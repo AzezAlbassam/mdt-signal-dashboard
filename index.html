@@ -1,0 +1,226 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MDT Signal Analysis</title><style>
+:root{--bg:#0c0f16;--card:#141a24;--card2:#1a2130;--bd:#242c3a;--tx:#e7ecf3;--mut:#8b95a7;--acc:#5b9dff;--pos:#3ecf8e;--neg:#ff6b6b;--gold:#f5c451}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fa;--card:#fff;--card2:#eef2f7;--bd:#dce3ec;--tx:#141a24;--mut:#5a6474;--acc:#2563eb}}
+:root[data-theme=dark]{--bg:#0c0f16;--card:#141a24;--card2:#1a2130;--bd:#242c3a;--tx:#e7ecf3;--mut:#8b95a7;--acc:#5b9dff}
+:root[data-theme=light]{--bg:#f5f7fa;--card:#fff;--card2:#eef2f7;--bd:#dce3ec;--tx:#141a24;--mut:#5a6474;--acc:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:30px 18px}
+.wrap{max-width:1120px;margin:0 auto}
+h1{font-size:27px;margin:0 0 3px}.sub{color:var(--mut);font-size:13.5px;margin:0 0 20px}
+h2{font-size:17px;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.sub2{font-weight:400;color:var(--mut);font-size:13px}
+.callout{background:var(--card2);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:13.5px}
+.callout b{color:var(--gold)}.callout ul{margin:8px 0 0;padding-left:18px}.callout li{margin:4px 0;color:var(--mut)}.callout li b{color:var(--tx)}
+.toggle{display:inline-flex;background:var(--card2);border:1px solid var(--bd);border-radius:9px;padding:3px;margin:6px 0 4px;gap:3px}
+.toggle button{background:none;border:0;color:var(--mut);padding:8px 15px;border-radius:7px;cursor:pointer;font:600 13px inherit}
+.toggle button.on{background:var(--acc);color:#fff}
+.toggle button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.hint{color:var(--mut);font-size:12.5px;margin:2px 0 14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:14px 0}
+.tile{background:var(--card);border:1px solid var(--bd);border-radius:11px;padding:14px 16px}
+.tl{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.tv{font-size:25px;font-weight:700;margin:4px 0 2px}.ts{color:var(--mut);font-size:12px}
+.tablewrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{background:var(--card2);color:var(--mut);font-size:12px;font-weight:600}
+th.l,td.l,td.name{text-align:left}td.name{font-weight:600}
+tbody tr:hover{background:var(--card2)}tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--card2)}tr.excl{opacity:.55}
+.pos{color:var(--pos)}.neg{color:var(--neg)}.mut{color:var(--mut)}.mny{font-variant-numeric:tabular-nums;font-weight:600}
+.tag{font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;vertical-align:middle}
+.tag.warn{background:#5a4a12;color:#f5c451}
+.barcell{width:30%;min-width:110px}.ybar{height:14px;border-radius:3px}
+.ybar.pos{background:linear-gradient(90deg,#3ecf8e,#5b9dff)}.ybar.neg{background:var(--neg)}
+.ybar.acc{background:var(--gold)}
+tr.grp td{background:var(--card2);font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut)}
+.barcell{position:relative}.bl{position:absolute;left:8px;top:0;font-size:11px;line-height:16px;font-weight:600}
+tr.wflast td{font-weight:700;background:var(--card2)}
+.mbar{position:relative;height:16px}
+.gbar{position:absolute;inset:0 auto 0 0;height:16px;border-radius:3px;background:var(--bd)}
+.nbar{position:absolute;inset:0 auto 0 0;height:16px;border-radius:3px}
+.nbar.pos{background:linear-gradient(90deg,#3ecf8e,#5b9dff)}.nbar.neg{background:var(--neg)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+ul.tl2{list-style:none;padding:0;margin:0;font-size:13px}
+ul.tl2 li{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 11px;margin-bottom:5px}
+footer{margin-top:32px;color:var(--mut);font-size:12px;border-top:1px solid var(--bd);padding-top:14px}
+</style></head><body><div class="wrap">
+<h1>MDT — Options Signal Analysis</h1>
+<p class="sub">Full history of 【⏰】swing-trades, 【💥】day-trades, 🎯│volume-alerts · 3,910 linked trades · generated 2026-08-06 17:48</p>
+
+<div class="callout"><b>Read this first.</b>
+<ul>
+<li><b>Stakes:</b> $2,500 per swing trade, $500 per day trade, as you specified. Use the toggle — it changes the answer a lot.</li>
+<li><b>MDT posts his losses</b> ("CUT", "cut for L"), which is better than most callers. But he usually doesn't quantify them, so unquantified cuts are charged at <b>-25%</b> — the median of the 319 cuts he <em>did</em> quantify. Wins come from his own "up X%" / "TP X%" messages.</li>
+<li><b>Still self-reported.</b> A trade only enters this ledger if MDT posted an outcome. Silent trades vanish, so the 86% win rate is an <em>upper bound</em>, not a true hit rate. Median return is the honest read, not the mean.</li>
+<li><b>🎯volume-alerts is excluded</b> from all P&L — it is a scan/highlight channel 99% "win rate", only 4 losers in 400, and its price quotes are mostly bid-ask spreads and other tickers. Shown greyed out for reference only.</li>
+<li><b>"Realistic net" assumptions</b> — entry slippage 3%, exit slippage 5% (his options are $0.30–2.00 with wide spreads; he says so himself), commissions 1.3% of stake round trip, the 165 entries he never followed up charged at −100%, and you catching 75% of alerts. Net lands near <b>half</b> the posted figure.</li>
+</ul></div>
+
+<h2>Position sizing</h2>
+<div class="toggle">
+ <button class="on" data-m="channel" data-hint="Sizing by channel: every trade posted in 【⏰】swing-trades is charged $2,500 and every 【💥】day-trades trade $500 — trusting the channel names.">By channel name</button>
+ <button data-m="duration" data-hint="Sizing by actual hold: only trades actually held more than 2 days get $2,500; everything else gets $500 — this matches your literal rule.">By actual hold time</button>
+</div>
+<p class="hint" id="hint">Sizing by channel: every trade posted in 【⏰】swing-trades is charged $2,500 and every 【💥】day-trades trade $500 — trusting the channel names.</p>
+
+<div class="pane" data-mode="channel">
+  <div class="tiles">
+    <div class="tile"><div class="tl">All time</div>
+      <div class="tv pos">+$3,089,250</div>
+      <div class="ts">3,510 closed trades</div></div><div class="tile"><div class="tl">2026 YTD</div>
+      <div class="tv pos">+$605,500</div>
+      <div class="ts">425 closed trades</div></div><div class="tile"><div class="tl">Since Jun 1</div>
+      <div class="tv pos">+$124,035</div>
+      <div class="ts">140 closed trades</div></div>
+  </div>
+  <h2>Per-channel results</h2>
+  <div class="tablewrap"><table>
+   <thead><tr><th class="l">Channel</th><th>Trades</th><th>Wins</th><th>Cuts</th><th>Win&nbsp;rate</th>
+   <th>Avg&nbsp;ret</th><th>Median</th><th>P&L all-time</th><th>P&L 2026</th><th>P&L Jun&nbsp;1+</th></tr></thead>
+   <tbody><tr>
+<td class="name">swing-trades</td>
+<td>1,941</td><td class="pos">1,675</td><td class="neg">266</td>
+<td>86%</td>
+<td class="pos">+60%</td>
+<td class="pos">+30%</td>
+<td class="mny pos">+$2,900,925</td>
+<td class="mny pos">+$581,700</td>
+<td class="mny pos">+$117,425</td>
+</tr><tr>
+<td class="name">day-trades</td>
+<td>1,569</td><td class="pos">1,283</td><td class="neg">286</td>
+<td>82%</td>
+<td class="pos">+24%</td>
+<td class="pos">+20%</td>
+<td class="mny pos">+$188,325</td>
+<td class="mny pos">+$23,800</td>
+<td class="mny pos">+$6,610</td>
+</tr><tr class='excl'>
+<td class="name">volume-alerts <span class='tag warn'>excluded</span></td>
+<td>400</td><td class="pos">395</td><td class="neg">5</td>
+<td>99%</td>
+<td class="pos">+444%</td>
+<td class="pos">+140%</td>
+<td class="mny pos">+$966,600</td>
+<td class="mny pos">+$36,475</td>
+<td class="mny pos">+$0</td>
+</tr>
+   <tr class="tot"><td class="name">TOTAL (swing + day)</td><td>3,510</td><td colspan="4"></td>
+   <td class="mny pos">+$3,089,250</td>
+   <td class="mny pos">+$605,500</td>
+   <td class="mny pos">+$124,035</td></tr>
+   </tbody></table></div>
+  <h2>Year by year <span class="sub2">(swing + day only)</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Year</th><th>Trades</th><th>P&L</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr><td class='name'>2021</td><td>879</td><td class='mny pos'>+$899,060</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr><td class='name'>2022</td><td>1,186</td><td class='mny pos'>+$679,150</td><td class='barcell'><div class='ybar pos' style='width:76%'></div></td></tr><tr><td class='name'>2023</td><td>240</td><td class='mny pos'>+$89,420</td><td class='barcell'><div class='ybar pos' style='width:10%'></div></td></tr><tr><td class='name'>2024</td><td>287</td><td class='mny pos'>+$270,800</td><td class='barcell'><div class='ybar pos' style='width:30%'></div></td></tr><tr><td class='name'>2025</td><td>493</td><td class='mny pos'>+$545,320</td><td class='barcell'><div class='ybar pos' style='width:61%'></div></td></tr><tr><td class='name'>2026</td><td>425</td><td class='mny pos'>+$605,500</td><td class='barcell'><div class='ybar pos' style='width:67%'></div></td></tr></tbody></table></div>
+
+  <h2>Calls vs puts <span class="sub2">— direction mix and which one pays</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Direction</th><th>Trades</th><th class="l">Share</th>
+  <th>Win&nbsp;rate</th><th>Avg&nbsp;ret</th><th>Median</th><th>P&amp;L</th></tr></thead>
+  <tbody><tr class='grp'><td class='name' colspan='7'>All time <span class='mut'>— 2.1 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>2,379</td><td class='barcell'><div class='ybar pos' style='width:68%'></div><span class='bl'>68%</span></td><td>85%</td><td class='pos'>+50%</td><td class='pos'>+25%</td><td class='mny pos'>+$2,479,930</td></tr><tr><td class='name'>Puts</td><td>1,131</td><td class='barcell'><div class='ybar acc' style='width:32%'></div><span class='bl'>32%</span></td><td>83%</td><td class='pos'>+31%</td><td class='pos'>+20%</td><td class='mny pos'>+$609,320</td></tr><tr class='grp'><td class='name' colspan='7'>2026 <span class='mut'>— 8.9 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>382</td><td class='barcell'><div class='ybar pos' style='width:90%'></div><span class='bl'>90%</span></td><td>90%</td><td class='pos'>+71%</td><td class='pos'>+30%</td><td class='mny pos'>+$594,695</td></tr><tr><td class='name'>Puts</td><td>43</td><td class='barcell'><div class='ybar acc' style='width:10%'></div><span class='bl'>10%</span></td><td>79%</td><td class='pos'>+19%</td><td class='pos'>+22%</td><td class='mny pos'>+$10,805</td></tr></tbody></table></div>
+
+  <h2>Reality check <span class="sub2">— what a follower would actually net</span></h2>
+  <p class="hint">Each step strips one real-world cost off MDT's posted numbers. The last line is the honest expectation.</p>
+  <div class="tablewrap"><table class="wf"><thead><tr><th class="l">Step</th><th>Running P&amp;L</th><th>vs posted</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr class=''><td class='name'>As posted by MDT</td><td class='mny pos'>+$3,089,250</td><td class='mut'>100%</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr class=''><td class='name'>− slippage (entry 3% / exit 5%)</td><td class='mny pos'>+$2,411,483</td><td class='mut'>78%</td><td class='barcell'><div class='ybar pos' style='width:78%'></div></td></tr><tr class=''><td class='name'>− commissions (1.3% of stake)</td><td class='mny pos'>+$2,338,202</td><td class='mut'>76%</td><td class='barcell'><div class='ybar pos' style='width:76%'></div></td></tr><tr class=''><td class='name'>− trades he never followed up (~165 @ −100%)</td><td class='mny pos'>+$1,959,702</td><td class='mut'>63%</td><td class='barcell'><div class='ybar pos' style='width:63%'></div></td></tr><tr class='wflast'><td class='name'>× you catch only 75% of alerts</td><td class='mny pos'>+$1,469,777</td><td class='mut'>48%</td><td class='barcell'><div class='ybar acc' style='width:48%'></div></td></tr></tbody></table></div>
+
+  <h2>2026 month by month <span class="sub2">— posted vs realistic</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Month</th><th>Trades</th><th>Win&nbsp;rate</th>
+  <th>Posted P&amp;L</th><th>Realistic net</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr><td class='name'>Jan 2026</td><td>63</td><td>94%</td><td class='mny mut'>+$122,260</td><td class='mny pos'>+$75,880</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:47%'></div><div class='nbar pos' style='width:29%'></div></div></td></tr><tr><td class='name'>Feb 2026</td><td>45</td><td>91%</td><td class='mny mut'>+$28,365</td><td class='mny pos'>+$13,490</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:11%'></div><div class='nbar pos' style='width:5%'></div></div></td></tr><tr><td class='name'>Mar 2026</td><td>55</td><td>75%</td><td class='mny mut'>+$13,255</td><td class='mny pos'>+$4,153</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:5%'></div><div class='nbar pos' style='width:2%'></div></div></td></tr><tr><td class='name'>Apr 2026</td><td>34</td><td>88%</td><td class='mny mut'>+$54,940</td><td class='mny pos'>+$33,257</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:21%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>May 2026</td><td>88</td><td>98%</td><td class='mny mut'>+$262,645</td><td class='mny pos'>+$167,076</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:100%'></div><div class='nbar pos' style='width:64%'></div></div></td></tr><tr><td class='name'>Jun 2026</td><td>63</td><td>92%</td><td class='mny mut'>+$66,585</td><td class='mny pos'>+$35,599</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:25%'></div><div class='nbar pos' style='width:14%'></div></div></td></tr><tr><td class='name'>Jul 2026</td><td>65</td><td>83%</td><td class='mny mut'>+$45,560</td><td class='mny pos'>+$22,992</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:17%'></div><div class='nbar pos' style='width:9%'></div></div></td></tr><tr><td class='name'>Aug 2026 <span class='tag'>partial</span></td><td>12</td><td>75%</td><td class='mny mut'>+$11,890</td><td class='mny pos'>+$6,653</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:5%'></div><div class='nbar pos' style='width:3%'></div></div></td></tr><tr class='tot'><td class='name'>2026 total</td><td>425</td><td></td><td class='mny mut'>+$605,500</td><td class='mny pos'>+$359,101</td><td></td></tr></tbody></table></div>
+  <p class="hint">Bars compare realistic net (solid) against posted (faint). August is a partial month.</p>
+</div>
+<div class="pane" data-mode="duration">
+  <div class="tiles">
+    <div class="tile"><div class="tl">All time</div>
+      <div class="tv pos">+$1,100,870</div>
+      <div class="ts">3,510 closed trades</div></div><div class="tile"><div class="tl">2026 YTD</div>
+      <div class="tv pos">+$180,500</div>
+      <div class="ts">425 closed trades</div></div><div class="tile"><div class="tl">Since Jun 1</div>
+      <div class="tv pos">+$37,035</div>
+      <div class="ts">140 closed trades</div></div>
+  </div>
+  <h2>Per-channel results</h2>
+  <div class="tablewrap"><table>
+   <thead><tr><th class="l">Channel</th><th>Trades</th><th>Wins</th><th>Cuts</th><th>Win&nbsp;rate</th>
+   <th>Avg&nbsp;ret</th><th>Median</th><th>P&L all-time</th><th>P&L 2026</th><th>P&L Jun&nbsp;1+</th></tr></thead>
+   <tbody><tr>
+<td class="name">swing-trades</td>
+<td>1,941</td><td class="pos">1,675</td><td class="neg">266</td>
+<td>86%</td>
+<td class="pos">+60%</td>
+<td class="pos">+30%</td>
+<td class="mny pos">+$864,445</td>
+<td class="mny pos">+$154,980</td>
+<td class="mny pos">+$29,585</td>
+</tr><tr>
+<td class="name">day-trades</td>
+<td>1,569</td><td class="pos">1,283</td><td class="neg">286</td>
+<td>82%</td>
+<td class="pos">+24%</td>
+<td class="pos">+20%</td>
+<td class="mny pos">+$236,425</td>
+<td class="mny pos">+$25,520</td>
+<td class="mny pos">+$7,450</td>
+</tr><tr class='excl'>
+<td class="name">volume-alerts <span class='tag warn'>excluded</span></td>
+<td>400</td><td class="pos">395</td><td class="neg">5</td>
+<td>99%</td>
+<td class="pos">+444%</td>
+<td class="pos">+140%</td>
+<td class="mny pos">+$966,600</td>
+<td class="mny pos">+$36,475</td>
+<td class="mny pos">+$0</td>
+</tr>
+   <tr class="tot"><td class="name">TOTAL (swing + day)</td><td>3,510</td><td colspan="4"></td>
+   <td class="mny pos">+$1,100,870</td>
+   <td class="mny pos">+$180,500</td>
+   <td class="mny pos">+$37,035</td></tr>
+   </tbody></table></div>
+  <h2>Year by year <span class="sub2">(swing + day only)</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Year</th><th>Trades</th><th>P&L</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr><td class='name'>2021</td><td>879</td><td class='mny pos'>+$363,200</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr><td class='name'>2022</td><td>1,186</td><td class='mny pos'>+$260,370</td><td class='barcell'><div class='ybar pos' style='width:72%'></div></td></tr><tr><td class='name'>2023</td><td>240</td><td class='mny pos'>+$35,520</td><td class='barcell'><div class='ybar pos' style='width:10%'></div></td></tr><tr><td class='name'>2024</td><td>287</td><td class='mny pos'>+$90,000</td><td class='barcell'><div class='ybar pos' style='width:25%'></div></td></tr><tr><td class='name'>2025</td><td>493</td><td class='mny pos'>+$171,280</td><td class='barcell'><div class='ybar pos' style='width:47%'></div></td></tr><tr><td class='name'>2026</td><td>425</td><td class='mny pos'>+$180,500</td><td class='barcell'><div class='ybar pos' style='width:50%'></div></td></tr></tbody></table></div>
+
+  <h2>Calls vs puts <span class="sub2">— direction mix and which one pays</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Direction</th><th>Trades</th><th class="l">Share</th>
+  <th>Win&nbsp;rate</th><th>Avg&nbsp;ret</th><th>Median</th><th>P&amp;L</th></tr></thead>
+  <tbody><tr class='grp'><td class='name' colspan='7'>All time <span class='mut'>— 2.1 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>2,379</td><td class='barcell'><div class='ybar pos' style='width:68%'></div><span class='bl'>68%</span></td><td>85%</td><td class='pos'>+50%</td><td class='pos'>+25%</td><td class='mny pos'>+$856,130</td></tr><tr><td class='name'>Puts</td><td>1,131</td><td class='barcell'><div class='ybar acc' style='width:32%'></div><span class='bl'>32%</span></td><td>83%</td><td class='pos'>+31%</td><td class='pos'>+20%</td><td class='mny pos'>+$244,740</td></tr><tr class='grp'><td class='name' colspan='7'>2026 <span class='mut'>— 8.9 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>382</td><td class='barcell'><div class='ybar pos' style='width:90%'></div><span class='bl'>90%</span></td><td>90%</td><td class='pos'>+71%</td><td class='pos'>+30%</td><td class='mny pos'>+$174,855</td></tr><tr><td class='name'>Puts</td><td>43</td><td class='barcell'><div class='ybar acc' style='width:10%'></div><span class='bl'>10%</span></td><td>79%</td><td class='pos'>+19%</td><td class='pos'>+22%</td><td class='mny pos'>+$5,645</td></tr></tbody></table></div>
+
+  <h2>Reality check <span class="sub2">— what a follower would actually net</span></h2>
+  <p class="hint">Each step strips one real-world cost off MDT's posted numbers. The last line is the honest expectation.</p>
+  <div class="tablewrap"><table class="wf"><thead><tr><th class="l">Step</th><th>Running P&amp;L</th><th>vs posted</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr class=''><td class='name'>As posted by MDT</td><td class='mny pos'>+$1,100,870</td><td class='mut'>100%</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr class=''><td class='name'>− slippage (entry 3% / exit 5%)</td><td class='mny pos'>+$828,259</td><td class='mut'>75%</td><td class='barcell'><div class='ybar pos' style='width:75%'></div></td></tr><tr class=''><td class='name'>− commissions (1.3% of stake)</td><td class='mny pos'>+$796,942</td><td class='mut'>72%</td><td class='barcell'><div class='ybar pos' style='width:72%'></div></td></tr><tr class=''><td class='name'>− trades he never followed up (~165 @ −100%)</td><td class='mny pos'>+$714,442</td><td class='mut'>65%</td><td class='barcell'><div class='ybar pos' style='width:65%'></div></td></tr><tr class='wflast'><td class='name'>× you catch only 75% of alerts</td><td class='mny pos'>+$535,831</td><td class='mut'>49%</td><td class='barcell'><div class='ybar acc' style='width:49%'></div></td></tr></tbody></table></div>
+
+  <h2>2026 month by month <span class="sub2">— posted vs realistic</span></h2>
+  <div class="tablewrap"><table><thead><tr><th class="l">Month</th><th>Trades</th><th>Win&nbsp;rate</th>
+  <th>Posted P&amp;L</th><th>Realistic net</th><th class="l">&nbsp;</th></tr></thead>
+  <tbody><tr><td class='name'>Jan 2026</td><td>63</td><td>94%</td><td class='mny mut'>+$35,800</td><td class='mny pos'>+$20,968</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:58%'></div><div class='nbar pos' style='width:34%'></div></div></td></tr><tr><td class='name'>Feb 2026</td><td>45</td><td>91%</td><td class='mny mut'>+$19,165</td><td class='mny pos'>+$9,302</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:31%'></div><div class='nbar pos' style='width:15%'></div></div></td></tr><tr><td class='name'>Mar 2026</td><td>55</td><td>75%</td><td class='mny mut'>+$5,655</td><td class='mny pos'>+$528</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:9%'></div><div class='nbar pos' style='width:1%'></div></div></td></tr><tr><td class='name'>Apr 2026</td><td>34</td><td>88%</td><td class='mny mut'>+$21,380</td><td class='mny pos'>+$12,218</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:35%'></div><div class='nbar pos' style='width:20%'></div></div></td></tr><tr><td class='name'>May 2026</td><td>88</td><td>98%</td><td class='mny mut'>+$61,465</td><td class='mny pos'>+$37,431</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:100%'></div><div class='nbar pos' style='width:61%'></div></div></td></tr><tr><td class='name'>Jun 2026</td><td>63</td><td>92%</td><td class='mny mut'>+$16,385</td><td class='mny pos'>+$7,810</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:27%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>Jul 2026</td><td>65</td><td>83%</td><td class='mny mut'>+$18,160</td><td class='mny pos'>+$7,846</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:30%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>Aug 2026 <span class='tag'>partial</span></td><td>12</td><td>75%</td><td class='mny mut'>+$2,490</td><td class='mny pos'>+$1,103</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:4%'></div><div class='nbar pos' style='width:2%'></div></div></td></tr><tr class='tot'><td class='name'>2026 total</td><td>425</td><td></td><td class='mny mut'>+$180,500</td><td class='mny pos'>+$97,206</td><td></td></tr></tbody></table></div>
+  <p class="hint">Bars compare realistic net (solid) against posted (faint). August is a partial month.</p>
+</div>
+
+<h2>⚠️ Why the two totals differ so much</h2>
+<div class="tablewrap"><table><thead><tr><th class="l">Channel</th><th>Trades</th><th>Median hold</th><th>Same-day</th><th>Held &gt;2 days</th></tr></thead>
+<tbody><tr><td class='name'>swing-trades</td><td>1,941</td><td>0d</td><td>64%</td><td>13%</td></tr><tr><td class='name'>day-trades</td><td>1,569</td><td>0d</td><td>91%</td><td>5%</td></tr><tr><td class='name'>volume-alerts</td><td>400</td><td>0d</td><td>74%</td><td>4%</td></tr></tbody></table></div>
+<p class="hint">The 【⏰】swing-trades channel is <b>not actually swing-trading</b>: its median hold is 0 days and only 13% of trades last more than 2 days. Sizing by channel name therefore pays $2,500 on hundreds of same-day trades. "By actual hold time" is the stricter, more literal reading of your rule.</p>
+
+<div class="two">
+ <div><h2>Biggest posted winners</h2><ul class="tl2"><li><b>APLD</b> 40C <span class='pos'>+2800%</span> <span class='mut'>2026-05-21 · swing-trades</span></li><li><b>INTC</b> 115C <span class='pos'>+2000%</span> <span class='mut'>2026-05-05 · swing-trades</span></li><li><b>QS</b> 31C <span class='pos'>+1500%</span> <span class='mut'>2021-10-29 · swing-trades</span></li><li><b>ORCL</b> 260C <span class='pos'>+1500%</span> <span class='mut'>2025-09-10 · swing-trades</span></li><li><b>FCX</b> 70C <span class='pos'>+1400%</span> <span class='mut'>2026-01-30 · swing-trades</span></li><li><b>LOTZ</b> 10C <span class='pos'>+1000%</span> <span class='mut'>2021-06-09 · swing-trades</span></li><li><b>WISH</b> 10C <span class='pos'>+1000%</span> <span class='mut'>2021-06-09 · swing-trades</span></li><li><b>AAL</b> 18P <span class='pos'>+1000%</span> <span class='mut'>2021-07-19 · swing-trades</span></li><li><b>AMD</b> 120C <span class='pos'>+1000%</span> <span class='mut'>2021-10-21 · swing-trades</span></li><li><b>OKE</b> 70C <span class='pos'>+1000%</span> <span class='mut'>2022-03-21 · swing-trades</span></li></ul></div>
+ <div><h2>Biggest posted losses</h2><ul class="tl2"><li><b>LLY</b> 625C <span class='neg'>-100%</span> <span class='mut'>2024-01-19 · day-trades</span></li><li><b>AFRM</b> 52C <span class='neg'>-99%</span> <span class='mut'>2024-11-01 · swing-trades</span></li><li><b>ROOT</b> 100C <span class='neg'>-99%</span> <span class='mut'>2024-11-06 · swing-trades</span></li><li><b>SPY</b> 390P <span class='neg'>-90%</span> <span class='mut'>2022-09-08 · day-trades</span></li><li><b>ABNB</b> 115P <span class='neg'>-80%</span> <span class='mut'>2023-10-25 · swing-trades</span></li><li><b>AMD</b> 400C <span class='neg'>-80%</span> <span class='mut'>2026-05-01 · swing-trades</span></li><li><b>BABA</b> 160C <span class='neg'>-70%</span> <span class='mut'>2026-01-02 · swing-trades</span></li><li><b>QQQ</b> 505C <span class='neg'>-65%</span> <span class='mut'>2025-03-10 · swing-trades</span></li><li><b>XLE</b> 80C <span class='neg'>-60%</span> <span class='mut'>2022-10-27 · swing-trades</span></li><li><b>RDDDT</b> 160C <span class='neg'>-60%</span> <span class='mut'>2024-12-04 · swing-trades</span></li></ul></div>
+</div>
+
+<footer>Source: full-history JSON export of 3 MDT channels via DiscordChatExporter.
+Parser anchors each contract on its strike/right token and takes the ticker immediately before it (MDT prefixes commentary like "LOTTO" / "CHASE ORDER"); exits link by ticker, or to the most recent open position within 5 days.
+Negative percents are read as losses and multi-result recap posts are skipped. Approximate best-effort NLP over free-text alerts — directional, not audited P&L.</footer>
+</div><script>
+document.querySelectorAll('.toggle button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('on'));
+ b.classList.add('on');
+ const m=b.dataset.m;
+ document.querySelectorAll('.pane').forEach(p=>p.style.display = p.dataset.mode===m?'':'none');
+ document.getElementById('hint').textContent = b.dataset.hint;
+}));
+document.querySelectorAll('.pane').forEach((p,i)=>{if(p.dataset.mode!=='channel')p.style.display='none'});
+</script></body></html>
