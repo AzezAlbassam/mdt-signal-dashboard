@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>$150k Challenge — plan &amp; tracker</title><style>
+<title>The $5,000 Challenge — plan &amp; tracker</title><style>
 :root{--bg:#080a0f;--pnl:#111520;--pnl2:#171c29;--ln:#232b3a;--tx:#e9edf4;--dim:#818b9c;
  --gold:#f2c14e;--go:#3ddc97;--no:#ff5d5d;--acc:#5b9dff}
 @media(prefers-color-scheme:light){:root{--bg:#f7f8fa;--pnl:#fff;--pnl2:#f0f2f6;--ln:#dde2ea;--tx:#111520;--dim:#5d6675;--gold:#a8781a}}
@@ -66,6 +66,14 @@ ol.pl li::before{content:counter(s);position:absolute;left:16px;top:13px;font:70
 .btn.ghost{background:var(--pnl2);color:var(--dim);border:1px solid var(--ln)}
 .bar{height:9px;background:var(--pnl2);border-radius:5px;overflow:hidden;margin:8px 0 4px}
 .bar>div{height:100%;background:linear-gradient(90deg,var(--go),var(--acc))}
+.nextbox{background:linear-gradient(160deg,color-mix(in srgb,var(--acc) 12%,var(--pnl2)),var(--pnl2));
+ border:1px solid var(--acc);border-radius:4px;padding:15px 16px;margin:16px 0}
+.nl{font:600 10.5px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:11px}
+.nrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:13px;align-items:end}
+.nb .k{font:600 10px ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.nb .v{font-size:23px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.nb .s{font-size:11px;color:var(--dim);margin-top:2px}
+.nb.stop .v{color:var(--no)}
 footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--ln);color:var(--dim);font-size:12.5px}
 </style></head><body><div class="wrap">
 
@@ -82,15 +90,17 @@ where the goal stops being realistic.</p>
   <b>0% chance of losing 75%</b> · median outcome $82k · needs 30&times;</div>
 </div>
 
-<div class="warnbox"><b>What that 74% is and isn't.</b> It is the probability <em>if</em> his edge is real
-at a 64% win rate — 20 points below what he posts. It is not a market forecast. Nothing in this data
-was independently verified, no signal service reliably produces 7.5× in three months, and the same
-model that yields 74% here yields 31% if his true win rate is 49%. Treat it as a conditional
-probability, and size for being wrong.</div>
+<div class="warnbox"><b>What that 43% is and isn't.</b> It is the probability <em>if</em> his edge is
+real at a 64% win rate &mdash; 20 points below what he posts. It is not a market forecast. Nothing in
+this data was independently verified, no signal service reliably produces 30&times; in three months, and
+the same model drops to <b>10%</b> if his true win rate is 49%. The most likely single outcome is not
+$150k &mdash; it is the median, <b>$82k</b>, and a 32% chance of finishing under $50k. Size for being
+wrong.</div>
 
 <h2><span class="n">01</span>Why capital matters more than aggression</h2>
-<p>$2,000 needs <b>75×</b> to reach $150k. $20,000 needs <b>7.5×</b>. That single difference does more
-for your odds than any amount of extra risk — and it is the one variable fully under your control.</p>
+<p>Your $5,000 needs <b>30&times;</b> to reach $150k; $20,000 would need only <b>7.5&times;</b>. Capital
+does more for your odds than any amount of extra risk, and it is the one variable fully under your
+control &mdash; so if you can add to the stake later, that beats sizing up per trade.</p>
 <div class="tabs">
   <button data-k="central" class="on">Central — 64% win</button><button data-k="pessim" class="">Pessimistic — 49% win</button><button data-k="optim" class="">Optimistic — 84% win</button>
 </div>
@@ -150,8 +160,8 @@ stake; it is fatal when the objective is 7.5&times;.</div>
 
 <h2><span class="n">04</span>The strategy, exactly</h2>
 <ol class="pl">
-  <li><b>Fund $20,000</b> if you can. At $2,000 the same plan gives you a 48% shot with 7% wipeout
-      risk; at $20,000 it is 74% with none. Capital is the cheapest edge available to you.</li>
+  <li><b>Start with $5,000</b> &mdash; a 43% shot at $150k, 68% at $50k, and no wipeout risk. Adding
+      capital later is the cheapest way to raise those odds: $10,000 would make it 59% / $20,000, 74%.</li>
   <li><b>Risk 50% of the balance per trade — never 100%.</b> All-in adds 5 points of hit-rate and
       brings back a 7% chance of losing three quarters of the account. Half-balance sizing cannot be
       wiped out by a single trade.</li>
@@ -163,8 +173,9 @@ stake; it is fatal when the objective is 7.5&times;.</div>
   <li><b>Exit when he exits &mdash; not on a fixed profit target.</b> The only number you enforce yourself is the &minus;30% stop. See section 03.</li>
   <li><b>Take the day's first clean alert.</b> No cherry-picking — profit is concentrated in a handful
       of trades, and selectively skipping is how followers miss them.</li>
-  <li><b>Bank 30% of the balance every 10 wins.</b> Tested against six alternatives; it beat
-      "half every 10" on both downside and median. Banking more starves the compounding.</li>
+  <li><b>Do not bank profits during the challenge.</b> Tested every variant: at 50% sizing your ruin
+      risk is already zero, so skimming only starves the compounding &mdash; banking 30% every 10 wins
+      cuts your odds from 43% to 28% and leaves the downside slightly worse. Let it ride.</li>
   <li><b>Stop the challenge if the account halves.</b> Pre-committed, not decided in the moment.</li>
   <li><b>Review at 20 closed trades against a 70% win rate.</b> That is the break-even line after
       slippage and commissions. Below it, this loses money no matter how good the alerts look.</li>
@@ -182,6 +193,20 @@ you will know which of the three cases you are actually living in. Saved in this
   </div>
   <div class="bar"><div id="s-bar" style="width:0%"></div></div>
   <div style="font-size:12.5px;color:var(--dim)" id="s-prog">0% of goal</div>
+
+  <div class="nextbox">
+    <div class="nl">Your next trade</div>
+    <div class="nrow">
+      <div class="nb"><div class="k">Stake to use</div><div class="v" id="n-stake">&mdash;</div>
+        <div class="s" id="n-basis"></div></div>
+      <div class="f" style="min-width:150px"><label for="n-prem">Option premium</label>
+        <input id="n-prem" type="number" step="0.01" min="0.01" placeholder="1.20" inputmode="decimal"></div>
+      <div class="nb"><div class="k">Contracts to buy</div><div class="v" id="n-cons">&mdash;</div>
+        <div class="s" id="n-cost"></div></div>
+      <div class="nb stop"><div class="k">Stop price (&minus;30%)</div><div class="v" id="n-stop">&mdash;</div>
+        <div class="s">set this as a live order</div></div>
+    </div>
+  </div>
   <p style="font-size:13.5px;margin:14px 0" id="s-verdict"></p>
   <div class="tw"><table class="log">
     <thead><tr><th>Date</th><th>Contract</th><th>Entry</th><th>Exit</th><th>Result</th><th></th></tr></thead>
@@ -295,12 +320,30 @@ function stats(){
   const prog=Math.max(0,Math.min(100,100*bal/tgt));
   $('s-bar').style.width=prog.toFixed(1)+'%';
   $('s-prog').textContent=prog.toFixed(1)+'% of goal';
+  nextTrade(bal);
   $('s-verdict').innerHTML = done.length<10
     ? `<span style="color:var(--dim)">Log at least 10 closed trades before judging anything.</span>`
     : (wr>=70
        ? `<b style="color:var(--go)">Win rate ${wr.toFixed(0)}% is above the 70% break-even line.</b> The edge is holding so far.`
        : `<b style="color:var(--no)">Win rate ${wr.toFixed(0)}% is below the 70% break-even line.</b> After friction this loses money. Stop and reassess.`);
 }
+function nextTrade(bal){
+  const frac=(+$('frac').value||0)/100;
+  const stake=bal*frac;
+  $('n-stake').textContent=money(stake);
+  $('n-basis').textContent=`${(frac*100).toFixed(0)}% of ${money(bal)}`;
+  const prem=parseFloat($('n-prem').value);
+  if(isFinite(prem)&&prem>0){
+    const cons=Math.floor(stake/(prem*100));
+    $('n-cons').textContent=cons>0?cons:'0';
+    $('n-cost').textContent=cons>0?`costs ${money(cons*prem*100)}`:'premium too high for this stake';
+    $('n-stop').textContent='$'+(prem*0.70).toFixed(2);
+  }else{
+    $('n-cons').textContent='—'; $('n-cost').textContent='enter the premium';
+    $('n-stop').textContent='—';
+  }
+}
+$('n-prem').addEventListener('input',()=>stats());
 $('add').addEventListener('click',addRow);
 $('clr').addEventListener('click',()=>{if(confirm('Delete all logged trades?')){T=[];save();}});
 plan();draw();
