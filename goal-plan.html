@@ -182,34 +182,34 @@ stake; it is fatal when the objective is 7.5&times;.</div>
 </ol>
 
 <h2><span class="n">05</span>Live tracker</h2>
-<p>Log every closed trade. This is the only thing here that produces real evidence — after 20 trades
-you will know which of the three cases you are actually living in. Saved in this browser only.</p>
+<p>Enter the ticker, how much you put in, and what you made or lost in dollars. Everything else is
+worked out for you &mdash; balance, win rate, and the exact stake for your next trade.</p>
 <div class="panel">
-  <div class="out" style="margin:0 0 16px">
-    <div class="o"><div class="k">Closed trades</div><div class="v" id="s-n">0</div></div>
-    <div class="o"><div class="k">Win rate</div><div class="v" id="s-wr">—</div></div>
-    <div class="o"><div class="k">Avg return</div><div class="v" id="s-avg">—</div></div>
-    <div class="o"><div class="k">Balance</div><div class="v" id="s-bal">—</div></div>
-  </div>
-  <div class="bar"><div id="s-bar" style="width:0%"></div></div>
-  <div style="font-size:12.5px;color:var(--dim)" id="s-prog">0% of goal</div>
-
   <div class="nextbox">
     <div class="nl">Your next trade</div>
     <div class="nrow">
-      <div class="nb"><div class="k">Stake to use</div><div class="v" id="n-stake">&mdash;</div>
+      <div class="nb"><div class="k">Put in</div><div class="v" id="n-stake">&mdash;</div>
         <div class="s" id="n-basis"></div></div>
-      <div class="f" style="min-width:150px"><label for="n-prem">Option premium</label>
-        <input id="n-prem" type="number" step="0.01" min="0.01" placeholder="1.20" inputmode="decimal"></div>
-      <div class="nb"><div class="k">Contracts to buy</div><div class="v" id="n-cons">&mdash;</div>
-        <div class="s" id="n-cost"></div></div>
-      <div class="nb stop"><div class="k">Stop price (&minus;30%)</div><div class="v" id="n-stop">&mdash;</div>
-        <div class="s">set this as a live order</div></div>
+      <div class="nb"><div class="k">Balance now</div><div class="v" id="s-bal">&mdash;</div>
+        <div class="s" id="s-pl"></div></div>
+      <div class="nb stop"><div class="k">Cut the trade if you are down</div>
+        <div class="v" id="n-stoploss">&mdash;</div><div class="s">that is &minus;30%</div></div>
     </div>
   </div>
+
+  <div class="out" style="margin:0 0 14px">
+    <div class="o"><div class="k">Trades</div><div class="v" id="s-n">0</div></div>
+    <div class="o"><div class="k">Win rate</div><div class="v" id="s-wr">&mdash;</div></div>
+    <div class="o"><div class="k">Total profit</div><div class="v" id="s-tot">&mdash;</div></div>
+    <div class="o"><div class="k">Avg per trade</div><div class="v" id="s-avg">&mdash;</div></div>
+  </div>
+  <div class="bar"><div id="s-bar" style="width:0%"></div></div>
+  <div style="font-size:12.5px;color:var(--dim)" id="s-prog">0% of goal</div>
   <p style="font-size:13.5px;margin:14px 0" id="s-verdict"></p>
+
   <div class="tw"><table class="log">
-    <thead><tr><th>Date</th><th>Contract</th><th>Entry</th><th>Exit</th><th>Result</th><th></th></tr></thead>
+    <thead><tr><th>Date</th><th>Ticker</th><th>Put in $</th><th>Profit / loss $</th>
+    <th>Return</th><th>Balance</th><th></th></tr></thead>
     <tbody id="tbody"></tbody></table></div>
   <div style="display:flex;gap:8px;margin-top:12px">
     <button class="btn" id="add">+ Add trade</button>
@@ -280,71 +280,79 @@ document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',
   document.querySelectorAll('.mx').forEach(t=>t.style.display=t.dataset.k===b.dataset.k?'':'none');
 }));
 
-/* ---------- trade tracker (saved in this browser) ---------- */
-const KEY='mdt_challenge_v1';
+/* ---------- trade tracker: ticker + dollars in + dollars profit ---------- */
+const KEY='mdt_challenge_v2';
 let T=JSON.parse(localStorage.getItem(KEY)||'[]');
 function save(){localStorage.setItem(KEY,JSON.stringify(T));draw();}
-function addRow(){T.push({d:new Date().toISOString().slice(0,10),tk:'',ent:'',ex:'',note:''});save();}
+function addRow(){
+  const bal=balance();const frac=(+$('frac').value||0)/100;
+  T.push({d:new Date().toISOString().slice(0,10),tk:'',in:Math.round(bal*frac),pl:''});
+  save();
+}
+function num(v){const x=parseFloat(v);return isFinite(x)?x:null;}
+function balance(){
+  let b=+$('cap').value||0;
+  T.forEach(t=>{const p=num(t.pl); if(p!==null) b+=p;});
+  return b;
+}
 function draw(){
-  const tb=$('tbody');
-  tb.innerHTML=T.map((t,i)=>`<tr>
-    <td><input value="${t.d}" data-i="${i}" data-f="d"></td>
-    <td><input value="${t.tk}" data-i="${i}" data-f="tk" placeholder="PLTR 150C"></td>
-    <td><input value="${t.ent}" data-i="${i}" data-f="ent" placeholder="1.20" inputmode="decimal"></td>
-    <td><input value="${t.ex}" data-i="${i}" data-f="ex" placeholder="1.80" inputmode="decimal"></td>
-    <td>${pct(t)}</td>
-    <td><button class="btn ghost" data-del="${i}">×</button></td></tr>`).join('');
-  tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',e=>{
+  let run=+$('cap').value||0;
+  $('tbody').innerHTML=T.map((t,i)=>{
+    const inv=num(t.in), pl=num(t.pl);
+    if(pl!==null) run+=pl;
+    const r=(inv&&pl!==null)?(pl/inv*100):null;
+    const rt=r===null?'<span style="color:var(--dim)">&mdash;</span>'
+      :`<b style="color:${r>=0?'var(--go)':'var(--no)'}">${r>=0?'+':''}${r.toFixed(0)}%</b>`;
+    return `<tr>
+      <td><input value="${t.d}" data-i="${i}" data-f="d" style="width:105px"></td>
+      <td><input value="${t.tk}" data-i="${i}" data-f="tk" placeholder="PLTR"></td>
+      <td><input value="${t.in}" data-i="${i}" data-f="in" inputmode="decimal" placeholder="2500"></td>
+      <td><input value="${t.pl}" data-i="${i}" data-f="pl" inputmode="decimal" placeholder="+800 or -750"></td>
+      <td>${rt}</td>
+      <td style="font-variant-numeric:tabular-nums">${pl!==null?money(run):'<span style="color:var(--dim)">&mdash;</span>'}</td>
+      <td><button class="btn ghost" data-del="${i}">&times;</button></td></tr>`;}).join('');
+  $('tbody').querySelectorAll('input').forEach(inp=>inp.addEventListener('change',e=>{
     T[+e.target.dataset.i][e.target.dataset.f]=e.target.value;save();}));
-  tb.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{
+  $('tbody').querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{
     T.splice(+e.target.dataset.del,1);save();}));
   stats();
 }
-function ret(t){const a=parseFloat(t.ent),b=parseFloat(t.ex);
-  return (isFinite(a)&&isFinite(b)&&a>0)?(b/a-1):null;}
-function pct(t){const r=ret(t);if(r===null)return '<span style="color:var(--dim)">—</span>';
-  return `<b style="color:${r>=0?'var(--go)':'var(--no)'}">${(r*100).toFixed(0)}%</b>`;}
 function stats(){
-  const done=T.map(ret).filter(r=>r!==null);
-  const w=done.filter(r=>r>0).length;
-  const wr=done.length?100*w/done.length:0;
+  const done=T.filter(t=>num(t.pl)!==null);
+  const pls=done.map(t=>num(t.pl));
+  const wins=pls.filter(x=>x>0).length;
+  const wr=done.length?100*wins/done.length:0;
+  const tot=pls.reduce((a,b)=>a+b,0);
+  const bal=balance();
+  const frac=(+$('frac').value||0)/100;
   $('s-n').textContent=done.length;
   $('s-wr').textContent=done.length?wr.toFixed(0)+'%':'—';
   $('s-wr').style.color=!done.length?'var(--tx)':(wr>=70?'var(--go)':'var(--no)');
-  const avg=done.length?done.reduce((a,b)=>a+b,0)/done.length:0;
-  $('s-avg').textContent=done.length?((avg*100).toFixed(0)+'%'):'—';
-  let bal=+$('cap').value||0;const frac=(+$('frac').value||0)/100;
-  done.forEach(r=>{bal+=bal*frac*r;});
+  $('s-tot').textContent=done.length?money(tot):'—';
+  $('s-tot').style.color=tot>=0?'var(--go)':'var(--no)';
+  const rets=done.map(t=>num(t.pl)/num(t.in)).filter(x=>isFinite(x));
+  $('s-avg').textContent=rets.length?((rets.reduce((a,b)=>a+b,0)/rets.length*100).toFixed(0)+'%'):'—';
   $('s-bal').textContent=money(bal);
-  const tgt=+$('tgt').value||1;
-  const prog=Math.max(0,Math.min(100,100*bal/tgt));
-  $('s-bar').style.width=prog.toFixed(1)+'%';
-  $('s-prog').textContent=prog.toFixed(1)+'% of goal';
-  nextTrade(bal);
-  $('s-verdict').innerHTML = done.length<10
-    ? `<span style="color:var(--dim)">Log at least 10 closed trades before judging anything.</span>`
-    : (wr>=70
-       ? `<b style="color:var(--go)">Win rate ${wr.toFixed(0)}% is above the 70% break-even line.</b> The edge is holding so far.`
-       : `<b style="color:var(--no)">Win rate ${wr.toFixed(0)}% is below the 70% break-even line.</b> After friction this loses money. Stop and reassess.`);
-}
-function nextTrade(bal){
-  const frac=(+$('frac').value||0)/100;
+  $('s-pl').textContent=(tot>=0?'up ':'down ')+money(Math.abs(tot))+' overall';
   const stake=bal*frac;
   $('n-stake').textContent=money(stake);
   $('n-basis').textContent=`${(frac*100).toFixed(0)}% of ${money(bal)}`;
-  const prem=parseFloat($('n-prem').value);
-  if(isFinite(prem)&&prem>0){
-    const cons=Math.floor(stake/(prem*100));
-    $('n-cons').textContent=cons>0?cons:'0';
-    $('n-cost').textContent=cons>0?`costs ${money(cons*prem*100)}`:'premium too high for this stake';
-    $('n-stop').textContent='$'+(prem*0.70).toFixed(2);
-  }else{
-    $('n-cons').textContent='—'; $('n-cost').textContent='enter the premium';
-    $('n-stop').textContent='—';
-  }
+  $('n-stoploss').textContent=money(stake*0.30);
+  const tgt=+$('tgt').value||1;
+  const prog=Math.max(0,Math.min(100,100*bal/tgt));
+  $('s-bar').style.width=prog.toFixed(1)+'%';
+  $('s-prog').textContent=prog.toFixed(1)+'% of your '+money(tgt)+' goal';
+  const start=+$('cap').value||0;
+  $('s-verdict').innerHTML = bal<=start*0.5
+    ? `<b style="color:var(--no)">You are down to half your starting capital. That was the pre-agreed stop &mdash; end the challenge.</b>`
+    : (done.length<10
+      ? `<span style="color:var(--dim)">Log at least 10 trades before reading anything into the win rate.</span>`
+      : (wr>=70
+        ? `<b style="color:var(--go)">Win rate ${wr.toFixed(0)}% is above the 70% break-even line.</b> The edge is holding so far.`
+        : `<b style="color:var(--no)">Win rate ${wr.toFixed(0)}% is below the 70% break-even line.</b> After slippage and fees this loses money over time. Stop and reassess.`));
 }
-$('n-prem').addEventListener('input',()=>stats());
 $('add').addEventListener('click',addRow);
 $('clr').addEventListener('click',()=>{if(confirm('Delete all logged trades?')){T=[];save();}});
+['cap','frac','tgt'].forEach(id=>$(id).addEventListener('input',()=>draw()));
 plan();draw();
 </script></body></html>
