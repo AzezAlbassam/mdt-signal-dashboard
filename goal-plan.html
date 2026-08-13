@@ -77,6 +77,13 @@ ol.pl li::before{content:counter(s);position:absolute;left:16px;top:13px;font:70
 .projbox{background:var(--pnl2);border:1px solid var(--ln);border-radius:4px;padding:15px 16px;margin:16px 0}
 .projbox .nl{color:var(--gold)}
 table.proj{min-width:480px}
+table.pred{min-width:620px}
+table.pred td{text-align:right}table.pred td.name{text-align:left}
+table.pred td.mid{font-weight:800;font-size:15px}
+table.pred td.mid.go{color:var(--go)}table.pred td.mid.gold{color:var(--gold)}
+table.pred td.mid.no{color:var(--no)}
+tr.grp td{background:var(--pnl2);font:600 11px ui-monospace,monospace;letter-spacing:.09em;
+ text-transform:uppercase;color:var(--dim);text-align:left}
 table.proj td{text-align:right}table.proj td.l,table.proj th.l{text-align:left}
 table.proj td.mid{font-weight:800;color:var(--go);font-size:15px}
 table.proj td.bad{color:var(--no)}
@@ -233,6 +240,20 @@ worked out for you &mdash; balance, win rate, and the exact stake for your next 
     <button class="btn ghost" id="clr">Clear all</button>
   </div>
 </div>
+
+<h2><span class="n">06</span>What the history predicts</h2>
+<p>These are the numbers to measure yourself against &mdash; the same $5,000 plan run forward on MDT's
+actual recorded results, before you log anything. Compare your live balance to the
+<b>Month 1 / 2 / 3 median</b> in the central case; if you are tracking well below it, his posted
+edge is not reaching you.</p>
+<div class="tw"><table class="pred">
+<thead><tr><th class="l">Horizon</th><th>Bad (10th)</th><th>25th</th><th>Median</th><th>75th</th><th>Good (90th)</th></tr></thead>
+<tbody><tr class='grp'><td class='name' colspan='6'>If his 84% win rate is real</td></tr><tr><td class='name'>Month 1<span class='sub2'>~20 trades</span></td><td>$10,961</td><td>$18,113</td><td class='mid go'>$33,971</td><td>$75,703</td><td>$174,048</td></tr><tr><td class='name'>Month 2<span class='sub2'>~40 trades</span></td><td>$47,818</td><td>$103,854</td><td class='mid go'>$273,376</td><td>$813,913</td><td>$2,513,253</td></tr><tr><td class='name'>Month 3<span class='sub2'>~60 trades</span></td><td>$231,373</td><td>$621,823</td><td class='mid go'>$2,167,109</td><td>$8,428,327</td><td>$31,325,936</td></tr><tr class='grp'><td class='name' colspan='6'>Central case — 64% win</td></tr><tr><td class='name'>Month 1<span class='sub2'>~20 trades</span></td><td>$3,669</td><td>$6,090</td><td class='mid gold'>$11,688</td><td>$25,873</td><td>$58,173</td></tr><tr><td class='name'>Month 2<span class='sub2'>~40 trades</span></td><td>$5,460</td><td>$11,812</td><td class='mid gold'>$31,238</td><td>$92,530</td><td>$289,488</td></tr><tr><td class='name'>Month 3<span class='sub2'>~60 trades</span></td><td>$9,348</td><td>$25,586</td><td class='mid gold'>$84,406</td><td>$320,679</td><td>$1,175,064</td></tr><tr class='grp'><td class='name' colspan='6'>Pessimistic — 49% win</td></tr><tr><td class='name'>Month 1<span class='sub2'>~20 trades</span></td><td>$1,747</td><td>$2,855</td><td class='mid no'>$5,337</td><td>$11,212</td><td>$24,986</td></tr><tr><td class='name'>Month 2<span class='sub2'>~40 trades</span></td><td>$1,156</td><td>$2,508</td><td class='mid no'>$6,430</td><td>$18,520</td><td>$52,782</td></tr><tr><td class='name'>Month 3<span class='sub2'>~60 trades</span></td><td>$910</td><td>$2,437</td><td class='mid no'>$7,671</td><td>$27,914</td><td>$101,906</td></tr></tbody></table></div>
+<p class="pnote">$5,000 &middot; 50% per trade &middot; exit on his call &middot; hard &minus;30% stop &middot;
+20 trades a month &middot; 15,000 simulated runs per row, net of slippage and commissions.
+In the central case <b>18% of runs are below $5,000 after month 1</b> and 5% still are at month 3 &mdash;
+an early drawdown is normal and is not by itself a reason to abandon the plan. In the pessimistic case
+<b>40% never recover</b>, which is what the 70% win-rate line in your tracker is there to detect.</p>
 
 <footer>
 Simulations resample 3,510 net per-trade results from MDT's swing-trades and day-trades channels
