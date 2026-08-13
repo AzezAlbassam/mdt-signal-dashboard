@@ -74,6 +74,15 @@ ol.pl li::before{content:counter(s);position:absolute;left:16px;top:13px;font:70
 .nb .v{font-size:23px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
 .nb .s{font-size:11px;color:var(--dim);margin-top:2px}
 .nb.stop .v{color:var(--no)}
+.projbox{background:var(--pnl2);border:1px solid var(--ln);border-radius:4px;padding:15px 16px;margin:16px 0}
+.projbox .nl{color:var(--gold)}
+table.proj{min-width:480px}
+table.proj td{text-align:right}table.proj td.l,table.proj th.l{text-align:left}
+table.proj td.mid{font-weight:800;color:var(--go);font-size:15px}
+table.proj td.bad{color:var(--no)}
+.pbar{height:8px;background:var(--pnl);border-radius:4px;overflow:hidden;min-width:70px}
+.pbar>div{height:100%;background:linear-gradient(90deg,var(--go),var(--acc))}
+.pnote{font-size:12px;color:var(--dim);margin:10px 0 0}
 footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--ln);color:var(--dim);font-size:12.5px}
 </style></head><body><div class="wrap">
 
@@ -206,6 +215,14 @@ worked out for you &mdash; balance, win rate, and the exact stake for your next 
   <div class="bar"><div id="s-bar" style="width:0%"></div></div>
   <div style="font-size:12.5px;color:var(--dim)" id="s-prog">0% of goal</div>
   <p style="font-size:13.5px;margin:14px 0" id="s-verdict"></p>
+
+  <div class="projbox" id="projbox">
+    <div class="nl">Projection from <em>your own</em> trades</div>
+    <div class="tw"><table class="proj">
+      <thead><tr><th class="l">From here</th><th>Bad case</th><th>Median</th><th>Good case</th><th class="l">&nbsp;</th></tr></thead>
+      <tbody id="projbody"></tbody></table></div>
+    <p class="pnote" id="projnote"></p>
+  </div>
 
   <div class="tw"><table class="log">
     <thead><tr><th>Date</th><th>Ticker</th><th>Put in $</th><th>Profit / loss $</th>
@@ -342,6 +359,7 @@ function stats(){
   const prog=Math.max(0,Math.min(100,100*bal/tgt));
   $('s-bar').style.width=prog.toFixed(1)+'%';
   $('s-prog').textContent=prog.toFixed(1)+'% of your '+money(tgt)+' goal';
+  project(done,bal,frac);
   const start=+$('cap').value||0;
   $('s-verdict').innerHTML = bal<=start*0.5
     ? `<b style="color:var(--no)">You are down to half your starting capital. That was the pre-agreed stop &mdash; end the challenge.</b>`
@@ -350,6 +368,56 @@ function stats(){
       : (wr>=70
         ? `<b style="color:var(--go)">Win rate ${wr.toFixed(0)}% is above the 70% break-even line.</b> The edge is holding so far.`
         : `<b style="color:var(--no)">Win rate ${wr.toFixed(0)}% is below the 70% break-even line.</b> After slippage and fees this loses money over time. Stop and reassess.`));
+}
+function project(done,bal,frac){
+  const rets=done.map(t=>num(t.pl)/num(t.in)).filter(x=>isFinite(x));
+  const body=$('projbody'), note=$('projnote');
+  if(rets.length<5){
+    body.innerHTML=`<tr><td class="l" colspan="5" style="color:var(--dim)">
+      Log ${5-rets.length} more trade${5-rets.length===1?'':'s'} and this will project your own
+      1, 2 and 3 month outcomes from your real results.</td></tr>`;
+    note.textContent=''; return;
+  }
+  // how often are you actually trading?
+  const ds=done.map(t=>t.d).filter(Boolean).sort();
+  let perMonth=20;
+  if(ds.length>1){
+    const days=Math.max(1,(new Date(ds[ds.length-1])-new Date(ds[0]))/86400000);
+    perMonth=Math.min(60,Math.max(4,Math.round(rets.length/days*21)));
+  }
+  const tgt=+$('tgt').value||1;
+  let _p=7; const pr=()=>{_p=(_p+0x6D2B79F5)|0;let t=_p;t=Math.imul(t^(t>>>15),t|1);
+    t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};
+  const rows=[];
+  for(const months of [1,2,3]){
+    const n=Math.round(perMonth*months), fin=[];
+    for(let r=0;r<2500;r++){
+      let b=bal;
+      for(let i=0;i<n;i++){
+        b+=b*frac*rets[(pr()*rets.length)|0];
+        if(b<=0){b=0;break;}
+      }
+      fin.push(b);
+    }
+    fin.sort((a,b)=>a-b);
+    rows.push({months,n,p10:fin[(fin.length*0.1)|0],med:fin[fin.length>>1],p90:fin[(fin.length*0.9)|0]});
+  }
+  const mx=Math.max(...rows.map(r=>r.med),tgt);
+  body.innerHTML=rows.map(r=>`<tr>
+    <td class="l"><b>${r.months} month${r.months>1?'s':''}</b>
+      <span style="color:var(--dim);font-size:11px"> · ~${r.n} trades</span></td>
+    <td class="${r.p10<bal?'bad':''}">${money(r.p10)}</td>
+    <td class="mid">${money(r.med)}</td>
+    <td>${money(r.p90)}</td>
+    <td class="l"><div class="pbar"><div style="width:${Math.min(100,100*r.med/mx).toFixed(0)}%"></div></div></td>
+  </tr>`).join('');
+  const avg=rets.reduce((a,b)=>a+b,0)/rets.length;
+  const hit=rows[2].med>=tgt;
+  note.innerHTML=`Based on your ${rets.length} logged trade${rets.length>1?'s':''}
+    (avg ${(avg*100).toFixed(0)}% per trade, about ${perMonth} trades a month), resampled 2,500 times.
+    ${hit?`<b style="color:var(--go)">On your current numbers you reach ${money(tgt)} inside 3 months.</b>`
+        :`<b style="color:var(--gold)">On your current numbers you finish 3 months at ${money(rows[2].med)}, short of ${money(tgt)}.</b>`}
+    ${rets.length<15?' A sample this small swings hard — treat it as a direction, not a forecast.':''}`;
 }
 $('add').addEventListener('click',addRow);
 $('clr').addEventListener('click',()=>{if(confirm('Delete all logged trades?')){T=[];save();}});
