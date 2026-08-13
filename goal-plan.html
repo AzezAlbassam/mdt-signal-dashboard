@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>$150k Challenge — plan &amp; tracker</title><style>
+:root{--bg:#080a0f;--pnl:#111520;--pnl2:#171c29;--ln:#232b3a;--tx:#e9edf4;--dim:#818b9c;
+ --gold:#f2c14e;--go:#3ddc97;--no:#ff5d5d;--acc:#5b9dff}
+@media(prefers-color-scheme:light){:root{--bg:#f7f8fa;--pnl:#fff;--pnl2:#f0f2f6;--ln:#dde2ea;--tx:#111520;--dim:#5d6675;--gold:#a8781a}}
+:root[data-theme=light]{--bg:#f7f8fa;--pnl:#fff;--pnl2:#f0f2f6;--ln:#dde2ea;--tx:#111520;--dim:#5d6675;--gold:#a8781a}
+:root[data-theme=dark]{--bg:#080a0f;--pnl:#111520;--pnl2:#171c29;--ln:#232b3a;--tx:#e9edf4;--dim:#818b9c;--gold:#f2c14e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);padding:32px 18px;
+ font:15px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1000px;margin:0 auto}
+.eye{font:600 11px ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.08;margin:10px 0 12px;letter-spacing:-.02em;text-wrap:balance}
+.lede{font-size:16.5px;color:var(--dim);max-width:66ch;margin:0 0 24px}
+h2{font-size:18px;margin:36px 0 12px;letter-spacing:-.01em}
+h2 .n{font:600 12px ui-monospace,monospace;color:var(--gold);margin-right:8px}
+p{max-width:70ch}
+.hero{background:linear-gradient(160deg,color-mix(in srgb,var(--go) 14%,var(--pnl)),var(--pnl));
+ border:1px solid var(--ln);border-radius:4px;padding:22px;margin:20px 0}
+.hero .k{font:600 11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.hero .big{font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.03em;margin:6px 0;color:var(--go)}
+.hero .sm{color:var(--dim);font-size:14px}
+.warnbox{background:color-mix(in srgb,var(--no) 10%,transparent);border:1px solid var(--no);
+ border-radius:4px;padding:16px 18px;margin:18px 0;font-size:14px}
+.warnbox b{color:var(--no)}
+.tw{overflow-x:auto;border:1px solid var(--ln);border-radius:4px;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{padding:11px 12px;text-align:center;border-bottom:1px solid var(--ln);white-space:nowrap;
+ font-variant-numeric:tabular-nums}
+th{background:var(--pnl2);color:var(--dim);font:600 11px ui-monospace,monospace;
+ letter-spacing:.08em;text-transform:uppercase}
+td.name,th.l{text-align:left}td.name{font-weight:700}
+td .sub2{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:2px}
+tbody tr:last-child td{border-bottom:none}
+td b{font-size:16px}td b.hit{color:var(--go)}
+td.best{background:color-mix(in srgb,var(--go) 15%,transparent);outline:1px solid var(--go)}
+.tabs{display:flex;gap:5px;margin:14px 0 0;flex-wrap:wrap}
+.tabs button{background:var(--pnl2);border:1px solid var(--ln);color:var(--dim);border-radius:4px;
+ padding:8px 13px;cursor:pointer;font:600 12.5px inherit}
+.tabs button.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.tabs button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.panel{background:var(--pnl);border:1px solid var(--ln);border-radius:4px;padding:18px;margin:14px 0}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font:600 10.5px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.f input,.f select{background:var(--pnl2);border:1px solid var(--ln);color:var(--tx);border-radius:4px;
+ padding:9px 11px;font:600 15px inherit;font-variant-numeric:tabular-nums}
+.f input:focus,.f select:focus{outline:2px solid var(--acc);outline-offset:1px}
+.out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.o{background:var(--pnl2);border:1px solid var(--ln);border-radius:4px;padding:13px;text-align:center}
+.o .k{font:600 10px ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.o .v{font-size:22px;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums}
+ol.pl{counter-reset:s;list-style:none;padding:0}
+ol.pl li{counter-increment:s;position:relative;padding:13px 16px 13px 48px;background:var(--pnl);
+ border:1px solid var(--ln);border-radius:4px;margin-bottom:8px;font-size:14px}
+ol.pl li::before{content:counter(s);position:absolute;left:16px;top:13px;font:700 12px ui-monospace,monospace;color:var(--gold)}
+.log{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.log th,.log td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:right}
+.log th:first-child,.log td:first-child{text-align:left}
+.log input{width:100%;background:var(--pnl2);border:1px solid var(--ln);color:var(--tx);
+ border-radius:3px;padding:6px 8px;font:inherit;font-size:13px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:4px;padding:9px 15px;cursor:pointer;font:600 13px inherit}
+.btn.ghost{background:var(--pnl2);color:var(--dim);border:1px solid var(--ln)}
+.bar{height:9px;background:var(--pnl2);border-radius:5px;overflow:hidden;margin:8px 0 4px}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--go),var(--acc))}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--ln);color:var(--dim);font-size:12.5px}
+</style></head><body><div class="wrap">
+
+<div class="eye">Goal planner · MDT signals</div>
+<h1>Getting to $150,000 in three months</h1>
+<p class="lede">I ran 8,000 simulated three-month runs for every combination of starting capital and
+position size, resampling MDT's actual net trade results. Here is what the numbers say, including
+where the goal stops being realistic.</p>
+
+<div class="hero">
+  <div class="k">Best risk-adjusted route to $150k</div>
+  <div class="big">$20,000 · 50% per trade</div>
+  <div class="sm"><b>74% chance of reaching $150,000</b> · <b>0% chance of losing 75%</b> ·
+  median outcome $340k · needs only 7.5×</div>
+</div>
+
+<div class="warnbox"><b>What that 74% is and isn't.</b> It is the probability <em>if</em> his edge is real
+at a 64% win rate — 20 points below what he posts. It is not a market forecast. Nothing in this data
+was independently verified, no signal service reliably produces 7.5× in three months, and the same
+model that yields 74% here yields 31% if his true win rate is 49%. Treat it as a conditional
+probability, and size for being wrong.</div>
+
+<h2><span class="n">01</span>Why capital matters more than aggression</h2>
+<p>$2,000 needs <b>75×</b> to reach $150k. $20,000 needs <b>7.5×</b>. That single difference does more
+for your odds than any amount of extra risk — and it is the one variable fully under your control.</p>
+<div class="tabs">
+  <button data-k="central" class="on">Central — 64% win</button><button data-k="pessim" class="">Pessimistic — 49% win</button><button data-k="optim" class="">Optimistic — 84% win</button>
+</div>
+<div class="tw mx" data-k="central" style=""><table>
+<thead><tr><th class="l">Starting capital</th><th>All-in per trade</th><th>50% per trade</th><th>25% per trade</th><th>10% per trade</th></tr></thead>
+<tbody><tr><td class='name'>$2,000<span class='sub2'>75× needed</span></td><td class=''><b class=''>48%</b><span class='sub2'>ruin 7% · med $57k</span></td><td class=''><b class=''>26%</b><span class='sub2'>ruin 0% · med $34k</span></td><td class=''><b class=''>4%</b><span class='sub2'>ruin 0% · med $12k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $5k</span></td></tr><tr><td class='name'>$5,000<span class='sub2'>30× needed</span></td><td class=''><b class='hit'>60%</b><span class='sub2'>ruin 7% · med $143k</span></td><td class=''><b class=''>44%</b><span class='sub2'>ruin 0% · med $85k</span></td><td class=''><b class=''>12%</b><span class='sub2'>ruin 0% · med $31k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $12k</span></td></tr><tr><td class='name'>$10,000<span class='sub2'>15× needed</span></td><td class=''><b class='hit'>70%</b><span class='sub2'>ruin 7% · med $286k</span></td><td class=''><b class=''>59%</b><span class='sub2'>ruin 0% · med $170k</span></td><td class=''><b class=''>26%</b><span class='sub2'>ruin 0% · med $61k</span></td><td class=''><b class=''>1%</b><span class='sub2'>ruin 0% · med $24k</span></td></tr><tr><td class='name'>$20,000<span class='sub2'>8× needed</span></td><td class=''><b class='hit'>79%</b><span class='sub2'>ruin 7% · med $571k</span></td><td class='best'><b class='hit'>74%</b><span class='sub2'>ruin 0% · med $340k</span></td><td class=''><b class=''>47%</b><span class='sub2'>ruin 0% · med $122k</span></td><td class=''><b class=''>6%</b><span class='sub2'>ruin 0% · med $47k</span></td></tr></tbody></table></div><div class="tw mx" data-k="pessim" style="display:none"><table>
+<thead><tr><th class="l">Starting capital</th><th>All-in per trade</th><th>50% per trade</th><th>25% per trade</th><th>10% per trade</th></tr></thead>
+<tbody><tr><td class='name'>$2,000<span class='sub2'>75× needed</span></td><td class=''><b class=''>9%</b><span class='sub2'>ruin 52% · med $409</span></td><td class=''><b class=''>4%</b><span class='sub2'>ruin 15% · med $3k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 1% · med $4k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $3k</span></td></tr><tr><td class='name'>$5,000<span class='sub2'>30× needed</span></td><td class=''><b class=''>16%</b><span class='sub2'>ruin 52% · med $1k</span></td><td class=''><b class=''>10%</b><span class='sub2'>ruin 15% · med $8k</span></td><td class=''><b class=''>2%</b><span class='sub2'>ruin 1% · med $9k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $7k</span></td></tr><tr><td class='name'>$10,000<span class='sub2'>15× needed</span></td><td class=''><b class=''>24%</b><span class='sub2'>ruin 52% · med $2k</span></td><td class=''><b class=''>19%</b><span class='sub2'>ruin 15% · med $15k</span></td><td class=''><b class=''>6%</b><span class='sub2'>ruin 1% · med $18k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $14k</span></td></tr><tr><td class='name'>$20,000<span class='sub2'>8× needed</span></td><td class=''><b class=''>33%</b><span class='sub2'>ruin 52% · med $4k</span></td><td class='best'><b class=''>31%</b><span class='sub2'>ruin 15% · med $31k</span></td><td class=''><b class=''>15%</b><span class='sub2'>ruin 1% · med $35k</span></td><td class=''><b class=''>1%</b><span class='sub2'>ruin 0% · med $28k</span></td></tr></tbody></table></div><div class="tw mx" data-k="optim" style="display:none"><table>
+<thead><tr><th class="l">Starting capital</th><th>All-in per trade</th><th>50% per trade</th><th>25% per trade</th><th>10% per trade</th></tr></thead>
+<tbody><tr><td class='name'>$2,000<span class='sub2'>75× needed</span></td><td class=''><b class='hit'>98%</b><span class='sub2'>ruin 0% · med $34,062k</span></td><td class=''><b class='hit'>85%</b><span class='sub2'>ruin 0% · med $856k</span></td><td class=''><b class=''>27%</b><span class='sub2'>ruin 0% · med $65k</span></td><td class=''><b class=''>0%</b><span class='sub2'>ruin 0% · med $9k</span></td></tr><tr><td class='name'>$5,000<span class='sub2'>30× needed</span></td><td class=''><b class='hit'>99%</b><span class='sub2'>ruin 0% · med $85,155k</span></td><td class=''><b class='hit'>95%</b><span class='sub2'>ruin 0% · med $2,140k</span></td><td class=''><b class=''>54%</b><span class='sub2'>ruin 0% · med $163k</span></td><td class=''><b class=''>1%</b><span class='sub2'>ruin 0% · med $24k</span></td></tr><tr><td class='name'>$10,000<span class='sub2'>15× needed</span></td><td class=''><b class='hit'>100%</b><span class='sub2'>ruin 0% · med $170,311k</span></td><td class=''><b class='hit'>98%</b><span class='sub2'>ruin 0% · med $4,281k</span></td><td class=''><b class='hit'>77%</b><span class='sub2'>ruin 0% · med $325k</span></td><td class=''><b class=''>6%</b><span class='sub2'>ruin 0% · med $47k</span></td></tr><tr><td class='name'>$20,000<span class='sub2'>8× needed</span></td><td class=''><b class='hit'>100%</b><span class='sub2'>ruin 0% · med $340,621k</span></td><td class='best'><b class='hit'>100%</b><span class='sub2'>ruin 0% · med $8,561k</span></td><td class=''><b class='hit'>93%</b><span class='sub2'>ruin 0% · med $650k</span></td><td class=''><b class=''>25%</b><span class='sub2'>ruin 0% · med $95k</span></td></tr></tbody></table></div>
+<p>Read each cell as <b>P(reach $150k)</b> with ruin risk and median beneath. The highlighted cell is
+the best trade-off in the whole grid. Two patterns hold across every case: <b>all-in buys you only a
+few points of extra hit-rate while adding real wipeout risk</b>, and <b>10% per trade cannot reach the
+goal at all</b> — it is too slow regardless of capital.</p>
+
+<h2><span class="n">02</span>Run your own numbers</h2>
+<div class="panel">
+  <div class="ctl">
+    <div class="f"><label for="cap">Starting capital</label>
+      <input id="cap" type="number" value="20000" min="500" step="500"></div>
+    <div class="f"><label for="tgt">Goal</label>
+      <input id="tgt" type="number" value="150000" min="1000" step="5000"></div>
+    <div class="f"><label for="frac">% of balance per trade</label>
+      <input id="frac" type="number" value="50" min="1" max="100" step="5"></div>
+    <div class="f"><label for="ntr">Trades in the period</label>
+      <input id="ntr" type="number" value="60" min="5" max="300" step="5"></div>
+    <div class="f"><label for="trust">Trust in his win rate</label>
+      <select id="trust">
+        <option value="0">Face value — 84% win</option>
+        <option value="20" selected>20 pts lower — 64% win</option>
+        <option value="35">35 pts lower — 49% win</option>
+      </select></div>
+  </div>
+  <div class="out">
+    <div class="o"><div class="k">Multiple needed</div><div class="v" id="o-mult"></div></div>
+    <div class="o"><div class="k">P(reach goal)</div><div class="v" id="o-hit"></div></div>
+    <div class="o"><div class="k">P(lose 75%)</div><div class="v" id="o-ruin"></div></div>
+    <div class="o"><div class="k">Median end</div><div class="v" id="o-med"></div></div>
+    <div class="o"><div class="k">Bad case (10th)</div><div class="v" id="o-p10"></div></div>
+  </div>
+  <p style="font-size:13px;color:var(--dim);margin:14px 0 0" id="o-note"></p>
+</div>
+
+<h2><span class="n">03</span>The strategy, exactly</h2>
+<ol class="pl">
+  <li><b>Fund $20,000</b> if you can. At $2,000 the same plan gives you a 48% shot with 7% wipeout
+      risk; at $20,000 it is 74% with none. Capital is the cheapest edge available to you.</li>
+  <li><b>Risk 50% of the balance per trade — never 100%.</b> All-in adds 5 points of hit-rate and
+      brings back a 7% chance of losing three quarters of the account. Half-balance sizing cannot be
+      wiped out by a single trade.</li>
+  <li><b>Hard stop at −30%, entered as a live order at fill.</b> Without a stop the geometric mean of
+      his return pool is −100%: one total loss ends a compounding account permanently. With the stop
+      it is +18% per trade. This rule is the strategy.</li>
+  <li><b>One position at a time.</b> Half your balance per trade means at most two open; keep it to
+      one so the stop stays enforceable and you are never forced to sell the wrong leg.</li>
+  <li><b>Take the day's first clean alert.</b> No cherry-picking — profit is concentrated in a handful
+      of trades, and selectively skipping is how followers miss them.</li>
+  <li><b>Bank 30% of the balance every 10 wins.</b> Tested against six alternatives; it beat
+      "half every 10" on both downside and median. Banking more starves the compounding.</li>
+  <li><b>Stop the challenge if the account halves.</b> Pre-committed, not decided in the moment.</li>
+  <li><b>Review at 20 closed trades against a 70% win rate.</b> That is the break-even line after
+      slippage and commissions. Below it, this loses money no matter how good the alerts look.</li>
+</ol>
+
+<h2><span class="n">04</span>Live tracker</h2>
+<p>Log every closed trade. This is the only thing here that produces real evidence — after 20 trades
+you will know which of the three cases you are actually living in. Saved in this browser only.</p>
+<div class="panel">
+  <div class="out" style="margin:0 0 16px">
+    <div class="o"><div class="k">Closed trades</div><div class="v" id="s-n">0</div></div>
+    <div class="o"><div class="k">Win rate</div><div class="v" id="s-wr">—</div></div>
+    <div class="o"><div class="k">Avg return</div><div class="v" id="s-avg">—</div></div>
+    <div class="o"><div class="k">Balance</div><div class="v" id="s-bal">—</div></div>
+  </div>
+  <div class="bar"><div id="s-bar" style="width:0%"></div></div>
+  <div style="font-size:12.5px;color:var(--dim)" id="s-prog">0% of goal</div>
+  <p style="font-size:13.5px;margin:14px 0" id="s-verdict"></p>
+  <div class="tw"><table class="log">
+    <thead><tr><th>Date</th><th>Contract</th><th>Entry</th><th>Exit</th><th>Result</th><th></th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button class="btn" id="add">+ Add trade</button>
+    <button class="btn ghost" id="clr">Clear all</button>
+  </div>
+</div>
+
+<footer>
+Simulations resample 3,510 net per-trade results from MDT's swing-trades and day-trades channels
+(the two that post real losses), after 3% entry slippage, 5% exit
+slippage and 1.3% commission, with a −30% stop that fails to fill 5% of the time.
+8,000 runs per grid cell, 3,000 per interactive query. Pool win rate 84.3%.
+These are conditional probabilities derived from one Discord channel's self-reported results — not
+investment advice, and not a prediction. Position sizing cannot make a losing edge profitable.
+</footer>
+</div><script>
+const POOL={"pool":[-0.25,-0.25,0.36,0.15,-0.25,0.3,0.85,-0.25,0.2,1.2,0.4,-0.25,0.4,0.7,0.2,0.3,0.6,1.2,-0.25,2.7,0.4,2.7,1.0,1.0,0.15,-0.25,-0.25,1.0,-0.25,0.38,0.28,-0.25,-0.25,-0.25,0.55,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,0.5,0.9,2.2,0.7,0.5,-0.25,0.02,-0.25,0.05,-0.25,0.85,0.25,0.2,0.25,0.4,0.45,0.35,0.2,0.1,0.3,3.0,0.3,0.6,1.0,0.25,1.3,1.85,0.55,1.0,1.85,0.5,1.0,1.35,1.0,0.8,1.0,1.6,1.1,0.2,1.4,0.45,10.0,10.0,0.6,0.98,0.8,1.9,1.35,1.2,1.2,1.1,0.75,0.5,1.0,0.6,-0.25,1.0,1.15,0.45,1.4,0.95,0.35,1.9,-0.25,0.45,0.25,0.5,0.55,-0.25,0.45,0.25,0.45,0.4,0.7,-0.25,0.35,0.5,-0.25,0.25,0.35,0.5,-0.25,2.5,-0.25,5.5,-0.25,0.4,1.0,0.2,-0.2,1.4,-0.25,0.5,1.5,0.44,0.3,0.4,-0.25,-0.25,-0.25,0.5,0.25,0.05,-0.25,-0.25,0.35,1.0,10.0,0.2,0.35,0.2,0.3,0.55,0.7,1.0,0.8,-0.25,0.25,0.7,0.5,0.4,0.8,1.3,0.2,0.25,-0.25,0.38,0.4,0.3,0.6,0.3,-0.25,0.42,0.85,0.35,-0.25,0.75,0.2,0.15,0.2,0.5,0.5,0.3,1.0,1.85,-0.25,0.45,0.15,0.45,0.25,0.35,0.7,0.25,0.25,0.5,0.75,0.5,1.5,0.35,0.3,0.15,0.25,0.75,0.25,0.3,-0.25,0.7,0.75,0.9,0.15,4.3,0.35,0.2,3.11,0.6,0.2,0.35,0.2,0.55,0.15,-0.25,1.0,0.5,0.85,0.5,1.2,0.3,0.8,0.65,0.4,0.7,1.45,0.45,0.32,1.35,2.0,0.5,-0.25,1.0,1.7,2.0,0.6,1.9,0.4,-0.25,0.2,0.5,2.5,0.3,0.8,0.5,1.7,2.0,3.0,-0.25,7.5,0.3,1.9,0.35,0.09,0.18,0.2,0.95,0.9,0.85,6.0,0.3,0.5,0.25,-0.25,1.5,0.35,0.35,0.3,0.6,0.7,-0.25,0.5,0.4,-0.25,0.15,0.15,0.65,0.18,0.15,-0.25,0.18,0.15,0.3,0.15,1.0,-0.25,0.15,0.2,0.2,0.7,0.2,-0.25,0.5,0.3,0.2,-0.25,0.4,-0.25,0.25,-0.25,-0.25,0.15,0.25,0.15,0.25,1.2,1.6,0.25,0.25,0.25,0.35,0.15,0.15,0.25,0.18,0.2,0.25,0.2,-0.25,0.25,-0.25,-0.25,0.25,0.25,1.0,2.1,0.35,0.35,0.35,0.2,0.28,0.45,0.2,0.55,0.2,-0.25,0.55,0.75,0.4,-0.25,4.2,0.3,0.4,0.18,0.35,0.4,0.2,-0.25,0.8,-0.25,0.7,0.4,0.75,0.45,0.6,0.76,0.6,1.2,0.6,0.35,-0.18,0.6,0.4,0.18,0.3,1.0,0.55,0.2,0.35,0.6,0.45,0.5,1.05,-0.25,0.9,0.4,0.7,-0.25,0.25,0.4,0.4,0.7,1.6,0.7,-0.25,0.5,0.75,1.0,0.25,0.75,1.15,0.3,0.25,1.55,0.45,0.3,0.55,0.3,0.25,0.8,0.3,0.2,10.0,0.15,0.65,0.9,0.5,-0.25,-0.25,0.5,0.35,0.55,1.25,0.6,0.3,-0.25,15.0,0.3,0.25,0.6,1.0,0.15,0.4,1.4,-0.25,0.65,1.0,1.15,-0.25,1.7,0.5,0.38,0.45,1.0,0.45,0.7,1.45,1.3,0.25,-0.25,0.55,0.3,0.95,0.65,0.1,0.25,0.3,0.4,1.5,0.4,0.6,0.2,0.9,4.0,0.7,0.2,0.4,0.45,1.3,0.65,0.45,0.9,0.25,0.25,-0.25,-0.25,0.5,0.25,0.25,0.25,0.75,1.3,0.25,1.0,1.5,0.3,1.2,0.6,1.25,-0.25,0.25,-0.25,0.25,0.2,0.2,0.25,0.25,0.45,0.8,0.35,0.25,0.55,1.0,0.45,0.75,1.2,0.45,0.25,-0.25,-0.25,0.25,0.25,0.35,0.45,6.0,0.15,0.15,0.15,0.15,0.15,0.4,3.0,1.0,0.25,0.2,3.9,0.85,0.25,0.2,0.2,0.05,0.2,3.0,0.35,0.7,0.3,0.25,1.2,0.25,0.5,0.2,4.5,1.3,0.2,0.25,0.4,0.4,0.75,0.4,0.45,0.65,0.35,0.35,1.2,0.3,0.3,0.95,0.15,0.25,0.3,-0.25,0.12,0.2,0.25,-0.25,-0.3,0.2,0.25,0.1,0.15,0.15,0.45,0.35,0.5,0.3,0.6,0.85,1.3,2.2,0.3,0.2,0.3,0.1,0.35,0.5,0.22,0.75,0.2,0.4,0.2,0.2,0.25,0.5,1.0,5.0,0.25,2.15,1.8,0.2,0.15,0.35,0.3,0.5,0.25,0.6,0.2,0.1,0.2,0.12,0.25,0.9,0.2,0.3,0.15,0.85,0.6,0.5,1.25,1.1,-0.25,1.0,0.66,0.8,0.8,0.2,0.5,0.05,0.15,0.3,0.1,0.35,0.15,0.85,-0.2,0.25,0.25,1.0,-0.25,-0.3,1.0,1.3,-0.25,0.4,-0.25,1.4,2.2,0.2,0.2,0.4,0.2,0.3,0.65,0.3,0.66,0.73,10.0,0.2,0.2,0.2,0.3,0.3,0.4,0.25,0.25,0.5,-0.25,1.33,2.2,-0.25,3.75,2.0,0.9,0.35,-0.25,0.25,10.0,1.3,0.5,0.4,0.5,-0.25,0.2,0.45,0.2,0.25,0.22,0.18,0.2,0.33,0.5,0.9,-0.25,0.2,0.2,0.04,-0.1,0.2,4.0,0.25,0.4,-0.2,-0.25,5.0,0.2,0.33,0.2,0.4,0.6,0.12,0.8,-0.25,0.15,0.2,0.2,0.3,0.5,0.4,0.65,0.15,1.5,0.35,0.3,0.3,0.25,4.0,0.3,0.25,0.2,0.2,0.3,-0.25,0.25,0.2,0.3,0.9,0.3,0.3,0.6,0.45,0.25,0.4,0.6,0.2,-0.35,0.4,-0.1,0.53,0.5,0.7,0.25,0.25,0.2,0.3,0.2,0.3,0.2,0.4,0.45,1.05,0.25,0.2,0.4,0.25,0.25,0.15,0.2,0.2,0.25,0.5,0.85,0.3,-0.25,0.4,0.8,-0.25,-0.3,0.1,0.25,0.15,0.2,0.5,-0.25,0.3,0.3,0.3,0.08,0.15,0.06,0.3,0.6,0.15,0.2,0.5,0.2,0.3,8.0,0.32,0.6,0.25,0.35,0.2,0.25,0.3,0.45,0.2,0.18,0.2,0.25,0.3,1.0,1.4,-0.25,0.2,-0.25,0.35,0.95,0.2,-0.15,0.7,0.25,2.6,0.8,0.25,0.3,0.3,0.25,0.3,0.3,0.45,0.05,0.5,0.2,0.2,0.22,2.0,-0.25,0.15,0.25,0.1,0.15,0.25,0.2,0.3,0.25,0.25,0.25,-0.25,-0.25,0.3,0.75,0.2,1.2,8.0,-0.3,0.15,0.15,0.15,0.25,0.45,0.15,0.2,0.15,0.1,0.2,0.15,0.55,0.3,0.2,0.2,0.1,0.5,0.2,0.25,0.2,0.1,0.2,0.4,0.25,0.45,0.6,1.0,-0.25,-0.25,-0.25,-0.25,0.3,0.4,0.55,-0.2,0.22,-0.3,-0.5,0.25,0.2,0.15,0.1,0.55,1.5,0.4,0.45,0.2,0.3,0.35,0.15,0.15,0.18,-0.25,0.2,0.25,0.15,0.25,0.4,1.0,0.15,0.1,0.15,-0.5,0.15,0.25,1.2,0.15,0.45,-0.25,0.4,0.25,0.25,0.3,0.45,-0.25,-0.45,0.1,0.2,0.75,0.18,-0.5,0.25,0.5,0.15,0.25,-0.02,-0.3,0.2,-0.3,0.7,-0.25,0.2,0.2,-0.25,0.2,0.3,0.2,-0.25,-0.25,0.3,0.15,0.15,-0.4,-0.25,0.1,0.15,0.2,0.3,0.3,0.4,-0.25,0.05,0.15,4.8,-0.18,0.2,0.15,0.25,0.15,0.15,0.35,-0.3,2.3,0.15,0.15,0.2,0.25,0.2,0.55,1.0,0.2,0.3,0.2,0.6,-0.25,0.25,0.75,1.35,-0.25,0.25,-0.25,0.25,0.15,0.15,0.04,-0.1,0.65,-0.25,0.5,-0.3,-0.6,0.25,1.0,0.1,0.15,0.2,3.2,0.24,0.35,0.3,-0.1,0.2,0.2,0.25,0.35,0.2,0.5,0.85,0.2,0.15,0.25,0.15,0.32,0.2,0.28,0.08,0.3,0.18,0.3,0.95,-0.25,0.85,-0.1,0.2,0.2,0.28,0.3,1.45,0.15,0.15,0.2,0.32,0.2,0.17,0.25,0.25,0.25,-0.25,0.25,0.7,0.15,0.15,0.15,0.15,0.1,0.18,0.2,0.18,0.2,-0.45,0.75,-0.25,0.85,0.4,0.2,-0.35,0.25,0.45,-0.35,0.16,1.4,-0.05,0.18,0.55,0.3,0.3,0.3,0.6,0.15,0.5,0.25,-0.25,0.25,0.2,0.5,0.3,-0.5,0.5,0.5,-0.25,0.35,0.15,0.15,0.1,0.25,0.45,0.5,0.4,0.15,-0.25,0.35,0.35,0.2,0.25,0.4,0.6,0.12,-0.3,0.22,0.15,0.15,0.5,-0.1,0.2,-0.1,-0.3,0.2,0.13,0.08,0.25,0.25,0.35,0.2,0.15,0.18,1.6,0.38,-0.3,2.85,0.2,0.28,0.15,-0.5,0.2,0.15,0.25,0.4,0.1,0.2,-0.2,0.9,0.65,0.6,0.15,0.25,0.3,0.4,0.3,0.25,0.26,-0.35,0.18,0.2,-0.8,-0.35,0.4,0.18,0.2,0.1,0.6,-0.4,-0.4,1.3,0.17,-0.1,0.2,-0.25,0.45,0.18,0.28,-0.4,0.95,0.45,0.35,0.45,0.75,-0.25,0.3,-0.2,0.15,0.15,-0.1,0.2,-0.25,0.2,0.6,-0.3,0.95,1.15,0.15,-0.25,0.2,0.25,-0.15,-0.15,0.3,-0.25,0.15,0.3,0.6,0.7,0.25,0.3,0.25,0.25,-0.1,0.1,0.3,0.25,0.2,-0.5,0.3,0.5,0.45,1.45,0.2,0.4,0.25,5.7,5.5,10.0,10.0,0.3,-0.5,0.4,0.8,1.9,0.4,0.2,0.25,10.0,0.4,0.25,0.7,1.0,0.15,0.15,0.35,-0.3,0.3,-0.5,0.45,0.65,0.4,0.7,0.5,0.2,0.25,0.4,0.2,0.6,0.45,0.55,0.75,0.25,0.4,0.3,0.45,0.35,0.25,-0.25,0.4,0.6,0.58,-0.2,-0.5,0.5,0.9,2.6,0.7,0.28,-0.2,1.0,0.2,-0.05,0.33,0.75,0.3,0.2,0.2,0.2,0.6,0.14,-0.99,0.45,1.75,0.2,0.2,-0.99,1.6,0.1,0.14,0.3,0.25,0.2,1.0,0.55,0.25,1.2,0.6,0.4,2.5,0.2,0.7,-0.35,-0.35,-0.1,-0.5,-0.5,-0.2,0.25,0.25,-0.25,-0.3,0.07,0.2,0.45,0.25,0.15,-0.4,0.4,1.2,-0.6,1.0,1.85,0.4,7.0,0.5,0.28,0.7,0.35,0.25,0.25,2.8,-0.3,0.2,0.25,0.6,0.55,0.25,0.35,0.35,0.45,0.3,-0.25,0.35,0.1,-0.3,-0.15,-0.5,0.15,2.0,0.5,0.2,0.2,0.8,0.3,0.2,0.1,0.25,0.3,0.2,-0.35,0.3,0.35,0.35,0.4,-0.35,1.95,1.25,0.2,1.65,0.3,0.3,4.5,0.3,0.85,0.2,0.7,0.9,0.2,0.2,0.4,0.5,0.1,0.75,0.2,0.25,2.2,1.5,0.25,0.35,0.2,0.3,-0.1,-0.2,0.2,0.2,0.3,0.35,0.3,-0.15,0.25,0.3,0.35,0.35,0.75,0.3,-0.2,1.1,0.25,0.35,0.25,0.2,0.35,-0.65,0.1,1.4,-0.3,-0.25,0.25,-0.18,-0.4,0.1,-0.3,0.2,0.25,0.4,-0.2,-0.12,0.2,0.15,0.18,0.15,-0.2,0.18,0.6,0.2,0.2,0.8,0.2,-0.1,1.15,0.25,0.5,0.45,3.0,0.2,0.45,0.45,0.6,0.25,0.3,0.75,0.2,0.45,0.25,0.65,0.3,0.2,0.05,-0.3,0.25,0.6,0.85,0.48,-0.2,0.35,0.37,0.8,0.8,0.7,0.3,0.95,3.2,0.2,10.0,0.3,0.2,0.85,0.2,0.3,0.5,15.0,0.2,0.25,1.35,2.45,1.0,0.65,0.25,2.0,2.3,0.25,0.3,0.65,1.2,0.45,0.85,0.18,0.2,-0.6,-0.2,0.2,0.45,0.2,7.0,0.3,0.7,1.2,0.35,0.4,1.3,0.3,0.25,0.2,0.3,0.06,-0.25,1.0,0.4,0.3,0.2,4.2,0.3,0.4,0.3,0.25,0.25,0.18,0.45,0.85,1.0,1.0,1.5,0.18,0.4,0.4,0.6,3.0,0.45,1.0,0.75,0.65,0.2,0.2,0.45,0.35,0.25,0.3,0.6,1.45,0.4,3.3,0.35,3.5,-0.3,4.5,0.4,0.7,0.35,0.2,5.0,2.0,-0.5,0.4,0.2,0.6,0.3,0.08,-0.15,-0.5,0.3,0.3,0.35,0.35,0.25,0.45,0.25,0.3,0.4,0.15,0.7,-0.05,0.25,0.25,3.0,7.0,0.08,0.35,0.3,0.2,1.0,10.0,0.75,0.3,0.7,2.5,0.25,0.9,0.45,0.25,0.3,0.22,-0.06,0.15,1.65,0.15,0.35,-0.05,0.45,5.0,1.95,0.3,0.2,0.2,0.25,0.5,1.0,0.15,0.7,0.3,0.35,0.2,0.3,0.2,0.35,0.2,0.55,-0.26,2.45,1.2,1.4,0.18,0.18,-0.25,0.18,0.3,-0.2,0.2,0.2,-0.25,-0.5,0.18,0.45,0.45,0.45,0.25,0.1,1.05,1.3,0.3,-0.09,0.15,0.2,0.2,0.22,0.15,0.15,0.85,0.4,-0.7,0.25,0.2,0.2,0.35,0.2,0.2,0.3,0.2,1.3,0.15,0.55,0.35,0.35,0.25,0.35,0.3,0.9,0.2,10.0,0.25,0.2,0.4,-0.3,0.3,-0.05,2.75,3.0,1.25,1.6,0.2,0.8,0.65,2.4,0.25,0.25,0.3,1.2,14.0,0.2,-0.3,0.3,0.7,0.8,0.22,0.18,0.35,0.3,-0.2,0.28,0.38,0.1,0.4,1.0,0.25,1.0,0.18,0.4,0.6,0.28,0.15,0.1,-0.45,0.3,0.25,0.7,0.9,1.2,0.4,0.18,0.22,0.85,0.2,-0.3,0.3,0.2,-0.25,0.3,0.18,-0.3,1.2,0.22,0.22,0.28,-0.25,0.22,0.25,0.48,0.9,0.65,0.18,0.18,0.18,0.28,0.4,3.5,0.6,0.85,0.2,0.35,0.5,0.1,0.45,10.0,0.65,1.0,0.6,-0.8,0.2,2.2,0.2,3.5,0.85,0.2,0.6,20.0,1.8,0.2,0.4,3.0,0.25,0.25,3.85,0.3,0.2,1.45,1.45,2.4,1.5,6.4,0.3,0.6,0.55,0.3,0.55,0.2,0.2,3.2,0.9,0.45,0.32,1.6,0.3,0.25,0.32,0.92,0.6,0.35,0.45,0.45,0.5,0.9,0.25,0.15,0.2,0.25,0.66,0.3,0.72,0.8,0.3,2.5,0.3,0.3,0.45,0.95,0.3,0.25,0.2,28.0,0.2,0.15,-0.6,0.3,0.2,0.38,0.5,0.6,0.15,0.25,0.25,0.3,1.0,0.2,0.25,0.3,8.2,0.2,0.45,0.2,0.25,-0.3,0.5,0.6,0.25,0.45,0.45,0.15,0.35,0.3,0.18,0.45,0.4,0.5,0.75,1.0,0.15,0.16,0.25,0.3,0.5,1.25,-0.5,0.15,-0.5,0.2,0.75,0.2,-0.25,-0.3,0.18,0.3,0.35,0.2,0.25,0.45,0.55,0.35,1.8,0.25,0.25,0.3,0.75,0.45,0.45,-0.25,0.45,-0.25,0.35,0.35,0.55,0.35,0.2,0.35,0.5,0.25,0.2,0.5,0.25,0.5,-0.55,1.0,0.45,-0.25,0.35,0.25,0.35,0.45,0.95,1.75,0.2,0.3,-0.3,0.2,0.45,0.55,-0.25,0.25,0.1,4.6,0.25,1.4,1.7,0.4,0.3,0.8,-0.2,0.3,0.3,1.18,0.2,0.1,0.28,0.2,0.15,0.2,0.5,0.1,-0.25,0.12,0.22,-0.25,-0.25,-0.25,-0.25,0.35,-0.25,0.15,0.25,-0.25,0.15,-0.25,0.15,0.25,0.75,-0.25,-0.25,0.3,0.15,0.2,0.6,0.3,-0.25,0.5,0.2,0.45,-0.25,0.7,0.25,0.45,0.55,0.2,0.18,-0.25,0.12,0.08,0.1,0.2,0.8,0.3,0.12,0.2,0.46,0.1,0.15,0.25,0.45,1.0,0.25,0.15,0.1,0.2,0.15,0.05,0.05,0.1,0.3,-0.25,-0.25,0.15,-0.25,0.25,0.4,0.7,0.2,0.2,0.5,0.1,0.2,0.35,-0.25,0.4,0.2,0.18,0.75,-0.25,0.2,0.25,0.25,0.2,0.45,0.2,0.4,0.5,0.4,0.2,0.3,-0.25,0.5,1.5,-0.25,5.0,-0.25,-0.25,0.0,0.45,0.75,0.2,0.1,-0.25,0.2,0.2,0.5,-0.25,0.4,0.15,-0.25,0.2,0.15,2.0,0.25,0.25,-0.25,0.2,1.0,0.4,0.35,-0.25,0.18,0.3,0.2,0.25,0.4,0.25,3.0,0.2,-0.25,-0.25,-0.25,0.2,0.1,0.2,0.4,0.5,-0.25,0.18,0.05,0.15,0.15,0.9,0.2,1.4,0.15,0.2,-0.25,-0.25,0.15,0.35,0.25,0.15,-0.25,0.61,0.35,5.35,0.3,0.15,0.5,0.1,0.15,0.15,0.35,0.35,0.25,0.15,0.25,0.2,0.2,0.45,0.8,0.2,0.1,0.2,0.3,0.15,0.15,0.25,0.2,0.08,0.22,0.5,0.25,-0.25,0.35,0.2,0.25,0.6,0.35,0.35,0.5,0.25,0.45,0.3,0.2,0.5,0.05,0.2,1.0,0.2,0.15,0.1,0.2,0.15,0.25,0.14,0.25,0.15,0.25,0.15,0.25,0.15,0.15,0.15,0.25,-0.25,-0.25,0.2,0.25,0.25,0.15,0.22,0.2,0.15,0.15,-0.25,1.8,0.15,0.25,0.35,0.5,0.15,0.15,-0.25,0.2,0.25,0.3,0.7,0.18,0.15,0.25,0.15,0.2,0.25,0.15,0.2,0.4,0.15,0.1,0.2,0.55,-0.25,0.15,0.15,0.5,0.3,0.5,1.0,1.4,0.3,0.1,0.15,0.2,-0.25,0.25,0.55,0.3,0.6,0.15,0.2,-0.25,0.35,0.55,-0.25,0.2,0.15,0.35,0.35,0.5,0.25,0.3,0.25,0.2,0.75,0.25,0.18,0.25,0.45,0.45,0.5,0.15,0.2,0.5,0.9,-0.25,0.2,0.25,0.65,5.0,0.25,0.35,0.35,0.35,-0.25,0.2,-0.25,0.25,3.0,-0.25,-0.25,0.25,0.25,0.6,0.95,0.25,0.15,0.25,0.15,0.25,0.45,0.45,0.25,0.45,0.45,-0.25,0.25,0.65,1.15,1.65,2.8,0.15,0.2,0.15,0.6,0.4,0.2,-0.25,0.15,-0.25,0.15,0.65,0.18,0.25,0.15,0.3,0.2,-0.25,0.66,0.2,0.2,0.15,0.25,0.15,-0.3,0.15,0.15,0.25,-0.25,0.2,-0.25,0.05,0.15,0.2,1.25,-0.25,0.2,0.15,0.35,0.15,0.15,0.25,0.2,0.05,0.15,-0.25,0.2,0.15,0.25,0.3,-0.25,0.15,0.25,0.4,-0.25,-0.25,0.5,0.15,0.2,0.3,0.15,-0.25,0.25,0.25,0.28,0.2,0.15,0.3,0.15,0.25,-0.25,0.25,0.6,0.8,0.2,0.4,0.15,0.2,0.2,0.4,0.15,0.25,0.15,0.3,-0.25,-0.25,0.35,0.25,-0.25,0.2,0.15,0.2,0.2,0.4,0.15,0.25,0.25,-0.13,0.15,0.25,1.2,0.25,0.3,0.25,0.2,-0.25,0.2,0.65,0.1,0.2,0.25,-0.25,-0.25,0.15,0.5,0.65,0.2,0.25,0.15,0.3,0.4,0.55,0.25,0.15,0.5,0.15,0.15,0.15,3.0,0.15,0.3,0.15,0.2,0.4,1.1,0.13,0.15,-0.05,-0.25,-0.02,0.15,0.15,-0.25,0.15,0.25,-0.2,-0.25,0.2,-0.25,0.3,0.45,0.25,-0.25,0.25,0.15,0.2,0.2,0.2,0.1,0.3,0.15,0.15,0.2,0.5,0.25,0.24,5.0,-0.25,0.3,0.15,0.6,-0.25,0.1,0.3,0.5,1.0,0.3,0.2,1.0,7.3,0.25,0.67,0.2,-0.25,0.2,0.15,0.15,0.2,0.25,0.2,0.15,0.25,0.8,0.15,0.15,-0.25,0.35,0.2,0.25,0.15,0.2,-0.25,-0.25,0.25,0.25,0.3,0.24,0.15,0.2,0.2,0.2,0.35,0.15,0.15,0.25,0.1,0.25,0.2,-0.15,0.15,0.1,0.1,0.15,0.2,0.18,0.25,0.15,-0.25,0.15,1.0,0.45,0.25,0.15,0.03,0.25,0.11,0.33,0.25,0.25,0.2,0.5,0.1,0.2,0.2,0.35,0.1,0.15,0.15,-0.1,-0.08,0.4,0.05,0.1,0.2,-0.18,0.25,0.3,0.2,-0.25,0.15,0.1,0.5,0.15,0.2,-0.2,0.15,0.15,0.25,0.25,0.2,-0.25,0.2,0.25,0.15,-0.25,0.5,0.8,0.2,0.5,-0.1,0.25,0.07,-0.15,-0.05,0.15,0.15,-0.25,0.14,-0.2,0.2,0.15,0.25,0.35,0.22,0.53,0.08,0.25,0.8,0.15,0.15,0.6,1.0,0.5,1.0,0.33,0.3,0.26,0.16,0.67,0.2,0.25,0.25,0.3,0.5,1.0,-0.25,0.3,-0.25,0.16,-0.25,0.23,0.3,0.5,0.21,0.2,0.25,0.1,0.17,0.3,0.12,0.4,1.6,0.15,-0.18,0.25,-0.25,-0.25,0.32,0.52,0.2,0.2,0.2,-0.25,0.25,-0.25,0.2,0.25,0.4,0.25,0.3,0.45,0.2,0.25,0.2,0.1,-0.25,0.2,-0.1,-0.25,0.1,0.15,0.25,0.3,0.2,0.33,-0.25,0.2,0.33,-0.25,0.18,0.2,0.25,0.1,0.2,-0.25,-0.25,0.3,0.2,0.84,-0.25,0.2,0.15,0.2,0.18,0.45,0.2,0.2,0.2,0.45,-0.25,0.17,0.1,0.1,0.4,0.2,0.16,0.2,-0.2,-0.25,0.3,0.05,0.16,-0.25,0.1,0.1,0.25,0.25,0.15,0.1,0.2,0.6,0.2,0.3,0.33,0.15,0.05,0.25,0.25,0.15,0.25,-0.1,0.2,0.4,0.1,0.75,0.2,0.5,1.0,0.15,-0.2,0.1,0.2,0.1,-0.25,0.2,0.25,0.4,0.1,0.15,0.25,0.2,0.3,0.25,0.1,1.5,0.3,0.25,0.45,0.2,0.25,0.2,0.25,0.05,0.25,-0.2,0.15,-0.03,-0.15,0.67,0.05,0.67,0.6,-0.2,0.15,-0.2,-0.08,0.18,0.06,-0.15,-0.25,0.4,0.35,0.35,0.08,0.1,0.1,0.15,0.1,0.3,-0.18,0.25,0.3,0.15,-0.25,0.2,0.7,-0.05,-0.25,0.22,0.1,0.15,0.2,0.3,0.2,0.25,0.15,0.4,1.2,0.1,0.18,0.25,-0.25,0.25,0.15,0.05,0.08,0.1,0.57,0.37,0.1,0.12,0.12,-0.3,0.15,0.75,0.5,0.15,0.05,0.15,0.35,0.2,0.4,0.18,0.15,-0.3,0.2,0.25,0.15,0.25,0.1,0.3,0.25,-0.25,-0.3,-0.15,0.15,0.2,0.35,0.25,0.2,-0.14,-0.3,0.6,0.2,0.45,0.3,-0.25,0.3,0.75,-0.3,0.15,0.4,0.6,0.12,0.2,0.3,-0.25,-0.25,0.1,0.3,0.25,-0.25,0.15,-0.08,-0.1,0.3,0.1,0.16,-0.25,-0.25,0.15,0.2,-0.1,0.25,0.2,0.15,0.15,0.25,0.3,0.18,0.25,0.16,0.2,0.55,0.2,0.3,-0.9,-0.1,-0.1,0.2,0.2,0.18,0.18,-0.25,0.25,0.3,0.05,0.1,0.08,0.2,-0.1,0.06,0.1,0.05,0.18,0.15,0.15,0.2,0.1,-0.2,0.09,0.1,-0.25,-0.15,0.15,-0.2,-0.15,0.1,0.1,-0.1,1.0,0.1,0.1,0.15,-0.1,0.15,0.1,0.1,0.3,0.4,0.15,0.05,0.15,0.15,0.2,0.35,0.25,-0.25,-0.15,0.15,0.1,0.05,0.18,0.15,0.2,0.3,0.1,0.1,0.3,0.2,0.2,0.05,-0.25,0.15,0.05,0.3,0.3,0.2,0.25,0.15,0.15,0.35,1.9,0.1,0.15,0.15,0.15,0.25,0.2,0.1,0.15,0.05,0.15,-0.25,0.2,-0.15,0.12,-0.1,0.15,0.35,0.2,-0.15,-0.2,0.15,0.15,0.15,0.3,0.25,0.2,0.25,-0.2,0.03,0.25,0.25,0.2,-0.25,0.4,0.2,0.15,0.2,0.2,0.25,0.7,2.0,0.25,0.25,0.22,0.1,0.2,0.15,0.23,0.25,0.18,1.0,0.18,0.2,0.12,0.15,0.15,0.3,0.1,0.4,0.18,0.05,0.18,0.2,0.1,0.15,0.15,0.2,0.02,-0.25,0.5,0.3,0.1,-0.25,0.3,0.25,0.18,0.15,0.2,-0.2,1.4,0.2,-0.05,-0.1,0.15,-0.16,0.18,0.9,0.18,0.25,-0.15,-0.2,-0.3,-0.25,0.18,0.18,0.2,0.15,0.15,-0.04,0.2,-0.25,0.1,-0.25,0.15,0.25,0.15,0.25,0.28,0.75,0.1,0.15,0.2,-0.25,0.25,0.2,0.35,0.18,-1.0,-0.15,0.4,0.1,0.35,-0.05,0.25,0.3,-0.08,0.05,0.1,-0.25,-0.2,0.35,0.65,0.2,0.35,-0.15,0.45,0.25,-0.2,0.35,-0.25,0.25,0.25,0.2,0.2,0.2,0.2,0.2,-0.5,0.18,3.5,1.0,0.52,1.12,0.16,0.4,0.18,0.25,0.35,0.85,2.2,0.3,0.1,0.35,0.5,0.2,-0.3,-0.25,0.3,0.3,1.2,0.5,-0.1,8.0,0.2,0.25,0.3,0.3,1.0,0.28,0.3,0.18,0.25,0.2,0.5,0.25,0.25,0.5,0.25,0.3,-0.2,-0.15,0.25,1.3,0.28,0.2,-0.25,0.15,-0.35,0.15,1.4,0.4,0.18,0.2,1.2,-0.25,0.25,0.35,-0.4,0.3,-0.1,0.33,-0.25,0.2,0.28,0.15,-0.2,-0.18,-0.25,-0.15,0.4,0.45,0.5,0.15,0.25,0.15,0.25,0.45,0.45,0.28,-0.35,0.25,-0.2,0.2,0.25,0.15,0.45,-0.16,0.15,0.2,0.3,0.25,-0.18,0.2,-0.15,0.18,0.1,0.3,-0.5,0.28,0.15,-0.15,-0.03,0.25,0.15,0.2,0.2,0.2,0.35,0.18,0.5,0.2,0.15,0.1,0.2,0.05,-0.15,0.25,-0.15,0.15,-0.05,-0.16,0.25,0.2,0.55,-0.25,0.05,0.25,0.35,-0.2,-0.2,0.18,-0.3,-0.35,-0.1,-0.35,-0.15,0.2,0.25,0.2,0.18,-0.1,0.2,0.15,0.2,-0.1,0.2,0.25,0.2,0.25,0.25,0.2,0.2,-0.2,0.35,-0.25,0.25,-0.3,0.2,-0.45,0.2,0.25,-0.35,0.2,0.2,-0.1,-0.35,1.0,0.18,0.25,0.15,0.22,0.25,0.3,0.3,-0.45,0.18,0.15,0.7,0.15,0.15,-0.25,0.15,0.18,0.12,0.2,-0.2,0.15,0.25,0.2,0.35,0.15,-0.3,-0.2,-0.25,0.3,-0.3,-0.25,-0.2,-0.2,-0.18,0.15,0.25,-0.25,0.25,0.45,0.5,0.25,0.25,0.35,0.18,-0.2,0.2,0.25,0.16,0.2,7.0,0.4,0.8,-0.15,-0.15,0.15,0.18,0.25,0.3,0.25,1.0,0.19,0.25,0.25,0.25,0.25,0.1,0.05,0.25,0.22,0.15,-0.5,0.15,0.18,0.26,0.7,0.18,0.85,0.18,0.2,0.65,0.18,0.3,0.2,0.15,0.25,0.28,0.2,0.18,0.2,-0.15,-0.5,-0.26,0.4,0.45,-0.18,0.15,0.2,0.2,0.2,0.95,0.2,-0.25,0.5,-0.2,0.2,0.18,0.25,0.35,0.2,0.2,0.38,0.2,0.22,0.22,1.0,0.22,0.2,0.25,0.4,0.6,0.6,0.6,0.25,0.15,10.0,-0.25,0.35,0.4,0.25,0.3,0.3,-0.5,0.3,0.6,0.2,0.38,0.2,0.06,0.25,0.45,0.2,0.23,0.6,0.66,0.5,-0.2,0.2,0.2,-0.05,-0.05,0.45,1.0,0.2,0.45,0.2,1.42,0.32,0.22,0.25,0.28,-0.25,0.26,0.18,-0.5,0.18,0.2,0.2,-0.28,0.6,0.5,-0.5,-0.16,-0.5,-0.18,0.1,0.32,0.4,-0.25,0.32,0.35,0.2,0.25,0.18,0.15,-0.22,0.22,0.2,0.3,0.25,0.3,0.3,-0.5,-0.16,0.36,0.33,0.3,1.0,0.3,0.2,0.2,0.22,0.2,0.3,0.2,0.22,0.42,0.25,0.2,0.18,0.3,0.42,0.3,0.25,0.3,0.2,0.5,0.55,0.3,0.2,0.2,-0.5,0.25,0.25,0.25,0.2,1.3,-0.5,1.0,1.8,0.3,0.5,0.2,0.25,-0.25,-0.25,0.2,1.0,0.25,0.3,0.45,1.8,0.2,0.2,0.22,0.3,-0.3,0.18,-0.05,-0.3,0.2,0.25],"params":{"entry_slip":0.03,"exit_slip":0.05,"commission":0.013,"participation":0.75,"silent_loss":1.0,"silent":{"swing-trades":148,"day-trades":17}},"n":3510,"win":84.3}, LOSERS=POOL.pool.filter(x=>x<=0), PP=POOL.params;
+// a -30% stop is a -30% option move; exit slippage still applies on the way out
+const NET=r=>(1+r)*(1-PP.exit_slip)/(1+PP.entry_slip)-1-PP.commission;
+const $=id=>document.getElementById(id);
+const money=v=>(v<0?'-$':'$')+Math.abs(Math.round(v)).toLocaleString();
+// mulberry32 — deterministic, and unlike a bare LCG its low bits are sound enough
+// to index an array with. (An LCG here skewed P(hit) by ~7 points.)
+let _s=99;
+const rnd=()=>{_s=(_s+0x6D2B79F5)|0;let t=_s;t=Math.imul(t^(t>>>15),t|1);
+  t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};
+
+function mc(start,frac,hair,target,n,stop=-0.30,runs=6000){
+  let hit=0,ruin=0;const fins=[];
+  for(let r=0;r<runs;r++){
+    let bal=start,peak=false;
+    for(let i=0;i<n;i++){
+      if(bal<start*0.02)break;
+      let x=POOL.pool[(rnd()*POOL.pool.length)|0];
+      if(hair>0&&x>0&&rnd()<hair)x=LOSERS[(rnd()*LOSERS.length)|0];
+      if(x<stop)x=(rnd()<0.05)?x:stop;
+      bal+=bal*frac*NET(x); if(bal<0)bal=0;
+      if(bal>=target)peak=true;
+    }
+    fins.push(bal); if(peak)hit++; if(bal<start*0.25)ruin++;
+  }
+  fins.sort((a,b)=>a-b);
+  return {hit:100*hit/runs,ruin:100*ruin/runs,med:fins[runs>>1],
+          p10:fins[(runs*0.1)|0],p90:fins[(runs*0.9)|0]};
+}
+function plan(){
+  _s=99;
+  const cap=+$('cap').value||0,frac=(+$('frac').value||0)/100,
+        tgt=+$('tgt').value||0,hair=(+$('trust').value||0)/100,n=+$('ntr').value||0;
+  const r=mc(cap,frac,hair,tgt,n);
+  $('o-hit').textContent=r.hit.toFixed(0)+'%';
+  $('o-hit').style.color=r.hit>=60?'var(--go)':(r.hit>=30?'var(--gold)':'var(--no)');
+  $('o-ruin').textContent=r.ruin.toFixed(0)+'%';
+  $('o-ruin').style.color=r.ruin<=1?'var(--go)':(r.ruin<=10?'var(--gold)':'var(--no)');
+  $('o-med').textContent=money(r.med);
+  $('o-p10').textContent=money(r.p10);
+  $('o-mult').textContent=(tgt/cap).toFixed(1)+'×';
+  $('o-note').textContent = r.hit>=60
+    ? `A ${r.hit.toFixed(0)}% chance assumes his edge holds at the trust level you picked. It is a conditional probability, not a forecast.`
+    : `At this size and trust level the goal is unlikely. Either raise starting capital, extend the timeframe, or lower the target.`;
+}
+['cap','frac','tgt','trust','ntr'].forEach(id=>{
+  $(id).addEventListener('input',plan);$(id).addEventListener('change',plan);});
+
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.mx').forEach(t=>t.style.display=t.dataset.k===b.dataset.k?'':'none');
+}));
+
+/* ---------- trade tracker (saved in this browser) ---------- */
+const KEY='mdt_challenge_v1';
+let T=JSON.parse(localStorage.getItem(KEY)||'[]');
+function save(){localStorage.setItem(KEY,JSON.stringify(T));draw();}
+function addRow(){T.push({d:new Date().toISOString().slice(0,10),tk:'',ent:'',ex:'',note:''});save();}
+function draw(){
+  const tb=$('tbody');
+  tb.innerHTML=T.map((t,i)=>`<tr>
+    <td><input value="${t.d}" data-i="${i}" data-f="d"></td>
+    <td><input value="${t.tk}" data-i="${i}" data-f="tk" placeholder="PLTR 150C"></td>
+    <td><input value="${t.ent}" data-i="${i}" data-f="ent" placeholder="1.20" inputmode="decimal"></td>
+    <td><input value="${t.ex}" data-i="${i}" data-f="ex" placeholder="1.80" inputmode="decimal"></td>
+    <td>${pct(t)}</td>
+    <td><button class="btn ghost" data-del="${i}">×</button></td></tr>`).join('');
+  tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',e=>{
+    T[+e.target.dataset.i][e.target.dataset.f]=e.target.value;save();}));
+  tb.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{
+    T.splice(+e.target.dataset.del,1);save();}));
+  stats();
+}
+function ret(t){const a=parseFloat(t.ent),b=parseFloat(t.ex);
+  return (isFinite(a)&&isFinite(b)&&a>0)?(b/a-1):null;}
+function pct(t){const r=ret(t);if(r===null)return '<span style="color:var(--dim)">—</span>';
+  return `<b style="color:${r>=0?'var(--go)':'var(--no)'}">${(r*100).toFixed(0)}%</b>`;}
+function stats(){
+  const done=T.map(ret).filter(r=>r!==null);
+  const w=done.filter(r=>r>0).length;
+  const wr=done.length?100*w/done.length:0;
+  $('s-n').textContent=done.length;
+  $('s-wr').textContent=done.length?wr.toFixed(0)+'%':'—';
+  $('s-wr').style.color=!done.length?'var(--tx)':(wr>=70?'var(--go)':'var(--no)');
+  const avg=done.length?done.reduce((a,b)=>a+b,0)/done.length:0;
+  $('s-avg').textContent=done.length?((avg*100).toFixed(0)+'%'):'—';
+  let bal=+$('cap').value||0;const frac=(+$('frac').value||0)/100;
+  done.forEach(r=>{bal+=bal*frac*r;});
+  $('s-bal').textContent=money(bal);
+  const tgt=+$('tgt').value||1;
+  const prog=Math.max(0,Math.min(100,100*bal/tgt));
+  $('s-bar').style.width=prog.toFixed(1)+'%';
+  $('s-prog').textContent=prog.toFixed(1)+'% of goal';
+  $('s-verdict').innerHTML = done.length<10
+    ? `<span style="color:var(--dim)">Log at least 10 closed trades before judging anything.</span>`
+    : (wr>=70
+       ? `<b style="color:var(--go)">Win rate ${wr.toFixed(0)}% is above the 70% break-even line.</b> The edge is holding so far.`
+       : `<b style="color:var(--no)">Win rate ${wr.toFixed(0)}% is below the 70% break-even line.</b> After friction this loses money. Stop and reassess.`);
+}
+$('add').addEventListener('click',addRow);
+$('clr').addEventListener('click',()=>{if(confirm('Delete all logged trades?')){T=[];save();}});
+plan();draw();
+</script></body></html>
