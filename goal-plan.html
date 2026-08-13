@@ -33,7 +33,9 @@ th{background:var(--pnl2);color:var(--dim);font:600 11px ui-monospace,monospace;
 td.name,th.l{text-align:left}td.name{font-weight:700}
 td .sub2{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:2px}
 tbody tr:last-child td{border-bottom:none}
-td b{font-size:16px}td b.hit{color:var(--go)}
+td b{font-size:16px}td b.hit{color:var(--go)}td b.no{color:var(--no)}
+td.alt{background:color-mix(in srgb,var(--acc) 13%,transparent)}
+tr.badrow td{background:color-mix(in srgb,var(--no) 10%,transparent)}
 td.best{background:color-mix(in srgb,var(--go) 15%,transparent);outline:1px solid var(--go)}
 .tabs{display:flex;gap:5px;margin:14px 0 0;flex-wrap:wrap}
 .tabs button{background:var(--pnl2);border:1px solid var(--ln);color:var(--dim);border-radius:4px;
@@ -132,7 +134,21 @@ goal at all</b> — it is too slow regardless of capital.</p>
   <p style="font-size:13px;color:var(--dim);margin:14px 0 0" id="o-note"></p>
 </div>
 
-<h2><span class="n">03</span>The strategy, exactly</h2>
+<h2><span class="n">03</span>When do you close a winner?</h2>
+<p>This is the rule the 74% depends on, so it is worth being exact: <b>you hold until MDT calls the
+exit.</b> Your only unilateral action is the &minus;30% stop. Capping your own upside breaks the
+maths, because the profit in his record is concentrated in a small number of large winners.</p>
+<div class="tw"><table>
+<thead><tr><th class="l">Exit rule</th><th>Exp/trade</th><th>P($150k)</th><th>P(lose 75%)</th><th>Median</th></tr></thead>
+<tbody><tr class='best'><td class='name'>Follow his exit (recommended)</td><td>+31.7%</td><td><b class='hit'>75%</b></td><td>0%</td><td>$358k</td></tr><tr class=' badrow'><td class='name'>Close everything at +30%</td><td>+6.5%</td><td><b class='no'>0%</b></td><td>19%</td><td>$11k</td></tr><tr class=''><td class='name'>Close at +50%</td><td>+11.5%</td><td><b class='no'>9%</b></td><td>4%</td><td>$31k</td></tr><tr class=''><td class='name'>Close at +100%</td><td>+17.6%</td><td><b class='hit'>45%</b></td><td>1%</td><td>$96k</td></tr><tr class=''><td class='name'>Scale ⅓@+30 / ⅓@+75 / ride</td><td>+17.8%</td><td><b class='hit'>40%</b></td><td>1%</td><td>$81k</td></tr><tr class='alt'><td class='name'>Scale ⅓@+50 / ⅓@+150 / ride</td><td>+21.2%</td><td><b class='hit'>57%</b></td><td>1%</td><td>$142k</td></tr></tbody></table></div>
+<div class="warnbox"><b>Closing every trade at +30% takes the goal to 0% and pushes ruin to 19%.</b>
+Your losses stay at &minus;30% (&minus;37% after slippage) while your wins are capped at +30% &mdash;
+a coin flip with worse-than-even payoff. Tight profit-taking is right for a small preservation-focused
+stake; it is fatal when the objective is 7.5&times;.</div>
+<p>If you cannot watch for his exit, the workable mechanical substitute is
+<b>sell &#8531; at +50%, &#8531; at +150%, ride the last &#8531;</b> &mdash; 57% to goal with 1% ruin.</p>
+
+<h2><span class="n">04</span>The strategy, exactly</h2>
 <ol class="pl">
   <li><b>Fund $20,000</b> if you can. At $2,000 the same plan gives you a 48% shot with 7% wipeout
       risk; at $20,000 it is 74% with none. Capital is the cheapest edge available to you.</li>
@@ -144,6 +160,7 @@ goal at all</b> — it is too slow regardless of capital.</p>
       it is +18% per trade. This rule is the strategy.</li>
   <li><b>One position at a time.</b> Half your balance per trade means at most two open; keep it to
       one so the stop stays enforceable and you are never forced to sell the wrong leg.</li>
+  <li><b>Exit when he exits &mdash; not on a fixed profit target.</b> The only number you enforce yourself is the &minus;30% stop. See section 03.</li>
   <li><b>Take the day's first clean alert.</b> No cherry-picking — profit is concentrated in a handful
       of trades, and selectively skipping is how followers miss them.</li>
   <li><b>Bank 30% of the balance every 10 wins.</b> Tested against six alternatives; it beat
@@ -153,7 +170,7 @@ goal at all</b> — it is too slow regardless of capital.</p>
       slippage and commissions. Below it, this loses money no matter how good the alerts look.</li>
 </ol>
 
-<h2><span class="n">04</span>Live tracker</h2>
+<h2><span class="n">05</span>Live tracker</h2>
 <p>Log every closed trade. This is the only thing here that produces real evidence — after 20 trades
 you will know which of the three cases you are actually living in. Saved in this browser only.</p>
 <div class="panel">
