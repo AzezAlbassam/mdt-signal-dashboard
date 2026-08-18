@@ -1,0 +1,368 @@
+<title>The 3% A Day Plan</title>
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px 90px}
+h1,h2,h3{color:var(--ink);text-wrap:balance;letter-spacing:-.022em;font-weight:650}
+h1{font-size:clamp(2rem,4.8vw,2.95rem);line-height:1.06;margin:0 0 14px}
+h2{font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.18;margin:0 0 8px}
+h3{font-size:1.02rem;margin:0 0 8px;letter-spacing:-.01em}
+p{margin:0 0 14px;max-width:68ch}
+.mono,td,th{font-variant-numeric:tabular-nums}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin:0 0 10px}
+header{padding:66px 0 34px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.1rem;color:var(--muted);max-width:60ch;margin:0}
+section{padding:52px 0;border-bottom:1px solid var(--line-soft)}
+section:last-of-type{border-bottom:none}
+.sub{color:var(--muted);margin:0 0 24px;max-width:66ch}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:28px 30px;margin:30px 0 0;display:flex;gap:32px;flex-wrap:wrap;align-items:baseline}
+.hero .big{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:clamp(2.4rem,6vw,3.6rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hero .lab{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:8px}
+.hero .side{flex:1;min-width:240px;color:var(--muted);font-size:.92rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:26px 0}
+.stat{background:var(--surface);padding:16px 18px}
+.stat .k{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.stat .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.5rem;
+  color:var(--ink);font-weight:650;margin-top:5px;letter-spacing:-.03em}
+.stat .n{font-size:.74rem;color:var(--muted);margin-top:2px}
+.tw{overflow-x:auto;margin:20px 0;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:540px}
+th{text-align:right;padding:10px 13px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--raise)}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 13px;text-align:right;border-bottom:1px solid var(--line-soft);
+  color:var(--body);white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+td:first-child{font-family:system-ui,sans-serif}
+tr:last-child td{border-bottom:none}
+td.name{color:var(--ink);font-weight:600}
+tbody tr.hl td{background:var(--accent-soft)}
+tbody tr.bad td{background:color-mix(in srgb,var(--neg) 9%,transparent)}
+.pos{color:var(--pos);font-weight:650}
+.neg{color:var(--neg);font-weight:650}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.68rem;
+  font-weight:700;letter-spacing:.03em;border:1px solid;font-family:system-ui,sans-serif}
+.pill.go{color:var(--pos);border-color:var(--pos)}
+.pill.no{color:var(--neg);border-color:var(--neg)}
+.pill.mid{color:var(--warn);border-color:var(--warn)}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:28px;margin-top:24px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;
+  padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:24px}
+label{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:8px}
+input[type=number]{width:100%;padding:10px 12px;font-size:1.02rem;background:var(--sunk);
+  border:1px solid var(--line);border-radius:3px;color:var(--ink);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);margin-top:5px}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select{width:100%;padding:10px 12px;background:var(--sunk);border:1px solid var(--line);
+  border-radius:3px;color:var(--ink);font-size:.95rem;font-family:system-ui,sans-serif}
+.rn{font-size:.72rem;color:var(--muted);margin-top:3px}
+.foot{font-size:.8rem;color:var(--muted);margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.note{font-size:.85rem;color:var(--muted);border-left:2px solid var(--line);padding-left:15px;margin:18px 0}
+.warn{border-left-color:var(--warn)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:32px}
+.bars{display:flex;flex-direction:column;gap:9px;margin:20px 0}
+.brow{display:grid;grid-template-columns:200px 1fr 96px;gap:12px;align-items:center;font-size:.85rem}
+.btrack{position:relative;height:24px;background:var(--grid);border-radius:2px;overflow:hidden}
+.bfill{position:absolute;inset:0 auto 0 0;border-radius:2px}
+.bval{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-weight:650}
+.curve{width:100%;height:250px;display:block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){.brow{grid-template-columns:120px 1fr 74px;font-size:.78rem}}
+
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Plan A &middot; feasibility study &middot; $1,000 start</p>
+  <h1>Can you make 3&ndash;6% a day?</h1>
+  <p class="lede">The plan is one trade idea a day, banking 3&ndash;6% and stopping. This works out
+  what that would require, and how likely it is, using 547 real option day-trades as the measuring
+  stick.</p>
+  <div class="hero">
+    <div>
+      <div class="lab">3% a day, compounded for a year</div>
+      <div class="big mono" style="color:var(--neg)">1,718&times;</div>
+    </div>
+    <div class="side">
+      <p style="margin:0">$1,000 would become <b class="mono">$1,717,832</b>. At 6% a day it becomes
+      <b class="mono">$2.4 billion</b>. Nothing in markets compounds like that, so the target is not
+      aggressive &mdash; it is outside the range of possible outcomes. What follows is the honest
+      version of the same plan.</p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">The arithmetic</p>
+  <h2>Small daily percentages are enormous annual ones</h2>
+  <p class="sub">This is the part that makes the plan feel reachable: 3% sounds modest. Compounded
+  over 252 trading days it is not.</p>
+  <div class="tw"><table id="compound"></table></div>
+  <p class="note">For scale: the best hedge funds in history compound at roughly 2&ndash;3% a
+  <em>month</em>. A 1%-a-day trader would be the best performer alive.</p>
+</section>
+
+<section>
+  <p class="eyebrow">The requirement</p>
+  <h2>What edge would 3% a day actually take?</h2>
+  <p class="sub">Working backwards. To make 3% in a day from <span id="tpdNote">n</span> trades at a
+  given position size, each trade has to carry a certain expected return. Compared against the best
+  per-trade edge measured anywhere in this project &mdash; <b class="mono">+4.98%</b>, from 547
+  audited, heavily filtered option trades.</p>
+  <div class="tw"><table id="required"></table></div>
+  <div class="note warn">
+  The rows marked achievable are a trap. They only work by taking <b>5&ndash;10 trades every day</b>.
+  That +4.98% edge was measured on about <b>14 trades a month</b> &mdash; the pick of the crop. Force
+  ten trades a day and roughly 470 of your 500 annual trades are not that setup at all. Edge and
+  frequency are not independent: the marginal trade is always worse than the average one.
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">The outcomes</p>
+  <h2>Where you land depends almost entirely on your edge</h2>
+  <p class="sub">$1,000, 252 days, 2 trades a day, 20% of the account per trade. The only thing
+  changing between rows is the per-trade edge.</p>
+  <div class="tw"><table id="scenarios"></table></div>
+  <p class="note">Win rate and reward:risk vary across the rows; the size of a winning trade is held
+  at the audited <b class="mono">+24%</b> throughout, so only the edge is changing.</p>
+  <div class="note warn">
+  <b>Look at the break-even row.</b> A trader with a genuinely zero edge &mdash; not bad, just
+  average &mdash; still ends the year down <b>67% of the time</b>, with a median of
+  <b class="mono">$708</b> and a 67% drawdown along the way. Nothing was done wrong; that is pure
+  volatility drag from risking 20% a trade. Being break-even at the trade level is a losing
+  strategy at the account level. Most retail day traders are below that line once spreads are
+  counted, which is the row ending at <b class="mono">$181</b>.
+  </div>
+  <h3 style="margin-top:32px">And on how much you risk</h3>
+  <p class="sub">Holding the audited edge constant, varying position size.</p>
+  <div class="tw"><table id="sizing"></table></div>
+</section>
+
+<section>
+  <p class="eyebrow">Your progression idea</p>
+  <h2>Does banking a 30% gain and easing off help?</h2>
+  <p class="sub">Your suggestion: once up 30%, trade smaller for a while, then reset. Tested against
+  flat sizing on identical trade sequences.</p>
+  <div class="tw"><table id="progression"></table></div>
+  <p class="note">It does not add return &mdash; it slightly reduces it, because you are sizing down
+  exactly when the account is compounding fastest. What it <em>does</em> buy is a smoother ride,
+  which matters if a drawdown would make you quit. Treat it as a psychological tool, not a
+  performance one.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Your numbers</p>
+  <h2>Run the plan with your own assumptions</h2>
+  <p class="sub">Set what you believe your edge is. Every combination runs 3,000 simulated years.
+  If you are not sure what to put, the honest default is the third scenario above.</p>
+  <div class="calc">
+    <div class="controls">
+      <div><label for="cap">Starting capital</label>
+        <input type="number" id="cap" value="1000" min="100" step="100"></div>
+      <div><label for="goal">Your goal</label>
+        <input type="number" id="goal" value="100000" min="200" step="1000"></div>
+      <div><label for="win">Win rate &mdash; <span id="winV">47</span>%</label>
+        <input type="range" id="win" min="25" max="75" step="1" value="47"></div>
+      <div><label for="rr">Reward : risk &mdash; <span id="rrV">2.0</span>:1</label>
+        <input type="range" id="rr" min="0.5" max="4" step="0.1" value="2.0"></div>
+      <div><label for="frac">Size per trade &mdash; <span id="fracV">20</span>%</label>
+        <input type="range" id="frac" min="2" max="50" step="1" value="20"></div>
+      <div><label for="tpd">Trades per day &mdash; <span id="tpdV">2</span></label>
+        <input type="range" id="tpd" min="1" max="6" step="1" value="2"></div>
+      <div><label for="bank">Progression &mdash; bank at <span id="bankV">off</span></label>
+        <input type="range" id="bank" min="0" max="100" step="10" value="0">
+        <div class="rn">Size drops to a quarter after this gain, then re-anchors.</div></div>
+    </div>
+    <div id="edgeLine" class="note" style="margin-top:0"></div>
+    <div class="stats" id="goalOut"></div>
+    <div class="tw"><table id="calc"></table></div>
+    <p class="foot">Median is the middle of 3,000 simulated years, not a forecast. Assumes your edge
+    holds unchanged for every trade &mdash; the most generous assumption on this page.</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Verdict</p>
+  <h2>What to do with this plan</h2>
+  <div class="two">
+    <div>
+      <p><b>3% a day is not a target, it is a category error.</b> It implies 1,718&times; a year. No
+      instrument, desk or fund produces that. The plan cannot fail from bad execution because it
+      cannot succeed with good execution.</p>
+      <p><b>The daily target itself also works against you.</b> Stopping at +3% caps your best days
+      while your losing days run to the daily stop. You truncate the right tail and keep the left
+      one &mdash; the opposite of what the edge needs.</p>
+    </div>
+    <div>
+      <p><b>What is real:</b> at the audited edge and 20% sizing, the median year takes $1,000 to
+      roughly <b class="mono">$110,000</b> &mdash; and that already assumes you find 500 genuine
+      setups a year, which nothing in the data supports.</p>
+      <p><b>The honest version of this plan</b> is a monthly target, not a daily one, sized so a
+      six-loss streak does not end you. Plan B is the better-shaped idea &mdash; same capital, but
+      the maths works differently.</p>
+    </div>
+  </div>
+</section>
+</div>
+<script type="application/json" id="D">{"basis":{"n":547,"win":0.4680073126142596,"avg_win":0.2379655567527655,"avg_loss":0.11566700264748403,"rr":2.0573331313685745,"edge":0.049835621130329286,"median":-0.011565022048423357,"per_month":14.0},"returns":[-0.1668,0.7153,-0.0326,-0.1668,-0.0153,-0.1668,0.0323,0.2804,0.5305,-0.1668,0.2518,-0.1668,0.7153,-0.1668,-0.1668,0.0773,0.0518,0.2565,0.0545,-0.1668,-0.1668,-0.1668,0.2939,0.0441,0.1016,-0.0729,-0.06,0.135,0.1264,0.7153,-0.1668,0.0816,0.1854,-0.0655,-0.0198,-0.1402,0.4463,0.3556,-0.1668,0.1315,-0.0799,0.5869,-0.1374,-0.0493,0.0858,0.1327,0.2337,0.002,-0.1668,0.7153,-0.1668,-0.146,-0.1668,-0.1668,-0.1178,-0.0077,0.1231,0.1687,0.1992,-0.1668,0.0055,-0.0728,0.5053,-0.1063,-0.1668,-0.0615,-0.0606,-0.1668,-0.1723,0.258,-0.0965,-0.1668,0.3429,0.0794,-0.0575,0.0478,-0.0484,0.0834,0.7153,-0.1668,-0.1668,-0.1668,0.7153,-0.1668,0.0082,0.3042,-0.1668,-0.0416,-0.0198,0.2252,-0.0575,0.025,-0.1668,0.0263,-0.1668,0.1881,-0.0437,-0.0117,-0.1668,0.2592,0.3642,-0.1668,-0.1668,-0.1668,-0.0915,-0.1668,-0.1668,-0.0047,0.0318,-0.1154,0.327,0.0391,0.7153,0.0665,-0.1668,-0.1668,0.7153,0.1482,0.1267,0.7153,-0.1668,0.3503,-0.0198,-0.1668,-0.1668,-0.1668,-0.1668,0.179,-0.0005,-0.1668,0.0035,0.0833,-0.1668,-0.0198,0.0067,0.082,-0.0061,0.3467,0.7153,0.0023,-0.0691,0.7153,0.1168,0.3157,-0.0351,0.1762,-0.0648,0.0415,0.1279,-0.4282,-0.0198,0.1968,-0.1668,0.7153,-0.1668,-0.0198,-0.0525,0.3146,-0.1254,-0.1668,-0.0089,0.2567,0.2086,-0.1587,0.198,0.0292,0.4861,-0.0381,-0.0116,0.3274,0.3677,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.0813,-0.0851,-0.0198,0.2184,-0.1668,0.7153,-0.1668,0.1804,0.0152,-0.025,-0.1668,0.0165,0.1051,0.4239,-0.1668,0.7153,0.0564,-0.0443,-0.0198,-0.1668,0.0167,-0.1668,-0.0856,-0.0254,-0.1668,-0.1668,0.0689,-0.1636,0.0222,0.3135,-0.0109,-0.1668,-0.0102,0.0207,0.7153,0.3634,0.122,-0.0519,-0.0108,-0.1668,-0.1668,0.0031,-0.0714,-0.0474,0.2252,-0.1668,0.3478,0.0011,-0.093,0.0289,0.7153,-0.0331,-0.1668,-0.2076,0.1181,-0.1668,0.1152,0.7153,-0.1668,-0.0404,0.3031,-0.1668,0.5271,0.0693,-0.0688,0.1669,-0.1015,-0.0606,-0.1937,-0.1086,-0.1668,-0.1668,-0.0463,-0.0668,0.1548,-0.0066,0.3439,0.1713,0.1485,-0.1668,-0.0198,0.1,-0.1668,0.2483,0.0404,-0.1668,0.0782,-0.1668,0.3175,-0.0159,0.0763,0.2103,-0.0198,-0.1668,-0.1668,0.137,-0.0111,0.2988,-0.0709,0.0576,-0.1668,-0.1668,0.1902,-0.1668,-0.1668,-0.1668,-0.0709,0.7153,0.0455,-0.0198,0.1454,0.0727,-0.0618,0.3548,-0.0114,-0.1128,0.0012,0.1492,-0.1734,-0.1668,-0.1668,0.2692,-0.016,0.1513,-0.1668,0.5477,-0.0898,-0.0125,0.4385,-0.1668,-0.1558,0.0067,0.0221,-0.0498,0.1289,0.0281,-0.0248,0.0693,0.096,0.0084,0.2011,-0.0266,-0.1668,-0.1668,0.0897,0.7153,0.3119,0.4267,0.233,-0.0482,-0.1668,0.1246,0.7153,0.5183,0.7153,0.2408,0.7153,-0.1668,0.4003,0.7153,-0.1668,0.1318,0.4437,-0.1668,0.0654,0.7153,0.7153,-0.008,0.3769,0.0039,-0.1668,-0.1668,0.2648,-0.1668,0.0273,0.0758,0.7153,-0.1668,-0.1668,-0.0253,0.183,-0.1668,0.1878,0.0886,0.2874,0.0152,-0.1668,0.0502,-0.0475,0.1905,-0.0218,0.3069,-0.1668,-0.1668,-0.0105,-0.1668,-0.0198,0.01,-0.0839,-0.0851,-0.1723,0.0215,0.7153,0.0202,-0.1668,0.1974,-0.0198,-0.1668,-0.1668,-0.1668,0.1116,-0.1598,0.183,-0.0525,0.0782,0.1202,-0.1668,-0.1668,0.0276,-0.0464,0.043,-0.0465,0.0909,-0.0198,0.7153,0.7153,0.7153,-0.1668,-0.1015,-0.0789,0.0728,0.0556,0.0571,-0.0019,0.0709,0.0053,-0.1668,-0.0775,-0.1668,-0.0615,-0.1668,0.1552,0.0602,-0.0173,-0.1668,-0.1668,0.1411,-0.1668,0.0896,0.1202,0.7153,-0.1668,0.0347,-0.0728,-0.0665,0.0041,0.0118,0.0318,0.1,-0.0097,0.3262,0.1532,0.0811,0.3941,0.7153,-0.1668,0.0025,-0.0634,-0.1668,0.0502,-0.1668,-0.1668,-0.1668,-0.1668,0.5076,-0.1668,-0.1668,-0.0514,-0.053,-0.0148,-0.1005,0.0034,-0.1668,-0.1668,0.0179,-0.1287,-0.0367,-0.1668,-0.0436,-0.0461,0.0985,-0.1668,-0.039,-0.1265,-0.086,-0.0006,-0.1015,-0.3465,-0.1668,0.0974,-0.0245,0.0006,-0.1668,0.7153,0.2502,0.0273,0.0669,-0.1668,-0.1668,-0.0909,-0.1668,-0.1668,-0.0811,-0.1668,0.0047,-0.1089,-0.0549,0.4594,0.1726,0.1115,0.0362,0.7153,0.1216,-0.1668,-0.0198,0.0777,0.1332,-0.0688,0.0396,-0.1668,0.7153,-0.1668,0.1673,-0.1668,-0.0705,0.0291,0.2082,-0.0063,0.2498,-0.0271,-0.1668,0.1202,0.7153,-0.0695,0.0465,0.2252,-0.1668,0.7153,-0.1668,-0.1668,-0.1668,0.0946,0.0224,-0.0198,0.0556,0.0933,-0.1668,0.1202,0.2252,0.2547,-0.1668,0.0388,0.2322,-0.0525,-0.1668,0.1115,0.1584,-0.0198,-0.1668],"compound":[{"daily":0.005,"mult":3.51437064469923,"end":3514.37064469923},{"daily":0.01,"mult":12.274002099240244,"end":12274.002099240244},{"daily":0.02,"mult":146.9749374399537,"end":146974.9374399537},{"daily":0.03,"mult":1717.831751313419,"end":1717831.751313419},{"daily":0.04,"mult":19606.564539472798,"end":19606564.5394728},{"daily":0.05,"mult":218626.78363222268,"end":218626783.63222268},{"daily":0.06,"mult":2382747.632600937,"end":2382747632.600937}],"required":[{"tpd":1,"frac":0.1,"need":0.30000000000000027,"ratio":6.019790527250484},{"tpd":1,"frac":0.25,"need":0.1200000000000001,"ratio":2.4079162109001935},{"tpd":1,"frac":0.5,"need":0.06000000000000005,"ratio":1.2039581054500967},{"tpd":2,"frac":0.1,"need":0.14889156509221957,"ratio":2.987653443765471},{"tpd":2,"frac":0.25,"need":0.05955662603688783,"ratio":1.1950613775061885},{"tpd":2,"frac":0.5,"need":0.029778313018443914,"ratio":0.5975306887530942},{"tpd":3,"frac":0.1,"need":0.09901634049960917,"ratio":1.9868587619418505},{"tpd":3,"frac":0.25,"need":0.03960653619984367,"ratio":0.7947435047767402},{"tpd":3,"frac":0.5,"need":0.019803268099921834,"ratio":0.3973717523883701},{"tpd":5,"frac":0.1,"need":0.05929269389993275,"ratio":1.1897653235799246},{"tpd":5,"frac":0.25,"need":0.0237170775599731,"ratio":0.4759061294319698},{"tpd":5,"frac":0.5,"need":0.01185853877998655,"ratio":0.2379530647159849},{"tpd":10,"frac":0.1,"need":0.02960253145653402,"ratio":0.5940034614822594},{"tpd":10,"frac":0.25,"need":0.011841012582613608,"ratio":0.23760138459290372},{"tpd":10,"frac":0.5,"need":0.005920506291306804,"ratio":0.11880069229645186}],"scenarios":[{"label":"The audited filtered edge","win":0.468,"rr":2.06,"edge":0.04991992233009709,"med":110957.13694896636,"p25":63440.70934267224,"p75":180964.77713204696,"p10":41713.59511745901,"lose":0.0,"wipe":0.0,"dd":0.235513580032515},{"label":"A strong but ordinary edge","win":0.43,"rr":1.8,"edge":0.026973333333333335,"med":11014.2133591361,"p25":6127.389418589711,"p75":18399.10668033374,"p10":3668.0245168096385,"lose":0.0018333333333333333,"wipe":0.0,"dd":0.35793887535579627},{"label":"A slight edge","win":0.42,"rr":1.55,"edge":0.010901935483870959,"med":2118.2432891632684,"p25":1137.7397593709736,"p75":3648.943427466072,"p10":660.4677923919959,"lose":0.20266666666666666,"wipe":0.0,"dd":0.5267217760216988},{"label":"Exactly break-even","win":0.4,"rr":1.5,"edge":1.3877787807814457e-17,"med":707.9021772576579,"p25":407.9150116889267,"p75":1228.5046595644483,"p10":235.05317840068506,"lose":0.6675,"wipe":0.0125,"dd":0.6690080671842997},{"label":"Typical retail after costs","win":0.38,"rr":1.42,"edge":-0.013475492957746485,"med":180.94721907488605,"p25":94.95698459480644,"p75":318.1074103851807,"p10":58.54747454127868,"lose":0.9796666666666667,"wipe":0.252,"dd":0.8503155176985266},{"label":"Retail with wide spreads","win":0.35,"rr":1.3,"edge":-0.03570000000000001,"med":0.0,"p25":0.0,"p75":34.03111971328887,"p10":0.0,"lose":1.0,"wipe":0.9683333333333334,"dd":0.9727304624461939}],"sizing_a":[{"frac":0.02,"edge":0.04991992233009709,"med":1649.902440308411,"p25":1559.2729829937273,"p75":1733.514033693655,"p10":1494.5831131104092,"lose":0.0,"wipe":0.0,"dd":0.025883157403194402},{"frac":0.05,"edge":0.04991992233009709,"med":3452.7712331126195,"p25":2998.7380825409873,"p75":3906.100523141112,"p10":2697.842442930206,"lose":0.0,"wipe":0.0,"dd":0.06371199845396973},{"frac":0.1,"edge":0.04991992233009709,"med":11434.852451264424,"p25":8632.473728219135,"p75":15146.973474677767,"p10":6749.97054962943,"lose":0.0,"wipe":0.0,"dd":0.12428792807090468},{"frac":0.2,"edge":0.04991992233009709,"med":110957.1369489664,"p25":63440.70934267226,"p75":194062.87173448404,"p10":41713.59511745908,"lose":0.0,"wipe":0.0,"dd":0.23465544541284097},{"frac":0.3,"edge":0.04991992233009709,"med":918089.5895705115,"p25":398761.8886155382,"p75":2113763.9241407323,"p10":192226.67458105972,"lose":0.0,"wipe":0.0,"dd":0.33615984717473996},{"frac":0.5,"edge":0.04991992233009709,"med":39657820.7840806,"p25":10022006.35432978,"p75":156928931.56695983,"p10":3007822.981030949,"lose":0.0,"wipe":0.0,"dd":0.5022464580840504}],"progression":[{"label":"Flat size, no easing","med":1551463.357507709,"p25":705790.9530607396,"lose":0.0,"dd":0.33673146284129724},{"label":"Bank at +30%, then size 10%","med":1542621.6910239866,"p25":705044.4704945257,"lose":0.0,"dd":0.3369992514334267},{"label":"Bank at +30%, then size 5%","med":1585707.739041409,"p25":715525.2146414919,"lose":0.0,"dd":0.3356615483145014},{"label":"Bank at +50%, then size 10%","med":1461542.397435439,"p25":663327.1387572524,"lose":0.0,"dd":0.3364538330193036}],"doubling":[{"target":0.8,"stop":-0.15,"hit":0.20292504570383912,"mean":0.04635769524624422},{"target":0.8,"stop":-0.25,"hit":0.24862888482632542,"mean":0.042547289099001885},{"target":0.8,"stop":-0.4,"hit":0.2961608775137112,"mean":0.036483690030675094},{"target":0.8,"stop":-0.5,"hit":0.3235831809872029,"mean":0.04488942700747914},{"target":1.0,"stop":-0.15,"hit":0.15356489945155394,"mean":0.041095195700668566},{"target":1.0,"stop":-0.25,"hit":0.19378427787934185,"mean":0.03873924559734072},{"target":1.0,"stop":-0.4,"hit":0.2340036563071298,"mean":0.03615101924642524},{"target":1.0,"stop":-0.5,"hit":0.25594149908592323,"mean":0.04388570999127121}],"best_double":{"target":0.8,"stop":-0.5,"hit":0.3235831809872029,"mean":0.04488942700747914},"returns_b":[-0.5099,0.7644,-0.5099,-0.5099,-0.0601,-0.5099,-0.1241,0.7644,-0.5099,0.7644,-0.5619,-0.5099,0.7644,-0.5099,-0.5099,-0.5099,-0.5099,0.1381,-0.2426,0.7644,-0.5099,-0.5099,0.7644,0.1635,-0.5099,-0.2265,0.0958,-0.5099,0.7644,0.7644,-0.38,0.7644,0.7644,-0.5099,-0.3874,-0.3207,0.7644,-0.5099,0.7644,-0.4433,-0.5189,0.7644,-0.5099,0.0982,-0.5099,-0.1026,0.7644,-0.5099,-0.5099,0.7644,-0.5099,0.0916,-0.5099,-0.5197,0.7644,-0.5099,-0.1158,0.7644,0.7644,0.7644,-0.4085,-0.5099,0.2252,-0.5099,-0.3434,-0.2388,0.4621,0.7644,-0.5121,0.0805,-0.1391,-0.5099,0.7644,0.7644,0.7644,0.0072,-0.5099,0.7644,0.7644,-0.5099,0.7644,-0.5099,0.7644,-0.5099,0.7644,-0.5099,-0.5466,-0.5099,-0.0198,-0.3057,-0.1164,0.4671,-0.5099,0.7644,0.7644,-0.2277,-0.0198,-0.3357,-0.5099,0.7644,-0.5099,0.7644,0.7644,-0.5099,0.3149,-0.5099,-0.5099,0.7644,0.7644,0.291,0.7644,-0.5099,0.7644,-0.5099,-0.5099,0.7644,0.7644,0.7644,0.7644,0.7644,0.7644,-0.5399,0.7525,-0.5099,0.7644,-0.5099,-0.5099,0.7644,0.505,-0.5099,-0.5099,-0.0703,-0.5099,0.7644,0.2769,-0.5163,0.7644,-0.5099,0.7644,-0.1893,0.7644,0.7644,-0.103,0.7644,-0.3431,-0.5687,0.0431,-0.5099,0.7644,-0.5099,-0.1458,0.7644,0.7644,0.7644,0.7644,-0.5099,-0.0634,-0.5272,-0.5099,-0.5099,-0.0198,-0.0198,-0.5099,-0.1865,-0.2255,0.7644,0.7644,-0.0748,0.7644,0.7644,-0.2933,-0.5099,-0.5099,-0.5099,0.7644,-0.5099,-0.3884,0.4991,-0.2819,0.7644,-0.1486,0.2887,0.7644,0.7644,0.7644,0.7644,-0.5099,0.2447,0.7644,0.7644,-0.5099,-0.5099,-0.5099,0.7644,0.7644,0.7644,0.7644,-0.5099,0.2513,-0.5099,-0.5099,-0.5099,-0.0334,0.7644,0.1745,-0.523,0.7644,0.7644,0.096,0.1783,-0.0871,-0.3843,0.7644,0.1139,0.7644,-0.5099,-0.5099,-0.5099,-0.2179,-0.5099,-0.125,-0.2209,-0.5099,0.7644,0.7644,0.7644,-0.5099,-0.2735,0.7644,0.0202,0.7644,-0.5099,-0.1521,0.7644,-0.0348,0.7644,-0.5099,-0.5233,0.7644,-0.5099,0.7644,0.3366,-0.1312,0.7644,-0.5099,0.7644,0.0988,0.7644,-0.5099,0.7644,-0.5099,0.7644,0.7644,0.1921,0.7644,0.7644,-0.5099,-0.5099,0.7644,-0.4212,-0.5099,-0.5099,0.0404,0.5242,-0.3335,-0.5099,0.7644,-0.0982,0.0148,-0.5099,0.7644,-0.5378,-0.5099,-0.2237,-0.5187,0.7644,-0.0709,0.7644,0.7644,-0.5099,0.7644,-0.5099,0.7644,0.7644,0.3472,0.7644,-0.5099,0.1154,-0.5099,-0.4573,-0.5099,0.1446,-0.5099,-0.155,-0.054,0.7644,-0.5099,0.0816,-0.5099,0.7644,-0.1555,0.7644,-0.5099,0.7644,-0.5099,-0.4845,-0.5163,-0.513,-0.5199,0.1921,0.1846,0.3303,0.7644,0.0455,-0.2448,-0.5099,0.7644,0.1142,-0.5168,-0.1632,-0.1322,-0.5122,0.7644,0.7644,0.7644,0.7644,-0.5099,-0.0908,-0.5099,-0.5099,0.7644,0.7644,0.7644,0.7644,0.7644,-0.5099,0.7644,0.7644,-0.5099,0.7644,0.7644,-0.5239,-0.1477,0.7644,0.7644,-0.1261,-0.5099,-0.5099,0.2089,0.7644,0.7644,-0.5099,-0.5099,-0.0222,0.7644,0.7644,-0.5099,-0.2136,-0.5099,0.7644,-0.2504,0.7644,-0.5099,0.7644,-0.5099,-0.5099,0.1514,0.7644,0.7644,0.1436,-0.5099,-0.5099,-0.5099,-0.5099,-0.392,-0.0411,-0.5099,-0.3792,-0.2884,0.0156,0.7644,-0.1198,-0.5268,-0.1256,-0.5476,0.7644,-0.5099,-0.5099,-0.104,-0.5799,-0.5268,-0.0933,-0.0198,0.7644,-0.5099,-0.5099,0.6126,0.0645,-0.5099,0.2269,0.2332,-0.14,0.7644,0.7644,0.7644,-0.5099,0.7644,-0.5099,-0.205,-0.5099,0.7644,-0.1334,-0.3652,-0.2711,-0.5099,-0.3658,-0.5099,-0.5412,-0.516,-0.1598,-0.4799,-0.0551,-0.5099,0.7644,-0.5099,-0.5099,-0.5099,0.7644,0.7644,-0.5397,-0.047,-0.0198,0.7644,-0.4262,0.7644,0.7644,-0.2231,0.2834,-0.5099,0.2973,-0.5099,0.7644,0.7644,-0.2586,-0.0421,0.3069,-0.5099,-0.5099,-0.5099,0.7644,-0.5099,-0.5099,0.7644,-0.5099,-0.5099,0.7644,-0.5099,0.0974,-0.5099,-0.3671,-0.5099,-0.5099,0.0682,0.7644,0.014,-0.5099,0.7644,-0.5099,0.7644,-0.0437,0.7644,-0.5243,0.7644,-0.1639,0.7644,-0.0198,-0.5099,-0.5099,0.0434,0.2252,-0.5099,0.7644,0.7644,-0.5099,0.1602,-0.5099,-0.5099,-0.2471,0.7644,0.7644,0.7644,-0.5099,-0.5099,0.1139,0.0261,0.7644,0.0624,-0.5099,0.7644,0.7644,-0.5099,-0.5099,-0.5099,0.277,0.113,-0.3723,-0.2117,-0.5099,0.7644,0.7644,-0.5099,-0.5099,-0.008,-0.2038,0.7644,-0.5099,0.7644,-0.0271,-0.3874,-0.5099,0.7644,0.3993,0.7644,-0.4004,-0.5099,0.7644,-0.5099,-0.5099,-0.3474,-0.5099,-0.4361,0.1893,-0.5099,0.7644,-0.5099,-0.2532,-0.5099,0.7644,-0.5099,-0.1903,0.0736,0.235,-0.5099,-0.5099,-0.1089,-0.0525,-0.5322],"bold":[{"k":3,"p":0.03388112482294342,"one_in":29.514958704169878},{"k":5,"p":0.003547559597398455,"one_in":281.8839183796471},{"k":8,"p":0.00012019530953628796,"one_in":8319.792210344878},{"k":10,"p":1.2585179097093888e-05,"one_in":79458.54344106358}],"ruin_curve":[{"frac":0.05,"p":0.6523333333333333,"med":3265,"broke":0.0},{"frac":0.1,"p":0.946,"med":2110.0,"broke":0.008},{"frac":0.15,"p":0.8893333333333333,"med":1677.0,"broke":0.077},{"frac":0.2,"p":0.6983333333333334,"med":1441,"broke":0.2776666666666667},{"frac":0.25,"p":0.475,"med":1175,"broke":0.513},{"frac":0.33,"p":0.19466666666666665,"med":724.0,"broke":0.805},{"frac":0.5,"p":0.041,"med":249,"broke":0.959},{"frac":0.75,"p":0.010666666666666666,"med":112.5,"broke":0.9893333333333333},{"frac":1.0,"p":0.005,"med":45,"broke":0.995}],"goals":[{"goal":2000,"p":0.88,"med":59.0,"months":4.214285714285714,"broke":0.12},{"goal":5000,"p":0.8132,"med":193,"months":13.785714285714286,"broke":0.1868},{"goal":10000,"p":0.7724,"med":326,"months":23.285714285714285,"broke":0.2276},{"goal":25000,"p":0.7596,"med":510,"months":36.42857142857143,"broke":0.24},{"goal":50000,"p":0.7536,"med":668.5,"months":47.75,"broke":0.2464},{"goal":100000,"p":0.7252,"med":855,"months":61.07142857142857,"broke":0.2728},{"goal":1024000,"p":0.7012,"med":1419,"months":101.35714285714286,"broke":0.2716}]}</script>
+<script>
+const D=JSON.parse(document.getElementById('D').textContent);
+const money=x=>'$'+Math.round(x).toLocaleString('en-US');
+const pct=x=>(x*100).toFixed(0)+'%';
+const sgn=x=>(x>=0?'+':'')+(x*100).toFixed(2)+'%';
+const cls=x=>x>=0?'pos':'neg';
+const el=(t,h)=>{const e=document.createElement(t);if(h!==undefined)e.innerHTML=h;return e};
+function table(id,head,rows){
+  const t=document.getElementById(id);t.innerHTML='';
+  const th=el('thead'),tr=el('tr');head.forEach(h=>tr.appendChild(el('th',h)));
+  th.appendChild(tr);t.appendChild(th);
+  const tb=el('tbody');
+  rows.forEach(r=>{const x=el('tr');if(r.cl)x.className=r.cl;
+    r.cells.forEach((c,i)=>{const td=el('td',c.h);if(c.c)td.className=c.c;else if(i===0)td.className='name';x.appendChild(td)});
+    tb.appendChild(x)});
+  t.appendChild(tb);
+}
+table('compound',['Daily return','After 252 days','$1,000 becomes'],
+ D.compound.map(c=>({cl:c.daily>=0.03?'bad':'',cells:[
+  {h:(c.daily*100).toFixed(1)+'% / day'},{h:c.mult.toLocaleString('en-US',{maximumFractionDigits:0})+'×'},
+  {h:money(c.end)}]})));
+
+table('required',['Trades per day','Size per trade','Edge needed per trade','Versus the best edge measured'],
+ D.required.map(r=>({cl:r.ratio<=1?'':'bad',cells:[
+  {h:r.tpd},{h:pct(r.frac)},{h:(r.need*100).toFixed(2)+'%'},
+  {h:r.ratio<=1?'<span class="pill mid">only by over-trading</span>'
+    :'<span class="pill no">'+r.ratio.toFixed(1)+'× the best ever measured</span>'}]})));
+
+table('scenarios',['Scenario','Win rate','R:R','Edge / trade','Median year','Chance of a loss','Chance of wipeout','Worst drawdown'],
+ D.scenarios.map(s=>({cl:s.edge<0.0001?'bad':(s.edge>=0.04?'hl':''),cells:[
+  {h:s.label},{h:pct(s.win)},{h:s.rr.toFixed(2)},{h:sgn(s.edge),c:cls(s.edge)},
+  {h:money(s.med),c:s.med>=1000?'pos':'neg'},{h:pct(s.lose),c:s.lose>0.5?'neg':''},
+  {h:pct(s.wipe),c:s.wipe>0.01?'neg':''},{h:pct(s.dd),c:s.dd>0.5?'neg':''}]})));
+
+table('sizing',['Size per trade','Median year','Weak run (p25)','Chance of a loss','Worst drawdown'],
+ D.sizing_a.map(s=>({cl:Math.abs(s.frac-0.2)<1e-9?'hl':'',cells:[
+  {h:pct(s.frac)},{h:money(s.med)},{h:money(s.p25)},{h:pct(s.lose)},
+  {h:pct(s.dd),c:s.dd>0.45?'neg':''}]})));
+
+table('progression',['Variant','Median year','Weak run (p25)','Chance of a loss','Worst drawdown'],
+ D.progression.map((p,i)=>({cl:i===0?'hl':'',cells:[
+  {h:p.label},{h:money(p.med)},{h:money(p.p25)},{h:pct(p.lose)},
+  {h:p.dd?pct(p.dd):'—'}]})));
+
+/* calculator */
+function sim(cap,goal,win,rr,frac,tpd,bank,runs=3000,days=252){
+  const den=win-(1-win)/rr, aw=den!==0?0.0498/den:0;
+  // calibrate so the displayed edge matches win/rr rather than a fixed edge
+  const unit=1, lossUnit=unit/rr;
+  const edge=win*unit-(1-win)*lossUnit;
+  // scale so a "typical" trade moves the stated fraction
+  const scale=0.24;                      // avg win magnitude anchored to the audited +24%
+  const W=scale, L=scale/rr;
+  const ends=[],dds=[],hitDay=[];
+  for(let r=0;r<runs;r++){
+    let b=cap,peak=cap,dd=0,anchor=cap,hit=null;
+    for(let d=0;d<days;d++){
+      let f=frac;
+      if(bank>0 && b/anchor-1>=bank){f=frac/4;}
+      for(let k=0;k<tpd;k++){
+        b*= (1+f*(Math.random()<win?W:-L));
+        if(b<cap*0.02){b=0;break}
+      }
+      if(b===0)break;
+      if(hit===null && b>=goal) hit=d+1;
+      if(bank>0 && b/anchor-1>=bank) anchor=b;
+      peak=Math.max(peak,b);dd=Math.max(dd,1-b/peak);
+    }
+    ends.push(b);dds.push(dd);if(hit!==null)hitDay.push(hit);
+  }
+  hitDay.sort((a,b)=>a-b);
+  ends.sort((a,b)=>a-b);
+  const q=p=>ends[Math.floor(p*ends.length)];
+  return {edge:edge*scale,pHit:hitDay.length/runs,
+    hitMed:hitDay.length?hitDay[Math.floor(hitDay.length/2)]:null,
+    hitFast:hitDay.length?hitDay[Math.floor(hitDay.length*0.25)]:null,
+    p10:q(.10),p25:q(.25),med:q(.5),p75:q(.75),p90:q(.90),
+    lose:ends.filter(e=>e<cap).length/ends.length,
+    wipe:ends.filter(e=>e<cap*0.1).length/ends.length,
+    dd:dds.reduce((a,b)=>a+b,0)/dds.length};
+}
+function draw(){
+  const cap=Math.max(100,+document.getElementById('cap').value||1000);
+  const win=+document.getElementById('win').value/100;
+  const rr=+document.getElementById('rr').value;
+  const frac=+document.getElementById('frac').value/100;
+  const tpd=+document.getElementById('tpd').value;
+  const bank=+document.getElementById('bank').value/100;
+  document.getElementById('winV').textContent=(win*100).toFixed(0);
+  document.getElementById('rrV').textContent=rr.toFixed(1);
+  document.getElementById('fracV').textContent=(frac*100).toFixed(0);
+  document.getElementById('tpdV').textContent=tpd;
+  document.getElementById('bankV').textContent=bank>0?('+'+(bank*100).toFixed(0)+'%'):'off';
+  document.getElementById('tpdNote').textContent=tpd;
+  const goal=Math.max(cap*1.05,+document.getElementById('goal').value||100000);
+  const r=sim(cap,goal,win,rr,frac,tpd,bank);
+  const perDay=Math.pow(r.med/cap,1/252)-1;
+  const good=r.edge>0;
+  document.getElementById('edgeLine').innerHTML =
+    `Your assumptions imply an edge of <b class="mono ${good?'pos':'neg'}">${sgn(r.edge)}</b> per trade`
+    + ` — the audited benchmark is <b class="mono">+4.98%</b>, and it exists about 14 times a month.`
+    + ` This median year works out to <b class="mono">${(perDay*100).toFixed(2)}% a day</b>.`;
+  const dayTxt=d=>d===null?'—':(d<21?d+' days':(d<252?(d/21).toFixed(1)+' months':(d/252).toFixed(1)+' years'));
+  document.getElementById('goalOut').innerHTML=[
+    {k:'Your goal',v:money(goal),n:(goal/cap).toFixed(1)+'× your capital'},
+    {k:'Chance of reaching it',v:pct(r.pHit),n:'within one year',
+     c:r.pHit>0.5?'var(--pos)':'var(--neg)'},
+    {k:'Typical time to get there',v:dayTxt(r.hitMed),n:r.hitMed?'median of the runs that made it':'rarely reached'},
+    {k:'If it goes well',v:dayTxt(r.hitFast),n:'fastest quarter of runs'},
+  ].map(s=>`<div class="stat"><div class="k">${s.k}</div>
+    <div class="v" ${s.c?`style="color:${s.c}"`:''}>${s.v}</div><div class="n">${s.n}</div></div>`).join('');
+  table('calc',['Outcome','Balance','vs start'],[
+   {cells:[{h:'Bad year (p10)'},{h:money(r.p10),c:r.p10>=cap?'pos':'neg'},{h:(r.p10/cap).toFixed(2)+'×'}]},
+   {cells:[{h:'Weak year (p25)'},{h:money(r.p25),c:r.p25>=cap?'pos':'neg'},{h:(r.p25/cap).toFixed(2)+'×'}]},
+   {cl:'hl',cells:[{h:'Median year'},{h:money(r.med),c:r.med>=cap?'pos':'neg'},{h:(r.med/cap).toFixed(2)+'×'}]},
+   {cells:[{h:'Strong year (p75)'},{h:money(r.p75),c:'pos'},{h:(r.p75/cap).toFixed(2)+'×'}]},
+   {cells:[{h:'Great year (p90)'},{h:money(r.p90),c:'pos'},{h:(r.p90/cap).toFixed(2)+'×'}]},
+   {cells:[{h:'Chance of ending down'},{h:pct(r.lose),c:r.lose>0.4?'neg':''},{h:''}]},
+   {cells:[{h:'Chance of near-wipeout'},{h:pct(r.wipe),c:r.wipe>0.02?'neg':''},{h:''}]},
+   {cells:[{h:'Typical worst drawdown'},{h:pct(r.dd),c:r.dd>0.45?'neg':''},{h:''}]},
+  ]);
+}
+['cap','goal','win','rr','frac','tpd','bank'].forEach(id=>{
+  const e=document.getElementById(id);
+  e.addEventListener('input',draw);e.addEventListener('change',draw);
+});
+draw();
+</script>

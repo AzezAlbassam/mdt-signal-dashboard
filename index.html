@@ -1,479 +1,93 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="robots" content="noindex,nofollow,noarchive">
+<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MDT Signal Analysis</title><style>
-.calc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin:14px 0}
-.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-.fld{display:flex;flex-direction:column;gap:5px}
-.fld label{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
-.fld input,.fld select{background:var(--card2);border:1px solid var(--bd);color:var(--tx);
- border-radius:8px;padding:9px 11px;font:600 15px inherit;font-variant-numeric:tabular-nums}
-.fld input:focus,.fld select:focus{outline:2px solid var(--acc);outline-offset:1px}
-.presets{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px}
-.presets button{background:var(--card2);border:1px solid var(--bd);color:var(--mut);
- border-radius:8px;padding:7px 13px;cursor:pointer;font:600 12.5px inherit}
-.presets button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
-.presets button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.stakes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
-.stake{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px}
-.stake .k{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
-.stake .v{font-size:21px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
-.stake .s{font-size:11.5px;color:var(--mut);margin-top:2px}
-.outcome{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:8px 0 4px}
-.oc{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;text-align:center}
-.oc .k{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
-.oc .v{font-size:20px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
-.oc.mid{border-color:var(--acc)}
-.warn{background:color-mix(in srgb,var(--neg) 12%,transparent);border:1px solid var(--neg);
- border-radius:9px;padding:11px 14px;margin:14px 0;font-size:13px}
-.warn b{color:var(--neg)}
-.fan{width:100%;height:210px;margin-top:6px}
-.legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
-.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+<title>Trading Research</title>
+<meta name="description" content="Audited options-signal research and feasibility studies, priced against real 1-minute option data.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
 
-:root{--bg:#0c0f16;--card:#141a24;--card2:#1a2130;--bd:#242c3a;--tx:#e7ecf3;--mut:#8b95a7;--acc:#5b9dff;--pos:#3ecf8e;--neg:#ff6b6b;--gold:#f5c451}
-@media(prefers-color-scheme:light){:root{--bg:#f5f7fa;--card:#fff;--card2:#eef2f7;--bd:#dce3ec;--tx:#141a24;--mut:#5a6474;--acc:#2563eb}}
-:root[data-theme=dark]{--bg:#0c0f16;--card:#141a24;--card2:#1a2130;--bd:#242c3a;--tx:#e7ecf3;--mut:#8b95a7;--acc:#5b9dff}
-:root[data-theme=light]{--bg:#f5f7fa;--card:#fff;--card2:#eef2f7;--bd:#dce3ec;--tx:#141a24;--mut:#5a6474;--acc:#2563eb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:30px 18px}
-.wrap{max-width:1120px;margin:0 auto}
-h1{font-size:27px;margin:0 0 3px}.sub{color:var(--mut);font-size:13.5px;margin:0 0 20px}
-h2{font-size:17px;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
-.sub2{font-weight:400;color:var(--mut);font-size:13px}
-.callout{background:var(--card2);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:13.5px}
-.callout b{color:var(--gold)}.callout ul{margin:8px 0 0;padding-left:18px}.callout li{margin:4px 0;color:var(--mut)}.callout li b{color:var(--tx)}
-.toggle{display:inline-flex;background:var(--card2);border:1px solid var(--bd);border-radius:9px;padding:3px;margin:6px 0 4px;gap:3px}
-.toggle button{background:none;border:0;color:var(--mut);padding:8px 15px;border-radius:7px;cursor:pointer;font:600 13px inherit}
-.toggle button.on{background:var(--acc);color:#fff}
-.toggle button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.hint{color:var(--mut);font-size:12.5px;margin:2px 0 14px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:14px 0}
-.tile{background:var(--card);border:1px solid var(--bd);border-radius:11px;padding:14px 16px}
-.tl{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-.tv{font-size:25px;font-weight:700;margin:4px 0 2px}.ts{color:var(--mut);font-size:12px}
-.tablewrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
-table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
-th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}
-th{background:var(--card2);color:var(--mut);font-size:12px;font-weight:600}
-th.l,td.l,td.name{text-align:left}td.name{font-weight:600}
-tbody tr:hover{background:var(--card2)}tr:last-child td{border-bottom:none}
-tr.tot td{font-weight:700;background:var(--card2)}tr.excl{opacity:.55}
-.pos{color:var(--pos)}.neg{color:var(--neg)}.mut{color:var(--mut)}.mny{font-variant-numeric:tabular-nums;font-weight:600}
-.tag{font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;vertical-align:middle}
-.tag.warn{background:#5a4a12;color:#f5c451}
-.barcell{width:30%;min-width:110px}.ybar{height:14px;border-radius:3px}
-.ybar.pos{background:linear-gradient(90deg,#3ecf8e,#5b9dff)}.ybar.neg{background:var(--neg)}
-.ybar.acc{background:var(--gold)}
-tr.grp td{background:var(--card2);font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut)}
-.barcell{position:relative}.bl{position:absolute;left:8px;top:0;font-size:11px;line-height:16px;font-weight:600}
-tr.wflast td{font-weight:700;background:var(--card2)}
-.mbar{position:relative;height:16px}
-.gbar{position:absolute;inset:0 auto 0 0;height:16px;border-radius:3px;background:var(--bd)}
-.nbar{position:absolute;inset:0 auto 0 0;height:16px;border-radius:3px}
-.nbar.pos{background:linear-gradient(90deg,#3ecf8e,#5b9dff)}.nbar.neg{background:var(--neg)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.two{grid-template-columns:1fr}}
-ul.tl2{list-style:none;padding:0;margin:0;font-size:13px}
-ul.tl2 li{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 11px;margin-bottom:5px}
-footer{margin-top:32px;color:var(--mut);font-size:12px;border-top:1px solid var(--bd);padding-top:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:840px;margin:0 auto;padding:0 22px 80px}
+header{padding:80px 0 36px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(2.1rem,5vw,3rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.1rem;color:var(--muted);max-width:58ch;margin:0}
+.cards{display:grid;gap:16px;margin:38px 0 0}
+a.card{display:block;background:var(--surface);border:1px solid var(--line);
+ border-radius:5px;padding:24px 26px;text-decoration:none;color:inherit;
+ transition:border-color .15s,transform .15s}
+a.card:hover,a.card:focus-visible{border-color:var(--accent);transform:translateY(-1px)}
+a.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card h2{color:var(--ink);font-size:1.2rem;margin:0 0 6px;letter-spacing:-.015em;font-weight:650}
+.card p{margin:0;color:var(--muted);font-size:.93rem;max-width:60ch}
+.tag{display:inline-block;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+ font-weight:700;color:var(--accent);margin-bottom:9px}
+.k{margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;font-size:.8rem;
+ color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.k b{color:var(--body);font-weight:650}
+footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);
+ font-size:.83rem;color:var(--faint);max-width:62ch}
 </style></head><body><div class="wrap">
-<h1>MDT — Options Signal Analysis</h1>
-<p class="sub">Full history of 【⏰】swing-trades, 【💥】day-trades, 🎯│volume-alerts · 3,910 linked trades · generated 2026-08-06 19:25</p>
-
-<div class="callout"><b>Read this first.</b>
-<ul>
-<li><b>Stakes:</b> $2,500 per swing trade, $500 per day trade, as you specified. Use the toggle — it changes the answer a lot.</li>
-<li><b>MDT posts his losses</b> ("CUT", "cut for L"), which is better than most callers. But he usually doesn't quantify them, so unquantified cuts are charged at <b>-25%</b> — the median of the 319 cuts he <em>did</em> quantify. Wins come from his own "up X%" / "TP X%" messages.</li>
-<li><b>Still self-reported.</b> A trade only enters this ledger if MDT posted an outcome. Silent trades vanish, so the 86% win rate is an <em>upper bound</em>, not a true hit rate. Median return is the honest read, not the mean.</li>
-<li><b>🎯volume-alerts is excluded</b> from all P&L — it is a scan/highlight channel 99% "win rate", only 4 losers in 400, and its price quotes are mostly bid-ask spreads and other tickers. Shown greyed out for reference only.</li>
-<li><b>"Realistic net" assumptions</b> — entry slippage 3%, exit slippage 5% (his options are $0.30–2.00 with wide spreads; he says so himself), commissions 1.3% of stake round trip, the 165 entries he never followed up charged at −100%, and you catching 75% of alerts. Net lands near <b>half</b> the posted figure.</li>
-</ul></div>
-
-<h2>Position sizing</h2>
-<div class="toggle">
- <button class="on" data-m="channel" data-hint="Sizing by channel: every trade posted in 【⏰】swing-trades is charged $2,500 and every 【💥】day-trades trade $500 — trusting the channel names.">By channel name</button>
- <button data-m="duration" data-hint="Sizing by actual hold: only trades actually held more than 2 days get $2,500; everything else gets $500 — this matches your literal rule.">By actual hold time</button>
+<header>
+ <p class="eyebrow">Independent research &middot; real 1-minute option prices</p>
+ <h1>Trading research</h1>
+ <p class="lede">Three studies, all priced against real option prints rather than posted claims.
+ Every strategy is tested on data the search never saw.</p>
+</header>
+<div class="cards">
+ <a class="card" href="audit.html">
+  <span class="tag">Signal audit</span>
+  <h2>What MDT&rsquo;s signals are actually worth</h2>
+  <p>2,155 Discord alerts across four channels, re-priced against real option data. Which channels
+  hold up out of sample, which don&rsquo;t, and the one strategy that survived every test.</p>
+  <div class="k"><span><b>2,155</b> alerts</span><span><b>55,000</b> rules tested</span>
+  <span><b>3.2</b> years</span></div>
+ </a>
+ <a class="card" href="plan-a.html">
+  <span class="tag">Feasibility study</span>
+  <h2>Can you make 3&ndash;6% a day?</h2>
+  <p>What a daily profit target would actually require, what realistic edges return instead, and why
+  a genuinely break-even trader still loses money.</p>
+  <div class="k"><span>3%/day = <b>1,718&times;</b> a year</span>
+  <span>break-even trader loses <b>67%</b> of the time</span></div>
+ </a>
+ <a class="card" href="plan-b.html">
+  <span class="tag">Feasibility study</span>
+  <h2>The compounding ladder</h2>
+  <p>Ten trades that double, versus twenty that make +40%. Smaller rungs get there faster because
+  you hit them more than twice as often. Includes a goal-and-timeline calculator.</p>
+  <div class="k"><span><b>+40%</b> beats <b>+100%</b></span>
+  <span>$1k&rarr;$10k in <b>12</b> months</span></div>
+ </a>
 </div>
-<p class="hint" id="hint">Sizing by channel: every trade posted in 【⏰】swing-trades is charged $2,500 and every 【💥】day-trades trade $500 — trusting the channel names.</p>
-
-<div class="pane" data-mode="channel">
-  <div class="tiles">
-    <div class="tile"><div class="tl">All time</div>
-      <div class="tv pos">+$3,089,250</div>
-      <div class="ts">3,510 closed trades</div></div><div class="tile"><div class="tl">2026 YTD</div>
-      <div class="tv pos">+$605,500</div>
-      <div class="ts">425 closed trades</div></div><div class="tile"><div class="tl">Since Jun 1</div>
-      <div class="tv pos">+$124,035</div>
-      <div class="ts">140 closed trades</div></div>
-  </div>
-  <h2>Per-channel results</h2>
-  <div class="tablewrap"><table>
-   <thead><tr><th class="l">Channel</th><th>Trades</th><th>Wins</th><th>Cuts</th><th>Win&nbsp;rate</th>
-   <th>Avg&nbsp;ret</th><th>Median</th><th>P&L all-time</th><th>P&L 2026</th><th>P&L Jun&nbsp;1+</th></tr></thead>
-   <tbody><tr>
-<td class="name">swing-trades</td>
-<td>1,941</td><td class="pos">1,675</td><td class="neg">266</td>
-<td>86%</td>
-<td class="pos">+60%</td>
-<td class="pos">+30%</td>
-<td class="mny pos">+$2,900,925</td>
-<td class="mny pos">+$581,700</td>
-<td class="mny pos">+$117,425</td>
-</tr><tr>
-<td class="name">day-trades</td>
-<td>1,569</td><td class="pos">1,283</td><td class="neg">286</td>
-<td>82%</td>
-<td class="pos">+24%</td>
-<td class="pos">+20%</td>
-<td class="mny pos">+$188,325</td>
-<td class="mny pos">+$23,800</td>
-<td class="mny pos">+$6,610</td>
-</tr><tr class='excl'>
-<td class="name">volume-alerts <span class='tag warn'>excluded</span></td>
-<td>400</td><td class="pos">395</td><td class="neg">5</td>
-<td>99%</td>
-<td class="pos">+444%</td>
-<td class="pos">+140%</td>
-<td class="mny pos">+$966,600</td>
-<td class="mny pos">+$36,475</td>
-<td class="mny pos">+$0</td>
-</tr>
-   <tr class="tot"><td class="name">TOTAL (swing + day)</td><td>3,510</td><td colspan="4"></td>
-   <td class="mny pos">+$3,089,250</td>
-   <td class="mny pos">+$605,500</td>
-   <td class="mny pos">+$124,035</td></tr>
-   </tbody></table></div>
-  <h2>Year by year <span class="sub2">(swing + day only)</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Year</th><th>Trades</th><th>P&L</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr><td class='name'>2021</td><td>879</td><td class='mny pos'>+$899,060</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr><td class='name'>2022</td><td>1,186</td><td class='mny pos'>+$679,150</td><td class='barcell'><div class='ybar pos' style='width:76%'></div></td></tr><tr><td class='name'>2023</td><td>240</td><td class='mny pos'>+$89,420</td><td class='barcell'><div class='ybar pos' style='width:10%'></div></td></tr><tr><td class='name'>2024</td><td>287</td><td class='mny pos'>+$270,800</td><td class='barcell'><div class='ybar pos' style='width:30%'></div></td></tr><tr><td class='name'>2025</td><td>493</td><td class='mny pos'>+$545,320</td><td class='barcell'><div class='ybar pos' style='width:61%'></div></td></tr><tr><td class='name'>2026</td><td>425</td><td class='mny pos'>+$605,500</td><td class='barcell'><div class='ybar pos' style='width:67%'></div></td></tr></tbody></table></div>
-
-  <h2>Calls vs puts <span class="sub2">— direction mix and which one pays</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Direction</th><th>Trades</th><th class="l">Share</th>
-  <th>Win&nbsp;rate</th><th>Avg&nbsp;ret</th><th>Median</th><th>P&amp;L</th></tr></thead>
-  <tbody><tr class='grp'><td class='name' colspan='7'>All time <span class='mut'>— 2.1 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>2,379</td><td class='barcell'><div class='ybar pos' style='width:68%'></div><span class='bl'>68%</span></td><td>85%</td><td class='pos'>+50%</td><td class='pos'>+25%</td><td class='mny pos'>+$2,479,930</td></tr><tr><td class='name'>Puts</td><td>1,131</td><td class='barcell'><div class='ybar acc' style='width:32%'></div><span class='bl'>32%</span></td><td>83%</td><td class='pos'>+31%</td><td class='pos'>+20%</td><td class='mny pos'>+$609,320</td></tr><tr class='grp'><td class='name' colspan='7'>2026 <span class='mut'>— 8.9 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>382</td><td class='barcell'><div class='ybar pos' style='width:90%'></div><span class='bl'>90%</span></td><td>90%</td><td class='pos'>+71%</td><td class='pos'>+30%</td><td class='mny pos'>+$594,695</td></tr><tr><td class='name'>Puts</td><td>43</td><td class='barcell'><div class='ybar acc' style='width:10%'></div><span class='bl'>10%</span></td><td>79%</td><td class='pos'>+19%</td><td class='pos'>+22%</td><td class='mny pos'>+$10,805</td></tr></tbody></table></div>
-
-  <h2>Reality check <span class="sub2">— what a follower would actually net</span></h2>
-  <p class="hint">Each step strips one real-world cost off MDT's posted numbers. The last line is the honest expectation.</p>
-  <div class="tablewrap"><table class="wf"><thead><tr><th class="l">Step</th><th>Running P&amp;L</th><th>vs posted</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr class=''><td class='name'>As posted by MDT</td><td class='mny pos'>+$3,089,250</td><td class='mut'>100%</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr class=''><td class='name'>− slippage (entry 3% / exit 5%)</td><td class='mny pos'>+$2,411,483</td><td class='mut'>78%</td><td class='barcell'><div class='ybar pos' style='width:78%'></div></td></tr><tr class=''><td class='name'>− commissions (1.3% of stake)</td><td class='mny pos'>+$2,338,202</td><td class='mut'>76%</td><td class='barcell'><div class='ybar pos' style='width:76%'></div></td></tr><tr class=''><td class='name'>− trades he never followed up (~165 @ −100%)</td><td class='mny pos'>+$1,959,702</td><td class='mut'>63%</td><td class='barcell'><div class='ybar pos' style='width:63%'></div></td></tr><tr class='wflast'><td class='name'>× you catch only 75% of alerts</td><td class='mny pos'>+$1,469,777</td><td class='mut'>48%</td><td class='barcell'><div class='ybar acc' style='width:48%'></div></td></tr></tbody></table></div>
-
-  <h2>2026 month by month <span class="sub2">— posted vs realistic</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Month</th><th>Trades</th><th>Win&nbsp;rate</th>
-  <th>Posted P&amp;L</th><th>Realistic net</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr><td class='name'>Jan 2026</td><td>63</td><td>94%</td><td class='mny mut'>+$122,260</td><td class='mny pos'>+$75,880</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:47%'></div><div class='nbar pos' style='width:29%'></div></div></td></tr><tr><td class='name'>Feb 2026</td><td>45</td><td>91%</td><td class='mny mut'>+$28,365</td><td class='mny pos'>+$13,490</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:11%'></div><div class='nbar pos' style='width:5%'></div></div></td></tr><tr><td class='name'>Mar 2026</td><td>55</td><td>75%</td><td class='mny mut'>+$13,255</td><td class='mny pos'>+$4,153</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:5%'></div><div class='nbar pos' style='width:2%'></div></div></td></tr><tr><td class='name'>Apr 2026</td><td>34</td><td>88%</td><td class='mny mut'>+$54,940</td><td class='mny pos'>+$33,257</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:21%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>May 2026</td><td>88</td><td>98%</td><td class='mny mut'>+$262,645</td><td class='mny pos'>+$167,076</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:100%'></div><div class='nbar pos' style='width:64%'></div></div></td></tr><tr><td class='name'>Jun 2026</td><td>63</td><td>92%</td><td class='mny mut'>+$66,585</td><td class='mny pos'>+$35,599</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:25%'></div><div class='nbar pos' style='width:14%'></div></div></td></tr><tr><td class='name'>Jul 2026</td><td>65</td><td>83%</td><td class='mny mut'>+$45,560</td><td class='mny pos'>+$22,992</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:17%'></div><div class='nbar pos' style='width:9%'></div></div></td></tr><tr><td class='name'>Aug 2026 <span class='tag'>partial</span></td><td>12</td><td>75%</td><td class='mny mut'>+$11,890</td><td class='mny pos'>+$6,653</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:5%'></div><div class='nbar pos' style='width:3%'></div></div></td></tr><tr class='tot'><td class='name'>2026 total</td><td>425</td><td></td><td class='mny mut'>+$605,500</td><td class='mny pos'>+$359,101</td><td></td></tr></tbody></table></div>
-  <p class="hint">Bars compare realistic net (solid) against posted (faint). August is a partial month.</p>
-</div>
-<div class="pane" data-mode="duration">
-  <div class="tiles">
-    <div class="tile"><div class="tl">All time</div>
-      <div class="tv pos">+$1,100,870</div>
-      <div class="ts">3,510 closed trades</div></div><div class="tile"><div class="tl">2026 YTD</div>
-      <div class="tv pos">+$180,500</div>
-      <div class="ts">425 closed trades</div></div><div class="tile"><div class="tl">Since Jun 1</div>
-      <div class="tv pos">+$37,035</div>
-      <div class="ts">140 closed trades</div></div>
-  </div>
-  <h2>Per-channel results</h2>
-  <div class="tablewrap"><table>
-   <thead><tr><th class="l">Channel</th><th>Trades</th><th>Wins</th><th>Cuts</th><th>Win&nbsp;rate</th>
-   <th>Avg&nbsp;ret</th><th>Median</th><th>P&L all-time</th><th>P&L 2026</th><th>P&L Jun&nbsp;1+</th></tr></thead>
-   <tbody><tr>
-<td class="name">swing-trades</td>
-<td>1,941</td><td class="pos">1,675</td><td class="neg">266</td>
-<td>86%</td>
-<td class="pos">+60%</td>
-<td class="pos">+30%</td>
-<td class="mny pos">+$864,445</td>
-<td class="mny pos">+$154,980</td>
-<td class="mny pos">+$29,585</td>
-</tr><tr>
-<td class="name">day-trades</td>
-<td>1,569</td><td class="pos">1,283</td><td class="neg">286</td>
-<td>82%</td>
-<td class="pos">+24%</td>
-<td class="pos">+20%</td>
-<td class="mny pos">+$236,425</td>
-<td class="mny pos">+$25,520</td>
-<td class="mny pos">+$7,450</td>
-</tr><tr class='excl'>
-<td class="name">volume-alerts <span class='tag warn'>excluded</span></td>
-<td>400</td><td class="pos">395</td><td class="neg">5</td>
-<td>99%</td>
-<td class="pos">+444%</td>
-<td class="pos">+140%</td>
-<td class="mny pos">+$966,600</td>
-<td class="mny pos">+$36,475</td>
-<td class="mny pos">+$0</td>
-</tr>
-   <tr class="tot"><td class="name">TOTAL (swing + day)</td><td>3,510</td><td colspan="4"></td>
-   <td class="mny pos">+$1,100,870</td>
-   <td class="mny pos">+$180,500</td>
-   <td class="mny pos">+$37,035</td></tr>
-   </tbody></table></div>
-  <h2>Year by year <span class="sub2">(swing + day only)</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Year</th><th>Trades</th><th>P&L</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr><td class='name'>2021</td><td>879</td><td class='mny pos'>+$363,200</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr><td class='name'>2022</td><td>1,186</td><td class='mny pos'>+$260,370</td><td class='barcell'><div class='ybar pos' style='width:72%'></div></td></tr><tr><td class='name'>2023</td><td>240</td><td class='mny pos'>+$35,520</td><td class='barcell'><div class='ybar pos' style='width:10%'></div></td></tr><tr><td class='name'>2024</td><td>287</td><td class='mny pos'>+$90,000</td><td class='barcell'><div class='ybar pos' style='width:25%'></div></td></tr><tr><td class='name'>2025</td><td>493</td><td class='mny pos'>+$171,280</td><td class='barcell'><div class='ybar pos' style='width:47%'></div></td></tr><tr><td class='name'>2026</td><td>425</td><td class='mny pos'>+$180,500</td><td class='barcell'><div class='ybar pos' style='width:50%'></div></td></tr></tbody></table></div>
-
-  <h2>Calls vs puts <span class="sub2">— direction mix and which one pays</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Direction</th><th>Trades</th><th class="l">Share</th>
-  <th>Win&nbsp;rate</th><th>Avg&nbsp;ret</th><th>Median</th><th>P&amp;L</th></tr></thead>
-  <tbody><tr class='grp'><td class='name' colspan='7'>All time <span class='mut'>— 2.1 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>2,379</td><td class='barcell'><div class='ybar pos' style='width:68%'></div><span class='bl'>68%</span></td><td>85%</td><td class='pos'>+50%</td><td class='pos'>+25%</td><td class='mny pos'>+$856,130</td></tr><tr><td class='name'>Puts</td><td>1,131</td><td class='barcell'><div class='ybar acc' style='width:32%'></div><span class='bl'>32%</span></td><td>83%</td><td class='pos'>+31%</td><td class='pos'>+20%</td><td class='mny pos'>+$244,740</td></tr><tr class='grp'><td class='name' colspan='7'>2026 <span class='mut'>— 8.9 calls per put</span></td></tr><tr><td class='name'>Calls</td><td>382</td><td class='barcell'><div class='ybar pos' style='width:90%'></div><span class='bl'>90%</span></td><td>90%</td><td class='pos'>+71%</td><td class='pos'>+30%</td><td class='mny pos'>+$174,855</td></tr><tr><td class='name'>Puts</td><td>43</td><td class='barcell'><div class='ybar acc' style='width:10%'></div><span class='bl'>10%</span></td><td>79%</td><td class='pos'>+19%</td><td class='pos'>+22%</td><td class='mny pos'>+$5,645</td></tr></tbody></table></div>
-
-  <h2>Reality check <span class="sub2">— what a follower would actually net</span></h2>
-  <p class="hint">Each step strips one real-world cost off MDT's posted numbers. The last line is the honest expectation.</p>
-  <div class="tablewrap"><table class="wf"><thead><tr><th class="l">Step</th><th>Running P&amp;L</th><th>vs posted</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr class=''><td class='name'>As posted by MDT</td><td class='mny pos'>+$1,100,870</td><td class='mut'>100%</td><td class='barcell'><div class='ybar pos' style='width:100%'></div></td></tr><tr class=''><td class='name'>− slippage (entry 3% / exit 5%)</td><td class='mny pos'>+$828,259</td><td class='mut'>75%</td><td class='barcell'><div class='ybar pos' style='width:75%'></div></td></tr><tr class=''><td class='name'>− commissions (1.3% of stake)</td><td class='mny pos'>+$796,942</td><td class='mut'>72%</td><td class='barcell'><div class='ybar pos' style='width:72%'></div></td></tr><tr class=''><td class='name'>− trades he never followed up (~165 @ −100%)</td><td class='mny pos'>+$714,442</td><td class='mut'>65%</td><td class='barcell'><div class='ybar pos' style='width:65%'></div></td></tr><tr class='wflast'><td class='name'>× you catch only 75% of alerts</td><td class='mny pos'>+$535,831</td><td class='mut'>49%</td><td class='barcell'><div class='ybar acc' style='width:49%'></div></td></tr></tbody></table></div>
-
-  <h2>2026 month by month <span class="sub2">— posted vs realistic</span></h2>
-  <div class="tablewrap"><table><thead><tr><th class="l">Month</th><th>Trades</th><th>Win&nbsp;rate</th>
-  <th>Posted P&amp;L</th><th>Realistic net</th><th class="l">&nbsp;</th></tr></thead>
-  <tbody><tr><td class='name'>Jan 2026</td><td>63</td><td>94%</td><td class='mny mut'>+$35,800</td><td class='mny pos'>+$20,968</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:58%'></div><div class='nbar pos' style='width:34%'></div></div></td></tr><tr><td class='name'>Feb 2026</td><td>45</td><td>91%</td><td class='mny mut'>+$19,165</td><td class='mny pos'>+$9,302</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:31%'></div><div class='nbar pos' style='width:15%'></div></div></td></tr><tr><td class='name'>Mar 2026</td><td>55</td><td>75%</td><td class='mny mut'>+$5,655</td><td class='mny pos'>+$528</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:9%'></div><div class='nbar pos' style='width:1%'></div></div></td></tr><tr><td class='name'>Apr 2026</td><td>34</td><td>88%</td><td class='mny mut'>+$21,380</td><td class='mny pos'>+$12,218</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:35%'></div><div class='nbar pos' style='width:20%'></div></div></td></tr><tr><td class='name'>May 2026</td><td>88</td><td>98%</td><td class='mny mut'>+$61,465</td><td class='mny pos'>+$37,431</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:100%'></div><div class='nbar pos' style='width:61%'></div></div></td></tr><tr><td class='name'>Jun 2026</td><td>63</td><td>92%</td><td class='mny mut'>+$16,385</td><td class='mny pos'>+$7,810</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:27%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>Jul 2026</td><td>65</td><td>83%</td><td class='mny mut'>+$18,160</td><td class='mny pos'>+$7,846</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:30%'></div><div class='nbar pos' style='width:13%'></div></div></td></tr><tr><td class='name'>Aug 2026 <span class='tag'>partial</span></td><td>12</td><td>75%</td><td class='mny mut'>+$2,490</td><td class='mny pos'>+$1,103</td><td class='barcell'><div class='mbar'><div class='gbar' style='width:4%'></div><div class='nbar pos' style='width:2%'></div></div></td></tr><tr class='tot'><td class='name'>2026 total</td><td>425</td><td></td><td class='mny mut'>+$180,500</td><td class='mny pos'>+$97,206</td><td></td></tr></tbody></table></div>
-  <p class="hint">Bars compare realistic net (solid) against posted (faint). August is a partial month.</p>
-</div>
-
-
-<h2>Plan your own position sizing <span class="sub2">— and project the next 6 months</span></h2>
-<p class="hint">Enter your account size. The simulator draws 2,000 random futures by resampling MDT's
-actual <em>realistic-net</em> trade results (after slippage, commissions and his unfollowed trades),
-so the spread you see is the spread his own history implies.</p>
-
-<div class="calc">
-  <div class="ctrls">
-    <div class="fld"><label for="pf">Portfolio</label>
-      <input id="pf" type="number" value="50000" min="1000" step="1000" inputmode="numeric"></div>
-    <div class="fld"><label for="follow">Follow</label>
-      <select id="follow">
-        <option value="both">Swing + day trades</option>
-        <option value="swing">Swing only</option>
-        <option value="day">Day trades only</option>
-      </select></div>
-    <div class="fld"><label for="part">Alerts you catch</label>
-      <select id="part">
-        <option value="1">100% — always at screen</option>
-        <option value="0.75" selected>75% — most of them</option>
-        <option value="0.5">50% — part time</option>
-        <option value="0.25">25% — casual</option>
-      </select></div>
-    <div class="fld"><label for="src">Base returns on</label>
-      <select id="src">
-        <option value="recent" selected>Last 12 months</option>
-        <option value="all">Full history</option>
-      </select></div>
-    <div class="fld"><label for="hair">Trust in his posted win rate</label>
-      <select id="hair">
-        <option value="0">Take it at face value</option>
-        <option value="10">Assume 10 pts lower</option>
-        <option value="20" selected>Assume 20 pts lower</option>
-        <option value="30">Assume 30 pts lower</option>
-      </select></div>
-  </div>
-
-  <div class="presets" role="group" aria-label="Risk level">
-    <button data-sw="2"  data-dy="1"   class="on">Conservative</button>
-    <button data-sw="5"  data-dy="2">Moderate</button>
-    <button data-sw="10" data-dy="5">Aggressive</button>
-  </div>
-  <div class="ctrls">
-    <div class="fld"><label for="psw">% of account per swing trade</label>
-      <input id="psw" type="number" value="2" min="0.1" max="50" step="0.5"></div>
-    <div class="fld"><label for="pdy">% of account per day trade</label>
-      <input id="pdy" type="number" value="1" min="0.1" max="50" step="0.5"></div>
-  </div>
-
-  <div class="stakes" id="stakes"></div>
-  <div id="kelly"></div>
-
-  <h3 style="font-size:15px;margin:18px 0 8px">Projected value after 6 months</h3>
-  <div class="outcome" id="outcome"></div>
-  <svg class="fan" id="fan" viewBox="0 0 640 210" preserveAspectRatio="none" role="img"
-       aria-label="Projected portfolio range over six months"></svg>
-  <p class="hint" id="expl" style="margin-top:12px"></p>
-  <div class="legend">
-    <span><i style="background:var(--acc)"></i>Median path</span>
-    <span><i style="background:color-mix(in srgb,var(--acc) 30%,transparent)"></i>Middle 80% of outcomes</span>
-    <span><i style="background:var(--mut)"></i>Starting value</span>
-  </div>
-</div>
-
-
-<h2>⚠️ Why the two totals differ so much</h2>
-<div class="tablewrap"><table><thead><tr><th class="l">Channel</th><th>Trades</th><th>Median hold</th><th>Same-day</th><th>Held &gt;2 days</th></tr></thead>
-<tbody><tr><td class='name'>swing-trades</td><td>1,941</td><td>0d</td><td>64%</td><td>13%</td></tr><tr><td class='name'>day-trades</td><td>1,569</td><td>0d</td><td>91%</td><td>5%</td></tr><tr><td class='name'>volume-alerts</td><td>400</td><td>0d</td><td>74%</td><td>4%</td></tr></tbody></table></div>
-<p class="hint">The 【⏰】swing-trades channel is <b>not actually swing-trading</b>: its median hold is 0 days and only 13% of trades last more than 2 days. Sizing by channel name therefore pays $2,500 on hundreds of same-day trades. "By actual hold time" is the stricter, more literal reading of your rule.</p>
-
-<div class="two">
- <div><h2>Biggest posted winners</h2><ul class="tl2"><li><b>APLD</b> 40C <span class='pos'>+2800%</span> <span class='mut'>2026-05-21 · swing-trades</span></li><li><b>INTC</b> 115C <span class='pos'>+2000%</span> <span class='mut'>2026-05-05 · swing-trades</span></li><li><b>QS</b> 31C <span class='pos'>+1500%</span> <span class='mut'>2021-10-29 · swing-trades</span></li><li><b>ORCL</b> 260C <span class='pos'>+1500%</span> <span class='mut'>2025-09-10 · swing-trades</span></li><li><b>FCX</b> 70C <span class='pos'>+1400%</span> <span class='mut'>2026-01-30 · swing-trades</span></li><li><b>LOTZ</b> 10C <span class='pos'>+1000%</span> <span class='mut'>2021-06-09 · swing-trades</span></li><li><b>WISH</b> 10C <span class='pos'>+1000%</span> <span class='mut'>2021-06-09 · swing-trades</span></li><li><b>AAL</b> 18P <span class='pos'>+1000%</span> <span class='mut'>2021-07-19 · swing-trades</span></li><li><b>AMD</b> 120C <span class='pos'>+1000%</span> <span class='mut'>2021-10-21 · swing-trades</span></li><li><b>OKE</b> 70C <span class='pos'>+1000%</span> <span class='mut'>2022-03-21 · swing-trades</span></li></ul></div>
- <div><h2>Biggest posted losses</h2><ul class="tl2"><li><b>LLY</b> 625C <span class='neg'>-100%</span> <span class='mut'>2024-01-19 · day-trades</span></li><li><b>AFRM</b> 52C <span class='neg'>-99%</span> <span class='mut'>2024-11-01 · swing-trades</span></li><li><b>ROOT</b> 100C <span class='neg'>-99%</span> <span class='mut'>2024-11-06 · swing-trades</span></li><li><b>SPY</b> 390P <span class='neg'>-90%</span> <span class='mut'>2022-09-08 · day-trades</span></li><li><b>ABNB</b> 115P <span class='neg'>-80%</span> <span class='mut'>2023-10-25 · swing-trades</span></li><li><b>AMD</b> 400C <span class='neg'>-80%</span> <span class='mut'>2026-05-01 · swing-trades</span></li><li><b>BABA</b> 160C <span class='neg'>-70%</span> <span class='mut'>2026-01-02 · swing-trades</span></li><li><b>QQQ</b> 505C <span class='neg'>-65%</span> <span class='mut'>2025-03-10 · swing-trades</span></li><li><b>XLE</b> 80C <span class='neg'>-60%</span> <span class='mut'>2022-10-27 · swing-trades</span></li><li><b>RDDDT</b> 160C <span class='neg'>-60%</span> <span class='mut'>2024-12-04 · swing-trades</span></li></ul></div>
-</div>
-
-<footer>Source: full-history JSON export of 3 MDT channels via DiscordChatExporter.
-Parser anchors each contract on its strike/right token and takes the ticker immediately before it (MDT prefixes commentary like "LOTTO" / "CHASE ORDER"); exits link by ticker, or to the most recent open position within 5 days.
-Negative percents are read as losses and multi-result recap posts are skipped. Approximate best-effort NLP over free-text alerts — directional, not audited P&L.</footer>
-</div><script>
-document.querySelectorAll('.toggle button').forEach(b=>b.addEventListener('click',()=>{
- document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('on'));
- b.classList.add('on');
- const m=b.dataset.m;
- document.querySelectorAll('.pane').forEach(p=>p.style.display = p.dataset.mode===m?'':'none');
- document.getElementById('hint').textContent = b.dataset.hint;
-}));
-document.querySelectorAll('.pane').forEach((p,i)=>{if(p.dataset.mode!=='channel')p.style.display='none'});
-
-
-const SIM = {"recent":{"swing":{"pool":[0.601,0.509,0.094,-0.045,0.463,0.693,1.754,2.031,-0.644,-0.275,0.14,0.278,0.555,-0.552,0.232,0.232,-0.137,1.708,0.186,0.186,0.186,0.278,0.417,-0.137,1.385,-0.367,0.186,0.555,0.647,0.232,-0.275,0.168,0.26,0.555,0.739,1.016,-0.367,-0.367,1.016,0.278,3.137,0.463,0.094,0.232,1.938,0.417,0.518,0.324,0.324,0.324,0.324,0.37,0.37,-0.598,0.832,-0.321,0.232,-0.367,0.048,0.37,0.232,6.366,0.14,0.324,0.094,0.112,0.518,-0.552,-0.238,0.112,0.297,-1.0,-1.0,-1.0],"per_month":6.17,"n":74,"win":75.7,"avg":37.6,"med":24.6},"day":{"pool":[0.14,0.186,0.094,0.324,0.14,0.186,-0.367,0.14,0.693,0.352,-0.275,0.232,0.251,0.647,0.647,0.555,0.186,0.786,2.861,0.094,9.133,0.186,0.094,0.094,0.186,0.37,13.744,0.094,0.14,1.154,2.169,0.832,0.509,0.14,0.14,0.186,0.509,1.016,0.324,0.693,0.075,0.094,0.094,0.324,0.094,6.366,0.186,0.555,1.016,0.232,0.278,1.108,0.186,0.094,0.186,-0.035,-0.321,0.832,0.278,0.186,0.094,3.783,0.186,0.278,0.186,0.14,0.14,0.075,0.324,0.693,0.832,0.832,1.293,0.075,0.278,0.278,0.463,2.676,0.324,0.832,0.601,0.509,0.094,0.094,0.324,0.232,0.14,0.186,0.463,1.247,0.278,2.953,0.232,3.137,-0.367,4.06,0.232,0.094,4.521,1.754,0.278,0.094,0.463,0.186,-0.017,-0.229,-0.552,0.186,0.186,0.14,0.324,0.14,0.186,0.278,0.048,0.555,0.14,0.14,2.676,6.366,-0.017,0.232,0.186,0.094,0.832,9.133,0.601,0.186,0.555,2.215,0.14,0.739,0.324,0.14,0.186,0.112,-0.146,0.048,1.431,0.048,0.232,-0.137,0.324,4.521,0.094,0.094,0.14,0.37,0.832,0.048,0.555,0.186,0.232,0.094,0.186,0.094,0.232,0.094,0.417,-0.33,2.169,1.016,1.201,0.075,0.075,-0.321,0.075,-0.275,0.094,0.094,-0.321,-0.552,0.075,0.324,0.324,0.324,0.14,0.002,0.878,1.108,-0.174,0.048,0.094,0.094,0.112,0.048,0.048,0.693,-0.736,0.14,0.094,0.094,0.232,0.094,0.094,0.186,0.094,1.108,0.048,0.232,0.232,0.14,0.232,0.186,0.739,0.094,9.133,0.14,0.094,0.278,-0.367,0.186,2.446,2.676,1.062,0.094,0.647,0.509,2.123,0.14,0.14,0.186,1.016,12.822,0.094,0.112,0.075,0.186,0.002,0.278,0.832,0.14,0.832,0.075,0.278,0.463,0.168,0.048,0.002,-0.506,0.186,0.14,0.278,0.075,0.112,0.693,0.094,0.186,0.094,-0.321,0.186,0.075,0.112,0.112,0.168,-0.321,0.112,0.14,0.352,0.739,0.509,0.075,0.075,0.075,0.168,0.693,0.37,0.002,0.324,9.133,0.509,0.832,0.463,-0.829,0.094,0.094,3.137,0.693,0.094,0.463,18.356,1.57,0.094,0.278,2.676,0.14,0.14,3.46,0.186,0.094,1.247,1.247,2.123,1.293,5.812,0.186,0.463,0.417,0.186,0.094,0.094,2.861,0.739,0.324,0.204,1.385,0.186,0.14,0.204,0.758,0.463,0.232,0.324,0.324,0.37,0.739,0.14,0.048,0.094,0.14,0.186,0.573,0.647,0.186,2.215,0.186,0.186,0.324,0.786,0.186,0.14,0.094,25.735,0.094,0.048,-0.644,0.186,0.094,0.26,0.37,0.463,0.048,0.14,0.14,0.186,0.832,0.094,0.14,0.186,7.472,0.094,0.324,0.094,0.14,-0.367,0.37,0.463,0.14,0.324,0.048,0.232,0.186,0.075,0.324,0.278,0.37,0.601,0.832,0.048,0.057,0.14,0.186,0.37,1.062,-0.552,0.048,-0.552,0.094,0.601,0.094,-0.321,-0.367,0.075,0.186,0.232,0.094,0.14,0.324,0.417,0.232,1.57,0.14,0.14,0.186,0.601,-0.321,-0.321,0.232,0.232,0.417,0.232,0.094,0.232,0.37,0.14,0.094,0.14,0.324,0.14,0.232,0.324,0.786,1.523,0.094,0.186,0.094,0.324,0.417,-0.321,0.14,0.002,4.152,0.14,1.201,1.477,0.278,0.186,0.647,-0.275,0.186,0.14,0.094,0.232,-0.367,-0.275,-0.321,0.186,-0.367,-0.321,-0.275,-0.275,-0.257,0.048,0.14,-0.321,0.14,0.324,0.14,0.14,0.075,-0.275,0.094,0.14,0.057,0.094,0.278,0.647,-0.229,-0.229,0.048,0.075,0.14,0.186,0.14,0.832,0.085,0.14,0.14,0.14,0.002,-0.045,0.14,0.112,0.048,-0.552,0.048,0.075,0.149,0.555,0.075,0.693,0.075,0.094,0.509,0.075,0.186,0.094,0.048,0.14,0.168,0.094,0.075,0.094,-0.229,-0.552,-0.33,0.278,-0.257,0.048,0.094,0.094,0.786,0.094,-0.321,0.37,-0.275,0.094,0.075,0.14,0.232,0.094,0.094,0.26,0.094,0.112,0.832,0.112,0.094,0.14,0.278,0.463,0.463,0.463,0.14,0.048,9.133,-0.321,0.232,0.278,0.14,0.186,0.186,-0.552,0.186,0.463,0.094,0.26,0.094,-0.035,0.14,0.324,0.094,0.121,0.463,0.37,-0.275,0.094,0.094,-0.137,-0.137,0.324,0.832,0.094,0.324,0.094,1.219,0.204,0.112,0.14,0.168,-0.321,0.149,0.075,-0.552,0.075,0.094,0.094,-0.349,0.463,0.37,-0.238,-0.552,-0.257,0.002,0.204,0.278,-0.321,0.204,0.232,0.094,0.14,0.075,0.048,-0.294,0.112,0.094,0.186,0.14,0.186,0.186,-0.552,0.241,0.214,0.186,0.832,0.186,0.094,0.094,0.112,0.094,0.186,0.094,0.297,0.14,0.094,0.075,0.186,0.186,0.14,0.186,0.094,0.37,0.417,0.186,0.094,0.094,-0.552,0.14,0.14,0.14,0.094,1.108,-0.552,0.832,1.57,0.186,0.37,0.094,0.14,-0.321,-0.321,0.094,0.832,0.14,0.186,0.324,1.57,0.094,0.094,0.112,0.186,-0.367,0.075,-0.137,-0.367,0.094,0.14,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],"per_month":52.08,"n":677,"win":84.5,"avg":45.7,"med":14.0}},"all":{"swing":{"pool":[0.094,0.048,-0.321,-0.321,-0.321,-0.321,0.37,0.832,1.154,0.647,0.832,1.385,0.924,0.832,0.463,0.315,-0.321,-0.321,0.37,0.14,9.133,0.094,0.232,0.555,0.555,1.108,0.094,0.186,0.37,0.186,-0.321,0.14,0.232,0.555,0.094,0.509,0.278,0.324,-0.321,6.827,0.739,0.693,0.14,0.048,0.048,-0.321,0.094,-0.321,3.783,0.186,0.075,0.324,1.016,0.417,0.878,0.739,0.14,-0.321,0.601,0.832,0.601,0.97,0.14,0.324,0.186,-0.321,1.477,0.324,0.555,1.247,1.108,0.14,1.293,3.599,0.555,0.14,0.14,0.601,1.016,0.048,3.506,0.693,0.048,0.324,1.108,1.938,0.002,0.094,4.521,0.232,0.094,0.186,0.232,0.048,0.278,0.094,0.186,0.186,0.518,-0.321,0.094,0.739,0.094,0.02,-0.321,0.278,0.048,-0.321,0.14,1.201,0.786,-0.321,0.14,0.002,1.016,0.048,0.186,0.278,-0.321,0.278,0.417,0.232,0.094,0.601,-0.367,-0.367,0.278,0.048,0.094,0.048,-0.644,2.861,0.693,0.186,0.186,0.204,0.075,0.094,0.075,0.693,0.14,0.278,0.232,0.112,0.048,0.048,-0.552,0.463,0.14,-0.46,-0.46,1.108,-0.183,0.094,-0.321,0.168,-0.321,-0.275,0.048,0.048,0.186,0.14,0.14,0.186,0.324,0.278,0.278,0.14,0.555,0.509,0.278,0.186,0.324,0.232,0.739,0.555,0.168,-0.275,0.094,1.016,0.463,0.278,0.048,0.232,-0.552,0.278,-0.413,0.232,0.601,0.186,0.924,-0.69,0.002,1.201,-0.275,-0.183,0.97,0.37,0.601,0.509,0.094,-0.045,0.463,0.693,1.754,2.031,-0.644,-0.275,0.14,0.278,0.555,-0.552,0.232,0.232,-0.137,1.708,0.186,0.186,0.186,0.278,0.417,-0.137,1.385,-0.367,0.186,0.555,0.647,0.232,-0.275,0.168,0.26,0.555,0.739,1.016,-0.367,-0.367,1.016,0.278,3.137,0.463,0.094,0.232,1.938,0.417,0.518,0.324,0.324,0.324,0.324,0.37,0.37,-0.598,0.832,-0.321,0.232,-0.367,-0.321,0.324,1.293,0.601,0.002,0.278,0.37,0.14,0.14,0.094,0.094,0.601,0.324,0.14,0.324,0.094,-0.321,-0.321,0.647,0.278,0.278,-0.321,-0.321,0.14,0.094,0.094,0.232,-0.026,0.038,0.832,0.37,0.02,0.389,0.324,0.094,0.002,0.094,0.278,-0.275,0.186,0.186,0.002,0.14,0.048,-0.321,-0.229,0.002,0.186,0.739,0.168,-0.321,-0.275,0.057,0.048,-0.275,0.14,0.14,0.186,0.048,0.37,0.232,6.366,0.14,0.324,0.094,0.112,0.518,-0.552,-0.238,0.112,0.297,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],"per_month":6.22,"n":342,"win":78.1,"avg":31.8,"med":18.6},"day":{"pool":[-0.321,-0.321,0.241,0.048,-0.321,0.186,0.693,-0.321,1.016,0.278,-0.321,0.278,0.555,0.094,0.186,0.463,1.016,-0.321,2.4,0.278,2.4,0.832,0.832,-0.321,-0.321,0.832,-0.321,0.26,0.168,-0.321,0.417,-0.321,-0.321,-0.321,-0.321,-0.321,0.37,0.739,1.938,0.555,-0.321,-0.072,-0.321,-0.045,-0.321,0.693,0.14,0.094,0.14,0.278,0.324,0.232,0.094,0.002,0.186,2.676,0.186,0.463,0.832,0.14,1.108,1.616,0.417,1.616,0.37,0.832,0.832,0.094,1.201,0.324,9.133,9.133,0.463,0.813,0.647,1.662,1.154,1.016,1.016,0.924,0.601,0.37,-0.321,0.832,0.97,0.324,1.201,0.786,0.232,1.662,-0.321,0.324,0.14,0.37,0.417,-0.321,0.324,0.14,0.324,0.278,0.555,-0.321,0.232,0.37,-0.321,0.14,0.232,0.37,-0.321,2.215,-0.321,4.982,-0.321,0.278,0.832,0.094,-0.275,1.201,-0.321,0.37,1.293,0.186,0.278,-0.321,-0.045,-0.321,-0.321,0.232,0.832,0.094,0.186,0.417,0.832,0.647,-0.321,0.14,0.37,0.278,0.647,0.14,-0.321,0.26,0.278,0.186,0.463,-0.321,0.297,0.693,0.232,-0.321,0.601,0.094,0.048,0.094,0.37,0.832,1.616,0.324,0.048,0.324,0.14,0.14,0.37,0.601,0.37,1.293,0.232,0.186,0.048,0.14,0.601,0.14,0.186,-0.321,0.555,0.601,0.739,0.048,3.875,0.232,0.094,2.778,0.463,0.094,0.232,0.417,0.048,-0.321,0.832,0.37,0.693,0.37,1.016,0.186,0.647,0.555,1.247,0.204,1.154,1.754,0.37,0.832,1.477,1.754,0.463,1.662,0.278,-0.321,0.094,0.37,2.215,0.186,0.647,0.37,1.477,1.754,2.676,-0.321,0.186,1.662,0.232,-0.008,0.075,0.094,0.786,5.443,0.186,0.37,-0.321,1.293,0.232,0.232,0.186,0.463,0.555,-0.321,0.37,0.278,-0.321,0.048,0.048,0.509,0.075,0.048,-0.321,0.075,0.186,0.832,-0.321,0.048,0.094,0.094,0.555,0.094,-0.321,0.37,0.186,0.094,-0.321,0.278,-0.321,0.14,-0.321,0.048,0.14,0.048,0.14,1.016,1.385,0.14,0.14,0.14,0.232,0.048,0.048,0.14,0.075,0.14,0.094,-0.321,0.14,-0.321,-0.321,0.14,0.14,0.832,1.846,0.232,0.232,0.232,0.094,0.168,0.324,0.094,0.417,0.094,-0.321,0.417,0.601,0.278,0.278,0.232,0.278,0.094,-0.321,0.647,-0.321,0.555,0.278,0.601,0.463,0.61,0.463,0.463,0.232,-0.257,0.463,0.278,0.075,0.186,0.832,0.094,0.232,0.463,0.324,0.37,-0.321,0.278,0.555,-0.321,0.278,0.278,0.555,1.385,0.555,0.37,0.14,0.186,1.339,0.186,0.417,0.186,0.14,0.647,0.186,0.094,9.133,0.048,0.509,0.739,0.37,-0.321,-0.321,0.37,0.232,0.417,1.062,0.463,0.186,-0.321,13.744,0.14,0.463,0.832,0.048,0.278,1.201,-0.321,0.509,0.832,0.97,0.37,0.26,0.324,0.832,0.14,-0.321,0.417,0.186,0.786,0.509,0.002,0.186,0.278,0.278,0.463,0.094,0.739,0.094,0.278,0.324,1.108,0.509,0.324,0.739,0.14,-0.321,-0.321,0.37,0.14,0.14,0.14,0.601,1.108,0.14,0.832,1.293,0.186,1.016,0.463,1.062,-0.321,0.14,-0.321,0.14,0.094,0.094,0.14,0.14,0.324,0.647,0.232,0.417,0.832,0.324,0.324,0.14,-0.321,-0.321,0.14,0.14,0.232,0.324,5.443,0.048,0.048,0.048,0.048,0.278,2.676,0.832,0.14,0.094,0.14,0.094,0.094,-0.045,0.094,2.676,0.232,0.555,0.186,0.14,1.016,0.14,0.37,0.094,4.06,1.108,0.094,0.14,0.278,0.278,0.601,0.278,0.324,0.509,0.232,0.232,1.016,0.186,0.186,0.786,0.048,0.14,0.186,-0.321,0.02,0.094,0.14,-0.321,-0.367,0.094,0.14,0.002,0.048,0.232,0.37,0.186,0.463,0.693,0.186,0.094,0.186,0.232,0.37,0.112,0.601,0.094,0.278,0.094,0.14,0.37,0.832,0.14,1.892,1.57,0.094,0.048,0.186,0.37,0.14,0.463,0.094,0.002,0.094,0.02,0.14,0.739,0.048,0.693,0.463,0.37,1.062,0.924,-0.321,0.832,0.518,0.647,0.647,0.094,0.37,-0.045,0.048,0.186,0.002,0.693,-0.275,0.14,0.14,0.832,-0.321,-0.367,0.832,1.108,-0.321,0.278,-0.321,1.201,1.938,0.094,0.094,0.509,0.583,9.133,0.094,0.094,0.094,0.186,0.186,0.278,0.14,0.14,0.37,-0.321,1.136,1.938,-0.321,3.368,1.754,0.739,0.232,0.14,9.133,1.108,0.37,0.278,0.37,-0.321,0.324,0.094,0.14,0.112,0.075,0.094,0.214,0.37,-0.321,0.094,0.094,-0.054,-0.183,3.599,0.14,0.278,-0.275,-0.321,4.521,0.094,0.214,0.094,0.278,0.463,0.647,0.048,0.094,0.094,0.186,0.37,0.278,0.509,0.048,1.293,0.232,0.186,0.186,0.14,3.599,0.186,0.14,0.094,0.094,0.186,-0.321,0.14,0.094,0.186,0.739,0.186,0.186,0.463,0.324,0.14,0.463,0.094,-0.413,0.278,-0.183,0.398,0.37,0.555,0.14,0.14,0.094,0.186,0.094,0.186,0.094,0.278,0.324,0.878,0.14,0.094,0.278,0.14,0.14,0.094,0.094,0.14,0.37,0.693,0.186,0.278,0.647,-0.321,-0.367,0.002,0.14,0.048,0.094,0.37,-0.321,0.186,0.186,0.186,-0.017,0.048,-0.035,0.186,0.463,0.048,0.094,0.37,0.094,0.186,7.288,0.204,0.463,0.14,0.232,0.094,0.14,0.186,0.324,0.094,0.075,0.094,0.186,0.832,-0.321,0.094,-0.321,0.232,0.094,-0.229,0.555,0.14,2.307,0.647,0.14,0.186,0.186,0.14,0.186,0.186,0.324,-0.045,0.37,0.094,0.094,0.112,1.754,0.048,0.048,0.14,0.094,0.186,0.14,0.14,0.14,-0.321,-0.321,0.186,0.601,0.094,7.288,-0.367,0.048,0.048,0.048,0.14,0.324,0.048,0.094,0.002,0.094,0.048,0.417,0.094,0.094,0.002,0.37,0.094,0.14,0.094,0.002,0.094,0.14,0.324,0.463,0.832,-0.321,-0.321,-0.321,0.186,-0.275,0.112,-0.367,-0.552,0.14,0.094,0.048,0.002,0.417,1.293,0.278,0.324,0.094,0.186,0.048,0.048,0.075,-0.321,0.094,0.14,0.048,0.14,0.278,0.832,0.048,0.002,0.048,-0.552,0.048,0.14,1.016,0.048,0.324,-0.321,0.278,0.14,0.14,0.186,0.324,-0.321,-0.506,0.002,0.075,-0.552,0.14,0.37,0.048,0.14,-0.109,0.094,0.555,-0.321,0.094,0.094,-0.321,0.094,0.186,0.094,-0.321,-0.321,0.186,0.048,0.048,-0.46,-0.321,0.002,0.048,0.094,0.186,0.186,-0.321,-0.045,4.337,-0.257,0.094,0.048,0.14,0.048,0.048,0.232,-0.367,2.031,0.048,0.048,0.094,0.14,0.094,0.417,0.832,0.186,0.094,0.463,-0.321,0.14,0.601,1.154,-0.321,0.14,-0.321,0.14,0.048,-0.054,-0.183,0.509,-0.321,0.37,-0.367,0.14,0.832,0.002,0.048,0.094,0.131,0.232,0.186,-0.183,0.094,0.094,0.14,0.232,0.094,0.37,0.094,0.048,0.14,0.048,0.204,0.094,0.168,-0.017,0.075,0.186,0.786,-0.321,0.693,-0.183,0.094,0.094,0.168,1.247,0.048,0.048,0.094,0.094,0.066,0.14,0.14,0.14,-0.321,0.14,0.555,0.048,0.048,0.048,0.048,0.002,0.094,-0.506,0.601,-0.321,0.278,0.094,-0.413,0.14,0.324,-0.413,0.057,1.201,-0.137,0.075,0.417,0.186,0.186,0.186,0.463,0.048,0.37,0.14,-0.321,0.14,0.094,0.37,0.186,-0.552,0.37,0.37,-0.321,0.232,0.048,0.048,0.002,0.324,0.37,0.048,-0.321,0.232,0.094,0.14,0.278,0.463,0.02,-0.367,0.048,0.37,-0.183,0.094,-0.183,-0.367,0.094,0.029,-0.017,0.14,0.14,0.232,0.094,0.048,0.075,1.385,0.26,-0.367,2.538,0.094,0.168,0.094,0.048,0.14,0.278,0.002,0.094,-0.275,0.739,0.509,0.048,0.186,0.278,0.186,0.14,0.149,-0.413,0.075,0.094,-0.829,-0.413,0.278,0.075,0.094,0.002,0.463,0.066,0.324,0.075,-0.46,0.786,0.324,0.232,0.324,0.601,0.186,-0.183,0.094,-0.321,0.094,0.463,-0.367,0.786,0.97,0.048,-0.321,0.094,0.14,-0.229,-0.229,0.186,-0.321,0.048,0.186,0.463,0.555,0.14,-0.183,0.002,0.186,0.14,0.094,-0.552,0.37,1.247,0.094,0.14,5.167,4.982,9.133,9.133,0.186,-0.552,0.278,0.647,1.662,0.278,0.094,0.14,9.133,0.832,0.048,0.048,0.232,-0.367,0.186,-0.552,0.324,0.278,0.555,0.37,0.094,0.14,0.278,0.094,0.463,0.324,0.417,0.601,0.14,0.14,-0.321,0.278,0.463,0.444,-0.275,-0.552,0.37,2.307,0.832,0.094,-0.137,0.214,0.601,0.186,0.094,0.094,0.094,0.463,0.038,-1.004,0.324,1.523,0.094,0.094,-1.004,1.385,0.002,0.038,0.186,0.14,0.832,0.417,0.14,2.215,0.094,0.555,-0.413,-0.413,-0.183,-0.552,-0.552,-0.275,0.14,0.14,-0.321,-0.367,-0.026,0.094,0.324,0.14,-0.46,0.278,1.016,-0.644,0.832,1.616,0.278,6.366,0.37,0.168,0.555,0.14,0.14,2.492,-0.367,0.094,0.14,0.463,0.417,0.14,0.232,0.232,0.324,0.186,-0.321,0.232,0.002,-0.367,-0.229,0.048,1.754,0.37,0.094,0.094,0.647,0.186,0.094,0.002,0.14,0.186,0.094,-0.413,0.186,0.232,0.232,1.708,1.062,0.094,1.431,0.186,0.186,4.06,0.186,0.693,0.094,0.555,0.739,0.094,0.094,0.278,0.37,0.002,0.601,0.094,0.14,1.938,1.293,0.14,0.232,0.094,0.186,-0.183,-0.275,0.094,0.094,0.186,0.232,0.186,-0.229,0.14,0.186,0.232,-0.275,0.14,0.232,0.14,0.094,0.232,-0.367,-0.321,0.14,-0.257,-0.46,0.002,-0.367,0.094,0.14,0.278,-0.201,0.094,0.048,0.075,0.048,-0.275,0.075,0.463,0.094,0.094,0.647,0.094,0.14,0.324,2.676,0.094,0.324,0.324,0.463,0.14,0.186,0.094,0.324,0.14,0.186,-0.367,0.14,0.693,0.352,-0.275,0.232,0.251,0.647,0.647,0.555,0.186,0.786,2.861,0.094,9.133,0.186,0.094,0.094,0.186,0.37,13.744,0.094,0.14,1.154,2.169,0.832,0.509,0.14,0.14,0.186,0.509,1.016,0.324,0.693,0.075,0.094,0.094,0.324,0.094,6.366,0.186,0.555,1.016,0.232,0.278,1.108,0.186,0.094,0.186,-0.035,-0.321,0.832,0.278,0.186,0.094,3.783,0.186,0.278,0.186,0.14,0.14,0.075,0.324,0.693,0.832,0.832,1.293,0.075,0.278,0.278,0.463,2.676,0.324,0.832,0.601,0.509,0.094,0.094,0.324,0.232,0.14,0.186,0.463,1.247,0.278,2.953,0.232,3.137,-0.367,4.06,0.232,0.094,4.521,1.754,0.278,0.094,0.463,0.186,-0.017,-0.229,-0.552,0.186,0.186,0.14,0.324,0.14,0.186,0.278,0.048,0.555,0.14,0.14,2.676,6.366,-0.017,0.232,0.186,0.094,0.832,9.133,0.601,0.186,0.555,2.215,0.14,0.739,0.324,0.14,0.186,0.112,-0.146,0.048,1.431,0.048,0.232,-0.137,0.324,4.521,0.094,0.094,0.14,0.37,0.832,0.048,0.555,0.186,0.232,0.094,0.186,0.094,0.232,0.094,0.417,-0.33,2.169,1.016,1.201,0.075,0.075,-0.321,0.075,-0.275,0.094,0.094,-0.321,-0.552,0.075,0.324,0.324,0.324,0.14,0.002,0.878,1.108,-0.174,0.048,0.094,0.094,0.112,0.048,0.048,0.693,-0.736,0.14,0.094,0.094,0.232,0.094,0.094,0.186,0.094,1.108,0.048,0.232,0.232,0.14,0.232,0.186,0.739,0.094,9.133,0.14,0.094,0.278,-0.367,0.186,2.446,2.676,1.062,0.094,0.647,0.509,2.123,0.14,0.14,0.186,1.016,12.822,0.094,0.112,0.075,0.186,0.002,0.278,0.832,0.14,0.832,0.075,0.278,0.463,0.168,0.048,0.002,-0.506,0.186,0.14,0.278,0.075,0.112,0.693,0.094,0.186,0.094,-0.321,0.186,0.075,0.112,0.112,0.168,-0.321,0.112,0.14,0.352,0.739,0.509,0.075,0.075,0.075,0.168,0.693,0.37,0.002,0.324,9.133,0.509,0.832,0.463,-0.829,0.094,0.094,3.137,0.693,0.094,0.463,18.356,1.57,0.094,0.278,2.676,0.14,0.14,3.46,0.186,0.094,1.247,1.247,2.123,1.293,5.812,0.186,0.463,0.417,0.186,0.094,0.094,2.861,0.739,0.324,0.204,1.385,0.186,0.14,0.204,0.758,0.463,0.232,0.324,0.324,0.37,0.739,0.14,0.048,0.094,0.14,0.186,0.573,0.647,0.186,2.215,0.186,0.186,0.324,0.786,0.186,0.14,0.094,25.735,0.094,0.048,-0.644,0.186,0.094,0.26,0.37,0.463,0.048,0.14,0.14,0.186,0.832,0.094,0.14,0.186,7.472,0.094,0.324,0.094,0.14,-0.367,0.37,0.463,0.14,0.324,0.048,0.232,0.186,0.075,0.324,0.278,0.37,0.601,0.832,0.048,0.057,0.14,0.186,0.37,1.062,-0.552,0.048,-0.552,0.094,0.601,0.094,-0.321,-0.367,0.075,0.186,0.232,0.094,0.14,0.324,0.417,0.232,1.57,0.14,0.14,0.186,0.601,-0.321,-0.321,0.232,0.232,0.417,0.232,0.094,0.232,0.37,0.14,0.094,0.14,0.324,0.14,0.232,0.324,0.786,1.523,0.094,0.186,0.094,0.324,0.417,-0.321,0.14,0.002,4.152,0.14,1.201,1.477,0.278,0.186,0.647,-0.275,0.186,0.186,0.998,0.094,0.002,0.168,0.094,0.048,0.094,0.37,0.002,0.02,0.112,-0.321,-0.321,-0.321,-0.321,0.232,-0.321,0.048,0.14,-0.321,0.048,-0.321,0.048,0.14,0.601,-0.321,-0.321,0.186,0.048,0.094,0.463,0.186,-0.321,0.37,0.094,-0.321,0.555,0.14,0.324,0.417,0.094,0.075,-0.321,0.02,-0.017,0.002,0.094,0.647,0.186,0.02,0.094,0.334,0.002,0.048,0.14,0.324,0.832,0.14,0.048,0.002,0.094,0.048,-0.045,-0.045,0.002,0.186,-0.321,-0.321,0.048,-0.321,0.14,0.278,0.555,0.094,0.094,0.37,0.002,0.094,0.232,-0.321,0.278,0.094,0.075,0.601,-0.321,0.094,0.14,0.14,0.094,0.324,0.094,0.278,0.37,0.278,0.094,0.186,-0.321,0.37,-0.321,4.521,-0.321,-0.321,-0.091,0.324,0.094,0.002,-0.321,0.094,0.094,0.37,-0.321,0.278,0.048,-0.321,0.094,0.048,1.754,0.14,0.14,-0.321,0.094,0.832,0.278,0.232,-0.321,0.075,0.186,0.094,0.14,0.278,0.14,2.676,0.094,-0.321,-0.321,-0.321,0.094,0.094,-0.321,0.075,-0.045,0.048,0.048,0.739,0.094,1.201,0.048,0.094,-0.321,-0.321,0.048,0.232,0.14,0.048,-0.321,0.472,0.232,4.844,0.186,0.048,0.37,0.002,0.048,0.048,0.232,0.232,0.14,0.048,0.14,0.094,0.094,0.324,0.647,0.094,0.002,0.094,0.186,0.048,0.048,0.094,-0.017,0.112,0.37,0.14,-0.321,0.232,0.094,0.14,0.463,0.232,0.232,0.37,0.14,0.324,0.186,0.094,0.37,-0.045,0.094,0.832,0.094,0.048,0.002,0.094,0.048,0.14,0.038,0.14,0.048,0.14,0.048,0.14,0.048,0.048,0.048,0.14,-0.321,-0.321,0.094,0.14,0.048,0.112,0.094,0.048,0.048,-0.321,1.57,0.048,0.14,0.232,0.37,0.048,0.048,-0.321,0.14,0.186,0.555,0.075,0.048,0.14,0.048,0.14,0.048,0.094,0.278,0.048,0.002,0.094,0.417,-0.321,0.048,0.048,0.37,0.186,0.37,0.832,1.201,0.186,0.002,0.048,0.094,-0.321,0.14,0.417,0.186,0.463,0.048,0.094,-0.321,0.232,0.417,-0.321,0.094,0.048,0.232,0.232,0.37,0.14,0.186,0.14,0.094,0.14,0.075,0.14,0.324,0.324,0.37,0.048,0.094,0.37,0.739,-0.321,0.094,0.14,0.509,4.521,0.14,0.232,0.232,0.232,-0.321,0.094,-0.321,0.14,2.676,-0.321,-0.321,0.14,0.14,0.463,0.786,0.14,0.048,0.14,0.048,0.14,0.324,0.324,-0.321,0.14,0.509,0.97,1.431,2.492,0.048,0.048,0.463,0.278,0.094,-0.321,0.048,-0.321,0.048,0.509,0.075,0.14,0.048,0.186,0.094,-0.321,0.518,0.094,0.094,0.048,0.14,0.048,-0.367,0.048,0.048,0.14,-0.321,0.094,-0.321,-0.045,0.048,0.094,1.062,-0.321,0.094,0.048,0.232,0.048,0.048,0.14,0.094,-0.045,0.048,0.094,0.048,0.14,0.186,0.048,0.14,0.278,-0.321,-0.321,0.37,0.048,0.094,0.186,0.048,-0.321,0.14,0.14,0.168,0.094,0.048,0.186,0.048,0.14,-0.321,0.14,0.463,0.094,0.048,0.094,0.094,0.048,0.14,0.048,0.186,-0.321,0.232,0.14,0.094,0.048,0.094,0.094,0.278,0.048,0.14,0.14,-0.211,0.048,0.14,1.016,0.14,0.186,0.14,0.094,-0.321,0.094,0.509,0.002,0.094,0.14,-0.321,-0.321,0.048,0.37,0.509,0.094,0.14,0.048,0.186,0.278,0.417,0.048,0.37,0.048,0.048,0.048,2.676,0.048,0.186,0.048,0.094,0.278,0.924,0.029,0.048,-0.137,-0.321,-0.109,0.048,0.048,-0.321,0.048,0.14,-0.275,-0.321,0.094,-0.321,0.186,0.324,0.14,-0.321,0.14,0.048,0.094,0.094,0.094,0.002,0.186,0.048,0.048,0.094,0.37,0.14,0.131,4.521,-0.321,0.186,0.048,0.463,-0.321,0.002,0.186,0.37,0.832,0.186,0.094,0.832,6.642,0.14,0.527,0.094,-0.321,0.094,0.048,0.048,0.094,0.14,0.094,0.048,0.14,0.647,0.048,0.048,-0.321,0.232,0.094,0.14,0.048,0.094,-0.321,-0.321,0.14,0.14,0.186,0.131,0.048,0.094,0.094,0.232,0.048,0.048,0.14,0.002,0.14,0.094,-0.229,0.048,0.002,0.002,0.048,0.094,0.075,0.14,0.048,-0.321,0.048,0.832,0.324,0.14,0.048,-0.063,0.14,0.011,0.214,0.14,0.14,0.094,0.37,0.002,0.094,0.002,0.048,0.048,-0.183,-0.164,0.278,-0.045,0.002,0.094,-0.257,0.14,0.186,0.094,-0.321,0.048,0.002,0.37,0.048,0.094,-0.275,0.048,0.048,0.14,0.14,0.094,-0.321,0.094,0.14,0.048,-0.321,0.37,0.647,0.094,0.37,-0.183,0.14,-0.229,-0.137,0.048,0.048,-0.321,-0.275,0.094,0.048,0.14,0.232,0.112,0.398,-0.017,0.14,0.647,0.048,0.048,0.463,0.832,0.37,0.832,0.214,0.186,0.149,0.057,0.527,0.094,0.14,0.14,0.186,0.37,-0.321,0.186,-0.321,0.057,-0.321,0.121,0.186,0.103,0.094,0.14,0.002,0.066,0.186,0.278,1.385,0.048,-0.257,0.14,-0.321,-0.321,0.204,0.094,0.094,0.094,-0.321,0.14,-0.321,0.094,0.14,0.278,0.14,0.186,0.14,0.094,0.002,-0.321,0.094,-0.183,-0.321,0.002,0.048,0.14,0.186,0.094,0.214,-0.321,0.094,0.214,-0.321,0.075,0.094,0.14,0.002,0.094,-0.321,-0.321,0.186,0.094,0.684,-0.321,0.094,0.048,0.094,0.075,0.324,0.094,0.094,0.094,0.324,-0.321,0.066,0.002,0.002,0.278,0.094,0.057,0.094,-0.275,-0.321,0.186,-0.045,0.057,-0.321,0.002,0.002,0.14,0.14,0.048,0.002,0.094,0.463,0.094,0.186,0.214,0.048,-0.045,0.14,0.14,0.048,0.14,-0.183,0.094,0.278,0.002,0.601,0.094,0.37,0.832,0.048,-0.275,0.002,-0.321,0.094,0.14,0.002,0.048,0.14,0.094,0.186,0.14,0.002,1.293,0.186,0.14,0.324,0.094,0.14,0.094,0.14,-0.045,0.14,-0.275,0.048,-0.118,-0.229,0.527,-0.045,0.527,0.463,-0.275,0.048,-0.164,0.075,-0.035,-0.229,-0.321,0.278,0.232,0.232,-0.017,0.002,0.002,0.048,0.002,0.186,-0.257,0.14,0.048,-0.321,0.094,0.555,-0.137,-0.321,0.112,0.002,0.048,0.094,0.094,0.14,0.048,0.278,1.016,0.002,0.075,0.14,-0.321,0.14,0.048,-0.045,-0.017,0.435,0.251,0.002,0.02,0.02,-0.367,0.048,0.601,0.37,0.048,-0.045,0.048,0.232,0.094,0.278,0.075,0.048,-0.367,0.094,0.14,0.048,0.002,0.186,0.14,-0.321,-0.367,-0.229,0.048,0.094,0.232,0.14,0.094,-0.22,-0.367,0.463,0.094,0.324,0.186,-0.321,0.186,0.601,-0.367,0.278,0.463,0.02,0.094,0.186,-0.321,0.002,0.186,0.14,-0.321,0.048,-0.164,-0.183,0.186,0.002,0.057,-0.321,-0.321,0.048,0.094,-0.183,0.14,0.094,0.048,0.048,0.14,0.186,0.075,0.14,0.057,0.094,0.417,0.094,0.186,-0.921,-0.183,-0.183,0.094,0.094,0.075,0.075,-0.321,0.14,0.186,-0.045,0.002,-0.017,0.094,-0.183,-0.035,0.002,-0.045,0.075,0.048,0.048,0.094,0.002,-0.275,-0.008,0.002,-0.321,-0.229,0.048,-0.275,0.002,0.002,-0.183,0.832,0.002,0.002,0.048,-0.183,0.048,0.002,0.002,0.186,0.278,0.048,-0.045,0.048,0.048,0.094,0.232,0.14,-0.321,-0.229,0.048,0.002,-0.045,0.075,0.048,0.094,0.186,0.002,0.002,0.186,0.094,0.094,-0.045,-0.321,0.048,-0.045,0.186,0.186,0.094,0.14,0.048,0.048,0.232,1.662,0.002,0.048,0.048,0.048,0.14,0.094,0.048,-0.045,0.048,-0.321,0.094,-0.229,0.02,-0.183,0.048,0.232,0.094,-0.229,-0.275,0.048,0.048,0.048,0.14,0.094,0.14,-0.275,-0.063,0.14,0.14,0.094,-0.321,0.278,0.094,0.048,0.094,0.094,0.14,0.555,1.754,0.14,0.14,0.112,0.002,0.094,0.048,0.121,0.14,0.075,0.832,0.075,0.094,0.02,0.048,0.048,0.186,0.002,0.278,0.075,-0.045,0.075,0.094,0.002,0.048,0.048,0.094,-0.072,-0.321,0.37,0.186,0.002,-0.321,0.186,0.14,0.075,0.048,0.094,-0.275,1.201,0.094,-0.137,-0.183,0.048,-0.238,0.075,0.075,0.14,-0.229,-0.275,-0.367,-0.321,0.075,0.075,0.094,0.048,0.048,-0.128,0.094,-0.321,0.002,-0.321,0.048,0.14,0.048,0.14,0.601,0.002,0.048,0.094,-0.321,0.14,0.094,0.232,0.075,-1.013,-0.229,0.278,0.002,0.232,-0.137,0.14,0.186,-0.164,-0.045,0.002,0.232,0.509,0.094,0.232,-0.229,0.324,0.14,-0.275,0.232,-0.321,0.14,0.14,0.094,0.094,0.094,0.094,0.094,-0.552,0.075,3.137,0.832,0.389,0.942,0.278,0.075,0.14,0.232,0.693,1.938,0.186,0.002,0.232,0.37,0.094,-0.367,-0.321,0.186,0.186,1.016,0.37,-0.183,7.288,0.094,0.14,0.186,0.186,0.832,0.168,0.186,0.075,0.14,0.094,0.37,0.14,0.14,0.37,0.14,0.186,-0.275,-0.229,0.14,1.108,0.168,0.094,-0.321,0.048,-0.413,0.048,1.201,0.278,0.075,0.094,1.016,-0.321,0.14,0.232,-0.46,0.186,-0.183,0.214,-0.321,0.094,0.168,0.048,-0.275,-0.257,-0.321,-0.229,0.278,0.324,0.37,0.14,0.048,0.14,0.324,0.324,0.168,-0.413,0.14,-0.275,0.094,0.14,0.048,0.324,-0.238,0.048,0.094,0.186,0.14,-0.257,0.094,-0.229,0.075,0.002,0.186,-0.552,0.168,0.048,-0.229,-0.118,0.14,0.048,0.094,0.094,0.094,0.232,0.075,0.37,0.094,0.048,0.002,0.094,-0.045,-0.229,0.14,-0.229,0.048,-0.137,-0.238,0.14,0.094,0.417,-0.321,-0.045,0.14,0.232,-0.275,0.075,-0.367,-0.413,-0.183,-0.413,-0.229,0.094,0.14,0.094,0.075,-0.183,0.094,0.048,0.094,-0.183,0.094,0.094,0.14,0.14,0.094,0.094,-0.275,0.232,-0.321,0.14,-0.367,0.094,-0.506,0.094,0.14,-0.413,0.094,0.094,-0.183,-0.413,0.832,0.075,0.14,0.048,0.112,0.186,-0.506,0.075,0.048,0.555,0.048,0.048,-0.321,0.048,0.075,0.02,0.094,-0.275,0.048,0.14,0.094,0.232,-0.367,-0.275,-0.321,0.186,-0.367,-0.321,-0.275,-0.275,-0.257,0.048,0.14,-0.321,0.14,0.324,0.14,0.14,0.075,-0.275,0.094,0.14,0.057,0.094,0.278,0.647,-0.229,-0.229,0.048,0.075,0.14,0.186,0.14,0.832,0.085,0.14,0.14,0.14,0.002,-0.045,0.14,0.112,0.048,-0.552,0.048,0.075,0.149,0.555,0.075,0.693,0.075,0.094,0.509,0.075,0.186,0.094,0.048,0.14,0.168,0.094,0.075,0.094,-0.229,-0.552,-0.33,0.278,-0.257,0.048,0.094,0.094,0.786,0.094,-0.321,0.37,-0.275,0.094,0.075,0.14,0.232,0.094,0.094,0.26,0.094,0.112,0.832,0.112,0.094,0.14,0.278,0.463,0.463,0.463,0.14,0.048,9.133,-0.321,0.232,0.278,0.14,0.186,0.186,-0.552,0.186,0.463,0.094,0.26,0.094,-0.035,0.14,0.324,0.094,0.121,0.463,0.37,-0.275,0.094,0.094,-0.137,-0.137,0.324,0.832,0.094,0.324,0.094,1.219,0.204,0.112,0.14,0.168,-0.321,0.149,0.075,-0.552,0.075,0.094,0.094,-0.349,0.463,0.37,-0.238,-0.552,-0.257,0.002,0.204,0.278,-0.321,0.204,0.232,0.094,0.14,0.075,0.048,-0.294,0.112,0.094,0.186,0.14,0.186,0.186,-0.552,0.241,0.214,0.186,0.832,0.186,0.094,0.094,0.112,0.094,0.186,0.094,0.297,0.14,0.094,0.075,0.186,0.186,0.14,0.186,0.094,0.37,0.417,0.186,0.094,0.094,-0.552,0.14,0.14,0.14,0.094,1.108,-0.552,0.832,1.57,0.186,0.37,0.094,0.14,-0.321,-0.321,0.094,0.832,0.14,0.186,0.324,1.57,0.094,0.094,0.112,0.186,-0.367,0.075,-0.137,-0.367,0.094,0.14,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],"per_month":52.06,"n":3332,"win":79.0,"avg":24.8,"med":11.2}},"params":{"entry_slip":0.03,"exit_slip":0.05,"commission":0.013,"participation":0.75,"silent_loss":1.0,"silent":{"swing-trades":148,"day-trades":17}}};
-const $ = id => document.getElementById(id);
-const fmt = v => (v<0?'-$':'$') + Math.abs(Math.round(v)).toLocaleString();
-
-// deterministic RNG so the same inputs always give the same projection
-let _s = 12345;
-const rnd = () => { _s = (_s*1664525 + 1013904223) % 4294967296; return _s/4294967296; };
-
-function cfg(){
-  return {pf:+$('pf').value||0, follow:$('follow').value, part:+$('part').value,
-          src:$('src').value, hair:(+$('hair').value||0)/100,
-          psw:(+$('psw').value||0)/100, pdy:(+$('pdy').value||0)/100};
-}
-
-// Model the reporting bias directly: he only posts outcomes he chooses to post, so
-// knock N points off the win rate by turning that share of sampled winners into losers.
-function draw(info, hair){
-  const pool = info.pool;
-  let v = pool[(rnd()*pool.length)|0];
-  if(hair > 0 && v > 0 && rnd() < hair){
-    const losers = info.losers;
-    v = losers.length ? losers[(rnd()*losers.length)|0] : -1;
-  }
-  return v;
-}
-function cats(c){ return c.follow==='both' ? ['swing','day'] : [c.follow]; }
-
-function kellyOf(pool){
-  const pos = pool.filter(x=>x>0), neg = pool.filter(x=>x<=0).map(x=>-x);
-  if(!pos.length || !neg.length) return null;
-  const W = pos.reduce((a,b)=>a+b,0)/pos.length,
-        L = neg.reduce((a,b)=>a+b,0)/neg.length,
-        p = pos.length/pool.length;
-  return (p*W - (1-p)*L)/(W*L);
-}
-
-function simulate(c){
-  const d = SIM[c.src], months = 6, runs = 2000;
-  for(const k of ['swing','day']) if(d[k] && !d[k].losers) d[k].losers = d[k].pool.filter(x=>x<=0);
-  const use = cats(c);
-  const paths = [];
-  for(let r=0; r<runs; r++){
-    let bal = c.pf; const path = [bal];
-    for(let m=0; m<months; m++){
-      for(const cat of use){
-        const info = d[cat]; if(!info || !info.pool.length) continue;
-        const pct = cat==='swing' ? c.psw : c.pdy;
-        const stake = bal * pct;                    // re-sized each month as the account moves
-        let n = info.per_month * c.part;
-        n = Math.floor(n) + (rnd() < (n % 1) ? 1 : 0);
-        for(let i=0; i<n; i++){
-          const ret = draw(info, c.hair);
-          bal += stake * ret;
-          if(bal <= 0){ bal = 0; break; }
-        }
-        if(bal <= 0) break;
-      }
-      path.push(bal);
-    }
-    paths.push(path);
-  }
-  const pct = (arr,q)=>{ const s=[...arr].sort((a,b)=>a-b); return s[Math.min(s.length-1, Math.floor(q*s.length))]; };
-  const band = [];
-  for(let m=0; m<=months; m++){
-    const col = paths.map(p=>p[m]);
-    band.push({p10:pct(col,0.10), p50:pct(col,0.50), p90:pct(col,0.90)});
-  }
-  const finals = paths.map(p=>p[months]);
-  return {band, finals,
-          lossProb: 100*finals.filter(v=>v<c.pf).length/finals.length,
-          bustProb: 100*finals.filter(v=>v<=c.pf*0.5).length/finals.length};
-}
-
-function drawFan(band, start){
-  const W=640,H=210,pad=6;
-  const all = band.flatMap(b=>[b.p10,b.p90]).concat([start]);
-  const lo=Math.min(...all), hi=Math.max(...all), rng=(hi-lo)||1;
-  const x = i => pad + i*(W-2*pad)/(band.length-1);
-  const y = v => H-pad - (v-lo)/rng*(H-2*pad);
-  const up = band.map((b,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(b.p90).toFixed(1)}`).join('');
-  const dn = band.map((b,i)=>`${x(band.length-1-i).toFixed(1)},${y(band[band.length-1-i].p10).toFixed(1)}`).join('L');
-  const mid= band.map((b,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(b.p50).toFixed(1)}`).join('');
-  $('fan').innerHTML =
-    `<path d="${up}L${dn}Z" fill="var(--acc)" opacity=".22"></path>`+
-    `<line x1="${pad}" y1="${y(start).toFixed(1)}" x2="${W-pad}" y2="${y(start).toFixed(1)}"
-       stroke="var(--mut)" stroke-width="1" stroke-dasharray="4 4"></line>`+
-    `<path d="${mid}" fill="none" stroke="var(--acc)" stroke-width="2.5"></path>`;
-}
-
-function render(){
-  const c = cfg(); const d = SIM[c.src]; const use = cats(c);
-  // stake sizes + expected trade counts
-  $('stakes').innerHTML = use.map(cat=>{
-    const pct = cat==='swing'?c.psw:c.pdy, n = d[cat].per_month*c.part*6;
-    return `<div class="stake"><div class="k">Per ${cat} trade</div>
-      <div class="v">${fmt(c.pf*pct)}</div>
-      <div class="s">${(pct*100).toFixed(1)}% of account · ~${Math.round(n)} trades in 6 mo</div></div>`;
-  }).join('') + `<div class="stake"><div class="k">Most at risk at once</div>
-      <div class="v">${fmt(use.reduce((a,cat)=>a+c.pf*(cat==='swing'?c.psw:c.pdy),0))}</div>
-      <div class="s">if one of each is open</div></div>`;
-
-  // Kelly reality check
-  const ks = use.map(cat=>({cat, k:kellyOf(d[cat].pool)})).filter(o=>o.k!=null);
-  const over = ks.filter(o=>o.k>1);
-  $('kelly').innerHTML = over.length ? `<div class="warn"><b>Reality check.</b>
-    On these numbers the Kelly criterion — the mathematically "optimal" bet size — comes out at
-    ${ks.map(o=>`${(o.k*100).toFixed(0)}% for ${o.cat}`).join(' and ')}.
-    Kelly is telling you to stake <em>more than your entire account on every trade</em>, which is
-    impossible. That is not an opportunity; it is the clearest sign these self-reported results are
-    better than reality. Treat the projection below as a best case, and size well under it.</div>` : '';
-
-  const r = simulate(c);
-  const f = r.band[r.band.length-1];
-  const roi = v => `${((v/c.pf-1)*100).toFixed(0)}%`;
-  $('outcome').innerHTML = `
-    <div class="oc"><div class="k">Bad case (10th pct)</div>
-      <div class="v ${f.p10>=c.pf?'pos':'neg'}">${fmt(f.p10)}</div><div class="k">${roi(f.p10)}</div></div>
-    <div class="oc mid"><div class="k">Median</div>
-      <div class="v ${f.p50>=c.pf?'pos':'neg'}">${fmt(f.p50)}</div><div class="k">${roi(f.p50)}</div></div>
-    <div class="oc"><div class="k">Good case (90th pct)</div>
-      <div class="v ${f.p90>=c.pf?'pos':'neg'}">${fmt(f.p90)}</div><div class="k">${roi(f.p90)}</div></div>
-    <div class="oc"><div class="k">Chance you end down</div>
-      <div class="v ${r.lossProb>35?'neg':''}">${r.lossProb.toFixed(0)}%</div>
-      <div class="k">lose half+: ${r.bustProb.toFixed(0)}%</div></div>`;
-  drawFan(r.band, c.pf);
-
-  // Expectancy is the honest tell: state it, and why a low "chance you end down" is not reassurance.
-  const use2 = cats(c), exp = [];
-  for(const cat of use2){
-    const info = d[cat]; if(!info) continue;
-    const pool = info.pool, losers = info.losers || pool.filter(x=>x<=0);
-    const pos = pool.filter(x=>x>0);
-    const p = Math.max(0, pos.length/pool.length - c.hair);
-    const W = pos.length ? pos.reduce((a,b)=>a+b,0)/pos.length : 0;
-    const L = losers.length ? -losers.reduce((a,b)=>a+b,0)/losers.length : 0;
-    exp.push({cat, e:(p*W - (1-p)*L)*100, p:p*100, W:W*100, L:L*100,
-              n:Math.round(info.per_month*c.part*6)});
-  }
-  $('expl').innerHTML = exp.map(e=>
-    `<b>${e.cat}</b>: ${e.p.toFixed(0)}% win × +${e.W.toFixed(0)}% avg win vs ${e.L.toFixed(0)}% avg loss
-     = <b>${e.e>=0?'+':''}${e.e.toFixed(0)}% expected per trade</b>, over ~${e.n} trades`).join('<br>')
-    + `<br><span class="mut">A positive edge repeated a few hundred times almost never loses — which is
-       exactly why the "chance you end down" figure above is so low. That number reflects how good his
-       <em>posted</em> numbers are, not how risky options trading actually is. If his real average win is
-       closer to his average loss, this entire projection collapses. Size for the possibility that it does.</span>`;
-}
-
-document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.presets button').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  $('psw').value = b.dataset.sw; $('pdy').value = b.dataset.dy; render();
-}));
-['pf','psw','pdy','follow','part','src','hair'].forEach(id=>{
-  $(id).addEventListener('input', ()=>{ _s=12345; render(); });
-  $(id).addEventListener('change', ()=>{ _s=12345; render(); });
-});
-render();
-</script></body></html>
+<footer>Research and analysis only &mdash; not financial advice. Every figure is measured from
+historical data and describes what already happened, not what will. Options trading can lose the
+entire amount invested.</footer>
+</div></body></html>

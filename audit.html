@@ -1,0 +1,484 @@
+<title>MDT Signal Audit</title>
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--body);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px 96px}
+h1,h2,h3,.disp{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;color:var(--ink);text-wrap:balance;font-weight:600}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 14px}
+h2{font-size:clamp(1.4rem,2.7vw,1.85rem);line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h3{font-size:1.06rem;margin:0 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+a{color:var(--accent)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 10px;font-family:system-ui,sans-serif}
+header{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.12rem;color:var(--muted);max-width:60ch;margin:0}
+.meta{margin-top:26px;font-size:.82rem;color:var(--faint);display:flex;gap:18px;flex-wrap:wrap}
+.meta b{color:var(--body);font-weight:600}
+section{padding:56px 0;border-bottom:1px solid var(--line-soft)}
+section:last-of-type{border-bottom:none}
+.sub{color:var(--muted);margin:0 0 26px;max-width:66ch}
+
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;padding:26px 28px;margin:34px 0 0}
+.verdict h3{font-size:1.15rem;margin-bottom:10px}
+.verdict p:last-child{margin-bottom:0}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin:30px 0}
+.stat{background:var(--surface);padding:18px 20px}
+.stat .k{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.stat .v{font-size:1.6rem;color:var(--ink);font-weight:600;margin-top:5px;letter-spacing:-.02em}
+.stat .n{font-size:.76rem;color:var(--muted);margin-top:2px}
+
+.tw{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:560px}
+th{text-align:right;padding:11px 14px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--raise)}
+th:first-child,td:first-child{text-align:left}
+td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line-soft);color:var(--body);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.name{color:var(--ink);font-weight:600}
+tbody tr.hl td{background:var(--accent-soft)}
+.pos{color:var(--pos);font-weight:600}
+.neg{color:var(--neg);font-weight:600}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.7rem;font-weight:600;letter-spacing:.03em;border:1px solid}
+.pill.go{color:var(--pos);border-color:var(--pos)}
+.pill.no{color:var(--neg);border-color:var(--neg)}
+.pill.mid{color:var(--warn);border-color:var(--warn)}
+
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:30px;margin-top:26px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:22px;padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:26px}
+label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:9px}
+input[type=number]{width:100%;padding:11px 13px;font-size:1.06rem;background:var(--bg);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);margin-top:6px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rv{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.06rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.rn{font-size:.74rem;color:var(--muted);margin-top:3px}
+.bar{position:relative;height:22px;background:var(--grid);border-radius:2px;min-width:120px}
+.bar i{position:absolute;top:0;bottom:0;background:var(--accent);opacity:.28;border-radius:2px}
+.bar b{position:absolute;top:-1px;bottom:-1px;width:2px;background:var(--accent)}
+.foot{font-size:.82rem;color:var(--muted);margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.note{font-size:.85rem;color:var(--muted);border-left:2px solid var(--line);padding-left:15px;margin:20px 0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px}
+.spec{list-style:none;padding:0;margin:16px 0 0}
+.spec li{padding:11px 0;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:20px;font-size:.92rem}
+.spec li:last-child{border-bottom:none}
+.spec span:first-child{color:var(--muted)}
+.spec span:last-child{color:var(--ink);font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right}
+.spark{display:flex;align-items:flex-end;gap:2px;height:56px;margin-top:8px}
+.spark i{flex:1;min-width:3px;border-radius:1px 1px 0 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Independent audit &middot; ThetaData 1-minute options &middot; 17 August 2026</p>
+  <h1>What MDT&rsquo;s signals are actually worth</h1>
+  <p class="lede">Five Discord channels, 2,155 alerts, every one re-priced against real option prints
+  rather than the numbers posted in chat. Each channel optimised separately, then tested on data the
+  search never saw. This is what survived.</p>
+  <div class="meta">
+    <span><b>2,155</b> alerts audited</span>
+    <span><b>4</b> channels priced</span>
+    <span><b>3.2</b> years of history</span>
+    <span><b>55,000</b> rule combinations tested</span>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">Correction issued</p>
+  <h2>The data is sound, and he is not making prices up</h2>
+  <p class="sub">An earlier version of this audit claimed half his exit prices were impossible. That
+  finding was wrong, and it is worth stating plainly before anything else.</p>
+  <div class="stats" id="valstats"></div>
+  <div class="verdict">
+    <h3>What the re-check found</h3>
+    <p>Every alert was matched to a contract and his quoted entry price tested against that
+    contract&rsquo;s own high&ndash;low range on the day. <b>98% of his entry quotes fall inside the
+    real range</b>, and we selected the nearest listed expiry 97% of the time &mdash; his
+    &ldquo;ticker and price only&rdquo; posts mean the front contract, which is what we priced. A true
+    same-day expiry only existed for 18% of those alerts, because most tickers list weekly expiries,
+    not daily ones.</p>
+    <p>On exits: <b>79% of his quoted exit prices did trade that day.</b> Only 21% are above the
+    contract&rsquo;s high and genuinely impossible. The gap is timing, not invention &mdash; he quotes
+    the day&rsquo;s best print, posted at a moment when the contract sat lower. The clearest case was
+    MU on 13 August: he posted $11.35&nbsp;&rarr;&nbsp;$34.00, the earlier audit called it fabricated
+    because the price at his post was $17.30, but the contract&rsquo;s actual high that day was
+    <b>$42.53</b>. His number was real.</p>
+    <p style="margin-bottom:0">What this changes: his <em>credibility</em>, not the strategy results.
+    Every backtest below walks real 1-minute bars from a verified entry and never uses a posted exit.
+    A follower still captures a median <b>+45%</b> where he quotes <b>+75%</b> &mdash; that is the
+    honest number to plan around.</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Channel by channel</p>
+  <h2>Each feed optimised on its own, then tested on data it never saw</h2>
+  <p class="sub">Every channel got its own search over entry window, premium cap, calls-versus-puts
+  and exit rule &mdash; roughly 55,000 combinations in total. Rules were chosen on the first 70% of
+  each channel&rsquo;s history and scored on the final 30%, which selection never touched. Lottery
+  rules were excluded up front: a rule needs a 30% win rate and cannot have three trades supplying
+  more than 60% of its profit.</p>
+  <div class="tw"><table id="pctable"></table></div>
+  <p class="note">The column that matters is <b>all viable rules</b>. On volume-alerts, the entire
+  field of 21,267 rules averages <b>+1.71%</b> per trade on the holdout &mdash; you did not need to
+  pick the right one. On swing and day-trades, both the best decile and the field are negative out of
+  sample. That is the difference between an edge and a good backtest.</p>
+  <div class="tw" style="margin-top:26px"><table id="chtable"></table></div>
+</section>
+
+<section>
+  <p class="eyebrow">Trade frequency</p>
+  <h2>The filter was costing you two thirds of your trades</h2>
+  <p class="sub">Earlier versions of this audit ran a first-10-minutes, sub-$5 filter inherited from
+  an old result. On the holdout, loosening it raises both frequency <em>and</em> return &mdash; the
+  filter was removing good trades. Measured on the holdout period only.</p>
+  <div class="tw"><table id="brtable"></table></div>
+  <p class="note">This is one trade per day by construction &mdash; the first alert after the open,
+  nothing else. Volume-alerts tops out near 3.7 a week including puts. If you are seeing five a week
+  you are counting other channels, and those did not survive the holdout test.</p>
+</section>
+
+<section>
+  <p class="eyebrow">The moonshots</p>
+  <h2>The +500% calls are real. They are also unpredictable.</h2>
+  <p class="sub">Across all 2,155 audited alerts, measured to expiry.</p>
+  <div class="stats" id="moonstats"></div>
+  <div class="two">
+    <div>
+      <h3>Nothing at entry predicts them</h3>
+      <p>Premium paid, time of day, calls versus puts, market direction, VIX level &mdash; every
+      feature tested returned a lift between 0.7&times; and 1.2&times; against the 10.4% base rate.
+      Cheap contracts are <em>not</em> more likely to run. There is no filter that finds them.</p>
+    </div>
+    <div>
+      <h3>But speed, once you are in, does</h3>
+      <p>The only real signal is how fast it moves in the first ten minutes.</p>
+      <div class="tw"><table id="earlytable"></table></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">The strategy</p>
+  <h2 id="stratTitle"></h2>
+  <p class="sub">One trade a day: the first alert he posts in volume-alerts after the 9:30 open,
+  taken only if it is a call. No time-of-day filter, no price cap &mdash; every attempt to narrow the
+  entry cost more in missed trades than it gained in quality. His puts are skipped: including them
+  adds 1.9 trades a month and costs 2.4 points of monthly return.</p>
+  <div class="two">
+    <div>
+      <ul class="spec" id="stratspec"></ul>
+    </div>
+    <div>
+      <h3>Why trust it</h3>
+      <p>It holds in every period tested independently, and the holdout is <em>better</em> than the
+      window it was chosen on &mdash; the opposite of what an overfit rule does.</p>
+      <div class="tw"><table id="pertable"></table></div>
+      <p style="margin-top:14px">Every calendar year stands on its own too.</p>
+      <div class="tw"><table id="yrtable"></table></div>
+    </div>
+  </div>
+
+</section>
+
+<section>
+  <p class="eyebrow">Projection</p>
+  <h2>What your account does</h2>
+  <p class="sub">Enter a starting balance. Outcomes are resampled from the 266 real audited trades,
+  4,000 simulated runs per horizon, compounding at your chosen position size.</p>
+  <div class="calc">
+    <div class="controls">
+      <div>
+        <label for="amt">Starting capital</label>
+        <input type="number" id="amt" value="10000" min="500" step="500">
+      </div>
+      <div>
+        <label for="size">Position size &mdash; <span id="sizeV">25</span>% per trade</label>
+        <input type="range" id="size" min="5" max="60" step="5" value="25">
+        <div class="rn" id="sizeNote"></div>
+      </div>
+      <div>
+        <label for="freq">Alerts per month &mdash; <span id="freqV">14</span></label>
+        <input type="range" id="freq" min="2" max="18" step="0.5" value="14">
+        <div class="rn">Full-record average is 14.0 a month, about 3.2 a week.</div>
+      </div>
+    </div>
+    <div class="tw"><table id="calctable"></table></div>
+    <p class="foot">Median is the middle outcome, not a promise. The p25&ndash;p75 band holds half of
+    all simulated runs &mdash; a quarter of the time you finish below the p25 figure. Assumes 2%
+    round-trip slippage. Deliberately stops at twelve months: beyond that, compounding arithmetic
+    stops being a forecast, because the alert flow, the edge and your own position size all change.</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Sensitivity</p>
+  <h2>The two dials that decide everything</h2>
+  <div class="two">
+    <div>
+      <h3>Slippage &mdash; the unmeasured input</h3>
+      <p>Every figure on this page assumes 2% round trip. It has never been measured on your fills,
+      and it is the single largest source of error here.</p>
+      <div class="tw"><table id="costtable"></table></div>
+    </div>
+    <div>
+      <h3>Position size</h3>
+      <p>Growth keeps rising to about 75% of balance because the stop bounds each loss near 20% &mdash;
+      but that assumes every stop fills. 25% is the recommendation: it gives up some growth to survive
+      a stop that gaps.</p>
+      <div class="tw"><table id="sizetable"></table></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Track record</p>
+  <h2>Every month the rule has existed</h2>
+  <p class="sub">Compounded at 25% per trade. Bars show the month&rsquo;s result; the rule goes quiet
+  for whole months when he posts nothing that qualifies.</p>
+  <div class="spark" id="spark"></div>
+  <div class="tw" style="margin-top:22px"><table id="monthtable"></table></div>
+  <p class="note">Nine of the last twelve months had three or fewer qualifying alerts. The setup is
+  drying up: his median premium has risen from $0.65 to $2.70 since 2023 and he posts later in the
+  session than he used to. Plan on roughly four trades a month, not seven.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Limits</p>
+  <h2>What this cannot tell you</h2>
+  <div class="two">
+    <div>
+      <p><b>Slippage is unmeasured.</b> At 2% the strategy returns about 9% a month. At 5% it returns
+      roughly 4%. Twenty logged fills would settle it, and nothing else on this page moves the answer
+      as much.</p>
+      <p><b>He does not post every day.</b> There is a first alert on 622 of 831 weekdays &mdash;
+      75% of trading days. If he posted one every session the same rule would return about
+      <b>+25% a month</b> instead of +16%. That missing quarter is the largest remaining lever on
+      this strategy and it is entirely his, not yours.</p>
+    </div>
+    <div>
+      <p><b>$150,000 in three months is not reachable.</b> That needs 15&times; in a quarter. This
+      compounds about 1.3&times;. The same edge reaches it in roughly two and a half years from
+      $20,000 &mdash; the timeline was the error, not the strategy.</p>
+      <p><b>Past behaviour, not a forecast.</b> Every number is resampled from what already happened.
+      A signal service can change or stop at any time.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<script type="application/json" id="D">{"validation":{"n":2176,"in_day":98,"in_window":90,"by_ch":{"mdt-idea":{"n":488,"in_day":97},"day-trades":{"n":346,"in_day":99},"volume-alerts":{"n":625,"in_day":98},"swing":{"n":717,"in_day":98}},"exit_day":79,"exit_upto":46,"exit_atpost":38,"exit_impossible":21,"claim_median":75,"achievable_median":45},"channels":[{"name":"swing-trades","n":703,"from":"2024-01-24","to":"2026-08-05","per_month":22.0,"calls":90,"med_prem":2.3,"med_clock":224,"med_peak":71,"hit25":71,"hit100":43,"hit500":10.1,"hit1000":3.4,"med_close":-1},{"name":"volume-alerts","n":622,"from":"2023-06-09","to":"2026-08-14","per_month":15.9,"calls":88,"med_prem":1.55,"med_clock":11,"med_peak":97,"hit25":79,"hit100":50,"hit500":10.8,"hit1000":3.5,"med_close":-20},{"name":"mdt-idea","n":484,"from":"2026-04-09","to":"2026-08-17","per_month":96.8,"calls":96,"med_prem":1.83,"med_clock":158,"med_peak":92,"hit25":76,"hit100":47,"hit500":13.8,"hit1000":5.2,"med_close":-6},{"name":"day-trades","n":346,"from":"2023-01-03","to":"2026-08-05","per_month":8.2,"calls":74,"med_prem":1.3,"med_clock":67,"med_peak":70,"hit25":75,"hit100":42,"hit500":5.5,"hit1000":1.2,"med_close":-39}],"strategy":{"filter":"the FIRST volume alert each day \u2014 calls only","target":0.75,"stop":-0.15,"tmax":3,"n":547,"win":0.4680073126142596,"geo":0.010733606007009344,"rr":2.0573331313685745,"avg_win":0.2379655567527655,"avg_loss":0.11566700264748403,"tpm":14.025641025641026,"per_week":3.2391780659679044,"frac":0.25,"monthly":0.16153625995014997},"breadth":[{"label":"first 10 min \u00b7 calls \u00b7 <$5","w0":0,"w1":10,"prem":5.0,"right":"C","permo":4.545454545454546,"n":50,"win":0.52,"geo":0.016421320956044427,"monthly":0.07684571405898244,"maxdd":0.22938145365245655},{"label":"first 20 min \u00b7 calls \u00b7 <$5","w0":0,"w1":20,"prem":5.0,"right":"C","permo":5.384615384615385,"n":70,"win":0.5142857142857142,"geo":0.022985785883342658,"monthly":0.13017057661512244,"maxdd":0.3084730012397845},{"label":"first 30 min \u00b7 calls \u00b7 <$5","w0":0,"w1":30,"prem":5.0,"right":"C","permo":6.769230769230769,"n":88,"win":0.5113636363636364,"geo":0.018782714019656588,"monthly":0.1342427076511925,"maxdd":0.343691432590326},{"label":"first 60 min \u00b7 calls \u00b7 <$5","w0":0,"w1":60,"prem":5.0,"right":"C","permo":8.846153846153847,"n":115,"win":0.48695652173913045,"geo":0.014646590595133846,"monthly":0.13726505794268573,"maxdd":0.4155290804322114},{"label":"any time \u00b7 calls \u00b7 <$5","w0":0,"w1":1000000000,"prem":5.0,"right":"C","permo":10.692307692307692,"n":139,"win":0.5035971223021583,"geo":0.014660309398571991,"monthly":0.16837585527836207,"maxdd":0.3695600750651453},{"label":"any time \u00b7 calls \u00b7 any px","w0":0,"w1":1000000000,"prem":null,"right":"C","permo":12.923076923076923,"n":168,"win":0.5178571428571429,"geo":0.013797153927641359,"monthly":0.193729991683409,"maxdd":0.34622280378520676},{"label":"any time \u00b7 calls+puts \u00b7 any px","w0":0,"w1":1000000000,"prem":null,"right":null,"permo":14.384615384615385,"n":187,"win":0.5026737967914439,"geo":0.01208219495035956,"monthly":0.18857627038994473,"maxdd":0.34622280378520653}],"sizing":[{"frac":0.05,"monthly":0.03447091390697854,"maxdd":0.0677693819330939},{"frac":0.1,"monthly":0.06793390777299368,"maxdd":0.13278665207837814},{"frac":0.15,"monthly":0.10031333495826744,"maxdd":0.19496242284053344},{"frac":0.2,"monthly":0.13153699294049326,"maxdd":0.2542366293853552},{"frac":0.25,"monthly":0.16153625995015042,"maxdd":0.3105757873513686},{"frac":0.33,"monthly":0.20682774976099183,"maxdd":0.3945977325274804},{"frac":0.4,"monthly":0.24355774690979315,"maxdd":0.46199161589671733},{"frac":0.5,"monthly":0.29103034303633657,"maxdd":0.5486075326955206}],"per_channel":{"volume-alerts":{"rho":0.15189250093899376,"top":0.020151190164505697,"all":0.01709949333599423,"verdict":"TRADEABLE","nrules":21267},"mdt-idea":{"rho":0.2055577560462224,"top":0.00043903490856802115,"all":-0.005713626045008031,"verdict":"TRADEABLE","nrules":9321},"swing-trades":{"rho":0.4372243171971436,"top":-0.003829442322899204,"all":-0.0065516876520773735,"verdict":"NO STABLE EDGE","nrules":11868},"day-trades":{"rho":0.40899786942589456,"top":-0.004535240412110273,"all":-0.00871522668459942,"verdict":"NO STABLE EDGE","nrules":12939}},"projection":{"1":{"trades":14,"p10":0.8887669523291116,"p25":0.9954775751244261,"median":1.1457154758982444,"p75":1.3316356456165286,"p90":1.540383483244395,"p_loss":0.25726666666666664},"2":{"trades":28,"p10":0.9192144659223904,"p25":1.088559622105757,"median":1.3307953815514095,"p75":1.6496136953272589,"p90":2.0203560884288954,"p_loss":0.16486666666666666},"3":{"trades":42,"p10":0.9793845302168906,"p25":1.2107266947522761,"median":1.5414005741620418,"p75":1.998596956269886,"p90":2.5461881905859434,"p_loss":0.11133333333333334},"6":{"trades":84,"p10":1.2558459087600893,"p25":1.714928162117438,"median":2.433090520020185,"p75":3.484764198037563,"p90":4.869226215988418,"p_loss":0.0394},"12":{"trades":168,"p10":2.325625458745443,"p25":3.5984240818741116,"median":5.975468399742028,"p75":10.008147276060857,"p90":15.921013819874494,"p_loss":0.0065}},"cost":[{"cost":0,"geo":0.015975989938818103,"monthly":0.2489490528723397},{"cost":0.01,"geo":0.013341844536492786,"monthly":0.2042905032593716},{"cost":0.02,"geo":0.010733606007009344,"monthly":0.16153625995014997},{"cost":0.03,"geo":0.00815089255797874,"monthly":0.12059309954032837},{"cost":0.04,"geo":0.005593329874038266,"monthly":0.08137291690664483},{"cost":0.05,"geo":0.0030605509345853488,"monthly":0.043792415099362714},{"cost":0.06,"geo":0.0005521958368188695,"monthly":0.007772815722177029}],"moonshot":{"n":2155,"t100":45.6,"t200":28.5,"t500":10.4,"t1000":3.5,"t2000":1.0},"early":[{"label":"flat or red","n":1124,"p500":9.3,"lift":0.9},{"label":"+10-25%","n":528,"p500":7.8,"lift":0.7},{"label":"+25-50%","n":291,"p500":10.7,"lift":1.0},{"label":"+50-100%","n":149,"p500":18.1,"lift":1.7},{"label":"+100% or more","n":63,"p500":31.7,"lift":3.1}],"calc":{"returns":[-0.1668,0.7153,-0.0326,-0.1668,-0.0153,-0.1668,0.0323,0.2804,0.5305,-0.1668,0.2518,-0.1668,0.7153,-0.1668,-0.1668,0.0773,0.0518,0.2565,0.0545,-0.1668,-0.1668,-0.1668,0.2939,0.0441,0.1016,-0.0729,-0.06,0.135,0.1264,0.7153,-0.1668,0.0816,0.1854,-0.0655,-0.0198,-0.1402,0.4463,0.3556,-0.1668,0.1315,-0.0799,0.5869,-0.1374,-0.0493,0.0858,0.1327,0.2337,0.002,-0.1668,0.7153,-0.1668,-0.146,-0.1668,-0.1668,-0.1178,-0.0077,0.1231,0.1687,0.1992,-0.1668,0.0055,-0.0728,0.5053,-0.1063,-0.1668,-0.0615,-0.0606,-0.1668,-0.1723,0.258,-0.0965,-0.1668,0.3429,0.0794,-0.0575,0.0478,-0.0484,0.0834,0.7153,-0.1668,-0.1668,-0.1668,0.7153,-0.1668,0.0082,0.3042,-0.1668,-0.0416,-0.0198,0.2252,-0.0575,0.025,-0.1668,0.0263,-0.1668,0.1881,-0.0437,-0.0117,-0.1668,0.2592,0.3642,-0.1668,-0.1668,-0.1668,-0.0915,-0.1668,-0.1668,-0.0047,0.0318,-0.1154,0.327,0.0391,0.7153,0.0665,-0.1668,-0.1668,0.7153,0.1482,0.1267,0.7153,-0.1668,0.3503,-0.0198,-0.1668,-0.1668,-0.1668,-0.1668,0.179,-0.0005,-0.1668,0.0035,0.0833,-0.1668,-0.0198,0.0067,0.082,-0.0061,0.3467,0.7153,0.0023,-0.0691,0.7153,0.1168,0.3157,-0.0351,0.1762,-0.0648,0.0415,0.1279,-0.4282,-0.0198,0.1968,-0.1668,0.7153,-0.1668,-0.0198,-0.0525,0.3146,-0.1254,-0.1668,-0.0089,0.2567,0.2086,-0.1587,0.198,0.0292,0.4861,-0.0381,-0.0116,0.3274,0.3677,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.1668,-0.0813,-0.0851,-0.0198,0.2184,-0.1668,0.7153,-0.1668,0.1804,0.0152,-0.025,-0.1668,0.0165,0.1051,0.4239,-0.1668,0.7153,0.0564,-0.0443,-0.0198,-0.1668,0.0167,-0.1668,-0.0856,-0.0254,-0.1668,-0.1668,0.0689,-0.1636,0.0222,0.3135,-0.0109,-0.1668,-0.0102,0.0207,0.7153,0.3634,0.122,-0.0519,-0.0108,-0.1668,-0.1668,0.0031,-0.0714,-0.0474,0.2252,-0.1668,0.3478,0.0011,-0.093,0.0289,0.7153,-0.0331,-0.1668,-0.2076,0.1181,-0.1668,0.1152,0.7153,-0.1668,-0.0404,0.3031,-0.1668,0.5271,0.0693,-0.0688,0.1669,-0.1015,-0.0606,-0.1937,-0.1086,-0.1668,-0.1668,-0.0463,-0.0668,0.1548,-0.0066,0.3439,0.1713,0.1485,-0.1668,-0.0198,0.1,-0.1668,0.2483,0.0404,-0.1668,0.0782,-0.1668,0.3175,-0.0159,0.0763,0.2103,-0.0198,-0.1668,-0.1668,0.137,-0.0111,0.2988,-0.0709,0.0576,-0.1668,-0.1668,0.1902,-0.1668,-0.1668,-0.1668,-0.0709,0.7153,0.0455,-0.0198,0.1454,0.0727,-0.0618,0.3548,-0.0114,-0.1128,0.0012,0.1492,-0.1734,-0.1668,-0.1668,0.2692,-0.016,0.1513,-0.1668,0.5477,-0.0898,-0.0125,0.4385,-0.1668,-0.1558,0.0067,0.0221,-0.0498,0.1289,0.0281,-0.0248,0.0693,0.096,0.0084,0.2011,-0.0266,-0.1668,-0.1668,0.0897,0.7153,0.3119,0.4267,0.233,-0.0482,-0.1668,0.1246,0.7153,0.5183,0.7153,0.2408,0.7153,-0.1668,0.4003,0.7153,-0.1668,0.1318,0.4437,-0.1668,0.0654,0.7153,0.7153,-0.008,0.3769,0.0039,-0.1668,-0.1668,0.2648,-0.1668,0.0273,0.0758,0.7153,-0.1668,-0.1668,-0.0253,0.183,-0.1668,0.1878,0.0886,0.2874,0.0152,-0.1668,0.0502,-0.0475,0.1905,-0.0218,0.3069,-0.1668,-0.1668,-0.0105,-0.1668,-0.0198,0.01,-0.0839,-0.0851,-0.1723,0.0215,0.7153,0.0202,-0.1668,0.1974,-0.0198,-0.1668,-0.1668,-0.1668,0.1116,-0.1598,0.183,-0.0525,0.0782,0.1202,-0.1668,-0.1668,0.0276,-0.0464,0.043,-0.0465,0.0909,-0.0198,0.7153,0.7153,0.7153,-0.1668,-0.1015,-0.0789,0.0728,0.0556,0.0571,-0.0019,0.0709,0.0053,-0.1668,-0.0775,-0.1668,-0.0615,-0.1668,0.1552,0.0602,-0.0173,-0.1668,-0.1668,0.1411,-0.1668,0.0896,0.1202,0.7153,-0.1668,0.0347,-0.0728,-0.0665,0.0041,0.0118,0.0318,0.1,-0.0097,0.3262,0.1532,0.0811,0.3941,0.7153,-0.1668,0.0025,-0.0634,-0.1668,0.0502,-0.1668,-0.1668,-0.1668,-0.1668,0.5076,-0.1668,-0.1668,-0.0514,-0.053,-0.0148,-0.1005,0.0034,-0.1668,-0.1668,0.0179,-0.1287,-0.0367,-0.1668,-0.0436,-0.0461,0.0985,-0.1668,-0.039,-0.1265,-0.086,-0.0006,-0.1015,-0.3465,-0.1668,0.0974,-0.0245,0.0006,-0.1668,0.7153,0.2502,0.0273,0.0669,-0.1668,-0.1668,-0.0909,-0.1668,-0.1668,-0.0811,-0.1668,0.0047,-0.1089,-0.0549,0.4594,0.1726,0.1115,0.0362,0.7153,0.1216,-0.1668,-0.0198,0.0777,0.1332,-0.0688,0.0396,-0.1668,0.7153,-0.1668,0.1673,-0.1668,-0.0705,0.0291,0.2082,-0.0063,0.2498,-0.0271,-0.1668,0.1202,0.7153,-0.0695,0.0465,0.2252,-0.1668,0.7153,-0.1668,-0.1668,-0.1668,0.0946,0.0224,-0.0198,0.0556,0.0933,-0.1668,0.1202,0.2252,0.2547,-0.1668,0.0388,0.2322,-0.0525,-0.1668,0.1115,0.1584,-0.0198,-0.1668],"tpm":14.025641025641026,"frac":0.25,"geo":0.010733606007009344},"improvement":{"old_tpm":4.1,"new_tpm":14.0,"old_monthly":0.0927,"new_monthly":0.16153625995014997,"old_geo":0.0219,"new_geo":0.010733606007009344},"yearly":[{"y":"2023","n":77,"ret":1.7164817538671908},{"y":"2024","n":188,"ret":3.8063257527958685},{"y":"2025","n":181,"ret":4.86110426392663},{"y":"2026","n":101,"ret":3.492402491102821}],"monthly":[{"m":"2023-06","n":7,"ret":-17.4},{"m":"2023-07","n":13,"ret":4.6},{"m":"2023-08","n":2,"ret":0.7},{"m":"2023-09","n":11,"ret":42.7},{"m":"2023-10","n":10,"ret":6.6},{"m":"2023-11","n":16,"ret":-0.5},{"m":"2023-12","n":18,"ret":106.1},{"m":"2024-01","n":19,"ret":35.9},{"m":"2024-02","n":16,"ret":0.6},{"m":"2024-03","n":13,"ret":-3.5},{"m":"2024-04","n":11,"ret":3.8},{"m":"2024-05","n":16,"ret":-4.3},{"m":"2024-06","n":15,"ret":68.0},{"m":"2024-07","n":18,"ret":5.4},{"m":"2024-08","n":11,"ret":24.2},{"m":"2024-09","n":17,"ret":87.4},{"m":"2024-10","n":15,"ret":-0.6},{"m":"2024-11","n":18,"ret":14.5},{"m":"2024-12","n":19,"ret":-21.8},{"m":"2025-01","n":18,"ret":34.5},{"m":"2025-02","n":17,"ret":-15.0},{"m":"2025-03","n":13,"ret":-6.2},{"m":"2025-04","n":2,"ret":2.1},{"m":"2025-05","n":18,"ret":13.8},{"m":"2025-06","n":19,"ret":58.3},{"m":"2025-07","n":22,"ret":55.6},{"m":"2025-08","n":18,"ret":25.6},{"m":"2025-09","n":15,"ret":83.7},{"m":"2025-10","n":19,"ret":-4.9},{"m":"2025-11","n":11,"ret":-12.2},{"m":"2025-12","n":9,"ret":-0.7},{"m":"2026-01","n":17,"ret":88.3},{"m":"2026-02","n":10,"ret":4.9},{"m":"2026-03","n":5,"ret":-3.7},{"m":"2026-04","n":10,"ret":44.9},{"m":"2026-05","n":17,"ret":-10.5},{"m":"2026-06","n":16,"ret":3.6},{"m":"2026-07","n":16,"ret":25.6},{"m":"2026-08","n":10,"ret":40.0}],"periods":[{"label":"Full record (39 months)","tpm":14.025641025641026,"geo":0.010733606007009344,"monthly":0.16153625995014997},{"label":"Selection window","tpm":14.037037037037036,"geo":0.00961414473598543,"monthly":0.14374675431796935},{"label":"Holdout \u2014 never used","tpm":12.923076923076923,"geo":0.013263618139745637,"monthly":0.18563675133073154}],"coverage":{"days_with_alert":622,"weekdays":831,"pct":75,"every_day_tpm":21.0,"every_day_monthly":0.251327021353851}}</script>
+<script>
+const D = JSON.parse(document.getElementById('D').textContent);
+const pct = x => (x*100).toFixed(0)+'%';
+const pct1 = x => (x*100).toFixed(1)+'%';
+const sgn = x => (x>=0?'+':'')+(x*100).toFixed(2)+'%';
+const money = x => '$'+Math.round(x).toLocaleString('en-US');
+const cls = x => x>=0?'pos':'neg';
+const el = (t,h)=>{const e=document.createElement(t); if(h!==undefined)e.innerHTML=h; return e;};
+
+function table(id, head, rows){
+  const t=document.getElementById(id); t.innerHTML='';
+  const th=el('thead'); const tr=el('tr');
+  head.forEach(h=>tr.appendChild(el('th',h))); th.appendChild(tr); t.appendChild(th);
+  const tb=el('tbody');
+  rows.forEach(r=>{
+    const x=el('tr'); if(r.hl) x.className='hl';
+    r.cells.forEach((c,i)=>{
+      const td=el('td', c.h);
+      if(c.c) td.className=c.c; else if(i===0) td.className='name';
+      x.appendChild(td);
+    });
+    tb.appendChild(x);
+  });
+  t.appendChild(tb);
+}
+function stats(id, items){
+  const c=document.getElementById(id); c.innerHTML='';
+  items.forEach(i=>{
+    const d=el('div'); d.className='stat';
+    d.innerHTML=`<div class="k">${i.k}</div><div class="v mono">${i.v}</div><div class="n">${i.n}</div>`;
+    c.appendChild(d);
+  });
+}
+
+/* validation */
+const V=D.validation;
+stats('valstats',[
+ {k:'Quotes checked', v:V.n.toLocaleString(), n:'across four channels'},
+ {k:'Entry inside real range', v:V.in_day+'%', n:'right contract, honest quote'},
+ {k:'Nearest expiry picked', v:'97%', n:'matches his front-contract habit'},
+ {k:'Exits genuinely impossible', v:V.exit_impossible+'%', n:'was reported as 50%'},
+ {k:'He quotes / you get', v:'+'+V.claim_median+'% / +'+V.achievable_median+'%', n:'median, at his post time'},
+]);
+
+/* channels */
+const verdict={'volume-alerts':['go','Tradeable'],'mdt-idea':['no','No stable rule'],
+ 'swing-trades':['no','Fat tails only'],'day-trades':['no','Negative']};
+table('chtable',
+ ['Channel','Alerts','Per month','Median post','Median premium','Median peak','Hit +500%','Median close D1','Verdict'],
+ D.channels.map(c=>({hl:c.name==='volume-alerts',cells:[
+  {h:c.name},{h:c.n},{h:c.per_month},
+  {h:c.med_clock+' min'},{h:'$'+c.med_prem.toFixed(2)},
+  {h:'+'+c.med_peak+'%',c:'pos'},{h:c.hit500+'%'},
+  {h:(c.med_close>=0?'+':'')+c.med_close+'%',c:cls(c.med_close)},
+  {h:`<span class="pill ${verdict[c.name][0]}">${verdict[c.name][1]}</span>`}
+ ]})));
+
+/* moonshots */
+const M=D.moonshot;
+stats('moonstats',[
+ {k:'Reach +100%', v:M.t100+'%', n:'at some point'},
+ {k:'Reach +200%', v:M.t200+'%', n:''},
+ {k:'Reach +500%', v:M.t500+'%', n:'about 1 in 10'},
+ {k:'Reach +1000%', v:M.t1000+'%', n:'about 1 in 29'},
+ {k:'Reach +2000%', v:M.t2000+'%', n:'about 1 in 100'},
+]);
+table('earlytable',['Up this much at 10 min','n','Then hits +500%','Lift'],
+ D.early.map(e=>({hl:e.lift>=3,cells:[{h:e.label},{h:e.n},{h:e.p500+'%'},{h:e.lift+'×',c:e.lift>=1.5?'pos':''}]})));
+
+/* strategy */
+const S=D.strategy;
+document.getElementById('stratTitle').textContent =
+ `First alert of the day — take +${(S.target*100).toFixed(0)}%, cut at −${Math.abs(S.stop*100).toFixed(0)}%, out in ${S.tmax} minutes`;
+const monthly = S.monthly;
+document.getElementById('stratspec').innerHTML = [
+ ['Channel','volume-alerts only'],
+ ['Entry','First alert after 9:30 — calls only, one per day'],
+ ['Target','+'+(S.target*100).toFixed(0)+'%'],
+ ['Stop','−'+Math.abs(S.stop*100).toFixed(0)+'%'],
+ ['Time limit','Exit at '+S.tmax+' minutes either way'],
+ ['Position size','25% of balance'],
+ ['Frequency',S.tpm.toFixed(1)+'/month ('+S.per_week.toFixed(1)+'/week)'],
+ ['Win rate',(S.win*100).toFixed(0)+'%'],
+ ['Average win / loss','+'+(S.avg_win*100).toFixed(0)+'% / −'+(S.avg_loss*100).toFixed(0)+'%'],
+ ['Reward:risk',S.rr.toFixed(2)+':1'],
+ ['Per trade',sgn(S.geo)],
+ ['Per month',sgn(monthly)],
+ ['Sample',S.n+' audited trades over 39 months'],
+].map(r=>`<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
+
+
+/* cost + sizing */
+table('costtable',['Round-trip cost','Per trade','Per month'],
+ D.cost.map(c=>({hl:Math.abs(c.cost-0.02)<1e-9,cells:[
+  {h:(c.cost*100).toFixed(0)+'%'},{h:sgn(c.geo),c:cls(c.geo)},
+  {h:sgn(c.monthly),c:cls(c.monthly)}]})));
+table('sizetable',['Size per trade','Per month','Worst drawdown'],
+ D.sizing.map(s=>({hl:Math.abs(s.frac-0.25)<1e-9,cells:[
+  {h:(s.frac*100).toFixed(0)+'%'},
+  {h:sgn(s.monthly),c:cls(s.monthly)},
+  {h:pct(s.maxdd),c:s.maxdd>0.45?'neg':''}]})));
+
+table('pctable',['Channel','Viable rules','Best decile on holdout','All viable rules','Rank correlation','Verdict'],
+ Object.entries(D.per_channel).map(([k,v])=>({hl:v&&v.verdict==='TRADEABLE'&&k==='volume-alerts',cells:[
+  {h:k},
+  {h:v?v.nrules.toLocaleString():'—'},
+  {h:v?sgn(v.top):'—',c:v?cls(v.top):''},
+  {h:v?sgn(v.all):'—',c:v?cls(v.all):''},
+  {h:v?(v.rho>=0?'+':'')+v.rho.toFixed(2):'—'},
+  {h:`<span class="pill ${k==='volume-alerts'?'go':(v&&v.verdict==='TRADEABLE'?'mid':'no')}">${k==='volume-alerts'?'Tradeable':(v?(v.verdict==='TRADEABLE'?'In-sample only':'No stable edge'):'—')}</span>`}
+ ]})));
+
+table('brtable',['Filter','Per month','Per week','Trades','Win','Per trade','Monthly','Worst drawdown'],
+ D.breadth.map(b=>({hl:b.label.indexOf('any time · calls · any px')===0,cells:[
+  {h:b.label},{h:b.permo.toFixed(1)},{h:(b.permo/4.33).toFixed(1)},{h:b.n},
+  {h:pct(b.win)},{h:sgn(b.geo),c:cls(b.geo)},
+  {h:sgn(b.monthly),c:cls(b.monthly)},{h:pct(b.maxdd),c:b.maxdd>0.4?'neg':''}]})));
+
+table('pertable',['Period','Trades/mo','Per trade','Monthly'],
+ D.periods.map(p=>({hl:p.label.indexOf('Holdout')===0,cells:[
+  {h:p.label},{h:p.tpm.toFixed(1)},{h:sgn(p.geo),c:cls(p.geo)},
+  {h:sgn(p.monthly),c:cls(p.monthly)}]})));
+
+table('yrtable',['Year','Trades','Compounded at 25%'],
+ D.yearly.map(y=>({cells:[{h:y.y},{h:y.n},
+  {h:(y.ret>=0?'+':'')+(y.ret*100).toFixed(0)+'%',c:cls(y.ret)}]})));
+
+/* monthly */
+const mo=D.monthly, mx=Math.max(...mo.map(m=>Math.abs(m.ret)));
+document.getElementById('spark').innerHTML = mo.map(m=>{
+  const h=Math.max(3,Math.abs(m.ret)/mx*100);
+  const col=m.ret>=0?'var(--pos)':'var(--neg)';
+  return `<i style="height:${h}%;background:${col}" title="${m.m}: ${m.ret>0?'+':''}${m.ret}%"></i>`;
+}).join('');
+table('monthtable',['Month','Qualifying alerts','Result at 25% size'],
+ mo.slice(-14).map(m=>({cells:[{h:m.m},{h:m.n},
+  {h:(m.ret>=0?'+':'')+m.ret.toFixed(1)+'%',c:cls(m.ret)}]})));
+
+/* calculator */
+const R=D.calc.returns;
+function pick(){return R[(Math.random()*R.length)|0];}
+function run(amount,frac,tpm){
+  const H=[1,2,3,6,12], out=[];
+  for(const m of H){
+    const n=Math.max(1,Math.round(tpm*m)), ends=[];
+    for(let i=0;i<4000;i++){
+      let b=1;
+      for(let j=0;j<n;j++) b*=(1+frac*pick());
+      ends.push(b);
+    }
+    ends.sort((a,b)=>a-b);
+    const q=p=>ends[Math.floor(p*ends.length)];
+    out.push({m,n,p25:q(.25)*amount,med:q(.5)*amount,p75:q(.75)*amount,
+              loss:ends.filter(e=>e<1).length/ends.length});
+  }
+  return out;
+}
+const LBL={1:'1 month',2:'2 months',3:'3 months',6:'6 months',12:'1 year'};
+function draw(){
+  const amt=Math.max(100,+document.getElementById('amt').value||10000);
+  const frac=+document.getElementById('size').value/100;
+  const tpm=+document.getElementById('freq').value;
+  document.getElementById('sizeV').textContent=(frac*100).toFixed(0);
+  document.getElementById('freqV').textContent=tpm.toFixed(1);
+  document.getElementById('sizeNote').textContent =
+    frac>0.35 ? 'Above the level a gapped stop can survive.' :
+    frac<0.15 ? 'Conservative — slower, much shallower drawdowns.' :
+                'Recommended range.';
+  const rows=run(amt,frac,tpm);
+  const top=Math.max(...rows.map(r=>r.p75));
+  table('calctable',['Horizon','Trades','Weak run (p25)','Median','Strong run (p75)','Chance of a loss','Range'],
+   rows.map(r=>({hl:r.m===3||r.m===12,cells:[
+    {h:LBL[r.m]},{h:r.n},
+    {h:money(r.p25),c:r.p25<amt?'neg':''},
+    {h:'<span class="rv">'+money(r.med)+'</span>',c:r.med>=amt?'pos':'neg'},
+    {h:money(r.p75)},
+    {h:pct(r.loss)},
+    {h:`<div class="bar"><i style="left:${r.p25/top*100}%;width:${Math.max(1,(r.p75-r.p25)/top*100)}%"></i><b style="left:${r.med/top*100}%"></b></div>`}
+   ]})));
+}
+['amt','size','freq'].forEach(id=>{
+  const e=document.getElementById(id);
+  e.addEventListener('input',draw); e.addEventListener('change',draw);
+});
+draw();
+</script>
