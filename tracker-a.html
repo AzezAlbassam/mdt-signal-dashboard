@@ -1,0 +1,277 @@
+<title>Daily Target Tracker</title>
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:840px;margin:0 auto;padding:0 20px 70px}
+h1{color:var(--ink);font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-.025em;
+ line-height:1.08;margin:0 0 8px;font-weight:650}
+h2{color:var(--ink);font-size:1.05rem;margin:0 0 12px;letter-spacing:-.01em;font-weight:650}
+p{margin:0 0 12px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 9px}
+header{padding:44px 0 24px}
+.sub{color:var(--muted);font-size:.95rem;max-width:60ch;margin:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;
+ padding:22px 24px;margin-bottom:18px}
+label{display:block;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin-bottom:7px}
+input,select{width:100%;padding:10px 12px;background:var(--sunk);border:1px solid var(--line);
+ border-radius:4px;color:var(--ink);font-size:1rem;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+select{font-family:system-ui,sans-serif}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+button{font-family:system-ui,sans-serif;font-size:.9rem;font-weight:650;cursor:pointer;
+ border-radius:4px;border:1px solid var(--line);background:var(--raise);color:var(--ink);
+ padding:10px 16px;transition:border-color .12s,background .12s}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] button.primary,
+:root:not([data-theme="light"]) button.primary{color:#191917}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) button.primary{color:#fff}}
+button.win{border-color:var(--pos);color:var(--pos)}
+button.loss{border-color:var(--neg);color:var(--neg)}
+button.ghost{background:transparent;color:var(--muted);font-weight:500}
+
+/* the progress striker */
+.striker{margin:6px 0 4px}
+.strack{position:relative;height:44px;background:var(--sunk);border:1px solid var(--line);
+ border-radius:6px;overflow:hidden}
+.sfill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:.85;
+ transition:width .45s cubic-bezier(.3,.9,.3,1)}
+.sfill.down{background:var(--neg)}
+.smarks{position:absolute;inset:0;pointer-events:none}
+.smark{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.slabel{position:absolute;top:50%;transform:translateY(-50%);left:14px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;
+ font-size:1.02rem;color:var(--ink);mix-blend-mode:normal}
+.sright{position:absolute;top:50%;transform:translateY(-50%);right:14px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86rem;color:var(--muted)}
+.scale{display:flex;justify-content:space-between;font-size:.7rem;color:var(--faint);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:5px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;
+ background:var(--line);border:1px solid var(--line);border-radius:5px;overflow:hidden;margin:16px 0}
+.stat{background:var(--surface);padding:13px 15px}
+.stat .k{font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.stat .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.22rem;
+ color:var(--ink);font-weight:650;margin-top:4px;letter-spacing:-.02em}
+.stat .n{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:460px}
+th{text-align:right;padding:9px 12px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);background:var(--raise);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line-soft);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+td:first-child{font-family:system-ui,sans-serif;color:var(--ink)}
+tr:last-child td{border-bottom:none}
+.pos{color:var(--pos);font-weight:650}
+.neg{color:var(--neg);font-weight:650}
+.rungs{display:flex;gap:4px;flex-wrap:wrap;margin:14px 0 4px}
+.rg{flex:1;min-width:26px;height:34px;border-radius:3px;background:var(--sunk);
+ border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+ font-size:.66rem;font-family:ui-monospace,monospace;color:var(--faint);font-weight:700;
+ transition:background .3s,color .3s}
+.rg.done{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.rg.now{border-color:var(--accent);color:var(--accent);border-width:2px}
+.empty{color:var(--muted);font-size:.88rem;padding:22px;text-align:center}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.hint{font-size:.78rem;color:var(--faint);margin-top:10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Strategy A &middot; 0DTE day trades</p>
+  <h1>Daily target tracker</h1>
+  <p class="sub">Log each day&rsquo;s result. The striker moves toward your goal and re-computes what
+  you need from the days left. Everything saves in this browser.</p>
+</header>
+
+<div class="panel">
+  <div class="row">
+    <div><label for="cap">Starting capital</label><input type="number" id="cap" value="1000" step="100"></div>
+    <div><label for="goal">Goal</label><input type="number" id="goal" value="10000" step="500"></div>
+    <div><label for="tgt">Daily target %</label><input type="number" id="tgt" value="3" step="0.5"></div>
+    <div><label for="days">Days to get there</label><input type="number" id="days" value="252" step="1"></div>
+  </div>
+  <div class="bar">
+    <button class="ghost" id="save">Save settings</button>
+    <button class="ghost" id="reset">Reset everything</button>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="striker">
+    <div class="strack">
+      <div class="sfill" id="fill" style="width:0%"></div>
+      <div class="smarks" id="marks"></div>
+      <div class="slabel mono" id="balLabel">$1,000</div>
+      <div class="sright mono" id="goalLabel">goal $10,000</div>
+    </div>
+    <div class="scale"><span id="s0">$1,000</span><span id="s25"></span><span id="s50"></span>
+      <span id="s75"></span><span id="s100">$10,000</span></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div id="pace" class="hint"></div>
+</div>
+
+<div class="panel">
+  <h2>Log a day</h2>
+  <div class="row">
+    <div><label for="pct">Result % on the account</label><input type="number" id="pct" placeholder="3.0" step="0.1"></div>
+    <div><label for="note">Note (optional)</label><input type="text" id="note" placeholder="SPY 0DTE, 2 trades" style="font-family:system-ui,sans-serif"></div>
+  </div>
+  <div class="bar">
+    <button class="primary" id="add">Add day</button>
+    <button class="win" id="quickWin">Hit target (+<span id="qt">3</span>%)</button>
+    <button class="loss" id="quickLoss">Down day (&minus;<span id="ql">3</span>%)</button>
+    <button class="ghost" id="flat">Flat / no trade</button>
+    <button class="ghost" id="undo">Undo last</button>
+  </div>
+  <p class="hint">You can also type a percentage and press Enter. Losing days go in as a negative
+  number.</p>
+</div>
+
+<div class="panel">
+  <h2>History</h2>
+  <div class="tw"><table id="hist"></table></div>
+</div>
+</div>
+
+<script>
+const K='trkA';
+const MEM={v:null};
+const store={
+  get(k){ try{return localStorage.getItem(k)}catch(e){return MEM.v} },
+  set(k,v){ try{localStorage.setItem(k,v)}catch(e){MEM.v=v} },
+  del(k){ try{localStorage.removeItem(k)}catch(e){MEM.v=null} }
+};
+const $=id=>document.getElementById(id);
+const money=x=>'$'+Math.round(x).toLocaleString('en-US');
+const S=()=>JSON.parse(store.get(K)||'{"cfg":{},"log":[]}');
+const W=s=>store.set(K,JSON.stringify(s));
+
+function cfg(){
+  const s=S();
+  return {cap:+($('cap').value||1000), goal:+($('goal').value||10000),
+          tgt:+($('tgt').value||3)/100, days:+($('days').value||252)};
+}
+function load(){
+  const s=S();
+  if(s.cfg && s.cfg.cap){
+    $('cap').value=s.cfg.cap; $('goal').value=s.cfg.goal;
+    $('tgt').value=(s.cfg.tgt*100).toFixed(1); $('days').value=s.cfg.days;
+  }
+}
+function bal(){
+  const c=cfg(); const s=S();
+  return s.log.reduce((b,e)=>b*(1+e.pct),c.cap);
+}
+function render(){
+  const c=cfg(), s=S(), b=bal();
+  const span=Math.max(1e-9,c.goal-c.cap);
+  const prog=Math.max(0,Math.min(1,(b-c.cap)/span));
+  const down=b<c.cap;
+  const f=$('fill');
+  f.style.width=(down?Math.min(100,100*(c.cap-b)/c.cap*0.5):100*prog)+'%';
+  f.className='sfill'+(down?' down':'');
+  $('balLabel').textContent=money(b);
+  $('goalLabel').textContent=(100*prog).toFixed(1)+'% of the way';
+  $('s0').textContent=money(c.cap); $('s100').textContent=money(c.goal);
+  $('s25').textContent=money(c.cap+span*0.25);
+  $('s50').textContent=money(c.cap+span*0.5);
+  $('s75').textContent=money(c.cap+span*0.75);
+  $('marks').innerHTML=[25,50,75].map(p=>`<div class="smark" style="left:${p}%"></div>`).join('');
+
+  const n=s.log.length, wins=s.log.filter(e=>e.pct>0).length;
+  const left=Math.max(0,c.days-n);
+  const need=left>0&&b>0?Math.pow(c.goal/b,1/left)-1:null;
+  const ret=b/c.cap-1;
+  const avg=n?Math.pow(b/c.cap,1/n)-1:0;
+  $('stats').innerHTML=[
+    {k:'Balance',v:money(b),n:(ret>=0?'+':'')+(100*ret).toFixed(1)+'% total',
+     c:b>=c.cap?'var(--pos)':'var(--neg)'},
+    {k:'Days logged',v:n,n:left+' left of '+c.days},
+    {k:'Win rate',v:n?Math.round(100*wins/n)+'%':'—',n:wins+' up, '+(n-wins)+' down'},
+    {k:'Your average day',v:(avg>=0?'+':'')+(100*avg).toFixed(2)+'%',n:'compounded',
+     c:avg>=0?'var(--pos)':'var(--neg)'},
+    {k:'Needed per day',v:need===null?'—':((need>=0?'+':'')+(100*need).toFixed(2)+'%'),
+     n:'to still make it',c:need!==null&&need>c.tgt*1.5?'var(--neg)':''},
+  ].map(x=>`<div class="stat"><div class="k">${x.k}</div>
+    <div class="v" ${x.c?`style="color:${x.c}"`:''}>${x.v}</div>
+    <div class="n">${x.n}</div></div>`).join('');
+
+  let msg='';
+  if(n===0){ msg='Log your first day to start the striker.'; }
+  else if(need===null){ msg='Out of days. '+(b>=c.goal?'Goal reached.':'Goal not reached — reset or extend the horizon.'); }
+  else if(b>=c.goal){ msg='Goal reached in '+n+' days. Re-base and run it again.'; }
+  else if(need>c.tgt*2){ msg='You now need '+(100*need).toFixed(2)+'% a day — more than double your '+(100*c.tgt).toFixed(1)+'% target. The goal is drifting out of reach; extend the horizon rather than raising risk.'; }
+  else if(need>c.tgt){ msg='Slightly behind: you need '+(100*need).toFixed(2)+'% a day versus your '+(100*c.tgt).toFixed(1)+'% target.'; }
+  else { msg='Ahead of pace — you need only '+(100*need).toFixed(2)+'% a day from here.'; }
+  $('pace').textContent=msg;
+
+  const rows=s.log.slice().reverse();
+  const t=$('hist');
+  if(!rows.length){ t.innerHTML='<tbody><tr><td class="empty" colspan="4">No days logged yet.</td></tr></tbody>'; }
+  else{
+    let run=c.cap; const bals=s.log.map(e=>run=run*(1+e.pct)); bals.reverse();
+    t.innerHTML='<thead><tr><th>Day</th><th>Result</th><th>Balance</th><th>Note</th></tr></thead><tbody>'
+      +rows.map((e,i)=>`<tr><td>${s.log.length-i}. ${e.date}</td>
+        <td class="${e.pct>=0?'pos':'neg'}">${e.pct>=0?'+':''}${(100*e.pct).toFixed(2)}%</td>
+        <td>${money(bals[i])}</td>
+        <td style="color:var(--muted);font-family:system-ui,sans-serif">${e.note||''}</td></tr>`).join('')
+      +'</tbody>';
+  }
+  $('qt').textContent=(100*c.tgt).toFixed(1);
+  $('ql').textContent=(100*c.tgt).toFixed(1);
+}
+function push(pct,note){
+  const s=S(); s.cfg=cfg();
+  s.log.push({pct,note:note||'',date:new Date().toISOString().slice(0,10)});
+  W(s); render();
+}
+$('add').onclick=()=>{const v=parseFloat($('pct').value);
+  if(isNaN(v))return; push(v/100,$('note').value); $('pct').value='';$('note').value='';};
+$('pct').addEventListener('keydown',e=>{if(e.key==='Enter')$('add').click()});
+$('quickWin').onclick=()=>push(cfg().tgt,'hit target');
+$('quickLoss').onclick=()=>push(-cfg().tgt,'down day');
+$('flat').onclick=()=>push(0,'no trade');
+$('undo').onclick=()=>{const s=S();s.log.pop();W(s);render()};
+$('save').onclick=()=>{const s=S();s.cfg=cfg();W(s);render()};
+$('reset').onclick=()=>{if(confirm('Clear all logged days and settings?')){store.del(K);location.reload()}};
+['cap','goal','tgt','days'].forEach(id=>$(id).addEventListener('input',()=>{
+  const s=S();s.cfg=cfg();W(s);render()}));
+load(); render();
+</script>
