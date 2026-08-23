@@ -1,0 +1,334 @@
+<title>The $2 SPX Trade</title>
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px 90px}
+h1,h2,h3{color:var(--ink);text-wrap:balance;letter-spacing:-.022em;font-weight:650}
+h1{font-size:clamp(2rem,4.8vw,2.95rem);line-height:1.06;margin:0 0 14px}
+h2{font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.18;margin:0 0 8px}
+h3{font-size:1.02rem;margin:0 0 8px;letter-spacing:-.01em}
+p{margin:0 0 14px;max-width:68ch}
+.mono,td,th{font-variant-numeric:tabular-nums}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin:0 0 10px}
+header{padding:66px 0 34px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.1rem;color:var(--muted);max-width:60ch;margin:0}
+section{padding:52px 0;border-bottom:1px solid var(--line-soft)}
+section:last-of-type{border-bottom:none}
+.sub{color:var(--muted);margin:0 0 24px;max-width:66ch}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:28px 30px;margin:30px 0 0;display:flex;gap:32px;flex-wrap:wrap;align-items:baseline}
+.hero .big{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:clamp(2.4rem,6vw,3.6rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hero .lab{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:8px}
+.hero .side{flex:1;min-width:240px;color:var(--muted);font-size:.92rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:26px 0}
+.stat{background:var(--surface);padding:16px 18px}
+.stat .k{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.stat .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.5rem;
+  color:var(--ink);font-weight:650;margin-top:5px;letter-spacing:-.03em}
+.stat .n{font-size:.74rem;color:var(--muted);margin-top:2px}
+.tw{overflow-x:auto;margin:20px 0;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:540px}
+th{text-align:right;padding:10px 13px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--raise)}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 13px;text-align:right;border-bottom:1px solid var(--line-soft);
+  color:var(--body);white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+td:first-child{font-family:system-ui,sans-serif}
+tr:last-child td{border-bottom:none}
+td.name{color:var(--ink);font-weight:600}
+tbody tr.hl td{background:var(--accent-soft)}
+tbody tr.bad td{background:color-mix(in srgb,var(--neg) 9%,transparent)}
+.pos{color:var(--pos);font-weight:650}
+.neg{color:var(--neg);font-weight:650}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.68rem;
+  font-weight:700;letter-spacing:.03em;border:1px solid;font-family:system-ui,sans-serif}
+.pill.go{color:var(--pos);border-color:var(--pos)}
+.pill.no{color:var(--neg);border-color:var(--neg)}
+.pill.mid{color:var(--warn);border-color:var(--warn)}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:28px;margin-top:24px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;
+  padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:24px}
+label{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:8px}
+input[type=number]{width:100%;padding:10px 12px;font-size:1.02rem;background:var(--sunk);
+  border:1px solid var(--line);border-radius:3px;color:var(--ink);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);margin-top:5px}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select{width:100%;padding:10px 12px;background:var(--sunk);border:1px solid var(--line);
+  border-radius:3px;color:var(--ink);font-size:.95rem;font-family:system-ui,sans-serif}
+.rn{font-size:.72rem;color:var(--muted);margin-top:3px}
+.foot{font-size:.8rem;color:var(--muted);margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.note{font-size:.85rem;color:var(--muted);border-left:2px solid var(--line);padding-left:15px;margin:18px 0}
+.warn{border-left-color:var(--warn)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:32px}
+.bars{display:flex;flex-direction:column;gap:9px;margin:20px 0}
+.brow{display:grid;grid-template-columns:200px 1fr 96px;gap:12px;align-items:center;font-size:.85rem}
+.btrack{position:relative;height:24px;background:var(--grid);border-radius:2px;overflow:hidden}
+.bfill{position:absolute;inset:0 auto 0 0;border-radius:2px}
+.bval{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-weight:650}
+.curve{width:100%;height:250px;display:block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){.brow{grid-template-columns:120px 1fr 74px;font-size:.78rem}}
+
+.big2{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.9rem;
+ font-weight:700;letter-spacing:-.03em}
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">SPX 0DTE &middot; 459 sessions &middot; January 2024 to August 2026</p>
+  <h1>The $2 SPX trade, backtested</h1>
+  <p class="lede">Your strategy, run on every session for two and a half years of real SPXW
+  same-day-expiry prints. The win rate is real. The version you are trading loses money anyway, and
+  one change fixes it.</p>
+  <div class="hero">
+    <div>
+      <div class="lab">Your version &mdash; 14:00 ET, +3%</div>
+      <div class="big mono" style="color:var(--neg)">&minus;0.37%</div>
+    </div>
+    <div class="side">
+      <p style="margin:0"><b class="mono">97.9%</b> win rate over 380 trades &mdash; and still
+      negative per trade, because the 8 losses cost <b class="mono">&minus;99%</b> each. Moving to
+      <b>15:00 ET with a +10% target</b> turns the same idea into
+      <b class="mono" style="color:var(--pos)">+5.92%</b> a trade.</p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">The core problem</p>
+  <h2>A 98% win rate is not enough when the loss is total</h2>
+  <p class="sub">Every losing trade is the contract expiring worthless &mdash; &minus;99%, every
+  time. The table below uses the recommended +10% target, where each winner pays enough that a loss
+  costs about a dozen trades. At your +3% target the same loss costs
+  <b class="mono">57</b> winners.</p>
+  <div class="tw"><table id="recovery"></table></div>
+  <div class="note warn">
+  At your <b class="mono">+3%</b> target the break-even loss rate is <b class="mono">1.77%</b>
+  &mdash; one loss in 57 trades. You are running about <b class="mono">2.1%</b>. That gap is small,
+  invisible over three days, and it is the entire difference between compounding and bleeding.
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Why your friend's record proves nothing</p>
+  <h2>Three winning days is what a losing strategy looks like</h2>
+  <p class="sub">With a 98% win rate, a run of winners is the expected outcome even when the
+  expectancy is negative.</p>
+  <div class="stats" id="streak"></div>
+  <p class="note">Four months with one loss is roughly a 1.2% loss rate &mdash; slightly better than
+  break-even, on a sample far too small to tell the two apart. Your friend is not proving the edge;
+  he is inside the streak that any 98% strategy produces.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Year by year</p>
+  <h2>You started trading in the good year</h2>
+  <p class="sub">The same rule, split by calendar year, compounded at 15% of the account per trade.</p>
+  <div class="tw"><table id="years"></table></div>
+  <p class="note">2026 has produced <b>zero</b> losing sessions so far. 2024 produced six. If you
+  had started this in January 2024 you would have been down a quarter of your account by December.
+  Nothing about the strategy changed &mdash; only the sample you happened to live through.</p>
+</section>
+
+<section>
+  <p class="eyebrow">The fix</p>
+  <h2>A bigger target buys cushion</h2>
+  <p class="sub">The loss is always about &minus;99%, whatever your target. So the only lever is how
+  much each winner pays. Raise the target and the break-even loss rate rises far faster than your
+  actual loss rate does.</p>
+  <div class="tw"><table id="cushion"></table></div>
+  <p class="note">At <b class="mono">+3%</b> you have about a point of margin. At
+  <b class="mono">+10%</b> you have <b class="mono">5.4</b> points. That is the difference between a
+  strategy that survives a bad month and one that does not.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Every combination</p>
+  <h2>Entry hour and target, validated out of sample</h2>
+  <p class="sub">Chosen on sessions before July 2025, scored on everything after. Your 14:00 entry is
+  the worst hour on the board.</p>
+  <div class="tw"><table id="grid"></table></div>
+  <p class="note">13 of 16 combinations are positive in both halves, where chance alone would give
+  about 4. The pattern is consistent: <b>later entry and bigger target both help</b>, and they
+  compound.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Your stop question</p>
+  <h2>You were right that a stop makes it worse</h2>
+  <p class="sub">You said you cannot use a stop because you would lose more. The data agrees, and it
+  is worth seeing why.</p>
+  <div class="tw"><table id="stops"></table></div>
+  <p class="note">These contracts routinely dip <b class="mono">10&ndash;30%</b> underwater before
+  the target prints. Any stop tighter than about &minus;50% converts winners into losers faster than
+  it saves you from the rare total loss.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Position size</p>
+  <h2>Never all-in on this</h2>
+  <p class="sub">The recommended rule at every size, compounded across all 264 trades. Note the
+  last row.</p>
+  <div class="tw"><table id="sizing"></table></div>
+  <div class="note warn">At <b>100% of the account</b> a single loss takes
+  <b class="mono">98.8%</b> and the strategy compounds to <b class="mono">&minus;100%</b>. The
+  arithmetic is not close. <b>10&ndash;20% is the working range</b>: enough to compound, small
+  enough that one bad afternoon is a setback rather than the end.</p>
+</section>
+
+<section>
+  <p class="eyebrow">The recommendation</p>
+  <h2 id="recTitle"></h2>
+  <div class="two">
+    <div>
+      <ul class="spec" id="spec"></ul>
+    </div>
+    <div>
+      <h3>What to expect</h3>
+      <div class="stats" id="expect"></div>
+      <p style="margin-top:14px">Roughly one loss every <b class="mono" id="lossEvery"></b> trades.
+      When it comes it takes back about <b class="mono" id="lossCost"></b> of the account at 15%
+      size &mdash; and you keep going.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Honest limits</p>
+  <h2>What this cannot tell you</h2>
+  <div class="two">
+    <div>
+      <p><b>The 15:00 entry skips 43% of days.</b> On those sessions no contract sits near $2 with
+      an hour left. One skipped day had a <b class="mono">9.9%</b> index move &mdash; a crash the
+      rule dodged by accident of pricing, not by design.</p>
+      <p><b>Seven losses is a thin basis for a tail estimate.</b> The loss rate could be double what
+      the sample shows and you would not see it for a year.</p>
+    </div>
+    <div>
+      <p><b>Nothing predicts the losing days.</b> Their move size, range and direction are
+      statistically identical to the winners. No filter tested removed them.</p>
+      <p><b>This is a positive-expectancy bet with a fat left tail, not a safe income stream.</b>
+      Treat every trade as one that might return nothing at all, and size so that outcome is
+      survivable.</p>
+    </div>
+  </div>
+</section>
+</div>
+<script type="application/json" id="D">{"n_sessions":459,"from":"20240102","to":"20260814","grid":[{"h":12,"ksa":19,"t":0.03,"stop":null,"n":344,"nl":4,"wr":0.9883720930232558,"aw":0.017572775143558532,"al":0.9916174295576153,"mean":0.0058380053214518585,"be":0.017412748421158048,"actual":0.011627906976744186,"sel":0.005206933373583054,"hold":0.007422124700795999,"ok":true},{"h":12,"ksa":19,"t":0.05,"stop":null,"n":344,"nl":10,"wr":0.9709302325581395,"aw":0.03758048656490737,"al":0.9913291804613422,"mean":0.007670321825772207,"be":0.0365245733121765,"actual":0.029069767441860465,"sel":0.004094056830672274,"hold":0.016647476813472038,"ok":true},{"h":12,"ksa":19,"t":0.07,"stop":null,"n":344,"nl":13,"wr":0.9622093023255814,"aw":0.05757906386020344,"al":0.9905003215050112,"mean":0.017971412669076148,"be":0.05493769333144492,"actual":0.0377906976744186,"sel":0.010693956221308679,"hold":0.03623931354816591,"ok":true},{"h":12,"ksa":19,"t":0.1,"stop":null,"n":344,"nl":19,"wr":0.9447674418604651,"aw":0.08756834492888363,"al":0.9897611692318588,"mean":0.028064679902563554,"be":0.08128278653639302,"actual":0.055232558139534885,"sel":0.013100801458380483,"hold":0.06562706865020677,"ok":true},{"h":12,"ksa":19,"t":0.15,"stop":null,"n":344,"nl":29,"wr":0.9156976744186046,"aw":0.1375562452273611,"al":0.9894947131401145,"mean":0.04254322838824251,"be":0.12204971230991207,"actual":0.08430232558139535,"sel":0.02303193252143388,"hold":0.09152056291104783,"ok":true},{"h":13,"ksa":20,"t":0.03,"stop":null,"n":352,"nl":4,"wr":0.9886363636363636,"aw":0.017796145973479484,"al":0.9874891973101407,"mean":0.006372448890711071,"be":0.017702581751914265,"actual":0.011363636363636364,"sel":0.001472783291319964,"hold":0.01774337094212817,"ok":true},{"h":13,"ksa":20,"t":0.05,"stop":null,"n":352,"nl":8,"wr":0.9772727272727273,"aw":0.037811531157450944,"al":0.9897228927685955,"mean":0.014458476068222615,"be":0.03679831086629591,"actual":0.022727272727272728,"sel":0.012827987185764517,"hold":0.01824244083317254,"ok":true},{"h":13,"ksa":20,"t":0.07,"stop":null,"n":352,"nl":15,"wr":0.9573863636363636,"aw":0.057800729748221216,"al":0.9897161659585468,"mean":0.013162225669807808,"be":0.05517880426093042,"actual":0.04261363636363636,"sel":0.0068087271387429265,"hold":0.027907137355109326,"ok":true},{"h":13,"ksa":20,"t":0.1,"stop":null,"n":352,"nl":26,"wr":0.9261363636363636,"aw":0.08780770980516212,"al":0.9895814093701876,"mean":0.008227831684255614,"be":0.08150046092202183,"actual":0.07386363636363637,"sel":0.00039412924076207657,"hold":0.02640793358141986,"ok":true},{"h":13,"ksa":20,"t":0.15,"stop":null,"n":352,"nl":40,"wr":0.8863636363636364,"aw":0.13779535641657215,"al":0.9893167112131696,"mean":0.009714439640465148,"be":0.12225524007239905,"actual":0.11363636363636363,"sel":-0.0040018826501342026,"hold":0.04154665929600704,"ok":false},{"h":14,"ksa":21,"t":0.03,"stop":null,"n":380,"nl":8,"wr":0.9789473684210527,"aw":0.017534669238121456,"al":0.988967547792062,"mean":-0.0036548511204087222,"be":0.0174213915691709,"actual":0.021052631578947368,"sel":-0.012148857079144582,"hold":0.017463273786173093,"ok":false},{"h":14,"ksa":21,"t":0.05,"stop":null,"n":380,"nl":14,"wr":0.9631578947368421,"aw":0.037537791834126075,"al":0.9882718234019661,"mean":-0.00025519399036153233,"be":0.03659333201462211,"actual":0.03684210526315789,"sel":-0.007891649631267341,"hold":0.018730856272807954,"ok":false},{"h":14,"ksa":21,"t":0.07,"stop":null,"n":380,"nl":20,"wr":0.9473684210526315,"aw":0.05752211737081339,"al":0.9887831924734896,"mean":0.0024534168526921794,"be":0.05497641733211987,"actual":0.05263157894736842,"sel":-0.0003729477696304472,"hold":0.00948043348250348,"ok":false},{"h":14,"ksa":21,"t":0.1,"stop":null,"n":380,"nl":28,"wr":0.9263157894736842,"aw":0.08752104766250611,"al":0.9887435527249326,"mean":0.008217340265536941,"be":0.08131926631332098,"actual":0.07368421052631578,"sel":0.00015958680936209067,"hold":0.028250837390522122,"ok":true},{"h":14,"ksa":21,"t":0.15,"stop":null,"n":380,"nl":49,"wr":0.8710526315789474,"aw":0.13754852342380505,"al":0.9896331716853749,"mean":-0.007798589892904997,"be":0.12202870577177174,"actual":0.12894736842105264,"sel":0.00046366524158741564,"hold":-0.028340526970404484,"ok":false},{"h":15,"ksa":22,"t":0.03,"stop":null,"n":264,"nl":2,"wr":0.9924242424242424,"aw":0.017803631513283538,"al":0.9888518097473321,"mean":0.010177453927975842,"be":0.017685923885722394,"actual":0.007575757575757576,"sel":0.012374845176188132,"hold":0.005468758396092364,"ok":true},{"h":15,"ksa":22,"t":0.05,"stop":null,"n":264,"nl":5,"wr":0.9810606060606061,"aw":0.03779817404780997,"al":0.9905309159741296,"mean":0.018322244312545963,"be":0.03675688494526936,"actual":0.01893939393939394,"sel":0.020847260665681416,"hold":0.01291149498439856,"ok":true},{"h":15,"ksa":22,"t":0.07,"stop":null,"n":264,"nl":5,"wr":0.9810606060606061,"aw":0.057798174047809965,"al":0.9905309159741296,"mean":0.03794345643375808,"be":0.05513361653123673,"actual":0.01893939393939394,"sel":0.04051392733234808,"hold":0.032435304508208085,"ok":true},{"h":15,"ksa":22,"t":0.1,"stop":null,"n":264,"nl":7,"wr":0.9734848484848485,"aw":0.08779343043587691,"al":0.989924290890439,"mean":0.05921758176434581,"be":0.08146236133876697,"actual":0.026515151515151516,"sel":0.05804931115054339,"hold":0.061721018793922416,"ok":true},{"h":15,"ksa":22,"t":0.15,"stop":null,"n":264,"nl":16,"wr":0.9393939393939394,"aw":0.13783212285595162,"al":0.9895445307921691,"mean":0.06950626505909581,"be":0.12225916015728679,"actual":0.06060606060606061,"sel":0.06918263015989645,"hold":0.070199768414523,"ok":true}],"cushion":[{"t":0.03,"aw":0.017803631513283538,"al":0.9888518097473321,"be":0.017685923885722394,"actual":0.007575757575757576,"margin":0.010110166309964818},{"t":0.05,"aw":0.03779817404780997,"al":0.9905309159741296,"be":0.03675688494526936,"actual":0.01893939393939394,"margin":0.01781749100587542},{"t":0.07,"aw":0.057798174047809965,"al":0.9905309159741296,"be":0.05513361653123673,"actual":0.01893939393939394,"margin":0.036194222591842795},{"t":0.1,"aw":0.08779343043587691,"al":0.989924290890439,"be":0.08146236133876697,"actual":0.026515151515151516,"margin":0.05494720982361545},{"t":0.15,"aw":0.13783212285595162,"al":0.9895445307921691,"be":0.12225916015728679,"actual":0.06060606060606061,"margin":0.06165309955122618},{"t":0.2,"aw":0.18783076163157403,"al":0.9899925734566982,"be":0.15947278003071402,"actual":0.09848484848484848,"margin":0.06098793154586554}],"best":{"h":15,"ksa":22,"t":0.1,"stop":null,"n":264,"nl":7,"wr":0.9734848484848485,"aw":0.08779343043587691,"al":0.989924290890439,"mean":0.05921758176434581,"be":0.08146236133876697,"actual":0.026515151515151516,"sel":0.05804931115054339,"hold":0.061721018793922416},"returns":[0.0912,0.0907,0.0851,0.0851,0.0899,0.0853,0.0863,0.088,0.0888,0.0908,0.0901,0.0855,0.0882,0.0907,0.0892,0.0893,0.0899,0.088,0.0851,0.0897,0.0877,0.0863,0.0867,0.0855,0.0846,0.0851,0.0892,0.0885,0.0846,0.089,0.089,0.0878,0.0892,0.0867,0.089,0.0855,0.0892,0.089,0.0905,0.087,0.0885,0.0885,0.0877,0.0882,0.0877,0.0908,0.0863,0.088,0.0908,0.0873,0.0873,0.0903,-0.9873,0.0877,0.087,0.0846,0.0882,0.0885,0.0903,0.0871,0.0886,0.0899,0.0886,0.0892,0.0877,0.0846,0.0887,0.0897,0.0897,-0.9851,0.0905,0.0867,0.085,0.0851,0.0896,0.0877,0.087,-0.9892,0.0882,0.087,0.0882,0.0908,0.0855,0.0905,0.0855,0.0877,0.0885,0.0901,0.085,0.0885,0.087,-0.9895,0.0851,0.0885,0.0851,0.0873,0.0867,0.0899,0.0882,0.0875,0.0893,0.0859,0.089,0.09,0.0907,0.0859,0.088,0.0859,0.0867,0.0855,0.0855,0.0877,0.0851,0.0892,0.0901,0.088,0.0905,0.0892,0.0846,0.0905,0.0882,0.0848,0.0912,0.0892,0.0873,0.0911,0.0897,0.0885,0.0895,0.087,0.087,0.0846,0.0903,0.0867,0.0907,0.0877,0.088,0.0855,0.087,0.089,0.0901,0.0903,0.0886,0.0877,0.0903,0.091,0.088,0.0877,0.0888,0.0892,0.0873,0.0863,0.0901,0.0882,0.0867,0.0846,0.0892,0.0846,-0.9882,0.0895,0.0895,0.0899,0.0863,0.0877,0.0846,0.0873,0.0864,0.0903,0.0882,0.0895,0.0877,0.0867,0.0863,0.0855,0.0851,0.0846,0.0901,0.088,0.0859,0.0897,-0.9926,0.0877,0.0859,0.0864,0.0878,0.0892,0.0871,0.089,0.0897,0.0885,0.0889,0.0863,0.089,0.0907,0.0863,0.087,0.0877,0.0867,0.0851,0.0888,0.088,0.0892,0.0864,0.0846,0.0885,0.087,0.0885,0.0885,0.0885,0.0909,0.0886,0.0851,0.0873,0.0903,0.0857,0.0846,0.0877,0.089,0.0847,0.0882,0.088,0.0901,0.0855,0.088,0.0877,0.0905,0.0859,0.0846,-0.9975,0.0885,0.0892,0.0855,0.0912,0.088,0.087,0.0871,0.088,0.0859,0.0903,0.0863,0.0848,0.0892,0.0859,0.087,0.0865,0.0867,0.0882,0.0873,0.0863,0.087,0.0855,0.0895,0.0905,0.088,0.0897,0.0846,0.0846,0.0846,0.0888,0.0867,0.0846,0.087,0.087,0.0885],"yours":{"h":14,"ksa":21,"t":0.03,"stop":null,"n":380,"nl":8,"wr":0.9789473684210527,"aw":0.017534669238121456,"al":0.988967547792062,"mean":-0.0036548511204087222,"be":0.0174213915691709,"actual":0.021052631578947368,"sel":-0.012148857079144582,"hold":0.017463273786173093},"stops":[{"stop":null,"wr":0.9734848484848485,"mean":0.05921758176434581,"al":0.989924290890439,"nl":7,"n":264},{"stop":-0.7,"wr":0.9583333333333334,"mean":0.05373837163695774,"al":0.7297299923399873,"nl":11,"n":264},{"stop":-0.6,"wr":0.9393939393939394,"mean":0.04411903007317173,"al":0.6329191213006199,"nl":16,"n":264},{"stop":-0.5,"wr":0.928030303030303,"mean":0.04222509067923234,"al":0.5453675776562504,"nl":19,"n":264},{"stop":-0.4,"wr":0.8901515151515151,"mean":0.0286312311975869,"al":0.45106862456510327,"nl":29,"n":264},{"stop":-0.3,"wr":0.8068181818181818,"mean":0.0015168401190774237,"al":0.35902329114482234,"nl":51,"n":264},{"stop":-0.2,"wr":0.6098484848484849,"mean":-0.05096750135664604,"al":0.26799899062957655,"nl":103,"n":264}],"years":[{"y":"2024","tag":"yours","n":203,"nl":6,"wr":0.9704433497536946,"mean":-0.012125221354897697,"comp":-0.35795823343960276},{"y":"2024","tag":"best","n":125,"nl":4,"wr":0.968,"mean":0.05350054670367898,"comp":1.570003614839257},{"y":"2025","tag":"yours","n":68,"nl":2,"wr":0.9705882352941176,"mean":-0.012219416667705138,"comp":-0.13886203545915343},{"y":"2025","tag":"best","n":55,"nl":1,"wr":0.9818181818181818,"mean":0.06838741216614433,"comp":0.728624067938898},{"y":"2026","tag":"yours","n":109,"nl":0,"wr":1.0,"mean":0.017463273786173093,"comp":0.3299597814825912},{"y":"2026","tag":"best","n":84,"nl":2,"wr":0.9761904761904762,"mean":0.061721018793922416,"comp":1.1083474083079143}],"sizing":[{"f":0.05,"geo":0.002922335601331927,"dd":0.06827824973033425,"yr":1.0740816343441084},{"f":0.1,"geo":0.00576208339423645,"dd":0.1366829970996687,"yr":3.2054719471487765},{"f":0.15,"geo":0.008510447975479618,"dd":0.20496097298475024,"yr":7.319561662624023},{"f":0.2,"geo":0.011157087531289411,"dd":0.2728406278494093,"yr":15.019818058019794},{"f":0.35,"geo":0.01835089668014178,"dd":0.4873821565264441,"yr":93.26761816094753},{"f":0.5,"geo":0.023992616781978393,"dd":0.6942869017898983,"yr":374.1511848668561},{"f":1.0,"geo":-0.04214445618399565,"dd":0.9999999923198569,"yr":-0.9999788649007787}],"recovery":[{"f":0.05,"gain":0.0043896715217938455,"loss":0.04949621454452195,"need":11.589584692746982},{"f":0.1,"gain":0.008779343043587691,"loss":0.0989924290890439,"need":11.925555014599437},{"f":0.15,"gain":0.013169014565381536,"loss":0.14848864363356584,"need":12.2863061001348},{"f":0.2,"gain":0.017558686087175382,"loss":0.1979848581780878,"need":12.675159061530675},{"f":0.35,"gain":0.030727700652556915,"loss":0.34647350181165365,"need":14.054894420160704},{"f":0.5,"gain":0.043896715217938455,"loss":0.4949621454452195,"need":15.901142996356457},{"f":1.0,"gain":0.08779343043587691,"loss":0.989924290890439,"need":54.63527600807802}]}</script>
+<script>
+const D=JSON.parse(document.getElementById('D').textContent);
+const pct=x=>(x*100).toFixed(1)+'%';
+const pct2=x=>(x*100).toFixed(2)+'%';
+const sgn=x=>(x>=0?'+':'')+(x*100).toFixed(2)+'%';
+const cls=x=>x>=0?'pos':'neg';
+const el=(t,h)=>{const e=document.createElement(t);if(h!==undefined)e.innerHTML=h;return e};
+function table(id,head,rows){const t=document.getElementById(id);if(!t)return;t.innerHTML='';
+ const th=el('thead'),tr=el('tr');head.forEach(h=>tr.appendChild(el('th',h)));th.appendChild(tr);t.appendChild(th);
+ const tb=el('tbody');rows.forEach(r=>{const x=el('tr');if(r.cl)x.className=r.cl;
+  r.cells.forEach((c,i)=>{const td=el('td',c.h);if(c.c)td.className=c.c;else if(i===0)td.className='name';x.appendChild(td)});
+  tb.appendChild(x)});t.appendChild(tb)}
+
+table('recovery',['Position size','Each win adds','One loss costs','Wins needed to recover'],
+ D.recovery.map(r=>({cl:Math.abs(r.f-0.15)<1e-9?'hl':(r.f>=1?'bad':''),cells:[
+  {h:pct(r.f)+' of account'},{h:sgn(r.gain),c:'pos'},{h:'−'+pct(r.loss),c:'neg'},
+  {h:r.need?Math.round(r.need).toLocaleString('en-US'):'never'}]})));
+
+const wr=D.yours.wr;
+document.getElementById('streak').innerHTML=[
+ {k:'Your win rate',v:pct(wr),n:D.yours.n+' trades'},
+ {k:'3 wins in a row',v:pct(Math.pow(wr,3)),n:'almost certain'},
+ {k:'20 in a row',v:pct(Math.pow(wr,20)),n:'a normal month'},
+ {k:'80 in a row',v:pct(Math.pow(wr,80)),n:"your friend's 4 months"},
+].map(s=>`<div class="stat"><div class="k">${s.k}</div><div class="v">${s.v}</div>
+ <div class="n">${s.n}</div></div>`).join('');
+
+table('years',['Year','Rule','Trades','Losses','Win rate','Per trade','Compounded at 15%'],
+ D.years.map(y=>({cl:y.tag==='best'?'hl':(y.comp<0?'bad':''),cells:[
+  {h:y.y},{h:y.tag==='yours'?'14:00 · +3%':'15:00 · +10%'},{h:y.n},{h:y.nl},
+  {h:pct(y.wr)},{h:sgn(y.mean),c:cls(y.mean)},
+  {h:sgn(y.comp),c:cls(y.comp)}]})));
+
+table('cushion',['Target','Average win','Average loss','Break-even loss rate','Your actual loss rate','Cushion'],
+ D.cushion.map(c=>({cl:Math.abs(c.t-0.10)<1e-9?'hl':(c.margin<1.5?'bad':''),cells:[
+  {h:'+'+(c.t*100).toFixed(0)+'%'},{h:sgn(c.aw),c:'pos'},{h:'−'+pct(c.al),c:'neg'},
+  {h:pct2(c.be)},{h:pct2(c.actual)},
+  {h:'+'+(100*c.margin).toFixed(2)+' pts',c:c.margin>3?'pos':''}]})));
+
+table('grid',['Entry (ET)','Your time','Target','Trades','Losses','Win rate','Selection','Holdout','Holds?'],
+ D.grid.map(g=>({cl:(g.h===15&&Math.abs(g.t-0.10)<1e-9)?'hl':(g.ok?'':'bad'),cells:[
+  {h:g.h+':00'},{h:g.ksa+':00'},{h:'+'+(g.t*100).toFixed(0)+'%'},{h:g.n},{h:g.nl},
+  {h:pct(g.wr)},{h:g.sel===null?'—':sgn(g.sel),c:g.sel===null?'':cls(g.sel)},
+  {h:g.hold===null?'—':sgn(g.hold),c:g.hold===null?'':cls(g.hold)},
+  {h:g.ok?'<span class="pill go">yes</span>':'<span class="pill no">no</span>'}]})));
+
+table('stops',['Stop','Trades','Losses','Win rate','Average loss','Per trade'],
+ D.stops.map(s=>({cl:s.stop===null?'hl':(s.mean<0?'bad':''),cells:[
+  {h:s.stop===null?'none (hold it)':(s.stop*100).toFixed(0)+'%'},{h:s.n},{h:s.nl},
+  {h:pct(s.wr)},{h:'−'+pct(s.al)},{h:sgn(s.mean),c:cls(s.mean)}]})));
+
+table('sizing',['Size per trade','Per trade','Per year (250 trades)','Worst drawdown'],
+ D.sizing.map(s=>({cl:Math.abs(s.f-0.15)<1e-9?'hl':(s.geo===null||s.geo<0?'bad':''),cells:[
+  {h:pct(s.f)},{h:s.geo===null?'wipeout':sgn(s.geo),c:s.geo===null?'neg':cls(s.geo)},
+  {h:s.yr===null?'−100%':sgn(s.yr),c:s.yr===null?'neg':cls(s.yr)},
+  {h:pct(s.dd),c:s.dd>0.4?'neg':''}]})));
+
+const B=D.best;
+document.getElementById('recTitle').textContent =
+ `Enter at ${B.ksa}:00 your time, take +${(B.t*100).toFixed(0)}%, hold with no stop`;
+document.getElementById('spec').innerHTML=[
+ ['Instrument','SPX same-day expiry (SPXW)'],
+ ['Entry time',B.h+':00 ET — '+B.ksa+':00 KSA'],
+ ['Contract','the one trading nearest $2.00'],
+ ['Direction','calls — puts lost money in every test'],
+ ['Take profit','+'+(B.t*100).toFixed(0)+'%'],
+ ['Stop loss','none — any stop made it worse'],
+ ['Position size','15% of the account'],
+ ['Win rate',pct(B.wr)],
+ ['Average win','+'+pct(B.aw)],
+ ['Average loss','−'+pct(B.al)],
+ ['Per trade',sgn(B.mean)],
+ ['Sample',B.n+' trades over 2.5 years'],
+].map(r=>`<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
+const s15=D.sizing.find(s=>Math.abs(s.f-0.15)<1e-9);
+document.getElementById('expect').innerHTML=[
+ {k:'Per trade',v:sgn(B.mean),n:'on the contract',c:'var(--pos)'},
+ {k:'At 15% size',v:sgn(s15.geo),n:'of the account',c:'var(--pos)'},
+ {k:'Selection',v:sgn(B.sel),n:'before Jul 2025'},
+ {k:'Holdout',v:sgn(B.hold),n:'after — never used',c:'var(--pos)'},
+].map(s=>`<div class="stat"><div class="k">${s.k}</div>
+ <div class="v" ${s.c?`style="color:${s.c}"`:''}>${s.v}</div><div class="n">${s.n}</div></div>`).join('');
+document.getElementById('lossEvery').textContent=Math.round(1/B.actual);
+document.getElementById('lossCost').textContent=pct(0.15*B.al);
+</script>

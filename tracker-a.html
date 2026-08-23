@@ -113,17 +113,19 @@ tr:last-child td{border-bottom:none}
 </style>
 <div class="wrap">
 <header>
-  <p class="eyebrow">Strategy A &middot; 0DTE day trades</p>
-  <h1>Daily target tracker</h1>
-  <p class="sub">Log each day&rsquo;s result. The striker moves toward your goal and re-computes what
-  you need from the days left. Everything saves in this browser.</p>
+  <p class="eyebrow">SPX 0DTE &middot; 15:00 ET / 22:00 KSA &middot; +10% target</p>
+  <h1>SPX daily tracker</h1>
+  <p class="sub">Log each day&rsquo;s result. The striker moves toward your goal and re-computes
+  what you need from the days left. Backtested expectation: about
+  <b class="mono">+0.85%</b> a day at 15% size, with roughly one total loss every 38 trades.
+  Everything saves in this browser.</p>
 </header>
 
 <div class="panel">
   <div class="row">
     <div><label for="cap">Starting capital</label><input type="number" id="cap" value="1000" step="100"></div>
     <div><label for="goal">Goal</label><input type="number" id="goal" value="10000" step="500"></div>
-    <div><label for="tgt">Daily target %</label><input type="number" id="tgt" value="3" step="0.5"></div>
+    <div><label for="tgt">Daily target % (account)</label><input type="number" id="tgt" value="1.3" step="0.1"></div>
     <div><label for="days">Days to get there</label><input type="number" id="days" value="252" step="1"></div>
   </div>
   <div class="bar">
@@ -156,12 +158,13 @@ tr:last-child td{border-bottom:none}
   <div class="bar">
     <button class="primary" id="add">Add day</button>
     <button class="win" id="quickWin">Hit target (+<span id="qt">3</span>%)</button>
-    <button class="loss" id="quickLoss">Down day (&minus;<span id="ql">3</span>%)</button>
+    <button class="loss" id="quickLoss">Total loss (&minus;15%)</button>
     <button class="ghost" id="flat">Flat / no trade</button>
     <button class="ghost" id="undo">Undo last</button>
   </div>
-  <p class="hint">You can also type a percentage and press Enter. Losing days go in as a negative
-  number.</p>
+  <p class="hint">Type the account result and press Enter. The red button logs the one that
+  matters: the contract expiring worthless at 15% size. Expect it roughly once every 38 trades
+  &mdash; it is part of the plan, not a failure of it.</p>
 </div>
 
 <div class="panel">
@@ -266,7 +269,7 @@ $('add').onclick=()=>{const v=parseFloat($('pct').value);
   if(isNaN(v))return; push(v/100,$('note').value); $('pct').value='';$('note').value='';};
 $('pct').addEventListener('keydown',e=>{if(e.key==='Enter')$('add').click()});
 $('quickWin').onclick=()=>push(cfg().tgt,'hit target');
-$('quickLoss').onclick=()=>push(-cfg().tgt,'down day');
+$('quickLoss').onclick=()=>push(-0.15,'contract expired worthless');
 $('flat').onclick=()=>push(0,'no trade');
 $('undo').onclick=()=>{const s=S();s.log.pop();W(s);render()};
 $('save').onclick=()=>{const s=S();s.cfg=cfg();W(s);render()};
