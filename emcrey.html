@@ -1,0 +1,792 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="تفكيك كامل لشركة eMcREY وخطة دخول عملية لسوق تقنيات المدفوعات في السعودية.">
+<style>*{box-sizing:border-box}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>تشريح eMcREY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EDF1EF; --surface:#FFFFFF; --raise:#F5F8F7; --sunk:#E3E9E6;
+  --ink:#0E1613; --body:#39443F; --muted:#5D6A64; --faint:#8A968F;
+  --line:#D5DEDA; --line-soft:#E4EAE7;
+  --accent:#00795F; --accent-ink:#00604B; --accent-wash:#DDEDE7;
+  --gold:#8A5E12; --gold-mark:#B8791A; --gold-wash:#F3EAD8;
+  --good:#1F7A52; --warn:#93650F; --bad:#A8352C;
+  --good-wash:#DDEEE4; --warn-wash:#F5EAD5; --bad-wash:#F6E2DF;
+  --s1:#00795F; --s2:#B8791A; --s3:#2E6FB7; --s4:#A8385A; --s5:#6B7F1E;
+  --grid:#E0E7E4;
+  --display:"Noto Kufi Arabic","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --sans:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0B1210; --surface:#131B18; --raise:#1A2420; --sunk:#080D0C;
+  --ink:#E9EFEC; --body:#BAC6C1; --muted:#8E9B95; --faint:#6B7873;
+  --line:#27332E; --line-soft:#1C2622;
+  --accent:#3FB392; --accent-ink:#5FC7A9; --accent-wash:#123028;
+  --gold:#CFA24E; --gold-mark:#CFA24E; --gold-wash:#2C2415;
+  --good:#4FB57F; --warn:#D8A93E; --bad:#E0736A;
+  --good-wash:#122C1F; --warn-wash:#2C2413; --bad-wash:#2E1815;
+  --s1:#2E9B7C; --s2:#B8883A; --s3:#5385C2; --s4:#BC5F79; --s5:#889D38;
+  --grid:#222D29;
+}}
+:root[data-theme="dark"]{
+  --ground:#0B1210; --surface:#131B18; --raise:#1A2420; --sunk:#080D0C;
+  --ink:#E9EFEC; --body:#BAC6C1; --muted:#8E9B95; --faint:#6B7873;
+  --line:#27332E; --line-soft:#1C2622;
+  --accent:#3FB392; --accent-ink:#5FC7A9; --accent-wash:#123028;
+  --gold:#CFA24E; --gold-mark:#CFA24E; --gold-wash:#2C2415;
+  --good:#4FB57F; --warn:#D8A93E; --bad:#E0736A;
+  --good-wash:#122C1F; --warn-wash:#2C2413; --bad-wash:#2E1815;
+  --s1:#2E9B7C; --s2:#B8883A; --s3:#5385C2; --s4:#BC5F79; --s5:#889D38;
+  --grid:#222D29;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;direction:rtl;background:var(--ground);color:var(--body);
+  font-family:var(--sans);font-size:15px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+.page{max-width:1120px;margin:0 auto;padding:0 24px 96px}
+h1,h2,h3,h4{color:var(--ink);font-family:var(--display);line-height:1.3;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.lat{font-family:var(--mono);letter-spacing:-.01em}
+
+/* ── nav ── */
+nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin-bottom:0}
+.navin{max-width:1120px;margin:0 auto;padding:9px 24px;display:flex;gap:6px;overflow-x:auto;
+  scrollbar-width:none}
+.navin::-webkit-scrollbar{display:none}
+.navin a{flex:0 0 auto;font-size:.79rem;font-weight:500;color:var(--muted);text-decoration:none;
+  padding:5px 11px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s}
+.navin a:hover{color:var(--ink);background:var(--sunk)}
+.navin a.on{color:var(--surface);background:var(--accent);font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .navin a.on{color:#08110E}}
+:root[data-theme="dark"] .navin a.on{color:#08110E}
+
+/* ── hero ── */
+header.hero{padding:64px 0 40px}
+.eyebrow{font-size:.68rem;letter-spacing:.16em;font-weight:700;color:var(--gold);
+  font-family:var(--sans);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line);max-width:180px}
+h1{font-size:clamp(2.3rem,6.5vw,3.9rem);font-weight:700;letter-spacing:-.01em;margin-bottom:20px}
+.lede{font-size:clamp(1.02rem,2.3vw,1.22rem);color:var(--muted);max-width:64ch;font-weight:300;line-height:1.75}
+.lede b{color:var(--body);font-weight:600}
+
+/* ── kpi strip ── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(154px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:40px}
+.kpi{background:var(--surface);padding:16px 18px}
+.kpi dt{font-size:.7rem;letter-spacing:.07em;color:var(--faint);font-weight:600;margin:0 0 6px}
+.kpi dd{margin:0;color:var(--ink);font-size:1.16rem;font-weight:600;line-height:1.35}
+.kpi dd small{display:block;font-size:.76rem;color:var(--muted);font-weight:400;margin-top:3px;line-height:1.5}
+
+/* ── sections ── */
+section{padding-top:60px;scroll-margin-top:60px}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.snum{font-family:var(--mono);font-size:.76rem;font-weight:600;color:var(--gold);
+  border:1px solid var(--line);border-radius:4px;padding:2px 7px;flex:0 0 auto}
+h2{font-size:clamp(1.42rem,3.4vw,1.86rem);font-weight:700;letter-spacing:-.005em}
+.sub{color:var(--muted);font-size:.97rem;max-width:70ch;margin-bottom:26px;font-weight:300}
+
+/* ── bluf ── */
+.bluf{background:var(--surface);border:1px solid var(--line);border-right:3px solid var(--accent);
+  border-radius:8px;padding:26px 28px}
+.bluf ol{margin:0;padding:0;list-style:none;display:grid;gap:18px;counter-reset:b}
+.bluf li{counter-increment:b;position:relative;padding-right:40px;min-height:26px}
+.bluf li::before{content:counter(b);position:absolute;right:0;top:3px;
+  font-family:var(--mono);font-size:.78rem;font-weight:600;
+  color:var(--accent-ink);background:var(--accent-wash);border-radius:5px;
+  width:26px;height:24px;display:grid;place-items:center}
+.bluf b{color:var(--ink);font-weight:600}
+
+/* ── verdicts ── */
+.verdicts{display:grid;gap:14px}
+.vd{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.vd-top{padding:18px 22px 14px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;
+  border-bottom:1px dashed var(--line)}
+.vd-claim{flex:1 1 320px;min-width:0}
+.vd-claim .lbl{font-size:.68rem;letter-spacing:.1em;font-weight:700;color:var(--faint);display:block;margin-bottom:4px}
+.vd-claim q{color:var(--ink);font-size:1.03rem;font-weight:500;font-style:normal}
+.badge{flex:0 0 auto;font-size:.76rem;font-weight:700;padding:5px 13px;border-radius:100px;
+  border:1px solid transparent;white-space:nowrap;font-family:var(--sans)}
+.b-false{background:var(--bad-wash);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 32%,transparent)}
+.b-mis{background:var(--warn-wash);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 32%,transparent)}
+.b-part{background:var(--good-wash);color:var(--good);border-color:color-mix(in srgb,var(--good) 32%,transparent)}
+.vd-body{padding:16px 22px 20px;display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(max-width:720px){.vd-body{grid-template-columns:1fr}}
+.vd-body h4{font-size:.72rem;letter-spacing:.09em;color:var(--faint);font-weight:700;
+  margin-bottom:6px;font-family:var(--sans)}
+.vd-body p{font-size:.93rem}
+.vd-body .so{background:var(--raise);border-radius:6px;padding:13px 15px}
+.vd-body .so p{color:var(--body)}
+.vd-body .so b{color:var(--ink)}
+
+/* ── tables ── */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:600px}
+thead th{background:var(--raise);text-align:right;font-weight:600;color:var(--muted);
+  font-size:.73rem;letter-spacing:.06em;padding:11px 15px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:12px 15px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--raise)}
+td strong{color:var(--ink);font-weight:600}
+td .hint{display:block;color:var(--faint);font-size:.82rem;margin-top:3px;line-height:1.55}
+.pill{display:inline-block;font-size:.71rem;font-weight:600;padding:2px 9px;border-radius:100px;white-space:nowrap}
+.p-own{background:var(--accent-wash);color:var(--accent-ink)}
+.p-partner{background:var(--gold-wash);color:var(--gold)}
+.p-mix{background:var(--sunk);color:var(--muted)}
+.p-hi{background:var(--bad-wash);color:var(--bad)}
+.p-mid{background:var(--warn-wash);color:var(--warn)}
+.p-lo{background:var(--good-wash);color:var(--good)}
+
+/* ── split ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.split{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:22px 24px}
+.panel.own{border-top:3px solid var(--s1)}
+.panel.partner{border-top:3px solid var(--s2)}
+.panel h3{font-size:1.06rem;margin-bottom:4px}
+.panel .cnt{font-family:var(--mono);font-size:.76rem;color:var(--faint);margin-bottom:16px;display:block}
+.panel ul{margin:0;padding:0;list-style:none;display:grid;gap:13px}
+.panel li{padding-right:14px;border-right:2px solid var(--line);font-size:.91rem}
+.panel.own li{border-right-color:color-mix(in srgb,var(--s1) 42%,transparent)}
+.panel.partner li{border-right-color:color-mix(in srgb,var(--s2) 42%,transparent)}
+.panel li b{display:block;color:var(--ink);font-weight:600;font-size:.95rem}
+.panel li span{color:var(--muted);font-size:.86rem;line-height:1.55;display:block;margin-top:2px}
+
+/* ── bar chart ── */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px 26px}
+.chart .ct{font-size:1rem;font-weight:600;color:var(--ink);font-family:var(--display)}
+.chart .cs{font-size:.85rem;color:var(--muted);margin:4px 0 22px}
+.bars{display:grid;gap:2px}
+.bar{display:grid;grid-template-columns:172px minmax(0,1fr) 38px 104px;gap:14px;align-items:center;
+  padding:8px;border-radius:6px;transition:background .14s;cursor:default}
+.bar:hover{background:var(--raise)}
+.bar .bl{font-size:.87rem;color:var(--body);text-align:right;line-height:1.45}
+.bar .bl small{display:block;color:var(--faint);font-size:.75rem;line-height:1.4;margin-top:1px}
+.bar .bt{position:relative;height:20px}
+.bar .bf{position:absolute;right:0;top:0;height:20px;border-radius:4px 0 0 4px}
+.bar .bv{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;text-align:left}
+.bar .bn{font-size:.79rem;color:var(--faint);line-height:1.4}
+@media(max-width:760px){
+  .bar{grid-template-columns:120px minmax(0,1fr) 34px;gap:10px}
+  .bar .bn{display:none}
+}
+.axis{margin-top:14px;padding-top:11px;border-top:1px solid var(--grid);
+  font-size:.75rem;color:var(--faint);display:flex;justify-content:space-between}
+
+/* ── matrix ── */
+.mx{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:26px 28px 20px}
+.plot{position:relative;height:360px;margin:20px 12px 8px 4px;
+  border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line)}
+.plot .gl{position:absolute;background:var(--grid)}
+.dot{position:absolute;width:14px;height:14px;border-radius:50%;
+  box-shadow:0 0 0 3px var(--surface);transform:translate(50%,50%);z-index:2}
+.dlab{position:absolute;font-size:.79rem;font-weight:600;color:var(--ink);white-space:nowrap;
+  transform:translateY(50%);background:var(--surface);padding:2px 6px;border-radius:4px;z-index:1}
+.dlab i{font-style:normal;font-family:var(--mono);color:var(--faint);font-size:.72rem;margin-left:7px}
+.axlab{font-size:.76rem;color:var(--faint);font-weight:500}
+.mx .xl{text-align:left;margin-top:8px}
+@media(max-width:780px){.mx{display:none}}
+
+/* ── timeline ── */
+.tl{display:grid;gap:0;position:relative}
+.ph{display:grid;grid-template-columns:112px 1fr;gap:22px;padding:24px 0;border-top:1px solid var(--line)}
+.ph:first-child{border-top:0;padding-top:6px}
+@media(max-width:720px){.ph{grid-template-columns:1fr;gap:12px}}
+.ph-when{font-family:var(--mono);font-size:.84rem;font-weight:600;color:var(--accent-ink);
+  padding-top:2px;line-height:1.5}
+.ph-when small{display:block;color:var(--faint);font-weight:400;font-size:.74rem;margin-top:2px;font-family:var(--sans)}
+.ph h3{font-size:1.13rem;margin-bottom:10px}
+.ph ul{margin:0 0 0 0;padding:0;list-style:none;display:grid;gap:9px}
+.ph li{position:relative;padding-right:18px;font-size:.92rem}
+.ph li::before{content:"";position:absolute;right:4px;top:10px;
+  width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.ph .out{margin-top:14px;background:var(--accent-wash);border-radius:6px;padding:11px 15px;
+  font-size:.88rem;color:var(--accent-ink)}
+.ph .out b{font-weight:700}
+
+/* ── misc ── */
+.note{background:var(--raise);border:1px solid var(--line);border-radius:8px;padding:18px 22px;
+  font-size:.92rem;margin-top:16px}
+.note b{color:var(--ink)}
+.note.warn{background:var(--warn-wash);border-color:color-mix(in srgb,var(--warn) 26%,transparent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.rk{display:grid;gap:12px}
+.risk{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:17px 20px;
+  display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.risk .sev{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:4px;white-space:nowrap;margin-top:2px}
+.risk h4{font-size:.98rem;margin-bottom:4px}
+.risk p{font-size:.89rem;color:var(--muted)}
+.risk p.fix{margin-top:7px;color:var(--body)}
+.risk p.fix b{color:var(--accent-ink);font-weight:600}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.tag{font-size:.75rem;font-weight:500;color:var(--muted);background:var(--surface);
+  border:1px solid var(--line);border-radius:100px;padding:4px 12px}
+.tag b{color:var(--ink);font-weight:600}
+footer{margin-top:76px;padding-top:26px;border-top:1px solid var(--line);font-size:.84rem;color:var(--faint)}
+footer h4{font-size:.72rem;letter-spacing:.09em;color:var(--faint);margin-bottom:10px;font-family:var(--sans);font-weight:700}
+footer ul{margin:0 0 22px;padding:0;list-style:none;display:grid;gap:5px;font-size:.8rem}
+footer a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--accent-ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head><body>
+<nav>
+  <div class="navin" id="nv">
+    <a href="#bluf" class="on">الخلاصة</a>
+    <a href="#claims">تصحيح المعلومات</a>
+    <a href="#who">من هي</a>
+    <a href="#what">ماذا تبيع</a>
+    <a href="#money">من أين الدخل</a>
+    <a href="#market">السوق</a>
+    <a href="#rivals">المنافسون</a>
+    <a href="#gaps">أين ندخل</a>
+    <a href="#regs">التراخيص</a>
+    <a href="#plan">خطة ١٨ شهرًا</a>
+    <a href="#team">الموظفون</a>
+    <a href="#budget">الميزانية</a>
+    <a href="#risks">المخاطر</a>
+  </div>
+</nav>
+
+<div class="page">
+
+<header class="hero">
+  <div class="eyebrow">تحليل تنافسي · سبتمبر 2026</div>
+  <h1>تشريح eMcREY</h1>
+  <p class="lede">شركة مدفوعات مقرّها الرياض، عمرها عشرون سنة، بين <b>201 و500 موظف</b>، وتغطّي أحد عشر مجالًا لا مجالًا واحدًا. هذه الصفحة تفكّك ما تبيعه فعلًا، وتفصل بين ما تملكه من برمجيات وما تعيد بيعه من غيرها، وتصحّح ثلاث معلومات وصلتكم عنها — ثم ترسم أول ثمانية عشر شهرًا لشركة تنافسها من الجهة التي لا تستطيع الدفاع عنها.</p>
+
+  <dl class="kpis">
+    <div class="kpi"><dt>سنة التأسيس</dt><dd class="num">2006</dd></div>
+    <div class="kpi"><dt>المقر الرئيسي</dt><dd>الرياض<small>أبراج العليا · برج B · الدور 18</small></dd></div>
+    <div class="kpi"><dt>عدد الموظفين</dt><dd class="num"><bdi dir="ltr">201–500</bdi><small>حسب LinkedIn</small></dd></div>
+    <div class="kpi"><dt>المكاتب</dt><dd class="num">6 دول<small>السعودية، الإمارات، قطر، كندا، قبرص، لبنان</small></dd></div>
+    <div class="kpi"><dt>مجالات الحلول</dt><dd class="num">11<small>لا حلّ واحد</small></dd></div>
+    <div class="kpi"><dt>الرئيسة التنفيذية</dt><dd style="font-size:1rem">منى معلوف يحشوشي<small>حسب Crunchbase</small></dd></div>
+  </dl>
+</header>
+
+<section id="bluf">
+  <div class="shead"><span class="snum">01</span><h2>الخلاصة في ستين ثانية</h2></div>
+  <p class="sub">إذا لم تقرأ غير هذا الجزء، اقرأه.</p>
+  <div class="bluf">
+    <ol>
+      <li><b>eMcREY ليست شركة منتج بقدر ما هي شركة تكامل أنظمة.</b> قلب منتجها في معالجة البطاقات ليس من صنعها: هو <span class="lat">FIS Cortex</span> — نظام أمريكي وصل إلى FIS عبر استحواذها على <span class="lat">Metavante</span> سنة 2009. ومحوّل المعاملات الذي تعرضه هو <span class="lat">IST/Switch</span>، وهو أيضًا منتج شريك. عائلة <span class="lat">Apex</span> هي الطبقة التي بنتها فوق منتجات الآخرين.</li>
+      <li><b>ليست «الوحيدة».</b> في نفس السوق: <span class="lat">HPS</span> بمنصّة <span class="lat">PowerCARD</span> (أكثر من 400 مؤسسة في 90 دولة، وهي من تشغّل منصّة الرمز الموحّد لـ«المدفوعات السعودية»)، و<span class="lat">Network International</span> التي تقدّم معالجة البطاقات داخل المملكة، و<span class="lat">FIS</span> نفسها تبيع مباشرة، و<span class="lat">ACI</span> و<span class="lat">Euronet</span>. بل إن <span class="lat">BML Istisharat</span> — شركة لبنانية من بيروت تأسست 1972 — تفوز بعقود أنظمة بنكية أساسية داخل السعودية.</li>
+      <li><b>ليست لبنانية بالمعنى الذي يهمّكم.</b> جذورها وقيادتها لبنانية، لكن مقرّها الرئيسي الرياض ولديها كيان مسجّل باسم <span class="lat">eMcREY Saudi Arabia Limited</span>. فلا تعتمدوا على «نحن سعوديون وهم أجانب» كورقة وحيدة — لأنها في الأوراق الرسمية سعودية أيضًا.</li>
+      <li><b>ليست حلًّا واحدًا.</b> أحد عشر مجالًا، وسبعة منتجات <span class="lat">Apex</span> على الأقل، إضافة إلى ذراع تدريب (<span class="lat">eMcREY Academy</span>) تبيع نقل المعرفة للبنوك بعد التركيب.</li>
+      <li><b>لكن خندقها ليس الكود — وهذه هي الفرصة.</b> خندقها الحقيقي أربعة أشياء: شهادات <span class="lat">mada</span> و<span class="lat">Visa</span> و<span class="lat">Mastercard</span>، وعلاقة الشراكة مع <span class="lat">FIS</span>، وفريق تنفيذ من مئات الأشخاص، ومراجع عملاء عمرها عشرون سنة. لا يمكن مواجهة هذه الأربعة بشركة من شخصين — لكن يمكن الالتفاف حولها بالكامل، ودخول السوق من طبقة لا تحتاج أيًّا منها.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="claims">
+  <div class="shead"><span class="snum">02</span><h2>تصحيح المعلومات الثلاث</h2></div>
+  <p class="sub">هذه هي المعلومات التي وصلتكم. كلها تحتاج تعديلًا، وواحدة منها لو بنيتم عليها الخطة لخسرتم سنة.</p>
+  <div class="verdicts">
+
+    <article class="vd">
+      <div class="vd-top">
+        <div class="vd-claim"><span class="lbl">المعلومة</span><q>هذي شركة لبنانية</q></div>
+        <span class="badge b-mis">مضلّلة</span>
+      </div>
+      <div class="vd-body">
+        <div><h4>الصحيح</h4><p>الجذور والقيادة لبنانية، لكن مركز ثقل الشركة اليوم هو الرياض: المقر الرئيسي في أبراج العليا، وكيان محلي مسجّل، ومكاتب في ست دول. هي شركة إقليمية مقرّها السعودية، لا شركة أجنبية تعمل عن بُعد.</p></div>
+        <div class="so"><h4>ماذا يعني لكم</h4><p>ورقة «المحتوى المحلي» ما زالت في صالحكم لكنها ليست ضربة قاضية. <b>الميزة الحقيقية ليست الجنسية بل النسبة</b>: هيئة المحتوى المحلي والمشتريات الحكومية تمنح المنتج الوطني أفضلية سعرية 10٪، وبدأت تطبّق وزن المحتوى المحلي على خدمات تقنية المعلومات. شركة سعودية بالكامل بموظفين سعوديين تسجّل نسبة أعلى من شركة إقليمية مقرها الرياض بفرق أجنبية.</p></div>
+      </div>
+    </article>
+
+    <article class="vd">
+      <div class="vd-top">
+        <div class="vd-claim"><span class="lbl">المعلومة</span><q>هي الوحيدة اللي تخدم البنوك الصغيرة وساما</q></div>
+        <span class="badge b-false">غير صحيحة</span>
+      </div>
+      <div class="vd-body">
+        <div><h4>الصحيح</h4><p>ثلاث مشاكل في هذه الجملة. <b>أولًا</b> ليست وحيدة — <span class="lat">HPS</span> و<span class="lat">Network International</span> و<span class="lat">FIS</span> و<span class="lat">ACI</span> و<span class="lat">Euronet</span> و<span class="lat">BML Istisharat</span> كلهم يبيعون في السعودية. <b>ثانيًا</b> «البنوك الصغيرة» تقريبًا غير موجودة كشريحة: في المملكة 11 بنكًا محليًا و3 بنوك رقمية و21 فرعًا لبنوك أجنبية — والمحلي الأصغر ليس صغيرًا. <b>ثالثًا</b> على الأرجح خلط بين «تبيع لجهات يرخّصها البنك المركزي» و«ساما عميل لديها».</p></div>
+        <div class="so"><h4>ماذا يعني لكم</h4><p>هذه أخطر معلومة في الثلاث. لو بنيتم الخطة على «سنأخذ حصة من احتكار» لاكتشفتم بعد ستة أشهر أنكم تنافسون شركات عالمية بميزانيات تسويق ضخمة. <b>والأهم: الشريحة التي تظنونها هدفكم أصغر مما تتصوّرون</b> — وشريحة أكبر بكثير وأقل ازدحامًا موجودة تحت البنوك مباشرة. انظروا قسم «السوق».</p></div>
+      </div>
+    </article>
+
+    <article class="vd">
+      <div class="vd-top">
+        <div class="vd-claim"><span class="lbl">المعلومة</span><q>ما تقدّم إلا سولوشن واحد</q></div>
+        <span class="badge b-false">غير صحيحة — لكن فيها نصف حقيقة مفيدة</span>
+      </div>
+      <div class="vd-body">
+        <div><h4>الصحيح</h4><p>تعرض أحد عشر مجالًا وسبعة منتجات <span class="lat">Apex</span> على الأقل، من إدارة البطاقات إلى المطابقة والتسوية إلى المصرفية المفتوحة إلى حلول النقل العام. لكن نصف الحقيقة المفيد هو أن <b>معظم هذه المجالات ليست ملكها</b>: نظام معالجة البطاقات الأساسي (<span class="lat">FIS Cortex</span>)، والمحوّل (<span class="lat">IST/Switch</span>)، ونواة <span class="lat">SoftPOS</span> (<span class="lat">Amadis</span>) كلها منتجات شركاء.</p></div>
+        <div class="so"><h4>ماذا يعني لكم</h4><p>لا تحاولوا بناء بديل لـ<span class="lat">Cortex</span> — هذا يعني منافسة FIS نفسها. <b>الفرصة في الطبقة التي بنتها eMcREY بنفسها</b>: المطابقة والتسوية، والتحصيل، وتتبّع البطاقات، والتوطين الشرعي. هذه طبقة بُنيت لبيئة قديمة تعمل على الخوادم المحلية، وهي بالضبط ما يمكن لشركة صغيرة سحابية أن تبنيه أفضل وأرخص.</p></div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="who">
+  <div class="shead"><span class="snum">03</span><h2>من هي eMcREY فعلًا</h2></div>
+  <p class="sub">الحقائق المتاحة علنًا، مع درجة الثقة في كل منها.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:22%">البند</th><th style="width:46%">المعلومة</th><th style="width:32%">القراءة التنافسية</th></tr></thead>
+      <tbody>
+        <tr><td><strong>التأسيس</strong></td><td>2006 — «منذ 2006 بنت سمعتها على حلول بطاقات مخصّصة من طرف إلى طرف»</td><td>عشرون سنة من المراجع. هذا ما لا يمكنكم شراؤه، ولا مواجهته مباشرة.</td></tr>
+        <tr><td><strong>المقر</strong></td><td>شارع العليا، أبراج العليا، برج B، الدور 18، طريق الأمير محمد بن عبدالعزيز، الرياض 12233</td><td>عنوان مكاتب من الفئة الأولى. تكلفة تشغيل عالية — وهذه نقطة ضعف في التسعير.</td></tr>
+        <tr><td><strong>الكيان</strong></td><td><span class="lat">eMcREY Limited</span> + <span class="lat">eMcREY Saudi Arabia Limited</span> (مُدرجة في دليل شركاء IBM)</td><td>كيان سعودي قائم. لا تراهنوا على ورقة «الأجنبي».</td></tr>
+        <tr><td><strong>المكاتب</strong></td><td>السعودية، الإمارات، قطر، كندا، قبرص، لبنان</td><td>تكلفة هيكلية موزّعة على ست دول. شركة من شخصين في الرياض تكلفتها جزء من عشرة من ذلك.</td></tr>
+        <tr><td><strong>الشراكات</strong></td><td>شريك استراتيجي لـ<span class="lat">FIS</span> · <span class="lat">Mastercard Platinum Digital Vendor</span> · <span class="lat">Visa Certified Vendor</span> · <span class="lat">IBM Enterprise Partner</span> · <span class="lat">Oracle Platinum Partner</span> · <span class="lat">Amadis</span> (SoftPOS) · <span class="lat">Token ID</span> · <span class="lat">Entrust</span></td><td>هذه قائمة موزّع قيمة مضافة، لا قائمة شركة منتج. وهي أيضًا خندقها الأصعب.</td></tr>
+        <tr><td><strong>القطاعات</strong></td><td>الخدمات المالية، الحكومة، النقل العام، الطاقة</td><td>التوسّع خارج البنوك يعني أن نموّ قطاع البنوك وحده لم يعد كافيًا لهم.</td></tr>
+        <tr><td><strong>ذراع التدريب</strong></td><td><span class="lat">eMcREY Academy</span> — دورات لنقل المعرفة للبنوك السعودية بعد تركيب الأنظمة</td><td>مؤشّر مهم: <strong>الخدمات تدرّ دخلًا أكثر من الرخص.</strong> هذه أول إشارة لطريق دخولكم.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="what">
+  <div class="shead"><span class="snum">04</span><h2>ماذا تبيع بالضبط</h2></div>
+  <p class="sub">الأهم في هذه الصفحة: الفصل بين ما تملكه وما تعيد بيعه. اليمين ملكها، اليسار منتجات شركاء تركّبها وتوطّنها.</p>
+
+  <div class="split">
+    <div class="panel own">
+      <h3>ما تملكه — عائلة <span class="lat">Apex</span></h3>
+      <span class="cnt">7 منتجات · طبقة فوق أنظمة الآخرين</span>
+      <ul>
+        <li><b><span class="lat">Apex CMS</span></b><span>دورة حياة البطاقة أو المحفظة من الإصدار إلى التفويض. متعدّد العملات ومتعدّد المؤسسات.</span></li>
+        <li><b><span class="lat">Apex CardPlus</span></b><span>خدمة الطلبات، إدارة التحصيل والتحليل، <strong>التمويل الإسلامي والتوافق الشرعي</strong>، إدارة الأقساط، التأمين والضرائب. هذه هي طبقة التوطين — وأهم ما تملكه فعلًا.</span></li>
+        <li><b><span class="lat">Apex Reconciliation</span></b><span>التسوية والمطابقة وإدارة النزاعات في منصّة واحدة: نشاط المُصدر والمستحوذ عبر نقاط البيع وحسابات التجار والصرّافات والسجلات الإلكترونية والشبكات وأنظمة البنك الأساسية.</span></li>
+        <li><b><span class="lat">Apex Collection</span></b><span>أتمتة التحصيل ومتابعة المستحق والمتأخر.</span></li>
+        <li><b><span class="lat">Apex Tracker</span></b><span>إرسال البطاقات وتسليمها، مرتبط بإدارة المخزون ونظام إدارة البطاقات.</span></li>
+        <li><b><span class="lat">Apex Enterprise Online Payment</span></b><span>المدفوعات الإلكترونية: الإصدار والاستحواذ والأمان والتقارير على منصّة واحدة.</span></li>
+        <li><b><span class="lat">Apex Open Banking</span></b><span>مشاركة البنك في منظومة المصرفية المفتوحة، وواجهات <span class="lat">AISP / PISP / TSP</span> الخلفية.</span></li>
+        <li><b><span class="lat">Apex Transit</span></b><span>تحصيل أجرة آلي مفتوح الحلقة: من بوابة الدفع إلى التسوية والمطابقة الخلفية، بالبطاقة أو الجوال.</span></li>
+      </ul>
+    </div>
+
+    <div class="panel partner">
+      <h3>ما تعيد بيعه — منتجات شركاء</h3>
+      <span class="cnt">القلب التقني · ليس ملكها</span>
+      <ul>
+        <li><b><span class="lat">FIS Cortex</span></b><span>إصدار وإدارة ومعالجة البطاقات الائتمانية ومدى المدين والمدفوعة مسبقًا. وصل إلى FIS عبر استحواذها على <span class="lat">Metavante</span> سنة 2009. <strong>هذا هو المحرّك الفعلي وراء عروضها في إدارة البطاقات.</strong></span></li>
+        <li><b><span class="lat">IST/Switch</span></b><span>منصّة تحويل معاملات مفتوحة الأنظمة، معالجة 24×7، وربط بكل شبكات البطاقات العالمية والمحلية.</span></li>
+        <li><b><span class="lat">Amadis</span></b><span>نواة <span class="lat">EMV</span> لحل <span class="lat">SoftPOS</span> — اختارتها eMcREY سنة 2021.</span></li>
+        <li><b><span class="lat">Oracle · IBM</span></b><span>قواعد البيانات والبنية التحتية والوسيطة.</span></li>
+        <li><b><span class="lat">Token ID · Entrust</span></b><span>الترميز وإصدار البطاقات وأمن الشهادات.</span></li>
+      </ul>
+      <div class="note" style="margin-top:20px"><b>الاستنتاج:</b> المحرّك من FIS، والمحوّل من IST، والنواة من Amadis. القيمة التي تضيفها eMcREY هي التوطين (شرعي، عربي، تنظيمي) والتكامل والتنفيذ والدعم. <b>وهذه قيمة حقيقية</b> — لكنها ليست ملكية فكرية يصعب تكرارها.</div>
+    </div>
+  </div>
+
+  <div class="tw" style="margin-top:22px">
+    <table>
+      <thead><tr><th style="width:30%">المجال المعلن</th><th style="width:16%">الملكية</th><th style="width:54%">هل تستطيعون دخوله؟</th></tr></thead>
+      <tbody>
+        <tr><td><strong>إدارة البطاقات</strong></td><td><span class="pill p-mix">مختلط</span></td><td>لا. المحرّك من FIS ومنافسته تعني منافسة FIS. تجنّبوه تمامًا في السنتين الأوليين.</td></tr>
+        <tr><td><strong>بوابة الدفع وتحويل المعاملات</strong></td><td><span class="pill p-partner">شريك</span></td><td>لا. يتطلّب شهادات <span class="lat">mada</span> وشبكات البطاقات، وهي أشهر ومئات الآلاف من الريالات.</td></tr>
+        <tr><td><strong>التسوية والمطابقة وإدارة النزاعات</strong></td><td><span class="pill p-own">ملكها</span></td><td><strong>نعم — وهذا أفضل مدخل لكم.</strong> ألم يشعر به الجميع، ولا يحتاج شهادة شبكة، ونطاق <span class="lat">PCI</span> فيه محدود لأنه يعمل على ملفات وليس على بيانات بطاقة حيّة.</td></tr>
+        <tr><td><strong>الاستحواذ على التجار</strong></td><td><span class="pill p-mix">مختلط</span></td><td>مزدحم جدًا: جيديا، تاب، نيوليب، هايبر باي. ابتعدوا.</td></tr>
+        <tr><td><strong>الاحتيال ومكافحة غسل الأموال</strong></td><td><span class="pill p-mix">مختلط</span></td><td>ممكن لاحقًا لكن المنافسة عالمية وشديدة، ومتطلّبات الإثبات ثقيلة.</td></tr>
+        <tr><td><strong>المدفوعات عبر الجوال والترميز</strong></td><td><span class="pill p-partner">شريك</span></td><td>لا. يحتاج اعتمادات <span class="lat">Visa/Mastercard</span> مباشرة.</td></tr>
+        <tr><td><strong>إصدار وسائل الدفع</strong></td><td><span class="pill p-mix">مختلط</span></td><td>لا مباشرة — لكن يمكن إعادة بيع مزوّدي المعالجة كواجهة، انظر المدخل الخامس.</td></tr>
+        <tr><td><strong>المدفوعات غير البطاقية</strong></td><td><span class="pill p-mix">مختلط</span></td><td>مرتبط بـ<span class="lat">سريع</span> و<span class="lat">سداد</span> و<span class="lat">SWIFT</span>. يحتاج تصاريح ربط. لاحقًا.</td></tr>
+        <tr><td><strong>المصرفية المفتوحة و<span class="lat">BaaS</span></strong></td><td><span class="pill p-own">ملكها</span></td><td><strong>نعم — نافذة مفتوحة الآن.</strong> البنك المركزي نقل المصرفية المفتوحة إلى ترخيص رسمي في مارس 2026، وكل جهة مرخّصة تحتاج تهيئة.</td></tr>
+        <tr><td><strong>حلول النقل العام</strong></td><td><span class="pill p-own">ملكها</span></td><td>مشاريع حكومية كبيرة بدورات شراء طويلة وضمانات أداء ثقيلة. ليست لشركة ناشئة.</td></tr>
+        <tr><td><strong>التكامل والأتمتة والحكومة الإلكترونية</strong></td><td><span class="pill p-own">خدمات</span></td><td><strong>نعم — وهذا مصدر دخلكم الأول.</strong> خدمات بشرية بحتة، بلا رخص وبلا رأس مال.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="money">
+  <div class="shead"><span class="snum">05</span><h2>من أين يأتي دخلها</h2></div>
+  <p class="sub">فهم هذا يحدّد كيف تسعّرون. النمط في هذه الصناعة معروف ومستقرّ.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:26%">مصدر الدخل</th><th style="width:26%">النموذج المعتاد</th><th style="width:48%">ما يعنيه لكم</th></tr></thead>
+      <tbody>
+        <tr><td><strong>هامش إعادة بيع الرخص</strong></td><td>رخصة دائمة أو اشتراك سنوي على منتج الشريك</td><td>هامش محدود ومقيّد باتفاق الشريك. لا تقلّدوه.</td></tr>
+        <tr><td><strong>خدمات التنفيذ والتكامل</strong></td><td>بالأيام أو بمراحل تسليم<span class="hint">غالبًا الجزء الأكبر من الفاتورة في هذه الصناعة</span></td><td><strong>هنا تبدؤون.</strong> بلا رأس مال وبلا رخص وبتدفّق نقدي فوري.</td></tr>
+        <tr><td><strong>الصيانة السنوية</strong></td><td><bdi dir="ltr">18–22</bdi>٪ من قيمة الرخصة سنويًا</td><td>هذا ما يجعل العميل عالقًا. اصنعوا نسختكم منه مبكرًا: اشتراك سنوي لا رخصة مرة واحدة.</td></tr>
+        <tr><td><strong>الخدمات المُدارة والمعالجة</strong></td><td>رسوم شهرية لكل بطاقة أو لكل معاملة</td><td>يحتاج بنية تحتية وشهادات. المرحلة الثالثة، لا الأولى.</td></tr>
+        <tr><td><strong>التدريب ونقل المعرفة</strong></td><td>دورات عبر <span class="lat">eMcREY Academy</span></td><td>مربح جدًا وبلا تكلفة تقريبًا. قابل للنسخ فورًا.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>الرقم المرجعي:</b> عقود الأنظمة البنكية الأساسية في هذه السوق تتراوح عادة بين <span class="num">300</span> ألف و<span class="num">1</span> مليون دولار سنويًا للموردين من الطبقة الأولى، والصفقات الكبرى بسبعة إلى ثمانية أرقام. <b>دورة البيع من أول اجتماع إلى توقيع العقد تُقاس بالأشهر، لا بالأسابيع</b> — وهذا وحده هو ما يقتل معظم الشركات الناشئة في هذا المجال. الخطة في الأسفل مصمّمة تحديدًا لتفادي هذه المصيدة.</div>
+</section>
+
+<section id="market">
+  <div class="shead"><span class="snum">06</span><h2>السوق: من هم الزبائن فعلًا</h2></div>
+  <p class="sub">هنا تتغيّر الخطة. «البنوك الصغيرة» ليست الشريحة — الشريحة تحتها بكثير وأكبر منها بستّة أضعاف.</p>
+
+  <div class="chart">
+    <div class="ct">الجهات المرخّصة من البنك المركزي السعودي</div>
+    <p class="cs">عدد الكيانات في كل شريحة — وهي في الوقت نفسه عدد العملاء المحتملين. الأرقام كما نُشرت في 2026.</p>
+    <div class="bars" role="img" aria-label="عدد الجهات المرخّصة: شركات التمويل 77، شركات المدفوعات 32، فروع البنوك الأجنبية 21، البنوك المحلية 11، البنوك الرقمية 3">
+      <div class="bar" title="77 شركة تمويل مرخّصة — يوليو 2026">
+        <div class="bl">شركات التمويل<small>تمويل استهلاكي، عقاري، منشآت، تأجير، اشترِ الآن وادفع لاحقًا</small></div>
+        <div class="bt"><span class="bf" style="width:100%;background:var(--s1)"></span></div>
+        <div class="bv">77</div><div class="bn">هدفكم الأول</div>
+      </div>
+      <div class="bar" title="32 شركة مدفوعات مرخّصة — مايو 2026">
+        <div class="bl">شركات المدفوعات والمحافظ<small>مرخّصة كـ PSP من البنك المركزي</small></div>
+        <div class="bt"><span class="bf" style="width:41.6%;background:var(--s2)"></span></div>
+        <div class="bv">32</div><div class="bn">هدفكم الثاني</div>
+      </div>
+      <div class="bar" title="21 فرعًا لبنوك أجنبية">
+        <div class="bl">فروع بنوك أجنبية<small>قرار الأنظمة غالبًا خارج المملكة</small></div>
+        <div class="bt"><span class="bf" style="width:27.3%;background:var(--s3)"></span></div>
+        <div class="bv">21</div><div class="bn">صعبة الوصول</div>
+      </div>
+      <div class="bar" title="11 بنكًا محليًا">
+        <div class="bl">البنوك المحلية<small>الراجحي، الأهلي، الرياض، الأول، الإنماء، البلاد…</small></div>
+        <div class="bt"><span class="bf" style="width:14.3%;background:var(--s4)"></span></div>
+        <div class="bv">11</div><div class="bn">ملعب eMcREY وHPS</div>
+      </div>
+      <div class="bar" title="3 بنوك رقمية">
+        <div class="bl">البنوك الرقمية<small>stc bank، D360، بنك ڤجن</small></div>
+        <div class="bt"><span class="bf" style="width:3.9%;background:var(--s5)"></span></div>
+        <div class="bv">3</div><div class="bn">سحابية ومنفتحة</div>
+      </div>
+    </div>
+    <div class="axis"><span>0</span><span>عدد الجهات المرخّصة</span><span>80</span></div>
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="note"><b>ما الذي تغيّر في قراءتكم؟</b> صديقكم قال «البنوك الصغيرة». لكن أصغر بنك محلي سعودي ليس صغيرًا، والشريحة كلها 11 بنكًا + 3 رقمية = <span class="num">14</span> عميلًا محتملًا، جميعهم لديهم موردون قائمون وعقود طويلة. <b>بينما شركات التمويل الـ77 وشركات المدفوعات الـ32 = <span class="num">109</span> جهة</b>، كثير منها حديث الترخيص، بلا نظام مطابقة محترم، وبميزانيات لا تسمح بشراء منصّة من الطبقة الأولى.</div>
+    <div class="note"><b>والسوق ينمو أمامكم.</b> البنك المركزي يرخّص جهات جديدة شهريًا تقريبًا: من 70 شركة تمويل في يناير 2026 إلى 77 في يوليو. كل ترخيص جديد يعني جهة تحتاج — من اليوم الأول — مطابقة وتسوية وتقارير رقابية ودفاتر منضبطة. <b>هؤلاء لا يشترون من eMcREY لأنهم لا يستطيعون تحمّل تكلفتها.</b></div>
+  </div>
+</section>
+
+<section id="rivals">
+  <div class="shead"><span class="snum">07</span><h2>خريطة المنافسين</h2></div>
+  <p class="sub">من يبيع ماذا لمن، ومدى تهديده لكم في السنة الأولى.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:19%">الشركة</th><th style="width:15%">الأصل</th><th style="width:38%">ما تبيعه في السعودية</th><th style="width:28%">التهديد عليكم</th></tr></thead>
+      <tbody>
+        <tr><td><strong><span class="lat">HPS</span></strong></td><td>المغرب</td><td>منصّة <span class="lat">PowerCARD</span>: الإصدار والاستحواذ والتحويل. أكثر من 400 مؤسسة في 90 دولة. وهي من تشغّل منصّة الرمز الموحّد لـ«المدفوعات السعودية».</td><td><span class="pill p-lo">منخفض</span><span class="hint">لا تنزل إلى شركات التمويل الصغيرة</span></td></tr>
+        <tr><td><strong><span class="lat">FIS</span></strong></td><td>أمريكا</td><td><span class="lat">Cortex</span> مباشرة أو عبر شركاء مثل eMcREY.</td><td><span class="pill p-lo">منخفض</span><span class="hint">حجم صفقاتها أكبر من سوقكم</span></td></tr>
+        <tr><td><strong><span class="lat">Network International</span></strong></td><td>الإمارات</td><td>معالجة بطاقات وخدمات مُدارة داخل المملكة بنشر محلي متوافق.</td><td><span class="pill p-mid">متوسط</span><span class="hint">قد تنافسكم على شركات التمويل</span></td></tr>
+        <tr><td><strong><span class="lat">BML Istisharat</span></strong></td><td>لبنان (بيروت، 1972)</td><td>أنظمة بنكية أساسية. فازت بعملاء جدد في السعودية ولبنان، ومنهم بنك الأردن لفرعه السعودي.</td><td><span class="pill p-mid">متوسط</span><span class="hint">دليل قاطع أن eMcREY ليست وحيدة</span></td></tr>
+        <tr><td><strong><span class="lat">ACI · Euronet</span></strong></td><td>أمريكا</td><td>محوّلات ومنصّات مدفوعات عالمية.</td><td><span class="pill p-lo">منخفض</span></td></tr>
+        <tr><td><strong>نيوليب · جيديا · تاب</strong></td><td>السعودية / الكويت</td><td>الاستحواذ على التجار وبوابات الدفع.</td><td><span class="pill p-lo">منخفض</span><span class="hint">طبقة مختلفة تمامًا</span></td></tr>
+        <tr><td><strong>بيوت الخبرة المحلية</strong></td><td>السعودية</td><td>تكامل أنظمة عام، غالبًا بلا تخصّص في المدفوعات.</td><td><span class="pill p-hi">عالٍ</span><span class="hint">هؤلاء منافسوكم الحقيقيون على أول عقد — وتفوزون عليهم بالتخصّص</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note warn"><b>انتبهوا:</b> منافسكم في السنة الأولى ليس eMcREY. منافسكم هو بيت خبرة سعودي عام يقدّم عرضًا بنصف سعركم لأنه لا يفهم المدفوعات — <b>وسيفوز أحيانًا</b>. سلاحكم ضده هو أن تتحدّثوا لغة المجال: <span class="lat">ISO 8583</span>، ملفات التسوية، مطابقة الصرّافات، دورة النزاعات. أظهروا ذلك في أول اجتماع.</div>
+</section>
+
+<section id="gaps">
+  <div class="shead"><span class="snum">08</span><h2>أين الفجوة: خمسة مداخل</h2></div>
+  <p class="sub">مرتّبة حسب الأفضلية لشركة من شخصين برأس مال محدود. المحور الأفقي جهد التنفيذ، والعمودي حجم الفرصة.</p>
+
+  <div class="mx">
+    <div class="axlab" style="margin-bottom:2px">حجم الفرصة ↑</div>
+    <div class="plot">
+      <div class="gl" style="right:0;left:0;top:33.3%;height:1px"></div>
+      <div class="gl" style="right:0;left:0;top:66.6%;height:1px"></div>
+      <div class="gl" style="top:0;bottom:0;right:33.3%;width:1px"></div>
+      <div class="gl" style="top:0;bottom:0;right:66.6%;width:1px"></div>
+
+      <div class="dot" style="right:20%;bottom:76%;background:var(--s1)"></div>
+      <div class="dlab" style="right:calc(20% + 16px);bottom:76%"><i>1</i>المطابقة والتسوية</div>
+
+      <div class="dot" style="right:8%;bottom:44%;background:var(--s2)"></div>
+      <div class="dlab" style="right:calc(8% + 16px);bottom:44%"><i>2</i>خدمات الشهادات والاختبار</div>
+
+      <div class="dot" style="right:32%;bottom:20%;background:var(--s4)"></div>
+      <div class="dlab" style="right:calc(32% + 16px);bottom:20%"><i>3</i>طبقة الامتثال</div>
+
+      <div class="dot" style="right:66%;bottom:60%;background:var(--s3)"></div>
+      <div class="dlab" style="right:calc(66% + 16px);bottom:60%"><i>4</i>منصّة شركات التمويل</div>
+
+      <div class="dot" style="right:48%;bottom:36%;background:var(--s5)"></div>
+      <div class="dlab" style="right:calc(48% + 16px);bottom:36%"><i>5</i>وسيط <span class="lat">BaaS</span></div>
+    </div>
+    <div class="axlab xl">← جهد التنفيذ والتكلفة يزداد</div>
+  </div>
+
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th style="width:5%">#</th><th style="width:22%">المدخل</th><th style="width:24%">من يشتريه</th><th style="width:29%">لماذا ينجح</th><th style="width:20%">أول صفقة تشبه</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong class="num">1</strong></td>
+          <td><strong>المطابقة والتسوية كخدمة</strong><span class="hint">ابدؤوا من هنا</span></td>
+          <td>شركات التمويل الـ77، شركات المدفوعات الـ32، ثم البنوك الصغيرة</td>
+          <td>ألم يومي يشعر به كل مسؤول عمليات، وغير جذّاب فلا أحد يتنافس عليه، ولا يحتاج شهادة شبكة، ونطاق <span class="lat">PCI</span> فيه ضيّق لأنه يعمل على ملفات لا على بيانات بطاقة حيّة.</td>
+          <td>مشروع مطابقة يدوية لشركة تمويل: <bdi dir="ltr">60–120</bdi> ألف ريال، <bdi dir="ltr">6–10</bdi> أسابيع</td>
+        </tr>
+        <tr>
+          <td><strong class="num">2</strong></td>
+          <td><strong>خدمات الشهادات والاختبار</strong></td>
+          <td>أي جهة تربط بـ<span class="lat">mada</span> أو تُصدر بطاقات</td>
+          <td>أقل جهد على الإطلاق: خبرة بشرية + أدوات محاكاة <span class="lat">ISO 8583</span>. تدرّ نقدًا من الشهر الثالث وتفتح لكم الأبواب التي تحتاجونها لاحقًا.</td>
+          <td>استشارة تجهيز لشهادة: <bdi dir="ltr">25–60</bdi> ألف ريال</td>
+        </tr>
+        <tr>
+          <td><strong class="num">3</strong></td>
+          <td><strong>طبقة الامتثال</strong></td>
+          <td>الجهات حديثة الترخيص</td>
+          <td>إطار الأمن السيبراني للبنك المركزي، ونظام حماية البيانات الشخصية، وحزمة التعهيد التي يطلبها البنك من كل مورد. كل جهة جديدة تحتاجها بالقانون.</td>
+          <td>حزمة تجهيز: <bdi dir="ltr">40–90</bdi> ألف ريال</td>
+        </tr>
+        <tr>
+          <td><strong class="num">4</strong></td>
+          <td><strong>منصّة شركات التمويل</strong></td>
+          <td>الـ77 شركة تمويل</td>
+          <td>ما يقابل <span class="lat">Apex CardPlus</span> و<span class="lat">Apex Collection</span> لكن سحابيًا وبعُشر السعر. هنا تتحوّلون من خدمات إلى منتج.</td>
+          <td>اشتراك سنوي: <bdi dir="ltr">150–400</bdi> ألف ريال</td>
+        </tr>
+        <tr>
+          <td><strong class="num">5</strong></td>
+          <td><strong>وسيط <span class="lat">BaaS</span> وإصدار البطاقات</strong></td>
+          <td>شركات تقنية مالية ناشئة</td>
+          <td>تكاملون مع مزوّدي معالجة جاهزين بدل بناء نظام إدارة بطاقات. جهد أعلى وارتباط بمزوّد خارجي — لذلك هو الأخير.</td>
+          <td>تكامل + حصة من المعاملات</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>لماذا المطابقة والتسوية تحديدًا؟</b> لأنها المكان الوحيد الذي تجتمع فيه أربعة شروط معًا: eMcREY تملكه فعلًا (فأنتم تنافسون كودها لا كود FIS)، ولا يحتاج ترخيصًا من البنك المركزي، ولا يحتاج شهادة من شبكات البطاقات، ويشتريه عميل يستطيع اتخاذ القرار في أسابيع لا في سنة. <b>هذا هو التقاطع الوحيد بين «مربح» و«ممكن لشخصين».</b></div>
+</section>
+
+<section id="regs">
+  <div class="shead"><span class="snum">09</span><h2>التراخيص: ما تحتاجونه وما لا تحتاجونه</h2></div>
+  <p class="sub">أكثر ما يوقف الناس هنا هو ظنّهم أنهم يحتاجون ترخيصًا من البنك المركزي. غالبًا لا تحتاجونه.</p>
+
+  <div class="grid2">
+    <div class="panel own">
+      <h3>ما لا تحتاجونه — إذا بعتم برمجيات فقط</h3>
+      <span class="cnt">الطريق الرخيص</span>
+      <ul>
+        <li><b>لا ترخيص من البنك المركزي</b><span>بائع البرمجيات الذي يبيع لجهة مرخّصة يقع تحت <b>قواعد التعهيد</b> — والعبء التنظيمي على الجهة المرخّصة لا عليكم: هي من تجري العناية الواجبة وتحصل على عدم الممانعة وتضمن حق التدقيق وخطة الخروج وقيود التعهيد الفرعي.</span></li>
+        <li><b>لا حدّ أدنى لرأس المال</b><span>لشركة ذات مسؤولية محدودة في أنشطة الخدمات، لا يوجد حدّ أدنى في معظم الحالات.</span></li>
+        <li><b>لا شهادة <span class="lat">mada</span></b><span>ما دمتم لا تتصلون بالشبكة الوطنية مباشرة.</span></li>
+        <li><b>لا <span class="lat">PCI DSS</span> من المستوى الأول</b><span>إذا لم تمرّ بيانات البطاقة الكاملة عبر أنظمتكم. صمّموا المنتج ليعمل على ملفات تسوية منزوعة الحساسية، وستوفّرون <bdi dir="ltr">45–200</bdi> ألف دولار و<bdi dir="ltr">3–9</bdi> أشهر.</span></li>
+      </ul>
+    </div>
+
+    <div class="panel partner">
+      <h3>ما تحتاجونه فعلًا</h3>
+      <span class="cnt">من اليوم الأول</span>
+      <ul>
+        <li><b>سجل تجاري</b><span>نحو 1,200 ريال لشركة ذات مسؤولية محدودة، وحجز الاسم نحو 100 ريال، والإصدار خلال <bdi dir="ltr">3–7</bdi> أيام عمل إذا اكتملت الأوراق.</span></li>
+        <li><b>عضوية الغرفة التجارية</b><span><bdi dir="ltr">2,000–3,000</bdi> ريال سنويًا.</span></li>
+        <li><b>التسجيل في الزكاة والضريبة والتأمينات ومنصّات العمل</b><span>قوى، مدد، التأمينات الاجتماعية، ضريبة القيمة المضافة.</span></li>
+        <li><b>الالتزام بتوطين البيانات</b><span>البنية التحتية للمدفوعات يجب أن تُستضاف داخل المملكة. اختاروا مزوّدًا سحابيًا له منطقة سعودية من اليوم الأول — تغييره لاحقًا مؤلم.</span></li>
+        <li><b>حزمة تعهيد جاهزة</b><span>كل بنك سيطلبها: سياسة أمن معلومات، خطة استمرارية أعمال، حق تدقيق، خطة خروج، توافق مع الضوابط الأساسية للأمن السيبراني ونظام حماية البيانات الشخصية. <b>جهّزوها قبل أول اجتماع</b> — وجودها يفصلكم عن بيوت الخبرة العامة.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note warn" style="margin-top:16px"><b>ومتى تحتاجون ترخيصًا فعلًا؟</b> فقط إذا قرّرتم أن تكونوا مزوّد خدمة مدفوعات بأنفسكم — عندها: شركة ذات مسؤولية محدودة داخل المملكة، ورأس مال مدفوع لا يقلّ عن <span class="num">مليون ريال</span> يُحافظ عليه كرأس مال عامل، وتقارير مالية ربعية خلال شهر وسنوية مدقّقة خلال شهرين. <b>لا تفعلوا هذا في السنتين الأوليين.</b> بيعوا للمرخّصين بدل أن تصيروا مرخّصين.</div>
+
+  <div class="tags">
+    <span class="tag">أفضلية سعرية <b>10٪</b> للمنتج الوطني في المنافسات الحكومية</span>
+    <span class="tag">وزن المحتوى المحلي يُطبَّق على <b>خدمات تقنية المعلومات</b></span>
+    <span class="tag">ترخيص المصرفية المفتوحة فُتح رسميًا <b>مارس 2026</b></span>
+    <span class="tag">البيئة التجريبية التنظيمية للبنك المركزي <b>متاحة</b></span>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="shead"><span class="snum">10</span><h2>خطة الثمانية عشر شهرًا</h2></div>
+  <p class="sub">الترقيم هنا تسلسل حقيقي لا زينة: كل مرحلة تموّل التي بعدها. لا تقفزوا مرحلة.</p>
+
+  <div class="tl">
+    <div class="ph">
+      <div class="ph-when">الشهر <bdi dir="ltr">0–3</bdi><small>بدون كتابة سطر واحد</small></div>
+      <div>
+        <h3>مرحلة الاستماع</h3>
+        <ul>
+          <li>أصدروا السجل التجاري وعضوية الغرفة. التكلفة كلها أقل من <span class="num">5,000</span> ريال.</li>
+          <li><strong>ثلاثون مكالمة اكتشاف</strong> مع مديري عمليات ومديري مالية في شركات تمويل وشركات مدفوعات حديثة الترخيص. لا تبيعوا شيئًا — اسألوا فقط: «كيف تقفلون اليوم؟ كم ساعة تأخذ المطابقة الشهرية؟ من يفعلها؟ على ماذا؟»</li>
+          <li>ستسمعون الجواب نفسه: <span class="lat">Excel</span>، وشخص واحد، وثلاثة أيام في نهاية كل شهر، وأخطاء لا يكتشفونها إلا بعد شهرين. <strong>اكتبوا كلامهم حرفيًا</strong> — هذه هي مواصفة منتجكم.</li>
+          <li>اختاروا مدخلًا واحدًا فقط والتزموا به. الأرجح: المطابقة والتسوية.</li>
+          <li>جهّزوا حزمة التعهيد والامتثال قبل أول عرض.</li>
+        </ul>
+        <div class="out"><b>مخرج المرحلة:</b> خطابا نوايا من جهتين + مواصفة مكتوبة من ألم حقيقي لا من تخيّل. لا توظيف. الرواتب صفر.</div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="ph-when">الشهر <bdi dir="ltr">3–9</bdi><small>الخدمات تموّل المنتج</small></div>
+      <div>
+        <h3>أول عقد مدفوع</h3>
+        <ul>
+          <li>بيعوا <strong>مشروع خدمات</strong> لا منتجًا: «سنبني لكم عملية المطابقة ونشغّلها ستة أشهر». سعر <bdi dir="ltr">60–120</bdi> ألف ريال.</li>
+          <li><strong>ابنوا المنتج داخل المشروع.</strong> العميل يدفع مقابل النتيجة، وأنتم تحتفظون بالكود. هذه هي الحيلة كلها.</li>
+          <li>وظّفوا مهندسًا خلفيًا أولًا واحدًا فقط. ثم خرّيجًا عبر برنامج تمهير براتب <span class="num">3,000</span> ريال مدعوم بالكامل من صندوق الموارد البشرية.</li>
+          <li>تقدّموا لمسرّعة «فنتك السعودية»، ولمبادرة <span class="lat">Connect</span> من هيئة تنمية التقنية التي تغطّي 50٪ من تكلفة الوصول إلى نموذج أولي بحدّ أقصى 200 ألف دولار.</li>
+        </ul>
+        <div class="out"><b>مخرج المرحلة:</b> إيراد أول، وعميل مرجعي واحد يمكن ذكر اسمه، ونسخة أولى تعمل عند عميل حقيقي.</div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="ph-when">الشهر <bdi dir="ltr">9–15</bdi><small>من خدمة إلى منتج</small></div>
+      <div>
+        <h3>التحويل إلى اشتراك</h3>
+        <ul>
+          <li>حوّلوا ما بنيتموه إلى منتج بواجهة موحّدة يمكن تركيبه عند العميل الثاني في أسبوعين لا في شهرين.</li>
+          <li>غيّروا التسعير: <strong>اشتراك سنوي لا مشروع مرة واحدة</strong>. هذا يبني الإيراد المتكرّر الذي يجعل الشركة قابلة للاستثمار.</li>
+          <li>ثلاثة عملاء إضافيين من نفس الشريحة. البيع أسهل كثيرًا مع مرجع.</li>
+          <li>الفريق يصل إلى ثمانية: أضيفوا محلّل أعمال مدفوعات، ومهندس ضمان جودة، ومهندس بنية تحتية، ومدير تنفيذ.</li>
+        </ul>
+        <div class="out"><b>مخرج المرحلة:</b> خمسة عملاء، وإيراد متكرّر سنوي بين <span class="num">700</span> ألف و<span class="num">1.5</span> مليون ريال.</div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="ph-when">الشهر <bdi dir="ltr">15–24</bdi><small>الصعود إلى البنوك</small></div>
+      <div>
+        <h3>أول عقد بنكي</h3>
+        <ul>
+          <li>الآن فقط قرّروا نطاق <span class="lat">PCI DSS</span>: هل تحتاجونه فعلًا؟ إن لم تلمسوا بيانات بطاقة، وفّروا المال.</li>
+          <li>ابدؤوا الحديث مع بنك رقمي أو بنك محلي صغير. لديكم الآن خمسة مراجع وحزمة تعهيد جاهزة — وهذا ما يفتح الباب.</li>
+          <li>وسّعوا إلى مدخل ثانٍ من القائمة، والأرجح: الامتثال أو منصّة شركات التمويل.</li>
+          <li>الفريق أربعة عشر: أضيفوا مهندس ما قبل البيع، ومسؤول امتثال وأمن، ومندوب مبيعات مؤسسي، وأخصائي <span class="lat">ISO 8583</span>.</li>
+        </ul>
+        <div class="out"><b>مخرج المرحلة:</b> أول عقد بنكي، وموقع تنافسي حقيقي — لا في مواجهة eMcREY بل في الطبقة التي لا تخدمها جيدًا.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="team">
+  <div class="shead"><span class="snum">11</span><h2>الموظفون: من، ومتى، وبكم، ويسوّي وش</h2></div>
+  <p class="sub">أكثر خطأ يرتكبه المؤسّسون هنا هو التوظيف مبكرًا. أول ثلاثة أشهر لا توظّفوا أحدًا — أنتما فقط.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:19%">الدور</th><th style="width:10%">متى</th><th style="width:16%">الراتب الشهري</th><th style="width:55%">أول مهمة له بالضبط</th></tr></thead>
+      <tbody>
+        <tr><td><strong>المؤسّس التجاري</strong><span class="hint">أحدكما</span></td><td class="num">شهر 0</td><td>—</td><td>ثلاثون مكالمة اكتشاف، وبناء العلاقة مع شركات التمويل، وكتابة العرض والتسعير، والتفاوض على أول عقد. <strong>لا يكتب كودًا.</strong></td></tr>
+        <tr><td><strong>المؤسّس التقني</strong><span class="hint">الآخر</span></td><td class="num">شهر 0</td><td>—</td><td>يحوّل كلام العملاء إلى مواصفة، ويبني نموذج المطابقة الأولي، ويختار المكدّس التقني ومزوّدًا سحابيًا له منطقة سعودية.</td></tr>
+        <tr><td><strong>مهندس خلفي أول</strong></td><td class="num">شهر 4</td><td class="num"><bdi dir="ltr">25–35</bdi> ألف ريال</td><td>محرّك المطابقة نفسه: قراءة ملفات التسوية، وقواعد المطابقة، ومعالجة الاستثناءات. ابحثوا عمّن عمل في بنك أو شركة مدفوعات — لا عن مطوّر ويب عام.</td></tr>
+        <tr><td><strong>خرّيج تمهير</strong></td><td class="num">شهر 5</td><td class="num">3,000 ريال</td><td>مدعوم بالكامل من صندوق الموارد البشرية لمدة <bdi dir="ltr">3–6</bdi> أشهر. الاختبار اليدوي، وإعداد بيانات العملاء، والتوثيق. <strong>أرخص طريقة لتوسيع الفريق في السعودية.</strong></td></tr>
+        <tr><td><strong>مهندس خلفي متوسط</strong></td><td class="num">شهر 8</td><td class="num"><bdi dir="ltr">15–22</bdi> ألف ريال</td><td>الواجهات والتقارير والتكاملات مع أنظمة العميل.</td></tr>
+        <tr><td><strong>محلّل أعمال مدفوعات</strong></td><td class="num">شهر 10</td><td class="num"><bdi dir="ltr">18–28</bdi> ألف ريال</td><td><strong>أهم توظيف بعد المهندس الأول.</strong> يفهم دورة النزاعات وملفات <span class="lat">mada</span> وتسوية الصرّافات. يترجم بين البنك والمهندسين. ابحثوا عنه في فرق عمليات البطاقات في البنوك.</td></tr>
+        <tr><td><strong>مهندس ضمان جودة</strong></td><td class="num">شهر 11</td><td class="num"><bdi dir="ltr">12–20</bdi> ألف ريال</td><td>في المدفوعات الخطأ يعني مالًا ضائعًا. الاختبار الآلي لحالات المطابقة والحدود.</td></tr>
+        <tr><td><strong>مهندس بنية تحتية</strong></td><td class="num">شهر 12</td><td class="num"><bdi dir="ltr">18–28</bdi> ألف ريال</td><td>النشر داخل المملكة، والنسخ الاحتياطي، والمراقبة، وسجلّ التدقيق — وهذا ما سيدقّقه البنك عليكم.</td></tr>
+        <tr><td><strong>مدير تنفيذ ومشاريع</strong></td><td class="num">شهر 13</td><td class="num"><bdi dir="ltr">18–26</bdi> ألف ريال</td><td>يمسك التركيب عند العميل حتى لا يبتلع المؤسّسين. من هنا تبدأ الشركة تتوسّع فعلًا.</td></tr>
+        <tr><td><strong>مسؤول امتثال وأمن</strong></td><td class="num">شهر 16</td><td class="num"><bdi dir="ltr">20–30</bdi> ألف ريال</td><td>الضوابط الأساسية للأمن السيبراني، ونظام حماية البيانات الشخصية، وردود استبيانات التعهيد التي ترسلها البنوك.</td></tr>
+        <tr><td><strong>مهندس ما قبل البيع</strong></td><td class="num">شهر 18</td><td class="num"><bdi dir="ltr">22–32</bdi> ألف ريال</td><td>العروض التوضيحية والردّ على كراسات الشروط. بدونه سيبتلع المؤسّس التقني في العروض بدل البناء.</td></tr>
+        <tr><td><strong>مندوب مبيعات مؤسسي</strong></td><td class="num">شهر 20</td><td class="num"><bdi dir="ltr">20–30</bdi> ألف + عمولة</td><td>لا توظّفوه قبل أن تبيعوا بأنفسكم خمس صفقات. من لم يبع المؤسّس منتجه بنفسه لن يبيعه غيره.</td></tr>
+        <tr><td><strong>أخصائي <span class="lat">ISO 8583</span></strong></td><td class="num">شهر 22</td><td class="num"><bdi dir="ltr">25–40</bdi> ألف ريال</td><td>نادر وغالٍ. لا تحتاجونه إلا إذا دخلتم التحويل والشهادات فعلًا.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="note"><b>السعودة في صالحكم تمامًا.</b> الشركات حتى خمسة موظفين تحتاج سعوديًا واحدًا على الأقل — <b>وأنتما سعوديان، فأنتم ملتزمون من اليوم الأول بلا تكلفة إضافية</b>، بلا رسوم مكتب عمل ولا رسوم مرافقين ولا إقامات. هذه ميزة نقدية حقيقية أمام أي منافس يعتمد على فرق أجنبية.</div>
+    <div class="note"><b>واستخدموا الدعم.</b> برنامج تمهير يعطي الخريج <span class="num">3,000</span> ريال شهريًا لمدة <bdi dir="ltr">3–6</bdi> أشهر على حساب الصندوق. وبرامج دعم التوظيف تغطّي بين 30٪ و50٪ من راتب الموظف السعودي. ومبادرة <span class="lat">TechCrew</span> من هيئة تنمية التقنية مخصّصة لدعم رواتب الكفاءات في المنشآت التقنية الصغيرة. <b>راتب المهندس الأول قد يكلّفكم نصف ما تظنّون.</b></div>
+  </div>
+</section>
+
+<section id="budget">
+  <div class="shead"><span class="snum">12</span><h2>الميزانية: كم تحتاجون فعلًا</h2></div>
+  <p class="sub">تقدير للثمانية عشر شهرًا الأولى بافتراض أن المؤسّسَين لا يأخذان راتبًا في أول ستة أشهر، وأن الإيراد يبدأ في الشهر السادس.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:34%">البند</th><th style="width:22%">التكلفة (ريال)</th><th style="width:44%">ملاحظة</th></tr></thead>
+      <tbody>
+        <tr><td>التأسيس والسجل والغرفة</td><td class="num">5,000</td><td>مرة واحدة. لا حدّ أدنى لرأس المال.</td></tr>
+        <tr><td>رواتب المؤسّسَين (شهر <bdi dir="ltr">7–18</bdi>)</td><td class="num">360,000</td><td>15 ألف لكل واحد شهريًا بعد بدء الإيراد.</td></tr>
+        <tr><td>مهندس خلفي أول (شهر <bdi dir="ltr">4–18</bdi>)</td><td class="num">420,000</td><td>28 ألف × 15 شهرًا، قابلة للخفض بدعم التوظيف.</td></tr>
+        <tr><td>خرّيج تمهير</td><td class="num">0</td><td>مدعوم بالكامل من صندوق الموارد البشرية.</td></tr>
+        <tr><td>مهندس متوسط (شهر <bdi dir="ltr">8–18</bdi>)</td><td class="num">198,000</td><td>18 ألف × 11 شهرًا.</td></tr>
+        <tr><td>محلّل أعمال مدفوعات (شهر <bdi dir="ltr">10–18</bdi>)</td><td class="num">198,000</td><td>22 ألف × 9 أشهر.</td></tr>
+        <tr><td>بنية سحابية داخل المملكة</td><td class="num">90,000</td><td>5 آلاف شهريًا. توطين البيانات إلزامي.</td></tr>
+        <tr><td>محاسبة وقانوني وحزمة الامتثال</td><td class="num">80,000</td><td>حزمة التعهيد تُكتب مرة وتُستخدم في كل صفقة.</td></tr>
+        <tr><td>سفر وفعاليات ومبيعات</td><td class="num">60,000</td><td><span class="lat">LEAP</span>، ملتقيات فنتك السعودية، اجتماعات العملاء.</td></tr>
+        <tr><td>احتياطي 15٪</td><td class="num">212,000</td><td>لا تبدؤوا بدونه.</td></tr>
+        <tr style="background:var(--accent-wash)"><td><strong>الإجمالي قبل الإيراد والدعم</strong></td><td class="num"><strong>1,623,000</strong></td><td><strong>وهذا رقم قبل الخصم.</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>لكن الرقم الحقيقي أقل بكثير.</b> اطرحوا منه: إيراد المرحلة الثانية (عقدان بـ<bdi dir="ltr">60–120</bdi> ألف = <span class="num"><bdi dir="ltr">120–240</bdi></span> ألف)، ودعم التوظيف (<bdi dir="ltr">30–50</bdi>٪ من رواتب السعوديين)، ومبادرة <span class="lat">Connect</span> (50٪ من تكلفة النموذج الأولي حتى 200 ألف دولار). <b>الاحتياج النقدي الفعلي يمكن أن ينزل إلى نطاق <bdi dir="ltr">500–800</bdi> ألف ريال</b> — وهو مبلغ يمكن لمؤسّسَين تدبيره أو تمويله من صندوق حكومي دون التنازل عن حصص.</div>
+</section>
+
+<section id="risks">
+  <div class="shead"><span class="snum">13</span><h2>ما الذي قد يقتل المشروع</h2></div>
+  <p class="sub">مرتّبة حسب احتمال حدوثها الفعلي، لا حسب حجمها.</p>
+  <div class="rk">
+    <div class="risk"><span class="sev" style="background:var(--bad-wash);color:var(--bad)">مرتفع جدًا</span><div>
+      <h4>بناء المنتج قبل بيع أي شيء</h4>
+      <p>الخطأ الأشهر في هذا المجال: سنة كاملة في البناء، ثم اكتشاف أن ما بُني لا يشبه ما يحتاجه أحد.</p>
+      <p class="fix"><b>العلاج:</b> لا سطر كود قبل خطاب نوايا من جهتين. المرحلة الأولى كلها مكالمات.</p></div></div>
+
+    <div class="risk"><span class="sev" style="background:var(--bad-wash);color:var(--bad)">مرتفع</span><div>
+      <h4>دورة بيع أطول من رأس المال</h4>
+      <p>البيع للبنوك يُقاس بالأشهر الطويلة. شركة من شخصين لا تعيش دورة كهذه بلا دخل.</p>
+      <p class="fix"><b>العلاج:</b> ابدؤوا من شركات التمويل وشركات المدفوعات — قرارها أسرع بكثير — وموّلوا أنفسكم بالخدمات حتى تنضج الصفقة البنكية.</p></div></div>
+
+    <div class="risk"><span class="sev" style="background:var(--warn-wash);color:var(--warn)">متوسط</span><div>
+      <h4>الانجرار إلى منافسة مباشرة</h4>
+      <p>إغراء بناء «نظام إدارة بطاقات» لأنه يبدو أهم. عمليًا هذا يعني منافسة FIS وHPS بميزانية صفرية.</p>
+      <p class="fix"><b>العلاج:</b> التزموا بمدخل واحد لمدة سنة كاملة. المطابقة والتسوية ليست مثيرة — لكنها تُدفع.</p></div></div>
+
+    <div class="risk"><span class="sev" style="background:var(--warn-wash);color:var(--warn)">متوسط</span><div>
+      <h4>توسيع نطاق <span class="lat">PCI</span> بلا داعٍ</h4>
+      <p>قرار معماري واحد خاطئ — تمرير رقم البطاقة الكامل عبر نظامكم — يضيف <bdi dir="ltr">45–200</bdi> ألف دولار و<bdi dir="ltr">3–9</bdi> أشهر.</p>
+      <p class="fix"><b>العلاج:</b> صمّموا من اليوم الأول على ملفات منزوعة الحساسية ومعرّفات مقنّعة. اجعلوه قرارًا معماريًا لا قرارًا لاحقًا.</p></div></div>
+
+    <div class="risk"><span class="sev" style="background:var(--warn-wash);color:var(--warn)">متوسط</span><div>
+      <h4>خسارة الصفقة أمام بيت خبرة عام أرخص</h4>
+      <p>سيحدث. عرضهم أرخص وعلاقتهم أقدم.</p>
+      <p class="fix"><b>العلاج:</b> لا تنافسوا على السعر. انزلوا في أول اجتماع إلى تفاصيل لا يعرفها غير المتخصّص — دورة النزاع، ونافذة إعادة العرض، ومطابقة السجل الإلكتروني للصرّاف. التخصّص هو فارقكم الوحيد.</p></div></div>
+
+    <div class="risk"><span class="sev" style="background:var(--good-wash);color:var(--good)">منخفض</span><div>
+      <h4>ردّ eMcREY المباشر عليكم</h4>
+      <p>شركة بـ<bdi dir="ltr">201–500</bdi> موظف وعقود من سبعة أرقام لن تنشغل بصفقة قيمتها 80 ألف ريال لدى شركة تمويل.</p>
+      <p class="fix"><b>العلاج:</b> هذا في صالحكم — وهو بالضبط سبب اختيار هذه الطبقة. ابقوا تحت رادارها حتى تبنوا خمسة مراجع.</p></div></div>
+  </div>
+</section>
+
+<footer>
+  <h4>المصادر</h4>
+  <ul>
+    <li><a href="https://emcrey.com/about/">eMcREY — About</a> · <a href="https://emcrey.com/solutions-and-services/">Solutions and Services</a> · <a href="https://emcrey.com/solutions-and-services/partner-products/">Partner Products</a> · <a href="https://emcrey.com/solutions-and-services/card-management/">Card Management</a> · <a href="https://emcrey.com/solutions-and-services/settlement-reconciliation-and-dispute-management/">Settlement &amp; Reconciliation</a> · <a href="https://emcrey.com/academy/">Academy</a></li>
+    <li><a href="https://www.crunchbase.com/organization/emcrey">Crunchbase — eMcREY</a> · <a href="https://www.linkedin.com/company/emcrey">LinkedIn</a> · <a href="https://www.ibm.com/partnerplus/directory/company/8849">IBM Partner Directory — eMcREY Saudi Arabia Limited</a> · <a href="https://partner.visa.com/content/gpp/partner-directory/emcrey-limited.html">Visa Partner Directory</a></li>
+    <li><a href="https://www.businesswire.com/news/home/20211212005038/en/Amadis-Chosen-by-eMcREY-for-SoftPos-Payment-Solution">Businesswire — Amadis chosen by eMcREY for SoftPOS</a> · <a href="https://e-payments.blogspot.com/2016/01/fis-overview-and-history.html">FIS overview and history (Cortex via Metavante, 2009)</a></li>
+    <li><a href="https://www.sama.gov.sa/en-US/MediaCenter/News/Pages/news-1143.aspx">SAMA — finance company licensing announcements</a> · <a href="https://rulebook.sama.gov.sa/en/guidelines-apply-payment-service-providers-license">SAMA Rulebook — PSP licence guidelines</a> · <a href="https://www.twobirds.com/en/insights/2026/saudi-arabia/saudi-financial-services-understanding-the-regulatory-perimeter-of-sama-and-the-cma">Bird &amp; Bird — SAMA and CMA regulatory perimeter</a> · <a href="https://www.clydeco.com/en/insights/2026/03/sama-new-licensing-framework-for-open-banking">Clyde &amp; Co — SAMA open banking licensing, March 2026</a></li>
+    <li><a href="https://spa.gov.sa/en/N2563894">SPA — LCGPA local content weighting for IT services</a> · <a href="https://www.hrdf.org.sa/en/products-and-services/programs/establishments/training/graduate-development/">HRDF — Tamheer</a> · <a href="https://ntdp.gov.sa/en">NTDP</a> · <a href="https://fintechsaudi.com/">Fintech Saudi</a></li>
+    <li><a href="https://www.hps-worldwide.com/news-and-media/hps-introduces-qr-based-national-payment-system">HPS — Saudi Payments unified QR platform</a> · <a href="https://network.global/ksa/en/processing-solutions/card-and-processing">Network International KSA</a> · <a href="https://www.fintechfutures.com/core-banking-technology/bml-istisharat-gains-new-core-banking-system-clients-in-saudi-arabia-and-lebanon">FinTech Futures — BML Istisharat wins in Saudi Arabia</a></li>
+  </ul>
+  <p>الأرقام المالية والرواتب تقديرات نطاقية من مسوح سوق منشورة، لا عروض أسعار. أرقام الجهات المرخّصة كما نُشرت خلال 2026 وهي تتغيّر شهريًا. معلومات eMcREY مجمّعة من موقعها ومصادر عامة — لم يُتَح الوصول المباشر إلى الموقع من هذه البيئة، والاعتماد كان على نتائج البحث ومقتطفات الصفحات.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('#nv a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))}).filter(Boolean);
+  if(!('IntersectionObserver' in window)||!secs.length)return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting)return;
+      var id='#'+e.target.id;
+      links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')===id)});
+      var on=document.querySelector('#nv a.on');
+      if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'});
+    });
+  },{rootMargin:'-15% 0px -70% 0px'});
+  secs.forEach(function(s){io.observe(s)});
+})();
+</script>
+
+</body></html>
