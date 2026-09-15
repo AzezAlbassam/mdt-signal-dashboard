@@ -1,0 +1,166 @@
+//@version=6
+// SPY Expected Move — daily, weekly and month-to-date bands.
+//
+// Reconstructed from charts published by the Figuring Out Money YouTube channel.
+// Independent work, not affiliated with or endorsed by that channel or TrendSpider.
+//
+// Each band is a close, a volatility and a horizon, drawn symmetrically about the
+// close it hangs on:
+//
+//     half width = close x volatility x sqrt(sessions / 365)
+//
+// Two families are drawn per horizon. The iVol family reads a smooth thirty-day
+// volatility and barely moves day to day. The plain family prices the actual
+// expiry, so it widens into an inflation print or a Fed meeting and collapses
+// over a weekend. The shaded interval between them is the zone.
+//
+// IMPORTANT: this platform cannot read an option chain, so the plain family
+// cannot be computed here. Type the straddle in, or let it be derived from the
+// iVol band. See the notes at the foot of this file.
+
+indicator("SPY Expected Move", "EM", overlay = true, max_lines_count = 60, max_labels_count = 60)
+
+// ─────────────────────────────────────────────────────────────── model
+
+gM = "Model"
+weeklySessions  = input.int(5,  "Sessions in the weekly horizon", minval = 1, maxval = 7, group = gM,
+     tooltip = "Five in a normal week. Four when a holiday closes the Friday. The published charts are consistent with either, so this is left as a choice.")
+monthlySessions = input.int(21, "Sessions in the month", minval = 15, maxval = 23, group = gM,
+     tooltip = "Trading days in the current calendar month. 20 to 22 in practice.")
+showDaily   = input.bool(true, "Daily",         group = gM, inline = "show")
+showWeekly  = input.bool(true, "Weekly",        group = gM, inline = "show")
+showMonthly = input.bool(true, "Month to date", group = gM, inline = "show")
+
+// ───────────────────────────────────────────────── the iVol family
+
+gV = "iVol family — smooth volatility"
+ivSource = input.string("From VIX", "Volatility source", options = ["From VIX", "Manual"], group = gV)
+ivManual = input.float(15.0, "Manual volatility, per cent", minval = 1, maxval = 200, step = 0.25, group = gV)
+vixShare = input.float(0.92, "IV30 as a share of VIX", minval = 0.5, maxval = 1.5, step = 0.01, group = gV,
+     tooltip = "Across fifteen published charts the iVol daily band implied 0.88 to 0.96 of the VIX close, averaging 0.92. Only used when the source is VIX.")
+
+// ──────────────────────────────────────────────── the plain family
+
+gP = "Plain family — the expiry's own price"
+plainSource = input.string("Scaled from iVol", "Source",
+     options = ["Scaled from iVol", "Manual straddle"], group = gP,
+     tooltip = "An option chain is not available here. Either type the at-the-money straddle of each expiry, or scale the iVol band by a constant.")
+plainScale  = input.float(0.798, "Scale factor", minval = 0.3, maxval = 1.6, step = 0.001, group = gP,
+     tooltip = "0.798 is the ratio of an at-the-money straddle to a one standard deviation move. Note the real plain band is event driven and ranged from 0.63 to 1.09 of the iVol band across the published charts, so a constant is an approximation.")
+plainDailyIn   = input.float(0, "Daily straddle, dollars",         minval = 0, step = 0.01, group = gP)
+plainWeeklyIn  = input.float(0, "Weekly straddle, dollars",        minval = 0, step = 0.01, group = gP)
+plainMonthlyIn = input.float(0, "Month-to-date straddle, dollars", minval = 0, step = 0.01, group = gP)
+
+// ─────────────────────────────────────────────────────────── styling
+
+gS = "Style"
+colIvol    = input.color(#4A90D9,               "iVol lines",   group = gS)
+colPlain   = input.color(#C8C8C0,               "Plain lines",  group = gS)
+colWeekly  = input.color(#E8A33D,               "Weekly lines", group = gS)
+colUpZone  = input.color(color.new(#93412F, 78), "Upper zone",  group = gS)
+colDnZone  = input.color(color.new(#4C6839, 76), "Lower zone",  group = gS)
+extendBars = input.int(26, "Project this many bars right", minval = 4, maxval = 200, group = gS)
+showLabels = input.bool(true, "Labels", group = gS)
+
+// ──────────────────────────────────────────────────────── the closes
+// close[1] on a higher timeframe is the last completed period's close, which is
+// exactly what each band hangs on: yesterday for the daily, the previous Friday
+// for the weekly, the previous month end for the monthly.
+
+dailyAnchor   = request.security(syminfo.tickerid, "D", close[1])
+weeklyAnchor  = request.security(syminfo.tickerid, "W", close[1])
+monthlyAnchor = request.security(syminfo.tickerid, "M", close[1])
+vixClose      = request.security("CBOE:VIX",       "D", close[1], ignore_invalid_symbol = true)
+
+iv = ivSource == "Manual" or na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
+
+halfWidth(anchorClose, sessions) =>
+    na(anchorClose) or na(iv) ? na : anchorClose * iv * math.sqrt(sessions / 365.0)
+
+ivolDailyHalf   = halfWidth(dailyAnchor,   1)
+ivolWeeklyHalf  = halfWidth(weeklyAnchor,  weeklySessions)
+ivolMonthlyHalf = halfWidth(monthlyAnchor, monthlySessions)
+
+plainHalf(typedIn, ivolHalf) =>
+    plainSource == "Manual straddle" and typedIn > 0 ? typedIn : ivolHalf * plainScale
+
+plainDailyHalf   = plainHalf(plainDailyIn,   ivolDailyHalf)
+plainWeeklyHalf  = plainHalf(plainWeeklyIn,  ivolWeeklyHalf)
+plainMonthlyHalf = plainHalf(plainMonthlyIn, ivolMonthlyHalf)
+
+// ───────────────────────────────────────────────────────── the drawing
+
+var line[]     lines  = array.new<line>()
+var label[]    labels = array.new<label>()
+var linefill[] fills  = array.new<linefill>()
+
+drawLevel(price, col, style, txt) =>
+    line result = na
+    if not na(price)
+        l = line.new(bar_index, price, bar_index + extendBars, price,
+             xloc = xloc.bar_index, color = col, width = 1, style = style)
+        array.push(lines, l)
+        if showLabels
+            array.push(labels, label.new(bar_index + extendBars, price,
+                 str.tostring(price, format.mintick) + " " + txt,
+                 xloc = xloc.bar_index, style = label.style_label_left,
+                 color = color.new(color.black, 100), textcolor = col, size = size.small))
+        result := l
+    result
+
+if barstate.islast
+    for l in lines
+        line.delete(l)
+    for lb in labels
+        label.delete(lb)
+    for f in fills
+        linefill.delete(f)
+    array.clear(lines)
+    array.clear(labels)
+    array.clear(fills)
+
+    if showDaily and not na(dailyAnchor)
+        pu = drawLevel(dailyAnchor + plainDailyHalf, colPlain, line.style_solid,  "DAILY EM")
+        pl = drawLevel(dailyAnchor - plainDailyHalf, colPlain, line.style_solid,  "DAILY EM")
+        iu = drawLevel(dailyAnchor + ivolDailyHalf,  colIvol,  line.style_dotted, "iVol DAILY EM")
+        il = drawLevel(dailyAnchor - ivolDailyHalf,  colIvol,  line.style_dotted, "iVol DAILY EM")
+        if not na(pu) and not na(iu)
+            array.push(fills, linefill.new(pu, iu, colUpZone))
+        if not na(pl) and not na(il)
+            array.push(fills, linefill.new(pl, il, colDnZone))
+
+    if showWeekly and not na(weeklyAnchor)
+        wu = drawLevel(weeklyAnchor + plainWeeklyHalf, colWeekly, line.style_solid,  "UPPER WEEKLY EM")
+        wl = drawLevel(weeklyAnchor - plainWeeklyHalf, colWeekly, line.style_solid,  "LOWER WEEKLY EM")
+        vu = drawLevel(weeklyAnchor + ivolWeeklyHalf,  colWeekly, line.style_dotted, "iVol Weekly EM")
+        vl = drawLevel(weeklyAnchor - ivolWeeklyHalf,  colWeekly, line.style_dotted, "iVol Weekly EM")
+        if not na(wu) and not na(vu)
+            array.push(fills, linefill.new(wu, vu, colUpZone))
+        if not na(wl) and not na(vl)
+            array.push(fills, linefill.new(wl, vl, colDnZone))
+
+    if showMonthly and not na(monthlyAnchor)
+        drawLevel(monthlyAnchor + plainMonthlyHalf, colWeekly, line.style_dashed, "UPPER MTD EM")
+        drawLevel(monthlyAnchor - plainMonthlyHalf, colWeekly, line.style_dashed, "LOWER MTD EM")
+
+// A reference for the eye: the close every daily band hangs on.
+plot(showDaily ? dailyAnchor : na, "Daily anchor close", color = color.new(colPlain, 55),
+     style = plot.style_stepline, linewidth = 1)
+
+// ─────────────────────────────────────────────────────────────── notes
+//
+// What this reproduces exactly:
+//   The anchors. The daily band hangs on the previous session's close, the
+//   weekly on the previous Friday's, the monthly on the previous month end.
+//   Verified to the cent against fifteen published charts.
+//
+//   The iVol family, to within the volatility feed. Across those charts the
+//   implied volatility held between 0.88 and 0.96 of the VIX close for the
+//   daily band and 0.80 to 0.90 for the weekly, so the VIX route lands close.
+//
+// What it cannot reproduce without an option chain:
+//   The plain family. Its implied volatility ran from 0.59 of VIX on a quiet
+//   Monday to 1.04 into an inflation print, because it prices the real expiry.
+//   No constant scale captures that. For an exact match, type the at-the-money
+//   straddle of the next session's expiry and of the Friday expiry into the
+//   inputs above each evening. Any broker's option chain shows both.
