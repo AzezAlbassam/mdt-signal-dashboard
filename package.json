@@ -1,0 +1,9 @@
+{
+  "name": "mdt-signal-dashboard",
+  "private": true,
+  "type": "module",
+  "description": "Static research dashboards plus the SPY expected-move engine.",
+  "scripts": {
+    "test": "node --test tests/"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "_readme": "Ground truth read off TrendSpider chart screenshots from the Figuring Out Money YouTube channel. Every band is symmetric about its anchor close to the cent; anchorClose was verified against end-of-day SPY data before this file was written. These are acceptance fixtures: the engine must reproduce upper and lower to within one cent.",
+  "_labels": {
+    "ivolDaily": "blue dotted, labelled 'iVol DAILY EM.'",
+    "ivolWeekly": "orange dotted, labelled 'iVol Weekly EM'",
+    "plainDaily": "white, labelled 'DAILY EM'",
+    "plainWeekly": "orange solid, labelled 'UPPER WEEKLY EM' / 'LOWER WEEKLY EM'",
+    "plainMonthly": "labelled 'UPPER MTD EM' / 'LOWER MTD EM'; no iVol monthly line was ever observed"
+  },
+  "observations": [
+    {
+      "id": "2026-05-18T17:36",
+      "capturedET": "2026-05-18T17:36:00-04:00",
+      "video": "The Quiet Selloff Started Awhile Ago.",
+      "published": "2026-05-19",
+      "lastPrice": 738.56,
+      "dailyRolled": true,
+      "bands": {
+        "ivolDaily":    { "upper": 744.98, "lower": 732.32, "anchorDate": "2026-05-18", "anchorClose": 738.65 },
+        "plainDaily":   { "upper": 743.52, "lower": 733.78, "anchorDate": "2026-05-18", "anchorClose": 738.65 },
+        "ivolWeekly":   { "upper": 753.11, "lower": 725.23, "anchorDate": "2026-05-15", "anchorClose": 739.17 },
+        "plainWeekly":  { "upper": 752.73, "lower": 725.61, "anchorDate": "2026-05-15", "anchorClose": 739.17 },
+        "plainMonthly": { "upper": 745.73, "lower": null,   "anchorDate": "2026-04-30", "anchorClose": 718.66 }
+      }
+    },
+    {
+      "id": "2026-06-12T17:33",
+      "capturedET": "2026-06-12T17:33:00-04:00",
+      "video": "The Next Rotation Nobody Sees Yet.",
+      "published": "2026-06-13",
+      "lastPrice": 741.63,
+      "dailyRolled": true,
+      "bands": {
+        "ivolDaily":    { "upper": 748.32, "lower": 735.18, "anchorDate": "2026-06-12", "anchorClose": 741.75 },
+        "plainDaily":   { "upper": 748.88, "lower": 734.62, "anchorDate": "2026-06-12", "anchorClose": 741.75 },
+        "ivolWeekly":   { "upper": 754.61, "lower": 728.89, "anchorDate": "2026-06-12", "anchorClose": 741.75 },
+        "plainWeekly":  { "upper": 755.74, "lower": 727.76, "anchorDate": "2026-06-12", "anchorClose": 741.75 },
+        "plainMonthly": { "upper": null,   "lower": 731.09, "anchorDate": "2026-05-29", "anchorClose": 756.48 }
+      }
+    },
+    {
+      "id": "2026-07-15T19:07",
+      "capturedET": "2026-07-15T19:07:00-04:00",
+      "video": "We're At The Apex!",
+      "published": "2026-07-16",
+      "lastPrice": 754.71,
+      "dailyRolled": true,
+      "bands": {
+        "ivolDaily":   { "upper": 760.63, "lower": 748.99, "anchorDate": "2026-07-15", "anchorClose": 754.81 },
+        "plainDaily":  { "upper": 758.49, "lower": 751.13, "anchorDate": "2026-07-15", "anchorClose": 754.81 },
+        "ivolWeekly":  { "upper": 766.83, "lower": 743.07, "anchorDate": "2026-07-10", "anchorClose": 754.95 },
+        "plainWeekly": { "upper": 764.06, "lower": 745.84, "anchorDate": "2026-07-10", "anchorClose": 754.95 }
+      }
+    },
+    {
+      "id": "2026-08-14T19:23",
+      "capturedET": "2026-08-14T19:23:00-04:00",
+      "video": "The Calm Before The Storm",
+      "published": "2026-08-15",
+      "lastPrice": 776.30,
+      "dailyRolled": true,
+      "bands": {
+        "ivolDaily":    { "upper": 781.66, "lower": 771.02, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainDaily":   { "upper": 779.95, "lower": 772.73, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "ivolWeekly":   { "upper": 787.45, "lower": 765.23, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainWeekly":  { "upper": 784.73, "lower": 767.95, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainMonthly": { "upper": 774.04, "lower": null,   "anchorDate": "2026-07-31", "anchorClose": 747.03 }
+      }
+    },
+    {
+      "id": "2026-08-17T16:40",
+      "capturedET": "2026-08-17T16:40:00-04:00",
+      "video": "Something Feels Off Right Now...",
+      "published": "2026-08-18",
+      "lastPrice": 772.68,
+      "dailyRolled": false,
+      "_note": "Captured 40 minutes after the close. The centres had not rolled to Monday yet and the plain halfwidths are byte-identical to Friday's. Only the two iVol halfwidths moved: daily 5.32 to 5.63, weekly 11.11 to 11.45.",
+      "bands": {
+        "ivolDaily":    { "upper": 781.97, "lower": 770.71, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainDaily":   { "upper": 779.95, "lower": 772.73, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "ivolWeekly":   { "upper": 787.79, "lower": 764.89, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainWeekly":  { "upper": 784.73, "lower": 767.95, "anchorDate": "2026-08-14", "anchorClose": 776.34 },
+        "plainMonthly": { "upper": 774.04, "lower": null,   "anchorDate": "2026-07-31", "anchorClose": 747.03 }
+      }
+    },
+    {
+      "id": "2026-08-24T16:42",
+      "capturedET": "2026-08-24T16:42:00-04:00",
+      "video": "The Setup Nobody Sees Coming",
+      "published": "2026-08-25",
+      "lastPrice": 763.51,
+      "dailyRolled": false,
+      "bands": {
+        "ivolDaily":    { "upper": 771.74, "lower": 759.70, "anchorDate": "2026-08-21", "anchorClose": 765.72 },
+        "plainDaily":   { "upper": 769.52, "lower": 761.92, "anchorDate": "2026-08-21", "anchorClose": 765.72 },
+        "ivolWeekly":   { "upper": 777.97, "lower": 753.47, "anchorDate": "2026-08-21", "anchorClose": 765.72 },
+        "plainWeekly":  { "upper": 776.04, "lower": 755.40, "anchorDate": "2026-08-21", "anchorClose": 765.72 },
+        "plainMonthly": { "upper": 774.04, "lower": null,   "anchorDate": "2026-07-31", "anchorClose": 747.03 }
+      }
+    },
+    {
+      "id": "2026-08-31T17:39",
+      "capturedET": "2026-08-31T17:39:00-04:00",
+      "video": "September Doesn't Play Fair.",
+      "published": "2026-09-01",
+      "lastPrice": 766.89,
+      "dailyRolled": false,
+      "bands": {
+        "ivolDaily":    { "upper": 774.92, "lower": 763.78, "anchorDate": "2026-08-28", "anchorClose": 769.35 },
+        "plainDaily":   { "upper": 773.20, "lower": 765.50, "anchorDate": "2026-08-28", "anchorClose": 769.35 },
+        "plainMonthly": { "upper": 774.04, "lower": null,   "anchorDate": "2026-07-31", "anchorClose": 747.03 }
+      }
+    },
+    {
+      "id": "2026-09-11T16:01",
+      "capturedET": "2026-09-11T16:01:00-04:00",
+      "video": "weekly recap frame",
+      "published": "2026-09-11",
+      "lastPrice": 764.20,
+      "dailyRolled": false,
+      "_note": "One minute after the close. Weekly still anchored to the previous Friday; daily still anchored to Thursday. Only the upper daily lines are on screen, so the daily entries carry upper with lower derived from the anchor.",
+      "bands": {
+        "ivolDaily":   { "upper": 764.61, "lower": null,   "anchorDate": "2026-09-10", "anchorClose": 757.83 },
+        "plainDaily":  { "upper": 764.69, "lower": null,   "anchorDate": "2026-09-10", "anchorClose": 757.83 },
+        "ivolWeekly":  { "upper": 781.63, "lower": 758.75, "anchorDate": "2026-09-04", "anchorClose": 770.19 },
+        "plainWeekly": { "upper": 779.73, "lower": 760.65, "anchorDate": "2026-09-04", "anchorClose": 770.19 }
+      }
+    },
+    {
+      "id": "2026-09-11T18:15",
+      "capturedET": "2026-09-11T18:15:00-04:00",
+      "video": "weekend setup frame",
+      "published": "2026-09-11",
+      "lastPrice": 764.20,
+      "dailyRolled": true,
+      "bands": {
+        "ivolDaily":   { "upper": 769.99, "lower": 758.59, "anchorDate": "2026-09-11", "anchorClose": 764.29 },
+        "plainDaily":  { "upper": 769.18, "lower": 759.40, "anchorDate": "2026-09-11", "anchorClose": 764.29 },
+        "plainWeekly": { "upper": 777.08, "lower": 751.50, "anchorDate": "2026-09-11", "anchorClose": 764.29 }
+      }
+    },
+    {
+      "id": "2026-09-14T17:29",
+      "capturedET": "2026-09-14T17:29:00-04:00",
+      "video": "Monday follow-up frame",
+      "published": "2026-09-14",
+      "lastPrice": 760.82,
+      "dailyRolled": false,
+      "_note": "Monday's session low of 757.93 traded into the lower zone between 759.40 and 758.28 and bounced.",
+      "bands": {
+        "ivolDaily":  { "upper": 770.30, "lower": 758.28, "anchorDate": "2026-09-11", "anchorClose": 764.29 },
+        "plainDaily": { "upper": 769.18, "lower": 759.40, "anchorDate": "2026-09-11", "anchorClose": 764.29 }
+      }
+    }
+  ]
+}
