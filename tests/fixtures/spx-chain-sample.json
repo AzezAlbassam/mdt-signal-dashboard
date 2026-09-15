@@ -1,0 +1,32 @@
+{
+  "_readme": "An SPX chain in the shape CBOE's delayed endpoint returns. The point of this fixture is 2026-09-18, which is listed twice: once by the weekly root, settled on the close, and once by the monthly root, settled on Friday's opening print. The two carry genuinely different prices, so a reader that matches on date alone takes the wrong one.",
+  "timestamp": "2026-09-11T20:20:00Z",
+  "data": {
+    "symbol": "^SPX",
+    "current_price": 7656.50,
+    "close": 7656.98,
+    "iv30": 0.1477,
+    "options": [
+      { "option": "SPXW260914C07650000", "bid": 28.00, "ask": 28.40, "iv": 0.1552, "delta": 0.58, "open_interest": 1100, "volume": 400 },
+      { "option": "SPXW260914P07650000", "bid": 21.00, "ask": 21.40, "iv": 0.1549, "delta": -0.42, "open_interest": 1250, "volume": 380 },
+      { "option": "SPXW260914C07655000", "bid": 25.30, "ask": 25.60, "iv": 0.1530, "delta": 0.53, "open_interest": 3400, "volume": 1500 },
+      { "option": "SPXW260914P07655000", "bid": 23.30, "ask": 23.60, "iv": 0.1528, "delta": -0.47, "open_interest": 3600, "volume": 1580 },
+      { "option": "SPXW260914C07660000", "bid": 22.75, "ask": 23.05, "iv": 0.1541, "delta": 0.47, "open_interest": 2900, "volume": 1200 },
+      { "option": "SPXW260914P07660000", "bid": 25.75, "ask": 26.05, "iv": 0.1539, "delta": -0.53, "open_interest": 2750, "volume": 1140 },
+
+      { "option": "SPXW260918C07655000", "bid": 64.70, "ask": 65.30, "iv": 0.1513, "delta": 0.52, "open_interest": 8800, "volume": 2600,
+        "_why": "weekly root, settled on Friday's close" },
+      { "option": "SPXW260918P07655000", "bid": 62.60, "ask": 63.20, "iv": 0.1511, "delta": -0.48, "open_interest": 9100, "volume": 2700 },
+
+      { "option": "SPX260918C07655000", "bid": 59.70, "ask": 60.30, "iv": 0.1396, "delta": 0.52, "open_interest": 41000, "volume": 5200,
+        "_why": "monthly root, same expiry date, settled on Friday's OPENING print and therefore cheaper" },
+      { "option": "SPX260918P07655000", "bid": 57.70, "ask": 58.30, "iv": 0.1393, "delta": -0.48, "open_interest": 43500, "volume": 5400 },
+
+      { "option": "SPXW260930C07655000", "bid": 124.20, "ask": 124.80, "iv": 0.1488, "delta": 0.53, "open_interest": 3100, "volume": 700 },
+      { "option": "SPXW260930P07655000", "bid": 119.20, "ask": 119.80, "iv": 0.1485, "delta": -0.47, "open_interest": 3300, "volume": 660 },
+
+      { "option": "SPXQ260914C07655000", "bid": 25.30, "ask": 25.60, "iv": 0.1530, "delta": 0.53, "open_interest": 3, "volume": 0,
+        "_why": "a root outside the accepted set; must be rejected" }
+    ]
+  }
+}

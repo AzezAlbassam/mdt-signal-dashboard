@@ -6,16 +6,18 @@ step and no runtime dependencies.
 | Page | What it is |
 | --- | --- |
 | `index.html` | Index |
-| `em.html` | SPY expected-move bands, rebuilt from the option chain |
+| `em.html` | SPY and SPX expected-move bands, rebuilt from the option chain |
 | `spx.html`, `plan-a.html`, `plan-b.html` | Strategy studies on real 0DTE data |
 | `tracker-a.html`, `tracker-b.html` | Trade trackers |
 
 ## The expected-move reconstruction
 
 `em.html` reproduces the daily, weekly and month-to-date expected-move overlay
-seen on a set of TrendSpider charts. It is an independent reconstruction from a
-public option chain, not affiliated with or endorsed by TrendSpider or anyone
-else.
+seen on a set of TrendSpider charts, for both SPY and SPX. It is an independent
+reconstruction from a public option chain, not affiliated with or endorsed by
+TrendSpider or anyone else.
+
+Chart-loadable versions live in `indicator/`, one per instrument.
 
 ### What the charts showed
 
@@ -82,6 +84,27 @@ computed and stored on every run, so the archive settles them with no refetch.
 The first live chain compared against a chart from the same evening resolves the
 second immediately.
 
+### The index cross-check
+
+One SPX chart, by a different author on a different platform, was drawn on the
+same dates. Its bands imply almost exactly the same volatility as the SPY
+reconstruction:
+
+| | Index | Fund | Gap |
+| --- | --- | --- | --- |
+| Daily, 28 August | 9.44% | 9.56% | 1.2% |
+| Month to date, August | 15.13% | 15.07% | 0.4% |
+
+Both daily figures sit near 0.65 of VIX, which is what a front expiry costs
+across a weekend. Two tools, two instruments, one model.
+
+The index needs its own handling in two places. It lists two option roots, and on
+the third Friday both carry the same expiry at different prices because the
+monthly settles on that morning's opening print rather than the close; the chain
+reader prefers the close-settled root and the tests assert it. And the index pays
+no dividend, so unlike the fund it has no quarterly ex-date mechanically shifting
+a band centred on the prior close.
+
 ## Layout
 
 ```
@@ -99,14 +122,17 @@ The page imports the same modules the tests do, so it cannot drift from them.
 ## Running
 
 ```sh
-npm test                              # 68 tests, no dependencies
+npm test                              # 82 tests, no dependencies
 node scripts/snapshot.mjs --fixture --dry-run   # the whole pipeline, offline
-node scripts/snapshot.mjs             # live; needs the chain and price feeds
+node scripts/snapshot.mjs             # live, both underlyings
+node scripts/snapshot.mjs --symbol=SPX # just one
 ```
 
 `.github/workflows/em-snapshot.yml` runs the snapshot twice each weekday so one
 run always lands after the New York close in either half of the year. It runs the
-test suite first, then commits the record to `data/em/`. A run that could not
+test suite first, then commits a record per underlying to `data/em/spy/` and
+`data/em/spx/`. Each underlying is fetched independently, so one feed failing
+does not lose the other. A run that could not
 fetch is still written as a row, because a history that skips the days the feed
 was unhealthy is biased toward calm markets.
 

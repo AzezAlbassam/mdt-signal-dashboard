@@ -1,0 +1,176 @@
+//@version=6
+// SPX Expected Move — daily, weekly and month-to-date bands on the index.
+//
+// Sibling of spy-expected-move.pine. Same construction, index-specific defaults
+// and one settlement caveat that does not exist on the fund.
+//
+//     half width = close x volatility x sqrt(sessions / 365)
+//
+// The construction was checked across both instruments on the same dates. On
+// 28 August 2026 the index daily band implied 9.44 per cent and the fund's
+// implied 9.56, a gap of 1.2 per cent. Over August the index monthly band
+// implied 15.13 per cent against the fund's 15.07, a gap of 0.4 per cent. Two
+// different tools, two different instruments, one model.
+//
+// Two families per horizon. The iVol family reads a smooth thirty-day
+// volatility and barely moves day to day. The plain family prices the actual
+// expiry, so it widens into an event and collapses over a weekend. The shaded
+// interval between them is the zone.
+
+indicator("SPX Expected Move", "EM SPX", overlay = true, max_lines_count = 60, max_labels_count = 60)
+
+// ─────────────────────────────────────────────────────────────── model
+
+gM = "Model"
+weeklySessions  = input.int(5,  "Sessions in the weekly horizon", minval = 1, maxval = 7, group = gM,
+     tooltip = "Five in a normal week. Four when a holiday closes the Friday.")
+monthlySessions = input.int(21, "Sessions in the month", minval = 15, maxval = 23, group = gM,
+     tooltip = "Trading days in the current calendar month. 20 to 22 in practice.")
+showDaily   = input.bool(true, "Daily",         group = gM, inline = "show")
+showWeekly  = input.bool(true, "Weekly",        group = gM, inline = "show")
+showMonthly = input.bool(true, "Month to date", group = gM, inline = "show")
+
+// ───────────────────────────────────────────────── the iVol family
+
+gV = "iVol family — smooth volatility"
+ivSource = input.string("From VIX", "Volatility source", options = ["From VIX", "Manual"], group = gV)
+ivManual = input.float(15.0, "Manual volatility, per cent", minval = 1, maxval = 200, step = 0.25, group = gV)
+vixShare = input.float(0.92, "IV30 as a share of VIX", minval = 0.5, maxval = 1.5, step = 0.01, group = gV,
+     tooltip = "VIX is built from SPX options across every strike, and the put skew lifts it above the at-the-money volatility this band wants, so the share is below one. The only index observation available implied 0.95 at the monthly tenor. No index iVol daily band has been observed, so this default is carried over from the fund, where it averaged 0.92 across fifteen charts.")
+
+// ──────────────────────────────────────────────── the plain family
+
+gP = "Plain family — the expiry's own price"
+plainSource = input.string("Scaled from iVol", "Source",
+     options = ["Scaled from iVol", "Manual straddle"], group = gP,
+     tooltip = "An option chain is not available to a chart script. Either type the at-the-money straddle of each expiry in points, or scale the iVol band by a constant.")
+plainScale  = input.float(0.798, "Scale factor", minval = 0.3, maxval = 1.6, step = 0.001, group = gP,
+     tooltip = "0.798 is the ratio of an at-the-money straddle to a one standard deviation move. The real ratio is event driven: on 28 August 2026 the index daily band sat at 0.65 of VIX, far below the 0.92 the smooth curve was reading.")
+plainDailyIn   = input.float(0, "Daily straddle, points",         minval = 0, step = 0.05, group = gP)
+plainWeeklyIn  = input.float(0, "Weekly straddle, points",        minval = 0, step = 0.05, group = gP)
+plainMonthlyIn = input.float(0, "Month-to-date straddle, points", minval = 0, step = 0.05, group = gP)
+
+// ─────────────────────────────────────────────────────────── styling
+
+gS = "Style"
+colIvol    = input.color(#4A90D9,                "iVol lines",   group = gS)
+colPlain   = input.color(#C8C8C0,                "Plain lines",  group = gS)
+colWeekly  = input.color(#E8A33D,                "Weekly lines", group = gS)
+colUpZone  = input.color(color.new(#93412F, 78), "Upper zone",   group = gS)
+colDnZone  = input.color(color.new(#4C6839, 76), "Lower zone",   group = gS)
+extendBars = input.int(26, "Project this many bars right", minval = 4, maxval = 200, group = gS)
+showLabels = input.bool(true, "Labels", group = gS)
+warnAmSettle = input.bool(true, "Warn on monthly settlement week", group = gS,
+     tooltip = "The index monthly contract settles on the opening print of the third Friday, not its close. In that week the weekly band is measuring to an opening auction.")
+
+// ──────────────────────────────────────────────────────── the closes
+
+dailyAnchor   = request.security(syminfo.tickerid, "D", close[1])
+weeklyAnchor  = request.security(syminfo.tickerid, "W", close[1])
+monthlyAnchor = request.security(syminfo.tickerid, "M", close[1])
+vixClose      = request.security("CBOE:VIX",       "D", close[1], ignore_invalid_symbol = true)
+
+iv = ivSource == "Manual" or na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
+
+halfWidth(anchorClose, sessions) =>
+    na(anchorClose) or na(iv) ? na : anchorClose * iv * math.sqrt(sessions / 365.0)
+
+ivolDailyHalf   = halfWidth(dailyAnchor,   1)
+ivolWeeklyHalf  = halfWidth(weeklyAnchor,  weeklySessions)
+ivolMonthlyHalf = halfWidth(monthlyAnchor, monthlySessions)
+
+plainHalf(typedIn, ivolHalf) =>
+    plainSource == "Manual straddle" and typedIn > 0 ? typedIn : ivolHalf * plainScale
+
+plainDailyHalf   = plainHalf(plainDailyIn,   ivolDailyHalf)
+plainWeeklyHalf  = plainHalf(plainWeeklyIn,  ivolWeeklyHalf)
+plainMonthlyHalf = plainHalf(plainMonthlyIn, ivolMonthlyHalf)
+
+// The third Friday, when the index monthly contract settles on the open.
+isSettlementWeek = dayofmonth >= 13 and dayofmonth <= 21
+
+// ───────────────────────────────────────────────────────── the drawing
+
+var line[]     lines  = array.new<line>()
+var label[]    labels = array.new<label>()
+var linefill[] fills  = array.new<linefill>()
+
+drawLevel(price, col, style, txt) =>
+    line result = na
+    if not na(price)
+        l = line.new(bar_index, price, bar_index + extendBars, price,
+             xloc = xloc.bar_index, color = col, width = 1, style = style)
+        array.push(lines, l)
+        if showLabels
+            array.push(labels, label.new(bar_index + extendBars, price,
+                 str.tostring(price, "#.00") + " " + txt,
+                 xloc = xloc.bar_index, style = label.style_label_left,
+                 color = color.new(color.black, 100), textcolor = col, size = size.small))
+        result := l
+    result
+
+if barstate.islast
+    for l in lines
+        line.delete(l)
+    for lb in labels
+        label.delete(lb)
+    for f in fills
+        linefill.delete(f)
+    array.clear(lines)
+    array.clear(labels)
+    array.clear(fills)
+
+    if showDaily and not na(dailyAnchor)
+        pu = drawLevel(dailyAnchor + plainDailyHalf, colPlain, line.style_solid,  "DAILY EM")
+        pl = drawLevel(dailyAnchor - plainDailyHalf, colPlain, line.style_solid,  "DAILY EM")
+        iu = drawLevel(dailyAnchor + ivolDailyHalf,  colIvol,  line.style_dotted, "iVol DAILY EM")
+        il = drawLevel(dailyAnchor - ivolDailyHalf,  colIvol,  line.style_dotted, "iVol DAILY EM")
+        if not na(pu) and not na(iu)
+            array.push(fills, linefill.new(pu, iu, colUpZone))
+        if not na(pl) and not na(il)
+            array.push(fills, linefill.new(pl, il, colDnZone))
+
+    if showWeekly and not na(weeklyAnchor)
+        wu = drawLevel(weeklyAnchor + plainWeeklyHalf, colWeekly, line.style_solid,  "UPPER WEEKLY EM")
+        wl = drawLevel(weeklyAnchor - plainWeeklyHalf, colWeekly, line.style_solid,  "LOWER WEEKLY EM")
+        vu = drawLevel(weeklyAnchor + ivolWeeklyHalf,  colWeekly, line.style_dotted, "iVol Weekly EM")
+        vl = drawLevel(weeklyAnchor - ivolWeeklyHalf,  colWeekly, line.style_dotted, "iVol Weekly EM")
+        if not na(wu) and not na(vu)
+            array.push(fills, linefill.new(wu, vu, colUpZone))
+        if not na(wl) and not na(vl)
+            array.push(fills, linefill.new(wl, vl, colDnZone))
+
+    if showMonthly and not na(monthlyAnchor)
+        drawLevel(monthlyAnchor + plainMonthlyHalf, colWeekly, line.style_dashed, "UPPER MTD EM")
+        drawLevel(monthlyAnchor - plainMonthlyHalf, colWeekly, line.style_dashed, "LOWER MTD EM")
+
+    if warnAmSettle and isSettlementWeek
+        array.push(labels, label.new(bar_index, low,
+             "settlement week: the monthly contract prints on Friday's open",
+             xloc = xloc.bar_index, style = label.style_label_up,
+             color = color.new(colWeekly, 82), textcolor = colWeekly, size = size.small))
+
+plot(showDaily ? dailyAnchor : na, "Daily anchor close", color = color.new(colPlain, 55),
+     style = plot.style_stepline, linewidth = 1)
+
+// ─────────────────────────────────────────── what differs from the fund
+//
+// Settlement. The monthly index contract is settled on a special opening
+// quotation taken from Friday's opening prints, not from the close. In that week
+// the weekly band is measuring to an opening auction, and the Thursday close is
+// effectively the last full session. The weekly contracts are settled on the
+// close as usual.
+//
+// Roots. The index lists two option roots. The weekly contracts are the ones
+// that expire Monday through Friday and settle on the close. The plain family
+// should always be priced from those, except for the third-Friday monthly. On
+// that one date both roots list the same expiry date at different prices, so a
+// chain reader that matches on date alone will silently take the wrong one.
+//
+// Dividends. The index is a price index and never drops on an ex-dividend date.
+// The fund does, quarterly, on the third Friday of March, June, September and
+// December, which mechanically shifts any band centred on the prior close. The
+// index band has no such distortion, so it is the cleaner of the two.
+//
+// Scale. Everything is in index points, roughly ten times the fund. Straddle
+// inputs above are points, not dollars.

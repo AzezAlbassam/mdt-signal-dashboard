@@ -21,8 +21,9 @@ test('a snapshot carries its schema, its capture time and the config that made i
   assert.equal(s.capturedEt.date, '2026-09-11')
   assert.equal(s.asOf, '2026-09-11', 'the last close held')
   assert.equal(s.status, 'ok')
+  assert.equal(s.symbol, 'SPY', 'the default underlying')
   assert.equal(s.configHash, configHash(s.config))
-  for (const k of ['dayBasis', 'straddleMultiplier', 'weeklyDayCount', 'ivolTenorDays', 'plainMode']) {
+  for (const k of ['symbol', 'roots', 'dayBasis', 'straddleMultiplier', 'weeklyDayCount', 'ivolTenorDays', 'plainMode']) {
     assert.ok(k in s.config, `config records ${k}`)
   }
 })
@@ -115,4 +116,19 @@ test('the same inputs serialise to the same bytes', () => {
   assert.ok(a.endsWith('\n'), 'a trailing newline so the file is a clean diff')
   const keys = Object.keys(JSON.parse(a))
   assert.deepEqual(keys, [...keys].sort(), 'keys are sorted so a commit only changes real values')
+})
+
+test('the underlying is recorded on the snapshot and inside its config hash', () => {
+  const a = make()
+  const b = make({ symbol: 'SPX' })
+  assert.equal(a.symbol, 'SPY')
+  assert.equal(b.symbol, 'SPX')
+  assert.equal(b.config.symbol, 'SPX')
+  assert.notEqual(a.configHash, b.configHash,
+    'a run on a different underlying cannot be mistaken for the same configuration')
+})
+
+test('the accepted option roots are recorded, so a settlement mix-up is visible', () => {
+  const s = make()
+  assert.deepEqual(s.config.roots, ['SPY'])
 })

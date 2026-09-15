@@ -1,0 +1,25 @@
+{
+  "_readme": "Expected-move levels read off an SPX chart. This one is a different author's tool on a different platform, so it is corroboration rather than an acceptance fixture: it shows the same construction being used on the index, and its implied volatilities are compared against the SPY reconstruction on the same dates.",
+  "_caveat": "Both bands centre on 7711.60 while the real 2026-08-28 index close was 7711.76, sixteen cents higher. The offset is unexplained and is not reproduced; it is recorded so nobody later mistakes it for an error in this engine.",
+  "observations": [
+    {
+      "id": "2026-08-29T10:56-07:00",
+      "author": "a third-party charting layout, not the channel being reconstructed",
+      "video": "They're All Leveraged Long Right Now...",
+      "published": "2026-08-30",
+      "anchorDate": "2026-08-28",
+      "anchorClose": 7711.76,
+      "observedCenter": 7711.60,
+      "bands": {
+        "dailyExpectedMove":   { "upper": 7749.72, "lower": 7673.48, "label": "1σ DEM" },
+        "weeklyExpectedMove":  { "upper": 7803.16, "lower": 7620.04, "label": "1σ WEM" },
+        "monthlyExpectedMove": { "upper": 7761.58, "lower": null, "label": "1σ MEM",
+          "anchorDate": "2026-07-31", "anchorClose": 7489.72 }
+      },
+      "otherLevels": {
+        "gammaFlip": 7640,
+        "_note": "A gamma-flip line, which is a different indicator and is not reconstructed here."
+      }
+    }
+  ]
+}

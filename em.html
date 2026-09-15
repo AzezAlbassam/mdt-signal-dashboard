@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SPY Expected Move</title>
-<meta name="description" content="A reconstruction of the daily, weekly and month-to-date expected-move bands on SPY, built from the option chain and scored honestly.">
+<title>Expected Move</title>
+<meta name="description" content="A reconstruction of the daily, weekly and month-to-date expected-move bands on SPY and SPX, built from the option chain and scored honestly.">
 <style>
 :root{
   --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
@@ -81,11 +81,18 @@ ul{max-width:64ch;padding-left:20px}li{margin-bottom:6px}
 footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
  font-size:.82rem;color:var(--faint);max-width:66ch}
 .scroll{overflow-x:auto}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden;margin-bottom:16px}
+.toggle button{appearance:none;background:var(--surface);border:0;padding:7px 18px;cursor:pointer;
+ font:inherit;font-size:.82rem;font-weight:650;color:var(--muted);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em}
+.toggle button+button{border-left:1px solid var(--line)}
+.toggle button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body><div class="wrap">
 
 <header>
-  <p class="eyebrow">SPY &middot; daily, weekly and month-to-date</p>
+  <p class="eyebrow">SPY and SPX &middot; daily, weekly and month-to-date</p>
   <h1>The expected move, rebuilt</h1>
   <p class="lede">Two bands per horizon. One prices the expiry itself and reacts to
   events, the other reads a smooth volatility curve and does not. The gap between
@@ -104,6 +111,10 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
 
 <section>
   <h2>Tonight&rsquo;s levels</h2>
+  <div class="toggle" id="symbols" role="group" aria-label="Underlying">
+    <button type="button" data-symbol="SPY" aria-pressed="true">SPY</button>
+    <button type="button" data-symbol="SPX" aria-pressed="false">SPX</button>
+  </div>
   <div id="live"></div>
 </section>
 
@@ -129,6 +140,12 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
   of sessions to its expiry.</p>
   <div class="scroll"><table id="calib"></table></div>
   <p id="calibnote" class="note" style="margin-top:14px"></p>
+  <h3 style="margin-top:28px">The same model on the index</h3>
+  <p>One chart of SPX, from a different author on a different platform, drawn on the
+  same dates. It is corroboration rather than a fixture, but the volatility it
+  implies is the point.</p>
+  <div class="scroll"><table id="spxcalib"></table></div>
+  <p id="spxnote" class="note" style="margin-top:14px"></p>
 </section>
 
 <section>
@@ -233,10 +250,12 @@ table($('model'), ['Band', 'Centre', 'Sessions', 'Volatility used', 'Refreshes']
 ].map((cells) => ({ cells: cells.map((c, i) => i === 0 ? c : { h: c }) })))
 
 // --- calibration from the committed fixtures
-const [fx, market, latest] = await Promise.all([
+const SYMBOLS = { SPY: 'spy', SPX: 'spx' }
+const [fx, market, spxMarket, spxObs] = await Promise.all([
   getJson('tests/fixtures/screenshots.json'),
   getJson('tests/fixtures/market.json'),
-  getJson('data/em/latest.json'),
+  getJson('tests/fixtures/spx-market.json'),
+  getJson('tests/fixtures/spx-observations.json'),
 ])
 
 const vix = Object.fromEntries((market?.sessions ?? []).map((s) => [s.date, s.vix]))
@@ -274,6 +293,47 @@ $('calibnote').innerHTML = `<b>The separation.</b> As a share of the VIX close t
  spans ${span('plainDaily')} and the plain weekly ${span('plainWeekly')}. That spread is the
  signature of a real expiry being priced, which is why the plain family needs an option chain and
  cannot be produced from any volatility index.`
+
+// --- the index cross-check, from real index data
+{
+  const spxBar = Object.fromEntries((spxMarket?.sessions ?? []).map((s) => [s.date, s]))
+  const ob = spxObs?.observations?.[0]
+  const rows = []
+  if (ob) {
+    const add = (label, upper, lower, anchorDate, anchorClose, horizon) => {
+      const days = horizonDays(horizon, anchorDate)
+      const h = lower == null ? upper - anchorClose : (upper - lower) / 2
+      const iv = impliedVol({ close: anchorClose, halfWidth: h, days })
+      const v = spxBar[anchorDate]?.vix
+      rows.push({ cells: [label, { h: f2(anchorClose), c: 'num' }, { h: String(days), c: 'num' },
+        { h: f2(h), c: 'num' }, { h: pct(iv), c: 'num' }, { h: v ? (iv / (v / 100)).toFixed(3) : '—', c: 'num' }] })
+      return iv
+    }
+    const b = ob.bands
+    const ivD = add('Index daily', b.dailyExpectedMove.upper, b.dailyExpectedMove.lower,
+      ob.anchorDate, ob.observedCenter, 'daily')
+    add('Index weekly', b.weeklyExpectedMove.upper, b.weeklyExpectedMove.lower,
+      ob.anchorDate, ob.observedCenter, 'weekly')
+    const ivM = add('Index month to date', b.monthlyExpectedMove.upper, null,
+      b.monthlyExpectedMove.anchorDate, b.monthlyExpectedMove.anchorClose, 'monthly')
+    table($('spxcalib'), ['Band', 'Centre', 'Sessions', 'Half width', 'Implied vol', '× VIX'], rows)
+
+    // The matching fund bands on the very same dates.
+    const fundDaily = fx.observations.find((o) => o.id === '2026-08-31T17:39')?.bands.plainDaily
+    const fundMtd = fx.observations.find((o) => o.id === '2026-08-14T19:23')?.bands.plainMonthly
+    const ivFundD = fundDaily ? impliedVol({ close: fundDaily.anchorClose,
+      halfWidth: (fundDaily.upper - fundDaily.lower) / 2, days: 1 }) : null
+    const ivFundM = fundMtd ? impliedVol({ close: fundMtd.anchorClose,
+      halfWidth: fundMtd.upper - fundMtd.anchorClose, days: horizonDays('monthly', '2026-07-31') }) : null
+    $('spxnote').innerHTML = `<b>Two tools, two instruments, one model.</b> On 28 August the index
+      daily band implied ${pct(ivD)} and the fund's implied ${pct(ivFundD)}, a gap of
+      ${Math.abs(ivD / ivFundD - 1) * 100 < 10 ? (Math.abs(ivD / ivFundD - 1) * 100).toFixed(1) : '—'}
+      per cent. Over August the index monthly implied ${pct(ivM)} against the fund's ${pct(ivFundM)},
+      a gap of ${(Math.abs(ivM / ivFundM - 1) * 100).toFixed(1)} per cent. Both daily figures sit near
+      0.65 of VIX, which is what a front expiry costs across a weekend and is why this family needs a
+      real chain. ${ob._caveat ?? ''}`
+  }
+}
 
 // --- the chart: real bands, real sessions
 {
@@ -340,11 +400,11 @@ $('calibnote').innerHTML = `<b>The separation.</b> As a share of the VIX close t
 }
 
 // --- tonight's levels
-function renderLive (snap) {
+function renderLive (snap, symbol) {
   const el = $('live')
   if (!snap || snap.status !== 'ok' || !snap.bands) {
     const why = snap?.reason ? `Last run reported: ${snap.reason}` : 'The scheduled job has not written a record yet.'
-    el.innerHTML = `<div class="empty"><b>No levels published yet.</b><br>${why}<br><br>
+    el.innerHTML = `<div class="empty"><b>No ${symbol} levels published yet.</b><br>${why}<br><br>
       The snapshot runs after each New York close and commits a record whether or not the
       feed was healthy, so a gap here is always explained rather than silent. Everything
       below is live now and does not depend on it.</div>`
@@ -375,7 +435,17 @@ function renderLive (snap) {
   </div><div class="scroll"><table id="livetable"></table></div>`
   table($('livetable'), ['Band', 'Upper', 'Lower', 'Half width', 'Centre', 'Expiry', 'Width'], t)
 }
-renderLive(latest)
+async function showSymbol (symbol) {
+  for (const b of document.querySelectorAll('#symbols button')) {
+    b.setAttribute('aria-pressed', String(b.dataset.symbol === symbol))
+  }
+  $('live').innerHTML = '<div class="empty">Loading&hellip;</div>'
+  renderLive(await getJson(`data/em/${SYMBOLS[symbol]}/latest.json`), symbol)
+}
+for (const b of document.querySelectorAll('#symbols button')) {
+  b.addEventListener('click', () => showSymbol(b.dataset.symbol))
+}
+await showSymbol('SPY')
 
 // --- accuracy: honest empty state
 {

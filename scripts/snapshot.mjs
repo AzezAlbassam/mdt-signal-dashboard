@@ -7,7 +7,7 @@
  * that every failure still produces a row. A history that quietly skips the
  * days the feed was unhealthy is biased toward calm markets.
  *
- *   node scripts/snapshot.mjs [--dry-run]
+ *   node scripts/snapshot.mjs [--dry-run] [--fixture] [--symbol=SPX]
  */
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -18,9 +18,32 @@ import { buildSnapshot, stableJson } from '../lib/snapshot.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'data', 'em')
-const CHAIN_URL = 'https://cdn.cboe.com/api/global/delayed_quotes/options/SPY.json'
-const STOOQ_URL = 'https://stooq.com/q/d/l/?s=spy.us&i=d'
-const YAHOO_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=1y&interval=1d'
+/**
+ * One entry per underlying. The index lists two option roots and the weekly one
+ * is preferred, because the monthly settles on Friday's opening print rather
+ * than its close.
+ */
+const SYMBOLS = {
+  SPY: {
+    dir: 'spy',
+    roots: ['SPY'],
+    chain: 'https://cdn.cboe.com/api/global/delayed_quotes/options/SPY.json',
+    stooq: 'https://stooq.com/q/d/l/?s=spy.us&i=d',
+    yahoo: 'https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=1y&interval=1d',
+    fixtureBars: 'tests/fixtures/market.json',
+    fixtureChain: 'tests/fixtures/chain-sample.json',
+  },
+  SPX: {
+    dir: 'spx',
+    roots: ['SPXW', 'SPX'],
+    chain: 'https://cdn.cboe.com/api/global/delayed_quotes/options/_SPX.json',
+    stooq: 'https://stooq.com/q/d/l/?s=%5Espx&i=d',
+    yahoo: 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1y&interval=1d',
+    fixtureBars: 'tests/fixtures/spx-market.json',
+    fixtureChain: 'tests/fixtures/spx-chain-sample.json',
+  },
+}
+const ONLY = (process.argv.find((a) => a.startsWith('--symbol=')) ?? '').split('=')[1]
 const DRY = process.argv.includes('--dry-run')
 /** Run the whole pipeline against the committed fixtures, with no network. */
 const FIXTURE = process.argv.includes('--fixture')
@@ -58,9 +81,9 @@ async function fetchWithRetry (url, { tries = 4, timeoutMs = 120000, json = true
 }
 
 /** Daily bars keyed by date. Stooq first because it needs no key and no shaping. */
-async function fetchBars () {
+async function fetchBars (cfg) {
   if (FIXTURE) {
-    const market = JSON.parse(await readFile(join(ROOT, 'tests/fixtures/market.json'), 'utf8'))
+    const market = JSON.parse(await readFile(join(ROOT, cfg.fixtureBars), 'utf8'))
     const bars = Object.fromEntries(market.sessions
       .filter((s) => s.date <= '2026-09-11')
       .map((s) => [s.date, { date: s.date, open: s.open, high: s.high, low: s.low, close: s.close }]))
@@ -68,7 +91,7 @@ async function fetchBars () {
     return bars
   }
   try {
-    const csv = await fetchWithRetry(STOOQ_URL, { json: false, timeoutMs: 60000 })
+    const csv = await fetchWithRetry(cfg.stooq, { json: false, timeoutMs: 60000 })
     const rows = csv.trim().split('\n').slice(1)
     if (rows.length < 30) throw new Error(`only ${rows.length} rows returned`)
     const bars = {}
@@ -81,7 +104,7 @@ async function fetchBars () {
     return bars
   } catch (err) {
     log(`stooq failed (${err.message}); falling back to the chart API`)
-    const data = await fetchWithRetry(YAHOO_URL, { timeoutMs: 60000 })
+    const data = await fetchWithRetry(cfg.yahoo, { timeoutMs: 60000 })
     const r = data.chart.result[0]
     const q = r.indicators.quote[0]
     const bars = {}
@@ -99,27 +122,28 @@ const readJson = async (path, fallback = null) => {
   try { return JSON.parse(await readFile(path, 'utf8')) } catch { return fallback }
 }
 
-async function main () {
+async function snapshotSymbol (symbol, cfg) {
   const capturedAt = new Date().toISOString()
-  await mkdir(join(OUT, 'history'), { recursive: true })
-  const latestPath = join(OUT, 'latest.json')
+  const dir = join(OUT, cfg.dir)
+  await mkdir(join(dir, 'history'), { recursive: true })
+  const latestPath = join(dir, 'latest.json')
   const previous = await readJson(latestPath)
 
   let bars = {}
   let chain = null
   let failure = null
   try {
-    bars = await fetchBars()
+    bars = await fetchBars(cfg)
   } catch (err) {
     failure = `price history unavailable: ${err.message}`
   }
   if (!failure) {
     try {
       const raw = FIXTURE
-        ? JSON.parse(await readFile(join(ROOT, 'tests/fixtures/chain-sample.json'), 'utf8'))
-        : await fetchWithRetry(CHAIN_URL)
-      chain = parseChain(raw)
-      log(`chain: ${chain.contracts.length} contracts, spot ${chain.spot}, rejected ${JSON.stringify(chain.rejected)}`)
+        ? JSON.parse(await readFile(join(ROOT, cfg.fixtureChain), 'utf8'))
+        : await fetchWithRetry(cfg.chain)
+      chain = parseChain(raw, { roots: cfg.roots })
+      log(`${symbol} chain: ${chain.contracts.length} contracts, spot ${chain.spot}, rejected ${JSON.stringify(chain.rejected)}`)
     } catch (err) {
       failure = `option chain unavailable: ${err.message}`
     }
@@ -127,9 +151,9 @@ async function main () {
 
   const closes = Object.fromEntries(
     Object.values(bars).map((b) => [b.date, b.close]).sort((a, b) => (a[0] < b[0] ? -1 : 1)))
-  const snapshot = buildSnapshot({ closes, chain, capturedAt, bars, previous, failure })
+  const snapshot = buildSnapshot({ closes, chain, capturedAt, symbol, bars, previous, failure })
 
-  log(`status ${snapshot.status}${snapshot.reason ? `: ${snapshot.reason}` : ''}`)
+  log(`${symbol} status ${snapshot.status}${snapshot.reason ? `: ${snapshot.reason}` : ''}`)
   if (snapshot.status === 'ok') {
     for (const [k, b] of Object.entries(snapshot.bands)) {
       if (b) log(`  ${k.padEnd(13)} ${b.lower} .. ${b.upper}  (anchor ${b.anchorDate} ${b.anchorClose}, expiry ${b.expiry}, ${b.days}d)`)
@@ -137,14 +161,14 @@ async function main () {
     if (snapshot.scored) log(`  scored ${snapshot.scored.session} against the ${snapshot.scored.anchorDate} bands`)
   }
 
-  if (DRY) { log('dry run, nothing written'); return }
+  if (DRY) { log(`${symbol} dry run, nothing written`); return snapshot }
 
   await writeFile(latestPath, stableJson(snapshot))
   if (snapshot.asOf) {
-    await writeFile(join(OUT, 'history', `${snapshot.asOf}.json`), stableJson(snapshot))
+    await writeFile(join(dir, 'history', `${snapshot.asOf}.json`), stableJson(snapshot))
   }
-
-  const index = await readJson(join(OUT, 'index.json'), { schema: 1, rows: [] })
+  const index = await readJson(join(dir, 'index.json'), { schema: 1, symbol, rows: [] })
+  index.symbol = symbol
   const row = {
     asOf: snapshot.asOf,
     capturedAt: snapshot.capturedAt,
@@ -154,8 +178,26 @@ async function main () {
   }
   index.rows = index.rows.filter((r) => r.asOf !== snapshot.asOf).concat(row)
     .sort((a, b) => (a.asOf < b.asOf ? -1 : 1))
-  await writeFile(join(OUT, 'index.json'), stableJson(index))
-  log(`wrote latest.json, history/${snapshot.asOf}.json and index.json (${index.rows.length} rows)`)
+  await writeFile(join(dir, 'index.json'), stableJson(index))
+  log(`${symbol} wrote ${cfg.dir}/latest.json, history/${snapshot.asOf}.json and index.json (${index.rows.length} rows)`)
+  return snapshot
+}
+
+async function main () {
+  const wanted = ONLY ? { [ONLY.toUpperCase()]: SYMBOLS[ONLY.toUpperCase()] } : SYMBOLS
+  const results = {}
+  for (const [symbol, cfg] of Object.entries(wanted)) {
+    if (!cfg) { console.error(`[em] unknown symbol ${symbol}`); process.exitCode = 1; continue }
+    // Each underlying is independent: one feed failing must not lose the other.
+    try {
+      results[symbol] = await snapshotSymbol(symbol, cfg)
+    } catch (err) {
+      console.error(`[em] ${symbol} failed outright:`, err.message)
+      process.exitCode = 1
+    }
+  }
+  const ok = Object.values(results).filter((r) => r?.status === 'ok').length
+  log(`${ok} of ${Object.keys(wanted).length} underlyings produced levels`)
 }
 
 main().catch((err) => { console.error('[em] fatal:', err); process.exit(1) })
