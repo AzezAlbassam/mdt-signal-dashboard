@@ -1,0 +1,43 @@
+name: Expected-move snapshot
+
+on:
+  schedule:
+    # Twice each weekday so one run always lands after the 16:00 New York close
+    # in both standard and daylight time. The job is idempotent per session.
+    - cron: '15 21 * * 1-5'
+    - cron: '15 22 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: em-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run the test suite
+        run: npm test
+
+      - name: Take the snapshot
+        run: node scripts/snapshot.mjs
+
+      - name: Commit the record
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/em
+          if git diff --staged --quiet; then
+            echo 'nothing changed'
+          else
+            git commit -m "Expected-move snapshot $(date -u +%Y-%m-%d)"
+            git push
+          fi

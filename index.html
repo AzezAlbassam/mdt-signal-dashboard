@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Two Strategies</title>
-<meta name="description" content="Feasibility studies and live trackers for two options strategies, measured on real SPY 0DTE data.">
+<meta name="description" content="A SPY expected-move tool built from the option chain, plus feasibility studies and trackers for two options strategies measured on real SPY 0DTE data.">
 <style>
 :root{
   --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
@@ -59,10 +59,23 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
 </style></head><body><div class="wrap">
 <header>
  <p class="eyebrow">Measured on 125 real SPY 0DTE sessions</p>
- <h1>Two strategies</h1>
- <p class="lede">A daily-target scalp and a compounding ladder, both tested against actual
- same-day-expiry option prints from February to August 2026. Plus a tracker for each.</p>
+ <h1>Levels and strategies</h1>
+ <p class="lede">An expected-move tool built from the live option chain, plus two strategy
+ studies tested against actual same-day-expiry option prints and a tracker for each.</p>
 </header>
+
+<h2 class="sec">The levels</h2>
+<div class="cards">
+ <a class="card" href="em.html">
+  <span class="tag">Live tool</span>
+  <h3>SPY expected move, rebuilt</h3>
+  <p>The daily, weekly and month-to-date bands, reconstructed from the option chain. Two
+  families per horizon: one prices the expiry and reacts to events, the other reads a
+  smooth volatility curve. The gap between them is the zone.</p>
+  <div class="k"><span>fitted on <b>10</b> charts</span><span><b>33</b> bands to the cent</span>
+  <span>updated <b>after each close</b></span></div>
+ </a>
+</div>
 
 <h2 class="sec">The studies</h2>
 <div class="cards">

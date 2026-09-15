@@ -1,0 +1,426 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPY Expected Move</title>
+<meta name="description" content="A reconstruction of the daily, weekly and month-to-date expected-move bands on SPY, built from the option chain and scored honestly.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+  --ivol:#3C6079; --plain:#5A5A52; --zone-up:#93412F; --zone-dn:#4C6839;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --ivol:#7FA9C4; --plain:#9B9B90; --zone-up:#C1715C; --zone-dn:#7E9B5F;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --ivol:#7FA9C4; --plain:#9B9B90; --zone-up:#C1715C; --zone-dn:#7E9B5F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px 80px}
+header{padding:74px 0 30px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.06rem;color:var(--muted);max-width:60ch;margin:0}
+h2{color:var(--ink);font-size:1.32rem;letter-spacing:-.018em;margin:0 0 10px;font-weight:650}
+h3{color:var(--ink);font-size:1rem;margin:0 0 6px;font-weight:650}
+section{padding:38px 0;border-bottom:1px solid var(--line-soft)}
+section:last-of-type{border-bottom:none}
+p{max-width:64ch}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.note{background:var(--raise);border:1px solid var(--line);border-radius:5px;
+ padding:16px 18px;font-size:.88rem;color:var(--muted);max-width:none}
+.note b{color:var(--body)}
+a{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:14px 0}
+th{text-align:left;font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line-soft);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+td.name{font-family:inherit;color:var(--body)}
+td.num{text-align:right}
+tr.hl td{background:var(--accent-soft)}
+.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:18px 20px}
+.card .k{font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.card .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.5rem;
+ color:var(--ink);font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.card .n{font-size:.82rem;color:var(--muted);margin-top:4px}
+.pill{display:inline-block;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;
+ font-weight:700;padding:2px 7px;border-radius:3px;background:var(--sunk);color:var(--muted)}
+.pill.live{background:var(--accent-soft);color:var(--accent)}
+.pill.frozen{background:var(--sunk);color:var(--muted)}
+.ivol{color:var(--ivol)}
+.plain{color:var(--plain)}
+.chart{width:100%;height:auto;aspect-ratio:880/380;display:block;margin:18px 0 6px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:22px;height:0;border-top:2px solid currentColor;
+ vertical-align:middle;margin-right:6px}
+.empty{background:var(--sunk);border:1px dashed var(--line);border-radius:5px;
+ padding:22px;color:var(--muted);font-size:.9rem}
+ul{max-width:64ch;padding-left:20px}li{margin-bottom:6px}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+ font-size:.82rem;color:var(--faint);max-width:66ch}
+.scroll{overflow-x:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="wrap">
+
+<header>
+  <p class="eyebrow">SPY &middot; daily, weekly and month-to-date</p>
+  <h1>The expected move, rebuilt</h1>
+  <p class="lede">Two bands per horizon. One prices the expiry itself and reacts to
+  events, the other reads a smooth volatility curve and does not. The gap between
+  them is the zone.</p>
+</header>
+
+<section>
+  <div class="note" id="honesty">
+    <b>What this is.</b> An independent reconstruction, built from a public option
+    chain. It is not affiliated with or endorsed by TrendSpider or any YouTube
+    channel. Two constants in the model are still unresolved and are shown as a
+    fork rather than quietly chosen. These are levels, not advice, not a signal and
+    not a forecast.
+  </div>
+</section>
+
+<section>
+  <h2>Tonight&rsquo;s levels</h2>
+  <div id="live"></div>
+</section>
+
+<section>
+  <h2>How each band is built</h2>
+  <p>Every band is a close, a volatility and a horizon, plotted symmetrically about
+  that close. The horizon is counted in real trading sessions, so a holiday
+  shortens it.</p>
+  <div class="scroll"><table id="model"></table></div>
+  <p class="note" style="margin-top:14px"><b>Why two families.</b> The plain family
+  takes the at-the-money straddle of the actual expiry, so an inflation print or a
+  Fed meeting widens it immediately. The iVol family reads a thirty-day
+  constant-maturity volatility, which barely moves on the same day. Across the ten
+  observations below, the plain daily band ran from 0.59 to 1.04 of VIX while the
+  iVol daily band held between 0.88 and 0.96. Nothing derived from a volatility
+  index can produce that first range.</p>
+</section>
+
+<section>
+  <h2>What the charts imply</h2>
+  <p>Ten screenshots, each read to the cent and anchored to a verified close. The
+  volatility column is what the band width demands, given the close and the number
+  of sessions to its expiry.</p>
+  <div class="scroll"><table id="calib"></table></div>
+  <p id="calibnote" class="note" style="margin-top:14px"></p>
+</section>
+
+<section>
+  <h2>A session against its bands</h2>
+  <p>The bands published on the evening of 11 September, against the session that
+  followed. The low of 757.93 traded into the lower zone and closed back above it.</p>
+  <svg class="chart" id="chart" role="img" aria-label="SPY bands and the following session"></svg>
+  <div class="legend">
+    <span class="plain"><i></i>plain band</span>
+    <span class="ivol"><i></i>iVol band</span>
+    <span style="color:var(--muted)"><i style="border-top-style:dotted"></i>anchor close</span>
+  </div>
+</section>
+
+<section>
+  <h2>How a session is scored</h2>
+  <p>Published before any data exists, so that a later change to these rules is
+  visible as a change to the rules.</p>
+  <div class="grid2">
+    <div class="card"><div class="k">Against a level</div><div class="n" style="margin-top:8px">
+      <b>Untouched</b> price never reached it.<br>
+      <b>Tagged</b> price reached it and the close came back inside.<br>
+      <b>Broken</b> the close finished beyond it.<br>
+      Touching to the cent counts as reaching.</div></div>
+    <div class="card"><div class="k">Against a zone</div><div class="n" style="margin-top:8px">
+      <b>Untouched</b> price never entered.<br>
+      <b>Entered</b> price traded in and stopped inside.<br>
+      <b>Crossed</b> price went through the far edge.<br>
+      Closing beyond is recorded separately.</div></div>
+  </div>
+  <p style="margin-top:14px">A band is only ever scored against a session strictly
+  after the close it hangs on. The code refuses the alternative rather than
+  trusting the caller.</p>
+</section>
+
+<section>
+  <h2>Accuracy</h2>
+  <p>Two separate questions, never added together. Reproduction fidelity asks
+  whether the arithmetic matches the chart. Calibration asks whether the bands
+  contain the market at the rate their own maths implies. A band can be reproduced
+  perfectly and still be badly calibrated.</p>
+  <div id="accuracy"></div>
+  <div class="scroll"><table id="theory"></table></div>
+</section>
+
+<section>
+  <h2>The two open constants</h2>
+  <div id="forks" class="grid2"></div>
+  <p style="margin-top:16px">Both are single flags in the model. The nightly record
+  stores every candidate whether or not it is the published one, so the archive can
+  settle each without fetching anything again.</p>
+</section>
+
+<footer>Research only, not financial advice. Band levels describe what the options
+market is pricing, not what will happen. Options can lose the entire amount
+invested. Price and chain data are delayed.</footer>
+</div>
+
+<script type="module">
+import { halfWidth, impliedVol, band, horizonDays } from './lib/implied-move.js'
+import { THEORETICAL, wilson } from './lib/score.js'
+
+const $ = (id) => document.getElementById(id)
+const f2 = (x) => x == null ? '—' : x.toFixed(2)
+const pct = (x) => x == null ? '—' : (x * 100).toFixed(1) + '%'
+
+const getJson = async (path) => {
+  try {
+    const r = await fetch(path, { cache: 'no-store' })
+    return r.ok ? await r.json() : null
+  } catch { return null }
+}
+
+function table (el, head, rows) {
+  el.innerHTML = ''
+  const thead = document.createElement('thead')
+  const hr = document.createElement('tr')
+  head.forEach((h) => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th) })
+  thead.appendChild(hr); el.appendChild(thead)
+  const tb = document.createElement('tbody')
+  rows.forEach((r) => {
+    const tr = document.createElement('tr')
+    if (r.cls) tr.className = r.cls
+    ;(r.cells ?? r).forEach((c, i) => {
+      const td = document.createElement('td')
+      if (typeof c === 'object' && c !== null) { td.innerHTML = c.h; if (c.c) td.className = c.c }
+      else { td.textContent = c; if (i === 0) td.className = 'name' }
+      tr.appendChild(td)
+    })
+    tb.appendChild(tr)
+  })
+  el.appendChild(tb)
+}
+
+// --- the model, straight from the library so the page cannot drift from the tests
+table($('model'), ['Band', 'Centre', 'Sessions', 'Volatility used', 'Refreshes'], [
+  ['iVol daily', 'previous close', '1', 'thirty-day constant maturity', 'every run'],
+  ['iVol weekly', 'previous Friday close', horizonDays('weekly', '2026-09-11') + ' (4 in a holiday week)', 'thirty-day constant maturity', 'every run'],
+  ['Plain daily', 'previous close', '1', 'the next session&rsquo;s own expiry', 'frozen at the roll'],
+  ['Plain weekly', 'previous Friday close', String(horizonDays('weekly', '2026-09-11')), 'the Friday expiry&rsquo;s own', 'frozen at the roll'],
+  ['Month to date', 'previous month-end close', String(horizonDays('monthly', '2026-07-31')) + ' in September', 'the month-end expiry&rsquo;s own', 'frozen at the roll'],
+].map((cells) => ({ cells: cells.map((c, i) => i === 0 ? c : { h: c }) })))
+
+// --- calibration from the committed fixtures
+const [fx, market, latest] = await Promise.all([
+  getJson('tests/fixtures/screenshots.json'),
+  getJson('tests/fixtures/market.json'),
+  getJson('data/em/latest.json'),
+])
+
+const vix = Object.fromEntries((market?.sessions ?? []).map((s) => [s.date, s.vix]))
+const bars = Object.fromEntries((market?.sessions ?? []).map((s) => [s.date, s]))
+const HORIZON = { ivolDaily: 'daily', plainDaily: 'daily', ivolWeekly: 'weekly', plainWeekly: 'weekly', plainMonthly: 'monthly' }
+const LABEL = { ivolDaily: 'iVol daily', plainDaily: 'Plain daily', ivolWeekly: 'iVol weekly', plainWeekly: 'Plain weekly', plainMonthly: 'Month to date' }
+
+const rows = []
+const byFamily = {}
+for (const ob of fx?.observations ?? []) {
+  for (const [key, v] of Object.entries(ob.bands)) {
+    if (v.upper == null || v.lower == null) continue
+    const days = horizonDays(HORIZON[key], v.anchorDate)
+    const h = (v.upper - v.lower) / 2
+    const iv = impliedVol({ close: v.anchorClose, halfWidth: h, days })
+    const ratio = vix[v.anchorDate] ? iv / (vix[v.anchorDate] / 100) : null
+    ;(byFamily[key] ??= []).push(ratio)
+    rows.push({ cells: [
+      ob.capturedET.slice(0, 10),
+      { h: `<span class="${key.startsWith('ivol') ? 'ivol' : 'plain'}">${LABEL[key]}</span>` },
+      { h: f2(v.anchorClose), c: 'num' }, { h: String(days), c: 'num' },
+      { h: f2(h), c: 'num' }, { h: pct(iv), c: 'num' },
+      { h: ratio ? ratio.toFixed(3) : '—', c: 'num' },
+    ] })
+  }
+}
+table($('calib'), ['Chart date', 'Band', 'Centre', 'Sessions', 'Half width', 'Implied vol', '× VIX'], rows)
+
+const span = (k) => {
+  const v = (byFamily[k] ?? []).filter(Boolean)
+  return v.length ? `${Math.min(...v).toFixed(2)} to ${Math.max(...v).toFixed(2)}` : '—'
+}
+$('calibnote').innerHTML = `<b>The separation.</b> As a share of the VIX close the iVol daily band
+ spans ${span('ivolDaily')} and the iVol weekly ${span('ivolWeekly')}, both tight. The plain daily
+ spans ${span('plainDaily')} and the plain weekly ${span('plainWeekly')}. That spread is the
+ signature of a real expiry being priced, which is why the plain family needs an option chain and
+ cannot be produced from any volatility index.`
+
+// --- the chart: real bands, real sessions
+{
+  const svg = $('chart')
+  const W = 880, H = 380, padL = 14, padR = 132, padT = 18, padB = 30
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+  const anchor = 764.29
+  const dates = ['2026-09-04', '2026-09-08', '2026-09-09', '2026-09-10', '2026-09-11', '2026-09-14']
+  const sess = dates.map((d) => bars[d]).filter(Boolean)
+  if (sess.length) {
+    const lines = [
+      { y: 769.99, label: 'iVol  769.99', cls: 'ivol' },
+      { y: 769.18, label: 'plain 769.18', cls: 'plain' },
+      { y: 759.40, label: 'plain 759.40', cls: 'plain' },
+      { y: 758.59, label: 'iVol  758.59', cls: 'ivol' },
+    ]
+    const prices = sess.flatMap((b) => [b.high, b.low]).concat(lines.map((l) => l.y))
+    const lo = Math.min(...prices) - 1.2, hi = Math.max(...prices) + 1.2
+    const plot = W - padR
+    const Y = (p) => padT + ((hi - p) / (hi - lo)) * (H - padT - padB)
+    const step = (plot - padL) / (sess.length + 1)
+    const X = (i) => padL + step * (i + 1)
+    const ns = 'http://www.w3.org/2000/svg'
+    const add = (tag, attrs, text) => {
+      const e = document.createElementNS(ns, tag)
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v)
+      if (text != null) e.textContent = text
+      svg.appendChild(e); return e
+    }
+    // The bands only exist from the close they hang on, so they start there.
+    const bandX = X(sess.length - 2)
+    const zoneW = plot - bandX
+    add('rect', { x: bandX, y: Y(769.99), width: zoneW, height: Y(769.18) - Y(769.99),
+      fill: 'var(--zone-up)', opacity: .2 })
+    add('rect', { x: bandX, y: Y(759.40), width: zoneW, height: Y(758.59) - Y(759.40),
+      fill: 'var(--zone-dn)', opacity: .22 })
+    add('line', { x1: padL, x2: plot, y1: Y(anchor), y2: Y(anchor),
+      stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '3 4' })
+    add('text', { x: plot + 10, y: Y(anchor) + 4, fill: 'var(--muted)', 'font-size': 11.5,
+      'font-family': 'ui-monospace,monospace' }, `close ${anchor}`)
+    for (const l of lines) {
+      add('line', { x1: bandX, x2: plot, y1: Y(l.y), y2: Y(l.y),
+        stroke: `var(--${l.cls})`, 'stroke-width': 1.6 })
+      add('text', { x: plot + 10, y: Y(l.y) + 4, fill: `var(--${l.cls})`, 'font-size': 11.5,
+        'font-family': 'ui-monospace,monospace' }, l.label)
+    }
+    const bw = Math.min(30, step * 0.52)
+    sess.forEach((b, i) => {
+      const cx = X(i)
+      const up = b.close >= b.open
+      add('line', { x1: cx, x2: cx, y1: Y(b.high), y2: Y(b.low),
+        stroke: up ? 'var(--pos)' : 'var(--neg)', 'stroke-width': 1.4 })
+      const top = Math.max(b.open, b.close), bot = Math.min(b.open, b.close)
+      add('rect', { x: cx - bw / 2, y: Y(top), width: bw, height: Math.max(1.5, Y(bot) - Y(top)),
+        fill: up ? 'var(--pos)' : 'var(--neg)' })
+      add('text', { x: cx, y: H - 10, fill: 'var(--faint)', 'font-size': 10.5,
+        'font-family': 'ui-monospace,monospace', 'text-anchor': 'middle' }, b.date.slice(5))
+    })
+    const last = sess[sess.length - 1]
+    add('text', { x: X(sess.length - 1), y: Y(last.low) + 17, fill: 'var(--muted)',
+      'font-size': 11, 'font-family': 'ui-monospace,monospace', 'text-anchor': 'middle' },
+      `low ${last.low}`)
+  }
+}
+
+// --- tonight's levels
+function renderLive (snap) {
+  const el = $('live')
+  if (!snap || snap.status !== 'ok' || !snap.bands) {
+    const why = snap?.reason ? `Last run reported: ${snap.reason}` : 'The scheduled job has not written a record yet.'
+    el.innerHTML = `<div class="empty"><b>No levels published yet.</b><br>${why}<br><br>
+      The snapshot runs after each New York close and commits a record whether or not the
+      feed was healthy, so a gap here is always explained rather than silent. Everything
+      below is live now and does not depend on it.</div>`
+    return
+  }
+  const cards = []
+  const order = ['plainDaily', 'ivolDaily', 'plainWeekly', 'ivolWeekly', 'plainMonthly']
+  const t = []
+  for (const k of order) {
+    const b = snap.bands[k]
+    if (!b) continue
+    t.push({ cells: [
+      { h: `<span class="${k.startsWith('ivol') ? 'ivol' : 'plain'}">${LABEL[k]}</span>` },
+      { h: f2(b.upper), c: 'num' }, { h: f2(b.lower), c: 'num' },
+      { h: f2(b.halfWidth), c: 'num' },
+      { h: `${b.anchorDate}<br><span style="color:var(--faint)">${f2(b.anchorClose)}</span>` },
+      { h: `${b.expiry}<br><span style="color:var(--faint)">${b.days} sessions</span>` },
+      { h: `<span class="pill ${b.frozen ? 'frozen' : 'live'}">${b.frozen ? 'frozen' : 'live'}</span>` },
+    ] })
+  }
+  el.innerHTML = `<div class="grid2" style="margin-bottom:16px">
+    <div class="card"><div class="k">Captured</div><div class="v">${snap.capturedEt.date}</div>
+      <div class="n">${String(snap.capturedEt.hour).padStart(2, '0')}:${String(snap.capturedEt.minute).padStart(2, '0')} New York</div></div>
+    <div class="card"><div class="k">Anchored on</div><div class="v">${snap.asOf}</div>
+      <div class="n">the last close held</div></div>
+    <div class="card"><div class="k">Chain snapshot</div><div class="v">${snap.source?.spot ?? '—'}</div>
+      <div class="n">delayed quotes, ${snap.source?.chainTimestamp ?? 'unknown time'}</div></div>
+  </div><div class="scroll"><table id="livetable"></table></div>`
+  table($('livetable'), ['Band', 'Upper', 'Lower', 'Half width', 'Centre', 'Expiry', 'Width'], t)
+}
+renderLive(latest)
+
+// --- accuracy: honest empty state
+{
+  const index = await getJson('data/em/index.json')
+  const scored = (index?.rows ?? []).filter((r) => r.scored)
+  const el = $('accuracy')
+  if (scored.length === 0) {
+    el.innerHTML = `<div class="empty"><b>0 sessions scored.</b> No rate is shown, because there is
+      nothing to compute one from. Printing a zero, a dash or a half-full gauge in a slot that will
+      later hold a measurement is how an empty page gets mistaken for a finding.<br><br>
+      Reproduction fidelity today stands at <b class="mono">10</b> chart observations and
+      <b class="mono">33</b> two-sided bands, every one reproduced to the cent. That figure is
+      <b>in sample</b>: the model was fitted on these same ten and none were held out.<br><br>
+      On containment, a Wilson interval on a band that should contain the market
+      ${pct(THEORETICAL.containment)} of the time is still
+      ±${((wilson(14, 20).high - wilson(14, 20).low) / 2 * 100).toFixed(0)} points wide at twenty
+      sessions and ±${((wilson(55, 80).high - wilson(55, 80).low) / 2 * 100).toFixed(0)} at eighty.
+      The daily band produces one observation per session, so the first genuinely useful reading is
+      months away. The weekly produces one per week and the monthly twelve a year, which is why no
+      month-to-date rate will ever be quoted here.</div>`
+  }
+}
+table($('theory'), ['If the band is one standard deviation', 'Expected'], [
+  ['Contains the whole session', pct(THEORETICAL.containment)],
+  ['Average close, in half widths', THEORETICAL.meanAbsZ.toFixed(3)],
+  ['Reaches one side', pct(THEORETICAL.oneSidedTouch)],
+  ['Closes beyond one side', pct(THEORETICAL.oneSidedBreak)],
+].map((c) => ({ cells: [c[0], { h: c[1], c: 'num' }] })))
+
+// --- the forks
+const w5 = halfWidth({ close: 764.29, iv: 0.1425, days: 5 })
+const w4 = halfWidth({ close: 764.29, iv: 0.1425, days: 4 })
+$('forks').innerHTML = `
+  <div class="card"><div class="k">Weekly session count</div>
+    <div class="v">4 or 5</div>
+    <div class="n">Counting real sessions gives five in a normal week. The ten charts are also
+    consistent with a fixed four. At a typical volatility the two differ by
+    <b class="mono">${(w5 - w4).toFixed(2)}</b> a side, about the width of a whole daily zone.
+    <br><br>Settled by: any Friday evening chart showing the iVol daily and iVol weekly labels
+    together.</div></div>
+  <div class="card"><div class="k">What the plain line plots</div>
+    <div class="v">×1 or ×0.798</div>
+    <div class="n">The straddle price, or a one-standard-deviation move on the same volatility.
+    They differ by <b class="mono">${Math.sqrt(2 / Math.PI).toFixed(4)}</b>, a gap of 25 per cent
+    that no quote noise can hide.
+    <br><br>Settled by: the first live chain compared against a chart from the same evening.</div></div>`
+</script>
+</body></html>

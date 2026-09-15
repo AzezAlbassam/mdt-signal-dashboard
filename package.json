@@ -4,6 +4,6 @@
   "type": "module",
   "description": "Static research dashboards plus the SPY expected-move engine.",
   "scripts": {
-    "test": "node --test tests/"
+    "test": "node --test 'tests/*.test.js'"
   }
 }
