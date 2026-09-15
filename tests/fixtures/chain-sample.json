@@ -1,0 +1,42 @@
+{
+  "_readme": "A small hand-built response in the shape CBOE's delayed SPY endpoint returns. Quotes are chosen so the at-the-money straddle lands on a round number for each expiry, and the last six contracts are the failure modes the parser has to survive.",
+  "timestamp": "2026-09-11T20:20:00Z",
+  "data": {
+    "symbol": "SPY",
+    "current_price": 764.20,
+    "close": 764.29,
+    "iv30": 0.1489,
+    "options": [
+      { "option": "SPY260914C00763000", "bid": 3.18, "ask": 3.24, "iv": 0.1571, "delta": 0.61, "open_interest": 4210, "volume": 1180 },
+      { "option": "SPY260914P00763000", "bid": 1.90, "ask": 1.96, "iv": 0.1566, "delta": -0.39, "open_interest": 5102, "volume": 990 },
+      { "option": "SPY260914C00764000", "bid": 2.55, "ask": 2.59, "iv": 0.1533, "delta": 0.54, "open_interest": 8890, "volume": 4400 },
+      { "option": "SPY260914P00764000", "bid": 2.30, "ask": 2.34, "iv": 0.1531, "delta": -0.46, "open_interest": 9105, "volume": 4610 },
+      { "option": "SPY260914C00765000", "bid": 2.01, "ask": 2.07, "iv": 0.1548, "delta": 0.46, "open_interest": 6003, "volume": 3020 },
+      { "option": "SPY260914P00765000", "bid": 2.74, "ask": 2.80, "iv": 0.1544, "delta": -0.54, "open_interest": 5880, "volume": 2870 },
+
+      { "option": "SPY260918C00764000", "bid": 6.50, "ask": 6.56, "iv": 0.1516, "delta": 0.53, "open_interest": 22140, "volume": 8800 },
+      { "option": "SPY260918P00764000", "bid": 6.23, "ask": 6.29, "iv": 0.1513, "delta": -0.47, "open_interest": 24880, "volume": 9210 },
+      { "option": "SPY260918C00765000", "bid": 5.94, "ask": 6.00, "iv": 0.1509, "delta": 0.50, "open_interest": 31200, "volume": 12040 },
+      { "option": "SPY260918P00765000", "bid": 6.66, "ask": 6.72, "iv": 0.1507, "delta": -0.50, "open_interest": 29950, "volume": 11880 },
+
+      { "option": "SPY260930C00764000", "bid": 12.40, "ask": 12.50, "iv": 0.1498, "delta": 0.53, "open_interest": 7700, "volume": 1450 },
+      { "option": "SPY260930P00764000", "bid": 11.90, "ask": 12.00, "iv": 0.1495, "delta": -0.47, "open_interest": 8120, "volume": 1390 },
+
+      { "option": "SPY261016C00765000", "bid": 19.10, "ask": 19.30, "iv": 0.1552, "delta": 0.52, "open_interest": 41000, "volume": 2600 },
+      { "option": "SPY261016P00765000", "bid": 19.40, "ask": 19.60, "iv": 0.1549, "delta": -0.48, "open_interest": 39500, "volume": 2480 },
+
+      { "option": "SPY260911C00764000", "bid": 0.00, "ask": 0.02, "iv": 0.0000, "delta": 0.50, "open_interest": 51000, "volume": 0,
+        "_why": "already expired at this anchor; quotes are frozen and must never be selected for the 09-14 target" },
+      { "option": "SPY1260914C00764000", "bid": 2.55, "ask": 2.59, "iv": 0.1533, "delta": 0.54, "open_interest": 12, "volume": 0,
+        "_why": "adjusted root, non-standard deliverable, must be rejected before the at-the-money search" },
+      { "option": "SPY260914C00766000", "bid": 0.00, "ask": 1.62, "iv": 0.1560, "delta": 0.39, "open_interest": 300, "volume": 4,
+        "_why": "no bid" },
+      { "option": "SPY260914P00766000", "bid": 3.90, "ask": 3.70, "iv": 0.1558, "delta": -0.61, "open_interest": 280, "volume": 2,
+        "_why": "crossed quote" },
+      { "option": "SPY260914C00767000", "bid": 0.90, "ask": 4.40, "iv": 0.1600, "delta": 0.30, "open_interest": 90, "volume": 0,
+        "_why": "spread far too wide to price from" },
+      { "option": "NOT-AN-OCC-SYMBOL", "bid": 1.00, "ask": 1.10, "iv": 0.15, "delta": 0.5, "open_interest": 0, "volume": 0,
+        "_why": "unparseable" }
+    ]
+  }
+}
