@@ -1,0 +1,689 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compounding Projector</title>
+<meta name="description" content="Set an initial amount and a monthly contribution, pick a dividend grower, and see the portfolio value, dividend income and yield on cost at 15 and 20 years.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+  --c1:#8F6A12; --c2:#0E6FA8; --c3:#A14430;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+@media(min-width:640px){.wrap{padding:0 22px 80px}}
+header{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(1.9rem,5vw,2.8rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.06rem;color:var(--muted);max-width:60ch;margin:0}
+.back{display:inline-block;font-size:.8rem;color:var(--muted);text-decoration:none;margin-bottom:22px}
+.back:hover{color:var(--accent)}
+h2.sec{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;margin:44px 0 14px;padding-top:8px;border-top:1px solid var(--line-soft)}
+p{max-width:64ch}
+b.n{color:var(--ink);font-weight:650;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:18px;margin:18px 0}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:820px){.grid.g3{grid-template-columns:repeat(3,1fr)}}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.f label .cur{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);
+ font-size:.78rem;letter-spacing:0;text-transform:none}
+.f input[type=number],.f select{background:var(--bg);color:var(--ink);border:1px solid var(--line);
+ border-radius:4px;padding:8px 10px;font-size:.95rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ width:100%}
+.f select{font-family:inherit}
+.f input[type=range]{accent-color:var(--accent);width:100%;margin:6px 0 0}
+.hint{font-size:.74rem;color:var(--faint);margin:3px 0 0;max-width:none}
+
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);margin:20px 0}
+@media(min-width:700px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:15px 16px}
+.tile.key{border-color:var(--accent);background:var(--accent-soft)}
+.tile .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.36rem;
+ color:var(--ink);font-weight:650;letter-spacing:-.02em;line-height:1.2}
+.tile.key .v{color:var(--accent)}
+.tile .l{font-size:.7rem;color:var(--faint);margin-top:5px;line-height:1.35}
+
+figure{margin:26px 0 0}
+.ch-t{color:var(--ink);font-size:1rem;font-weight:650;margin:0 0 3px}
+.ch-s{font-size:.82rem;color:var(--muted);margin:0 0 12px;max-width:62ch}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:10px;max-width:62ch}
+.chart{position:relative}
+.chart svg{display:block;width:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 10px;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:6px;color:var(--body)}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);
+ border-radius:4px;padding:8px 10px;font-size:.78rem;box-shadow:0 2px 10px rgba(0,0,0,.09);
+ opacity:0;transition:opacity .1s;z-index:5;min-width:150px}
+.tip .ty{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);
+ font-weight:650;margin-bottom:5px;display:block}
+.tip .tr{display:flex;justify-content:space-between;gap:14px;line-height:1.5}
+.tip .tr b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-weight:650}
+.tip .tr i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px;flex:none}
+
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin-top:8px}
+th{text-align:right;padding:9px 10px;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;border-bottom:1px solid var(--line)}
+th:first-child{text-align:left}
+td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line-soft);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+td:first-child{text-align:left;color:var(--ink);font-weight:650}
+tr:last-child td{border-bottom:none}
+tr.mark td{background:var(--accent-soft)}
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+
+.warn{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--warn);
+ border-radius:4px;padding:13px 16px;margin:16px 0;font-size:.88rem}
+.warn.hide{display:none}
+.warn p{margin:0;max-width:62ch}
+.callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+ border-radius:4px;padding:16px 18px;margin:20px 0}
+.callout p{margin:0;max-width:62ch}
+.callout p+p{margin-top:9px}
+footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
+ font-size:.82rem;color:var(--faint);max-width:64ch}
+</style></head><body><div class="wrap">
+
+<header>
+ <a class="back" href="dividends.html">&larr; The dividend snowball</a>
+ <p class="eyebrow">Compounding projector</p>
+ <h1>What it turns into</h1>
+ <p class="lede">Set what you start with and what you add. Pick a company off the screen or set
+ your own assumptions. The projection shows the portfolio value, the income it throws off, and
+ the yield on your original cost.</p>
+</header>
+
+<div class="panel">
+ <div class="grid g3">
+  <div class="f">
+   <label for="init">Initial amount <span class="cur" id="initV">$10,000</span></label>
+   <input type="number" id="init" value="10000" min="0" step="1000">
+  </div>
+  <div class="f">
+   <label for="monthly">Added each month <span class="cur" id="monthlyV">$500</span></label>
+   <input type="number" id="monthly" value="500" min="0" step="50">
+  </div>
+  <div class="f">
+   <label for="years">Years <span class="cur" id="yearsV">20</span></label>
+   <input type="range" id="years" min="5" max="35" step="1" value="20">
+  </div>
+ </div>
+</div>
+
+<div class="panel">
+ <div class="grid g3">
+  <div class="f">
+   <label for="pick">Assumptions from</label>
+   <select id="pick"><option value="">Custom</option></select>
+   <p class="hint">Loads that company&rsquo;s current yield and recent dividend growth.</p>
+  </div>
+  <div class="f">
+   <label for="y0">Starting yield <span class="cur" id="y0V">2.00%</span></label>
+   <input type="range" id="y0" min="0.25" max="8" step="0.05" value="2">
+  </div>
+  <div class="f">
+   <label for="g">Dividend growth / yr <span class="cur" id="gV">10%</span></label>
+   <input type="range" id="g" min="0" max="25" step="0.5" value="10">
+  </div>
+  <div class="f">
+   <label for="pg">Share price growth / yr <span class="cur" id="pgV">8%</span></label>
+   <input type="range" id="pg" min="-2" max="20" step="0.5" value="8">
+  </div>
+  <div class="f">
+   <label for="tax">Tax on dividends <span class="cur" id="taxV">0%</span></label>
+   <input type="range" id="tax" min="0" max="40" step="1" value="0">
+  </div>
+  <div class="f">
+   <label for="reinvest">Dividends are</label>
+   <select id="reinvest">
+    <option value="1" selected>Reinvested</option>
+    <option value="0">Taken as cash</option>
+   </select>
+  </div>
+  <div class="f">
+   <label for="fade">Growth rate over time</label>
+   <select id="fade">
+    <option value="1" selected>Fades to 5% by year 20</option>
+    <option value="0">Held flat forever</option>
+   </select>
+   <p class="hint">Fading is the realistic case. Holding 15%+ flat for two decades is the
+   single most common way these projections mislead.</p>
+  </div>
+ </div>
+</div>
+
+<div class="warn hide" id="coherence"><p id="coherenceMsg"></p></div>
+
+<h2 class="sec">At <span id="hzLabel">20</span> years</h2>
+<div class="tiles">
+ <div class="tile key"><div class="v" id="oValue">&mdash;</div><div class="l">Portfolio value</div></div>
+ <div class="tile key"><div class="v" id="oIncome">&mdash;</div><div class="l">Dividends in the final year</div></div>
+ <div class="tile"><div class="v" id="oYoc">&mdash;</div><div class="l">Yield on your original cost</div></div>
+ <div class="tile"><div class="v" id="oPaid">&mdash;</div><div class="l">Total you put in</div></div>
+</div>
+
+<div class="callout">
+ <p id="summary">&mdash;</p>
+</div>
+
+<figure>
+ <p class="ch-t">Where the money comes from</p>
+ <p class="ch-s">Your own contributions, the dividends that got reinvested, and the market
+ appreciation on top &mdash; stacked to the total portfolio value.</p>
+ <div class="legend" id="legend">
+  <span><i style="background:var(--c1)"></i>Your capital</span>
+  <span><i style="background:var(--c3)"></i>Reinvested dividends</span>
+  <span><i style="background:var(--c2)"></i>Market appreciation</span>
+ </div>
+ <div class="chart" id="areaWrap">
+  <svg id="area" role="img" aria-label="Stacked area chart of portfolio composition over time"></svg>
+  <div class="tip" id="areaTip"></div>
+ </div>
+ <figcaption>The bottom band is money you handed over. Everything above it is what the
+ position did on its own. The crossover &mdash; the year the stack above your capital exceeds
+ the capital itself &mdash; is the moment the snowball starts doing the work.</figcaption>
+</figure>
+
+<figure>
+ <p class="ch-t">Annual dividend income</p>
+ <p class="ch-s">Cash paid to you in each year, before reinvestment.</p>
+ <div class="chart" id="incWrap">
+  <svg id="inc" role="img" aria-label="Line chart of annual dividend income over time"></svg>
+  <div class="tip" id="incTip"></div>
+ </div>
+ <figcaption>This is the line that matters if the goal is income rather than a lump sum.
+ It compounds twice over: the dividend per share rises, and reinvestment keeps adding shares.</figcaption>
+</figure>
+
+<h2 class="sec">Year by year</h2>
+<div class="twrap"><table>
+ <thead><tr>
+  <th>Year</th><th>Put in</th><th>Value</th><th>Dividends that year</th>
+  <th>Cumulative dividends</th><th>Yield on cost</th>
+ </tr></thead>
+ <tbody id="miles"></tbody>
+</table></div>
+
+<h2 class="sec">What this model does and does not do</h2>
+<p>It compounds three things: the dividend per share at your growth rate, the share price at
+your price-growth rate, and the share count from contributions plus reinvested dividends.
+Contributions are added monthly and buy shares at the average price for that year.</p>
+<p>By default it does <strong>not</strong> hold your growth rate flat. Growth runs at the rate you
+set for five years, then fades linearly to 5% a year by year twenty, and the share price fades on
+the same schedule. This matters enormously: a 20% grower held flat for two decades produces a
+number roughly four times larger than the faded one, and the flat number is close to fiction.
+Companies decelerate as they get big &mdash; that is the whole reason this screen hunts small
+ones. You can switch the fade off to see the difference.</p>
+<p>It still assumes no recession, no dividend cut, no valuation change beyond the price growth you
+set, and no trading costs. Real twenty-year outcomes are lumpier than this in every direction.
+The value of the projection is in the comparison between assumptions, not in the final digit.</p>
+<p>One check worth watching: if you set price growth well below dividend growth, the implied
+yield climbs every year, and a company whose yield reaches 15% is one the market has decided
+will cut. The banner above warns you when the assumptions stop being coherent.</p>
+
+<footer>Research and analysis only &mdash; not financial advice. Projections are arithmetic
+applied to assumptions you choose, not forecasts. Dividends can be cut, and companies that
+raised for twenty years have stopped in the twenty-first.</footer>
+</div>
+
+<script>
+// ---- formatting ---------------------------------------------------------
+const money = v => {
+  const a = Math.abs(v);
+  if (a >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
+  if (a >= 1e4) return '$' + Math.round(v/1e3) + 'K';
+  return '$' + Math.round(v).toLocaleString('en-US');
+};
+const moneyFull = v => '$' + Math.round(v).toLocaleString('en-US');
+const pct = (v, d=1) => v.toFixed(d) + '%';
+
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value) || 0;
+
+// ---- the model ----------------------------------------------------------
+function simulate(){
+  const init     = Math.max(0, num('init'));
+  const monthly  = Math.max(0, num('monthly'));
+  const years    = Math.round(num('years'));
+  const y0       = num('y0') / 100;
+  const g        = num('g') / 100;
+  const pg       = num('pg') / 100;
+  const tax      = num('tax') / 100;
+  const reinvest = $('reinvest').value === '1';
+
+  // an arbitrary starting share price — only ratios matter
+  const p0 = 100;
+  const d0 = p0 * y0;
+
+  // No company raises its dividend at 20%+ for two decades. With the fade on, growth
+  // runs at the chosen rate for five years then declines linearly to 5% by year twenty.
+  const fade = $('fade').value === '1';
+  const TERMINAL = 0.05, FULL = 5, FADE_END = 20;
+  const rateAt = (t, base) => {
+    const b = base === undefined ? g : base;
+    if (!fade || b <= TERMINAL) return b;
+    if (t <= FULL) return b;
+    const r = TERMINAL + (b - TERMINAL) * Math.max(0, 1 - (t - FULL) / (FADE_END - FULL));
+    return Math.max(r, TERMINAL);
+  };
+
+  let price = p0, div = d0;
+  let shares = init > 0 ? init / p0 : 0;
+  let capital = init;          // everything you have handed over
+  let divReinvested = 0;       // cash dividends that bought shares
+  let divCumulative = 0;       // all dividends received, after tax
+
+  const rows = [{
+    year: 0, capital, value: init, div: 0, divCum: 0,
+    reinvested: 0, appreciation: 0, yoc: y0 * 100
+  }];
+
+  for (let yr = 1; yr <= years; yr++){
+    const prevPrice = price;
+    // the price fades on the same schedule as the dividend — a company whose dividend
+    // growth decelerates re-rates too, and holding price growth flat while the dividend
+    // slows would quietly drive the implied yield to nothing
+    price = price * (1 + rateAt(yr, pg));
+    div   = div   * (1 + rateAt(yr));
+    const avgPrice = (prevPrice + price) / 2;
+
+    // dividends on the shares held through the year, plus roughly half a year
+    // of dividends on the shares bought during it
+    const contrib = monthly * 12;
+    const sharesFromContrib = avgPrice > 0 ? contrib / avgPrice : 0;
+    const dividendShares = shares + sharesFromContrib / 2;
+    const gross = dividendShares * div;
+    const net = gross * (1 - tax);
+
+    shares += sharesFromContrib;
+    capital += contrib;
+    divCumulative += net;
+
+    if (reinvest && avgPrice > 0){
+      shares += net / avgPrice;
+      divReinvested += net;
+    }
+
+    const value = shares * price;
+    rows.push({
+      year: yr,
+      capital,
+      value,
+      div: net,
+      divCum: divCumulative,
+      reinvested: divReinvested,
+      appreciation: Math.max(0, value - capital - divReinvested),
+      yoc: div / p0 * 100
+    });
+  }
+
+  return { rows, years, y0: y0 * 100, g: g * 100, pg: pg * 100, reinvest,
+           impliedEndYield: div / price * 100 };
+}
+
+// ---- charts -------------------------------------------------------------
+const CSS = k => getComputedStyle(document.body).getPropertyValue(k).trim();
+
+// one unit for the whole axis, so a scale never mixes "$5,000" with "$10K"
+function mkAxisFmt(top){
+  if (top >= 1e9) return v => v === 0 ? '$0' : '$' + (v/1e9).toFixed(1) + 'B';
+  if (top >= 1e6) return v => v === 0 ? '$0' : '$' + (v/1e6).toFixed(v % 1e6 ? 1 : 0) + 'M';
+  if (top >= 1e4) return v => v === 0 ? '$0' : '$' + Math.round(v/1e3) + 'K';
+  return v => '$' + Math.round(v).toLocaleString('en-US');
+}
+
+function niceTicks(max, count){
+  if (max <= 0) return [0, 1];
+  const raw = max / count;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+  const out = [];
+  // run past max so the top tick always sits at or above the highest value —
+  // otherwise the series is drawn outside the plot area and gets clipped
+  for (let v = 0; v < max - 1e-9; v += step) out.push(v);
+  out.push(out.length ? out[out.length - 1] + step : step);
+  return out;
+}
+
+// x-axis year labels — always including the final year, since that is the one the
+// headline figures refer to
+function xAxis(rows, X, h, m, narrow, years){
+  const step = Math.max(1, Math.round(years / (narrow ? 4 : 6)));
+  const idx = [];
+  for (let i = 0; i < rows.length; i += step) idx.push(i);
+  const last = rows.length - 1;
+  // drop a label that would collide with the final one, then always add the final one
+  if (idx[idx.length - 1] !== last){
+    if (last - idx[idx.length - 1] < step * 0.6) idx.pop();
+    idx.push(last);
+  }
+  return idx.map(i =>
+    '<text x="' + X(i) + '" y="' + (h - 8) + '" text-anchor="middle" font-size="10" ' +
+    'fill="' + CSS('--faint') + '" font-family="ui-monospace,monospace">' + rows[i].year + '</text>'
+  ).join('');
+}
+
+function chartGeom(wrapId){
+  const w = Math.max(280, $(wrapId).clientWidth);
+  const narrow = w < 470;
+  return {
+    w,
+    h: narrow ? 210 : 270,
+    m: { t: 10, r: narrow ? 12 : 18, b: 26, l: narrow ? 46 : 58 },
+    narrow
+  };
+}
+
+function drawArea(sim){
+  const svg = $('area');
+  const { w, h, m } = chartGeom('areaWrap');
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const rows = sim.rows;
+  const maxV = Math.max(...rows.map(r => Math.max(r.value, r.capital + r.reinvested)));
+  const ticks = niceTicks(maxV, 4);
+  const top = ticks[ticks.length - 1] || 1;
+  const afmt = mkAxisFmt(top);
+
+  const X = i => m.l + (i / (rows.length - 1)) * iw;
+  const Y = v => m.t + ih - (v / top) * ih;
+
+  const bands = [
+    { key: 'capital',      color: CSS('--c1'), label: 'Your capital' },
+    { key: 'reinvested',   color: CSS('--c3'), label: 'Reinvested dividends' },
+    { key: 'appreciation', color: CSS('--c2'), label: 'Market appreciation' }
+  ];
+
+  let out = '';
+
+  // gridlines and y labels
+  for (const t of ticks){
+    out += '<line x1="' + m.l + '" x2="' + (m.l + iw) + '" y1="' + Y(t) + '" y2="' + Y(t) +
+           '" stroke="' + CSS('--grid') + '" stroke-width="1"/>';
+    out += '<text x="' + (m.l - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end" font-size="10" ' +
+           'fill="' + CSS('--faint') + '" font-family="ui-monospace,monospace">' + afmt(t) + '</text>';
+  }
+
+  // stacked bands, bottom up, each with a surface-coloured edge for the 2px gap
+  let base = rows.map(() => 0);
+  for (const b of bands){
+    const tops = rows.map((r, i) => base[i] + r[b.key]);
+    let d = 'M' + X(0) + ',' + Y(base[0]);
+    for (let i = 0; i < rows.length; i++) d += ' L' + X(i) + ',' + Y(tops[i]);
+    for (let i = rows.length - 1; i >= 0; i--) d += ' L' + X(i) + ',' + Y(base[i]);
+    d += ' Z';
+    out += '<path d="' + d + '" fill="' + b.color + '" opacity="0.9"/>';
+
+    let edge = 'M' + X(0) + ',' + Y(tops[0]);
+    for (let i = 1; i < rows.length; i++) edge += ' L' + X(i) + ',' + Y(tops[i]);
+    out += '<path d="' + edge + '" fill="none" stroke="' + CSS('--surface') + '" stroke-width="2"/>';
+
+    base = tops;
+  }
+
+  out += xAxis(rows, X, h, m, chartGeom('areaWrap').narrow, sim.years);
+  out += '<line class="cross" x1="0" x2="0" y1="' + m.t + '" y2="' + (m.t + ih) +
+         '" stroke="' + CSS('--muted') + '" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>';
+
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  svg.innerHTML = out;
+
+  attachHover(svg, $('areaWrap'), $('areaTip'), rows, X, m, ih, r =>
+    '<span class="ty">Year ' + r.year + '</span>' +
+    tipRow(CSS('--c1'), 'Your capital', money(r.capital)) +
+    tipRow(CSS('--c3'), 'Reinvested', money(r.reinvested)) +
+    tipRow(CSS('--c2'), 'Appreciation', money(r.appreciation)) +
+    '<div class="tr" style="margin-top:5px;padding-top:5px;border-top:1px solid ' + CSS('--line-soft') +
+    '"><span>Total</span><b>' + money(r.value) + '</b></div>'
+  );
+}
+
+function tipRow(color, label, val){
+  return '<div class="tr"><span><i style="background:' + color + '"></i>' + label +
+         '</span><b>' + val + '</b></div>';
+}
+
+function drawLine(sim){
+  const svg = $('inc');
+  const { w, h, m, narrow } = chartGeom('incWrap');
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const rows = sim.rows;
+  const maxV = Math.max(...rows.map(r => r.div), 1);
+  const ticks = niceTicks(maxV, 4);
+  const top = ticks[ticks.length - 1] || 1;
+  const afmt = mkAxisFmt(top);
+
+  const X = i => m.l + (i / (rows.length - 1)) * iw;
+  const Y = v => m.t + ih - (v / top) * ih;
+
+  let out = '';
+  for (const t of ticks){
+    out += '<line x1="' + m.l + '" x2="' + (m.l + iw) + '" y1="' + Y(t) + '" y2="' + Y(t) +
+           '" stroke="' + CSS('--grid') + '" stroke-width="1"/>';
+    out += '<text x="' + (m.l - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end" font-size="10" ' +
+           'fill="' + CSS('--faint') + '" font-family="ui-monospace,monospace">' + afmt(t) + '</text>';
+  }
+
+  let d = 'M' + X(0) + ',' + Y(rows[0].div);
+  for (let i = 1; i < rows.length; i++) d += ' L' + X(i) + ',' + Y(rows[i].div);
+  out += '<path d="' + d + '" fill="none" stroke="' + CSS('--c3') + '" stroke-width="2" ' +
+         'stroke-linejoin="round" stroke-linecap="round"/>';
+
+  // end marker with a surface ring, direct-labelled
+  const li = rows.length - 1;
+  out += '<circle cx="' + X(li) + '" cy="' + Y(rows[li].div) + '" r="4.5" fill="' + CSS('--c3') +
+         '" stroke="' + CSS('--surface') + '" stroke-width="2"/>';
+  if (!narrow){
+    out += '<text x="' + (X(li) - 8) + '" y="' + (Y(rows[li].div) - 10) + '" text-anchor="end" ' +
+           'font-size="11" font-weight="650" fill="' + CSS('--ink') +
+           '" font-family="ui-monospace,monospace">' + money(rows[li].div) + '/yr</text>';
+  }
+
+  out += xAxis(rows, X, h, m, narrow, sim.years);
+  out += '<line class="cross" x1="0" x2="0" y1="' + m.t + '" y2="' + (m.t + ih) +
+         '" stroke="' + CSS('--muted') + '" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>';
+
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  svg.innerHTML = out;
+
+  attachHover(svg, $('incWrap'), $('incTip'), rows, X, m, ih, r =>
+    '<span class="ty">Year ' + r.year + '</span>' +
+    tipRow(CSS('--c3'), 'Dividends', money(r.div)) +
+    '<div class="tr"><span>Cumulative</span><b>' + money(r.divCum) + '</b></div>' +
+    '<div class="tr"><span>Yield on cost</span><b>' + pct(r.yoc) + '</b></div>'
+  );
+}
+
+function attachHover(svg, wrap, tip, rows, X, m, ih, body){
+  const cross = svg.querySelector('.cross');
+  const move = e => {
+    const rect = svg.getBoundingClientRect();
+    const px = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const scale = svg.viewBox.baseVal.width / rect.width || 1;
+    const x = px * scale;
+
+    let best = 0, bestD = Infinity;
+    for (let i = 0; i < rows.length; i++){
+      const d = Math.abs(X(i) - x);
+      if (d < bestD){ bestD = d; best = i; }
+    }
+    const r = rows[best];
+
+    cross.setAttribute('x1', X(best));
+    cross.setAttribute('x2', X(best));
+    cross.setAttribute('opacity', '1');
+
+    tip.innerHTML = body(r);
+    tip.style.opacity = '1';
+    const tw = tip.offsetWidth;
+    let left = (X(best) / scale) + 14;
+    if (left + tw > rect.width) left = (X(best) / scale) - tw - 14;
+    tip.style.left = Math.max(0, left) + 'px';
+    tip.style.top = '8px';
+  };
+  const leave = () => { cross.setAttribute('opacity', '0'); tip.style.opacity = '0'; };
+
+  svg.addEventListener('mousemove', move);
+  svg.addEventListener('mouseleave', leave);
+  svg.addEventListener('touchstart', move, { passive: true });
+  svg.addEventListener('touchmove', move, { passive: true });
+  svg.addEventListener('touchend', leave);
+}
+
+// ---- output -------------------------------------------------------------
+function renderOutputs(sim){
+  const last = sim.rows[sim.rows.length - 1];
+  $('hzLabel').textContent = sim.years;
+  $('oValue').textContent  = money(last.value);
+  $('oIncome').textContent = money(last.div);
+  $('oYoc').textContent    = pct(last.yoc, last.yoc >= 100 ? 0 : 1);
+  $('oPaid').textContent   = money(last.capital);
+
+  const multiple = last.capital > 0 ? last.value / last.capital : 0;
+  const monthlyIncome = last.div / 12;
+  $('summary').innerHTML =
+    'You put in <b class="n">' + moneyFull(last.capital) + '</b> over ' + sim.years +
+    ' years. It ends worth <b class="n">' + moneyFull(Math.round(last.value)) + '</b> — ' +
+    '<b class="n">' + multiple.toFixed(1) + '×</b> what you handed over — and pays ' +
+    '<b class="n">' + moneyFull(Math.round(last.div)) + '</b> in that final year, about ' +
+    '<b class="n">' + moneyFull(Math.round(monthlyIncome)) + '</b> a month. Your original ' +
+    'shares yield <b class="n">' + pct(last.yoc, 1) + '</b> on what you paid for them, against ' +
+    'the <b class="n">' + pct(sim.y0, 2) + '</b> you started at.';
+
+  // milestones
+  const tb = $('miles');
+  tb.innerHTML = '';
+  const marks = [1, 5, 10, 15, 20, 25, 30, 35].filter(y => y <= sim.years);
+  if (!marks.includes(sim.years)) marks.push(sim.years);
+  for (const y of marks){
+    const r = sim.rows[y];
+    if (!r) continue;
+    const tr = document.createElement('tr');
+    if (y === 15 || y === 20) tr.className = 'mark';
+    // full precision in the table — a column that mixes "$6,514" with "$13K" is
+    // harder to scan than one that spells every row out
+    tr.innerHTML = '<td>' + y + '</td>' +
+      '<td>' + moneyFull(r.capital) + '</td>' +
+      '<td>' + moneyFull(r.value) + '</td>' +
+      '<td>' + moneyFull(r.div) + '</td>' +
+      '<td>' + moneyFull(r.divCum) + '</td>' +
+      '<td>' + pct(r.yoc, 1) + '</td>';
+    tb.appendChild(tr);
+  }
+
+  // coherence check on the assumptions
+  const box = $('coherence'), msg = $('coherenceMsg');
+  const ey = sim.impliedEndYield;
+  if (ey > 15){
+    box.classList.remove('hide');
+    msg.innerHTML = 'These assumptions imply the shares yield <b class="n">' + pct(ey, 1) +
+      '</b> in year ' + sim.years + '. A yield that high means the market expects a cut — ' +
+      'dividend growth this far above price growth does not hold for two decades. Raise price ' +
+      'growth or lower dividend growth.';
+  } else if (ey < 0.4 && sim.y0 > 0.5){
+    box.classList.remove('hide');
+    msg.innerHTML = 'These assumptions imply the shares yield only <b class="n">' + pct(ey, 2) +
+      '</b> in year ' + sim.years + ' — the price is compounding far faster than the ' +
+      'dividend, which means you are betting on the rating, not the snowball.';
+  } else {
+    box.classList.add('hide');
+  }
+}
+
+function update(){
+  $('initV').textContent    = moneyFull(num('init'));
+  $('monthlyV').textContent = moneyFull(num('monthly'));
+  $('yearsV').textContent   = Math.round(num('years'));
+  $('y0V').textContent      = num('y0').toFixed(2) + '%';
+  $('gV').textContent       = num('g') + '%';
+  $('pgV').textContent      = num('pg') + '%';
+  $('taxV').textContent     = num('tax') + '%';
+
+  const sim = simulate();
+  renderOutputs(sim);
+  drawArea(sim);
+  drawLine(sim);
+}
+
+['init','monthly','years','y0','g','pg','tax','reinvest','fade'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    if (['y0','g','pg'].includes(id)) $('pick').value = '';
+    update();
+  });
+  $(id).addEventListener('change', update);
+});
+
+let rt;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(update, 120); });
+
+// ---- company picker -----------------------------------------------------
+fetch('dividend-data.json')
+  .then(r => r.json())
+  .then(j => {
+    const sel = $('pick');
+    const list = j.companies.map(c => {
+      const reg = c.dr != null ? c.dr : c.d;
+      return { s: c.s, n: c.n, y: reg / c.p * 100, g: c.g };
+    }).sort((a, b) => a.s.localeCompare(b.s));
+
+    for (const c of list){
+      const o = document.createElement('option');
+      o.value = c.s;
+      o.textContent = c.s + ' — ' + c.n;
+      o.dataset.y = c.y.toFixed(2);
+      o.dataset.g = c.g;
+      sel.appendChild(o);
+    }
+
+    sel.addEventListener('change', () => {
+      const o = sel.selectedOptions[0];
+      if (!o || !o.dataset.y) return;
+      $('y0').value = Math.min(8, Math.max(0.25, parseFloat(o.dataset.y)));
+      $('g').value  = Math.min(25, parseFloat(o.dataset.g));
+      // long run, price tends to track the dividend; start them level
+      $('pg').value = Math.min(20, Math.max(-2, parseFloat(o.dataset.g)));
+      update();
+    });
+  })
+  .catch(() => { /* the projector works fine without the picker */ });
+
+update();
+</script>
+</body></html>

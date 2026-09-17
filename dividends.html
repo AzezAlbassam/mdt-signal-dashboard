@@ -1,0 +1,688 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Dividend Snowball</title>
+<meta name="description" content="What Buffett's Coca-Cola position actually earns, the rules that produced it, and a live screen of small companies that fit the same profile today.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+  --c1:#8F6A12; --c2:#0E6FA8; --c3:#A14430;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+@media(min-width:640px){.wrap{padding:0 22px 80px}}
+header{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(1.9rem,5vw,2.8rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.06rem;color:var(--muted);max-width:60ch;margin:0}
+.back{display:inline-block;font-size:.8rem;color:var(--muted);text-decoration:none;margin-bottom:22px}
+.back:hover{color:var(--accent)}
+h2.sec{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;margin:48px 0 14px;padding-top:8px;border-top:1px solid var(--line-soft)}
+h3{color:var(--ink);font-size:1.18rem;margin:30px 0 8px;letter-spacing:-.015em;font-weight:650}
+p{max-width:64ch}
+mono,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+b.n{color:var(--ink);font-weight:650;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* stat tiles */
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);margin:22px 0}
+@media(min-width:640px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:14px 16px}
+.tile .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.32rem;
+ color:var(--ink);font-weight:650;letter-spacing:-.02em;line-height:1.2}
+.tile .l{font-size:.7rem;color:var(--faint);margin-top:5px;line-height:1.35}
+
+.callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+ border-radius:4px;padding:16px 18px;margin:22px 0}
+.callout p{margin:0;max-width:62ch}
+.callout p+p{margin-top:9px}
+
+.formula{background:var(--sunk);border:1px solid var(--line-soft);border-radius:4px;
+ padding:18px;text-align:center;margin:20px 0;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:var(--ink)}
+.formula small{display:block;font-family:system-ui,sans-serif;color:var(--muted);
+ font-size:.8rem;margin-top:9px}
+
+/* rules */
+ol.rules{list-style:none;counter-reset:r;padding:0;margin:18px 0}
+ol.rules li{counter-increment:r;background:var(--surface);border:1px solid var(--line);
+ border-radius:5px;padding:15px 17px 15px 52px;position:relative;margin-bottom:9px}
+ol.rules li::before{content:counter(r);position:absolute;left:16px;top:15px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;font-weight:700;
+ color:var(--accent);background:var(--accent-soft);width:23px;height:23px;border-radius:3px;
+ display:flex;align-items:center;justify-content:center}
+ol.rules .rt{color:var(--ink);font-weight:650;display:block;margin-bottom:3px;font-size:1rem}
+ol.rules .rr{font-size:.9rem;color:var(--muted);margin:0;max-width:60ch}
+ol.rules .test{display:inline-block;margin-top:8px;font-size:.74rem;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);
+ background:var(--accent-soft);padding:3px 8px;border-radius:3px}
+
+ul.flags{list-style:none;padding:0;margin:14px 0}
+ul.flags li{padding:9px 0 9px 26px;border-bottom:1px solid var(--line-soft);position:relative;
+ font-size:.93rem;max-width:64ch}
+ul.flags li::before{content:"×";position:absolute;left:6px;top:8px;color:var(--neg);font-weight:700}
+
+/* controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:16px 0 14px;
+ padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:5px}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl label{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.ctl select,.ctl input{background:var(--bg);color:var(--ink);border:1px solid var(--line);
+ border-radius:4px;padding:6px 9px;font-size:.87rem;font-family:inherit;min-width:110px}
+.ctl input[type=range]{padding:0;min-width:130px;accent-color:var(--accent)}
+.chk{display:flex;align-items:center;gap:7px;font-size:.87rem;padding-bottom:6px}
+.chk input{accent-color:var(--accent);width:15px;height:15px}
+
+/* table */
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:820px}
+th{text-align:right;padding:10px 11px;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap;
+ cursor:pointer;user-select:none;background:var(--raise);position:sticky;top:0}
+th:first-child,th:nth-child(2){text-align:left}
+th:hover{color:var(--accent)}
+th.on{color:var(--accent)}
+th .ar{opacity:.5;font-size:.7rem}
+td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line-soft);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+td:first-child,td:nth-child(2){text-align:left}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--raise)}
+.tk{color:var(--ink);font-weight:650}
+.nm{font-family:system-ui,sans-serif;color:var(--body);font-size:.84rem}
+.sc{display:inline-block;min-width:30px;padding:2px 6px;border-radius:3px;font-weight:650;
+ font-size:.8rem;text-align:center}
+.sc.hi{background:var(--accent-soft);color:var(--accent)}
+.sc.md{background:var(--sunk);color:var(--body)}
+.sc.lo{background:transparent;color:var(--faint)}
+.fg{font-family:system-ui,sans-serif;font-size:.68rem;color:var(--neg);
+ border:1px solid currentColor;border-radius:3px;padding:1px 5px;margin-left:4px;opacity:.85}
+.yoc{color:var(--ink);font-weight:650}
+
+/* chart */
+figure{margin:20px 0 0}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:10px;max-width:62ch}
+.ch-t{color:var(--ink);font-size:1rem;font-weight:650;margin:0 0 3px}
+.ch-s{font-size:.82rem;color:var(--muted);margin:0 0 14px}
+.bars{display:flex;flex-direction:column;gap:2px}
+.brow{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:10px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem}
+.brow .bt{color:var(--ink);font-weight:650}
+.btrack{position:relative;height:22px;display:flex;align-items:center}
+.bfill{height:15px;border-radius:0 4px 4px 0;background:var(--c1);transition:width .35s ease}
+.bval{margin-left:8px;color:var(--body);font-size:.78rem;white-space:nowrap}
+
+.note{font-size:.82rem;color:var(--faint);max-width:64ch}
+.status{font-size:.76rem;color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ margin:10px 0 0}
+.status.err{color:var(--neg)}
+button.act{background:var(--accent);color:var(--bg);border:none;border-radius:4px;
+ padding:7px 14px;font-size:.84rem;font-weight:650;cursor:pointer;font-family:inherit}
+button.act:hover{opacity:.88}
+button.act:disabled{opacity:.45;cursor:default}
+a.cta{display:block;background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:20px 22px;text-decoration:none;color:inherit;margin-top:14px;
+ transition:border-color .15s,transform .15s}
+a.cta:hover{border-color:var(--accent);transform:translateY(-1px)}
+a.cta h3{margin:0 0 5px}
+a.cta p{margin:0;color:var(--muted);font-size:.92rem}
+footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
+ font-size:.82rem;color:var(--faint);max-width:64ch}
+details{margin:12px 0}
+summary{cursor:pointer;color:var(--accent);font-size:.88rem;font-weight:650}
+details[open] summary{margin-bottom:10px}
+</style></head><body><div class="wrap">
+
+<header>
+ <a class="back" href="index.html">&larr; All studies</a>
+ <p class="eyebrow">Live screen &middot; 43 companies</p>
+ <h1>The dividend snowball</h1>
+ <p class="lede">What Buffett&rsquo;s Coca-Cola position actually pays him, the arithmetic that
+ produced it, and a live screen of small companies that fit the same profile today &mdash;
+ before they get big.</p>
+</header>
+
+<h2 class="sec">Start with the real numbers</h2>
+<p>The story going around is roughly right in shape and badly wrong in size. Here is what
+Berkshire Hathaway&rsquo;s Coca-Cola stake actually looks like, using Coca-Cola&rsquo;s live
+dividend and share price:</p>
+
+<div class="tiles">
+ <div class="tile"><div class="v">$1.299B</div><div class="l">What Berkshire paid, 1988&ndash;1994</div></div>
+ <div class="tile"><div class="v">400M</div><div class="l">Shares held, unchanged since 1994</div></div>
+ <div class="tile"><div class="v" id="koDiv">$840M</div><div class="l">Dividends per year, at today&rsquo;s rate</div></div>
+ <div class="tile"><div class="v" id="koYoc">64.7%</div><div class="l">Yield on original cost</div></div>
+</div>
+
+<div class="callout">
+<p>So the position pays about <b class="n">$210 million a quarter</b>, not $2 million &mdash; and
+the cost was <b class="n">$1.3 billion</b>, not $800,000. The holding period is 38 years, not 50.
+Coca-Cola has raised its dividend for <b class="n">64 straight years</b>, not 26.</p>
+<p>The part of the story that is true is the part that matters: Berkshire has collected roughly
+<b class="n">$11 billion</b> in cash dividends on a $1.3 billion cost &mdash; it got its money back
+about eight times over without selling anything &mdash; and still owns a stake worth around
+<b class="n">$35 billion</b>. That is the snowball. It just took four decades.</p>
+</div>
+
+<h2 class="sec">The engine, in one line</h2>
+<p>Every dividend-growth story reduces to the same expression. There is no other mechanism:</p>
+
+<div class="formula">
+ yield on cost after t years&nbsp;=&nbsp;y<sub>0</sub> &times; (1&nbsp;+&nbsp;g)<sup>t</sup>
+ <small>y<sub>0</sub> = the yield you buy at &nbsp;&middot;&nbsp; g = annual dividend growth
+ &nbsp;&middot;&nbsp; t = years you hold</small>
+</div>
+
+<p>For Coca-Cola: Berkshire bought at roughly a <b class="n">3.2%</b> yield and the dividend
+compounded at about <b class="n">8.5%</b> a year for 37 years. That turns 3.2% into 64.7%.
+Nothing exotic happened &mdash; a mid-single-digit starting yield met decades of steady raises.</p>
+
+<p>The formula also tells you where the leverage is. Doubling your starting yield doubles your
+end result. Adding three points to <em>g</em> multiplies it by three or four. <strong>Growth
+compounds; yield does not.</strong> That is why a 1.8% yield growing at 14% beats a 5% yield
+growing at 3% &mdash; and it beats it decisively, in year eleven:</p>
+
+<div class="tiles">
+ <div class="tile"><div class="v">31.9%</div><div class="l">1.8% yield &times; 14% growth, after 15 years</div></div>
+ <div class="tile"><div class="v">7.8%</div><div class="l">5.0% yield &times; 3% growth, after 15 years</div></div>
+ <div class="tile"><div class="v">61.4%</div><div class="l">1.8% &times; 14%, after 20 years</div></div>
+ <div class="tile"><div class="v">9.0%</div><div class="l">5.0% &times; 3%, after 20 years</div></div>
+</div>
+
+<h2 class="sec">The bucket list &mdash; ten rules</h2>
+<p>These are written as tests, not opinions. A company either passes or it does not, and the
+screen below applies the measurable ones automatically.</p>
+
+<ol class="rules">
+ <li><span class="rt">Small enough that growth still moves the needle</span>
+  <p class="rr">Coca-Cola is a $378 billion company. It cannot grow its dividend at 10% for
+  twenty more years, because it would have to become the largest company on earth to fund it.
+  The whole game is buying the compounding <em>before</em> the market caps it out.</p>
+  <span class="test">market cap &lt; $15B &middot; ideally &lt; $5B</span></li>
+
+ <li><span class="rt">A starting yield in the usable band</span>
+  <p class="rr">Below about 1% the snowball starts too small to matter inside a human lifetime.
+  Above about 5% in a small company, the market is usually telling you the dividend is at risk
+  or the business has stopped growing. The sweet spot is unglamorous.</p>
+  <span class="test">1.5% &le; yield &le; 4.0%</span></li>
+
+ <li><span class="rt">Dividend growth above 8% a year</span>
+  <p class="rr">This is the single highest-weighted input, because it is the one that
+  compounds. Below 6% you are roughly tracking inflation and the snowball never really
+  forms. Above 12% sustained is where twenty-year outcomes get interesting.</p>
+  <span class="test">5-year dividend CAGR &ge; 8% &middot; prefer &ge; 12%</span></li>
+
+ <li><span class="rt">A payout ratio with room left in it</span>
+  <p class="rr">The most underrated rule. A company paying out 25% of free cash flow can
+  double its dividend <em>without growing profits at all</em>, just by moving to 50%. A
+  company already at 80% can only raise as fast as it grows. Low payout is stored future
+  growth.</p>
+  <span class="test">payout 20&ndash;60% of free cash flow</span></li>
+
+ <li><span class="rt">A streak long enough to prove policy, short enough to still be fast</span>
+  <p class="rr">Five years tells you management means it. But the 50- and 60-year streaks
+  are mostly mature businesses raising 3% a year to protect the record. Counter-intuitively,
+  the best hunting is 10 to 25 years &mdash; the policy is established and the growth is
+  still real.</p>
+  <span class="test">10 &le; streak &le; 30 years</span></li>
+
+ <li><span class="rt">Earnings growing at least as fast as the dividend</span>
+  <p class="rr">If the dividend grows 12% while free cash flow grows 4%, the payout ratio is
+  climbing and the raises are being borrowed from the future. Check that the payout ratio
+  today is not much higher than it was five years ago.</p>
+  <span class="test">FCF growth &ge; dividend growth, over 5 years</span></li>
+
+ <li><span class="rt">High return on invested capital</span>
+  <p class="rr">A business earning 20% on capital can fund its own growth and still hand you
+  cash. A business earning 7% has to choose. This is what separates a compounder from a
+  company that merely pays a dividend.</p>
+  <span class="test">ROIC &gt; 12% &middot; prefer &gt; 15%</span></li>
+
+ <li><span class="rt">A balance sheet that is not competing with you</span>
+  <p class="rr">Debt gets paid before shareholders do. In the downturn that will happen at
+  some point in your twenty years, a leveraged company cuts the dividend and an unleveraged
+  one raises it.</p>
+  <span class="test">net debt / EBITDA &lt; 2.5&times;</span></li>
+
+ <li><span class="rt">One sentence on why competitors cannot take the business</span>
+  <p class="rr">Switching costs, a regulated monopoly, franchise royalties, distribution
+  density, a brand people ask for by name. If you cannot write the sentence, you do not have
+  a twenty-year holding &mdash; you have a stock.</p>
+  <span class="test">write it down &middot; if you cannot, skip it</span></li>
+
+ <li><span class="rt">Management that treats the dividend as a promise</span>
+  <p class="rr">Did it survive 2008 and 2020 without a cut? Do insiders own meaningful stock?
+  Is there a stated policy? A company that cut in 2020 and quietly restarted later has told
+  you what it does under pressure.</p>
+  <span class="test">no cut in the last two recessions</span></li>
+</ol>
+
+<h3>The disqualifiers</h3>
+<ul class="flags">
+ <li><strong>A yield above 7% on a small company.</strong> That is not a bargain, it is a
+ forecast. The market is pricing the cut before it is announced.</li>
+ <li><strong>A trailing yield inflated by a special dividend.</strong> Four names in the screen
+ below do this &mdash; their headline yield is two to four times their real, repeatable one.
+ The screen flags them and scores them on the regular dividend only.</li>
+ <li><strong>A dividend funded by debt or asset sales</strong> rather than by free cash flow.
+ Compare dividends paid against free cash flow in the cash-flow statement, not against earnings.</li>
+ <li><strong>Payout above 90% of free cash flow.</strong> There is no room left for a raise and
+ no cushion for a bad year.</li>
+ <li><strong>Steady share issuance.</strong> If the share count climbs every year, part of your
+ dividend growth is being handed to new shareholders.</li>
+ <li><strong>Fixed payouts on cyclical earnings</strong> &mdash; homebuilders, shipping,
+ commodity chemicals. The streak looks fine right up until the cycle turns, which it will do
+ at least twice in twenty years.</li>
+</ul>
+
+<h2 class="sec">The live screen</h2>
+<p>43 US-listed companies that pay a growing dividend and are still small enough to compound.
+Prices, market caps and dividend rates are live. Growth rates, streaks and payout ratios are
+research estimates &mdash; <strong>verify them against the company&rsquo;s own dividend history
+before committing money.</strong></p>
+
+<div class="controls">
+ <div class="ctl"><label for="fSector">Sector</label>
+  <select id="fSector"><option value="">All</option></select></div>
+ <div class="ctl"><label for="fCap">Max market cap</label>
+  <select id="fCap">
+   <option value="999">No limit</option>
+   <option value="15">Under $15B</option>
+   <option value="10" selected>Under $10B</option>
+   <option value="5">Under $5B</option>
+   <option value="2">Under $2B</option>
+  </select></div>
+ <div class="ctl"><label for="fYield">Min yield &mdash; <span id="fYieldV">0.0%</span></label>
+  <input type="range" id="fYield" min="0" max="5" step="0.25" value="0"></div>
+ <div class="ctl"><label for="fGrow">Min div growth &mdash; <span id="fGrowV">0%</span></label>
+  <input type="range" id="fGrow" min="0" max="25" step="1" value="0"></div>
+ <label class="chk"><input type="checkbox" id="fClean"> Hide flagged</label>
+</div>
+
+<div class="twrap"><table id="screen">
+ <thead><tr>
+  <th data-k="s">Ticker</th>
+  <th data-k="n">Company</th>
+  <th data-k="sec">Sector</th>
+  <th data-k="mc">Mkt cap</th>
+  <th data-k="p">Price</th>
+  <th data-k="y">Yield</th>
+  <th data-k="g">Div growth</th>
+  <th data-k="po">Payout</th>
+  <th data-k="st">Streak</th>
+  <th data-k="yoc">YoC in 20y</th>
+  <th data-k="score" class="on">Score <span class="ar">&darr;</span></th>
+ </tr></thead>
+ <tbody id="rows"></tbody>
+</table></div>
+<p class="status" id="status">Loading&hellip;</p>
+
+<details>
+ <summary>How the score is calculated</summary>
+ <p class="note">Out of 100, from five components, all applied to the <em>regular</em> dividend
+ (special dividends are excluded):<br>
+ &middot; <strong>Entry yield, 20 pts</strong> &mdash; full marks in the 1.5&ndash;4.0% band,
+ falling away above and below.<br>
+ &middot; <strong>Dividend growth, 30 pts</strong> &mdash; the heaviest weight, because it is the
+ term that compounds. Full marks in the 12&ndash;20% band; above 20% scores slightly
+ <em>lower</em>, because a dividend growing that fast is usually young, small-based and
+ about to decelerate.<br>
+ &middot; <strong>Payout runway, 20 pts</strong> &mdash; full marks at or below 25% of free cash
+ flow, zero above 85%.<br>
+ &middot; <strong>Size, 15 pts</strong> &mdash; full marks under $2B, 2 points above $15B.<br>
+ &middot; <strong>Track record, 15 pts</strong> &mdash; full marks for a 10&ndash;30 year streak;
+ less for shorter (unproven) and for 50+ (mature, slow).<br><br>
+ <strong>YoC in 20y</strong> is the regular yield compounded forward &mdash; the Coca-Cola
+ calculation applied to each name. It does <em>not</em> hold the current growth rate flat for
+ twenty years, because no company does that. Growth runs at the recent rate for five years,
+ then fades linearly to a 5% terminal rate by year twenty. Hover any figure in that column to
+ see what it would have been on a flat extrapolation; for the fastest growers the difference
+ is three- or four-fold, and that gap is the single biggest source of error in this kind of
+ analysis.</p>
+</details>
+
+<h2 class="sec">Ranked by the only number that matters</h2>
+<figure>
+ <p class="ch-t">Projected yield on cost after 20 years</p>
+ <p class="ch-s">Today&rsquo;s regular yield compounded at each company&rsquo;s recent dividend
+ growth rate for five years, then fading to 5% a year by year twenty. Top 12 of the filtered
+ screen.</p>
+ <div class="bars" id="bars"></div>
+ <figcaption>Read this as a ranking, not a forecast. It is arithmetic applied to a growth rate
+ that no company is contractually obliged to maintain &mdash; the value of the chart is that it
+ sorts candidates by the mechanism that actually produced Buffett&rsquo;s result, instead of by
+ headline yield. The fade matters: without it the top of this list is simply whichever company
+ raised its dividend fastest last year, which is close to the opposite of what you want.</figcaption>
+</figure>
+
+<h2 class="sec">Run your own numbers</h2>
+<a class="cta" href="dividend-projector.html">
+ <h3>The compounding projector &rarr;</h3>
+ <p>Set your initial amount and what you add each month, pick a company off the screen or set
+ your own assumptions, and see the portfolio value, the annual dividend income and the yield on
+ cost at 15 and 20 years.</p>
+</a>
+
+<h2 class="sec">Keeping it alive</h2>
+<p class="note">Prices in this page come from <code>dividend-data.json</code>, refreshed when the
+repository is updated. To pull live prices into the page right now, add a free
+<a href="https://site.financialmodelingprep.com/developer/docs" style="color:var(--accent)">Financial
+Modeling Prep</a> API key &mdash; it is stored in your browser only and never leaves it.</p>
+<div class="controls">
+ <div class="ctl"><label for="apiKey">FMP API key (optional)</label>
+  <input type="password" id="apiKey" placeholder="paste key" style="min-width:200px"></div>
+ <button class="act" id="refresh">Refresh prices</button>
+</div>
+<p class="status" id="rstatus"></p>
+
+<footer>Research and analysis only &mdash; not financial advice. Dividend growth rates, payout
+ratios and streaks are estimates as of the research vintage in the data file and have not been
+audited against primary filings. A company can cut its dividend at any time, and past increases
+do not oblige future ones. The twenty-year projections are arithmetic, not predictions.</footer>
+</div>
+
+<script>
+const FIX = {
+  // yield-on-cost helper used by the hero tiles
+  koShares: 400e6, koCost: 1.299e9
+};
+
+let DATA = null, sortKey = 'score', sortDir = -1;
+
+const fmtCap = v => v >= 1e9 ? '$' + (v/1e9).toFixed(1) + 'B' : '$' + Math.round(v/1e6) + 'M';
+const pct = (v, d=1) => v.toFixed(d) + '%';
+
+// --- scoring -------------------------------------------------------------
+function scoreYield(y){
+  if (y < 0.5) return 2;
+  if (y < 1.0) return 6;
+  if (y < 1.5) return 12;
+  if (y <= 4.0) return 20;
+  if (y <= 5.5) return 14;
+  return 6;
+}
+function scoreGrowth(g){
+  // The credible sweet spot is 12-20%. Above 20% is usually a young dividend off a
+  // small base, which is impressive but far less likely to persist for two decades,
+  // so it scores slightly below the sustainable band rather than above it.
+  if (g > 20)  return 26;
+  if (g >= 12) return 30;
+  if (g >= 10) return 24;
+  if (g >= 8)  return 18;
+  if (g >= 6)  return 12;
+  if (g >= 4)  return 6;
+  return 0;
+}
+function scorePayout(p){
+  if (p <= 25) return 20;
+  if (p <= 40) return 17;
+  if (p <= 55) return 13;
+  if (p <= 70) return 8;
+  if (p <= 85) return 4;
+  return 0;
+}
+function scoreSize(mc){
+  const b = mc / 1e9;
+  if (b <= 2)  return 15;
+  if (b <= 5)  return 12;
+  if (b <= 10) return 9;
+  if (b <= 15) return 6;
+  return 2;
+}
+function scoreStreak(st){
+  if (st >= 10 && st <= 30) return 15;
+  if (st > 30 && st <= 50)  return 12;
+  if (st > 50)              return 10;
+  if (st >= 5)              return 10;
+  return 4;
+}
+
+// No company raises its dividend at 25% for twenty years. Holding the recent rate flat
+// for two decades flatters exactly the youngest, least-proven payers — the opposite of
+// what this screen is for. So growth runs at the recent rate for five years, then fades
+// linearly to a 5% terminal rate by year 20.
+const TERMINAL = 5, FULL_YEARS = 5, HORIZON = 20;
+
+function fadedYoc(y0, g){
+  let mult = 1;
+  for (let t = 1; t <= HORIZON; t++){
+    const rate = t <= FULL_YEARS
+      ? g
+      : TERMINAL + (g - TERMINAL) * Math.max(0, 1 - (t - FULL_YEARS) / (HORIZON - FULL_YEARS));
+    mult *= 1 + Math.max(rate, TERMINAL) / 100;
+  }
+  return y0 * mult;
+}
+
+function enrich(c){
+  // regular dividend excludes specials; fall back to the trailing figure
+  const reg = c.dr != null ? c.dr : c.d;
+  const y   = reg / c.p * 100;
+  const yTtm = c.d / c.p * 100;
+  const yoc    = fadedYoc(y, c.g);
+  const yocRaw = y * Math.pow(1 + c.g/100, HORIZON);
+  const score = scoreYield(y) + scoreGrowth(c.g) + scorePayout(c.po)
+              + scoreSize(c.mc) + scoreStreak(c.st);
+  return Object.assign({}, c, { y, yTtm, yoc, yocRaw, score, reg });
+}
+
+// --- rendering -----------------------------------------------------------
+function filtered(){
+  const sec  = document.getElementById('fSector').value;
+  const cap  = parseFloat(document.getElementById('fCap').value) * 1e9;
+  const minY = parseFloat(document.getElementById('fYield').value);
+  const minG = parseFloat(document.getElementById('fGrow').value);
+  const clean = document.getElementById('fClean').checked;
+  return DATA.filter(c =>
+    (!sec || c.sec === sec) &&
+    c.mc <= cap &&
+    c.y >= minY &&
+    c.g >= minG &&
+    (!clean || c.fl.length === 0)
+  );
+}
+
+function sorted(rows){
+  return rows.slice().sort((a, b) => {
+    const A = a[sortKey], B = b[sortKey];
+    const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
+    return r * sortDir;
+  });
+}
+
+function render(){
+  const rows = sorted(filtered());
+  const tb = document.getElementById('rows');
+  tb.innerHTML = '';
+
+  for (const c of rows){
+    const tr = document.createElement('tr');
+    const cls = c.score >= 70 ? 'hi' : c.score >= 55 ? 'md' : 'lo';
+    const flags = c.fl.length
+      ? ' <span class="fg" title="' + c.fl.join(', ') + '">' + c.fl.length + '</span>'
+      : '';
+    const yieldCell = c.dr != null
+      ? pct(c.y, 2) + ' <span class="fg" title="trailing yield of ' + pct(c.yTtm,1) +
+        ' includes a special dividend">sp</span>'
+      : pct(c.y, 2);
+
+    tr.innerHTML =
+      '<td><span class="tk">' + c.s + '</span></td>' +
+      '<td><span class="nm">' + c.n + flags + '</span></td>' +
+      '<td><span class="nm">' + c.sec + '</span></td>' +
+      '<td>' + fmtCap(c.mc) + '</td>' +
+      '<td>$' + c.p.toFixed(2) + '</td>' +
+      '<td>' + yieldCell + '</td>' +
+      '<td>' + pct(c.g, 0) + '</td>' +
+      '<td>' + pct(c.po, 0) + '</td>' +
+      '<td>' + c.st + 'y</td>' +
+      '<td class="yoc" title="' + pct(c.yocRaw, 0) +
+        ' if the current growth rate held flat for all 20 years">' + pct(c.yoc, 0) + '</td>' +
+      '<td><span class="sc ' + cls + '">' + c.score + '</span></td>';
+    tb.appendChild(tr);
+  }
+
+  document.getElementById('status').textContent =
+    rows.length + ' of ' + DATA.length + ' companies shown · prices as of ' + META.generated;
+
+  renderBars(rows.slice().sort((a,b) => b.yoc - a.yoc).slice(0, 12));
+}
+
+function renderBars(rows){
+  const el = document.getElementById('bars');
+  el.innerHTML = '';
+  if (!rows.length) return;
+  const max = rows[0].yoc;
+
+  for (const c of rows){
+    const row = document.createElement('div');
+    row.className = 'brow';
+    const w = Math.max(2, (c.yoc / max) * 100);
+    row.innerHTML =
+      '<div class="bt">' + c.s + '</div>' +
+      '<div class="btrack">' +
+        '<div class="bfill" style="width:' + w + '%"></div>' +
+        '<div class="bval">' + pct(c.yoc, 0) + '</div>' +
+      '</div>';
+    row.title = c.n + ' — ' + pct(c.y,2) + ' today, growing ' + pct(c.g,0) +
+                '/yr fading to ' + TERMINAL + '% → ' + pct(c.yoc,0) + ' on cost in 20 years' +
+                ' (' + pct(c.yocRaw,0) + ' if growth never slowed)';
+    el.appendChild(row);
+  }
+}
+
+// --- sorting -------------------------------------------------------------
+document.querySelectorAll('#screen th').forEach(th => {
+  th.addEventListener('click', () => {
+    const k = th.dataset.k;
+    if (k === sortKey) { sortDir *= -1; }
+    else { sortKey = k; sortDir = (k === 's' || k === 'n' || k === 'sec') ? 1 : -1; }
+    document.querySelectorAll('#screen th').forEach(h => {
+      h.classList.remove('on');
+      const a = h.querySelector('.ar'); if (a) a.remove();
+    });
+    th.classList.add('on');
+    th.insertAdjacentHTML('beforeend',
+      ' <span class="ar">' + (sortDir === 1 ? '↑' : '↓') + '</span>');
+    render();
+  });
+});
+
+['fSector','fCap','fClean'].forEach(id =>
+  document.getElementById(id).addEventListener('change', render));
+document.getElementById('fYield').addEventListener('input', e => {
+  document.getElementById('fYieldV').textContent = parseFloat(e.target.value).toFixed(1) + '%';
+  render();
+});
+document.getElementById('fGrow').addEventListener('input', e => {
+  document.getElementById('fGrowV').textContent = e.target.value + '%';
+  render();
+});
+
+// --- live refresh --------------------------------------------------------
+const KEY_STORE = 'fmpKey';
+try {
+  const saved = localStorage.getItem(KEY_STORE);
+  if (saved) document.getElementById('apiKey').value = saved;
+} catch (e) { /* storage unavailable — refresh still works, key just isn't remembered */ }
+
+document.getElementById('refresh').addEventListener('click', async () => {
+  const key = document.getElementById('apiKey').value.trim();
+  const st = document.getElementById('rstatus');
+  if (!key) { st.className = 'status err'; st.textContent = 'Enter an API key first.'; return; }
+  try { localStorage.setItem(KEY_STORE, key); } catch (e) { /* not fatal */ }
+
+  const btn = document.getElementById('refresh');
+  btn.disabled = true;
+  st.className = 'status';
+  let done = 0, failed = 0;
+
+  for (const c of DATA){
+    try {
+      const r = await fetch('https://financialmodelingprep.com/stable/profile?symbol=' +
+                            encodeURIComponent(c.s) + '&apikey=' + encodeURIComponent(key));
+      const j = await r.json();
+      if (Array.isArray(j) && j[0] && typeof j[0].price === 'number' && j[0].price > 0){
+        c.p = j[0].price;
+        if (typeof j[0].marketCap === 'number' && j[0].marketCap > 0) c.mc = j[0].marketCap;
+        if (typeof j[0].lastDividend === 'number' && j[0].lastDividend > 0 && c.dr == null){
+          c.d = j[0].lastDividend;
+        }
+        // recompute the derived fields for this row
+        Object.assign(c, enrich(c));
+        done++;
+      } else { failed++; }
+    } catch (e) { failed++; }
+    st.textContent = 'Refreshed ' + done + '/' + DATA.length +
+                     (failed ? ' · ' + failed + ' failed' : '');
+  }
+
+  META.generated = new Date().toISOString().slice(0, 10) + ' (live)';
+  render();
+  btn.disabled = false;
+  if (failed === DATA.length){
+    st.className = 'status err';
+    st.textContent = 'All requests failed — check the key, or your plan may not cover this endpoint.';
+  }
+});
+
+// --- boot ----------------------------------------------------------------
+let META = { generated: '—' };
+
+fetch('dividend-data.json')
+  .then(r => r.json())
+  .then(j => {
+    META = j;
+    DATA = j.companies.map(enrich);
+
+    const secs = [...new Set(DATA.map(c => c.sec))].sort();
+    const sel = document.getElementById('fSector');
+    for (const s of secs){
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      sel.appendChild(o);
+    }
+
+    // hero tiles, from the live Coca-Cola dividend rate in the notes
+    const koAnnual = 2.10;
+    document.getElementById('koDiv').textContent =
+      '$' + Math.round(FIX.koShares * koAnnual / 1e6) + 'M';
+    document.getElementById('koYoc').textContent =
+      (koAnnual / (FIX.koCost / FIX.koShares) * 100).toFixed(1) + '%';
+
+    render();
+  })
+  .catch(() => {
+    const st = document.getElementById('status');
+    st.className = 'status err';
+    st.textContent = 'Could not load dividend-data.json.';
+  });
+</script>
+</body></html>
