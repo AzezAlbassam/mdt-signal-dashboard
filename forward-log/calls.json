@@ -1,0 +1,8 @@
+{
+ "protocol": "PROTOCOL.md",
+ "protocolFixedAt": "2026-09-17",
+ "account": "@zero_en3kas",
+ "windowDays": 30,
+ "startedAt": null,
+ "calls": []
+}
