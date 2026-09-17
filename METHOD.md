@@ -204,14 +204,112 @@ larger target) was mechanical, and came from measurement rather than from geomet
 
 ---
 
-## 6. Summary
+## 6. Three follow-up questions, measured
+
+`scripts/answers.js`. Same 2,943 SPX daily sessions. Every rate carries a Wilson interval
+and every expectancy a bootstrap interval, because the interesting-looking rows are the
+small ones.
+
+**Data limit, stated first:** this data plan serves `^GSPC` daily only. Intraday bars are
+gated, and so is every other symbol tried (`^NDX`, `QQQ`). That bounds two of the three
+answers, and where it does, it is said rather than papered over.
+
+### 6.1 Which timeframe?
+
+Numeric ladder, short the first touch, 2% stop / 3% target. Break-even is 40%.
+
+| timeframe | bars | trades | win rate | 95% CI | expectancy | 95% CI |
+|---|---|---|---|---|---|---|
+| daily | 2,943 | 319 | 27.9% | [23%, 34%] | −0.53% | [−0.76, −0.29] |
+| weekly | 612 | 152 | 34.2% | [27%, 42%] | −0.30% | [−0.66, +0.08] |
+| monthly | 141 | 32 | 50.0% | [34%, 66%] | +0.50% | [−0.44, +1.28] |
+
+Monthly looks best and means least. Its win interval spans the 40% break-even in both
+directions and its expectancy interval spans zero; 16 wins against 16 losses at a 3:2
+payoff is what a coin flip pays. Only the daily row's interval is clear of break-even,
+and it is clear on the **wrong side**. Higher timeframes here buy a smaller sample, not
+a better rule — and the 5-minute and 1-hour charts he actually posts on could not be
+tested at all.
+
+### 6.2 The win rate
+
+It is not one number. On the identical levels it runs from **15% to 68%** purely by
+moving the exits — and the two facts that matter are underneath it.
+
+**First: every win rate has a bar to clear**, namely `stop / (stop + target)`.
+
+| rule | stop/target | trades | win rate | needs | edge | expectancy |
+|---|---|---|---|---|---|---|
+| numeric ×45 (short) | 2/2 | 319 | 43.6% | 50.0% | −6.4pp | −0.24% |
+| numeric ×45 (short) | 2/3 | 319 | 27.9% | 40.0% | −12.1pp | −0.53% |
+| numeric ×45 (short) | 5/5 | 319 | **68.4%** | 50.0% | +18.4pp | **−0.58%** |
+| MA50 at peak (long) | 2/3 | 139 | 36.3% | 40.0% | −3.7pp | −0.06% |
+| MA50 at peak (long) | 5/5 | 139 | 44.6% | 50.0% | −5.4pp | +0.20% |
+
+The 5/5 row is the trap in miniature: a **68.4% win rate that loses money**. Of its 319
+trades, **243 timed out** — the headline rate describes 24% of the positions actually
+opened, and the rest sat for 20 sessions and were marked to the close. This is the same
+arithmetic the `spx.html` study on this site already found in his $2 SPX trade.
+
+**Second: flip the direction and the win rate flips exactly.** On the same levels,
+122 wins / 158 losses short is 158 wins / 122 losses long — a perfect mirror, and the
+expectancies sum to exactly zero. Over this sample no bar was ever wide enough to trigger
+both exits, so the whole result is decided by which way you face relative to the market's
+drift.
+
+To be precise about what that does and does not prove: it shows a win rate quoted without
+its direction and payoff is not information. It does **not** by itself show his levels are
+uninformative — any entry price would mirror this way. The evidence for no edge is the
+null-model comparison, below and in §3.
+
+**The MA50 rows were the only ones not clearly negative, so they got a second null.**
+
+| MA50 test | stop/target | his expectancy | vs displaced level | vs random anchor bar |
+|---|---|---|---|---|
+| MA50 at peak | 2/5 | +0.14% | −0.31%, p = 0.011 | +0.15%, **p = 0.498** |
+| MA50 at peak | 5/5 | +0.20% | −0.21%, p = 0.022 | +0.49%, **p = 0.780** |
+
+Against a randomly displaced level it looks significant. Against levels the same distance
+below a **random bar instead of a swing peak**, it vanishes completely. So the apparent
+edge is "buying a dip of about this depth in a rising market", not "the MA50 at the peak".
+The peak contributes nothing. This is the second time in this study a positive result died
+to a harder null — the first was the p = 0.003 in §3.
+
+### 6.3 Stocks or NDX?
+
+Not directly answerable: `^NDX` and `QQQ` are gated on this plan. What *can* be measured
+is the property that decides it. His ladder is built from the **digit sum of the price**,
+so re-quoting the same market rewrites every level. Indices do not split. Stocks do.
+
+Identical SPX series in every row, only the quote units differ:
+
+| same market, re-quoted | sample low | digit sum | raw win% | with his ÷10 rule |
+|---|---|---|---|---|
+| index, unchanged | 1988.12 | 26 | 27.9% (319) | 27.9% (319), exp −0.53% |
+| after a 2:1 split | 994.06 | 22 | 28.1% (294) | 27.8% (294), exp −0.54% |
+| after a 4:1 split | 497.03 | 20 | 31.5% (204) | 18.3% (260), exp −0.90% |
+| after a 10:1 split | 198.81 | 18 | 40.6% (74) | 25.1% (326), exp −0.61% |
+
+His ÷10/÷100 rule does most of its job — it keeps the ladder on the same scale as the
+price, so the trade count survives. What it cannot fix is the digit sum itself: **Σ moves
+26 → 22 → 20 → 18 for a market that never changed.** Every expectancy stays negative.
+
+So the answer is **index rather than stocks**, for a structural reason rather than a
+performance one: on an index that never splits, this instability never fires. On a stock
+it fires on the split date, and every level moves for no economic reason. NVDA's 10:1 in
+2024 and TSLA's 3:1 in 2022 would each have rewritten the whole ladder overnight.
+
+## 7. Summary
 
 | | |
 |---|---|
 | Can his free strategies be implemented? | **Two of them, yes** — the numeric ladder and the MA-at-peak level. Both are in `engine/`, golden-tested against his own published numbers. |
 | Can the geometric school be implemented? | **No.** It is defined in on-screen degrees, which are not a property of the price data. Not a limitation of Pine or of effort. |
 | Can results be made to match his exactly? | **For his arithmetic, yes** — 4103 → 8 → 360 → 4463/4823 reproduces exactly. **For his charts, no** — the wave, the peak and the chart scale are all chosen by eye. |
-| Do the implementable rules have an edge? | **No.** Indistinguishable from randomly placed levels across 2,943 sessions and four thresholds. 45 is not special. |
+| Do the implementable rules have an edge? | **No.** Indistinguishable from randomly placed levels across 2,943 sessions and four thresholds. 45 is not special, and the MA50 result dies against a random-anchor null. |
+| Best timeframe? | The data cannot separate daily, weekly and monthly — monthly only looks better because it has 32 trades. Intraday was not testable. |
+| Win rate? | Anywhere from 15% to 68% depending only on the exits. Every setting sits below its own break-even, and the 68% case loses money. |
+| Stocks or index? | Index. His ladder reads the digit sum of the price, so a stock split rewrites every level overnight. |
 | Should you buy the paid indicator? | Not a question this can answer — it was not examined. But its public evidence is retrospective markup, and the two forward calls in the free record are 1-for-2. |
 
 Research and analysis only. Not financial advice.

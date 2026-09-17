@@ -64,6 +64,7 @@ table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.87rem}
 th{text-align:left;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;
  color:var(--faint);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
 td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+td.neg{color:var(--neg)}
 td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;
  padding-right:14px;white-space:nowrap}
 tr:last-child td{border-bottom:none}
@@ -306,6 +307,96 @@ and it was not done here.</p>
 <p>What <i>was</i> used is explicitly licensed. On 9 July 2025 he wrote:
 <span dir="rtl" class="ar">جميع الاستراتيجيات بحسابي مسموح لأي مبرمج ينزلها بمؤشر مجاني</span>
 &mdash; every strategy on my account, any programmer may publish as a free indicator.</p>
+</section>
+
+<section class="sec">
+<p class="num">07 &mdash; three follow-up questions</p>
+<h2>Timeframe, win rate, and stocks versus index</h2>
+
+<div class="warn"><b>Data limit.</b> This data plan serves SPX daily only &mdash; intraday
+bars are gated, and so is every other symbol tried (NDX, QQQ). So the timeframe answer
+covers daily and above but <i>not</i> the 5-minute and 1-hour charts he actually posts,
+and the stocks question is answered structurally rather than by direct comparison.</div>
+
+<h3>Which timeframe?</h3>
+<p>Numeric ladder, short the first touch, 2% stop / 3% target. Break-even is 40%.</p>
+<table>
+<thead><tr><th>timeframe</th><th class="n">trades</th><th class="n">win rate</th>
+<th class="n">95% CI</th><th class="n">expectancy</th><th class="n">95% CI</th></tr></thead>
+<tbody>
+<tr><td>daily</td><td class="n">319</td><td class="n">27.9%</td><td class="n">[23%, 34%]</td><td class="n neg">&minus;0.53%</td><td class="n">[&minus;0.76, &minus;0.29]</td></tr>
+<tr><td>weekly</td><td class="n">152</td><td class="n">34.2%</td><td class="n">[27%, 42%]</td><td class="n neg">&minus;0.30%</td><td class="n">[&minus;0.66, +0.08]</td></tr>
+<tr><td>monthly</td><td class="n">32</td><td class="n">50.0%</td><td class="n">[34%, 66%]</td><td class="n">+0.50%</td><td class="n">[&minus;0.44, +1.28]</td></tr>
+</tbody></table>
+<p>Monthly looks best and means least &mdash; its win interval straddles the 40% break-even
+in both directions and its expectancy straddles zero. Sixteen wins against sixteen losses
+at a 3:2 payoff is what a coin flip pays. <b>The only interval clear of break-even is
+daily&rsquo;s, and it is clear on the wrong side.</b></p>
+
+<h3>The win rate</h3>
+<p>It is not one number. On identical levels it runs from <b>15% to 68%</b> purely by moving
+the exits. Two things underneath it matter more.</p>
+
+<p><b>First, every win rate has a bar to clear</b> &mdash;
+<code>stop &divide; (stop + target)</code>.</p>
+<table>
+<thead><tr><th>rule</th><th class="n">stop/tgt</th><th class="n">win</th><th class="n">needs</th>
+<th class="n">edge</th><th class="n">expectancy</th></tr></thead>
+<tbody>
+<tr><td>numeric &times;45 (short)</td><td class="n">2/2</td><td class="n">43.6%</td><td class="n">50.0%</td><td class="n neg">&minus;6.4pp</td><td class="n neg">&minus;0.24%</td></tr>
+<tr><td>numeric &times;45 (short)</td><td class="n">2/3</td><td class="n">27.9%</td><td class="n">40.0%</td><td class="n neg">&minus;12.1pp</td><td class="n neg">&minus;0.53%</td></tr>
+<tr><td>numeric &times;45 (short)</td><td class="n">5/5</td><td class="n"><b>68.4%</b></td><td class="n">50.0%</td><td class="n">+18.4pp</td><td class="n neg"><b>&minus;0.58%</b></td></tr>
+<tr><td>MA50 at peak (long)</td><td class="n">2/3</td><td class="n">36.3%</td><td class="n">40.0%</td><td class="n neg">&minus;3.7pp</td><td class="n neg">&minus;0.06%</td></tr>
+<tr><td>MA50 at peak (long)</td><td class="n">5/5</td><td class="n">44.6%</td><td class="n">50.0%</td><td class="n neg">&minus;5.4pp</td><td class="n">+0.20%</td></tr>
+</tbody></table>
+<p>The 5/5 row is the whole trap in one line: a <b>68.4% win rate that loses money</b>. Of
+its 319 trades, <b>243 timed out</b> &mdash; the headline rate describes 24% of the
+positions actually opened. The rest sat for twenty sessions and were marked to the close.
+This is the identical arithmetic the <a href="spx.html">$2 SPX study</a> already found.</p>
+
+<p><b>Second, flip the direction and the win rate flips exactly.</b> On the same levels,
+122 wins / 158 losses short is 158 wins / 122 losses long &mdash; a perfect mirror, with the
+expectancies summing to exactly zero. Over this whole sample no bar was ever wide enough to
+trigger both exits, so the result is decided entirely by which way you face relative to the
+market&rsquo;s drift. To be exact about what that proves: a win rate quoted without its
+direction and payoff is not information. It does <i>not</i> on its own show the levels are
+uninformative &mdash; any entry price mirrors this way. That evidence is the null models.</p>
+
+<h3>And the one result that looked real</h3>
+<p>The MA50 rows were the only ones not clearly negative, so they got a second, harder null.</p>
+<table>
+<thead><tr><th>MA50 at peak</th><th class="n">stop/tgt</th><th class="n">his</th>
+<th class="n">vs displaced level</th><th class="n">vs random anchor bar</th></tr></thead>
+<tbody>
+<tr><td>long the touch</td><td class="n">2/5</td><td class="n">+0.14%</td><td class="n">&minus;0.31%, p=0.011</td><td class="n"><b>+0.15%, p=0.498</b></td></tr>
+<tr><td>long the touch</td><td class="n">5/5</td><td class="n">+0.20%</td><td class="n">&minus;0.21%, p=0.022</td><td class="n"><b>+0.49%, p=0.780</b></td></tr>
+</tbody></table>
+<p>Against a randomly displaced level it looks significant. Against levels the same distance
+below a <b>random bar instead of a swing peak</b>, it vanishes. So the apparent edge is
+&ldquo;buy a dip of about this depth in a rising market&rdquo;, not &ldquo;the MA50 at the
+peak&rdquo;. <b>The peak contributes nothing.</b> That is the second positive result in this
+study to die against a harder null.</p>
+
+<h3>Stocks or NDX?</h3>
+<p>NDX and QQQ are gated, so this is not a direct comparison. But the property that decides
+it <i>is</i> measurable: his ladder is built from the <b>digit sum of the price</b>, so
+re-quoting the same market rewrites every level. Indices never split. Stocks do.</p>
+<table>
+<thead><tr><th>identical SPX series, re-quoted</th><th class="n">sample low</th>
+<th class="n">digit sum</th><th class="n">win% (his &divide;10 rule)</th><th class="n">expectancy</th></tr></thead>
+<tbody>
+<tr><td>index, unchanged</td><td class="n">1988.12</td><td class="n">26</td><td class="n">27.9%</td><td class="n neg">&minus;0.53%</td></tr>
+<tr><td>after a 2:1 split</td><td class="n">994.06</td><td class="n">22</td><td class="n">27.8%</td><td class="n neg">&minus;0.54%</td></tr>
+<tr><td>after a 4:1 split</td><td class="n">497.03</td><td class="n">20</td><td class="n">18.3%</td><td class="n neg">&minus;0.90%</td></tr>
+<tr><td>after a 10:1 split</td><td class="n">198.81</td><td class="n">18</td><td class="n">25.1%</td><td class="n neg">&minus;0.61%</td></tr>
+</tbody></table>
+<p>His &divide;10 rule does most of its job &mdash; it keeps the ladder on the same scale as
+the price, so the trade count survives. What it cannot fix is the digit sum:
+<b>26 &rarr; 22 &rarr; 20 &rarr; 18 for a market that never changed.</b> So the answer is
+<b>index rather than stocks</b>, for a structural reason rather than a performance one. On
+an index that never splits this instability never fires; on a stock it fires on the split
+date. NVDA&rsquo;s 10:1 in 2024 and TSLA&rsquo;s 3:1 in 2022 would each have rewritten the
+whole ladder overnight.</p>
 </section>
 
 <footer>Research and analysis only &mdash; not financial advice. Quotations are his, in his
