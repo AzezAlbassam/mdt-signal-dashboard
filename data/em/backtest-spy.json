@@ -262,31 +262,45 @@
       }
     },
     "breakToWeekly": {
-      "label": "Daily band broken at the close, weekly band reached that week",
+      "label": "Daily band broken at the close, weekly band reached LATER that week",
       "n": 22,
-      "k": 11,
+      "k": 8,
       "reportable": true,
-      "point": 0.5,
+      "point": 0.36363636363636365,
       "interval": {
-        "point": 0.5,
-        "low": 0.3072210627372502,
-        "high": 0.6927789372627497,
+        "point": 0.36363636363636365,
+        "low": 0.19733204670366125,
+        "high": 0.5704829190986899,
         "n": 22,
-        "k": 11
+        "k": 8
       }
     },
-    "breakToWeeklyLater": {
-      "label": "Same, excluding sessions that had already reached it",
-      "n": 13,
-      "k": 3,
+    "breakToWeeklyWithDaysLeft": {
+      "label": "Same, only breaks with sessions left in the week",
+      "n": 18,
+      "k": 8,
       "reportable": false,
       "point": null,
       "interval": {
-        "point": 0.23076923076923078,
-        "low": 0.08179528718498566,
-        "high": 0.502563759467275,
-        "n": 13,
-        "k": 3
+        "point": 0.4444444444444444,
+        "low": 0.24559518127005633,
+        "high": 0.6628358435795723,
+        "n": 18,
+        "k": 8
+      }
+    },
+    "breakTouchedWeeklySameDay": {
+      "label": "DIAGNOSTIC: break day itself already touched the weekly band (not tradeable)",
+      "n": 22,
+      "k": 8,
+      "reportable": true,
+      "point": 0.36363636363636365,
+      "interval": {
+        "point": 0.36363636363636365,
+        "low": 0.19733204670366125,
+        "high": 0.5704829190986899,
+        "n": 22,
+        "k": 8
       }
     },
     "weeklyFadeLower": {
@@ -1844,7 +1858,7 @@
       "side": "upper",
       "weeklyAnchor": "2026-05-01",
       "weeklyLevel": 733.83,
-      "reached": true,
+      "reached": false,
       "alreadyThere": true
     },
     {
@@ -1868,7 +1882,7 @@
       "side": "lower",
       "weeklyAnchor": "2026-05-29",
       "weeklyLevel": 744,
-      "reached": true,
+      "reached": false,
       "alreadyThere": true
     },
     {
@@ -1948,7 +1962,7 @@
       "side": "lower",
       "weeklyAnchor": "2026-07-10",
       "weeklyLevel": 742.73,
-      "reached": true,
+      "reached": false,
       "alreadyThere": true
     },
     {

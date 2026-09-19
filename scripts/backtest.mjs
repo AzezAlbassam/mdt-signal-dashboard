@@ -92,7 +92,10 @@ setups.zoneUpperHeld = rate(zoneUpperReached, (r) => r.zoneUpper.outcome === 'en
   'Upper zone entered and NOT crossed intraday (approx.)')
 
 // B. Break then run: close beyond the daily band, then reach the weekly band
-// on the same side before the week ends.
+// on the same side before the week ends. The signal exists only at the close,
+// so the break session's own high and low cannot be credited: that would be
+// look-ahead. Only later sessions count. A touch on the break day itself is
+// kept as a separate diagnostic.
 // The weekly band in force DURING a session is the one anchored on the last
 // session of the previous week. weekAnchor(date) answers "after this close",
 // which on a Friday is the Friday itself, so it is asked about the prior session.
@@ -107,14 +110,16 @@ const runRows = breaks.map((r) => {
   if (!wb) return null
   const rest = S.filter((s) => s.date > r.session.date && s.date <= wb.expiry)
   const reached = side === 'lower'
-    ? (r.session.low <= wb.lower) || rest.some((s) => s.low <= wb.lower)
-    : (r.session.high >= wb.upper) || rest.some((s) => s.high >= wb.upper)
+    ? rest.some((s) => s.low <= wb.lower)
+    : rest.some((s) => s.high >= wb.upper)
   const alreadyThere = side === 'lower' ? r.session.low <= wb.lower : r.session.high >= wb.upper
   return { ...r, side, wb, reached, alreadyThere, remaining: rest.length }
 }).filter(Boolean)
-setups.breakToWeekly = rate(runRows, (r) => r.reached, 'Daily band broken at the close, weekly band reached that week')
-setups.breakToWeeklyLater = rate(runRows.filter((r) => !r.alreadyThere && r.remaining > 0),
-  (r) => r.reached, 'Same, excluding sessions that had already reached it')
+setups.breakToWeekly = rate(runRows, (r) => r.reached, 'Daily band broken at the close, weekly band reached LATER that week')
+setups.breakToWeeklyWithDaysLeft = rate(runRows.filter((r) => r.remaining > 0),
+  (r) => r.reached, 'Same, only breaks with sessions left in the week')
+setups.breakTouchedWeeklySameDay = rate(runRows, (r) => r.alreadyThere,
+  'DIAGNOSTIC: break day itself already touched the weekly band (not tradeable)')
 
 // C. Weekly fade: the week reaches its band and closes back inside.
 const wkLower = weekly.filter((r) => r.lower !== 'untouched')

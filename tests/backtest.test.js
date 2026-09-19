@@ -25,7 +25,8 @@ test('the weekly band in force on a Friday is last week\'s, not the one that Fri
   const fri = out.breakRows.find((r) => r.date === '2026-05-08')
   assert.ok(fri, 'the 2026-05-08 break is in the sample')
   assert.equal(fri.weeklyAnchor, '2026-05-01')
-  assert.equal(fri.reached, true, 'it reached the weekly band that same day')
+  assert.equal(fri.alreadyThere, true, 'it touched the weekly band that same day')
+  assert.equal(fri.reached, false, 'but a Friday has no later session, so it cannot count as a run')
 })
 
 test('the setup counts are the ones the ratings were written from', () => {
@@ -34,8 +35,12 @@ test('the setup counts are the ones the ratings were written from', () => {
   assert.deepEqual([s.fadeUpper.n, s.fadeUpper.k], [27, 14])
   assert.deepEqual([s.afterLowerTagNextUp.n, s.afterLowerTagNextUp.k], [20, 14])
   assert.deepEqual([s.afterUpperTagNextDown.n, s.afterUpperTagNextDown.k], [27, 16])
-  assert.deepEqual([s.breakToWeekly.n, s.breakToWeekly.k], [22, 11],
-    'independently reproduced twice; the band in force on a Friday is the one anchored the Friday before')
+  // Only sessions after the break count: the close-break signal does not exist
+  // until the close, so the break day's own range would be look-ahead.
+  assert.deepEqual([s.breakToWeekly.n, s.breakToWeekly.k], [22, 8])
+  assert.deepEqual([s.breakToWeeklyWithDaysLeft.n, s.breakToWeeklyWithDaysLeft.k], [18, 8])
+  assert.deepEqual([s.breakTouchedWeeklySameDay.n, s.breakTouchedWeeklySameDay.k], [22, 8],
+    'reproduced independently twice under the inclusive rule as 11 of 22, of which 3 were same-day-only')
   assert.equal(s.weeklyFadeLower.reportable, false, 'five weeks is not a rate')
 })
 

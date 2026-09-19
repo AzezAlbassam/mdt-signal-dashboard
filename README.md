@@ -122,11 +122,25 @@ The page imports the same modules the tests do, so it cannot drift from them.
 ## Running
 
 ```sh
-npm test                              # 82 tests, no dependencies
+npm test                              # 88 tests, no dependencies
 node scripts/snapshot.mjs --fixture --dry-run   # the whole pipeline, offline
 node scripts/snapshot.mjs             # live, both underlyings
 node scripts/snapshot.mjs --symbol=SPX # just one
 ```
+
+### The setup backtest
+
+`scripts/backtest.mjs` rebuilds the iVol bands for every session in the fixture
+from the prior close and 0.92 of the prior VIX close, and scores the setups a
+trader would take off them, each as k of n with a Wilson interval next to the
+base rate a random walk gives the same rule. Its counts are pinned by
+`tests/backtest.test.js` and were reproduced twice by independent code before
+being pinned. The result is in `data/em/backtest-spy.json`.
+
+The short version: the bands are well calibrated as a range, fading a tag to the
+close sits exactly on the 50 per cent base rate with losses 1.8 times wins, and
+the zone cannot be backtested at all without historical option chains. No setup
+earns a quoted per-trade probability from 96 sessions.
 
 `.github/workflows/em-snapshot.yml` runs the snapshot twice each weekday so one
 run always lands after the New York close in either half of the year. It runs the
