@@ -122,6 +122,12 @@ cleaner of the two.
 **Points, not dollars.** Everything is roughly ten times the fund, and the
 straddle inputs are in points.
 
+**The regime fit came from the fund.** The multipliers under Extras were fitted
+on SPY sessions against the VIX, and the index script carries the same numbers.
+VIX measures index options in the first place and the fund tracks the index, so
+the ratio of realised to implied volatility is the same quantity either way.
+The cuts are VIX levels and do not change.
+
 ## TrendSpider
 
 TrendSpider does not run Pine. Its own scripting language can reach the option
