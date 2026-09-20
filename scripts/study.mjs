@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 import {
   dailyBandSeries, calibrate, calibrateSeries, solveK, scoreSetups, simulateSetup, summariseTrades,
   skewedBandSeries, scaledSeries, blendedBandSeries, regimeCalibration, openAnchoredSeries,
-  vixTerciles, THEORY, wilsonRate,
+  vixTerciles, THEORY, wilsonRate, solveKByRegime, regimeAdjustedSeries, outOfSample,
 } from '../lib/study.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -67,11 +67,28 @@ out.options = { note: 'Black-Scholes on real paths; sigma = ivScale x VIX; slipp
 for (const setup of ['lowerTagLong', 'upperTagShort']) {
   for (const ivScale of [0.92, 0.72]) {
     for (const dte of [0, 1, 2, 5]) {
-      const trades = simulateSetup(S, { setup, dte, k: K, ivScale, slippage: 0.01 })
-      const sum = summariseTrades(trades)
-      out.options.runs.push({ setup, ivScale, dte, ...sum, meanDollarsPerContract: sum.meanPnl * 100, byRegime: null })
+      // A same-session leg cannot know when the band was touched, so it is
+      // bounded: a whole session of time paid for (conservative), half, a quarter.
+      const fractions = dte === 0 ? [1, 0.5, 0.25] : [null]
+      for (const entryFraction of fractions) {
+        const trades = simulateSetup(S, { setup, dte, k: K, ivScale, slippage: 0.01, excludeGapThrough: dte === 0, ...(entryFraction ? { entryFraction } : {}) })
+        const sum = summariseTrades(trades)
+        out.options.runs.push({ setup, ivScale, dte, entryFraction, excludeGapThrough: dte === 0, ...sum, meanDollarsPerContract: sum.meanPnl * 100 })
+      }
     }
   }
+}
+// how rich the 0DTE volatility can be before the same-session edge disappears
+out.options.zeroDteIvSensitivity = []
+for (const setup of ['lowerTagLong', 'upperTagShort']) for (const ivScale of [0.92, 1.05, 1.15, 1.30, 1.50]) {
+  const sum = summariseTrades(simulateSetup(S, { setup, dte: 0, k: K, ivScale, slippage: 0.01, entryFraction: 1, excludeGapThrough: true }))
+  out.options.zeroDteIvSensitivity.push({ setup, ivScale, n: sum.n, meanPnlPct: sum.meanPnlPct, winRate: sum.winRate.point, profitFactor: sum.profitFactor, meanPremiumIn: sum.meanPremiumIn })
+}
+// what realistic bid-ask costs do to a sub-dollar 0DTE option
+out.options.zeroDteSlippage = []
+for (const ivScale of [0.92, 1.15]) for (const slippage of [0.01, 0.03, 0.05]) {
+  const sum = summariseTrades(simulateSetup(S, { setup: 'lowerTagLong', dte: 0, k: K, ivScale, slippage, entryFraction: 1, excludeGapThrough: true }))
+  out.options.zeroDteSlippage.push({ ivScale, slippage, n: sum.n, meanPnlPct: sum.meanPnlPct, winRate: sum.winRate.point, profitFactor: sum.profitFactor, meanDollarsPerContract: sum.meanPnl * 100 })
 }
 // underlying-only comparison for the same events (no option, no theta)
 {
@@ -86,6 +103,14 @@ for (const setup of ['lowerTagLong', 'upperTagShort']) {
 
 // ── 4. enhancement candidates
 out.enhancements = {}
+out.enhancements.regimeK = solveKByRegime(S)
+out.enhancements.regimeInSample = (() => {
+  const adj = regimeAdjustedSeries(S, out.enhancements.regimeK)
+  const o = { overall: calibrateSeries(adj) }
+  for (const g of ['low', 'mid', 'high']) o[g] = calibrateSeries(adj.filter((b) => b.regime === g))
+  return o
+})()
+out.enhancements.outOfSample = { split2022: outOfSample(S, { split: '2022-01-01', fixedK: K }), split2020: outOfSample(S, { split: '2020-01-01', fixedK: K }) }
 out.enhancements.kGrid = [0.80, 0.86, 0.92, 1.00].map((k) => ({ k, ...cal(S, k) }))
 out.enhancements.skew = [0, 0.05, 0.10, 0.15, 0.20].map((skew) => ({ skew, ...calibrateSeries(skewedBandSeries(S, { k: K, skew })) }))
 const base = dailyBandSeries(S, { k: K })
@@ -140,8 +165,12 @@ for (const [k, r] of Object.entries(out.setups)) console.log(`${lab[k].padEnd(46
 console.log('\nSETUPS BY VIX REGIME        lower tag→next up   base up    upper tag→next down')
 for (const [g, r] of Object.entries(out.setupsByRegime)) console.log(`${g.padEnd(6)}                      ${pct(r.nextAfterLowerTag.point)} n=${String(r.nextAfterLowerTag.n).padStart(3)}     ${pct(r.baseNextUp.point)}    ${pct(r.nextAfterUpperTag.point)} n=${r.nextAfterUpperTag.n}`)
 console.log('\nOPTION LEGS, MODEL-PRICED (slippage 1%/side, ATM)')
-console.log('setup           iv    dte    n    win     mean%   median%   PF    $/contract  premium')
-for (const r of out.options.runs) console.log(`${r.setup.padEnd(14)} ${r.ivScale.toFixed(2)}   ${r.dte}   ${String(r.n).padStart(4)}  ${pct(r.winRate.point)}  ${pct(r.meanPnlPct)}   ${pct(r.medianPnlPct)}  ${r.profitFactor === Infinity ? '  ∞ ' : r.profitFactor.toFixed(2).padStart(4)}   ${r.meanDollarsPerContract.toFixed(0).padStart(6)}    ${r.meanPremiumIn.toFixed(2)}`)
+console.log('setup           iv   dte@frac  n    win     mean%   median%   PF    $/contract  premium   (frac = share of session assumed left at a 0DTE entry)')
+for (const r of out.options.runs) console.log(`${r.setup.padEnd(14)} ${r.ivScale.toFixed(2)}   ${r.dte}${r.entryFraction ? '@' + r.entryFraction : '  '} ${String(r.n).padStart(4)}  ${pct(r.winRate.point)}  ${pct(r.meanPnlPct)}   ${pct(r.medianPnlPct)}  ${r.profitFactor === Infinity ? '  ∞ ' : r.profitFactor.toFixed(2).padStart(4)}   ${r.meanDollarsPerContract.toFixed(0).padStart(6)}    ${r.meanPremiumIn.toFixed(2)}`)
+console.log('0DTE, whole session paid for, gap-throughs excluded: how rich the 0DTE vol can be before the edge is gone')
+for (const r of out.options.zeroDteIvSensitivity) console.log(`   ${r.setup.padEnd(14)} iv ${r.ivScale.toFixed(2)}×VIX  n=${r.n}  win ${pct(r.winRate)}  mean ${pct(r.meanPnlPct)}  PF ${r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2)}  premium ${r.meanPremiumIn.toFixed(2)}`)
+console.log('0DTE lowerTagLong, whole session paid for, gap-throughs excluded: bid-ask cost as a share of premium each side')
+for (const r of out.options.zeroDteSlippage) console.log(`   iv ${r.ivScale.toFixed(2)}×VIX  slippage ${(r.slippage * 100).toFixed(0)}%  n=${r.n}  win ${pct(r.winRate)}  mean ${pct(r.meanPnlPct)}  PF ${r.profitFactor.toFixed(2)}  $/contract ${r.meanDollarsPerContract.toFixed(0)}`)
 const u = out.options.underlying
 console.log(`underlying only: lowerTagLong mean ${(u.lowerTagLong.mean * 100).toFixed(3)}% win ${pct(u.lowerTagLong.win.point)} n=${u.lowerTagLong.n} | upperTagShort mean ${(u.upperTagShort.mean * 100).toFixed(3)}% win ${pct(u.upperTagShort.win.point)} | any-day long mean ${(u.allLong.mean * 100).toFixed(3)}%`)
 console.log('\nENHANCEMENTS')
@@ -154,5 +183,16 @@ for (const r of out.enhancements.outer) console.log(`             ${r.m.toFixed(
 console.log(`outer 2σ reached within a session of an inner close-break: ${pct(out.enhancements.outerAfterBreak.point)} n=${out.enhancements.outerAfterBreak.n} ${ci(out.enhancements.outerAfterBreak)}`)
 console.log('blend      win  weight(implied)  contained  mean|z|  |z err|  break err')
 for (const r of out.enhancements.blend) console.log(`            ${r.window}    ${r.weight.toFixed(2)}            ${pct(r.contained)}   ${f3(r.meanAbsZ)}   ${f3(r.absZErr)}   ${f3(r.breakErr)}`)
+const rk = out.enhancements.regimeK
+console.log(`\nREGIME-ADJUSTED MULTIPLIER (fitted on the decade): low(VIX≤${rk.cuts.low.toFixed(1)}) ${rk.k.low.toFixed(3)}  mid ${rk.k.mid.toFixed(3)}  high(VIX>${rk.cuts.high.toFixed(1)}) ${rk.k.high.toFixed(3)}`)
+for (const [name, oos] of Object.entries(out.enhancements.outOfSample)) {
+  console.log(`OUT OF SAMPLE ${name}: fit ${oos.fit.from}..${oos.fit.to} (n=${oos.fit.n}) → test ${oos.test.from}..${oos.test.to} (n=${oos.test.n})`)
+  console.log(`   fitted k: low ${oos.regime.k.low.toFixed(3)} mid ${oos.regime.k.mid.toFixed(3)} high ${oos.regime.k.high.toFixed(3)}`)
+  console.log(`   test set        contained  reach↑  reach↓  break↑  break↓  mean|z|   |z err|`)
+  const f = oos.fixed, g = oos.regime
+  console.log(`   fixed 0.92       ${pct(f.contained)}   ${pct(f.upperReached)}  ${pct(f.lowerReached)}  ${pct(f.closeBreakUpper)}  ${pct(f.closeBreakLower)}   ${f3(f.meanAbsZ)}    ${f3(Math.abs(f.meanAbsZ - THEORY.meanAbsZ))}`)
+  console.log(`   regime k         ${pct(g.contained)}   ${pct(g.upperReached)}  ${pct(g.lowerReached)}  ${pct(g.closeBreakUpper)}  ${pct(g.closeBreakLower)}   ${f3(g.meanAbsZ)}    ${f3(Math.abs(g.meanAbsZ - THEORY.meanAbsZ))}   ${g.improves ? 'IMPROVES' : 'does not improve'}`)
+  for (const r of ['low', 'mid', 'high']) { const b = g.byRegime[r]; console.log(`     ${r.padEnd(5)} n=${String(b.regime.n).padStart(4)}  fixed mean|z| ${f3(b.fixed.meanAbsZ)} contained ${pct(b.fixed.contained)}  |  regime mean|z| ${f3(b.regime.meanAbsZ)} contained ${pct(b.regime.contained)}`) }
+}
 const o = out.enhancements.openAnchored
 console.log(`open-anchored (k=0.92): contained ${pct(o.contained)} reach↑ ${pct(o.upperReached)} reach↓ ${pct(o.lowerReached)} break↑ ${pct(o.closeBreakUpper)} break↓ ${pct(o.closeBreakLower)} mean|z| ${f3(o.meanAbsZ)}`)

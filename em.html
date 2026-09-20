@@ -425,6 +425,9 @@ function renderLive (snap, symbol) {
       { h: `<span class="pill ${b.frozen ? 'frozen' : 'live'}">${b.frozen ? 'frozen' : 'live'}</span>` },
     ] })
   }
+  const outer = ['ivolDaily', 'ivolWeekly'].map((k) => snap.bands[k]?.outer ? { k, o: snap.bands[k].outer } : null).filter(Boolean)
+  const outerHtml = outer.length ? `<p class="note" style="margin-top:12px"><b>Outer two-sigma targets.</b> ${outer.map(({ k, o }) =>
+    `${LABEL[k]} ${f2(o.lower)} to ${f2(o.upper)}`).join(' · ')}. Over a decade the two-sigma band contained the range 90% of the time and, after a close through the inner band, was reached within that session or the next 57.5% of the time.</p>` : ''
   el.innerHTML = `<div class="grid2" style="margin-bottom:16px">
     <div class="card"><div class="k">Captured</div><div class="v">${snap.capturedEt.date}</div>
       <div class="n">${String(snap.capturedEt.hour).padStart(2, '0')}:${String(snap.capturedEt.minute).padStart(2, '0')} New York</div></div>
@@ -432,7 +435,7 @@ function renderLive (snap, symbol) {
       <div class="n">the last close held</div></div>
     <div class="card"><div class="k">Chain snapshot</div><div class="v">${snap.source?.spot ?? '—'}</div>
       <div class="n">delayed quotes, ${snap.source?.chainTimestamp ?? 'unknown time'}</div></div>
-  </div><div class="scroll"><table id="livetable"></table></div>`
+  </div><div class="scroll"><table id="livetable"></table></div>${outerHtml}`
   table($('livetable'), ['Band', 'Upper', 'Lower', 'Half width', 'Centre', 'Expiry', 'Width'], t)
 }
 async function showSymbol (symbol) {

@@ -18,7 +18,7 @@
 // cannot be computed here. Type the straddle in, or let it be derived from the
 // iVol band. See the notes at the foot of this file.
 
-indicator("SPY Expected Move", "EM", overlay = true, max_lines_count = 60, max_labels_count = 60)
+indicator("SPY Expected Move", "EM", overlay = true, max_lines_count = 80, max_labels_count = 80)
 
 // ─────────────────────────────────────────────────────────────── model
 
@@ -37,7 +37,7 @@ gV = "iVol family — smooth volatility"
 ivSource = input.string("From VIX", "Volatility source", options = ["From VIX", "Manual"], group = gV)
 ivManual = input.float(15.0, "Manual volatility, per cent", minval = 1, maxval = 200, step = 0.25, group = gV)
 vixShare = input.float(0.92, "IV30 as a share of VIX", minval = 0.5, maxval = 1.5, step = 0.01, group = gV,
-     tooltip = "Across fifteen published charts the iVol daily band implied 0.88 to 0.96 of the VIX close, averaging 0.92. Only used when the source is VIX.")
+     tooltip = "Across fifteen published charts the iVol daily band implied 0.88 to 0.96 of the VIX close, averaging 0.92. Only used when the source is VIX. Over a decade of SPY sessions the multiplier that makes this a true one-sigma band is 0.89; 0.92 reproduces the published charts and is within noise of it.")
 
 // ──────────────────────────────────────────────── the plain family
 
@@ -60,6 +60,13 @@ colWeekly  = input.color(#E8A33D,               "Weekly lines", group = gS)
 colUpZone  = input.color(color.new(#93412F, 78), "Upper zone",  group = gS)
 colDnZone  = input.color(color.new(#4C6839, 76), "Lower zone",  group = gS)
 extendBars = input.int(26, "Project this many bars right", minval = 4, maxval = 200, group = gS)
+
+gE = "Enhancements — measured over a decade of sessions"
+showOuter = input.bool(true, "Outer two-sigma band", group = gE,
+     tooltip = "The iVol band scaled by the multiple below. Over 2,688 real SPY sessions the two-sigma band contained the intraday range 90% of the time and, after a close through the inner band, was reached within that session or the next 57.5% of the time (n=783). A target, not an entry.")
+outerMult = input.float(2.0, "Outer multiple", minval = 1.25, maxval = 3, step = 0.25, group = gE)
+showGap  = input.bool(true, "Flag a band the session opened beyond", group = gE,
+     tooltip = "A level the session opened past was never available as a fill. Roughly one lower-band touch in five over the decade was a gap through at the open, and any trade entered at the band on those days is fiction.")
 showLabels = input.bool(true, "Labels", group = gS)
 
 // ──────────────────────────────────────────────────────── the closes
@@ -71,6 +78,8 @@ dailyAnchor   = request.security(syminfo.tickerid, "D", close[1])
 weeklyAnchor  = request.security(syminfo.tickerid, "W", close[1])
 monthlyAnchor = request.security(syminfo.tickerid, "M", close[1])
 vixClose      = request.security("CBOE:VIX",       "D", close[1], ignore_invalid_symbol = true)
+
+sessionOpen   = request.security(syminfo.tickerid, "D", open)
 
 iv = ivSource == "Manual" or na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
 
@@ -128,6 +137,16 @@ if barstate.islast
             array.push(fills, linefill.new(pu, iu, colUpZone))
         if not na(pl) and not na(il)
             array.push(fills, linefill.new(pl, il, colDnZone))
+        if showOuter
+            drawLevel(dailyAnchor + outerMult * ivolDailyHalf, color.new(colIvol, 35), line.style_dashed, str.tostring(outerMult, "#.##") + "σ DAILY")
+            drawLevel(dailyAnchor - outerMult * ivolDailyHalf, color.new(colIvol, 35), line.style_dashed, str.tostring(outerMult, "#.##") + "σ DAILY")
+        if showGap and not na(sessionOpen)
+            if sessionOpen <= dailyAnchor - plainDailyHalf
+                array.push(labels, label.new(bar_index, dailyAnchor - plainDailyHalf, "opened through the lower band: no fill there",
+                     xloc = xloc.bar_index, style = label.style_label_upper_right, color = color.new(colDnZone, 40), textcolor = colPlain, size = size.small))
+            if sessionOpen >= dailyAnchor + plainDailyHalf
+                array.push(labels, label.new(bar_index, dailyAnchor + plainDailyHalf, "opened through the upper band: no fill there",
+                     xloc = xloc.bar_index, style = label.style_label_lower_right, color = color.new(colUpZone, 40), textcolor = colPlain, size = size.small))
 
     if showWeekly and not na(weeklyAnchor)
         wu = drawLevel(weeklyAnchor + plainWeeklyHalf, colWeekly, line.style_solid,  "UPPER WEEKLY EM")
@@ -138,6 +157,9 @@ if barstate.islast
             array.push(fills, linefill.new(wu, vu, colUpZone))
         if not na(wl) and not na(vl)
             array.push(fills, linefill.new(wl, vl, colDnZone))
+        if showOuter
+            drawLevel(weeklyAnchor + outerMult * ivolWeeklyHalf, color.new(colWeekly, 35), line.style_dashed, str.tostring(outerMult, "#.##") + "σ WEEKLY")
+            drawLevel(weeklyAnchor - outerMult * ivolWeeklyHalf, color.new(colWeekly, 35), line.style_dashed, str.tostring(outerMult, "#.##") + "σ WEEKLY")
 
     if showMonthly and not na(monthlyAnchor)
         drawLevel(monthlyAnchor + plainMonthlyHalf, colWeekly, line.style_dashed, "UPPER MTD EM")
