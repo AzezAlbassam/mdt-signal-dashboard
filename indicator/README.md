@@ -58,6 +58,46 @@ The `em.html` page in this repository computes the plain family properly, becaus
 its pipeline fetches a real chain, and prints both straddles each evening. Typing
 those two numbers in gives you the exact bands on the chart.
 
+## The extras, and what a decade of sessions says about them
+
+Three switches sit under **Extras** in both scripts. Only one of them changes
+the band, and it is off by default, because the published charts plot a single
+constant and reproducing them is what these scripts are for.
+
+**Calibrate the band to the volatility regime.** Off by default. A single
+multiplier near 0.92 is not wrong on average, it is wrong in a pattern: over
+2,688 SPY sessions the band realised a mean absolute z of 0.64 in the calmest
+third of sessions and 0.90 in the most stressed, against 0.798 for a true one
+standard deviation. It is about a quarter too wide when nothing is happening
+and a tenth too narrow when everything is. Refitting a multiplier per VIX
+tercile on a rolling window, so no session is ever priced by its own future,
+cuts the weighted calibration error from 0.077 to 0.011. This is the only
+change to the indicator that survived a walk-forward test. Turning it on will
+stop the lines matching a published chart, which is the point of it.
+
+The five numbers under the switch are the fit: cuts at VIX 16.35 and 18.67,
+multipliers 0.729, 0.812 and 0.980, and the multiple already assumed to be in
+the plotted volatility, 0.92. They come from `REGIME_FIT` in
+`lib/implied-move.js` and `docs/study.md` records how they were fitted.
+
+**Outer two-sigma line.** Off by default, and it is geometry rather than a
+signal. After a close through the inner band, the two-sigma line was reached
+that session or the next 57.5 per cent of the time over 783 events, and a
+random walk whose band is the width this one actually is reaches it 58 per cent
+of the time. Worse, 243 of those 450 reaches had already happened before the
+close that defined the setup. Of the breaks that had not already reached it,
+38 per cent did next session. Draw it if a level reached more often than not
+helps you place an order. Do not read anything into reaching it.
+
+**Flag a band the session opened beyond.** On by default, because it is a
+statement of fact rather than a forecast: a level the session opened past never
+traded, so no order could have been filled there. Over the decade 22 per cent
+of lower-band touches and 14 per cent of upper-band touches were gaps through
+at the open. A horizon plots two lines a side and a session can open past one
+and not the other, so the label says which, and whether the outer line can
+still fill. Filtering trades on it does not improve anything; it stops you
+counting fills you could never have had.
+
 ## What differs on the index
 
 **Settlement.** The monthly contract settles on a special opening quotation taken

@@ -142,6 +142,28 @@ close sits exactly on the 50 per cent base rate with losses 1.8 times wins, and
 the zone cannot be backtested at all without historical option chains. No setup
 earns a quoted per-trade probability from 96 sessions.
 
+### The decade study
+
+`scripts/study.mjs` rebuilds the daily band for 2,688 real SPY sessions from
+January 2016 to September 2026 and measures what happened next: whether the
+band is a true one sigma, whether the setups traders take off it beat their own
+base rates, which days to expiry an option leg wants, and which of seven
+proposed enhancements survive. `docs/study.md` is the write-up and
+`data/em/study-spy.json` is the output.
+
+Every figure was reproduced twice by independent code working from the
+definitions alone, and then attacked by a reviewer who recomputed each one from
+the raw fixture. The review overturned three of the four enhancement verdicts,
+in both directions, and found a defect in the days-to-expiry comparison: the
+rungs were priced on different volatility inputs. All of that is in
+`docs/study.md` with the numbers that decided it.
+
+The short version: the bands are a fair one-sigma range and a good target list;
+fading a tag is a coin flip because arithmetic says it must be; no option leg
+at any expiry survives an honest price of volatility; and the one change worth
+making is a multiplier that depends on the volatility regime, which both Pine
+scripts now carry as a switch that is off by default.
+
 `.github/workflows/em-snapshot.yml` runs the snapshot twice each weekday so one
 run always lands after the New York close in either half of the year. It runs the
 test suite first, then commits a record per underlying to `data/em/spy/` and
