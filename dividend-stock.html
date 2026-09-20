@@ -154,7 +154,14 @@ td.dim{color:var(--faint)}
 .prov-box dd{margin:0;color:var(--body);max-width:70ch}
 .prov-box dd code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;color:var(--ink)}
 .prov-box ul{margin:4px 0 0;padding-left:18px}
-.prov-box li{margin:3px 0}
+.prov-box li{margin:5px 0;line-height:1.5}
+.prov-box details summary{cursor:pointer;color:var(--accent);font-size:.84rem;
+ list-style:none;display:inline-flex;align-items:center;gap:5px}
+.prov-box details summary::-webkit-details-marker{display:none}
+.prov-box details summary::before{content:"▸";font-size:.72rem;transition:transform .15s}
+.prov-box details[open] summary::before{transform:rotate(90deg)}
+.prov-box details[open] summary{margin-bottom:4px}
+.prov-box details ul{max-height:340px;overflow-y:auto;padding-right:8px}
 .flag{display:inline-block;font-size:.68rem;color:var(--neg);border:1px solid currentColor;border-radius:3px;padding:1px 6px;margin:0 4px 4px 0;opacity:.85}
 footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--faint);max-width:64ch}
 .status{font-size:.8rem;color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:40px 0}
@@ -301,7 +308,19 @@ function render(sym){
    ${splits.length ? '<dt>Splits applied</dt><dd>' + splits.map(s => esc(s.date) + ' &times;' + s.ratio + (s.note ? ' (' + esc(s.note) + ')' : '')).join('; ') + '</dd>' : ''}
    ${n.specials?.hasSpecials ? '<dt>Specials</dt><dd>' + esc(n.specials.note || 'Special dividends were paid and are excluded from the regular series.') + '</dd>' : ''}
    <dt>Review</dt><dd>${c.verdicts.length} independent reviewers (${c.verdicts.map(v => esc(v.lens)).join(', ')}). ${c.repaired ? 'A blocking finding was raised and the record was recomputed once.' : 'No blocking findings.'}${revIssues.filter(i => i.severity === 'warn').length ? ' ' + revIssues.filter(i => i.severity === 'warn').length + ' warning(s) noted below.' : ''}</dd>
-   ${(issues.length || revIssues.length) ? '<dt>Caveats</dt><dd><ul>' + issues.map(i => '<li>' + esc(i) + '</li>').join('') + revIssues.filter(i => i.severity === 'warn').map(i => '<li><span class="dim">' + esc(i.lens) + ':</span> ' + esc(i.detail) + '</li>').join('') + '</ul></dd>' : ''}
+   ${(() => {
+     // Every judgement call and reviewer note is worth keeping, but there can be twenty of
+     // them and they are paragraphs, not lines — so they collapse. The count stays visible.
+     const warn = revIssues.filter(i => i.severity === 'warn');
+     const total = issues.length + warn.length;
+     if (!total) return '<dt>Caveats</dt><dd>None recorded.</dd>';
+     return '<dt>Caveats</dt><dd><details><summary>' + total +
+       ' judgement call' + (total === 1 ? '' : 's') + ' and reviewer note' + (total === 1 ? '' : 's') +
+       '</summary><ul>' +
+       issues.map(i => '<li>' + esc(i) + '</li>').join('') +
+       warn.map(i => '<li><span class="dim">' + esc(i.lens) + ':</span> ' + esc(i.detail) + '</li>').join('') +
+       '</ul></details></dd>';
+   })()}
    ${(a.estimateCorrections || []).length ? '<dt>vs. earlier estimates</dt><dd><ul>' + a.estimateCorrections.map(e => '<li>' + esc(e.field) + ': ' + esc(e.prior ?? '—') + ' &rarr; <b class="n">' + esc(e.now ?? '—') + '</b> &mdash; ' + esc(e.why) + '</li>').join('') + '</ul></dd>' : ''}
    ${(a.flags || c.fl || []).length ? '<dt>Flags</dt><dd>' + (a.flags || c.fl).map(f => '<span class="flag">' + esc(f) + '</span>').join('') + '</dd>' : ''}
   </dl></div>`;
