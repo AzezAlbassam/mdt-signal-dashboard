@@ -660,13 +660,15 @@ fetch('dividend-data.json')
     const sel = $('pick');
     const list = j.companies.map(c => {
       const reg = c.dr != null ? c.dr : c.d;
-      return { s: c.s, n: c.n, y: reg / c.p * 100, g: c.g };
+      // verified filed growth where it exists, else the research estimate
+      const g = c.v && c.v.g5 != null ? c.v.g5 : c.g;
+      return { s: c.s, n: c.n, y: reg / c.p * 100, g, filed: !!(c.v && c.v.g5 != null) };
     }).sort((a, b) => a.s.localeCompare(b.s));
 
     for (const c of list){
       const o = document.createElement('option');
       o.value = c.s;
-      o.textContent = c.s + ' — ' + c.n;
+      o.textContent = c.s + ' — ' + c.n + (c.filed ? ' · filed' : ' · est.');
       o.dataset.y = c.y.toFixed(2);
       o.dataset.g = c.g;
       sel.appendChild(o);

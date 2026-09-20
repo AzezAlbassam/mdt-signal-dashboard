@@ -125,6 +125,18 @@ tbody tr:hover{background:var(--raise)}
 .fg{font-family:system-ui,sans-serif;font-size:.68rem;color:var(--neg);
  border:1px solid currentColor;border-radius:3px;padding:1px 5px;margin-left:4px;opacity:.85}
 .yoc{color:var(--ink);font-weight:650}
+a.tk{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+a.tk:hover{color:var(--accent);border-color:var(--accent)}
+.src{font-family:system-ui,sans-serif;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--faint);margin-left:5px;vertical-align:middle}
+.src.on{color:var(--accent)}
+a.vd{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
+ font-weight:650;padding:2px 7px;border-radius:3px;text-decoration:none;min-width:44px;text-align:center}
+a.vd.strong{background:var(--pos);color:var(--bg)}
+a.vd.candidate{background:var(--accent-soft);color:var(--accent)}
+a.vd.watch{background:var(--sunk);color:var(--body)}
+a.vd.avoid{background:transparent;color:var(--neg);border:1px solid var(--neg)}
+a.vd:hover{opacity:.85}
 
 /* chart */
 figure{margin:20px 0 0}
@@ -330,9 +342,12 @@ screen below applies the measurable ones automatically.</p>
 
 <h2 class="sec">The live screen</h2>
 <p>43 US-listed companies that pay a growing dividend and are still small enough to compound.
-Prices, market caps and dividend rates are live. Growth rates, streaks and payout ratios are
-research estimates &mdash; <strong>verify them against the company&rsquo;s own dividend history
-before committing money.</strong></p>
+Prices, market caps and dividend rates are live. Growth rates, payout ratios and streaks marked
+<span class="src on">filed</span> come from each company&rsquo;s own SEC filings &mdash;
+split-adjusted, cross-checked against dividends paid divided by shares, and reviewed by two
+independent passes. The <strong>Rules</strong> column opens the full analysis: the ten rules
+applied to that company with the actual figures, the filed dividend history, and where the
+snowball is most likely to break.</p>
 
 <div class="controls">
  <div class="ctl"><label for="fSector">Sector</label>
@@ -363,6 +378,7 @@ before committing money.</strong></p>
   <th data-k="g">Div growth</th>
   <th data-k="po">Payout</th>
   <th data-k="st">Streak</th>
+  <th data-k="pass">Rules</th>
   <th data-k="yoc">YoC in 20y</th>
   <th data-k="score" class="on">Score <span class="ar">&darr;</span></th>
  </tr></thead>
@@ -371,9 +387,29 @@ before committing money.</strong></p>
 <p class="status" id="status">Loading&hellip;</p>
 
 <details>
- <summary>How the score is calculated</summary>
- <p class="note">Out of 100, from five components, all applied to the <em>regular</em> dividend
- (special dividends are excluded):<br>
+ <summary>Where the numbers come from</summary>
+ <p class="note">Three different kinds of number share this table, and they are not equally
+ reliable:<br>
+ &middot; <strong>Price, market cap and the trailing dividend</strong> are live from a market
+ data feed, refreshed on the date in the line above.<br>
+ &middot; <strong>Growth, payout and streak marked <span class="src on">filed</span></strong>
+ are computed from the company&rsquo;s own 10-K filings via SEC EDGAR&rsquo;s XBRL data. For each
+ company one pass derives the annual regular dividend per share &mdash; choosing between the
+ filed annual figure, the four quarterly rates, and dividends paid divided by shares; adjusting
+ the years that were filed on a pre-split share basis; separating special dividends from the
+ regular series &mdash; and computes free cash flow, payout, ROIC and leverage from the cash-flow
+ and balance-sheet tags. Two further passes then try to <em>refute</em> that work, one
+ recomputing every figure from the raw filings, one checking it against the live price, share
+ count and what the business plausibly is. A company whose record is blocked by either reviewer
+ is recomputed before it appears here.<br>
+ &middot; <strong>Anything marked <span class="src">est</span></strong> is my earlier research
+ estimate, not yet replaced by filed data. Treat those as a starting point for your own check,
+ not as a figure to act on.<br><br>
+ XBRL begins around 2009, so a streak longer than the filing window cannot be confirmed from
+ filings alone; where the research figure is longer and plausible, the table shows it and the
+ company&rsquo;s own page says which years the data actually confirms.</p>
+ <p class="note"><br>The <strong>score</strong> is out of 100, from five components, all applied
+ to the <em>regular</em> dividend (special dividends are excluded):<br>
  &middot; <strong>Entry yield, 20 pts</strong> &mdash; full marks in the 1.5&ndash;4.0% band,
  falling away above and below.<br>
  &middot; <strong>Dividend growth, 30 pts</strong> &mdash; the heaviest weight, because it is the
@@ -512,11 +548,19 @@ function enrich(c){
   const reg = c.dr != null ? c.dr : c.d;
   const y   = reg / c.p * 100;
   const yTtm = c.d / c.p * 100;
-  const yoc    = fadedYoc(y, c.g);
-  const yocRaw = y * Math.pow(1 + c.g/100, HORIZON);
-  const score = scoreYield(y) + scoreGrowth(c.g) + scorePayout(c.po)
-              + scoreSize(c.mc) + scoreStreak(c.st);
-  return Object.assign({}, c, { y, yTtm, yoc, yocRaw, score, reg });
+  // verified figures from SEC filings take precedence over the research estimates;
+  // each falls back on its own so a null in one field doesn't discard the others
+  const v = c.v || {};
+  const g  = v.g5 != null ? v.g5 : c.g;
+  const st = v.st != null ? v.st : c.st;
+  const po = v.po != null ? v.po : c.po;
+  const filed = v.src === 'sec';
+  const yoc    = fadedYoc(y, g);
+  const yocRaw = y * Math.pow(1 + g/100, HORIZON);
+  const score = scoreYield(y) + scoreGrowth(g) + scorePayout(po)
+              + scoreSize(c.mc) + scoreStreak(st);
+  return Object.assign({}, c, { y, yTtm, yoc, yocRaw, score, reg, g, st, po, filed,
+    verdict: v.verdict || null, pass: v.pass ?? null, conf: v.conf || null });
 }
 
 // --- rendering -----------------------------------------------------------
@@ -559,24 +603,41 @@ function render(){
         ' includes a special dividend">sp</span>'
       : pct(c.y, 2);
 
+    const src = c.filed
+      ? ' <span class="src on" title="from SEC filings, split-adjusted, reviewed">filed</span>'
+      : ' <span class="src" title="research estimate — not yet verified against filings">est</span>';
+    const rulesCell = c.pass != null
+      ? '<a class="vd ' + c.verdict + '" href="dividend-stock.html#' + c.s + '" title="' + c.verdict +
+        ' — open the analysis">' + c.pass + '/10</a>'
+      : '<span class="fg" style="color:var(--faint)">—</span>';
+
+    // only link through to an analysis that exists
+    const tkCell = c.pass != null
+      ? '<a class="tk" href="dividend-stock.html#' + c.s + '">' + c.s + '</a>'
+      : '<span class="tk">' + c.s + '</span>';
+
     tr.innerHTML =
-      '<td><span class="tk">' + c.s + '</span></td>' +
+      '<td>' + tkCell + '</td>' +
       '<td><span class="nm">' + c.n + flags + '</span></td>' +
       '<td><span class="nm">' + c.sec + '</span></td>' +
       '<td>' + fmtCap(c.mc) + '</td>' +
       '<td>$' + c.p.toFixed(2) + '</td>' +
       '<td>' + yieldCell + '</td>' +
-      '<td>' + pct(c.g, 0) + '</td>' +
+      '<td>' + pct(c.g, 0) + src + '</td>' +
       '<td>' + pct(c.po, 0) + '</td>' +
       '<td>' + c.st + 'y</td>' +
+      '<td>' + rulesCell + '</td>' +
       '<td class="yoc" title="' + pct(c.yocRaw, 0) +
         ' if the current growth rate held flat for all 20 years">' + pct(c.yoc, 0) + '</td>' +
       '<td><span class="sc ' + cls + '">' + c.score + '</span></td>';
     tb.appendChild(tr);
   }
 
+  const nFiled = DATA.filter(c => c.filed).length;
   document.getElementById('status').textContent =
-    rows.length + ' of ' + DATA.length + ' companies shown · prices as of ' + META.generated;
+    rows.length + ' of ' + DATA.length + ' companies shown · prices as of ' + META.generated +
+    (nFiled ? ' · growth, payout and streak from SEC filings for ' + nFiled + ' of ' + DATA.length +
+              (META.verifiedAsOf ? ', verified ' + META.verifiedAsOf : '') : '');
 
   renderBars(rows.slice().sort((a,b) => b.yoc - a.yoc).slice(0, 12));
 }

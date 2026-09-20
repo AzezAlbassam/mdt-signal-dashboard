@@ -1,0 +1,476 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Analysis</title>
+<meta name="description" content="One company at a time: the filed dividend history, the ten rules applied with verified numbers, and where the snowball is most likely to break.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --pos-soft:#E4EBDD; --neg-soft:#F0DFD9; --warn-soft:#EFE7CC;
+  --grid:#E2E2DB;
+  --c1:#8F6A12; --c2:#0E6FA8; --c3:#A14430;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+@media(min-width:640px){.wrap{padding:0 22px 80px}}
+a{color:var(--accent)}
+.mono,td,.v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+b.n{color:var(--ink);font-weight:650;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+p{max-width:64ch}
+
+/* nav row */
+.nav{display:flex;align-items:center;gap:10px;padding:26px 0 0;flex-wrap:wrap}
+.nav a.back{font-size:.8rem;color:var(--muted);text-decoration:none;margin-right:auto}
+.nav a.back:hover{color:var(--accent)}
+.nav select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;
+ padding:7px 10px;font-size:.88rem;font-family:inherit;min-width:220px}
+.nav button{background:var(--surface);color:var(--body);border:1px solid var(--line);border-radius:4px;
+ padding:7px 11px;font-size:.84rem;cursor:pointer;font-family:inherit}
+.nav button:hover{border-color:var(--accent);color:var(--accent)}
+
+header{padding:34px 0 26px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 10px}
+h1{color:var(--ink);font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:-.025em;line-height:1.05;margin:0 0 6px;font-weight:650}
+h1 .tk{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.6em;
+ vertical-align:middle;margin-left:10px;letter-spacing:0}
+.lede{font-size:1.04rem;color:var(--muted);max-width:62ch;margin:0}
+h2.sec{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;margin:44px 0 14px;padding-top:8px;border-top:1px solid var(--line-soft)}
+
+/* verdict band */
+.band{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:22px 0 0;padding:14px 18px;
+ border-radius:5px;border:1px solid var(--line);background:var(--surface)}
+.band .vd{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+ padding:5px 10px;border-radius:3px}
+.band .vd.strong{background:var(--pos-soft);color:var(--pos)}
+.band .vd.candidate{background:var(--accent-soft);color:var(--accent)}
+.band .vd.watch{background:var(--warn-soft);color:var(--warn)}
+.band .vd.avoid{background:var(--neg-soft);color:var(--neg)}
+.band .pc{color:var(--ink);font-weight:650}
+.band .pc small{color:var(--faint);font-weight:400}
+.band .prov{margin-left:auto;font-size:.74rem;color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.band .prov i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.band .prov i.high{background:var(--pos)} .band .prov i.medium{background:var(--warn)} .band .prov i.low{background:var(--neg)}
+
+/* tiles */
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);margin:16px 0 0}
+@media(min-width:700px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:14px 16px}
+.tile .v{font-size:1.32rem;color:var(--ink);font-weight:650;letter-spacing:-.02em;line-height:1.2}
+.tile .l{font-size:.7rem;color:var(--faint);margin-top:5px;line-height:1.35}
+.tile .l em{font-style:normal;color:var(--accent)}
+
+/* assessment */
+.callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+ border-radius:4px;padding:16px 18px;margin:18px 0 0}
+.callout p{margin:0;max-width:64ch}
+.callout p+p{margin-top:9px}
+.callout .sn{font-size:.84rem;color:var(--muted)}
+
+/* rules */
+ol.rules{list-style:none;padding:0;margin:14px 0 0;border:1px solid var(--line);border-radius:5px;background:var(--surface);overflow:hidden}
+ol.rules li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line-soft);align-items:start}
+ol.rules li:last-child{border-bottom:none}
+ol.rules .ic{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+ font-weight:700;font-size:.85rem;margin-top:2px}
+.ic.pass{background:var(--pos-soft);color:var(--pos)} .ic.fail{background:var(--neg-soft);color:var(--neg)} .ic.na{background:var(--sunk);color:var(--faint)}
+ol.rules .rt{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+ol.rules .rn{color:var(--ink);font-weight:650;font-size:.95rem}
+ol.rules .rn small{color:var(--faint);font-weight:400;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-right:8px}
+ol.rules .rv{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88rem;color:var(--ink);font-weight:650;white-space:nowrap}
+ol.rules .rv small{color:var(--faint);font-weight:400;margin-left:8px}
+ol.rules .rnote{font-size:.85rem;color:var(--muted);margin:3px 0 0;max-width:66ch}
+
+/* two-col lists */
+.cols{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+@media(min-width:640px){.cols{grid-template-columns:1fr 1fr}}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:14px 16px}
+.col h4{margin:0 0 8px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.col ul{margin:0;padding-left:18px;font-size:.9rem}
+.col li{margin:5px 0;max-width:52ch}
+.col.risk h4{color:var(--neg)} .col.str h4{color:var(--pos)}
+
+/* charts */
+figure{margin:16px 0 0}
+.ch-t{color:var(--ink);font-size:1rem;font-weight:650;margin:0 0 3px}
+.ch-s{font-size:.82rem;color:var(--muted);margin:0 0 12px;max-width:62ch}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:10px;max-width:64ch}
+.chart{position:relative}
+.chart svg{display:block;width:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 10px;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:6px;color:var(--body)}
+.legend i{width:11px;height:11px;border-radius:2px;display:block;flex:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);
+ border-radius:4px;padding:8px 10px;font-size:.78rem;box-shadow:0 2px 10px rgba(0,0,0,.09);
+ opacity:0;transition:opacity .1s;z-index:5;min-width:150px}
+.tip .ty{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-weight:650;margin-bottom:5px;display:block}
+.tip .tr{display:flex;justify-content:space-between;gap:14px;line-height:1.5}
+.tip .tr b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);font-weight:650}
+.tip .tr i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px;flex:none}
+.empty{padding:26px;text-align:center;color:var(--faint);font-size:.88rem;border:1px dashed var(--line);border-radius:5px}
+
+/* table */
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:5px;background:var(--surface);margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:.84rem;min-width:640px}
+th{text-align:right;padding:9px 10px;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--raise)}
+th:first-child{text-align:left}
+td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+td:first-child{text-align:left;color:var(--ink);font-weight:650}
+tr:last-child td{border-bottom:none}
+td.neg{color:var(--neg)}
+td.dim{color:var(--faint)}
+
+/* provenance */
+.prov-box{background:var(--sunk);border:1px solid var(--line-soft);border-radius:5px;padding:14px 16px;margin-top:14px;font-size:.84rem}
+.prov-box dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0}
+.prov-box dt{color:var(--faint);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding-top:3px}
+.prov-box dd{margin:0;color:var(--body);max-width:70ch}
+.prov-box dd code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;color:var(--ink)}
+.prov-box ul{margin:4px 0 0;padding-left:18px}
+.prov-box li{margin:3px 0}
+.flag{display:inline-block;font-size:.68rem;color:var(--neg);border:1px solid currentColor;border-radius:3px;padding:1px 6px;margin:0 4px 4px 0;opacity:.85}
+footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--faint);max-width:64ch}
+.status{font-size:.8rem;color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:40px 0}
+.status.err{color:var(--neg)}
+</style></head><body><div class="wrap">
+
+<div class="nav">
+ <a class="back" href="dividends.html">&larr; The screen</a>
+ <button id="prev" title="previous">&larr;</button>
+ <select id="pick"></select>
+ <button id="next" title="next">&rarr;</button>
+</div>
+
+<div id="page"><p class="status">Loading&hellip;</p></div>
+
+<footer>Research and analysis only &mdash; not financial advice. Dividend and cash-flow figures are
+taken from the company&rsquo;s own SEC filings (XBRL), split-adjusted to today&rsquo;s share basis and
+cross-checked against dividends paid divided by shares outstanding. The rules are applied
+mechanically; the assessment is a reading of the numbers, not a forecast. A company can cut its
+dividend at any time.</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const CSS = k => getComputedStyle(document.body).getPropertyValue(k).trim();
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const fmtCap = v => v == null ? '—' : v >= 1e9 ? '$' + (v/1e9).toFixed(1) + 'B' : '$' + Math.round(v/1e6) + 'M';
+const money = v => {
+  if (v == null || isNaN(v)) return '—';
+  const a = Math.abs(v), s = v < 0 ? '−' : '';
+  if (a >= 1e9) return s + '$' + (a/1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return s + '$' + (a/1e6).toFixed(1) + 'M';
+  if (a >= 1e3) return s + '$' + Math.round(a/1e3) + 'K';
+  return s + '$' + a.toFixed(2);
+};
+const pct = (v, d=1) => v == null || isNaN(v) ? '—' : v.toFixed(d) + '%';
+const dps = v => v == null || isNaN(v) ? '—' : '$' + v.toFixed(v < 1 ? 3 : 2);
+const x = (v, d=1) => v == null || isNaN(v) ? '—' : v.toFixed(d) + '×';
+const asPct = v => v == null ? null : (Math.abs(v) <= 1.5 ? v * 100 : v);   // fraction or already %
+
+let ALL = [], BY = {}, ORDER = [];
+
+// ---------- render ---------------------------------------------------------
+function render(sym){
+  const c = BY[sym];
+  if (!c){ $('#page').innerHTML = '<p class="status err">No record for ' + esc(sym) + '.</p>'; return; }
+  const n = c.normalised, a = c.analysis, sf = a.screenFields || {};
+  const reg = sf.regularAnnualDps ?? n.latest?.dps ?? null;
+  const yld = reg != null && c.p ? reg / c.p * 100 : null;
+  const conf = n.dataQuality?.confidence || 'low';
+  const stNote = sf.streakSource ? ' <em>' + esc(sf.streakSource.split(';')[0]) + '</em>' : '';
+
+  document.title = c.n + ' (' + c.s + ') — Stock Analysis';
+  $('#pick').value = sym;
+
+  let h = '';
+  h += `<header>
+   <p class="eyebrow">${esc(c.sec)} &middot; ${fmtCap(c.mc)} &middot; $${(c.p ?? 0).toFixed(2)}</p>
+   <h1>${esc(c.n)}<span class="tk">${esc(c.s)}</span></h1>
+   <p class="lede">${esc(a.moat || c.m)}</p>
+  </header>`;
+
+  h += `<div class="band">
+   <span class="vd ${esc(a.verdict)}">${esc(a.verdict)}</span>
+   <span class="pc">${a.passCount} of 10 rules <small>pass</small></span>
+   <span class="prov"><i class="${conf}"></i>${esc(conf)} confidence &middot; ${c.verdicts.length} reviewers${c.repaired ? ' &middot; repaired once' : ''}</span>
+  </div>`;
+
+  h += `<div class="tiles">
+   <div class="tile"><div class="v">${pct(yld, 2)}</div><div class="l">Regular yield on ${dps(reg)} a year</div></div>
+   <div class="tile"><div class="v">${pct(sf.g5, 1)}</div><div class="l">Dividend growth, 5-yr CAGR <em>filed</em></div></div>
+   <div class="tile"><div class="v">${pct(sf.payout, 0)}</div><div class="l">Payout ${esc(sf.payoutBasis || 'of free cash flow')}</div></div>
+   <div class="tile"><div class="v">${sf.streak ?? '—'}<span style="font-size:.6em;color:var(--faint)"> yrs</span></div><div class="l">Consecutive increases${stNote}</div></div>
+  </div>`;
+
+  h += `<div class="callout"><p>${esc(a.assessment)}</p>${a.sectorNote ? '<p class="sn">' + esc(a.sectorNote) + '</p>' : ''}</div>`;
+
+  // dividend history chart
+  h += `<h2 class="sec">Dividend per share, by fiscal year</h2>
+  <figure>
+   <p class="ch-t">What the company actually paid</p>
+   <p class="ch-s">Regular dividend per share from the 10-K filings, adjusted to today&rsquo;s share count. Fiscal years end ${esc(n.fiscalYearEnd || '—')}.</p>
+   <div class="legend" id="dlegend"></div>
+   <div class="chart" id="dwrap"><svg id="dchart" role="img" aria-label="Bar chart of dividend per share by fiscal year"></svg><div class="tip" id="dtip"></div></div>
+   <figcaption id="dcap"></figcaption>
+  </figure>`;
+
+  // rules
+  h += `<h2 class="sec">The ten rules, applied</h2><ol class="rules">`;
+  for (const r of (a.rules || []).slice().sort((p, q) => p.id - q.id)){
+    const cls = r.pass === true ? 'pass' : r.pass === false ? 'fail' : 'na';
+    const ic = r.pass === true ? '&#10003;' : r.pass === false ? '&#215;' : '&ndash;';
+    h += `<li><div class="ic ${cls}">${ic}</div><div>
+      <div class="rt"><span class="rn"><small>${String(r.id).padStart(2,'0')}</small>${esc(r.name)}</span>
+      <span class="rv">${esc(r.value)}${r.threshold ? '<small>' + esc(r.threshold) + '</small>' : ''}</span></div>
+      ${r.note ? '<p class="rnote">' + esc(r.note) + '</p>' : ''}</div></li>`;
+  }
+  h += `</ol>`;
+
+  if ((a.strengths || []).length || (a.risks || []).length){
+    h += `<div class="cols">
+     <div class="col str"><h4>What holds it up</h4><ul>${(a.strengths||[]).map(s => '<li>' + esc(s) + '</li>').join('')}</ul></div>
+     <div class="col risk"><h4>What could break it</h4><ul>${(a.risks||[]).map(s => '<li>' + esc(s) + '</li>').join('')}</ul></div>
+    </div>`;
+  }
+
+  // payout chart
+  h += `<h2 class="sec">Payout ratio over time</h2>
+  <figure>
+   <p class="ch-t" id="pt">Dividends as a share of free cash flow</p>
+   <p class="ch-s">The 20&ndash;60% band is the range where a raise is funded and there is still room for another. Below it, growth is stored; above it, growth is borrowed.</p>
+   <div class="chart" id="pwrap"><svg id="pchart" role="img" aria-label="Line chart of payout ratio by fiscal year"></svg><div class="tip" id="ptip"></div></div>
+   <figcaption id="pcap"></figcaption>
+  </figure>`;
+
+  // financials
+  h += `<h2 class="sec">The numbers, year by year</h2><div class="twrap"><table><thead><tr>
+   <th>FY</th><th>Div / share</th><th>Dividends paid</th><th>Free cash flow</th><th>Payout</th><th>Net income</th><th>ROIC</th><th>Net debt / EBITDA</th>
+  </tr></thead><tbody>`;
+  const dpsBy = Object.fromEntries((n.dps || []).map(d => [d.fy, d]));
+  const fin = (n.fin || []).slice().sort((p, q) => p.end.localeCompare(q.end));
+  for (const f of fin.slice(-12)){
+    const d = dpsBy[f.fy];
+    const po = asPct(f.payoutFcf), roic = asPct(f.roic);
+    h += `<tr><td>${esc(f.fy)}</td>
+      <td>${d ? dps(d.val) + (d.special ? '<span class="dim"> +' + dps(d.special) + '</span>' : '') : '<span class="dim">—</span>'}</td>
+      <td>${money(f.divPaid)}</td>
+      <td class="${f.fcf != null && f.fcf < 0 ? 'neg' : ''}">${money(f.fcf)}</td>
+      <td class="${po != null && po > 80 ? 'neg' : ''}">${pct(po, 0)}</td>
+      <td>${money(f.netIncome)}</td>
+      <td>${pct(roic, 1)}</td>
+      <td class="${f.netDebtToEbitda != null && f.netDebtToEbitda > 2.5 ? 'neg' : ''}">${f.netDebtToEbitda == null ? '<span class="dim">—</span>' : x(f.netDebtToEbitda)}</td></tr>`;
+  }
+  h += `</tbody></table></div>`;
+
+  // provenance
+  const issues = (n.dataQuality?.issues || []);
+  const splits = (n.splitAdjustments || []).filter(s => s && s.ratio && s.ratio !== 1);
+  const revIssues = c.verdicts.flatMap(v => (v.issues || []).map(i => ({ ...i, lens: v.lens })));
+  h += `<h2 class="sec">Where these numbers come from</h2><div class="prov-box"><dl>
+   <dt>Source</dt><dd>SEC EDGAR XBRL company facts, <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${esc(c.cik)}&type=10-K" target="_blank" rel="noopener">CIK ${esc(c.cik)}</a>. Prices from FMP as of ${esc(c.priceAsOf)}. Verified ${esc(c.verifiedAsOf)}.</dd>
+   <dt>Dividend series</dt><dd>${esc(n.dpsMethod)}${n.dpsTag ? ' &mdash; <code>' + esc(n.dpsTag) + '</code>' : ''}. ${n.growth?.yearsCovered ?? (n.dps||[]).length} fiscal years, ${esc(n.growth?.fromFy || '')}&ndash;${esc(n.growth?.toFy || '')}.</dd>
+   ${splits.length ? '<dt>Splits applied</dt><dd>' + splits.map(s => esc(s.date) + ' &times;' + s.ratio + (s.note ? ' (' + esc(s.note) + ')' : '')).join('; ') + '</dd>' : ''}
+   ${n.specials?.hasSpecials ? '<dt>Specials</dt><dd>' + esc(n.specials.note || 'Special dividends were paid and are excluded from the regular series.') + '</dd>' : ''}
+   <dt>Review</dt><dd>${c.verdicts.length} independent reviewers (${c.verdicts.map(v => esc(v.lens)).join(', ')}). ${c.repaired ? 'A blocking finding was raised and the record was recomputed once.' : 'No blocking findings.'}${revIssues.filter(i => i.severity === 'warn').length ? ' ' + revIssues.filter(i => i.severity === 'warn').length + ' warning(s) noted below.' : ''}</dd>
+   ${(issues.length || revIssues.length) ? '<dt>Caveats</dt><dd><ul>' + issues.map(i => '<li>' + esc(i) + '</li>').join('') + revIssues.filter(i => i.severity === 'warn').map(i => '<li><span class="dim">' + esc(i.lens) + ':</span> ' + esc(i.detail) + '</li>').join('') + '</ul></dd>' : ''}
+   ${(a.estimateCorrections || []).length ? '<dt>vs. earlier estimates</dt><dd><ul>' + a.estimateCorrections.map(e => '<li>' + esc(e.field) + ': ' + esc(e.prior ?? '—') + ' &rarr; <b class="n">' + esc(e.now ?? '—') + '</b> &mdash; ' + esc(e.why) + '</li>').join('') + '</ul></dd>' : ''}
+   ${(a.flags || c.fl || []).length ? '<dt>Flags</dt><dd>' + (a.flags || c.fl).map(f => '<span class="flag">' + esc(f) + '</span>').join('') + '</dd>' : ''}
+  </dl></div>`;
+
+  $('#page').innerHTML = h;
+  drawDps(c);
+  drawPayout(c);
+}
+
+// ---------- charts --------------------------------------------------------
+function niceTicks(max, count){
+  if (!(max > 0)) return [0, 1];
+  const raw = max / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), norm = raw / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+  const out = []; for (let v = 0; v < max - 1e-9; v += step) out.push(v);
+  out.push(out.length ? out[out.length-1] + step : step); return out;
+}
+function geom(id){
+  const w = Math.max(280, $(id).clientWidth), narrow = w < 470;
+  return { w, h: narrow ? 210 : 260, m: { t: 14, r: narrow ? 10 : 16, b: 26, l: narrow ? 44 : 54 }, narrow };
+}
+function tipRow(color, label, val){
+  return '<div class="tr"><span>' + (color ? '<i style="background:' + color + '"></i>' : '') + label + '</span><b>' + val + '</b></div>';
+}
+function hover(svg, wrap, tip, n, xOf, body){
+  const move = e => {
+    const rect = svg.getBoundingClientRect();
+    const px = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const scale = svg.viewBox.baseVal.width / rect.width || 1;
+    const xx = px * scale;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < n; i++){ const d = Math.abs(xOf(i) - xx); if (d < bd){ bd = d; best = i; } }
+    tip.innerHTML = body(best);
+    tip.style.opacity = '1';
+    const tw = tip.offsetWidth;
+    let left = xOf(best) / scale + 14; if (left + tw > rect.width) left = xOf(best) / scale - tw - 14;
+    tip.style.left = Math.max(0, left) + 'px'; tip.style.top = '6px';
+    svg.querySelectorAll('.hl').forEach(el => el.setAttribute('opacity', el.dataset.i == best ? '1' : '0'));
+  };
+  const leave = () => { tip.style.opacity = '0'; svg.querySelectorAll('.hl').forEach(el => el.setAttribute('opacity', '0')); };
+  svg.addEventListener('mousemove', move); svg.addEventListener('mouseleave', leave);
+  svg.addEventListener('touchstart', move, { passive: true }); svg.addEventListener('touchmove', move, { passive: true }); svg.addEventListener('touchend', leave);
+}
+
+function drawDps(c){
+  const svg = $('#dchart'), rows = (c.normalised.dps || []).slice().sort((p, q) => p.end.localeCompare(q.end));
+  const leg = $('#dlegend'), cap = $('#dcap');
+  if (rows.length < 2){ $('#dwrap').innerHTML = '<div class="empty">Not enough filed dividend history to chart.</div>'; leg.innerHTML = ''; cap.textContent = ''; return; }
+  const hasSpecial = rows.some(r => r.special);
+  leg.innerHTML = hasSpecial
+    ? '<span><i style="background:var(--c1)"></i>Regular</span><span><i style="background:var(--c3);opacity:.75"></i>Special</span>'
+    : '';
+  const { w, h, m, narrow } = geom('#dwrap');
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const maxV = Math.max(...rows.map(r => r.val + (r.special || 0)));
+  const ticks = niceTicks(maxV, 4), top = ticks[ticks.length-1];
+  const slot = iw / rows.length, bw = Math.max(3, slot - 2);           // 2px surface gap between bars
+  const X = i => m.l + i * slot + slot / 2, Y = v => m.t + ih - (v / top) * ih;
+  const R = Math.min(4, bw / 2);
+  const bar = (x0, y0, y1, color, op) => {                              // rounded top, flat bottom on the baseline
+    const hgt = Math.max(0, y1 - y0);
+    if (hgt < 0.5) return '';
+    const r = Math.min(R, hgt);
+    return `<path d="M${x0},${y1} L${x0},${y0 + r} Q${x0},${y0} ${x0 + r},${y0} L${x0 + bw - r},${y0} Q${x0 + bw},${y0} ${x0 + bw},${y0 + r} L${x0 + bw},${y1} Z" fill="${color}" opacity="${op}"/>`;
+  };
+  let out = '';
+  for (const t of ticks) out += `<line x1="${m.l}" x2="${m.l + iw}" y1="${Y(t)}" y2="${Y(t)}" stroke="${CSS('--grid')}"/>` +
+    `<text x="${m.l - 7}" y="${Y(t) + 4}" text-anchor="end" font-size="10" fill="${CSS('--faint')}" font-family="ui-monospace,monospace">$${t.toFixed(t < 1 ? 2 : 2)}</text>`;
+  rows.forEach((r, i) => {
+    const x0 = X(i) - bw / 2;
+    out += `<rect class="hl" data-i="${i}" x="${x0 - 1}" y="${m.t}" width="${bw + 2}" height="${ih}" fill="${CSS('--raise')}" opacity="0"/>`;
+    out += bar(x0, Y(r.val), Y(0), CSS('--c1'), 1);
+    if (r.special) out += bar(x0, Y(r.val + r.special), Y(r.val) + 2, CSS('--c3'), .75);
+  });
+  // selective direct labels: first and last
+  const lab = (i, r) => `<text x="${X(i)}" y="${Y(r.val + (r.special || 0)) - 6}" text-anchor="middle" font-size="10.5" font-weight="650" fill="${CSS('--ink')}" font-family="ui-monospace,monospace">${dps(r.val)}</text>`;
+  out += lab(0, rows[0]) + lab(rows.length - 1, rows[rows.length - 1]);
+  const step = Math.max(1, Math.ceil(rows.length / (narrow ? 5 : 9)));
+  rows.forEach((r, i) => { if (i % step === 0 || i === rows.length - 1)
+    out += `<text x="${X(i)}" y="${h - 8}" text-anchor="middle" font-size="10" fill="${CSS('--faint')}" font-family="ui-monospace,monospace">${narrow ? "'" + r.fy.slice(2) : r.fy}</text>`; });
+  svg.setAttribute('width', w); svg.setAttribute('height', h); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.innerHTML = out;
+  hover(svg, $('#dwrap'), $('#dtip'), rows.length, X, i => {
+    const r = rows[i], prev = rows[i-1];
+    const yoy = prev && prev.val ? (r.val / prev.val - 1) * 100 : null;
+    return `<span class="ty">FY${esc(r.fy)}</span>` + tipRow(CSS('--c1'), 'Regular', dps(r.val)) +
+      (r.special ? tipRow(CSS('--c3'), 'Special', dps(r.special)) : '') +
+      tipRow(null, 'vs prior year', yoy == null ? '—' : (yoy >= 0 ? '+' : '') + yoy.toFixed(1) + '%') +
+      (r.basis ? `<div class="tr" style="margin-top:4px;color:var(--faint)"><span>${esc(r.basis)}</span></div>` : '');
+  });
+  const first = rows[0], last = rows[rows.length-1], yrs = +last.fy - +first.fy;
+  const cagr = yrs > 0 && first.val > 0 ? (Math.pow(last.val / first.val, 1 / yrs) - 1) * 100 : null;
+  cap.innerHTML = `${dps(first.val)} in FY${esc(first.fy)} to ${dps(last.val)} in FY${esc(last.fy)}` +
+    (cagr != null ? ` &mdash; <b class="n">${cagr.toFixed(1)}%</b> a year over ${yrs} years.` : '.') +
+    (c.normalised.streak?.cutsOrHolds?.length ? ' ' + c.normalised.streak.cutsOrHolds.map(k => `FY${esc(k.fy)}: ${esc(k.kind || 'hold')}`).join('; ') + '.' : '');
+}
+
+function drawPayout(c){
+  const svg = $('#pchart'), fin = (c.normalised.fin || []).slice().sort((p, q) => p.end.localeCompare(q.end));
+  // FCF payout is the honest measure, but only when FCF is positive in most years —
+  // a regulated utility spending its cash flow on rate base has negative FCF by design,
+  // and a chart of the few positive years would mislead. Fall back to net income then.
+  let key = 'payoutFcf', label = 'Dividends as a share of free cash flow';
+  let rows = fin.filter(f => f[key] != null && f[key] >= 0).map(f => ({ fy: f.fy, v: asPct(f[key]) }));
+  if (rows.length < 3 || rows.length < fin.length * 0.7){
+    key = 'payoutNi'; label = 'Dividends as a share of net income';
+    rows = fin.filter(f => f[key] != null && f[key] >= 0).map(f => ({ fy: f.fy, v: asPct(f[key]) }));
+  }
+  $('#pt').textContent = label;
+  if (rows.length < 3){ $('#pwrap').innerHTML = '<div class="empty">Payout cannot be charted — free cash flow is negative or missing for most years' + (c.normalised.fin?.length ? '; see the table' : '') + '.</div>'; $('#pcap').textContent = ''; return; }
+  const { w, h, m, narrow } = geom('#pwrap');
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const maxV = Math.max(100, ...rows.map(r => r.v));
+  const top = maxV <= 100 ? 100 : niceTicks(maxV, 4).slice(-1)[0];
+  const ticks = niceTicks(top, 4);
+  const X = i => m.l + (i / (rows.length - 1)) * iw, Y = v => m.t + ih - (v / top) * ih;
+  let out = `<rect x="${m.l}" y="${Y(60)}" width="${iw}" height="${Y(20) - Y(60)}" fill="${CSS('--accent-soft')}" opacity=".7"/>`;
+  for (const t of ticks) out += `<line x1="${m.l}" x2="${m.l + iw}" y1="${Y(t)}" y2="${Y(t)}" stroke="${CSS('--grid')}"/>` +
+    `<text x="${m.l - 7}" y="${Y(t) + 4}" text-anchor="end" font-size="10" fill="${CSS('--faint')}" font-family="ui-monospace,monospace">${t}%</text>`;
+  let d = ''; rows.forEach((r, i) => { d += (i ? ' L' : 'M') + X(i) + ',' + Y(Math.min(r.v, top)); });
+  out += `<path d="${d}" fill="none" stroke="${CSS('--c2')}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  rows.forEach((r, i) => { out += `<line class="hl" data-i="${i}" x1="${X(i)}" x2="${X(i)}" y1="${m.t}" y2="${m.t + ih}" stroke="${CSS('--muted')}" stroke-dasharray="3 3" opacity="0"/>`; });
+  const li = rows.length - 1;
+  out += `<circle cx="${X(li)}" cy="${Y(Math.min(rows[li].v, top))}" r="4.5" fill="${CSS('--c2')}" stroke="${CSS('--surface')}" stroke-width="2"/>`;
+  if (!narrow) out += `<text x="${X(li) - 8}" y="${Y(Math.min(rows[li].v, top)) - 10}" text-anchor="end" font-size="11" font-weight="650" fill="${CSS('--ink')}" font-family="ui-monospace,monospace">${rows[li].v.toFixed(0)}%</text>`;
+  const step = Math.max(1, Math.ceil(rows.length / (narrow ? 5 : 9)));
+  rows.forEach((r, i) => { if (i % step === 0 || i === li)
+    out += `<text x="${X(i)}" y="${h - 8}" text-anchor="middle" font-size="10" fill="${CSS('--faint')}" font-family="ui-monospace,monospace">${narrow ? "'" + r.fy.slice(2) : r.fy}</text>`; });
+  svg.setAttribute('width', w); svg.setAttribute('height', h); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.innerHTML = out;
+  hover(svg, $('#pwrap'), $('#ptip'), rows.length, X, i => `<span class="ty">FY${esc(rows[i].fy)}</span>` + tipRow(CSS('--c2'), 'Payout', rows[i].v.toFixed(0) + '%'));
+  const inBand = rows.filter(r => r.v >= 20 && r.v <= 60).length;
+  $('#pcap').innerHTML = `Inside the 20&ndash;60% band in <b class="n">${inBand} of ${rows.length}</b> years. Latest: <b class="n">${rows[li].v.toFixed(0)}%</b>.`;
+}
+
+// ---------- routing & boot ------------------------------------------------
+function go(sym){ if (!BY[sym]) return; history.replaceState(null, '', '#' + sym); render(sym); window.scrollTo({ top: 0 }); }
+$('#pick').addEventListener('change', e => go(e.target.value));
+$('#prev').addEventListener('click', () => { const i = ORDER.indexOf(current()); go(ORDER[(i - 1 + ORDER.length) % ORDER.length]); });
+$('#next').addEventListener('click', () => { const i = ORDER.indexOf(current()); go(ORDER[(i + 1) % ORDER.length]); });
+window.addEventListener('hashchange', () => render(current()));
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => render(current()), 120); });
+const current = () => { const h = decodeURIComponent(location.hash.slice(1)).toUpperCase(); return BY[h] ? h : ORDER[0]; };
+
+fetch('dividend-stocks.json').then(r => r.json()).then(j => {
+  ALL = j.stocks || [];
+  // order: verdict strength, then pass count, then ticker — so prev/next walks the ranking
+  const rank = { strong: 0, candidate: 1, watch: 2, avoid: 3 };
+  ALL.sort((p, q) => (rank[p.analysis.verdict] - rank[q.analysis.verdict]) || (q.analysis.passCount - p.analysis.passCount) || p.s.localeCompare(q.s));
+  ORDER = ALL.map(c => c.s); BY = Object.fromEntries(ALL.map(c => [c.s, c]));
+  const sel = $('#pick');
+  for (const c of ALL){ const o = document.createElement('option'); o.value = c.s; o.textContent = `${c.s} — ${c.n} · ${c.analysis.passCount}/10`; sel.appendChild(o); }
+  if (!ALL.length) return empty();
+  render(current());
+}).catch(empty);
+
+// The per-company analyses are generated from SEC filings by a separate pass. Until that
+// pass has published dividend-stocks.json this page has nothing to show — say so plainly
+// rather than rendering a broken shell.
+function empty(){
+  $('#page').innerHTML =
+   '<header><p class="eyebrow">Not published yet</p>' +
+   '<h1>No analysis to show</h1>' +
+   '<p class="lede">The per-company analyses are derived from SEC filings and published as ' +
+   '<code>dividend-stocks.json</code>. That file is not in place yet, so there is nothing to ' +
+   'display here.</p></header>' +
+   '<p style="margin-top:22px"><a href="dividends.html">&larr; Back to the screen</a>, which ' +
+   'works from live prices and does not depend on this file.</p>';
+  $('#pick').closest('.nav').style.display = 'none';
+}
+</script>
+</body></html>
