@@ -122,7 +122,7 @@ The page imports the same modules the tests do, so it cannot drift from them.
 ## Running
 
 ```sh
-npm test                              # 88 tests, no dependencies
+npm test                              # 130 tests, no dependencies
 node scripts/snapshot.mjs --fixture --dry-run   # the whole pipeline, offline
 node scripts/snapshot.mjs             # live, both underlyings
 node scripts/snapshot.mjs --symbol=SPX # just one

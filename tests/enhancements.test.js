@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { outerBand, gapThrough } from '../lib/implied-move.js'
+import { outerBand, gapThrough, gapThroughZone } from '../lib/implied-move.js'
 import { buildFamilies, FAMILIES, OUTER_SIGMA } from '../lib/bands.js'
 import { parseChain } from '../lib/cboe-chain.js'
 
@@ -30,6 +30,50 @@ test('a session that opens beyond a band level gapped through it and offers no f
   assert.deepEqual(gapThrough(band, { open: 770.10 }), { lower: false, upper: true })
   assert.deepEqual(gapThrough(band, { open: 764.00 }), { lower: false, upper: false })
   assert.deepEqual(gapThrough(band, { open: 758.59 }), { lower: true, upper: false }, 'opening exactly on the level counts')
+})
+
+test('the zone gap flag names which of the two lines the session opened past', () => {
+  // The lower zone runs from 756.40 up to 758.59; the nearer line to the centre is its high.
+  // The upper zone runs from 769.99 up to 772.10; the nearer line is its low.
+  const z = { lower: { low: 756.40, high: 758.59 }, upper: { low: 769.99, high: 772.10 } }
+
+  assert.deepEqual(gapThroughZone(z, { open: 764.00 }), {
+    lower: { near: false, far: false }, upper: { near: false, far: false },
+  }, 'an open inside both zones gapped through nothing')
+
+  assert.deepEqual(gapThroughZone(z, { open: 757.50 }), {
+    lower: { near: true, far: false }, upper: { near: false, far: false },
+  }, 'an open inside the lower zone passed the nearer line only, so the far line still fills')
+
+  assert.deepEqual(gapThroughZone(z, { open: 755.00 }), {
+    lower: { near: true, far: true }, upper: { near: false, far: false },
+  }, 'an open below the whole lower zone offers no fill anywhere in it')
+
+  assert.deepEqual(gapThroughZone(z, { open: 771.00 }), {
+    lower: { near: false, far: false }, upper: { near: true, far: false },
+  }, 'the upper side reads the other way round: the zone low is the nearer line')
+
+  assert.deepEqual(gapThroughZone(z, { open: 773.00 }), {
+    lower: { near: false, far: false }, upper: { near: true, far: true },
+  })
+
+  assert.deepEqual(gapThroughZone(z, { open: 758.59 }), {
+    lower: { near: true, far: false }, upper: { near: false, far: false },
+  }, 'opening exactly on a line counts, as it does for a single band')
+})
+
+test('the zone gap flag agrees with the single-band flag on each of the two lines', () => {
+  const plain = { upper: 772.10, lower: 756.40 }
+  const ivol = { upper: 769.99, lower: 758.59 }
+  const z = { lower: { low: plain.lower, high: ivol.lower }, upper: { low: ivol.upper, high: plain.upper } }
+  for (const open of [750, 756.40, 757.5, 758.59, 764, 769.99, 771, 772.10, 780]) {
+    const s = { open }
+    const zg = gapThroughZone(z, s)
+    assert.equal(zg.lower.near, gapThrough(ivol, s).lower, `lower near at ${open}`)
+    assert.equal(zg.lower.far, gapThrough(plain, s).lower, `lower far at ${open}`)
+    assert.equal(zg.upper.near, gapThrough(ivol, s).upper, `upper near at ${open}`)
+    assert.equal(zg.upper.far, gapThrough(plain, s).upper, `upper far at ${open}`)
+  }
 })
 
 test('the families now carry an outer two-sigma band for each iVol horizon', () => {
