@@ -1,0 +1,1125 @@
+{
+  "generated": "2026-09-20",
+  "span": {
+    "from": "2016-01-04",
+    "to": "2026-09-14",
+    "sessions": 2689
+  },
+  "k": 0.92,
+  "theory": {
+    "containment": 0.6826894921370859,
+    "meanAbsZ": 0.7978845608028654,
+    "oneSidedTouch": 0.3173105078629141,
+    "oneSidedBreak": 0.15865525393145707,
+    "pathContainment": 0.428
+  },
+  "calibration": {
+    "k092": {
+      "n": 2688,
+      "contained": 0.4880952380952381,
+      "upperReached": 0.2693452380952381,
+      "lowerReached": 0.25595238095238093,
+      "closeBreakUpper": 0.1644345238095238,
+      "closeBreakLower": 0.12686011904761904,
+      "meanAbsZ": 0.770197080903238,
+      "meanZ": 0.05884369980420761
+    },
+    "kSolvedAbsZ": 0.8880749788139473,
+    "kSolvedBreak": 0.8709016175157014,
+    "byYear": {
+      "2016": {
+        "n": 251,
+        "kSolved": 0.8381449709297999,
+        "at092": {
+          "n": 251,
+          "contained": 0.5099601593625498,
+          "upperReached": 0.24701195219123506,
+          "lowerReached": 0.24701195219123506,
+          "closeBreakUpper": 0.15139442231075698,
+          "closeBreakLower": 0.13545816733067728,
+          "meanAbsZ": 0.7268944913254928,
+          "meanZ": 0.04751911812557547
+        }
+      },
+      "2017": {
+        "n": 250,
+        "kSolved": 0.6515472254791772,
+        "at092": {
+          "n": 250,
+          "contained": 0.636,
+          "upperReached": 0.216,
+          "lowerReached": 0.152,
+          "closeBreakUpper": 0.136,
+          "closeBreakLower": 0.048,
+          "meanAbsZ": 0.5650646433084552,
+          "meanZ": 0.1202098383387088
+        }
+      },
+      "2018": {
+        "n": 250,
+        "kSolved": 1.01988778537749,
+        "at092": {
+          "n": 250,
+          "contained": 0.404,
+          "upperReached": 0.316,
+          "lowerReached": 0.312,
+          "closeBreakUpper": 0.196,
+          "closeBreakLower": 0.176,
+          "meanAbsZ": 0.8845138235914418,
+          "meanZ": -0.02559060676973435
+        }
+      },
+      "2019": {
+        "n": 251,
+        "kSolved": 0.850233161504538,
+        "at092": {
+          "n": 251,
+          "contained": 0.4820717131474104,
+          "upperReached": 0.2749003984063745,
+          "lowerReached": 0.24701195219123506,
+          "closeBreakUpper": 0.16733067729083664,
+          "closeBreakLower": 0.099601593625498,
+          "meanAbsZ": 0.7373781659207391,
+          "meanZ": 0.12090152524316522
+        }
+      },
+      "2020": {
+        "n": 252,
+        "kSolved": 0.9910099307425904,
+        "at092": {
+          "n": 252,
+          "contained": 0.47619047619047616,
+          "upperReached": 0.27380952380952384,
+          "lowerReached": 0.25396825396825395,
+          "closeBreakUpper": 0.19047619047619047,
+          "closeBreakLower": 0.14682539682539683,
+          "meanAbsZ": 0.8594690471106833,
+          "meanZ": 0.04586872342339994
+        }
+      },
+      "2021": {
+        "n": 251,
+        "kSolved": 0.7400726662053472,
+        "at092": {
+          "n": 251,
+          "contained": 0.5936254980079682,
+          "upperReached": 0.21912350597609562,
+          "lowerReached": 0.18725099601593626,
+          "closeBreakUpper": 0.12350597609561753,
+          "closeBreakLower": 0.08366533864541832,
+          "meanAbsZ": 0.6418397328668033,
+          "meanZ": 0.09433313319745966
+        }
+      },
+      "2022": {
+        "n": 250,
+        "kSolved": 1.1273133647702438,
+        "at092": {
+          "n": 250,
+          "contained": 0.34,
+          "upperReached": 0.304,
+          "lowerReached": 0.384,
+          "closeBreakUpper": 0.204,
+          "closeBreakLower": 0.196,
+          "meanAbsZ": 0.9776803575401152,
+          "meanZ": -0.09171907214805
+        }
+      },
+      "2023": {
+        "n": 249,
+        "kSolved": 0.9214002577898595,
+        "at092": {
+          "n": 249,
+          "contained": 0.4457831325301205,
+          "upperReached": 0.3092369477911647,
+          "lowerReached": 0.26104417670682734,
+          "closeBreakUpper": 0.20080321285140562,
+          "closeBreakLower": 0.14056224899598393,
+          "meanAbsZ": 0.7990989565329446,
+          "meanZ": 0.108456213049287
+        }
+      },
+      "2024": {
+        "n": 251,
+        "kSolved": 0.9012953888321835,
+        "at092": {
+          "n": 251,
+          "contained": 0.4860557768924303,
+          "upperReached": 0.30278884462151395,
+          "lowerReached": 0.2350597609561753,
+          "closeBreakUpper": 0.18326693227091634,
+          "closeBreakLower": 0.11952191235059761,
+          "meanAbsZ": 0.7816626907304506,
+          "meanZ": 0.1118459929865617
+        }
+      },
+      "2025": {
+        "n": 249,
+        "kSolved": 0.8792103565257128,
+        "at092": {
+          "n": 249,
+          "contained": 0.5060240963855421,
+          "upperReached": 0.24096385542168675,
+          "lowerReached": 0.26907630522088355,
+          "closeBreakUpper": 0.11646586345381527,
+          "closeBreakLower": 0.1285140562248996,
+          "meanAbsZ": 0.7625090969237494,
+          "meanZ": 0.05148483967544878
+        }
+      },
+      "2026": {
+        "n": 174,
+        "kSolved": 0.8311116989786016,
+        "at092": {
+          "n": 174,
+          "contained": 0.5114942528735632,
+          "upperReached": 0.23563218390804597,
+          "lowerReached": 0.25862068965517243,
+          "closeBreakUpper": 0.1206896551724138,
+          "closeBreakLower": 0.1206896551724138,
+          "meanAbsZ": 0.7207947749105053,
+          "meanZ": 0.05739515916218679
+        }
+      }
+    },
+    "atSolved": {
+      "n": 2688,
+      "contained": 0.4680059523809524,
+      "upperReached": 0.28348214285714285,
+      "lowerReached": 0.2630208333333333,
+      "closeBreakUpper": 0.17819940476190477,
+      "closeBreakLower": 0.13020833333333334,
+      "meanAbsZ": 0.7978845608028654,
+      "meanZ": 0.060959046377110616
+    },
+    "regime": {
+      "low": {
+        "n": 899,
+        "contained": 0.578420467185762,
+        "upperReached": 0.22803114571746386,
+        "lowerReached": 0.20244716351501668,
+        "closeBreakUpper": 0.13236929922135707,
+        "closeBreakLower": 0.0867630700778643,
+        "meanAbsZ": 0.6431527155261095,
+        "meanZ": 0.08780568813217045,
+        "vixCut": {
+          "low": 14.82,
+          "high": 19.4
+        }
+      },
+      "mid": {
+        "n": 893,
+        "contained": 0.503919372900336,
+        "upperReached": 0.24188129899216126,
+        "lowerReached": 0.2631578947368421,
+        "closeBreakUpper": 0.14893617021276595,
+        "closeBreakLower": 0.13325867861142218,
+        "meanAbsZ": 0.7662049421611846,
+        "meanZ": 0.010470116887967233,
+        "vixCut": {
+          "low": 14.82,
+          "high": 19.4
+        }
+      },
+      "high": {
+        "n": 896,
+        "contained": 0.38169642857142855,
+        "upperReached": 0.33816964285714285,
+        "lowerReached": 0.30245535714285715,
+        "closeBreakUpper": 0.21205357142857142,
+        "closeBreakLower": 0.16071428571428573,
+        "meanAbsZ": 0.9016455902455272,
+        "meanZ": 0.07799635832805074,
+        "vixCut": {
+          "low": 14.82,
+          "high": 19.4
+        }
+      }
+    }
+  },
+  "setups": {
+    "fadeLower": {
+      "k": 347,
+      "n": 688,
+      "point": 0.5043604651162791,
+      "low": 0.4670800687421769,
+      "high": 0.5415924384102965,
+      "reportable": true
+    },
+    "fadeUpper": {
+      "k": 282,
+      "n": 724,
+      "point": 0.38950276243093923,
+      "low": 0.3546547700758739,
+      "high": 0.42551713678521014,
+      "reportable": true
+    },
+    "nextAfterLowerTag": {
+      "k": 390,
+      "n": 687,
+      "point": 0.5676855895196506,
+      "low": 0.5303659596664982,
+      "high": 0.6042524810952308,
+      "reportable": true
+    },
+    "nextAfterUpperTag": {
+      "k": 344,
+      "n": 724,
+      "point": 0.47513812154696133,
+      "low": 0.43898953068258506,
+      "high": 0.5115491483611588,
+      "reportable": true
+    },
+    "breakToWeekly": {
+      "k": 347,
+      "n": 781,
+      "point": 0.44430217669654287,
+      "low": 0.40981084911968896,
+      "high": 0.47933873768893026,
+      "reportable": true
+    },
+    "baseNextUp": {
+      "k": 1479,
+      "n": 2688,
+      "point": 0.5502232142857143,
+      "low": 0.5313586125465493,
+      "high": 0.5689444714687657,
+      "reportable": true
+    },
+    "baseNextDown": {
+      "k": 1203,
+      "n": 2688,
+      "point": 0.44754464285714285,
+      "low": 0.42883526279925,
+      "high": 0.4664037383403099,
+      "reportable": true
+    }
+  },
+  "setupsByRegime": {
+    "low": {
+      "vixCut": {
+        "low": 14.82,
+        "high": 19.4
+      },
+      "nextAfterLowerTag": {
+        "k": 103,
+        "n": 182,
+        "point": 0.5659340659340659,
+        "low": 0.4932994907251888,
+        "high": 0.6358428446411946,
+        "reportable": true
+      },
+      "nextAfterUpperTag": {
+        "k": 102,
+        "n": 205,
+        "point": 0.4975609756097561,
+        "low": 0.42979413435022823,
+        "high": 0.5654175443765587,
+        "reportable": true
+      },
+      "baseNextUp": {
+        "k": 496,
+        "n": 899,
+        "point": 0.5517241379310345,
+        "low": 0.5190636736541734,
+        "high": 0.583944444871396,
+        "reportable": true
+      },
+      "fadeLower": {
+        "k": 104,
+        "n": 182,
+        "point": 0.5714285714285714,
+        "low": 0.49878768673959506,
+        "high": 0.6411165099073202,
+        "reportable": true
+      }
+    },
+    "mid": {
+      "vixCut": {
+        "low": 14.82,
+        "high": 19.4
+      },
+      "nextAfterLowerTag": {
+        "k": 135,
+        "n": 234,
+        "point": 0.5769230769230769,
+        "low": 0.5128809120463228,
+        "high": 0.6384804199035453,
+        "reportable": true
+      },
+      "nextAfterUpperTag": {
+        "k": 87,
+        "n": 216,
+        "point": 0.4027777777777778,
+        "low": 0.33962167533451304,
+        "high": 0.4693315574847079,
+        "reportable": true
+      },
+      "baseNextUp": {
+        "k": 492,
+        "n": 892,
+        "point": 0.5515695067264574,
+        "low": 0.5187804369189497,
+        "high": 0.5839163060082095,
+        "reportable": true
+      },
+      "fadeLower": {
+        "k": 116,
+        "n": 235,
+        "point": 0.49361702127659574,
+        "low": 0.4303139666339699,
+        "high": 0.5571253999868303,
+        "reportable": true
+      }
+    },
+    "high": {
+      "vixCut": {
+        "low": 14.82,
+        "high": 19.4
+      },
+      "nextAfterLowerTag": {
+        "k": 152,
+        "n": 271,
+        "point": 0.5608856088560885,
+        "low": 0.5013561612743258,
+        "high": 0.6187130602383175,
+        "reportable": true
+      },
+      "nextAfterUpperTag": {
+        "k": 155,
+        "n": 303,
+        "point": 0.5115511551155115,
+        "low": 0.4554763125162113,
+        "high": 0.5673367715660492,
+        "reportable": true
+      },
+      "baseNextUp": {
+        "k": 490,
+        "n": 896,
+        "point": 0.546875,
+        "low": 0.5141492107537475,
+        "high": 0.5792005667838289,
+        "reportable": true
+      },
+      "fadeLower": {
+        "k": 127,
+        "n": 271,
+        "point": 0.46863468634686345,
+        "low": 0.41007569267909405,
+        "high": 0.5280704659356047,
+        "reportable": true
+      }
+    }
+  },
+  "options": {
+    "note": "Black-Scholes on real paths; sigma = ivScale x VIX; slippage 1% of premium each side; strike at the money; contract = 100 shares.",
+    "runs": [
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.92,
+        "dte": 0,
+        "n": 688,
+        "winRate": {
+          "k": 279,
+          "n": 688,
+          "point": 0.4055232558139535,
+          "low": 0.36945764165744094,
+          "high": 0.44263803670563856,
+          "reportable": true
+        },
+        "meanPnlPct": 0.9883283626055772,
+        "medianPnlPct": -1.01,
+        "meanPnl": 0.5354527218811032,
+        "profitFactor": 2.7300859035991927,
+        "worstPct": -1.01,
+        "bestPct": 19.1612570232501,
+        "meanPremiumIn": 0.5648923948678913,
+        "meanDollarsPerContract": 53.54527218811032,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.92,
+        "dte": 1,
+        "n": 687,
+        "winRate": {
+          "k": 253,
+          "n": 687,
+          "point": 0.3682678311499272,
+          "low": 0.33302562218557674,
+          "high": 0.4049750468695531,
+          "reportable": true
+        },
+        "meanPnlPct": 0.06146009425489074,
+        "medianPnlPct": -0.685362635854819,
+        "meanPnl": 0.08967904023935078,
+        "profitFactor": 1.0875359208535735,
+        "worstPct": -1.01,
+        "bestPct": 9.545136807169099,
+        "meanPremiumIn": 1.8994841963992766,
+        "meanDollarsPerContract": 8.967904023935077,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.92,
+        "dte": 2,
+        "n": 687,
+        "winRate": {
+          "k": 272,
+          "n": 687,
+          "point": 0.39592430858806404,
+          "low": 0.36003054326480893,
+          "high": 0.43297551018758645,
+          "reportable": true
+        },
+        "meanPnlPct": 0.015018794469052936,
+        "medianPnlPct": -0.1874202459649788,
+        "meanPnl": 0.060898370177203655,
+        "profitFactor": 1.0676103261506251,
+        "worstPct": -1.0098792120484608,
+        "bestPct": 6.529011655234222,
+        "meanPremiumIn": 2.7451331250556064,
+        "meanDollarsPerContract": 6.089837017720366,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.92,
+        "dte": 5,
+        "n": 687,
+        "winRate": {
+          "k": 295,
+          "n": 687,
+          "point": 0.4294032023289665,
+          "low": 0.3928826390195802,
+          "high": 0.46670887975582087,
+          "reportable": true
+        },
+        "meanPnlPct": -0.006236159212096763,
+        "medianPnlPct": -0.07133700850432662,
+        "meanPnl": 0.026583125237200807,
+        "profitFactor": 1.0322425943463662,
+        "worstPct": -0.9469604876920635,
+        "bestPct": 3.0867477040346256,
+        "meanPremiumIn": 4.32087544730522,
+        "meanDollarsPerContract": 2.6583125237200806,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.72,
+        "dte": 0,
+        "n": 688,
+        "winRate": {
+          "k": 287,
+          "n": 688,
+          "point": 0.4171511627906977,
+          "low": 0.38086573535894996,
+          "high": 0.45435662874405824,
+          "reportable": true
+        },
+        "meanPnlPct": 1.6530226762858766,
+        "medianPnlPct": -1.01,
+        "meanPnl": 0.6516259521784665,
+        "profitFactor": 3.7056913950190964,
+        "worstPct": -1.01,
+        "bestPct": 26.703863872873487,
+        "meanPremiumIn": 0.4498693945734726,
+        "meanDollarsPerContract": 65.16259521784666,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.72,
+        "dte": 1,
+        "n": 687,
+        "winRate": {
+          "k": 281,
+          "n": 687,
+          "point": 0.4090247452692867,
+          "low": 0.3728649437236531,
+          "high": 0.44619629181165754,
+          "reportable": true
+        },
+        "meanPnlPct": 0.3613234933094043,
+        "medianPnlPct": -0.6020595893808239,
+        "meanPnl": 0.5040832199042738,
+        "profitFactor": 1.6550942807256073,
+        "worstPct": -1.01,
+        "bestPct": 12.349661446929417,
+        "meanPremiumIn": 1.4891830284142031,
+        "meanDollarsPerContract": 50.40832199042738,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.72,
+        "dte": 2,
+        "n": 687,
+        "winRate": {
+          "k": 300,
+          "n": 687,
+          "point": 0.4366812227074236,
+          "low": 0.40004726048512546,
+          "high": 0.4740193594474508,
+          "reportable": true
+        },
+        "meanPnlPct": 0.16931315934388097,
+        "medianPnlPct": -0.16740668889321958,
+        "meanPnl": 0.38388006668258123,
+        "profitFactor": 1.5223486159163568,
+        "worstPct": -1.0099985181699533,
+        "bestPct": 8.558416265662428,
+        "meanPremiumIn": 2.1502524349027183,
+        "meanDollarsPerContract": 38.38800666825812,
+        "byRegime": null
+      },
+      {
+        "setup": "lowerTagLong",
+        "ivScale": 0.72,
+        "dte": 5,
+        "n": 687,
+        "winRate": {
+          "k": 318,
+          "n": 687,
+          "point": 0.462882096069869,
+          "low": 0.42590624845519015,
+          "high": 0.5002707356432168,
+          "reportable": true
+        },
+        "meanPnlPct": 0.058080314894117746,
+        "medianPnlPct": -0.04994833940918065,
+        "meanPnl": 0.25866028629482285,
+        "profitFactor": 1.3572035071967745,
+        "worstPct": -0.9879482618535093,
+        "bestPct": 4.183575231603435,
+        "meanPremiumIn": 3.382894941486769,
+        "meanDollarsPerContract": 25.866028629482287,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.92,
+        "dte": 0,
+        "n": 724,
+        "winRate": {
+          "k": 184,
+          "n": 724,
+          "point": 0.2541436464088398,
+          "low": 0.2237848062129375,
+          "high": 0.28709768655297463,
+          "reportable": true
+        },
+        "meanPnlPct": 0.3600332206554604,
+        "medianPnlPct": -1.01,
+        "meanPnl": 0.2445028533198586,
+        "profitFactor": 1.6487894216320578,
+        "worstPct": -1.01,
+        "bestPct": 21.09708750139774,
+        "meanPremiumIn": 0.5675154999677569,
+        "meanDollarsPerContract": 24.45028533198586,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.92,
+        "dte": 1,
+        "n": 724,
+        "winRate": {
+          "k": 166,
+          "n": 724,
+          "point": 0.2292817679558011,
+          "low": 0.20013765525925145,
+          "high": 0.26128351655040444,
+          "reportable": true
+        },
+        "meanPnlPct": -0.16938756330531912,
+        "medianPnlPct": -1.01,
+        "meanPnl": -0.30240951514853137,
+        "profitFactor": 0.7264363850021813,
+        "worstPct": -1.01,
+        "bestPct": 10.700070653447343,
+        "meanPremiumIn": 1.677324666275829,
+        "meanDollarsPerContract": -30.240951514853137,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.92,
+        "dte": 2,
+        "n": 724,
+        "winRate": {
+          "k": 197,
+          "n": 724,
+          "point": 0.27209944751381215,
+          "low": 0.24094813715845795,
+          "high": 0.30565642074252786,
+          "reportable": true
+        },
+        "meanPnlPct": -0.11408663490986184,
+        "medianPnlPct": -0.35917163613803726,
+        "meanPnl": -0.2626287452432332,
+        "profitFactor": 0.7374751490918388,
+        "worstPct": -1.0099999999556344,
+        "bestPct": 6.8912175192341545,
+        "meanPremiumIn": 2.4221687609938733,
+        "meanDollarsPerContract": -26.262874524323323,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.92,
+        "dte": 5,
+        "n": 724,
+        "winRate": {
+          "k": 242,
+          "n": 724,
+          "point": 0.3342541436464088,
+          "low": 0.30084711790447183,
+          "high": 0.3694107423871542,
+          "reportable": true
+        },
+        "meanPnlPct": -0.06798091425234701,
+        "medianPnlPct": -0.16847378925842396,
+        "meanPnl": -0.24348323796141877,
+        "profitFactor": 0.749376562416501,
+        "worstPct": -1.0072266531516585,
+        "bestPct": 3.4542774107551013,
+        "meanPremiumIn": 3.868313090220831,
+        "meanDollarsPerContract": -24.348323796141877,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.72,
+        "dte": 0,
+        "n": 724,
+        "winRate": {
+          "k": 195,
+          "n": 724,
+          "point": 0.26933701657458564,
+          "low": 0.238303225878109,
+          "high": 0.302805629694404,
+          "reportable": true
+        },
+        "meanPnlPct": 0.795354750579072,
+        "medianPnlPct": -1.01,
+        "meanPnl": 0.36350641360248837,
+        "profitFactor": 2.249842013629537,
+        "worstPct": -1.01,
+        "bestPct": 35.44060176799011,
+        "meanPremiumIn": 0.4496901927572329,
+        "meanDollarsPerContract": 36.35064136024884,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.72,
+        "dte": 1,
+        "n": 724,
+        "winRate": {
+          "k": 197,
+          "n": 724,
+          "point": 0.27209944751381215,
+          "low": 0.24094813715845795,
+          "high": 0.30565642074252786,
+          "reportable": true
+        },
+        "meanPnlPct": 0.06405129710072677,
+        "medianPnlPct": -1.01,
+        "meanPnl": 0.061469511015116135,
+        "profitFactor": 1.0741258305278316,
+        "worstPct": -1.01,
+        "bestPct": 14.730515045269094,
+        "meanPremiumIn": 1.3170484027474627,
+        "meanDollarsPerContract": 6.146951101511614,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.72,
+        "dte": 2,
+        "n": 724,
+        "winRate": {
+          "k": 226,
+          "n": 724,
+          "point": 0.31215469613259667,
+          "low": 0.2794679664046156,
+          "high": 0.3468242752592273,
+          "reportable": true
+        },
+        "meanPnlPct": -0.005418377194421593,
+        "medianPnlPct": -0.3655388477375401,
+        "meanPnl": 0.004916573733626209,
+        "profitFactor": 1.0060391481836806,
+        "worstPct": -1.0099999999999998,
+        "bestPct": 8.889904419878466,
+        "meanPremiumIn": 1.8991086906301675,
+        "meanDollarsPerContract": 0.4916573733626209,
+        "byRegime": null
+      },
+      {
+        "setup": "upperTagShort",
+        "ivScale": 0.72,
+        "dte": 5,
+        "n": 724,
+        "winRate": {
+          "k": 255,
+          "n": 724,
+          "point": 0.35220994475138123,
+          "low": 0.31827974567386635,
+          "high": 0.3877001797528336,
+          "reportable": true
+        },
+        "meanPnlPct": -0.029504135010866277,
+        "medianPnlPct": -0.16710212646888453,
+        "meanPnl": -0.061120466518467156,
+        "profitFactor": 0.9275683644798796,
+        "worstPct": -1.0097548102119644,
+        "bestPct": 4.546571787968268,
+        "meanPremiumIn": 3.03016540507771,
+        "meanDollarsPerContract": -6.112046651846716,
+        "byRegime": null
+      }
+    ],
+    "underlying": {
+      "lowerTagLong": {
+        "n": 687,
+        "mean": 0.0011569483709682688,
+        "win": {
+          "k": 390,
+          "n": 687,
+          "point": 0.5676855895196506,
+          "low": 0.5303659596664982,
+          "high": 0.6042524810952308,
+          "reportable": true
+        }
+      },
+      "upperTagShort": {
+        "n": 724,
+        "mean": -0.00011478161480638688,
+        "win": {
+          "k": 344,
+          "n": 724,
+          "point": 0.47513812154696133,
+          "low": 0.43898953068258506,
+          "high": 0.5115491483611588,
+          "reportable": true
+        }
+      },
+      "allLong": {
+        "n": 2687,
+        "mean": 0.0005578865815589241,
+        "win": {
+          "k": 1478,
+          "n": 2687,
+          "point": 0.550055824339412,
+          "low": 0.5311873066638939,
+          "high": 0.5687814221210021,
+          "reportable": true
+        }
+      }
+    }
+  },
+  "enhancements": {
+    "kGrid": [
+      {
+        "k": 0.8,
+        "n": 2688,
+        "contained": 0.40029761904761907,
+        "upperReached": 0.3247767857142857,
+        "lowerReached": 0.29501488095238093,
+        "closeBreakUpper": 0.20498511904761904,
+        "closeBreakLower": 0.14918154761904762,
+        "meanAbsZ": 0.8857266430387247,
+        "meanZ": 0.06767025477483846
+      },
+      {
+        "k": 0.86,
+        "n": 2688,
+        "contained": 0.44680059523809523,
+        "upperReached": 0.29538690476190477,
+        "lowerReached": 0.2741815476190476,
+        "closeBreakUpper": 0.18415178571428573,
+        "closeBreakLower": 0.13839285714285715,
+        "meanAbsZ": 0.8239317609662551,
+        "meanZ": 0.06294907420915205
+      },
+      {
+        "k": 0.92,
+        "n": 2688,
+        "contained": 0.4880952380952381,
+        "upperReached": 0.2693452380952381,
+        "lowerReached": 0.25595238095238093,
+        "closeBreakUpper": 0.1644345238095238,
+        "closeBreakLower": 0.12686011904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "k": 1,
+        "n": 2688,
+        "contained": 0.5498511904761905,
+        "upperReached": 0.23102678571428573,
+        "lowerReached": 0.22805059523809523,
+        "closeBreakUpper": 0.14434523809523808,
+        "closeBreakLower": 0.11532738095238096,
+        "meanAbsZ": 0.7085813144309777,
+        "meanZ": 0.054136203819870776
+      }
+    ],
+    "skew": [
+      {
+        "skew": 0,
+        "n": 2688,
+        "contained": 0.4880952380952381,
+        "upperReached": 0.2693452380952381,
+        "lowerReached": 0.25595238095238093,
+        "closeBreakUpper": 0.1644345238095238,
+        "closeBreakLower": 0.12686011904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "skew": 0.05,
+        "n": 2688,
+        "contained": 0.48623511904761907,
+        "upperReached": 0.2883184523809524,
+        "lowerReached": 0.23958333333333334,
+        "closeBreakUpper": 0.18043154761904762,
+        "closeBreakLower": 0.11904761904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "skew": 0.1,
+        "n": 2688,
+        "contained": 0.4806547619047619,
+        "upperReached": 0.3098958333333333,
+        "lowerReached": 0.22358630952380953,
+        "closeBreakUpper": 0.19456845238095238,
+        "closeBreakLower": 0.11421130952380952,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "skew": 0.15,
+        "n": 2688,
+        "contained": 0.4713541666666667,
+        "upperReached": 0.33556547619047616,
+        "lowerReached": 0.20684523809523808,
+        "closeBreakUpper": 0.20982142857142858,
+        "closeBreakLower": 0.10714285714285714,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "skew": 0.2,
+        "n": 2688,
+        "contained": 0.46130952380952384,
+        "upperReached": 0.3567708333333333,
+        "lowerReached": 0.19456845238095238,
+        "closeBreakUpper": 0.22247023809523808,
+        "closeBreakLower": 0.10267857142857142,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      }
+    ],
+    "outer": [
+      {
+        "m": 1,
+        "n": 2688,
+        "contained": 0.4880952380952381,
+        "upperReached": 0.2693452380952381,
+        "lowerReached": 0.25595238095238093,
+        "closeBreakUpper": 0.1644345238095238,
+        "closeBreakLower": 0.12686011904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761
+      },
+      {
+        "m": 1.5,
+        "n": 2688,
+        "contained": 0.7578125,
+        "upperReached": 0.10900297619047619,
+        "lowerReached": 0.13430059523809523,
+        "closeBreakUpper": 0.057291666666666664,
+        "closeBreakLower": 0.06845238095238096,
+        "meanAbsZ": 0.51346472060216,
+        "meanZ": 0.03922913320280496
+      },
+      {
+        "m": 2,
+        "n": 2688,
+        "contained": 0.9006696428571429,
+        "upperReached": 0.03050595238095238,
+        "lowerReached": 0.06882440476190477,
+        "closeBreakUpper": 0.017485119047619048,
+        "closeBreakLower": 0.03273809523809524,
+        "meanAbsZ": 0.385098540451619,
+        "meanZ": 0.029421849902103805
+      }
+    ],
+    "blend": [
+      {
+        "window": 10,
+        "weight": 1,
+        "n": 2688,
+        "contained": 0.4880952380952381,
+        "upperReached": 0.2693452380952381,
+        "lowerReached": 0.25595238095238093,
+        "closeBreakUpper": 0.1644345238095238,
+        "closeBreakLower": 0.12686011904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761,
+        "absZErr": 0.027687479899627387,
+        "breakErr": 0.01300793250288565
+      },
+      {
+        "window": 10,
+        "weight": 0.75,
+        "n": 2688,
+        "contained": 0.4270833333333333,
+        "upperReached": 0.30357142857142855,
+        "lowerReached": 0.28608630952380953,
+        "closeBreakUpper": 0.19047619047619047,
+        "closeBreakLower": 0.1409970238095238,
+        "meanAbsZ": 0.8382371823358397,
+        "meanZ": 0.06448046702804068,
+        "absZErr": 0.04035262153297425,
+        "breakErr": 0.0070813532114000766
+      },
+      {
+        "window": 10,
+        "weight": 0.5,
+        "n": 2688,
+        "contained": 0.36235119047619047,
+        "upperReached": 0.3474702380952381,
+        "lowerReached": 0.31287202380952384,
+        "closeBreakUpper": 0.21800595238095238,
+        "closeBreakLower": 0.16071428571428573,
+        "meanAbsZ": 0.9260643331466015,
+        "meanZ": 0.07157000825858549,
+        "absZErr": 0.12817977234373612,
+        "breakErr": 0.030704865116161995
+      },
+      {
+        "window": 10,
+        "weight": 0.25,
+        "n": 2688,
+        "contained": 0.29464285714285715,
+        "upperReached": 0.38913690476190477,
+        "lowerReached": 0.34858630952380953,
+        "closeBreakUpper": 0.24553571428571427,
+        "closeBreakLower": 0.17782738095238096,
+        "meanAbsZ": 1.044784140078041,
+        "meanZ": 0.08088827092993496,
+        "absZErr": 0.2468995792751757,
+        "breakErr": 0.05302629368759054
+      },
+      {
+        "window": 10,
+        "weight": 0,
+        "n": 2688,
+        "contained": 0.2183779761904762,
+        "upperReached": 0.4460565476190476,
+        "lowerReached": 0.3939732142857143,
+        "closeBreakUpper": 0.27232142857142855,
+        "closeBreakLower": 0.2034970238095238,
+        "meanAbsZ": 1.218132917392668,
+        "meanZ": 0.09391654248184925,
+        "absZErr": 0.42024835658980264,
+        "breakErr": 0.07925397225901909
+      },
+      {
+        "window": 20,
+        "weight": 1,
+        "n": 2688,
+        "contained": 0.4880952380952381,
+        "upperReached": 0.2693452380952381,
+        "lowerReached": 0.25595238095238093,
+        "closeBreakUpper": 0.1644345238095238,
+        "closeBreakLower": 0.12686011904761904,
+        "meanAbsZ": 0.770197080903238,
+        "meanZ": 0.05884369980420761,
+        "absZErr": 0.027687479899627387,
+        "breakErr": 0.01300793250288565
+      },
+      {
+        "window": 20,
+        "weight": 0.75,
+        "n": 2688,
+        "contained": 0.43563988095238093,
+        "upperReached": 0.3020833333333333,
+        "lowerReached": 0.27976190476190477,
+        "closeBreakUpper": 0.18973214285714285,
+        "closeBreakLower": 0.14136904761904762,
+        "meanAbsZ": 0.8358458262512891,
+        "meanZ": 0.0643155466701822,
+        "absZErr": 0.03796126544842371,
+        "breakErr": 0.006895341306638159
+      },
+      {
+        "window": 20,
+        "weight": 0.5,
+        "n": 2688,
+        "contained": 0.3783482142857143,
+        "upperReached": 0.34077380952380953,
+        "lowerReached": 0.30357142857142855,
+        "closeBreakUpper": 0.21651785714285715,
+        "closeBreakLower": 0.16034226190476192,
+        "meanAbsZ": 0.9197021240717879,
+        "meanZ": 0.07144107908050695,
+        "absZErr": 0.12181756326892246,
+        "breakErr": 0.02977480559235246
+      },
+      {
+        "window": 20,
+        "weight": 0.25,
+        "n": 2688,
+        "contained": 0.31436011904761907,
+        "upperReached": 0.38169642857142855,
+        "lowerReached": 0.33556547619047616,
+        "closeBreakUpper": 0.23921130952380953,
+        "closeBreakLower": 0.17373511904761904,
+        "meanAbsZ": 1.0313483412933357,
+        "meanZ": 0.08114848062971414,
+        "absZErr": 0.23346378049047034,
+        "breakErr": 0.04781796035425723
+      },
+      {
+        "window": 20,
+        "weight": 0,
+        "n": 2688,
+        "contained": 0.25223214285714285,
+        "upperReached": 0.42931547619047616,
+        "lowerReached": 0.3723958333333333,
+        "closeBreakUpper": 0.26264880952380953,
+        "closeBreakLower": 0.1956845238095238,
+        "meanAbsZ": 1.1903804831278069,
+        "meanZ": 0.09555948909579921,
+        "absZErr": 0.39249592232494146,
+        "breakErr": 0.07051141273520961
+      }
+    ],
+    "openAnchored": {
+      "n": 2688,
+      "contained": 0.6499255952380952,
+      "upperReached": 0.15736607142857142,
+      "lowerReached": 0.20014880952380953,
+      "closeBreakUpper": 0.08333333333333333,
+      "closeBreakLower": 0.09263392857142858,
+      "meanAbsZ": 0.6031815379080521,
+      "meanZ": 0.01958861594988494
+    },
+    "outerAfterBreak": {
+      "k": 450,
+      "n": 783,
+      "point": 0.5747126436781609,
+      "low": 0.5398020839290615,
+      "high": 0.6088936904081955,
+      "reportable": true
+    }
+  }
+}
