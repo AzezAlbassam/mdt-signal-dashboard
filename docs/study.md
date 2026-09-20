@@ -87,3 +87,25 @@ identified after the fact.
 Both adopted enhancements are in `lib/implied-move.js` as `outerBand` and
 `gapThrough`, in `lib/bands.js` behind `OUTER_SIGMA`, and in both Pine scripts
 under the Enhancements group.
+
+## What the study does not cover
+
+**Option prices are modelled, not historical.** There is no archive of SPY option
+quotes in this repository, so every option figure in the study is Black-Scholes
+priced on the real path with the volatility set to a multiple of the prior VIX
+close. That makes the entry volatility an assumption rather than a measurement,
+and the whole options conclusion turns on it. The sensitivity ladder in
+`data/em/study-spy.json` exists for exactly that reason.
+
+**The index, not the fund.** Everything is measured on SPY. An SPX trade is the
+same band arithmetic on a ticket about ten times the size. In the chains captured
+here the index strikes sit five points apart on a 7,655 index, which is 0.065 per
+cent, and the fund's sit a dollar apart on a 765 fund, which is 0.13 per cent, so
+relative to price the index grid is the finer of the two. What differs is size:
+one contract is a much larger commitment, and a structure sized as a lottery
+ticket in the fund is not one in the index.
+
+**One underlying, one decade.** 2,688 bands is a lot of sessions but one market
+regime sequence. The out-of-sample splits test whether a fitted parameter
+survives a different span; they cannot test whether the whole relationship
+survives a market nobody has seen yet.
