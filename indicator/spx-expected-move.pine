@@ -60,12 +60,22 @@ colUpZone  = input.color(color.new(#93412F, 78), "Upper zone",   group = gS)
 colDnZone  = input.color(color.new(#4C6839, 76), "Lower zone",   group = gS)
 extendBars = input.int(26, "Project this many bars right", minval = 4, maxval = 200, group = gS)
 
-gE = "Enhancements — measured over a decade of sessions"
-showOuter = input.bool(true, "Outer two-sigma band", group = gE,
-     tooltip = "The iVol band scaled by the multiple below. Over 2,688 real SPY sessions the two-sigma band contained the intraday range 90% of the time and, after a close through the inner band, was reached within that session or the next 57.5% of the time (n=783). A target, not an entry.")
+gE = "Extras — what a decade of sessions actually supports"
+useRegime = input.bool(false, "Calibrate the band to the volatility regime", group = gE,
+     tooltip = "OFF reproduces the published charts, which plot one constant multiple of volatility. ON rescales the band to a true one standard deviation using a multiplier refitted per VIX tercile on a rolling 500-session window. Over 2,688 SPY sessions the constant realised a mean |z| of 0.64 in the calmest third and 0.90 in the most stressed, against 0.798 for a true one sigma; the regime version cuts the weighted calibration error from 0.077 to 0.011. This is the only change to the indicator that survived a walk-forward test. It will not match the published lines.")
+regimeBase = input.float(0.92, "Multiple already in the band", minval = 0.3, maxval = 2, step = 0.01, group = gE,
+     tooltip = "What the plotted volatility is worth as a multiple of VIX. The band is rescaled by the regime multiplier divided by this.")
+regimeCutLo = input.float(16.35, "VIX cut, calm to normal",    minval = 5, maxval = 60, step = 0.01, group = gE)
+regimeCutHi = input.float(18.67, "VIX cut, normal to stressed", minval = 5, maxval = 60, step = 0.01, group = gE)
+regimeKLo   = input.float(0.7291, "Multiplier, calm",     minval = 0.3, maxval = 2, step = 0.0001, group = gE)
+regimeKMid  = input.float(0.8115, "Multiplier, normal",   minval = 0.3, maxval = 2, step = 0.0001, group = gE)
+regimeKHi   = input.float(0.9804, "Multiplier, stressed", minval = 0.3, maxval = 2, step = 0.0001, group = gE)
+
+showOuter = input.bool(false, "Outer two-sigma line", group = gE,
+     tooltip = "A geometric target, NOT an edge. After a close through the inner band the two-sigma line was reached within that session or the next 57.5% of the time (n=783), which is what a random walk of the same width gives for free (58%), and 31% of those reaches had already happened before the close that defined the setup. Of the breaks that had not already reached it, 38% did next session. Draw it as a target if it helps you place an order; do not read it as a signal.")
 outerMult = input.float(2.0, "Outer multiple", minval = 1.25, maxval = 3, step = 0.25, group = gE)
 showGap  = input.bool(true, "Flag a band the session opened beyond", group = gE,
-     tooltip = "A level the session opened past was never available as a fill. Roughly one lower-band touch in five over the decade was a gap through at the open, and any trade entered at the band on those days is fiction.")
+     tooltip = "A fill note, not a signal. A level the session opened past never traded, so no order could have been filled there. 22% of lower-band touches and 14% of upper-band touches over the decade were gaps through at the open. Filtering trades on it does not improve anything; it just stops you counting fills you could never have had.")
 showLabels = input.bool(true, "Labels", group = gS)
 warnAmSettle = input.bool(true, "Warn on monthly settlement week", group = gS,
      tooltip = "The index monthly contract settles on the opening print of the third Friday, not its close. In that week the weekly band is measuring to an opening auction.")
@@ -81,8 +91,13 @@ sessionOpen   = request.security(syminfo.tickerid, "D", open)
 
 iv = ivSource == "Manual" or na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
 
+// The regime multiplier, off by default: the published charts plot a constant.
+regimeK() =>
+    na(vixClose) ? regimeBase : vixClose <= regimeCutLo ? regimeKLo : vixClose <= regimeCutHi ? regimeKMid : regimeKHi
+regimeScale = useRegime and regimeBase > 0 ? regimeK() / regimeBase : 1.0
+
 halfWidth(anchorClose, sessions) =>
-    na(anchorClose) or na(iv) ? na : anchorClose * iv * math.sqrt(sessions / 365.0)
+    na(anchorClose) or na(iv) ? na : anchorClose * iv * math.sqrt(sessions / 365.0) * regimeScale
 
 ivolDailyHalf   = halfWidth(dailyAnchor,   1)
 ivolWeeklyHalf  = halfWidth(weeklyAnchor,  weeklySessions)

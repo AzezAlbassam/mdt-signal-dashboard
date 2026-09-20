@@ -436,6 +436,8 @@
         "worstPct": -1.01,
         "bestPct": 12.074811029273603,
         "meanPremiumIn": 0.7667658905193633,
+        "meanCostShare": 0.024114196519080443,
+        "costShareAggregate": 0.02405953755255557,
         "meanDollarsPerContract": 29.282345992123656
       },
       {
@@ -460,6 +462,8 @@
         "worstPct": -1.01,
         "bestPct": 19.045576324023678,
         "meanPremiumIn": 0.5503721724400285,
+        "meanCostShare": 0.03050107104511964,
+        "costShareAggregate": 0.02958742533072087,
         "meanDollarsPerContract": 51.1381115181365
       },
       {
@@ -484,6 +488,8 @@
         "worstPct": -1.01,
         "bestPct": 30.888444770554223,
         "meanPremiumIn": 0.40039550199403834,
+        "meanCostShare": 0.041347642241264825,
+        "costShareAggregate": 0.03692431303070987,
         "meanDollarsPerContract": 66.28575523318145
       },
       {
@@ -508,6 +514,8 @@
         "worstPct": -1.01,
         "bestPct": 9.545136807169099,
         "meanPremiumIn": 1.8994841963992766,
+        "meanCostShare": 0.020822829234897776,
+        "costShareAggregate": 0.020678912240934617,
         "meanDollarsPerContract": 8.967904023935077
       },
       {
@@ -532,6 +540,8 @@
         "worstPct": -1.0098792120484608,
         "bestPct": 6.529011655234222,
         "meanPremiumIn": 2.7451331250556064,
+        "meanCostShare": 0.020353725196657114,
+        "costShareAggregate": 0.020426102249874463,
         "meanDollarsPerContract": 6.089837017720366
       },
       {
@@ -556,6 +566,8 @@
         "worstPct": -0.9469604876920635,
         "bestPct": 3.0867477040346256,
         "meanPremiumIn": 4.32087544730522,
+        "meanCostShare": 0.020139028694827286,
+        "costShareAggregate": 0.02026416418645394,
         "meanDollarsPerContract": 2.6583125237200806
       },
       {
@@ -580,6 +592,8 @@
         "worstPct": -1.01,
         "bestPct": 16.632525818557266,
         "meanPremiumIn": 0.6058332592152769,
+        "meanCostShare": 0.028318781350957167,
+        "costShareAggregate": 0.02779429185802588,
         "meanDollarsPerContract": 45.53654175383639
       },
       {
@@ -604,6 +618,8 @@
         "worstPct": -1.01,
         "bestPct": 26.703863872873487,
         "meanPremiumIn": 0.4386432768032712,
+        "meanCostShare": 0.037437296273852255,
+        "costShareAggregate": 0.03457663071993381,
         "meanDollarsPerContract": 62.42272997744893
       },
       {
@@ -628,6 +644,8 @@
         "worstPct": -1.01,
         "bestPct": 92.11624025879355,
         "meanPremiumIn": 0.32400250695005245,
+        "meanCostShare": 0.05589555029247814,
+        "costShareAggregate": 0.04327250129406432,
         "meanDollarsPerContract": 74.00144773262402
       },
       {
@@ -652,6 +670,8 @@
         "worstPct": -1.01,
         "bestPct": 12.349661446929417,
         "meanPremiumIn": 1.4891830284142031,
+        "meanCostShare": 0.02385175245767067,
+        "costShareAggregate": 0.02362117661117221,
         "meanDollarsPerContract": 50.40832199042738
       },
       {
@@ -676,6 +696,8 @@
         "worstPct": -1.0099985181699533,
         "bestPct": 8.558416265662428,
         "meanPremiumIn": 2.1502524349027183,
+        "meanCostShare": 0.02191225413478667,
+        "costShareAggregate": 0.022005332393740865,
         "meanDollarsPerContract": 38.38800666825812
       },
       {
@@ -700,6 +722,8 @@
         "worstPct": -0.9879482618535093,
         "bestPct": 4.183575231603435,
         "meanPremiumIn": 3.382894941486769,
+        "meanCostShare": 0.020788690049435544,
+        "costShareAggregate": 0.020974355793218234,
         "meanDollarsPerContract": 25.866028629482287
       },
       {
@@ -724,6 +748,8 @@
         "worstPct": -1.01,
         "bestPct": 11.272517193381914,
         "meanPremiumIn": 0.7783901865410214,
+        "meanCostShare": 0.019112737888966263,
+        "costShareAggregate": 0.019854886614880708,
         "meanDollarsPerContract": -2.6750332387169657
       },
       {
@@ -748,6 +774,8 @@
         "worstPct": -1.01,
         "bestPct": 17.316256755367167,
         "meanPremiumIn": 0.5571908412224755,
+        "meanCostShare": 0.023001276364539202,
+        "costShareAggregate": 0.02376718076282009,
         "meanDollarsPerContract": 19.666100638456193
       },
       {
@@ -772,6 +800,8 @@
         "worstPct": -1.01,
         "bestPct": 29.081277378920916,
         "meanPremiumIn": 0.4033414812407094,
+        "meanCostShare": 0.029163528593656087,
+        "costShareAggregate": 0.029018492734496783,
         "meanDollarsPerContract": 35.20488599661455
       },
       {
@@ -796,6 +826,8 @@
         "worstPct": -1.01,
         "bestPct": 10.700070653447343,
         "meanPremiumIn": 1.677324666275829,
+        "meanCostShare": 0.018491034714087546,
+        "costShareAggregate": 0.018380881081745324,
         "meanDollarsPerContract": -30.240951514853137
       },
       {
@@ -820,6 +852,8 @@
         "worstPct": -1.0099999999556344,
         "bestPct": 6.8912175192341545,
         "meanPremiumIn": 2.4221687609938733,
+        "meanCostShare": 0.019049629950405468,
+        "costShareAggregate": 0.01910679692474985,
         "meanDollarsPerContract": -26.262874524323323
       },
       {
@@ -844,6 +878,8 @@
         "worstPct": -1.0072266531516585,
         "bestPct": 3.4542774107551013,
         "meanPremiumIn": 3.868313090220831,
+        "meanCostShare": 0.01951534430048136,
+        "costShareAggregate": 0.0195662323046309,
         "meanDollarsPerContract": -24.348323796141877
       },
       {
@@ -868,6 +904,8 @@
         "worstPct": -1.01,
         "bestPct": 15.141155345470258,
         "meanPremiumIn": 0.6139410291584597,
+        "meanCostShare": 0.021694105128554974,
+        "costShareAggregate": 0.022494599100197455,
         "meanDollarsPerContract": 13.934331656921787
       },
       {
@@ -892,6 +930,8 @@
         "worstPct": -1.01,
         "bestPct": 24.175364687391617,
         "meanPremiumIn": 0.44265191078022753,
+        "meanCostShare": 0.027004372893979292,
+        "costShareAggregate": 0.02732952426880215,
         "meanDollarsPerContract": 31.23453261312327
       },
       {
@@ -916,6 +956,8 @@
         "worstPct": -1.01,
         "bestPct": 81.87421948692761,
         "meanPremiumIn": 0.3245550530395705,
+        "meanCostShare": 0.03668664141222789,
+        "costShareAggregate": 0.03363527222471666,
         "meanDollarsPerContract": 43.162315244929566
       },
       {
@@ -940,6 +982,8 @@
         "worstPct": -1.01,
         "bestPct": 14.730515045269094,
         "meanPremiumIn": 1.3170484027474627,
+        "meanCostShare": 0.020849003001017313,
+        "costShareAggregate": 0.02067345629379376,
         "meanDollarsPerContract": 6.146951101511614
       },
       {
@@ -964,6 +1008,8 @@
         "worstPct": -1.0099999999999998,
         "bestPct": 8.889904419878466,
         "meanPremiumIn": 1.8991086906301675,
+        "meanCostShare": 0.020147289119248266,
+        "costShareAggregate": 0.020228170554125246,
         "meanDollarsPerContract": 0.4916573733626209
       },
       {
@@ -988,6 +1034,8 @@
         "worstPct": -1.0097548102119644,
         "bestPct": 4.546571787968268,
         "meanPremiumIn": 3.03016540507771,
+        "meanCostShare": 0.01990399863625386,
+        "costShareAggregate": 0.019998276060315314,
         "meanDollarsPerContract": -6.112046651846716
       }
     ],
@@ -1083,6 +1131,281 @@
         "meanPremiumIn": 1.2592589491198232
       }
     ],
+    "ladder": [
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "lowerTagLong",
+        "dte": 0,
+        "n": 535,
+        "winRate": 0.38878504672897196,
+        "meanPnlPct": 0.3508893817719622,
+        "medianPnlPct": -0.8817351762283665,
+        "profitFactor": 1.6553333604514229,
+        "meanPremiumIn": 0.7667658905193633,
+        "meanCostShare": 0.060530270136091885,
+        "costShareAggregate": 0.0428721433787243,
+        "meanDollarsPerContract": 27.839859546194194
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "lowerTagLong",
+        "dte": 1,
+        "n": 687,
+        "winRate": 0.3682678311499272,
+        "meanPnlPct": 0.057177115694394334,
+        "medianPnlPct": -0.7081840283979753,
+        "profitFactor": 1.0926057140206331,
+        "meanPremiumIn": 1.8994841963992766,
+        "meanCostShare": 0.025105807795391653,
+        "costShareAggregate": 0.017760893049940364,
+        "meanDollarsPerContract": 9.522177157743284
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "lowerTagLong",
+        "dte": 2,
+        "n": 687,
+        "winRate": 0.39737991266375544,
+        "meanPnlPct": 0.014157308712931438,
+        "medianPnlPct": -0.19824044343424932,
+        "profitFactor": 1.0819875275515998,
+        "meanPremiumIn": 2.7451331250556064,
+        "meanCostShare": 0.021215210952778497,
+        "costShareAggregate": 0.015664085507375337,
+        "meanDollarsPerContract": 7.397074007910677
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "lowerTagLong",
+        "dte": 5,
+        "n": 687,
+        "winRate": 0.4366812227074236,
+        "meanPnlPct": 0.0009355010111252424,
+        "medianPnlPct": -0.06856778394433109,
+        "profitFactor": 1.0880672504982647,
+        "meanPremiumIn": 4.32087544730522,
+        "meanCostShare": 0.01296736847160581,
+        "costShareAggregate": 0.009951686995934376,
+        "meanDollarsPerContract": 7.114205473061172
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "upperTagShort",
+        "dte": 0,
+        "n": 623,
+        "winRate": 0.22150882825040127,
+        "meanPnlPct": -0.14334148284283504,
+        "medianPnlPct": -1.0191982709464933,
+        "profitFactor": 0.9243880889437858,
+        "meanPremiumIn": 0.7783901865410214,
+        "meanCostShare": 0.0546152717394723,
+        "costShareAggregate": 0.03830599994936633,
+        "meanDollarsPerContract": -4.111249793748964
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "upperTagShort",
+        "dte": 1,
+        "n": 724,
+        "winRate": 0.22513812154696133,
+        "meanPnlPct": -0.1769873897580144,
+        "medianPnlPct": -1.0071984895123502,
+        "profitFactor": 0.7274265988964438,
+        "meanPremiumIn": 1.677324666275829,
+        "meanCostShare": 0.02609086116677941,
+        "costShareAggregate": 0.01881984423466698,
+        "meanDollarsPerContract": -30.314579887251487
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "upperTagShort",
+        "dte": 2,
+        "n": 724,
+        "winRate": 0.26933701657458564,
+        "meanPnlPct": -0.11915854901654843,
+        "medianPnlPct": -0.3713733610304048,
+        "profitFactor": 0.7422697510252303,
+        "meanPremiumIn": 2.4221687609938733,
+        "meanCostShare": 0.024121544057092773,
+        "costShareAggregate": 0.017752685400151704,
+        "meanDollarsPerContract": -25.934885860945144
+      },
+      {
+        "volAnchor": "knownAtEntry",
+        "setup": "upperTagShort",
+        "dte": 5,
+        "n": 724,
+        "winRate": 0.3342541436464088,
+        "meanPnlPct": -0.06303581401351424,
+        "medianPnlPct": -0.16293229120462982,
+        "profitFactor": 0.7800406085055457,
+        "meanPremiumIn": 3.868313090220831,
+        "meanCostShare": 0.014570244061648606,
+        "costShareAggregate": 0.011115956489846776,
+        "meanDollarsPerContract": -21.079492541111414
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "lowerTagLong",
+        "dte": 0,
+        "n": 535,
+        "winRate": 0.38878504672897196,
+        "meanPnlPct": 0.3508893817719622,
+        "medianPnlPct": -0.8817351762283665,
+        "profitFactor": 1.6553333604514229,
+        "meanPremiumIn": 0.7667658905193633,
+        "meanCostShare": 0.060530270136091885,
+        "costShareAggregate": 0.0428721433787243,
+        "meanDollarsPerContract": 27.839859546194194
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "lowerTagLong",
+        "dte": 1,
+        "n": 687,
+        "winRate": 0.37554585152838427,
+        "meanPnlPct": 0.14021809610028713,
+        "medianPnlPct": -0.6961899759714221,
+        "profitFactor": 1.2430194669408152,
+        "meanPremiumIn": 1.7643512189128394,
+        "meanCostShare": 0.027008124869023372,
+        "costShareAggregate": 0.019121213112595178,
+        "meanDollarsPerContract": 23.035474906386604
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "lowerTagLong",
+        "dte": 2,
+        "n": 687,
+        "winRate": 0.4279475982532751,
+        "meanPnlPct": 0.09582535166436199,
+        "medianPnlPct": -0.15158355870894422,
+        "profitFactor": 1.346313106057018,
+        "meanPremiumIn": 2.5451321577091397,
+        "meanCostShare": 0.02279885698563963,
+        "costShareAggregate": 0.016894996933559458,
+        "meanDollarsPerContract": 27.397170742557066
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "lowerTagLong",
+        "dte": 5,
+        "n": 687,
+        "winRate": 0.5094614264919942,
+        "meanPnlPct": 0.080867978860914,
+        "medianPnlPct": 0.00881780193359212,
+        "profitFactor": 1.589970171076591,
+        "meanPremiumIn": 4.003534568746858,
+        "meanCostShare": 0.013907311115912944,
+        "costShareAggregate": 0.010740509232934856,
+        "meanDollarsPerContract": 38.84829332889698
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "upperTagShort",
+        "dte": 0,
+        "n": 623,
+        "winRate": 0.22150882825040127,
+        "meanPnlPct": -0.14334148284283504,
+        "medianPnlPct": -1.0191982709464933,
+        "profitFactor": 0.9243880889437858,
+        "meanPremiumIn": 0.7783901865410214,
+        "meanCostShare": 0.0546152717394723,
+        "costShareAggregate": 0.03830599994936633,
+        "meanDollarsPerContract": -4.111249793748964
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "upperTagShort",
+        "dte": 1,
+        "n": 724,
+        "winRate": 0.21961325966850828,
+        "meanPnlPct": -0.2245507427243827,
+        "medianPnlPct": -1.0065724562300815,
+        "profitFactor": 0.6572879735276227,
+        "meanPremiumIn": 1.78245887821829,
+        "meanCostShare": 0.024757507022191032,
+        "costShareAggregate": 0.017709799275610557,
+        "meanDollarsPerContract": -40.82800108149784
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "upperTagShort",
+        "dte": 2,
+        "n": 724,
+        "winRate": 0.2541436464088398,
+        "meanPnlPct": -0.16774313502593818,
+        "medianPnlPct": -0.40741127662121224,
+        "profitFactor": 0.6343721907793941,
+        "meanPremiumIn": 2.569837348415454,
+        "meanCostShare": 0.022870546298868057,
+        "costShareAggregate": 0.016732576490303176,
+        "meanDollarsPerContract": -40.70174460310373
+      },
+      {
+        "volAnchor": "anchor",
+        "setup": "upperTagShort",
+        "dte": 5,
+        "n": 724,
+        "winRate": 0.2886740331491713,
+        "meanPnlPct": -0.11322412173250762,
+        "medianPnlPct": -0.20985941446595663,
+        "profitFactor": 0.6002059921170517,
+        "meanPremiumIn": 4.105082240591441,
+        "meanCostShare": 0.013820594448052786,
+        "costShareAggregate": 0.010474820595507542,
+        "meanDollarsPerContract": -44.756407578173274
+      }
+    ],
+    "realCosts": [
+      {
+        "ivScale": 0.92,
+        "n": 535,
+        "winRate": 0.38878504672897196,
+        "meanPnlPct": 0.3508893817719622,
+        "profitFactor": 1.6553333604514229,
+        "meanPremiumIn": 0.7667658905193633,
+        "meanCostShare": 0.060530270136091885,
+        "costShareAggregate": 0.0428721433787243
+      },
+      {
+        "ivScale": 1.15,
+        "n": 535,
+        "winRate": 0.3514018691588785,
+        "meanPnlPct": 0.07551075970351695,
+        "profitFactor": 1.1698552906541082,
+        "meanPremiumIn": 0.9531704541561513,
+        "meanCostShare": 0.04704950164480695,
+        "costShareAggregate": 0.03448795234149801
+      },
+      {
+        "ivScale": 1.264,
+        "n": 535,
+        "winRate": 0.3383177570093458,
+        "meanPnlPct": -0.02219754585295181,
+        "profitFactor": 0.9988271469426657,
+        "meanPremiumIn": 1.045870331626646,
+        "meanCostShare": 0.04244991129719829,
+        "costShareAggregate": 0.03143114036434519
+      },
+      {
+        "ivScale": 1.46,
+        "n": 535,
+        "winRate": 0.31588785046728973,
+        "meanPnlPct": -0.15357673005058498,
+        "profitFactor": 0.7736564373099127,
+        "meanPremiumIn": 1.205553827095023,
+        "meanCostShare": 0.03639773835207753,
+        "costShareAggregate": 0.027267880087506274
+      }
+    ],
+    "selection": {
+      "meanRangeLowerTouch": 0.016897588780494438,
+      "meanRangeAll": 0.011270339209777415,
+      "meanRangeNoTouch": 0.007513543464504036,
+      "ratioTouchToAll": 1.4992972674535996,
+      "note": "A session that reaches a one-sigma band is by selection a volatile one, so the volatility quoted at the moment of the touch is not the previous close."
+    },
     "zeroDteSlippage": [
       {
         "ivScale": 0.92,
@@ -1752,12 +2075,267 @@
       "meanZ": 0.01958861594988494
     },
     "outerAfterBreak": {
-      "k": 450,
       "n": 783,
-      "point": 0.5747126436781609,
-      "low": 0.5398020839290615,
-      "high": 0.6088936904081955,
-      "reportable": true
-    }
+      "multiple": 2,
+      "skipped": 0,
+      "reached": {
+        "k": 450,
+        "n": 783,
+        "point": 0.5747126436781609,
+        "low": 0.5398020839290615,
+        "high": 0.6088936904081955,
+        "reportable": true
+      },
+      "sameSession": {
+        "k": 243,
+        "n": 783,
+        "point": 0.3103448275862069,
+        "low": 0.278932177512994,
+        "high": 0.34360931840012293,
+        "reportable": true
+      },
+      "nextSessionOnly": {
+        "k": 207,
+        "n": 783,
+        "point": 0.26436781609195403,
+        "low": 0.23468337040953524,
+        "high": 0.2963530336037312,
+        "reportable": true
+      },
+      "tradeable": {
+        "k": 207,
+        "n": 540,
+        "point": 0.38333333333333336,
+        "low": 0.3432865569469371,
+        "high": 0.4250282745974845,
+        "reportable": true
+      }
+    },
+    "outerBaseRate": {
+      "matched": {
+        "k": 34946,
+        "n": 60216,
+        "point": 0.5803440945927992,
+        "low": 0.5763974096998885,
+        "high": 0.5842805290923716,
+        "reportable": true,
+        "paths": 200000,
+        "steps": 78,
+        "halfWidth": 1.036,
+        "multiple": 2,
+        "seed": 20260920
+      },
+      "trueSigma": {
+        "k": 38594,
+        "n": 63604,
+        "point": 0.6067857367461166,
+        "low": 0.6029832920367786,
+        "high": 0.6105752832655162,
+        "reportable": true,
+        "paths": 200000,
+        "steps": 78,
+        "halfWidth": 1,
+        "multiple": 2,
+        "seed": 20260920
+      },
+      "note": "halfWidth 1.036 is the measured band: mean |z| 0.770 against a normal 0.798 means the band is 3.6 per cent wider than the true one sigma of the close."
+    },
+    "regimeErrorFixed": {
+      "n": 2688,
+      "cuts": {
+        "low": 14.82,
+        "high": 19.4
+      },
+      "pooled": 0.027687479899627387,
+      "weighted": 0.09686149952806897,
+      "meanAbsZ": 0.770197080903238,
+      "byRegime": {
+        "low": {
+          "n": 899,
+          "meanAbsZ": 0.6431527155261095,
+          "error": 0.15473184527675587
+        },
+        "mid": {
+          "n": 893,
+          "meanAbsZ": 0.7662049421611846,
+          "error": 0.031679618641680785
+        },
+        "high": {
+          "n": 896,
+          "meanAbsZ": 0.9016455902455272,
+          "error": 0.10376102944266175
+        }
+      }
+    },
+    "rollingRegime": [
+      {
+        "window": 250,
+        "n": 2438,
+        "k": {
+          "low": 0.7286656867145533,
+          "mid": 0.8540920583436578,
+          "high": 0.8338346975315256
+        },
+        "cuts": {
+          "low": 16.35,
+          "high": 18.43
+        },
+        "fixed": {
+          "pooled": 0.023312398775142462,
+          "weighted": 0.09228651921847406,
+          "byRegime": {
+            "low": {
+              "n": 758,
+              "meanAbsZ": 0.6468774220841743,
+              "error": 0.1510071387186911
+            },
+            "mid": {
+              "n": 829,
+              "meanAbsZ": 0.7659766357299458,
+              "error": 0.03190792507291962
+            },
+            "high": {
+              "n": 851,
+              "meanAbsZ": 0.8966853279243948,
+              "error": 0.09880076712152941
+            }
+          }
+        },
+        "regime": {
+          "pooled": 0.00027440119149768627,
+          "weighted": 0.013707414473715391,
+          "byRegime": {
+            "low": {
+              "n": 758,
+              "meanAbsZ": 0.7833433750298273,
+              "error": 0.01454118577303809
+            },
+            "mid": {
+              "n": 829,
+              "meanAbsZ": 0.8184440702068407,
+              "error": 0.02055950940397533
+            },
+            "high": {
+              "n": 851,
+              "meanAbsZ": 0.791594755426767,
+              "error": 0.006289805376098356
+            }
+          }
+        },
+        "improves": true
+      },
+      {
+        "window": 500,
+        "n": 2188,
+        "k": {
+          "low": 0.7291315149488087,
+          "mid": 0.8115475269179091,
+          "high": 0.9803599932314656
+        },
+        "cuts": {
+          "low": 16.35,
+          "high": 18.67
+        },
+        "fixed": {
+          "pooled": 0.0003872880718178706,
+          "weighted": 0.07646778763240633,
+          "byRegime": {
+            "low": {
+              "n": 516,
+              "meanAbsZ": 0.6871177243962023,
+              "error": 0.11076683640666307
+            },
+            "mid": {
+              "n": 821,
+              "meanAbsZ": 0.7661228325039063,
+              "error": 0.03176172829895907
+            },
+            "high": {
+              "n": 851,
+              "meanAbsZ": 0.8966853279243948,
+              "error": 0.09880076712152941
+            }
+          }
+        },
+        "regime": {
+          "pooled": 0.0017210000125007507,
+          "weighted": 0.01102352139991141,
+          "byRegime": {
+            "low": {
+              "n": 516,
+              "meanAbsZ": 0.7857334649054115,
+              "error": 0.01215109589745389
+            },
+            "mid": {
+              "n": 821,
+              "meanAbsZ": 0.7931257387386251,
+              "error": 0.004758822064240276
+            },
+            "high": {
+              "n": 851,
+              "meanAbsZ": 0.8142682346279873,
+              "error": 0.016383673825121847
+            }
+          }
+        },
+        "improves": true
+      },
+      {
+        "window": 1000,
+        "n": 1688,
+        "k": {
+          "low": 0.8542925343528787,
+          "mid": 0.84081799310562,
+          "high": 1.0212905119648348
+        },
+        "cuts": {
+          "low": 15.65,
+          "high": 18.66
+        },
+        "fixed": {
+          "pooled": 0.00409836227695215,
+          "weighted": 0.0794480351020586,
+          "byRegime": {
+            "low": {
+              "n": 275,
+              "meanAbsZ": 0.7268935041248976,
+              "error": 0.07099105667796779
+            },
+            "mid": {
+              "n": 652,
+              "meanAbsZ": 0.7196780902485042,
+              "error": 0.07820647055436125
+            },
+            "high": {
+              "n": 761,
+              "meanAbsZ": 0.8814523976811706,
+              "error": 0.08356783687830516
+            }
+          }
+        },
+        "regime": {
+          "pooled": 0.020835910662039936,
+          "weighted": 0.03572308795323438,
+          "byRegime": {
+            "low": {
+              "n": 275,
+              "meanAbsZ": 0.8435746612892951,
+              "error": 0.04569010048642974
+            },
+            "mid": {
+              "n": 652,
+              "meanAbsZ": 0.7595243656667627,
+              "error": 0.03836019513610267
+            },
+            "high": {
+              "n": 761,
+              "meanAbsZ": 0.7680226060031906,
+              "error": 0.029861954799674795
+            }
+          }
+        },
+        "improves": true
+      }
+    ]
   }
 }

@@ -13,6 +13,7 @@ import {
   dailyBandSeries, calibrate, calibrateSeries, solveK, scoreSetups, simulateSetup, summariseTrades,
   skewedBandSeries, scaledSeries, blendedBandSeries, regimeCalibration, openAnchoredSeries,
   vixTerciles, THEORY, wilsonRate, solveKByRegime, regimeAdjustedSeries, outOfSample,
+  regimeError, rollingRegime, outerAfterBreak, reachAfterBreakBaseRate,
 } from '../lib/study.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -84,6 +85,61 @@ for (const setup of ['lowerTagLong', 'upperTagShort']) for (const ivScale of [0.
   const sum = summariseTrades(simulateSetup(S, { setup, dte: 0, k: K, ivScale, slippage: 0.01, entryFraction: 1, excludeGapThrough: true }))
   out.options.zeroDteIvSensitivity.push({ setup, ivScale, n: sum.n, meanPnlPct: sum.meanPnlPct, winRate: sum.winRate.point, profitFactor: sum.profitFactor, meanPremiumIn: sum.meanPremiumIn })
 }
+// The ladder, read as one experiment. The rungs above are each priced on the
+// volatility known when that rung is entered, which is not the same number:
+// a same-session leg is entered intraday off the previous VIX close, a held
+// leg at the close off that session's. Pricing every rung on the anchor is
+// the only way to compare them, and it moves them all.
+out.options.ladder = []
+for (const volAnchor of ['knownAtEntry', 'anchor']) {
+  for (const setup of ['lowerTagLong', 'upperTagShort']) {
+    for (const dte of [0, 1, 2, 5]) {
+      const trades = simulateSetup(S, {
+        setup, dte, k: K, ivScale: K, volAnchor, entryFraction: 1,
+        excludeGapThrough: dte === 0, halfSpread: 0.015, commission: 0.65,
+      })
+      const sum = summariseTrades(trades)
+      out.options.ladder.push({
+        volAnchor, setup, dte, n: sum.n, winRate: sum.winRate.point, meanPnlPct: sum.meanPnlPct,
+        medianPnlPct: sum.medianPnlPct, profitFactor: sum.profitFactor, meanPremiumIn: sum.meanPremiumIn,
+        meanCostShare: sum.meanCostShare, costShareAggregate: sum.costShareAggregate,
+        meanDollarsPerContract: sum.meanPnl * 100,
+      })
+    }
+  }
+}
+
+// A cost model a broker would recognise: a penny and a half of half-spread and
+// 65 cents a contract, charged on the way out only when the leg is worth closing.
+out.options.realCosts = []
+for (const ivScale of [0.92, 1.15, 1.264, 1.46]) {
+  const sum = summariseTrades(simulateSetup(S, {
+    setup: 'lowerTagLong', dte: 0, k: K, ivScale, entryFraction: 1,
+    excludeGapThrough: true, halfSpread: 0.015, commission: 0.65,
+  }))
+  out.options.realCosts.push({
+    ivScale, n: sum.n, winRate: sum.winRate.point, meanPnlPct: sum.meanPnlPct,
+    profitFactor: sum.profitFactor, meanPremiumIn: sum.meanPremiumIn,
+    meanCostShare: sum.meanCostShare, costShareAggregate: sum.costShareAggregate,
+  })
+}
+
+// How volatile the sessions that reach a band are, which is what decides
+// whether 0.92 x the previous VIX close is anywhere near the real quote.
+{
+  const series = dailyBandSeries(S, { k: K })
+  const range = (rows) => rows.reduce((a, b) => a + (b.session.high - b.session.low) / b.session.close, 0) / rows.length
+  const touched = series.filter((b) => b.session.low <= b.lower)
+  const untouched = series.filter((b) => b.session.low > b.lower && b.session.high < b.upper)
+  out.options.selection = {
+    meanRangeLowerTouch: range(touched),
+    meanRangeAll: range(series),
+    meanRangeNoTouch: range(untouched),
+    ratioTouchToAll: range(touched) / range(series),
+    note: 'A session that reaches a one-sigma band is by selection a volatile one, so the volatility quoted at the moment of the touch is not the previous close.',
+  }
+}
+
 // what realistic bid-ask costs do to a sub-dollar 0DTE option
 out.options.zeroDteSlippage = []
 for (const ivScale of [0.92, 1.15]) for (const slippage of [0.01, 0.03, 0.05]) {
@@ -121,25 +177,31 @@ for (const window of [10, 20]) for (const weight of [1, 0.75, 0.5, 0.25, 0]) {
   out.enhancements.blend.push({ window, weight, ...c, absZErr: Math.abs(c.meanAbsZ - THEORY.meanAbsZ), breakErr: Math.abs((c.closeBreakUpper + c.closeBreakLower) / 2 - THEORY.oneSidedBreak) })
 }
 out.enhancements.openAnchored = calibrateSeries(openAnchoredSeries(S, { k: K }))
-// the outer band as a target after a close-break of the inner
-{
-  const inner = base
-  const idx = new Map(S.map((s, i) => [s.date, i]))
-  const hits = { n: 0, k: 0 }
-  for (const b of inner) {
-    const s = b.session
-    const side = s.close > b.upper ? 'up' : s.close < b.lower ? 'down' : null
-    if (!side) continue
-    const nxt = S[idx.get(s.date) + 1]
-    if (!nxt) continue
-    // the next session's band, and whether it runs to the outer 2σ of the ORIGINAL anchor
-    const outerUp = b.center + 2 * b.halfWidth
-    const outerDn = b.center - 2 * b.halfWidth
-    hits.n++
-    if (side === 'up' ? (s.high >= outerUp || nxt.high >= outerUp) : (s.low <= outerDn || nxt.low <= outerDn)) hits.k++
-  }
-  out.enhancements.outerAfterBreak = wilsonRate(hits.k, hits.n)
+// The outer band after a close break of the inner one, split into the part
+// that was over before the signal existed and the part that was still ahead,
+// each against the rate a random walk of the same width gives for free.
+out.enhancements.outerAfterBreak = outerAfterBreak(S, { k: K, multiple: 2 })
+out.enhancements.outerBaseRate = {
+  matched: reachAfterBreakBaseRate({ paths: 200000, halfWidth: 1.036, multiple: 2, seed: 20260920 }),
+  trueSigma: reachAfterBreakBaseRate({ paths: 200000, halfWidth: 1, multiple: 2, seed: 20260920 }),
+  note: 'halfWidth 1.036 is the measured band: mean |z| 0.770 against a normal 0.798 means the band is 3.6 per cent wider than the true one sigma of the close.',
 }
+
+// The calibration score, taken inside each regime rather than pooled, and the
+// rolling refit that the single fixed split could not test.
+out.enhancements.regimeErrorFixed = regimeError(dailyBandSeries(S, { k: K }), vixTerciles(S))
+out.enhancements.rollingRegime = [250, 500, 1000].map((window) => {
+  const r = rollingRegime(S, { window })
+  return {
+    window,
+    n: r.n,
+    k: r.k,
+    cuts: r.cuts,
+    fixed: { pooled: r.fixed.pooled, weighted: r.fixed.weighted, byRegime: r.fixed.byRegime },
+    regime: { pooled: r.regime.pooled, weighted: r.regime.weighted, byRegime: r.regime.byRegime },
+    improves: r.regime.weighted < r.fixed.weighted,
+  }
+})
 
 writeFileSync(join(ROOT, 'data/em/study-spy.json'), JSON.stringify(out, null, 2) + '\n')
 
