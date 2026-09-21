@@ -1,0 +1,120 @@
+<!doctype html><meta charset="utf-8"><title>walk</title>
+<style>
+:root{--bg:#191917;--ink:#EDEDE7;--body:#C1C1B7;--muted:#8D8D83;--faint:#696960;--line:#34342E;--accent:#CBA84A;--pos:#7E9B5F;--neg:#C1715C;--blue:#7FA9C4}
+*{box-sizing:border-box}
+html,body{margin:0;background:#000}
+#stage{width:1920px;height:1080px;background:var(--bg);position:relative;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--body);padding:56px 88px}
+.eyebrow{font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 12px}
+h2{color:var(--ink);font-size:52px;letter-spacing:-.022em;margin:0 0 6px;font-weight:660}
+.dt{font-family:ui-monospace,Menlo,monospace;font-size:22px;color:var(--blue);margin:0 0 20px}
+#row{display:flex;gap:44px}
+#side{width:470px;flex:none;padding-top:6px}
+.box{background:#222220;border:1px solid var(--line);border-radius:11px;padding:20px 24px;margin-bottom:16px;transition:opacity .25s}
+.box .k{font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:11px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:9px 14px;font-size:23px}
+.kv .l{color:var(--muted)}
+.kv .r{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right}
+.big{font-family:ui-monospace,Menlo,monospace;font-size:52px;font-weight:700;letter-spacing:-.02em;margin:4px 0 8px}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.box.win{border-color:#3d5230;background:#1e2319}
+.box.lose{border-color:#5a3226;background:#251b18}
+.les{background:#1d1c18;border:1px solid #3a3529;border-radius:11px;padding:19px 24px;font-size:22px;color:#E1C982;line-height:1.5}
+.les b{color:#F0DCA4}
+.stage-note{position:absolute;left:88px;bottom:34px;font-size:19px;color:var(--faint)}
+.cue{position:absolute;padding:10px 20px;border-radius:9px;font-size:26px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+</style>
+<div id="stage">
+  <p class="eyebrow" id="eyebrow"></p>
+  <h2 id="title"></h2>
+  <p class="dt" id="dates"></p>
+  <div id="row"><div id="chartwrap"></div><div id="side"></div></div>
+  <div class="stage-note" id="note"></div>
+</div>
+<script>
+const CASES = __CASES__;
+const W = 1180, H = 720, L = 118, R = 236, TP = 26, B = 56;
+
+function render (ci, t) {
+  const c = CASES[ci];
+  const N = c.path.length;
+  // phases: 0-.12 set the stage, .12-.80 the price walks, .80-1 the result
+  const walk = Math.max(0, Math.min(1, (t - 0.12) / 0.68));
+  const shown = t < 0.12 ? 1 : Math.max(1, Math.round(walk * N));
+  const done = t >= 0.80;
+
+  document.getElementById('eyebrow').textContent = 'A real month · ' + c.sub;
+  document.getElementById('title').textContent = c.label;
+  document.getElementById('dates').textContent =
+    `${c.entryDate} to ${c.exitDate}  ·  ${c.days} days  ·  VIX ${c.entryVix.toFixed(1)} the day you sold`;
+  document.getElementById('note').textContent =
+    'Each bar is one session, high to low. The white line is the close. Measured on the fund, at about a tenth of the index; the trade is the same shape and every dollar is ten times larger on the index.';
+
+  const lo = Math.min(...c.path.map(p => p.l));
+  const hi = Math.max(...c.path.map(p => p.h), c.longStrike);
+  const pad = (hi - lo) * 0.07, y0 = lo - pad, y1 = hi + pad;
+  const y = v => TP + (y1 - v) / (y1 - y0) * (H - TP - B);
+  const x = i => L + i / (N - 1) * (W - L - R);
+  const n = v => v.toFixed(2);
+  const g = [];
+
+  g.push(`<rect x="${L}" y="${y(c.longStrike).toFixed(1)}" width="${W - L - R}" height="${(y(c.shortStrike) - y(c.longStrike)).toFixed(1)}" fill="#C1715C" opacity=".13"/>`);
+  g.push(`<rect x="${L}" y="${y(c.shortStrike).toFixed(1)}" width="${W - L - R}" height="${(H - B - y(c.shortStrike)).toFixed(1)}" fill="#7E9B5F" opacity=".07"/>`);
+  for (const [v, col, lab, dash] of [[c.longStrike, '#7E9B5F', 'the call you BUY', '7 5'], [c.shortStrike, '#C1715C', 'the call you SELL', '']]) {
+    g.push(`<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${W - R + 6}" y2="${y(v).toFixed(1)}" stroke="${col}" stroke-width="2.8" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`);
+    g.push(`<text x="${L - 13}" y="${(y(v) + 8).toFixed(1)}" fill="${col}" font-size="24" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${n(v)}</text>`);
+    g.push(`<text x="${W - R + 15}" y="${(y(v) + 8).toFixed(1)}" fill="${col}" font-size="22">${lab}</text>`);
+  }
+  g.push(`<text x="${W - R + 15}" y="${(y(c.shortStrike) + 44).toFixed(1)}" fill="#7E9B5F" font-size="21">below this line,</text>`);
+  g.push(`<text x="${W - R + 15}" y="${(y(c.shortStrike) + 70).toFixed(1)}" fill="#7E9B5F" font-size="21">you keep it all</text>`);
+
+  for (let i = 0; i < shown; i++) {
+    const p = c.path[i], up = p.c >= p.o;
+    const fresh = i === shown - 1 && !done;
+    g.push(`<line x1="${x(i).toFixed(1)}" y1="${y(p.h).toFixed(1)}" x2="${x(i).toFixed(1)}" y2="${y(p.l).toFixed(1)}" stroke="${up ? '#6f8a54' : '#a9614f'}" stroke-width="${fresh ? 6 : 4}" opacity="${fresh ? 1 : .82}"/>`);
+  }
+  if (shown > 1) {
+    g.push(`<polyline points="${c.path.slice(0, shown).map((p, i) => `${x(i).toFixed(1)},${y(p.c).toFixed(1)}`).join(' ')}" fill="none" stroke="#EDEDE7" stroke-width="3" opacity=".9"/>`);
+  }
+
+  g.push(`<circle cx="${x(0).toFixed(1)}" cy="${y(c.S0).toFixed(1)}" r="11" fill="#CBA84A"/>`);
+  g.push(`<text x="${(x(0) + 22).toFixed(1)}" y="${(y(c.S0) + 9).toFixed(1)}" fill="#CBA84A" font-size="26" font-weight="700">YOU SELL HERE</text>`);
+
+  if (done) {
+    const won = c.settlement === 0, col = won ? '#7E9B5F' : '#C1715C';
+    g.push(`<circle cx="${x(N - 1).toFixed(1)}" cy="${y(c.S1).toFixed(1)}" r="11" fill="${col}"/>`);
+    const above = c.S1 > (y0 + y1) / 2;
+    g.push(`<text x="${(x(N - 1) - 18).toFixed(1)}" y="${(y(c.S1) + (above ? 44 : -26)).toFixed(1)}" fill="${col}" font-size="27" text-anchor="end" font-weight="700">IT SETTLES AT ${n(c.S1)}</text>`);
+    g.push(`<text x="${(x(N - 1) - 18).toFixed(1)}" y="${(y(c.S1) + (above ? 74 : 4)).toFixed(1)}" fill="${col}" font-size="23" text-anchor="end">${won ? 'below your strike — nothing to pay' : 'above your strike — it pays out'}</text>`);
+  }
+  const lastShown = c.path[shown - 1];
+  g.push(`<text x="${L}" y="${H - 16}" fill="#696960" font-size="21" font-family="ui-monospace,Menlo,monospace">${c.path[0].d}</text>`);
+  g.push(`<text x="${W - R + 6}" y="${H - 16}" fill="#696960" font-size="21" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${lastShown.d}</text>`);
+
+  document.getElementById('chartwrap').innerHTML = `<svg width="${W}" height="${H}">${g.join('')}</svg>`;
+
+  const money = v => (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v * 100)).toLocaleString();
+  const won = c.settlement === 0;
+  const pr = 100 * c.pnlPctOfRisk;
+  document.getElementById('side').innerHTML = `
+    <div class="box">
+      <div class="k">What you sent, as one order</div>
+      <div class="kv">
+        <span class="l">SELL call</span><span class="r">${c.shortStrike.toFixed(2)}</span>
+        <span class="l">BUY call</span><span class="r">${c.longStrike.toFixed(2)}</span>
+        <span class="l">Credit in</span><span class="r">${money(c.credit)}</span>
+        <span class="l">Most you can lose</span><span class="r" style="color:var(--accent)">${money(-c.maxLoss).replace('−', '')}</span>
+      </div>
+    </div>
+    <div class="box ${done ? (won ? 'win' : 'lose') : ''}" style="opacity:${done ? 1 : 0.28}">
+      <div class="k">How it ended</div>
+      <div class="big ${won ? 'pos' : 'neg'}">${done ? money(c.pnl) : '—'}</div>
+      <div class="kv">
+        <span class="l">Index over the month</span><span class="r">${done ? (c.movePct >= 0 ? '+' : '') + (100 * c.movePct).toFixed(1) + '%' : '—'}</span>
+        <span class="l">Of the money at risk</span><span class="r ${won ? 'pos' : 'neg'}">${done ? (pr >= 0 ? '+' : '') + pr.toFixed(0) + '%' : '—'}</span>
+      </div>
+    </div>
+    <div class="les" style="opacity:${done ? 1 : 0.18}">${c.lesson}</div>`;
+}
+window.render = render;
+render(0, 0);
+</script>

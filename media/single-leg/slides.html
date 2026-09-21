@@ -1,0 +1,191 @@
+<!doctype html><meta charset="utf-8"><title>slides</title>
+<style>
+:root{--bg:#191917;--ink:#EDEDE7;--body:#C1C1B7;--muted:#8D8D83;--faint:#696960;--line:#34342E;--accent:#CBA84A;--pos:#7E9B5F;--neg:#C1715C;--blue:#7FA9C4}
+*{box-sizing:border-box}
+body{margin:0;background:#000;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--body)}
+.s{width:1920px;height:1080px;background:var(--bg);padding:74px 100px;position:relative;overflow:hidden}
+.eyebrow{font-size:21px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 16px}
+h1{color:var(--ink);font-size:78px;letter-spacing:-.03em;line-height:1.05;margin:0 0 22px;font-weight:660}
+h2{color:var(--ink);font-size:56px;letter-spacing:-.024em;line-height:1.1;margin:0 0 24px;font-weight:660}
+.lede{font-size:30px;line-height:1.5;color:var(--body);max-width:1500px;margin:0 0 30px}
+.lede b{color:var(--ink)}
+ul{font-size:29px;line-height:1.66;padding-left:30px;margin:0;max-width:1560px}
+li{margin-bottom:12px}
+b{color:var(--ink)}
+.mono{font-family:ui-monospace,Menlo,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:8px}
+.box{background:#222220;border:1px solid var(--line);border-radius:13px;padding:30px 36px}
+.box.no{border-color:#5a3226;background:#251b18}
+.box.yes{border-color:#3d5230;background:#1e2319}
+.box.gold{border-color:#5a4a1e;background:#24211a}
+.box h3{margin:0 0 12px;color:var(--ink);font-size:36px;font-weight:650;letter-spacing:-.015em}
+.box .mark{font-size:42px;line-height:1;margin-bottom:10px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:15px 24px;font-size:30px}
+.kv .l{color:var(--muted)}
+.kv .r{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right}
+.kv .r.g{color:var(--accent);font-weight:700}
+.kv .r.p{color:var(--pos)}
+.kv .r.n{color:var(--neg)}
+.huge{font-family:ui-monospace,Menlo,monospace;font-size:120px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--accent)}
+.hugelab{font-size:26px;color:var(--muted);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;margin-top:26px}
+.stat{background:#222220;border:1px solid var(--line);border-radius:13px;padding:28px 32px;text-align:center}
+.stat .v{font-family:ui-monospace,Menlo,monospace;font-size:66px;font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.stat .l{font-size:23px;color:var(--muted);margin-top:12px;line-height:1.4}
+.bar{height:56px;background:#2b2b27;border-radius:8px;position:relative;margin:34px 0 12px;overflow:hidden}
+.bar .need{position:absolute;left:0;top:0;bottom:0;background:#4b3f22}
+.bar .got{position:absolute;left:0;top:0;bottom:0;background:#7E9B5F;opacity:.5}
+.bar .tick{position:absolute;top:-5px;bottom:-5px;width:5px;background:#CBA84A}
+.barlab{display:flex;justify-content:space-between;font-size:24px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-top:20px}
+.step{background:#1f1f1d;border:1px solid var(--line);border-radius:12px;padding:24px 26px}
+.step .n{font-family:ui-monospace,Menlo,monospace;color:var(--accent);font-size:20px;font-weight:700;letter-spacing:.12em}
+.step .h{color:var(--ink);font-weight:650;font-size:27px;margin:9px 0 11px;letter-spacing:-.01em}
+.step p{margin:0;font-size:21px;line-height:1.55}
+.foot{position:absolute;left:100px;right:100px;bottom:46px;font-size:22px;color:var(--faint);line-height:1.5}
+.center{display:flex;flex-direction:column;justify-content:center;height:100%}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+</style>
+
+<section class="s"><div class="center">
+  <p class="eyebrow">SPY · 2,689 sessions · January 2016 to September 2026</p>
+  <h1>Calls and puts,<br>one at a time.</h1>
+  <p class="lede" style="font-size:34px">Two questions about the expected-move band, asked separately, because they have opposite answers.</p>
+  <p style="font-size:24px;color:var(--faint);margin:26px 0 0;line-height:1.5">No voice-over on this one &mdash; everything is written on screen, so read rather than listen. Each panel holds long enough to finish it.</p>
+</div></section>
+
+<section class="s">
+  <p class="eyebrow">Question one</p>
+  <h2>Can you buy a call or a put when price breaks the band?</h2>
+  <ul>
+    <li><b>576 combinations searched.</b> Eight entry rules, both directions, four targets, three stops, three time limits.</li>
+    <li>Entry is the <b>open of the next session</b> — never the close that fired the signal, because that is a fill you did not have.</li>
+    <li>A bar that touches <b>both</b> your target and your stop is scored as <b>the stop</b>. A daily bar cannot say which came first, and assuming the good one is how a backtest lies.</li>
+    <li>The law underneath it all: on a path with no edge, a target <span class="mono">T</span> and a stop <span class="mono">S</span> are hit first with probability <span class="mono">S/(T+S)</span> and <span class="mono">T/(T+S)</span>.</li>
+  </ul>
+  <p class="foot">Three controls, each stricter than the last. The third one decides it.</p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">The answer, and it is not close</p>
+  <h2>No.</h2>
+  <div class="stats">
+    <div class="stat"><div class="v" style="color:var(--neg)">50.7%</div><div class="l">of the 576 beat simply taking the trade anyway — a coin flip</div></div>
+    <div class="stat"><div class="v" style="color:var(--neg)">64%</div><div class="l">of searches run on <b>dates no rule chose</b> did <b>better</b> than the real one</div></div>
+    <div class="stat"><div class="v" style="color:var(--neg)">4 of 14</div><div class="l">leaders survived out of sample against the same control</div></div>
+  </div>
+  <div class="box" style="margin-top:34px">
+    <div class="kv">
+      <span class="l">Best edge found across all 576 combinations</span><span class="r n">0.51 R</span>
+      <span class="l">Best edge the same search finds in pure noise, on average</span><span class="r">0.57 R</span>
+      <span class="l">…and 19 times in 20, under</span><span class="r">0.85 R</span>
+    </div>
+  </div>
+  <p class="foot">Search 576 ways and about 29 will look significant at a 5% threshold by construction. The real search underperformed the average noise search. <b>The band forecasts the size of a move and says nothing about its direction.</b></p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">Question two</p>
+  <h2>Can you sell one? Yes — and this is the whole trade.</h2>
+  <div class="grid2">
+    <div class="box gold">
+      <h3>Call spread at 1.25σ</h3>
+      <div class="kv">
+        <span class="l">SELL one call</span><span class="r g">1.25σ above the market</span>
+        <span class="l">BUY one call</span><span class="r g">0.5σ further up</span>
+        <span class="l">Expiry</span><span class="r">30 calendar days</span>
+        <span class="l">Management</span><span class="r">none — hold to expiry</span>
+        <span class="l">How often</span><span class="r">once a month, 12 a year</span>
+      </div>
+    </div>
+    <div class="box">
+      <h3>Two options. Same type. One order.</h3>
+      <p style="font-size:27px;line-height:1.55;margin:0 0 18px">No condor. No four legs. No adjustment, no stop, no profit target.</p>
+      <p style="font-size:27px;line-height:1.55;margin:0">You send it, and then you do nothing for a month. It settles in cash by itself — there is no assignment and nothing to close.</p>
+    </div>
+  </div>
+  <p class="foot">One sigma = <span class="mono">index × (VIX ÷ 100) × √(calendar days ÷ 365)</span>. No entry filter improves it: VIX high, VIX low, nothing. The edge is in the calendar, not a signal.</p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">Eleven years, every start date averaged</p>
+  <h2>What it actually does</h2>
+  <div class="stats">
+    <div class="stat"><div class="v pos">96.9%</div><div class="l">of months win</div></div>
+    <div class="stat"><div class="v pos">+5.3%</div><div class="l">of the money at risk, per month</div></div>
+    <div class="stat"><div class="v" style="color:var(--accent)">11 / 11</div><div class="l">years positive · 21 of 21 start dates positive</div></div>
+  </div>
+  <div class="bar"><div class="need" style="width:86.5%"></div><div class="got" style="width:96.9%"></div><div class="tick" style="left:86.5%"></div></div>
+  <div class="barlab"><span>0%</span><span>the payoff demands <b style="color:var(--accent)">86.5%</b> &nbsp;→&nbsp; you get <b style="color:var(--pos)">96.9%</b></span><span>100%</span></div>
+  <p class="foot"><b>That gap — 10.4 points — is the entire edge, and it is the only thing you are paid for.</b> Loses the full maximum in 0.4% of months, about once every two and a half years.</p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">The part nobody wants to hear</p>
+  <h2>You cannot have a high win rate <i>and</i> a high reward.</h2>
+  <div class="grid2">
+    <div class="box">
+      <div class="kv">
+        <span class="l">When it wins</span><span class="r p">+6.4% of risk</span>
+        <span class="l">When it loses</span><span class="r n">−40.9% of risk</span>
+        <span class="l">Reward to risk</span><span class="r g">0.16</span>
+        <span class="l">One loss takes back</span><span class="r">six wins</span>
+      </div>
+    </div>
+    <div class="box no">
+      <p style="font-size:29px;line-height:1.55;margin:0">Win rate and reward are <b>welded together</b>. A 90% win rate forces a reward near 1-to-9. A 3-to-1 reward forces a win rate near a quarter.</p>
+      <p style="font-size:29px;line-height:1.55;margin:18px 0 0">There is <b>no trade anywhere in this study</b> with both high at once. Anyone offering you one is selling something.</p>
+    </div>
+  </div>
+  <p class="foot">This is the same arithmetic that killed question one, seen from the other side. Buying gives you 3-to-1 and a 44% win rate — and no edge. Selling gives you a 97% win rate and 0.16 — and a real one.</p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">Why the second leg is not optional</p>
+  <h2>Sell that call alone and you have a different trade.</h2>
+  <div class="grid2">
+    <div class="box no">
+      <h3 style="color:var(--neg)">One leg · the worst month</h3>
+      <div class="kv">
+        <span class="l">Naked put, Feb–Mar 2020</span><span class="r n">−92.70 pts</span>
+        <span class="l">As a multiple of the credit</span><span class="r n">72×</span>
+        <span class="l">Margin grew to</span><span class="r n">3.7×</span>
+        <span class="l">Broker called on</span><span class="r n">day one</span>
+      </div>
+    </div>
+    <div class="box yes">
+      <h3 style="color:var(--pos)">Two legs · the same month</h3>
+      <div class="kv">
+        <span class="l">Loss</span><span class="r p">−7.53 pts</span>
+        <span class="l">Times smaller</span><span class="r p">12×</span>
+        <span class="l">Margin grew to</span><span class="r p">never moves</span>
+        <span class="l">Known at entry</span><span class="r p">exactly</span>
+      </div>
+    </div>
+  </div>
+  <p class="foot">A backtest that settles every trade on the terminal close <b>cannot see a margin call</b>. The account is gone before the trade it books ever expires. That is why it is measured separately rather than assumed away.</p>
+</section>
+
+<section class="s">
+  <p class="eyebrow">How you actually do it</p>
+  <h2>Five steps, twelve times a year.</h2>
+  <div class="steps">
+    <div class="step"><div class="n">STEP 1</div><div class="h">Pick a day</div><p>Once a month, the same day each month. There is no setup to wait for.</p></div>
+    <div class="step"><div class="n">STEP 2</div><div class="h">Measure the move</div><p>One sigma is <b>index × (VIX ÷ 100) × √(days ÷ 365)</b>, using calendar days to expiry.</p></div>
+    <div class="step"><div class="n">STEP 3</div><div class="h">Two strikes</div><p>Sell the call <b>1.25σ above</b>. Buy the call <b>0.5σ further up</b>. One order, net credit limit. Never leg in.</p></div>
+    <div class="step"><div class="n">STEP 4</div><div class="h">Size it</div><p>Max loss is the strike gap minus the credit. Buy the contracts that make it <b>5% of your account</b>.</p></div>
+    <div class="step"><div class="n">STEP 5</div><div class="h">Do nothing</div><p><b>You never sell.</b> Hold to expiry. No stop, no adjustment, no target. It cash-settles by itself.</p></div>
+  </div>
+  <p class="foot"><b>The fill floor.</b> The model collects about 11% of the strike gap as credit. If you cannot fill above <b>5.6%</b>, there is no edge left — cancel and skip the month.</p>
+</section>
+
+<section class="s"><div class="center">
+  <p class="eyebrow">What this is, and what it is not</p>
+  <h2 style="font-size:46px;max-width:1560px">Eleven years is eleven years. It is not a guarantee.</h2>
+  <ul style="font-size:31px">
+    <li>Every premium here is a <b>model's price</b>, not a broker's quote. That is why step 3 has a floor.</li>
+    <li>The measured edge is <b>10.4 points of win rate</b> over what the payoff demands. It is real, and it is not large.</li>
+    <li>One SPX spread risks real money. <b>XSP</b> is the same index at one tenth the size and settles the same way.</li>
+    <li>This is research, <b>not advice</b>.</li>
+  </ul>
+</div></section>

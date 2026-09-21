@@ -152,6 +152,13 @@ floor, cancel and skip the month — there is no edge left to trade.
 
 ---
 
+## The poster and the video
+
+`media/single-leg/build.sh` rebuilds both from `lib/premium.js`, so the figures
+on them cannot drift from the figures here. The video has no narration — the
+generated voice-over ran out of credits, so every word is on screen and the
+panels hold long enough to read.
+
 ## Reproducing
 
 ```

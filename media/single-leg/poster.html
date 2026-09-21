@@ -1,0 +1,242 @@
+<!doctype html><meta charset="utf-8"><title>Calls and puts</title>
+<style>
+:root{--bg:#191917;--ink:#EDEDE7;--body:#C1C1B7;--muted:#8D8D83;--faint:#696960;--line:#34342E;--accent:#CBA84A;--pos:#7E9B5F;--neg:#C1715C;--blue:#7FA9C4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{width:1900px;padding:46px 54px 42px}
+h1{color:var(--ink);font-size:44px;letter-spacing:-.025em;margin:0 0 8px;font-weight:660}
+.lede{color:var(--muted);font-size:18px;margin:0 0 30px;max-width:1500px;line-height:1.55}
+.sec{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:34px 0 14px;border-top:1px solid var(--line);padding-top:16px}
+.verdicts{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.v{border-radius:11px;padding:24px 28px;border:1px solid var(--line);background:#222220}
+.v.no{border-color:#5a3226;background:#251b18}
+.v.yes{border-color:#3d5230;background:#1e2319}
+.v .mark{font-size:34px;line-height:1;margin-bottom:9px}
+.v h3{margin:0 0 5px;font-size:25px;color:var(--ink);font-weight:650;letter-spacing:-.01em}
+.v .one{font-size:17px;color:var(--body);line-height:1.55;margin:0 0 14px}
+.v ul{margin:0;padding-left:19px;font-size:15.5px;line-height:1.7}
+.v li{margin-bottom:3px}
+.v b{color:var(--ink)}
+.mono{font-family:ui-monospace,Menlo,monospace}
+.trade{display:grid;grid-template-columns:600px 1fr 430px;gap:28px;align-items:start}
+.card{background:#222220;border:1px solid var(--line);border-radius:10px;padding:22px 26px}
+.card.pick{border-color:#5a4a1e;background:#24211a}
+.card h4{margin:0 0 3px;font-size:22px;color:var(--ink);font-weight:650}
+.card .dte{font-family:ui-monospace,Menlo,monospace;font-size:14px;color:var(--blue);margin:0 0 16px}
+table.legs{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 14px}
+table.legs td{padding:7px 0;border-bottom:1px solid #2b2b27}
+table.legs td.act{width:58px;font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:13.5px}
+table.legs td.k{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right;width:86px;font-size:16px}
+table.legs td.d{color:var(--muted);font-size:13.5px;padding-left:12px}
+.sell{color:var(--neg)}.buy{color:var(--pos)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:7px 16px;font-size:15px}
+.kv .l{color:var(--muted)}
+.kv .r{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right}
+.kv .r.big{color:var(--accent);font-weight:700}
+.law{background:#1d1c18;border:1px solid #3a3529;border-radius:10px;padding:20px 24px;font-size:15.5px;color:#E1C982;line-height:1.6}
+.law h4{margin:0 0 8px;color:#E9D79C;font-size:18px;font-weight:650}
+.bar{height:30px;background:#2b2b27;border-radius:5px;position:relative;margin:12px 0 6px;overflow:hidden}
+.bar .need{position:absolute;left:0;top:0;bottom:0;background:#4b3f22}
+.bar .got{position:absolute;left:0;top:0;bottom:0;background:#7E9B5F;opacity:.55}
+.bar .tick{position:absolute;top:-3px;bottom:-3px;width:3px;background:#CBA84A}
+.barlab{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.case{background:#222220;border:1px solid var(--line);border-radius:10px;padding:18px 22px 16px}
+.case.win{border-color:#3d5230}
+.case.lose{border-color:#5a3226}
+.case .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.case h5{margin:0;font-size:20px;color:var(--ink);font-weight:650}
+.case .pnl{font-family:ui-monospace,Menlo,monospace;font-size:21px;font-weight:700}
+.case .sub{font-size:14px;color:var(--muted);margin:0 0 3px}
+.case .dt{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--faint);margin:0 0 10px}
+.case .les{font-size:14px;line-height:1.55;color:var(--body);margin-top:10px}
+.case .les b{color:var(--ink)}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.step{background:#1f1f1d;border:1px solid var(--line);border-radius:9px;padding:16px 18px}
+.step .n{font-family:ui-monospace,Menlo,monospace;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.11em}
+.step .h{color:var(--ink);font-weight:650;font-size:16px;margin:5px 0 6px}
+.step p{margin:0;font-size:13.5px;color:var(--body);line-height:1.55}
+.foot{margin-top:28px;font-size:13.5px;color:var(--muted);line-height:1.65;border-top:1px solid var(--line);padding-top:16px}
+.foot b{color:var(--body)}
+</style>
+<div class="wrap">
+<h1>Calls and puts, one at a time. What the decade actually says.</h1>
+<p class="lede">SPY, 2,689 sessions, January 2016 to September 2026. Two questions, asked separately, because they have opposite answers. Everything is priced off the VIX close of the session the trade opened on, with five cents a leg in costs, and every configuration is run at all 21 possible start dates and averaged so the answer is not the luck of where the calendar fell.</p>
+
+<div class="verdicts">
+  <div class="v no">
+    <div class="mark">✕</div>
+    <h3>Buying a call or a put off the band</h3>
+    <p class="one">No edge. Not a small one — none. Stop looking here.</p>
+    <ul>
+      <li>Searched <b>576 combinations</b>: 8 entry rules × 2 directions × 4 targets × 3 stops × 3 time limits.</li>
+      <li>Entry is the <b>open of the next session</b>, never the close that fired the signal. A bar touching both levels is scored as <b>the stop</b>.</li>
+      <li>Against taking the trade anyway: <b>292 of 576</b> beat their own control. That is 50.7% — a coin flip.</li>
+      <li>Against a placebo that reruns the whole search on <b>dates no rule chose</b>: the real best edge is <b>0.51 R</b>, the noise search averages <b>0.57 R</b>, and <b>64% of noise searches did better</b>.</li>
+      <li>Out of sample on 2022 onward: <b>4 of 14</b> survived. Ranked on raw profit 13 of 20 looked fine — all 13 were the market's drift wearing a rule's clothes.</li>
+    </ul>
+  </div>
+  <div class="v yes">
+    <div class="mark">✓</div>
+    <h3>Selling one at the band</h3>
+    <p class="one">A real, measurable edge — and it is the same variance premium, in two legs instead of four.</p>
+    <ul>
+      <li>Sell one call <b>1.25σ above</b> the market, buy one <b>0.5σ further up</b>. Two options, same type, one order.</li>
+      <li><b>96.9% of months win.</b> The payoff demands 86.5%. The gap — <b>10.4 points</b> — is the entire edge.</li>
+      <li><b>+5.3% of the money at risk</b> per month. Positive in all 11 years and all 21 start dates.</li>
+      <li>Loses the full maximum in <b>0.4% of months</b>, about once every two and a half years.</li>
+      <li>No entry filter improves it. VIX high, VIX low, nothing: the edge is in <b>the calendar</b>, not a signal.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">The trade, exactly</div>
+<div class="trade">
+  <div class="card pick">
+    <h4>Call spread at 1.25σ</h4>
+    <p class="dte">30 calendar days · 21 sessions · held to expiry · cash settled</p>
+    <div id="chart"></div>
+    <table class="legs">
+      <tr><td class="act buy">BUY</td><td class="k" id="kbuy"></td><td class="d">call &mdash; this caps your loss</td></tr>
+      <tr><td class="act sell">SELL</td><td class="k" id="ksell"></td><td class="d">call &mdash; 1.25σ above the market</td></tr>
+    </table>
+    <div class="kv">
+      <span class="l">One sigma over 30 days</span><span class="r" id="v-move"></span>
+      <span class="l">Distance between the strikes</span><span class="r" id="v-width"></span>
+      <span class="l">Credit you collect</span><span class="r" id="v-credit"></span>
+      <span class="l">Most you can lose, ever</span><span class="r big" id="v-loss"></span>
+      <span class="l">The same trade on XSP</span><span class="r" id="v-xsp"></span>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h4>The law you cannot get around</h4>
+      <p style="font-size:15.5px;line-height:1.6;margin:10px 0 0">On a path with no edge, a target <span class="mono">T</span> and a stop <span class="mono">S</span> are reached first with probability <span class="mono">S/(T+S)</span> and <span class="mono">T/(T+S)</span>. <b style="color:var(--ink)">Win rate and reward-to-risk are welded together.</b> A 90% win rate forces a reward near 1-to-9. A 3-to-1 reward forces a win rate near a quarter.</p>
+      <p style="font-size:15.5px;line-height:1.6;margin:14px 0 0">There is no trade in this study — none — with a high win rate <i>and</i> a high reward-to-risk. Asking for both is asking for an edge over that line, and the only honest thing to do is measure the gap. That gap is what you are paid.</p>
+      <div class="bar">
+        <div class="need" style="width:86.5%"></div>
+        <div class="got" style="width:96.9%"></div>
+        <div class="tick" style="left:86.5%"></div>
+      </div>
+      <div class="barlab"><span>0%</span><span>break-even 86.5% &nbsp;→&nbsp; <b style="color:var(--accent)">actual 96.9%</b></span><span>100%</span></div>
+      <table class="legs" style="margin-top:18px">
+        <tr><td class="d" style="padding-left:0">When it wins</td><td class="k pos">+6.4%</td><td class="d">of the money at risk</td></tr>
+        <tr><td class="d" style="padding-left:0">When it loses</td><td class="k neg">−40.9%</td><td class="d">of the money at risk</td></tr>
+        <tr><td class="d" style="padding-left:0">Reward to risk</td><td class="k">0.16</td><td class="d">one loss takes back six wins</td></tr>
+        <tr><td class="d" style="padding-left:0">Per month, on average</td><td class="k pos">+5.3%</td><td class="d">of the money at risk</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="law">
+    <h4>Why the second leg is not optional</h4>
+    <p style="margin:0 0 12px">Sell the call on its own and the worst month of the decade looks like this:</p>
+    <div class="kv" style="color:#E1C982">
+      <span class="l" style="color:#a99560">Naked put, Feb–Mar 2020</span><span class="r" style="color:#C1715C">−92.70 pts</span>
+      <span class="l" style="color:#a99560">As a multiple of the credit</span><span class="r" style="color:#C1715C">72×</span>
+      <span class="l" style="color:#a99560">Margin grew to</span><span class="r" style="color:#C1715C">3.7×</span>
+      <span class="l" style="color:#a99560">Broker called on</span><span class="r" style="color:#C1715C">day one</span>
+    </div>
+    <p style="margin:14px 0 0">The same month with the second leg: <b style="color:#7E9B5F">−7.53 points</b>, twelve times smaller, and exactly the number printed on your screen when you opened it.</p>
+    <p style="margin:12px 0 0;color:#a99560;font-size:14px">A backtest that settles every trade on the terminal close cannot see a margin call. That is why it is measured separately rather than assumed away.</p>
+  </div>
+</div>
+
+<div class="sec">Four real months — where the price went, and what it cost you</div>
+<div class="cases" id="cases"></div>
+
+<div class="sec">How you actually do it</div>
+<div class="steps">
+  <div class="step"><div class="n">STEP 1</div><div class="h">Pick a day, any day</div><p>Once a month, the same day each month. There is no setup to wait for — filtering by VIX, high or low, changed nothing. Twelve decisions a year.</p></div>
+  <div class="step"><div class="n">STEP 2</div><div class="h">Measure the move</div><p>Take the index level and the VIX close. One sigma is <b>index × (VIX ÷ 100) × √(days ÷ 365)</b>, using calendar days to expiry.</p></div>
+  <div class="step"><div class="n">STEP 3</div><div class="h">Two strikes</div><p>Sell the call <b>1.25σ above</b>. Buy the call <b>0.5σ further up</b>. Round to listed strikes. Send both legs as <b>one order</b> at a net credit limit — never leg in.</p></div>
+  <div class="step"><div class="n">STEP 4</div><div class="h">Size it</div><p>Max loss is the gap between strikes minus the credit, known exactly at entry. Buy the number of contracts that makes it <b>5% of your account</b>. Not margin, not notional.</p></div>
+  <div class="step"><div class="n">STEP 5</div><div class="h">Then do nothing</div><p><b>You never sell.</b> Hold to expiry. No stop, no adjustment, no profit target. It cash-settles by itself. Hold-to-expiry is the only rule the decade measures.</p></div>
+</div>
+
+<p class="foot"><b>The fill floor.</b> The model collects about 11% of the strike gap as credit. If you cannot fill above <b>5.6%</b>, there is no edge left — cancel and skip the month. <b>Sizing.</b> One SPX spread risks real money; XSP is the same index at one tenth the size and settles the same way, so divide every dollar figure by ten. <b>What this is not.</b> Every premium here is a model's, not a broker's quote, which is why step 3 has a floor. Eleven years is eleven years, not a guarantee. This is research, not advice.</p>
+</div>
+<script>
+const CASES = __CASES__;
+const S0 = 760.88 * 10, VIX = 17.10, DAYS = 30;
+const ncdf = x => { const t=1/(1+0.2316419*Math.abs(x)); const d=0.3989422804014327*Math.exp(-x*x/2);
+  let p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429)))); return x>=0?1-p:p; };
+const bs=(S,K,T,s)=>{ if(T<=0) return Math.max(S-K,0); const d1=(Math.log(S/K)+0.5*s*s*T)/(s*Math.sqrt(T)), d2=d1-s*Math.sqrt(T);
+  return S*ncdf(d1)-K*ncdf(d2); };
+const T = DAYS/365, sig = VIX/100;
+const move = S0*sig*Math.sqrt(T);
+const sell = S0 + 1.25*move, buy = sell + 0.5*move;
+const credit = bs(S0,sell,T,sig) - bs(S0,buy,T,sig);
+const maxLoss = (buy-sell) - credit;
+const r = v => Math.round(v).toLocaleString();
+document.getElementById('ksell').textContent = r(sell);
+document.getElementById('kbuy').textContent = r(buy);
+document.getElementById('v-move').textContent = r(move)+' pts';
+document.getElementById('v-width').textContent = r(buy-sell)+' pts';
+document.getElementById('v-credit').textContent = '$'+r(credit*100);
+document.getElementById('v-loss').textContent = '$'+r(maxLoss*100);
+document.getElementById('v-xsp').textContent = '$'+r(maxLoss*10)+' at risk';
+
+// the little payoff picture on the trade card
+(function(){
+  const W=548,H=178,PAD=22;
+  const lo=S0-0.4*move, hi=buy+0.55*move;
+  const x=v=>PAD+(v-lo)/(hi-lo)*(W-2*PAD);
+  const yTop=34, yBot=H-40;
+  const g=[];
+  g.push(`<rect x="${PAD}" y="${yTop}" width="${x(sell)-PAD}" height="${yBot-yTop}" fill="#7E9B5F" opacity=".13"/>`);
+  g.push(`<rect x="${x(sell)}" y="${yTop}" width="${x(buy)-x(sell)}" height="${yBot-yTop}" fill="#C1715C" opacity=".13"/>`);
+  g.push(`<rect x="${x(buy)}" y="${yTop}" width="${W-PAD-x(buy)}" height="${yBot-yTop}" fill="#C1715C" opacity=".24"/>`);
+  g.push(`<text x="${(PAD+x(sell))/2}" y="${(yTop+yBot)/2+5}" fill="#7E9B5F" font-size="14" text-anchor="middle">anywhere in here, you keep it all</text>`);
+  g.push(`<text x="${(x(buy)+W-PAD)/2}" y="${(yTop+yBot)/2+5}" fill="#C1715C" font-size="13" text-anchor="middle">max loss</text>`);
+  for (const [v,c,lab,dash] of [[S0,'#8D8D83','index now','2 3'],[sell,'#C1715C','sell call',''],[buy,'#7E9B5F','buy call','5 4']]) {
+    g.push(`<line x1="${x(v)}" y1="${yTop-8}" x2="${x(v)}" y2="${yBot+8}" stroke="${c}" stroke-width="${dash==='2 3'?1.4:2.2}" ${dash?`stroke-dasharray="${dash}"`:''}/>`);
+    g.push(`<text x="${x(v)}" y="${yTop-14}" fill="${c}" font-size="13" text-anchor="middle">${lab}</text>`);
+    g.push(`<text x="${x(v)}" y="${yBot+26}" fill="${c}" font-size="14" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">${r(v)}</text>`);
+  }
+  document.getElementById('chart').innerHTML = `<svg width="${W}" height="${H}">${g.join('')}</svg>`;
+})();
+
+const W=760,H=300,L=74,R=126,TP=16,B=34;
+function chart(c){
+  const lo=Math.min(...c.path.map(p=>p.l));
+  const hi=Math.max(...c.path.map(p=>p.h), c.longStrike);
+  const pad=(hi-lo)*0.07, y0=lo-pad, y1=hi+pad;
+  const y=v=>TP+(y1-v)/(y1-y0)*(H-TP-B);
+  const x=i=>L+i/(c.path.length-1)*(W-L-R);
+  const n=v=>v.toFixed(v<100?2:1);
+  const g=[];
+  g.push(`<rect x="${L}" y="${y(c.longStrike).toFixed(1)}" width="${W-L-R}" height="${(y(c.shortStrike)-y(c.longStrike)).toFixed(1)}" fill="#C1715C" opacity=".13"/>`);
+  for (const [v,col,lab,dash] of [[c.longStrike,'#7E9B5F','buy call','5 4'],[c.shortStrike,'#C1715C','sell call','']]) {
+    g.push(`<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${W-R+4}" y2="${y(v).toFixed(1)}" stroke="${col}" stroke-width="2.2" ${dash?`stroke-dasharray="${dash}"`:''}/>`);
+    g.push(`<text x="${L-9}" y="${(y(v)+5).toFixed(1)}" fill="${col}" font-size="14" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${n(v)}</text>`);
+    g.push(`<text x="${W-R+11}" y="${(y(v)+5).toFixed(1)}" fill="${col}" font-size="13.5">${lab}</text>`);
+  }
+  for (let i=0;i<c.path.length;i++){
+    const p=c.path[i], up=p.c>=p.o;
+    g.push(`<line x1="${x(i).toFixed(1)}" y1="${y(p.h).toFixed(1)}" x2="${x(i).toFixed(1)}" y2="${y(p.l).toFixed(1)}" stroke="${up?'#6f8a54':'#a9614f'}" stroke-width="3" opacity=".8"/>`);
+  }
+  g.push(`<polyline points="${c.path.map((p,i)=>`${x(i).toFixed(1)},${y(p.c).toFixed(1)}`).join(' ')}" fill="none" stroke="#EDEDE7" stroke-width="2.2" opacity=".85"/>`);
+  g.push(`<circle cx="${x(0).toFixed(1)}" cy="${y(c.S0).toFixed(1)}" r="7" fill="#CBA84A"/>`);
+  g.push(`<text x="${(x(0)+14).toFixed(1)}" y="${(y(c.S0)+5).toFixed(1)}" fill="#CBA84A" font-size="14" font-weight="700">you sell here</text>`);
+  const last=c.path.length-1, won=c.settlement===0;
+  g.push(`<circle cx="${x(last).toFixed(1)}" cy="${y(c.S1).toFixed(1)}" r="7" fill="${won?'#7E9B5F':'#C1715C'}"/>`);
+  g.push(`<text x="${(x(last)-10).toFixed(1)}" y="${(y(c.S1)+(c.S1>c.shortStrike?26:-14)).toFixed(1)}" fill="${won?'#7E9B5F':'#C1715C'}" font-size="14" text-anchor="end" font-weight="700">settles ${n(c.S1)}</text>`);
+  g.push(`<text x="${L}" y="${H-10}" fill="#696960" font-size="13" font-family="ui-monospace,Menlo,monospace">${c.path[0].d}</text>`);
+  g.push(`<text x="${W-R+4}" y="${H-10}" fill="#696960" font-size="13" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${c.path[last].d}</text>`);
+  g.push(`<text x="${(L+W-R)/2}" y="${H-10}" fill="#696960" font-size="13" text-anchor="middle">${c.days} days · VIX ${c.entryVix.toFixed(1)} at entry · index ${c.movePct>=0?'+':''}${(100*c.movePct).toFixed(1)}%</text>`);
+  return `<svg width="${W}" height="${H}">${g.join('')}</svg>`;
+}
+document.getElementById('cases').innerHTML = CASES.map(c=>{
+  const won=c.settlement===0, p=100*c.pnlPctOfRisk;
+  return `<div class="case ${won?'win':'lose'}">
+    <div class="hd"><h5>${c.label}</h5><span class="pnl ${won?'pos':'neg'}">${p>=0?'+':''}${p.toFixed(0)}% of risk</span></div>
+    <p class="sub">${c.sub}</p>
+    <p class="dt">${c.entryDate} → ${c.exitDate}</p>
+    ${chart(c)}
+    <p class="les">${c.lesson}</p>
+  </div>`;
+}).join('');
+</script>
