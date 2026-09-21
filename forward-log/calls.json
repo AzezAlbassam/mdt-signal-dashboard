@@ -3,6 +3,31 @@
  "protocolFixedAt": "2026-09-17",
  "account": "@zero_en3kas",
  "windowDays": 30,
- "startedAt": null,
- "calls": []
+ "startedAt": "2026-09-21",
+ "calls": [
+  {
+   "tweetId": "pending-id-2026-09-21T0221+03",
+   "tweetIdNote": "exact status id not visible in the screenshot; URL truncated. Replace when known.",
+   "postedAt": "2026-09-20T23:21:00Z",
+   "loggedAt": "2026-09-21T00:40:00Z",
+   "rawText": "يسعد صباحكم صعد سباكس #spx500 لأعلى نقطة في الصندوق و هبط بزيرو انعكاس ٦٤ نقطة بفارق بسيط عن الهدف السلبي\n\nالمتوقع  يصعد ٧٦٩٧/٧٧٢٠\nماذا عن الهدف السلبي ؟ بيحققه كذلك لكن قبله فيه صعود للمنطقة اعلاه واذا حان وقت الهبوط ببلغكم في حينه\n#us500",
+   "klass": "forward_call",
+   "klassReason": "Names SPX, two explicit levels (7697/7720) as a rise target, and a future tense ('المتوقع يصعد'). Posted 02:21 UTC+3 on Mon 2026-09-21, before the US session; CFD feed showed 7664, cash SPX closed 7650.50 on Friday. Sentence 1 is retrospective (a prior call, not scoreable here). The 'negative target' sentence names no level and defers timing ('ببلغكم في حينه') — a hedge, not scoreable. The scoreable claim is the rise to the 7697–7720 zone.",
+   "instrument": "SPX",
+   "direction": "long",
+   "levels": [
+    7697,
+    7720
+   ],
+   "horizonDays": 5,
+   "notes": "Levels quoted on a CFD feed (BlackBull) ~14 pts above Friday's cash close; scored on cash SPX exactly as he stated them. The two levels form a zone; per PROTOCOL §3 each is scored separately and a partial is not rounded up to a hit. Chart attached was 1h; scored on daily bars per PROTOCOL §6.3.",
+   "resolution": {
+    "outcome": "unresolved",
+    "levels": [],
+    "note": "no price data at or after the post",
+    "resolvedAt": "2026-09-21"
+   }
+  }
+ ],
+ "asOf": "2026-09-21"
 }
