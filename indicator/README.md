@@ -58,6 +58,30 @@ The `em.html` page in this repository computes the plain family properly, becaus
 its pipeline fetches a real chain, and prints both straddles each evening. Typing
 those two numbers in gives you the exact bands on the chart.
 
+## Reading the right tenor, for free
+
+The weakest input in the whole model has always been the front expiry's own
+volatility. The screenshots could not settle it, a chart cannot fetch an option
+chain, and the fallback was one thirty-day number used for every horizon and
+scaled by a constant.
+
+The exchange publishes the answer and charges nothing for it. VIX9D, VIX and
+VIX3M are three points on the same curve at nine, thirty and ninety-three days.
+Setting **Volatility source** to *VIX term structure* reads the tenor each band
+is actually drawn for, interpolating in total variance because variance is what
+adds over time, and clamping outside the published points rather than
+extrapolating.
+
+It matters most exactly where the old input was worst. On a calm tape the
+nine-day index sits about a third below the thirty-day one, so the daily band
+has been drawn far too wide. In a shock the front inverts above the thirty-day
+and the daily band widens, which is what it should do and what a flat number
+cannot do. Leave the source on *From VIX* to reproduce the published charts;
+switch it to read a more honest band.
+
+The same curve is in `lib/bands.js` as `vixCurve` and `sigmaFromCurve`, so the
+page and the tests read it the same way the script does.
+
 ## The extras, and what a decade of sessions says about them
 
 Three switches sit under **Extras** in both scripts. Only one of them changes

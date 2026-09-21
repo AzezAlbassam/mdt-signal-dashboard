@@ -34,7 +34,8 @@ showMonthly = input.bool(true, "Month to date", group = gM, inline = "show")
 // ───────────────────────────────────────────────── the iVol family
 
 gV = "iVol family — smooth volatility"
-ivSource = input.string("From VIX", "Volatility source", options = ["From VIX", "Manual"], group = gV)
+ivSource = input.string("From VIX", "Volatility source", options = ["From VIX", "VIX term structure", "Manual"], group = gV,
+     tooltip = "From VIX reproduces the published charts: one thirty-day number for every horizon. VIX term structure reads the tenor each band is actually drawn for, using VIX9D, VIX and VIX3M, which the exchange publishes free. A daily band wants the nine-day point, and on a calm tape that is a third narrower than the thirty-day number. On a shock the front inverts above it and the daily band widens as it should. This will not match the published lines.")
 ivManual = input.float(15.0, "Manual volatility, per cent", minval = 1, maxval = 200, step = 0.25, group = gV)
 vixShare = input.float(0.92, "IV30 as a share of VIX", minval = 0.5, maxval = 1.5, step = 0.01, group = gV,
      tooltip = "Across fifteen published charts the iVol daily band implied 0.88 to 0.96 of the VIX close, averaging 0.92. Only used when the source is VIX. Over a decade of SPY sessions the multiplier that makes this a true one-sigma band is 0.89; 0.92 reproduces the published charts and is within noise of it.")
@@ -88,22 +89,62 @@ dailyAnchor   = request.security(syminfo.tickerid, "D", close[1])
 weeklyAnchor  = request.security(syminfo.tickerid, "W", close[1])
 monthlyAnchor = request.security(syminfo.tickerid, "M", close[1])
 vixClose      = request.security("CBOE:VIX",       "D", close[1], ignore_invalid_symbol = true)
+vix9dClose    = request.security("CBOE:VIX9D",     "D", close[1], ignore_invalid_symbol = true)
+vix3mClose    = request.security("CBOE:VIX3M",     "D", close[1], ignore_invalid_symbol = true)
 
 sessionOpen   = request.security(syminfo.tickerid, "D", open)
 
-iv = ivSource == "Manual" or na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
+// Volatility at a tenor, interpolated in total variance because variance is
+// what adds over time. Outside the published points it clamps rather than
+// extrapolating, so a missing index cannot invent a number.
+tsSigma(tenorDays) =>
+    s9  = na(vix9dClose) ? na : vix9dClose / 100.0
+    s30 = na(vixClose)   ? na : vixClose   / 100.0
+    s93 = na(vix3mClose) ? na : vix3mClose / 100.0
+    near   = na(s9)  ? s30 : s9
+    nearD  = na(s9)  ? 30.0 : 9.0
+    far    = na(s93) ? s30 : s93
+    farD   = na(s93) ? 30.0 : 93.0
+    out = float(na)
+    if na(near) and na(s30) and na(far)
+        out := na
+    else if na(s30)
+        out := na(near) ? far : near
+    else if tenorDays <= nearD
+        out := near
+    else if tenorDays >= farD
+        out := far
+    else if tenorDays <= 30.0
+        va = near * near * nearD
+        vb = s30 * s30 * 30.0
+        out := math.sqrt((va + (vb - va) * (tenorDays - nearD) / (30.0 - nearD)) / tenorDays)
+    else
+        va = s30 * s30 * 30.0
+        vb = far * far * farD
+        out := math.sqrt((va + (vb - va) * (tenorDays - 30.0) / (farD - 30.0)) / tenorDays)
+    out
+
+ivFor(tenorDays) =>
+    fromTerm = ivSource == "VIX term structure" ? tsSigma(tenorDays) : na
+    ivSource == "Manual" ? ivManual / 100.0 :
+         ivSource == "VIX term structure" and not na(fromTerm) ? fromTerm * vixShare :
+         na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
+
 
 // The regime multiplier, off by default: the published charts plot a constant.
 regimeK() =>
     na(vixClose) ? regimeBase : vixClose <= regimeCutLo ? regimeKLo : vixClose <= regimeCutHi ? regimeKMid : regimeKHi
 regimeScale = useRegime and regimeBase > 0 ? regimeK() / regimeBase : 1.0
 
-halfWidth(anchorClose, sessions) =>
-    na(anchorClose) or na(iv) ? na : anchorClose * iv * math.sqrt(sessions / 365.0) * regimeScale
+// `sessions` sets the width, matching the published model. `tenorDays` only
+// chooses which volatility on the curve is read for it.
+halfWidth(anchorClose, sessions, tenorDays) =>
+    v = ivFor(tenorDays)
+    na(anchorClose) or na(v) ? na : anchorClose * v * math.sqrt(sessions / 365.0) * regimeScale
 
-ivolDailyHalf   = halfWidth(dailyAnchor,   1)
-ivolWeeklyHalf  = halfWidth(weeklyAnchor,  weeklySessions)
-ivolMonthlyHalf = halfWidth(monthlyAnchor, monthlySessions)
+ivolDailyHalf   = halfWidth(dailyAnchor,   1,               1.0)
+ivolWeeklyHalf  = halfWidth(weeklyAnchor,  weeklySessions,  7.0)
+ivolMonthlyHalf = halfWidth(monthlyAnchor, monthlySessions, 30.0)
 
 plainHalf(typedIn, ivolHalf) =>
     plainSource == "Manual straddle" and typedIn > 0 ? typedIn : ivolHalf * plainScale
