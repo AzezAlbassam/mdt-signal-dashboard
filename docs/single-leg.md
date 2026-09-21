@@ -119,6 +119,37 @@ with a high win rate and a high reward-to-risk at once.** The edge is the gap
 between 96.9 and the 86.5 the payoff demands — ten points, and ten points is a
 real, tradeable edge.
 
+### What that is worth to an actual account
+
+`+5.3% of the money at risk` is not an account return. At the 5 per cent sizing
+rule the money at risk **is** 5 per cent of the account, so the account earns
+about 0.27 per cent a month. Run over the decade at every start offset, with
+enough capital that whole-contract rounding stops distorting it:
+
+| risk per trade | CAGR worst / median / best | max drawdown median / worst |
+|---|---|---|
+| 5% | 1.9% / **2.9%** / 3.8% | 4.4% / 5.7% |
+| 10% | 3.7% / **5.8%** / 7.8% | 8.9% / 11.4% |
+| 20% | 7.1% / **11.8%** / 16.1% | 17.8% / 22.2% |
+| 30% | 10.2% / **17.8%** / 25.1% | 26.7% / 32.6% |
+
+Holding the index over the same decade returned **13.3 per cent a year with a
+34.1 per cent drawdown**. So the trade is not a way to beat the index; at 20 per
+cent risk a trade it roughly matches it with half the drawdown, and at the
+prescribed 5 per cent it returns less than cash. **Pick the risk rule knowing
+that, and not from the headline.**
+
+### How often it really loses everything
+
+0.4 per cent of trades, which is **one every twenty-two years of monthly
+trading** — not once every two and a half years, which is the *put* spread's
+figure (3.07 per cent) and was wrongly carried over here in an earlier draft.
+
+Across all 21 start offsets the decade produced ten full losses, but they
+cluster into **three market episodes**: December 2017, July 2022, October 2023.
+Whether your own calendar catches one is luck: the median phase saw **none**,
+the worst saw two.
+
 ### Year by year, every start date averaged
 
 `call` spread, 1.25σ, monthly:
@@ -165,4 +196,5 @@ panels hold long enough to read.
 node --test 'tests/*.test.js'     # 208 tests
 node scripts/signals.mjs          # the buying search and its placebo
 node scripts/single-leg.mjs       # the selling study
+node scripts/ten-thousand.mjs     # what a real account of a given size does
 ```

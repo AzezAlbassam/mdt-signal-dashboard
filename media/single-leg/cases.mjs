@@ -27,7 +27,7 @@ const CASES = [
   { d: '2019-01-14', label: 'Won by a single point', sub: 'the closest call that still paid',
     lesson: 'The index finished within a tenth of a point of your short strike. A cash-settled European option has no assignment and no early exercise: above the strike by any amount is a full loss, below it by any amount is a full win. It closed below.' },
   { d: '2022-07-14', label: 'The full loss', sub: 'a bear-market rally, +13 per cent in a month',
-    lesson: 'The index blew through both strikes. You lost the entire maximum — and <b>the entire maximum was a number you knew on the day you opened it.</b> No gap, halt or margin call could make it larger. This happens about once every two and a half years.' },
+    lesson: 'The index blew through both strikes. You lost the entire maximum — and <b>the entire maximum was a number you knew on the day you opened it.</b> No gap, halt or margin call could make it larger. Only three episodes in the decade did this &mdash; this is one of them.' },
   { d: '2025-04-21', label: 'A partial loss', sub: 'the V-shaped recovery off the April low',
     lesson: 'The index closed between your two strikes, so the loss was part of the maximum rather than all of it. Seventy per cent of the risk. Most losing months look like this one, not like the month above.' },
 ]
