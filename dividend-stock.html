@@ -411,11 +411,20 @@ function drawDps(c){
       tipRow(null, 'vs prior year', yoy == null ? '—' : (yoy >= 0 ? '+' : '') + yoy.toFixed(1) + '%') +
       (r.basis ? `<div class="tr" style="margin-top:4px;color:var(--faint)"><span>${esc(r.basis)}</span></div>` : '');
   });
-  const first = rows[0], last = rows[rows.length-1], yrs = +last.fy - +first.fy;
+  // Measure from the first year the company actually paid — a company that initiated its
+  // dividend partway through the window has no growth rate from the zero years, and
+  // "$0.000 in FY2012" is a worse opening fact than the year it started paying.
+  const fi = rows.findIndex(r => r.val > 0);
+  const first = rows[fi >= 0 ? fi : 0], last = rows[rows.length - 1];
+  const yrs = +last.fy - +first.fy;
   const cagr = yrs > 0 && first.val > 0 ? (Math.pow(last.val / first.val, 1 / yrs) - 1) * 100 : null;
-  cap.innerHTML = `${dps(first.val)} in FY${esc(first.fy)} to ${dps(last.val)} in FY${esc(last.fy)}` +
+  cap.innerHTML =
+    (fi > 0 ? `First paid in FY${esc(first.fy)}. ` : '') +
+    `${dps(first.val)} in FY${esc(first.fy)} to ${dps(last.val)} in FY${esc(last.fy)}` +
     (cagr != null ? ` &mdash; <b class="n">${cagr.toFixed(1)}%</b> a year over ${yrs} years.` : '.') +
-    (c.normalised.streak?.cutsOrHolds?.length ? ' ' + c.normalised.streak.cutsOrHolds.map(k => `FY${esc(k.fy)}: ${esc(k.kind || 'hold')}`).join('; ') + '.' : '');
+    (c.normalised.streak?.cutsOrHolds?.length
+      ? ' ' + c.normalised.streak.cutsOrHolds.map(k => `FY${esc(k.fy)}: ${esc(k.kind || 'hold')}`).join('; ') + '.'
+      : '');
 }
 
 function drawPayout(c){

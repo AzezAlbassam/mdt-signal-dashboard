@@ -508,7 +508,25 @@
    "m": "Electronic bond trading network; liquidity begets liquidity.",
    "fl": [
     "competition"
-   ]
+   ],
+   "v": {
+    "g5": 4.8,
+    "st": 16,
+    "stSrc": "data; 16 consecutive increases FY2010-FY2025, not window-limited (FY2009 is the initiation year), so the prior research figure of 17 was not used",
+    "po": 35.5,
+    "poBasis": "dividends paid / FCF where capex = PP&E 8.2M + capitalised software 49.8M (FY2025 FCF 324.1M); PP&E-only basis would show 30.8%",
+    "dpsReg": 3.04,
+    "roic": 27.2,
+    "nde": -0.7,
+    "fcfG5": -0.8,
+    "verdict": "candidate",
+    "pass": 8,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "MORN",
@@ -730,7 +748,25 @@
    "m": "Industrial adhesives specified into customer production lines.",
    "fl": [
     "leverage"
-   ]
+   ],
+   "v": {
+    "g5": 7.5,
+    "st": 57,
+    "stSrc": "research; data confirms 16 years (FY2009-FY2025, window-limited - streak runs to the first year of XBRL data)",
+    "po": 41.5,
+    "poBasis": "dividends paid / free cash flow (CFO - capex), FY2025: 50,271,000 / 121,218,000",
+    "dpsReg": 0.928,
+    "roic": 6.6,
+    "nde": 4.2,
+    "fcfG5": -13.1,
+    "verdict": "avoid",
+    "pass": 5,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "SLGN",
