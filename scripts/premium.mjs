@@ -168,6 +168,34 @@ for (const minVix of [null, 15, 18, 20, 25]) {
   }
 }
 
+// ── 5b. which years carry it
+{
+  out.byYear = {}
+  for (const [label, opts] of [
+    ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+  ]) {
+    const byYear = {}
+    for (let start = 0; start < opts.hold; start++) {
+      for (const t of simulatePremium(S, { ...opts, start })) {
+        const y = t.entryDate.slice(0, 4)
+        // In points a credit grows with the index, so a decade that tripled
+        // makes the later years look better than they were. Basis points of
+        // the index at entry is the comparable unit.
+        ;(byYear[y] ??= []).push({ pnl: t.pnl, bp: 10000 * t.pnl / t.S0 })
+      }
+    }
+    out.byYear[label] = Object.fromEntries(Object.entries(byYear).sort().map(([y, v]) => [y, {
+      periods: Math.round(v.length / opts.hold),
+      meanPnl: v.reduce((a, b) => a + b.pnl, 0) / v.length,
+      meanBp: v.reduce((a, b) => a + b.bp, 0) / v.length,
+      worst: Math.min(...v.map((x) => x.pnl)),
+      worstBp: Math.min(...v.map((x) => x.bp)),
+      shareLosing: v.filter((x) => x.pnl < 0).length / v.length,
+    }]))
+  }
+}
+
 // ── 6. how thin is the tail estimate?
 {
   const trades = simulatePremium(S, { hold: 21, widthSigma: 2, structure: 'strangle', costPerLeg: 0.05 })
@@ -223,6 +251,14 @@ for (const r of out.regimeFilter) {
 console.log('\nOUT OF SAMPLE (fit span before 2022, test span from 2022)')
 for (const [k, v] of Object.entries(out.outOfSample)) {
   console.log(`  ${k}: fit n=${v.fit.n} win ${pct(v.fit.winRate)} mean ${f2(v.fit.meanPnl)} | test n=${v.test.n} win ${pct(v.test.winRate)} mean ${f2(v.test.meanPnl)} worst ${f2(v.test.worstOfAnyPhase)}`)
+}
+
+console.log('\nWHICH YEARS CARRY IT (21 sessions, 1σ, every phase pooled)')
+console.log('       naked strangle            defined-risk condor')
+console.log('year   mean bp   worst bp    |   mean bp   worst bp')
+for (const y of Object.keys(out.byYear.strangle1)) {
+  const a = out.byYear.strangle1[y]; const b = out.byYear.condor1[y]
+  console.log(`${y}   ${a.meanBp.toFixed(0).padStart(6)}   ${a.worstBp.toFixed(0).padStart(7)}    |   ${b.meanBp.toFixed(0).padStart(6)}   ${b.worstBp.toFixed(0).padStart(7)}`)
 }
 
 console.log('\nTHE TAIL IS FIVE MONTHS')
