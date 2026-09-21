@@ -1570,6 +1570,33 @@
     },
     "note": "A backtest that settles every trade assumes you were never closed out. A defined-risk position posts its whole worst case on day one, so that is true of it. A naked one does not."
   },
+  "sizing": {
+    "condor1": {
+      "months": 128,
+      "totalInStakes": 14.387985543086039,
+      "totalRange": [
+        8.608854746856455,
+        20.194098531018746
+      ],
+      "worstDrawdownInStakes": 2.9277662804684272,
+      "worstDrawdownAnyPhase": 4.259923937096847,
+      "longestLosingStreak": 2.5238095238095237,
+      "longestLosingStreakAnyPhase": 4
+    },
+    "condor15": {
+      "months": 128,
+      "totalInStakes": 3.398363455216076,
+      "totalRange": [
+        -0.3106135382836738,
+        5.31768100929406
+      ],
+      "worstDrawdownInStakes": 1.6788524805079696,
+      "worstDrawdownAnyPhase": 3.2501335137742684,
+      "longestLosingStreak": 2.9523809523809526,
+      "longestLosingStreakAnyPhase": 7
+    },
+    "note": "Risking one unit a month, the decade returns about fourteen units and the worst drawdown is about three, four in the unluckiest phase. Risk one per cent of an account a month and that is roughly fourteen per cent over the decade against a four per cent drawdown. Risk ten per cent a month for a meaningful return and the drawdown is forty."
+  },
   "tail": {
     "n": 128,
     "losingMonths": 1,

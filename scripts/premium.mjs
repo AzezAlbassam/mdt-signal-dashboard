@@ -242,6 +242,43 @@ for (const minVix of [null, 15, 18, 20, 25]) {
   out.margin.note = 'A backtest that settles every trade assumes you were never closed out. A defined-risk position posts its whole worst case on day one, so that is true of it. A naked one does not.'
 }
 
+// ── 5d. what it looks like sized to risk one unit a month
+{
+  out.sizing = {}
+  for (const [label, opts] of [
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+    ['condor15', { hold: 21, widthSigma: 1.5, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+  ]) {
+    const totals = []; const dds = []; const streaks = []
+    for (let start = 0; start < opts.hold; start++) {
+      const trades = simulatePremium(S, { ...opts, start })
+      let run = 0; let peak = 0; let dd = 0; let cur = 0; let worstRun = 0
+      for (const t of trades) {
+        // Each month risks exactly one unit, so the series is comparable and
+        // the drawdown is in units of a single month's stake.
+        const u = t.pnl / t.maxLoss
+        run += u
+        if (run > peak) peak = run
+        if (peak - run > dd) dd = peak - run
+        cur = u < 0 ? cur + 1 : 0
+        if (cur > worstRun) worstRun = cur
+      }
+      totals.push(run); dds.push(dd); streaks.push(worstRun)
+    }
+    const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length
+    out.sizing[label] = {
+      months: Math.round(simulatePremium(S, { ...opts, start: 0 }).length),
+      totalInStakes: mean(totals),
+      totalRange: [Math.min(...totals), Math.max(...totals)],
+      worstDrawdownInStakes: mean(dds),
+      worstDrawdownAnyPhase: Math.max(...dds),
+      longestLosingStreak: mean(streaks),
+      longestLosingStreakAnyPhase: Math.max(...streaks),
+    }
+  }
+  out.sizing.note = 'Risking one unit a month, the decade returns about fourteen units and the worst drawdown is about three, four in the unluckiest phase. Risk one per cent of an account a month and that is roughly fourteen per cent over the decade against a four per cent drawdown. Risk ten per cent a month for a meaningful return and the drawdown is forty.'
+}
+
 // ── 6. how thin is the tail estimate?
 {
   const trades = simulatePremium(S, { hold: 21, widthSigma: 2, structure: 'strangle', costPerLeg: 0.05 })
@@ -319,6 +356,13 @@ for (const y of Object.keys(out.byYear.strangle1)) {
   const a = out.byYear.strangle1[y]; const b = out.byYear.condor1[y]
   console.log(`${y}   ${a.meanBp.toFixed(0).padStart(6)}   ${a.worstBp.toFixed(0).padStart(7)}    |   ${b.meanBp.toFixed(0).padStart(6)}   ${b.worstBp.toFixed(0).padStart(7)}`)
 }
+
+console.log('\nSIZED TO RISK ONE UNIT A MONTH')
+for (const [k, z] of Object.entries(out.sizing)) {
+  if (k === 'note') continue
+  console.log(`  ${k.padEnd(9)} over ${z.months} months: total ${z.totalInStakes.toFixed(1)} stakes (${z.totalRange[0].toFixed(1)} to ${z.totalRange[1].toFixed(1)})  worst drawdown ${z.worstDrawdownInStakes.toFixed(2)} stakes (${z.worstDrawdownAnyPhase.toFixed(2)} worst phase)  longest losing run ${z.longestLosingStreakAnyPhase} months`)
+}
+console.log(`  ${out.sizing.note}`)
 
 console.log('\nTHE TAIL IS FIVE MONTHS')
 for (const t of out.tail.worstFive) console.log(`  ${t.entryDate} → ${t.exitDate}  VIX at entry ${t.entryVix.toFixed(1)}  index moved ${pct(t.movePct)}  P&L ${f2(t.pnl)}`)
