@@ -9,6 +9,7 @@
   --line:#DBDBD3; --line-soft:#E7E7E1;
   --accent:#8F711B; --accent-soft:#EFE7CC;
   --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --pos-soft:#E4EBDD; --neg-soft:#F0DFD9; --warn-soft:#EFE7CC;
   --grid:#E2E2DB;
   --c1:#8F6A12; --c2:#0E6FA8; --c3:#A14430;
 }
@@ -18,6 +19,7 @@
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
   --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
   --grid:#2C2C27;
   --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
 }}
@@ -27,6 +29,7 @@
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
   --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
   --grid:#2C2C27;
   --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
 }
@@ -130,6 +133,10 @@ a.tk:hover{color:var(--accent);border-color:var(--accent)}
 .src{font-family:system-ui,sans-serif;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
  color:var(--faint);margin-left:5px;vertical-align:middle}
 .src.on{color:var(--accent)}
+.src i.cf{font-style:normal;font-size:.56rem;letter-spacing:.04em;margin-left:3px;
+ padding:1px 3px;border-radius:2px;vertical-align:baseline}
+.src i.cf.medium{background:var(--warn-soft);color:var(--warn)}
+.src i.cf.low{background:var(--neg-soft);color:var(--neg)}
 a.vd{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
  font-weight:650;padding:2px 7px;border-radius:3px;text-decoration:none;min-width:44px;text-align:center}
 a.vd.strong{background:var(--pos);color:var(--bg)}
@@ -603,9 +610,19 @@ function render(){
         ' includes a special dividend">sp</span>'
       : pct(c.y, 2);
 
+    // Every filed figure carries a confidence, because XBRL is messy — filers restate,
+    // mislabel and occasionally file a wrong number. The dot says how much of the result
+    // rested on judgement; the company's own page lists every call that was made.
+    const CONF = {
+      high:   ['', 'derived cleanly from the filings'],
+      medium: ['med', 'some figures required a judgement call — see the company page'],
+      low:    ['low', 'several figures required judgement, or key tags are missing — read the caveats before acting on this row']
+    };
+    const [dot, why] = CONF[c.conf] || CONF.high;
     const src = c.filed
-      ? ' <span class="src on" title="from SEC filings, split-adjusted, reviewed">filed</span>'
-      : ' <span class="src" title="research estimate — not yet verified against filings">est</span>';
+      ? ' <span class="src on" title="From SEC filings: ' + why + '.">filed' +
+        (dot ? '<i class="cf ' + c.conf + '">' + dot + '</i>' : '') + '</span>'
+      : ' <span class="src" title="Research estimate — not yet checked against the filings.">est</span>';
     const rulesCell = c.pass != null
       ? '<a class="vd ' + c.verdict + '" href="dividend-stock.html#' + c.s + '" title="' + c.verdict +
         ' — open the analysis">' + c.pass + '/10</a>'
