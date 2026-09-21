@@ -1,0 +1,137 @@
+<!doctype html><meta charset="utf-8"><title>Expected-move condor sheet</title>
+<style>
+:root{--bg:#191917;--ink:#EDEDE7;--body:#C1C1B7;--muted:#8D8D83;--faint:#696960;--line:#34342E;--accent:#CBA84A;--pos:#7E9B5F;--neg:#C1715C;--blue:#7FA9C4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{width:1820px;padding:34px 40px 30px}
+h1{color:var(--ink);font-size:30px;letter-spacing:-.02em;margin:0 0 6px;font-weight:650}
+.sub{color:var(--muted);font-size:14.5px;margin:0 0 8px;max-width:1500px;line-height:1.5}
+.spot{font-size:13px;color:var(--faint);margin:0 0 22px;font-family:ui-monospace,Menlo,monospace}
+.spot b{color:var(--accent)}
+.spot input{background:#111;border:1px solid var(--line);color:var(--accent);font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:4px 7px;border-radius:5px;width:100px;margin:0 14px 0 4px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#222220;border:1px solid var(--line);border-radius:9px;padding:20px 22px 18px;display:flex;flex-direction:column}
+.card.pick{border-color:#5a4a1e;background:#24211a}
+.tag{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:5px}
+.tag .pickflag{color:var(--accent)}
+h2{color:var(--ink);font-size:20px;margin:0 0 3px;font-weight:650;letter-spacing:-.01em}
+.dte{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--blue);margin:0 0 14px}
+svg{display:block;margin:2px 0 10px}
+.legs{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px}
+.legs td{padding:5px 0;border-bottom:1px solid #2b2b27}
+.legs td.act{width:52px;font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:12px}
+.legs td.k{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right;width:74px}
+.legs td.d{color:var(--muted);font-size:12px;padding-left:10px}
+.sell{color:var(--neg)}.buy{color:var(--pos)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;margin-top:auto}
+.grid2 .lab{color:var(--muted)}
+.grid2 .val{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right}
+.floor{margin-top:12px;background:#1d1c18;border:1px solid #3a3529;border-radius:6px;padding:9px 11px;font-size:12.5px;color:#E1C982;line-height:1.45}
+.steps{margin-top:24px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.step{background:#1f1f1d;border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.step .n{font-family:ui-monospace,Menlo,monospace;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.1em}
+.step .h{color:var(--ink);font-weight:650;font-size:14.5px;margin:4px 0 5px}
+.step p{margin:0;font-size:12.5px;color:var(--body);line-height:1.5}
+.foot{margin-top:20px;font-size:12.5px;color:var(--muted);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.foot b{color:var(--body)}
+</style>
+<div class="wrap">
+<h1>The three trades, and exactly how to place them</h1>
+<p class="sub">All three are the same shape: an iron condor sold at the expected-move band on a cash-settled European index option, held to expiry with no management. They differ only in how far out the short strikes sit and how long you hold. Measured on 2,688 real sessions, January 2016 to September 2026, at every possible start date.</p>
+<p class="spot">Type today's numbers and the strikes recompute.
+ index <input id="s0in" type="number" step="0.01" value="7650.5">
+ VIX <input id="vxin" type="number" step="0.01" value="14.81">
+ <span id="stamp"></span></p>
+
+<div class="cols" id="cols"></div>
+
+<div class="steps">
+ <div class="step"><div class="n">STEP 1</div><div class="h">Measure the move</div><p>On the morning you trade, take the index level and the VIX close. The one-sigma move is <b>index &times; (VIX &divide; 100) &times; &radic;(days &divide; 365)</b>, using calendar days to expiry.</p></div>
+ <div class="step"><div class="n">STEP 2</div><div class="h">Set four strikes</div><p>Short strikes at the multiple of that move shown on the card. Long strikes half a sigma further out on each side. Round to the nearest listed strike.</p></div>
+ <div class="step"><div class="n">STEP 3</div><div class="h">Send it as one order</div><p>All four legs, one expiry, as a single iron condor at a net credit limit. Never leg in. Start at the mid and work down; if you cannot fill above the floor on the card, cancel and skip the month.</p></div>
+ <div class="step"><div class="n">STEP 4</div><div class="h">Size it</div><p>Max loss is the wing width minus the credit, and you know it exactly at entry. Buy the number of contracts that makes it 5 per cent of your account. Not margin, not notional.</p></div>
+ <div class="step"><div class="n">STEP 5</div><div class="h">Then do nothing</div><p>Hold to expiry. No stop, no adjustment, no profit target. Cash settles automatically. Hold-to-expiry is the only rule the decade actually measures.</p></div>
+</div>
+
+<p class="foot"><b>Why you can do nothing for a month.</b> The wings mean the worst case is posted on day one and no gap, halt or margin call can exceed it. The naked version of this trade earns more on paper and an account funded at its margin is closed out on 9 March 2020, fourteen days before the expiry that books the loss. <b>Sizing note.</b> One SPX condor risks about the price of a small car, so at 5 per cent that needs a large account. XSP is the same index at one tenth the size and settles the same way; every figure here divides by ten. <b>This is research, not advice.</b> Every premium is a model's, not a quote, which is why step 3 has a floor.</p>
+</div>
+
+<script>
+let S0 = 7650.5, VIX = 14.81;
+const TRADES = [
+  {pick:true, tag:'The pick', name:'1.0&sigma; condor, monthly', dte:'30 calendar days &middot; 21 sessions',
+   days:30, width:1, wing:0.5, win:'86.9%', ret:'+12.2% a month on risk', cagr:'7.5% a year at 5% risk',
+   dd:'15% worst drawdown', full:'4.3% of months', floor:14,
+   note:'Positive in all 11 years and all 21 start dates. 2020 was its second best year.'},
+  {tag:'If you can trade more often', name:'1.0&sigma; condor, fortnightly', dte:'14 calendar days &middot; 10 sessions',
+   days:14, width:1, wing:0.5, win:'86.5%', ret:'+10.3% a trade on risk', cagr:'8.0% a year at 3% risk',
+   dd:'12% worst drawdown', full:'4.9% of trades', floor:16,
+   note:'Slightly better risk-adjusted, at 25 decisions a year instead of 12.'},
+  {tag:'If you need a higher win rate', name:'1.25&sigma; condor, monthly', dte:'30 calendar days &middot; 21 sessions',
+   days:30, width:1.25, wing:0.5, win:'92.6%', ret:'+7.6% a month on risk', cagr:'4.6% a year at 5% risk',
+   dd:'gentler bad months', full:'2.1% of months', floor:8,
+   note:'Costs about 40 per cent of the return. Worth it only if the alternative is quitting in a drawdown.'},
+];
+// Black-Scholes, r = 0, to show the credit the model expects.
+const ncdf = x => { const t = 1/(1+0.2316419*Math.abs(x)); const d = 0.3989422804014327*Math.exp(-x*x/2);
+  let p = d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return x >= 0 ? 1-p : p; };
+const bs = (S,K,T,s,type) => { if (T<=0) return Math.max(type==='C'?S-K:K-S,0);
+  const d1=(Math.log(S/K)+0.5*s*s*T)/(s*Math.sqrt(T)), d2=d1-s*Math.sqrt(T);
+  return type==='C' ? S*ncdf(d1)-K*ncdf(d2) : K*ncdf(-d2)-S*ncdf(-d1); };
+
+const H = 210, PAD = 26;
+function render () {
+document.getElementById('cols').innerHTML = TRADES.map(t => {
+  const T = t.days/365, sig = VIX/100;
+  const move = S0*sig*Math.sqrt(T);
+  const sc = S0 + t.width*move, sp = S0 - t.width*move;
+  const wing = t.wing*move;
+  const bc = sc + wing, bp = sp - wing;
+  const credit = bs(S0,sc,T,sig,'C') + bs(S0,sp,T,sig,'P') - bs(S0,bc,T,sig,'C') - bs(S0,bp,T,sig,'P');
+  const maxLoss = wing - credit;
+  const r = x => Math.round(x).toLocaleString();
+  const y = v => PAD + (bc - v)/(bc - bp)*(H - 2*PAD);
+  const W = 470;
+  return `<div class="card ${t.pick?'pick':''}">
+   <div class="tag">${t.pick?'<span class="pickflag">&#9733; '+t.tag+'</span>':t.tag}</div>
+   <h2>${t.name}</h2>
+   <div class="dte">${t.dte}</div>
+   <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+     <rect x="64" y="${y(sc)}" width="${W-130}" height="${y(sp)-y(sc)}" fill="#7E9B5F" opacity=".11"/>
+     <text x="${W/2}" y="${(y(sc)+y(sp))/2+4}" fill="#7E9B5F" font-size="12.5" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">keep the credit anywhere in here</text>
+     ${[[bc,'#7E9B5F','buy call','4'],[sc,'#C1715C','sell call',''],[S0,'#8D8D83','index now','2 3'],[sp,'#C1715C','sell put',''],[bp,'#7E9B5F','buy put','4']].map(([v,c,lab,dash]) =>
+       `<line x1="64" y1="${y(v)}" x2="${W-66}" y2="${y(v)}" stroke="${c}" stroke-width="${dash==='2 3'?1:1.6}" ${dash?`stroke-dasharray="${dash}"`:''}/>
+        <text x="58" y="${y(v)+4}" fill="${c}" font-size="12" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${r(v)}</text>
+        <text x="${W-60}" y="${y(v)+4}" fill="${c}" font-size="11.5">${lab}</text>`).join('')}
+   </svg>
+   <table class="legs">
+     <tr><td class="act buy">BUY</td><td class="k">${r(bc)}</td><td class="d">call &mdash; caps the loss above</td></tr>
+     <tr><td class="act sell">SELL</td><td class="k">${r(sc)}</td><td class="d">call &mdash; ${t.width}&sigma; above</td></tr>
+     <tr><td class="act sell">SELL</td><td class="k">${r(sp)}</td><td class="d">put &mdash; ${t.width}&sigma; below</td></tr>
+     <tr><td class="act buy">BUY</td><td class="k">${r(bp)}</td><td class="d">put &mdash; caps the loss below</td></tr>
+   </table>
+   <div class="grid2">
+     <div class="lab">One sigma is</div><div class="val">${r(move)} pts</div>
+     <div class="lab">Wing width</div><div class="val">${r(wing)} pts</div>
+     <div class="lab">Credit you collect</div><div class="val">$${r(credit*100)}</div>
+     <div class="lab">Most you can lose</div><div class="val">$${r(maxLoss*100)}</div>
+     <div class="lab">Same on XSP</div><div class="val">$${r(maxLoss*10)}</div>
+     <div class="lab">Wins</div><div class="val">${t.win}</div>
+     <div class="lab">Returns</div><div class="val">${t.cagr}</div>
+     <div class="lab">Loses it all</div><div class="val">${t.full}</div>
+   </div>
+   <div class="floor"><b>Fill floor.</b> The model assumes ${(100*credit/wing).toFixed(0)}% of the wing in credit. Below <b>${t.floor}% (about $${r(wing*t.floor)})</b> this trade has no edge left. Cancel and wait.<br><span style="color:#8D8D83">${t.note}</span></div>
+  </div>`;
+}).join('');
+}
+const s0in = document.getElementById('s0in'), vxin = document.getElementById('vxin');
+function update () {
+  const a = parseFloat(s0in.value), b = parseFloat(vxin.value);
+  if (!(a > 0) || !(b > 0)) return;
+  S0 = a; VIX = b; render();
+}
+s0in.addEventListener('input', update);
+vxin.addEventListener('input', update);
+render();
+</script>

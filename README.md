@@ -7,6 +7,7 @@ step and no runtime dependencies.
 | --- | --- |
 | `index.html` | Index |
 | `em.html` | SPY and SPX expected-move bands, rebuilt from the option chain |
+| `trade-sheet.html` | The four strikes for the three condors, from today's index level and VIX |
 | `spx.html`, `plan-a.html`, `plan-b.html` | Strategy studies on real 0DTE data |
 | `tracker-a.html`, `tracker-b.html` | Trade trackers |
 
