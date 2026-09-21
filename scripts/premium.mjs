@@ -11,7 +11,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
-  variancePremium, simulatePremium, summarisePremium, horizons, realisedVol,
+  variancePremium, simulatePremium, summarisePremium, horizons, realisedVol, marginPath,
 } from '../lib/premium.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -208,6 +208,40 @@ for (const minVix of [null, 15, 18, 20, 25]) {
   }
 }
 
+// ── 5c. could you still be there at expiry?
+{
+  out.margin = {}
+  for (const [label, opts] of [
+    ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
+    ['strangle2', { hold: 21, widthSigma: 2, structure: 'strangle', costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+  ]) {
+    const all = []
+    for (let start = 0; start < opts.hold; start++) {
+      for (const t of simulatePremium(S, { ...opts, start })) all.push({ t, p: marginPath(S, t) })
+    }
+    const mult = all.map((x) => x.p.peakMultiple).sort((a, b) => a - b)
+    const liq = all.filter((x) => x.p.liquidatedOn != null)
+    const worst = all.reduce((a, b) => (b.t.pnl < a.t.pnl ? b : a))
+    out.margin[label] = {
+      trades: all.length,
+      meanInitialMargin: all.reduce((a, x) => a + x.p.initialMargin, 0) / all.length,
+      meanReturnOnMargin: all.reduce((a, x) => a + x.t.pnl / x.p.initialMargin, 0) / all.length,
+      medianPeakMultiple: mult[Math.floor(mult.length / 2)],
+      worstPeakMultiple: mult[mult.length - 1],
+      liquidated: liq.length,
+      liquidatedShare: liq.length / all.length,
+      worstWindow: {
+        entryDate: worst.t.entryDate, exitDate: worst.t.exitDate, pnl: worst.t.pnl,
+        entryVix: worst.t.entryVix, initialMargin: worst.p.initialMargin,
+        peakMultiple: worst.p.peakMultiple, liquidatedOn: worst.p.liquidatedOn,
+        settledLossAsShareOfMargin: worst.t.pnl / worst.p.initialMargin,
+      },
+    }
+  }
+  out.margin.note = 'A backtest that settles every trade assumes you were never closed out. A defined-risk position posts its whole worst case on day one, so that is true of it. A naked one does not.'
+}
+
 // ── 6. how thin is the tail estimate?
 {
   const trades = simulatePremium(S, { hold: 21, widthSigma: 2, structure: 'strangle', costPerLeg: 0.05 })
@@ -268,6 +302,14 @@ for (const r of out.regimeFilter) {
 console.log('\nOUT OF SAMPLE (fit span before 2022, test span from 2022)')
 for (const [k, v] of Object.entries(out.outOfSample)) {
   console.log(`  ${k}: fit n=${v.fit.n} win ${pct(v.fit.winRate)} mean ${f2(v.fit.meanPnl)} | test n=${v.test.n} win ${pct(v.test.winRate)} mean ${f2(v.test.meanPnl)} worst ${f2(v.test.worstOfAnyPhase)}`)
+}
+
+console.log('\nCOULD YOU STILL BE THERE AT EXPIRY? (account funded at the initial requirement)')
+for (const [k, m] of Object.entries(out.margin)) {
+  if (k === 'note') continue
+  const w = m.worstWindow
+  console.log(`  ${k.padEnd(10)} mean margin ${f2(m.meanInitialMargin)}  return on margin ${pct(m.meanReturnOnMargin, 2)}/period  median peak ${m.medianPeakMultiple.toFixed(2)}x  closed out ${m.liquidated}/${m.trades}`)
+  console.log(`             worst window ${w.entryDate} to ${w.exitDate}, VIX ${w.entryVix.toFixed(1)} at entry, peak ${w.peakMultiple.toFixed(2)}x, ${w.liquidatedOn ? 'CLOSED OUT ' + w.liquidatedOn : 'survived'}, settled loss ${pct(w.settledLossAsShareOfMargin, 0)} of margin`)
 }
 
 console.log('\nWHICH YEARS CARRY IT (21 sessions, 1σ, every phase pooled)')

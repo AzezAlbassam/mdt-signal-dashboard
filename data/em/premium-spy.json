@@ -1510,6 +1510,66 @@
       }
     }
   },
+  "margin": {
+    "strangle1": {
+      "trades": 2668,
+      "meanInitialMargin": 46.30024737175774,
+      "meanReturnOnMargin": 0.04125318647718424,
+      "medianPeakMultiple": 1.2460158037155376,
+      "worstPeakMultiple": 3.3719862257044824,
+      "liquidated": 18,
+      "liquidatedShare": 0.006746626686656672,
+      "worstWindow": {
+        "entryDate": "2020-02-21",
+        "exitDate": "2020-03-23",
+        "pnl": -91.26463854865273,
+        "entryVix": 17.08,
+        "initialMargin": 37.77391233869716,
+        "peakMultiple": 3.3719862257044824,
+        "liquidatedOn": "2020-03-09",
+        "settledLossAsShareOfMargin": -2.4160758814267025
+      }
+    },
+    "strangle2": {
+      "trades": 2668,
+      "meanInitialMargin": 44.20711286427216,
+      "meanReturnOnMargin": -0.0013076432602293245,
+      "medianPeakMultiple": 1.0006054081118727,
+      "worstPeakMultiple": 3.0594289338140515,
+      "liquidated": 11,
+      "liquidatedShare": 0.004122938530734633,
+      "worstWindow": {
+        "entryDate": "2020-02-20",
+        "exitDate": "2020-03-20",
+        "pnl": -78.43724590226641,
+        "entryVix": 15.56,
+        "initialMargin": 36.90662167250496,
+        "peakMultiple": 3.0594289338140515,
+        "liquidatedOn": "2020-03-12",
+        "settledLossAsShareOfMargin": -2.125289239375202
+      }
+    },
+    "condor1": {
+      "trades": 2668,
+      "meanInitialMargin": 4.134113104493897,
+      "meanReturnOnMargin": 0.11324876177091678,
+      "medianPeakMultiple": 1,
+      "worstPeakMultiple": 1,
+      "liquidated": 0,
+      "liquidatedShare": 0,
+      "worstWindow": {
+        "entryDate": "2026-03-27",
+        "exitDate": "2026-04-28",
+        "pnl": -10.982230737454156,
+        "entryVix": 31.05,
+        "initialMargin": 10.982230737454156,
+        "peakMultiple": 1,
+        "liquidatedOn": null,
+        "settledLossAsShareOfMargin": -1
+      }
+    },
+    "note": "A backtest that settles every trade assumes you were never closed out. A defined-risk position posts its whole worst case on day one, so that is true of it. A naked one does not."
+  },
   "tail": {
     "n": 128,
     "losingMonths": 1,
