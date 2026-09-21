@@ -58,7 +58,13 @@ const FAMILIES = [
   ['sharesBasic','dur', 'shares', ['WeightedAverageNumberOfSharesOutstandingBasic']],
   ['sharesOut',  'inst','shares', ['CommonStockSharesOutstanding']],
   ['debtLT',     'inst','USD', ['LongTermDebtNoncurrent', 'LongTermDebt', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']],
-  ['debtCur',    'inst','USD', ['LongTermDebtCurrent', 'DebtCurrent', 'ShortTermBorrowings', 'LongTermDebtAndCapitalLeaseObligationsCurrent']],
+  // KNOWN LIMITATION: one tag per family wins, so a filer reporting current maturities
+  // (LongTermDebtCurrent) and revolver draws (ShortTermBorrowings) as separate tags has
+  // only one of them captured, and net debt is then a floor. `DebtCurrent`, where filed,
+  // already covers both. The analysis pass is told to check the candidate list and say so
+  // when it spots the gap — CPK's leverage note is an example. Summing the distinct tags
+  // is the fix, and it needs every company re-run together so the screen stays comparable.
+  ['debtCur',    'inst','USD', ['DebtCurrent', 'LongTermDebtCurrent', 'ShortTermBorrowings', 'LongTermDebtAndCapitalLeaseObligationsCurrent']],
   ['cash',       'inst','USD', ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents', 'Cash']],
   ['equity',     'inst','USD', ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest']],
   ['assets',     'inst','USD', ['Assets']],

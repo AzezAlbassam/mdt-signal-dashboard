@@ -88,7 +88,25 @@
    "st": 33,
    "po": 35,
    "m": "Smart water meters sold to municipalities on 15-year replacement cycles.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 16.2,
+    "st": 33,
+    "stSrc": "research; data confirms 16 years (FY2010-FY2025, window-limited - XBRL starts FY2009 and the streak runs to the edge of the window)",
+    "po": 25.7,
+    "poBasis": "FCF (CFO - capex), FY2025: 43,529k / 169,672k",
+    "dpsReg": 1.48,
+    "roic": 28.3,
+    "nde": -1.2,
+    "fcfG5": 16.1,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "FELE",
@@ -101,7 +119,25 @@
    "st": 33,
    "po": 30,
    "m": "Groundwater and fuel pumping systems; distribution depth in a fragmented trade.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 11.3,
+    "st": 16,
+    "stSrc": "data (16 consecutive increases FY2010-FY2025; not window-limited, XBRL starts FY2008). Prior research claims 33 years and is likely right - the FY2009 flat year is a declared-basis timing artefact - but it cannot be confirmed from filings, so the data streak is used.",
+    "po": 25.8,
+    "poBasis": "FCF (FY2025 dividends 50.0M / FCF 193.5M); on net income 34.0%",
+    "dpsReg": 1.06,
+    "roic": 14.8,
+    "nde": 0.2,
+    "fcfG5": 0.5,
+    "verdict": "strong",
+    "pass": 8,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "GRC",
@@ -164,7 +200,25 @@
    "m": "Identification labels and safety signage; tiny ticket, high switching friction.",
    "fl": [
     "slow-growth"
-   ]
+   ],
+   "v": {
+    "g5": 2.1,
+    "st": 40,
+    "stSrc": "research; data confirms 17 years (FY2010-FY2026, window-limited at FY2009)",
+    "po": 24,
+    "poBasis": "FCF (FY2026 dividends 46.1M / FCF 192.7M); NI basis 22.5%",
+    "dpsReg": 0.9758,
+    "roic": 17.8,
+    "nde": null,
+    "fcfG5": 1.5,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "SSD",
@@ -192,7 +246,25 @@
    "st": 16,
    "po": 18,
    "m": "Industrial parts distribution; branch density and same-day availability.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 8.3,
+    "st": 16,
+    "stSrc": "data (FY2011-FY2026, 16 increases; not window-limited - the FY2010 hold is visible in-window); priorEstimates.streak of 16 agrees",
+    "po": 15.8,
+    "poBasis": "dividends / free cash flow (CFO - capex), FY2026",
+    "dpsReg": 1.94,
+    "roic": 19.7,
+    "nde": 0.5,
+    "fcfG5": 15.3,
+    "verdict": "candidate",
+    "pass": 8,
+    "conf": "medium",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "UFPI",
@@ -256,7 +328,25 @@
    "st": 13,
    "po": 55,
    "m": "Failure-analysis and expert-witness consulting; reputation is the product.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 9.6,
+    "st": 13,
+    "stSrc": "data (13 consecutive increases FY2013-FY2025, not window-limited; prior research estimate of 13 confirmed)",
+    "po": 50.3,
+    "poBasis": "dividends paid / free cash flow (CFO - capex), FY2025",
+    "dpsReg": 1.2,
+    "roic": 51.2,
+    "nde": -1.7,
+    "fcfG5": 4.5,
+    "verdict": "strong",
+    "pass": 9,
+    "conf": "high",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 12,
+    "src": "sec"
+   }
   },
   {
    "s": "RLI",
@@ -357,7 +447,25 @@
    "m": "Listed real assets specialist; category leadership in REIT and infrastructure funds.",
    "fl": [
     "aum-sensitive"
-   ]
+   ],
+   "v": {
+    "g5": 9.7,
+    "st": 19,
+    "stSrc": "research; data confirms 13 years (FY2013-FY2025, window-limited - regular series only reconstructible back to FY2012 because FY2010/FY2011 bundle unseparable specials)",
+    "po": 82.8,
+    "poBasis": "percent of net income (FY2025 dividends 126.9M / NI 153.2M); FCF payout not computable because FY2025 CFO is -120.4M on consolidated-fund investment activity",
+    "dpsReg": 2.48,
+    "roic": 33.7,
+    "nde": -0.8,
+    "fcfG5": null,
+    "verdict": "candidate",
+    "pass": 9,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 14,
+    "src": "sec"
+   }
   },
   {
    "s": "VCTR",
@@ -486,7 +594,25 @@
    "st": 58,
    "po": 60,
    "m": "Regulated water across five states; rate base grows with capital spend.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 7.9,
+    "st": 58,
+    "stSrc": "research; data confirms 16 years (FY2009-FY2025 window-limited, no holds or cuts)",
+    "po": 57.6,
+    "poBasis": "percent of net income (regulated utility with FY2025 FCF of -$214.4M; FCF payout not computable or meaningful)",
+    "dpsReg": 1.24,
+    "roic": null,
+    "nde": 4.5,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 5,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "CPK",
@@ -499,7 +625,25 @@
    "st": 21,
    "po": 40,
    "m": "Regulated gas and electric in fast-growing Delmarva and Florida territories.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 9.3,
+    "st": 21,
+    "stSrc": "research; data confirms 16 years (FY2010-FY2025, window-limited at the FY2009 start of XBRL)",
+    "po": 43.3,
+    "poBasis": "net income (regulated utility; FCF -$214.9m in FY2025 so dividends/FCF is not meaningful). 45.5% on declared dividends rather than cash paid.",
+    "dpsReg": 2.695,
+    "roic": 5.8,
+    "nde": 4.6,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 8,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "OGS",
@@ -647,7 +791,25 @@
    "fl": [
     "reit-payout",
     "rate-sensitive"
-   ]
+   ],
+   "v": {
+    "g5": 4.8,
+    "st": 13,
+    "stSrc": "data (FY2013-FY2025, not window-limited); prior research streak of 13 matches exactly",
+    "po": 67.6,
+    "poBasis": "dividends / CFO (REIT; FCF is negative in 16 of 17 years because capex is real-estate acquisition spend, so a FCF payout is undefined)",
+    "dpsReg": 3.163,
+    "roic": null,
+    "nde": null,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 4,
+    "conf": "low",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "CRAI",
@@ -660,7 +822,25 @@
    "st": 10,
    "po": 30,
    "m": "Economic litigation consulting; billings follow regulatory and antitrust activity.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 16.5,
+    "st": 9,
+    "stSrc": "data; 9 consecutive increases FY2017-FY2025, not window-limited (dividend initiated FY2016 inside the window), so the prior research figure of 10 was not used",
+    "po": 74.5,
+    "poBasis": "dividends / FY2025 FCF (13.831M / 18.556M); structural alternatives: 25.3% of net income, 37.9% of 3-yr average FCF (36.5M). FY2025 FCF is a one-year low on a 22.4M CFO.",
+    "dpsReg": 2.28,
+    "roic": 30.4,
+    "nde": null,
+    "fcfG5": -13.2,
+    "verdict": "candidate",
+    "pass": 6,
+    "conf": "high for dps/streak/growth; medium for fin-derived ROIC and leverage",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 10,
+    "src": "sec"
+   }
   },
   {
    "s": "FHI",
@@ -688,7 +868,25 @@
    "st": 30,
    "po": 30,
    "m": "Filtration with a large replacement-filter aftermarket attached to installed equipment.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 6.3,
+    "st": 30,
+    "stSrc": "research; data confirms 16 years (FY2010-FY2025, window-limited - XBRL begins FY2009)",
+    "po": 38.8,
+    "poBasis": "dividends / free cash flow (FY2025: 131.9M / 339.9M); net income basis 35.9%",
+    "dpsReg": 1.14,
+    "roic": 19,
+    "nde": 0.8,
+    "fcfG5": 5.3,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "LECO",
@@ -729,9 +927,27 @@
    "m": "Convenience stores with kitchen economics in towns too small for competitors.",
    "fl": [
     "graduated"
-   ]
+   ],
+   "v": {
+    "g5": 11.6,
+    "st": 26,
+    "stSrc": "research; data confirms 17 years (FY2010-FY2026, window-limited at the FY2009 start of XBRL)",
+    "po": 11.5,
+    "poBasis": "dividends paid / free cash flow (FY2026: 83.1M / 721.6M)",
+    "dpsReg": 2.28,
+    "roic": 13.5,
+    "nde": 1.3,
+    "fcfG5": 14.7,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   }
  ],
- "verifiedAsOf": "2026-09-20",
+ "verifiedAsOf": "2026-09-21",
  "verifiedSource": "SEC EDGAR XBRL companyfacts, normalised and adversarially reviewed per company"
 }
