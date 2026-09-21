@@ -362,7 +362,25 @@
    "m": "Specialty P&C underwriting with a 45-year record of underwriting profit.",
    "fl": [
     "special-dividend"
-   ]
+   ],
+   "v": {
+    "g5": 5.8,
+    "st": 50,
+    "stSrc": "research; data confirms 17 years (window-limited, reaches FY2008)",
+    "po": 39.7,
+    "poBasis": "total dividends paid (regular + special) / FCF (CFO - capex); regular dividend alone is 9.5% of FCF",
+    "dpsReg": 0.64,
+    "roic": 21.7,
+    "nde": null,
+    "fcfG5": 18.8,
+    "verdict": "candidate",
+    "pass": 6,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "PRI",
@@ -406,7 +424,25 @@
    "st": 13,
    "po": 30,
    "m": "Regional commercial P&C distributed through independent agents.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 10.8,
+    "st": 12,
+    "stSrc": "data (12 strictly rising years FY2014-FY2025, not window-limited - the FY2008-FY2013 freeze is visible in the data); priorEstimates.streak of 13 is one year too high and was not used",
+    "po": 7.8,
+    "poBasis": "dividends / FCF (CFO - capex), insurer basis per rule 4; FCF is structurally flattered because an insurer's CFO includes float and reserve growth - payout on net income is 19.9%, which is the fairer read",
+    "dpsReg": 1.72,
+    "roic": null,
+    "nde": null,
+    "fcfG5": 17.6,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "THG",
@@ -432,7 +468,25 @@
    "st": 9,
    "po": 40,
    "m": "Private-markets allocation and data; fee streams contracted over 10+ year fund lives.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 11.6,
+    "st": 9,
+    "stSrc": "data (FY2018 initiation + 8 raises through FY2026); not window-limited - HLNE IPO'd March 2017, and priorEstimates.streak was also 9",
+    "po": 20.9,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2026; asset manager so CFO-capex is the right FCF definition",
+    "dpsReg": 2.4,
+    "roic": 33.1,
+    "nde": -0.3,
+    "fcfG5": 19.8,
+    "verdict": "strong",
+    "pass": 9,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 9,
+    "src": "sec"
+   }
   },
   {
    "s": "CNS",
@@ -493,7 +547,25 @@
    "st": 11,
    "po": 45,
    "m": "Mid-market M&A and restructuring; the restructuring arm earns most in bad years.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 13.3,
+    "st": 11,
+    "stSrc": "data (FY2016-FY2026, full life of the dividend since the Aug-2015 IPO; not window-limited); prior research streak of 11 agrees",
+    "po": 25.5,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2026: 174.037m / 681.819m. Advisory/asset-manager model, so FCF = CFO - capex is the right base; equals 41.0% of net income.",
+    "dpsReg": 2.6,
+    "roic": 34.5,
+    "nde": -2.1,
+    "fcfG5": 3.8,
+    "verdict": "strong",
+    "pass": 9,
+    "conf": "medium",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 10,
+    "src": "sec"
+   }
   },
   {
    "s": "MKTX",
@@ -539,7 +611,25 @@
    "st": 16,
    "po": 25,
    "m": "Investment data and PitchBook; subscriptions embedded in client workflow.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 8.9,
+    "st": 16,
+    "stSrc": "data (FY2010-FY2025, 16 consecutive increases; not window-limited — the streak begins at the 2010 initiation, inside the FY2009-start window; prior research estimate of 16 agrees exactly)",
+    "po": 17.4,
+    "poBasis": "dividends paid / free cash flow (CFO - capex), FY2025: 76.9M / 442.6M",
+    "dpsReg": 1.87,
+    "roic": 21.9,
+    "nde": 0.8,
+    "fcfG5": 7.6,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "TXRH",
@@ -676,7 +766,25 @@
    "m": "Regulated gas distribution to 2.2m customers across three states.",
    "fl": [
     "slow-growth"
-   ]
+   ],
+   "v": {
+    "g5": 4.4,
+    "st": 11,
+    "stSrc": "data (FY2015-FY2025, not window-limited); prior research estimate of 11 agrees",
+    "po": 60.8,
+    "poBasis": "net income - regulated utility with FCF <= 0 (FY2025 CFO $579m vs capex $707m), so dividends/FCF is undefined and dividends/NI is used",
+    "dpsReg": 2.68,
+    "roic": 6.2,
+    "nde": null,
+    "fcfG5": null,
+    "verdict": "candidate",
+    "pass": 6,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 12,
+    "src": "sec"
+   }
   },
   {
    "s": "NJR",
@@ -689,7 +797,25 @@
    "st": 29,
    "po": 55,
    "m": "Regulated New Jersey gas utility plus clean-energy and storage assets.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 7.5,
+    "st": 29,
+    "stSrc": "research; data confirms 17 years (window-limited, run reaches first data year FY2008)",
+    "po": 53.7,
+    "poBasis": "percent of net income (FY2025 divPaid 180.1m / NI 335.6m); FCF basis not computable - all cash-capex tags stop at FY2019 and FCF is structurally negative for this rate-base utility",
+    "dpsReg": 1.825,
+    "roic": 6.7,
+    "nde": 4.9,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "OTTR",
@@ -704,7 +830,25 @@
    "m": "Regulated electric utility funding a high-margin PVC pipe manufacturer.",
    "fl": [
     "plastics-cycle"
-   ]
+   ],
+   "v": {
+    "g5": 7.3,
+    "st": 12,
+    "stSrc": "data (XBRL FY2008-FY2025, not window-limited: the FY2009-FY2013 flat-at-1.19 holds are visible inside the window, so the 12-year streak is a true count and supersedes the prior research estimate of 14)",
+    "po": 89.9,
+    "poBasis": "dividends / FCF, FY2025 (88.064M / 97.917M). Utility-appropriate alternatives: 31.9% of net income, 22.8% of CFO.",
+    "dpsReg": 2.31,
+    "roic": 10.8,
+    "nde": 1.4,
+    "fcfG5": null,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "MSEX",
@@ -717,7 +861,25 @@
    "st": 53,
    "po": 60,
    "m": "Regulated water in New Jersey and Delaware; small, steady rate-base growth.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 5.8,
+    "st": 53,
+    "stSrc": "research; data confirms 16 years (FY2010-FY2025 filed, window-limited at the FY2009 start of XBRL)",
+    "po": 58.2,
+    "poBasis": "net income (FY2025 $24.9m dividends / $42.8m NI) - payout-of-FCF is not computable in any year because FCF is negative throughout the rate-base build",
+    "dpsReg": 1.38,
+    "roic": 5.6,
+    "nde": 4.1,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 5,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "SCL",
@@ -733,7 +895,25 @@
    "fl": [
     "slow-growth",
     "margin-pressure"
-   ]
+   ],
+   "v": {
+    "g5": 6.5,
+    "st": 58,
+    "stSrc": "research; data confirms 16 years (FY2009-FY2025, window-limited at the start of the XBRL window)",
+    "po": 138.1,
+    "poBasis": "FY2025 dividends paid 35,029,000 / FCF 25,368,000; on the forward $1.58 rate (~35.9M) it is ~142%. Net-income payout is 74.7%.",
+    "dpsReg": 1.58,
+    "roic": 3.5,
+    "nde": 2.4,
+    "fcfG5": -25.3,
+    "verdict": "avoid",
+    "pass": 4,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "FUL",
@@ -781,7 +961,25 @@
    "m": "Metal food cans and dispensing closures on long-term contracts with food majors.",
    "fl": [
     "leverage"
-   ]
+   ],
+   "v": {
+    "g5": 10.8,
+    "st": 21,
+    "stSrc": "research; data confirms 17 years (FY2009-FY2025 increases, window-limited at FY2008)",
+    "po": 20.3,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2025",
+    "dpsReg": 0.8,
+    "roic": null,
+    "nde": null,
+    "fcfG5": 2.3,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "LSTR",
@@ -798,7 +996,25 @@
    "fl": [
     "special-dividend",
     "freight-cycle"
-   ]
+   ],
+   "v": {
+    "g5": 14.6,
+    "st": 11,
+    "stSrc": "data (FY2015-FY2025, not window-limited); priorEstimates.streak of 15 rejected - it matches neither the filed reading (11) nor the run-rate reading (17)",
+    "po": 56.9,
+    "poBasis": "total declared dividends (incl. $2.00 special) / FY2025 FCF; regular dividend alone is 25.2% of FCF and 47.1% of net income",
+    "dpsReg": 1.6,
+    "roic": 29,
+    "nde": -2,
+    "fcfG5": 3.6,
+    "verdict": "strong",
+    "pass": 8,
+    "conf": "medium",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "JKHY",
@@ -811,7 +1027,25 @@
    "st": 35,
    "po": 40,
    "m": "Core banking software for community banks; replacing it takes years.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 6,
+    "st": 35,
+    "stSrc": "research; data confirms 17 years (XBRL window starts FY2009, window-limited)",
+    "po": 33.6,
+    "poBasis": "percent of FCF, with CFO less PP&E capex AND capitalised software development (184.2m + 4.1m) deducted; on the PP&E-only capex family it is 24.5%, and on net income 33.9%",
+    "dpsReg": 2.38,
+    "roic": 24.5,
+    "nde": null,
+    "fcfG5": 9.6,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "ADC",
@@ -891,7 +1125,25 @@
    "m": "Money-market fund scale; assets and fees rise with short-term rates.",
    "fl": [
     "rate-sensitive"
-   ]
+   ],
+   "v": {
+    "g5": 4.3,
+    "st": 3,
+    "stSrc": "data (FY2009-FY2025, 17-yr window); not window-limited - FY2022 flat at 1.08 breaks the run inside the window. Prior research streak of 11 discarded as contradicted by the filings.",
+    "po": 35.6,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2025: 104.8m / 294.6m. Asset manager, so FCF is the right base; payout on net income is 26.0% but FY2025 NI may carry a one-off.",
+    "dpsReg": 1.33,
+    "roic": 40.4,
+    "nde": -0.4,
+    "fcfG5": -3.9,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "DCI",
@@ -935,7 +1187,25 @@
    "st": 30,
    "po": 35,
    "m": "Welding equipment and consumables; the training pipeline locks in the brand.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 9,
+    "st": 30,
+    "stSrc": "research; data confirms 17 years (FY2008-FY2025, window-limited at the start of the XBRL window)",
+    "po": 31.5,
+    "poBasis": "dividends paid / free cash flow (CFO - capex), FY2025",
+    "dpsReg": 3.04,
+    "roic": null,
+    "nde": null,
+    "fcfG5": 12.8,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 18,
+    "src": "sec"
+   }
   },
   {
    "s": "WTRG",
