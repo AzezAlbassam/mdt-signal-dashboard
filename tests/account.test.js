@@ -13,7 +13,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { sizePosition, simulateAccount, windowResults, CONTRACT_MULTIPLIER } from '../lib/account.js'
+import { sizePosition, simulateAccount, windowResults, accountAcrossPhases, CONTRACT_MULTIPLIER } from '../lib/account.js'
 
 const long = JSON.parse(readFileSync(new URL('./fixtures/market-long.json', import.meta.url))).sessions
 const near = (a, b, tol, what) =>
@@ -113,4 +113,67 @@ test('every same-length window of the decade is reported, because one window is 
   assert.ok(w.best.returnPct - w.worst.returnPct > 0.05,
     `nine months is short enough that outcomes differ a lot: ${w.worst.returnPct} to ${w.best.returnPct}`)
   assert.ok(w.shareProfitable >= 0 && w.shareProfitable <= 1)
+})
+
+// ──────────────────────────────────────────────── the options must actually arrive
+
+test('every pricing option an account is given reaches the structure that prices the trade', () => {
+  // An earlier version destructured a closed list and passed seven keys on.
+  // Anything else was accepted, ignored, and returned a confidently identical
+  // answer — which is worse than refusing it, because it reads as "pricing
+  // does not matter" to whoever tried to stress it.
+  const base = { capital: 1000000, riskPct: 0.05, from: '2020-01-01', side: 'call', widthSigma: 1.25, wingSigma: 0.5, hold: 21 }
+  const plain = simulateAccount(long, base)
+  for (const override of [{ pricingScale: 0.8 }, { skew: 0.15 }, { ivScale: 0.85 }, { r: 0.04 }]) {
+    const moved = simulateAccount(long, { ...base, ...override })
+    assert.notEqual(moved.finalEquity, plain.finalEquity,
+      `${Object.keys(override)[0]} was accepted and then ignored`)
+  }
+})
+
+test('a wing can be named in points, because listed strikes are a fixed distance apart', () => {
+  // XSP lists strikes $5 apart above $200, so a wing named in sigma lands
+  // between two strikes that do not exist. A wing named in points does not.
+  const bySigma = simulateAccount(long, {
+    capital: 1000000, riskPct: 0.05, from: '2026-01-01', side: 'call', widthSigma: 1.25, wingSigma: 0.5, hold: 21,
+  })
+  const byPoints = simulateAccount(long, {
+    capital: 1000000, riskPct: 0.05, from: '2026-01-01', side: 'call', widthSigma: 1.25, wingPoints: 5, hold: 21,
+  })
+  assert.ok(byPoints.trades.length > 0)
+  for (const t of byPoints.trades) {
+    assert.ok(t.maxLossPoints < 5, 'a five point wing cannot lose more than five points')
+    assert.ok(t.maxLossPoints > 3, `and the credit is only part of it: ${t.maxLossPoints}`)
+  }
+  assert.notEqual(byPoints.finalEquity, bySigma.finalEquity)
+})
+
+test('idle cash is not zero, so an account that never trades still moves', () => {
+  // r = 0 runs through the whole model. At the account level that turns "you
+  // cannot trade this" into "you end where you started", which is false: the
+  // money earns the bill rate while it sits there, and that rate is the thing
+  // the strategy actually has to beat.
+  const idle = simulateAccount(long, {
+    capital: 10000, riskPct: 0.05, from: '2026-01-01', cashRate: 0.04,
+    side: 'call', widthSigma: 1.25, wingSigma: 0.5, hold: 21,
+  })
+  assert.equal(idle.trades.length, 0, 'still unaffordable')
+  assert.ok(idle.finalEquity > 10000, `cash earned something: ${idle.finalEquity}`)
+  assert.ok(idle.finalEquity < 10400, 'but only eight and a half months of it')
+  near(idle.cashInterest, idle.finalEquity - 10000, 1e-9)
+})
+
+test('the phase a calendar happens to fall on is reported, not chosen', () => {
+  // Every other study in this repo runs all start offsets and averages. The
+  // account study is the one that answers the question a person actually
+  // asks, so it is the one that must not quietly pick a phase.
+  const a = accountAcrossPhases(long, {
+    capital: 10000, riskPct: 0.05, from: '2026-01-01', forceOneContract: true,
+    side: 'call', widthSigma: 1.25, wingSigma: 0.5, hold: 21,
+  })
+  assert.ok(a.phases >= 15, `one per start offset that fits: ${a.phases}`)
+  assert.ok(a.worst.returnPct < a.median.returnPct)
+  assert.ok(a.median.returnPct < a.best.returnPct)
+  assert.ok(a.best.returnPct - a.worst.returnPct > 0.04,
+    `the same year on a different start day is a different answer: ${a.worst.returnPct} to ${a.best.returnPct}`)
 })
