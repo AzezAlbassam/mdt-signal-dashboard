@@ -181,14 +181,18 @@ strikes. Not one real quote appears in this repository. Before risking
 anything, price the exact structure for three months and record the net credit
 you could actually be filled at, as a share of the wing width.
 
-| | Share of wing width |
-| --- | --- |
-| What the model assumes you collect | 21.5% |
-| Break-even after costs | 11.0% |
-| Below this, do not trade it | 14% |
+The floor is different for each structure, because a wider short strike
+collects less against the same wing. Quoting one number for all of them, as an
+earlier draft did, is wrong.
 
-If your fills come in under 14 per cent of the wing width, the entire edge is
-inside the bid and ask, and you would be paying to carry the risk.
+| Structure | Model credit | Break-even | Do not trade below |
+| --- | --- | --- | --- |
+| 1.0σ shorts, monthly | 21.5% of the wing | 11.0% | 14% |
+| 1.0σ shorts, fortnightly | 21.6% | 12.5% | 16% |
+| 1.25σ shorts, monthly | 13.7% | 6.3% | 8% |
+
+If your fills come in under the floor, the entire edge is inside the bid and
+ask, and you would be paying to carry the risk.
 
 ## What this study cannot tell you
 
