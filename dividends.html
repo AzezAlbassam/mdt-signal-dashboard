@@ -144,6 +144,11 @@ a.vd.candidate{background:var(--accent-soft);color:var(--accent)}
 a.vd.watch{background:var(--sunk);color:var(--body)}
 a.vd.avoid{background:transparent;color:var(--neg);border:1px solid var(--neg)}
 a.vd:hover{opacity:.85}
+tbody tr.avoid td{opacity:.62}
+tbody tr.avoid:hover td{opacity:1}
+tbody tr.avoid td:first-child{position:relative}
+tbody tr.avoid td:first-child::before{content:"";position:absolute;left:0;top:6px;bottom:6px;
+ width:2px;background:var(--neg);border-radius:1px}
 
 /* chart */
 figure{margin:20px 0 0}
@@ -355,6 +360,12 @@ split-adjusted, cross-checked against dividends paid divided by shares, and revi
 independent passes. The <strong>Rules</strong> column opens the full analysis: the ten rules
 applied to that company with the actual figures, the filed dividend history, and where the
 snowball is most likely to break.</p>
+<p>The table leads with rules passed rather than score, and a company the analysis says to
+<strong>avoid</strong> is marked in the margin wherever you sort it to. The two disagree more
+than you would expect: the score measures the snowball itself &mdash; yield, growth, payout,
+size, streak &mdash; and cannot see leverage, return on capital, or whether earnings actually
+cover the raises. Sorted by score alone, three companies flagged <em>avoid</em> sit in the top
+half.</p>
 
 <div class="controls">
  <div class="ctl"><label for="fSector">Sector</label>
@@ -385,9 +396,9 @@ snowball is most likely to break.</p>
   <th data-k="g">Div growth</th>
   <th data-k="po">Payout</th>
   <th data-k="st">Streak</th>
-  <th data-k="pass">Rules</th>
+  <th data-k="pass" class="on">Rules <span class="ar">&darr;</span></th>
   <th data-k="yoc">YoC in 20y</th>
-  <th data-k="score" class="on">Score <span class="ar">&darr;</span></th>
+  <th data-k="score">Score</th>
  </tr></thead>
  <tbody id="rows"></tbody>
 </table></div>
@@ -483,7 +494,11 @@ const FIX = {
   koShares: 400e6, koCost: 1.299e9
 };
 
-let DATA = null, sortKey = 'score', sortDir = -1;
+// Default to the rules, not the score. The score measures the snowball mechanics — yield,
+// growth, payout, size, streak — and is blind to leverage, return on capital and whether
+// earnings cover the raises. Sorting by it puts companies the full analysis says to avoid
+// (CPK, FUL, CWT) in the top half. The rule count sees those; the score cannot.
+let DATA = null, sortKey = 'pass', sortDir = -1;
 
 const fmtCap = v => v >= 1e9 ? '$' + (v/1e9).toFixed(1) + 'B' : '$' + Math.round(v/1e6) + 'M';
 const pct = (v, d=1) => v.toFixed(d) + '%';
@@ -588,6 +603,14 @@ function filtered(){
 
 function sorted(rows){
   return rows.slice().sort((a, b) => {
+    // Unanalysed rows have no rule count. They sort to the bottom whichever way the
+    // column is pointed, rather than pretending to be a zero.
+    if (sortKey === 'pass'){
+      if (a.pass == null && b.pass == null) return b.score - a.score;
+      if (a.pass == null) return 1;
+      if (b.pass == null) return -1;
+      return (a.pass - b.pass) * sortDir || b.score - a.score;
+    }
     const A = a[sortKey], B = b[sortKey];
     const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
     return r * sortDir;
@@ -601,6 +624,9 @@ function render(){
 
   for (const c of rows){
     const tr = document.createElement('tr');
+    // An 'avoid' stays legible but must never read as a candidate, wherever it lands
+    // when the table is re-sorted.
+    if (c.verdict === 'avoid') tr.className = 'avoid';
     const cls = c.score >= 70 ? 'hi' : c.score >= 55 ? 'md' : 'lo';
     const flags = c.fl.length
       ? ' <span class="fg" title="' + c.fl.join(', ') + '">' + c.fl.length + '</span>'
