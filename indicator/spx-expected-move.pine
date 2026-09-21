@@ -95,38 +95,46 @@ sessionOpen   = request.security(syminfo.tickerid, "D", open)
 // Volatility at a tenor, interpolated in total variance because variance is
 // what adds over time. Outside the published points it clamps rather than
 // extrapolating, so a missing index cannot invent a number.
-tsSigma(tenorDays) =>
-    s9  = na(vix9dClose) ? na : vix9dClose / 100.0
-    s30 = na(vixClose)   ? na : vixClose   / 100.0
-    s93 = na(vix3mClose) ? na : vix3mClose / 100.0
-    near   = na(s9)  ? s30 : s9
-    nearD  = na(s9)  ? 30.0 : 9.0
-    far    = na(s93) ? s30 : s93
-    farD   = na(s93) ? 30.0 : 93.0
-    out = float(na)
-    if na(near) and na(s30) and na(far)
+tsSigma(float tenorDays) =>
+    float s9  = na(vix9dClose) ? na : vix9dClose / 100.0
+    float s30 = na(vixClose)   ? na : vixClose   / 100.0
+    float s93 = na(vix3mClose) ? na : vix3mClose / 100.0
+    // Fall back along the curve when an index is missing, rather than guessing.
+    float nearIv = na(s9)  ? s30 : s9
+    float nearD  = na(s9)  ? 30.0 : 9.0
+    float farIv  = na(s93) ? s30 : s93
+    float farD   = na(s93) ? 30.0 : 93.0
+    float out = na
+    if na(s30) and na(nearIv) and na(farIv)
         out := na
     else if na(s30)
-        out := na(near) ? far : near
+        out := na(nearIv) ? farIv : nearIv
     else if tenorDays <= nearD
-        out := near
+        out := nearIv
     else if tenorDays >= farD
-        out := far
+        out := farIv
     else if tenorDays <= 30.0
-        va = near * near * nearD
-        vb = s30 * s30 * 30.0
+        float va = nearIv * nearIv * nearD
+        float vb = s30 * s30 * 30.0
         out := math.sqrt((va + (vb - va) * (tenorDays - nearD) / (30.0 - nearD)) / tenorDays)
     else
-        va = s30 * s30 * 30.0
-        vb = far * far * farD
+        float va = s30 * s30 * 30.0
+        float vb = farIv * farIv * farD
         out := math.sqrt((va + (vb - va) * (tenorDays - 30.0) / (farD - 30.0)) / tenorDays)
     out
 
-ivFor(tenorDays) =>
-    fromTerm = ivSource == "VIX term structure" ? tsSigma(tenorDays) : na
-    ivSource == "Manual" ? ivManual / 100.0 :
-         ivSource == "VIX term structure" and not na(fromTerm) ? fromTerm * vixShare :
-         na(vixClose) ? ivManual / 100.0 : (vixClose / 100.0) * vixShare
+ivFor(float tenorDays) =>
+    float fromTerm = tsSigma(tenorDays)
+    float out = na
+    if ivSource == "Manual"
+        out := ivManual / 100.0
+    else if ivSource == "VIX term structure" and not na(fromTerm)
+        out := fromTerm * vixShare
+    else if na(vixClose)
+        out := ivManual / 100.0
+    else
+        out := (vixClose / 100.0) * vixShare
+    out
 
 
 // The regime multiplier, off by default: the published charts plot a constant.
