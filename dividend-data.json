@@ -185,7 +185,25 @@
    "m": "Industrial floor-cleaning machines plus a consumables and service annuity.",
    "fl": [
     "slow-growth"
-   ]
+   ],
+   "v": {
+    "g5": 6.1,
+    "st": 54,
+    "stSrc": "research; data confirms 16 years (window-limited at FY2009, all 16 in-window steps are increases)",
+    "po": 50.6,
+    "poBasis": "dividends / FCF, FY2025 (21.9M / 43.3M). Smoother cumulative FY2021-FY2025 reading is 35.95% (99.8M / 277.6M); payout of FY2025 net income is 50.0%.",
+    "dpsReg": 1.24,
+    "roic": 5.9,
+    "nde": null,
+    "fcfG5": -16.1,
+    "verdict": "candidate",
+    "pass": 6,
+    "conf": "high",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "BRC",
@@ -233,7 +251,25 @@
    "m": "Structural connectors written into building codes and engineers' drawings.",
    "fl": [
     "cyclical"
-   ]
+   ],
+   "v": {
+    "g5": 4.6,
+    "st": 12,
+    "stSrc": "data; 12 consecutive increases FY2014-FY2025, not window-limited (series starts FY2008, with holds in 2009/2010), so the data streak overrides the prior research guess of 13",
+    "po": 16,
+    "poBasis": "dividends paid / free cash flow (CFO - PP&E capex), FY2025: 47.58M / 297.62M",
+    "dpsReg": 1.15,
+    "roic": 17.4,
+    "nde": -0.1,
+    "fcfG5": 11.2,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "AIT",
