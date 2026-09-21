@@ -164,6 +164,23 @@ at any expiry survives an honest price of volatility; and the one change worth
 making is a multiplier that depends on the volatility regime, which both Pine
 scripts now carry as a switch that is off by default.
 
+### The low-frequency study
+
+`scripts/premium.mjs` asks a different question: one position a month, held to
+expiry, settled on the terminal price the way a European index option settles.
+It can be priced where the same-session study could not, because VIX is a
+thirty-day implied volatility on this index rather than a guess about a quote.
+`docs/low-frequency.md` is the write-up and `data/em/premium-spy.json` the
+output.
+
+It found one real thing and one fatal one. Implied volatility exceeded what
+followed in 83 per cent of months, 18.4 against 14.9, in every volatility
+regime. And a naked short position funded at its initial margin is closed out
+on 9 March 2020, two weeks before the expiry the backtest settles at, so every
+figure that assumed it was carried to expiry was a number nobody could have
+collected. `marginPath` now measures that. Stated as return on the capital
+actually at risk, the structure with the highest win rate has the worst return.
+
 `.github/workflows/em-snapshot.yml` runs the snapshot twice each weekday so one
 run always lands after the New York close in either half of the year. It runs the
 test suite first, then commits a record per underlying to `data/em/spy/` and
