@@ -16,6 +16,10 @@ import {
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const S = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/market-long.json'), 'utf8')).sessions
+// The wing that survives four legs of commission. A quarter sigma leaves too
+// little credit and is under water at 0.20 a leg; a half sigma still earns
+// there and at 0.30. See tests/premium.test.js.
+const WING = 0.5
 const pct = (x, d = 1) => x == null ? '   —' : (x * 100).toFixed(d).padStart(5) + '%'
 const f2 = (x) => x == null ? '  — ' : x.toFixed(2).padStart(6)
 
@@ -116,8 +120,8 @@ for (const hold of [10, 21]) {
   for (const widthSigma of [1, 1.5, 2]) {
     for (const structure of ['strangle', 'condor']) {
       const base = { hold, widthSigma, structure, costPerLeg: 0.05 }
-      const opts = structure === 'condor' ? { ...base, wingSigma: 0.25 } : base
-      out.grid.push({ hold, widthSigma, structure, wingSigma: structure === 'condor' ? 0.25 : null, ...acrossPhases(opts) })
+      const opts = structure === 'condor' ? { ...base, wingSigma: WING } : base
+      out.grid.push({ hold, widthSigma, structure, wingSigma: structure === 'condor' ? WING : null, ...acrossPhases(opts) })
     }
   }
 }
@@ -141,11 +145,18 @@ for (const ivScale of [0.85, 0.92, 1, 1.1]) {
 for (const pricingScale of [1, 0.97, 0.95, 0.92, 0.90, 0.85]) {
   for (const [label, opts] of [
     ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
-    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: WING, costPerLeg: 0.05 }],
   ]) {
     out.sensitivity.pricingScale.push({ pricingScale, label, ...acrossPhases({ ...opts, pricingScale }) })
   }
 }
+
+// Which wing. The narrow one looks cheaper and dies to commission.
+out.wingSweep = [0.25, 0.5, 0.75, 1].map((wingSigma) => ({
+  wingSigma,
+  ...acrossPhases({ hold: 21, widthSigma: 1, structure: 'condor', wingSigma, costPerLeg: 0.05 }),
+  atHighCost: acrossPhases({ hold: 21, widthSigma: 1, structure: 'condor', wingSigma, costPerLeg: 0.20 }).meanPnl,
+}))
 
 // ── 4. does waiting for a rich premium help?
 out.regimeFilter = []
@@ -185,7 +196,7 @@ for (const minVix of [null, 15, 18, 20, 25]) {
   out.byYear = {}
   for (const [label, opts] of [
     ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
-    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: WING, costPerLeg: 0.05 }],
   ]) {
     const byYear = {}
     for (let start = 0; start < opts.hold; start++) {
@@ -214,7 +225,7 @@ for (const minVix of [null, 15, 18, 20, 25]) {
   for (const [label, opts] of [
     ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
     ['strangle2', { hold: 21, widthSigma: 2, structure: 'strangle', costPerLeg: 0.05 }],
-    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: WING, costPerLeg: 0.05 }],
   ]) {
     const all = []
     for (let start = 0; start < opts.hold; start++) {
@@ -246,8 +257,8 @@ for (const minVix of [null, 15, 18, 20, 25]) {
 {
   out.sizing = {}
   for (const [label, opts] of [
-    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
-    ['condor15', { hold: 21, widthSigma: 1.5, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: WING, costPerLeg: 0.05 }],
+    ['condor15', { hold: 21, widthSigma: 1.5, structure: 'condor', wingSigma: WING, costPerLeg: 0.05 }],
   ]) {
     const totals = []; const dds = []; const streaks = []
     for (let start = 0; start < opts.hold; start++) {
@@ -324,6 +335,12 @@ for (const skew of [0, 0.05, 0.10, 0.15]) {
 for (const r of out.sensitivity.costs) console.log(`  cost ${r.costPerLeg.toFixed(2)}/leg  mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}`)
 console.log('  ten-session periods priced off a thirty-day volatility:')
 for (const r of out.sensitivity.ivScale) console.log(`    ivScale ${r.ivScale.toFixed(2)}  mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}  worst ${f2(r.worstOfAnyPhase)}`)
+
+console.log('\nWHICH WING (1σ shorts, 21 sessions)')
+console.log('  wing    win     mean   ret/risk   mean max loss   mean at 0.20 a leg')
+for (const w of out.wingSweep) {
+  console.log(`  ${w.wingSigma.toFixed(2)}σ   ${pct(w.winRate)} ${f2(w.meanPnl)}              ${f2(w.meanPremiumIn)}        ${f2(w.atHighCost)}`)
+}
 
 console.log('\nIF VIX OVERSTATES THE AT-THE-MONEY QUOTE (strikes unmoved, legs priced lower)')
 for (const r of out.sensitivity.pricingScale) {

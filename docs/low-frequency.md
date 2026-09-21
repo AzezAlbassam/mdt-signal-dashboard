@@ -51,8 +51,8 @@ luckiest, because one grid straddles a crash and another starts the day after.
 | 21 | 1.0σ | strangle | 89.2% | +2.01 | −46.98 | −91.26 |
 | 21 | 1.5σ | strangle | 96.4% | +0.69 | −39.45 | −85.21 |
 | 21 | 2.0σ | strangle | 99.0% | +0.02 | −32.23 | −78.44 |
+| 21 | 1.0σ | condor, 0.5σ wings | 86.9% | +1.12 | −14.9 | −19.45 |
 | 21 | 1.0σ | condor, 0.25σ wings | 85.0% | +0.54 | −8.18 | −10.98 |
-| 21 | 1.5σ | condor, 0.25σ wings | 90.3% | +0.21 | −6.00 | −8.98 |
 | 10 | 1.0σ | strangle | 89.0% | +1.27 | −34.69 | −56.53 |
 
 Read the last two columns first. The two-sigma strangle is what "a very high
@@ -87,6 +87,28 @@ the credit was fat and the loss had a ceiling. Its ceiling is not a fixed
 percentage: the wing is measured in sigma, so a position opened at a VIX of
 seventy risks far more than one opened at fifteen.
 
+## Choosing the wing
+
+The wing is not chosen by what looks safest. It is chosen by what survives four
+legs of commission.
+
+| Wing | Win rate | Mean per trade | At 0.20 a leg |
+| --- | --- | --- | --- |
+| 0.25σ | 85.0% | +0.54 | −0.06 |
+| 0.50σ | 86.9% | +1.12 | +0.52 |
+| 0.75σ | 87.9% | +1.53 | +0.93 |
+| 1.00σ | 88.3% | +1.79 | +1.19 |
+
+A quarter-sigma wing looks like the cheap, tight, sensible choice and it is the
+wrong one: it leaves so little credit that four legs of cost put it under water
+at twenty cents a leg. Half a sigma collects more than twice as much, wins
+slightly more often, and is still clearly positive at costs three times higher.
+Going wider keeps raising the money but lowers the return on what you post, so
+half a sigma is where the two curves cross.
+
+This was a correction. The first pass picked the quarter-sigma wing on the
+strength of its smaller absolute worst case and had to be shown the cost table.
+
 ## Could you still be there at expiry?
 
 Every figure above assumes the position was carried to settlement. A naked
@@ -98,7 +120,7 @@ the requirement and the equity on every session a trade is open.
 | --- | --- | --- | --- | --- |
 | 1.0σ strangle | 46.30 | +4.13% a month | 18 of 2,668 | closed out 9 March 2020, settled loss 242% of margin |
 | 2.0σ strangle | 44.21 | −0.13% a month | 11 of 2,668 | closed out 12 March 2020, settled loss 213% of margin |
-| 1.0σ condor, 0.25σ wings | 4.13 | +11.32% a month | none | survived, worst loss is the posted amount |
+| 1.0σ condor, 0.5σ wings | 8.56 | +12.24% a month | none | survived, worst loss is the posted amount |
 
 On the worst window of the decade an account funded at the initial requirement
 is closed out on 9 March 2020, fourteen sessions before the expiry the study

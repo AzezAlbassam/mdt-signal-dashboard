@@ -218,3 +218,54 @@ test('over the decade a five per cent cheaper at-the-money quote takes a large b
   assert.ok(real.meanPnl > 0.7 * full.meanPnl,
     `a five per cent haircut should cost something but not the edge: ${full.meanPnl} → ${real.meanPnl}`)
 })
+
+test('the wing is chosen by what survives four legs of commission, not by what looks safest', () => {
+  const at = (wingSigma, costPerLeg) => {
+    const all = []
+    for (let start = 0; start < 21; start++) {
+      all.push(...simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'condor', wingSigma, costPerLeg, start }))
+    }
+    return summarisePremium(all)
+  }
+
+  const narrow = at(0.25, 0.05)
+  const wide = at(0.5, 0.05)
+  assert.ok(wide.meanPnl > 2 * narrow.meanPnl,
+    `a half-sigma wing collects more than twice as much: ${narrow.meanPnl} against ${wide.meanPnl}`)
+  assert.ok(wide.winRate.point > narrow.winRate.point, 'and wins slightly more often')
+
+  // The decisive test is cost. A narrow wing leaves too little credit to carry
+  // four legs, so it dies at a cost the wide one still absorbs three times over.
+  assert.ok(at(0.25, 0.20).meanPnl < 0, 'the narrow wing is under water at 0.20 a leg')
+  assert.ok(at(0.5, 0.20).meanPnl > 0.4, 'the wide one is still clearly positive there')
+  assert.ok(at(0.5, 0.30).meanPnl > 0, 'and survives 0.30 a leg')
+})
+
+test('sized so the posted loss is a fixed share of equity, the decade compounds in single digits', () => {
+  const at = (risk) => {
+    const cagrs = []; const dds = []
+    for (let start = 0; start < 21; start++) {
+      const trades = simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.5, costPerLeg: 0.05, start })
+      let eq = 1; let peak = 1; let dd = 0
+      for (const t of trades) {
+        eq *= 1 + risk * (t.pnl / t.maxLoss)
+        if (eq > peak) peak = eq
+        const d = 1 - eq / peak
+        if (d > dd) dd = d
+      }
+      cagrs.push(Math.pow(eq, 1 / (trades.length * 21 / 252)) - 1)
+      dds.push(dd)
+    }
+    return { cagr: cagrs.reduce((a, b) => a + b, 0) / cagrs.length, worstDd: Math.max(...dds), allPositive: cagrs.every((c) => c > 0) }
+  }
+
+  const five = at(0.05)
+  assert.ok(five.cagr > 0.05 && five.cagr < 0.12,
+    `risking five per cent a month is a single-digit return, not a wealth engine: ${five.cagr}`)
+  assert.ok(five.worstDd > 0.10 && five.worstDd < 0.25, `against a mid-teens drawdown: ${five.worstDd}`)
+  assert.ok(five.allPositive, 'every start date is positive over the decade')
+
+  // Risk and return scale together, which is the only honest lever here.
+  assert.ok(at(0.03).cagr < five.cagr && at(0.03).worstDd < five.worstDd)
+  assert.ok(at(0.06).cagr > five.cagr && at(0.06).worstDd > five.worstDd)
+})
