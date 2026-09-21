@@ -123,7 +123,7 @@ for (const hold of [10, 21]) {
 }
 
 // ── 3. what the assumptions are worth
-out.sensitivity = { skew: [], costs: [], ivScale: [] }
+out.sensitivity = { skew: [], costs: [], ivScale: [], pricingScale: [] }
 for (const skew of [0, 0.05, 0.10, 0.15]) {
   out.sensitivity.skew.push({ skew, ...acrossPhases({ hold: 21, widthSigma: 2, structure: 'strangle', skew, costPerLeg: 0.05 }) })
 }
@@ -133,6 +133,18 @@ for (const costPerLeg of [0, 0.05, 0.10, 0.20]) {
 // A ten-session option is shorter than the thirty days VIX measures.
 for (const ivScale of [0.85, 0.92, 1, 1.1]) {
   out.sensitivity.ivScale.push({ ivScale, ...acrossPhases({ hold: 10, widthSigma: 2, structure: 'strangle', ivScale, costPerLeg: 0.05 }) })
+}
+
+// VIX is a variance swap rate over the whole strip, not the at-the-money quote,
+// and it sits above it. Leaving the strikes where the chart drew them and
+// pricing the legs lower is the honest version of that doubt.
+for (const pricingScale of [1, 0.97, 0.95, 0.92, 0.90, 0.85]) {
+  for (const [label, opts] of [
+    ['strangle1', { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }],
+    ['condor1', { hold: 21, widthSigma: 1, structure: 'condor', wingSigma: 0.25, costPerLeg: 0.05 }],
+  ]) {
+    out.sensitivity.pricingScale.push({ pricingScale, label, ...acrossPhases({ ...opts, pricingScale }) })
+  }
 }
 
 // ── 4. does waiting for a rich premium help?
@@ -241,6 +253,11 @@ for (const skew of [0, 0.05, 0.10, 0.15]) {
 for (const r of out.sensitivity.costs) console.log(`  cost ${r.costPerLeg.toFixed(2)}/leg  mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}`)
 console.log('  ten-session periods priced off a thirty-day volatility:')
 for (const r of out.sensitivity.ivScale) console.log(`    ivScale ${r.ivScale.toFixed(2)}  mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}  worst ${f2(r.worstOfAnyPhase)}`)
+
+console.log('\nIF VIX OVERSTATES THE AT-THE-MONEY QUOTE (strikes unmoved, legs priced lower)')
+for (const r of out.sensitivity.pricingScale) {
+  console.log(`  ${r.label.padEnd(10)} quote at ${r.pricingScale.toFixed(2)} x VIX   mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}  worst ${f2(r.worstOfAnyPhase)}`)
+}
 
 console.log('\nWAITING FOR A RICHER PREMIUM (21 sessions, 2σ strangle)')
 console.log('  every phase kept; the simple mean and the trade-weighted mean are both shown because a filter thins the phases unevenly')

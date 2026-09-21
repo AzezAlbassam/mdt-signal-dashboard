@@ -187,3 +187,34 @@ test('the answer depends on which day of the month the grid starts, so every sta
   assert.ok(Math.min(...means) < Math.max(...means) * 0.9,
     'and so does the mean, which is why one grid is not a result')
 })
+
+test('the volatility that places the strikes and the one that prices them can differ, because VIX is not the at-the-money quote', () => {
+  const base = { S0: 5000, S1: 5000, sigma: 0.16, days: 30, widthSigma: 1 }
+  const asIs = shortStrangle(base)
+  const cheaper = shortStrangle({ ...base, pricingScale: 0.95 })
+  assert.equal(cheaper.callStrike, asIs.callStrike, 'the strikes are where the chart drew them')
+  assert.equal(cheaper.putStrike, asIs.putStrike)
+  assert.ok(cheaper.premiumIn < asIs.premiumIn, 'but the seller is paid less for them')
+  assert.equal(shortStrangle({ ...base, pricingScale: 1 }).premiumIn, asIs.premiumIn)
+
+  // This is a different question from moving the strikes in, which ivScale does.
+  const narrower = shortStrangle({ ...base, sigma: 0.16 * 0.95 })
+  assert.ok(narrower.callStrike < asIs.callStrike, 'ivScale moves the strikes, pricingScale does not')
+})
+
+test('over the decade a five per cent cheaper at-the-money quote takes a large bite out of the edge', () => {
+  const full = summarisePremium(simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 }))
+  const real = summarisePremium(simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05, pricingScale: 0.95 }))
+  assert.equal(full.n, real.n)
+  assert.ok(real.meanPnl < full.meanPnl, 'less premium for the same risk is less profit')
+  // The settlement is untouched, because the strikes did not move. The worst
+  // month still gets slightly worse, because a smaller credit offsets less of it.
+  const fullTrades = simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05 })
+  const realTrades = simulatePremium(long, { hold: 21, widthSigma: 1, structure: 'strangle', costPerLeg: 0.05, pricingScale: 0.95 })
+  for (let i = 0; i < fullTrades.length; i++) {
+    assert.equal(realTrades[i].settlement, fullTrades[i].settlement, 'the risk is identical')
+  }
+  assert.ok(real.worst < full.worst, 'so the worst month is a little worse, not the same')
+  assert.ok(real.meanPnl > 0.7 * full.meanPnl,
+    `a five per cent haircut should cost something but not the edge: ${full.meanPnl} → ${real.meanPnl}`)
+})
