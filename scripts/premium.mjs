@@ -21,6 +21,8 @@ const f2 = (x) => x == null ? '  — ' : x.toFixed(2).padStart(6)
 
 const out = {
   generated: '2026-09-21',
+  sampleWarning: 'Every configuration is run at each start offset and averaged, which removes the luck of where the grid falls. It does not add evidence: 21 phases over one decade are 21 resamplings of the same sessions, so the independent sample is roughly the number of non-overlapping periods in a single phase, about 127 months. Any confidence interval read off the pooled trade count would be about four and a half times too narrow.',
+  pricingWarning: 'Both the strikes and the credit come from the same sigma = VIX/100. The mean credit and the mean profit are therefore a restatement of the measured variance risk premium, not independent confirmation of it. Only a real bid and ask would be that.',
   span: { from: S[0].date, to: S[S.length - 1].date, sessions: S.length },
   note: 'Model-priced on real index paths. sigma is the VIX close of the entry session, which for a 21-session at-the-money option is close to a real quote on this index. Skew is set to zero by default, which pays a seller less than the real surface would.',
 }
@@ -57,12 +59,18 @@ function acrossPhases (opts) {
   const runs = []
   for (let start = 0; start < opts.hold; start++) {
     const trades = simulatePremium(S, { ...opts, start })
-    if (trades.length < 20) continue
+    // A phase is kept unless it is too small to summarise at all. An earlier
+    // threshold of twenty dropped whole phases once an entry filter thinned
+    // them, and it dropped exactly the phases the filter had thinned most,
+    // which flattered every filtered result.
+    if (trades.length < 5) continue
     const s = summarisePremium(trades)
     const dd = maxDrawdown(trades)
     runs.push({ start, ...s, maxDrawdown: dd.drawdown, drawdownEndedAt: dd.endedAt })
   }
   const mean = (f) => runs.reduce((a, r) => a + f(r), 0) / runs.length
+  const totalTrades = runs.reduce((a, r) => a + r.n, 0)
+  const weighted = (f) => runs.reduce((a, r) => a + f(r) * r.n, 0) / totalTrades
   return {
     phases: runs.length,
     n: Math.round(mean((r) => r.n)),
@@ -91,6 +99,14 @@ function acrossPhases (opts) {
       return good.length ? good.reduce((a, r) => a + Math.abs(r.worst) / r.meanPnl, 0) / good.length : null
     })(),
     profitablePhases: runs.filter((r) => r.meanPnl > 0).length,
+    // Weighted by how many trades each phase actually had, so a thin phase
+    // cannot carry the same weight as a full one.
+    weightedMeanPnl: weighted((r) => r.meanPnl),
+    meanPnlRange: [Math.min(...runs.map((r) => r.meanPnl)), Math.max(...runs.map((r) => r.meanPnl))],
+    // Twenty-one phases over the same decade are not twenty-one samples. The
+    // independent evidence is one phase's worth of non-overlapping periods.
+    independentPeriods: Math.round(mean((r) => r.n)),
+    phasesAreResamples: true,
   }
 }
 
@@ -199,8 +215,9 @@ console.log('  ten-session periods priced off a thirty-day volatility:')
 for (const r of out.sensitivity.ivScale) console.log(`    ivScale ${r.ivScale.toFixed(2)}  mean ${f2(r.meanPnl)}  win ${pct(r.winRate)}  worst ${f2(r.worstOfAnyPhase)}`)
 
 console.log('\nWAITING FOR A RICHER PREMIUM (21 sessions, 2σ strangle)')
+console.log('  every phase kept; the simple mean and the trade-weighted mean are both shown because a filter thins the phases unevenly')
 for (const r of out.regimeFilter) {
-  console.log(`  enter only when VIX ≥ ${String(r.minVix ?? 'any').padStart(3)}   n=${String(r.n).padStart(3)}  win ${pct(r.winRate)}  mean ${f2(r.meanPnl)}  worst ${f2(r.worstOfAnyPhase)}  maxDD ${f2(r.maxDrawdown)}`)
+  console.log(`  VIX ≥ ${String(r.minVix ?? 'any').padStart(3)}  periods=${String(r.independentPeriods).padStart(3)}  win ${pct(r.winRate)}  mean ${f2(r.meanPnl)}  weighted ${f2(r.weightedMeanPnl)}  range ${f2(r.meanPnlRange[0])} to ${f2(r.meanPnlRange[1])}  worst ${f2(r.worstOfAnyPhase)}`)
 }
 
 console.log('\nOUT OF SAMPLE (fit span before 2022, test span from 2022)')

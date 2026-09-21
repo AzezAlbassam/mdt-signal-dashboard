@@ -1,5 +1,7 @@
 {
   "generated": "2026-09-21",
+  "sampleWarning": "Every configuration is run at each start offset and averaged, which removes the luck of where the grid falls. It does not add evidence: 21 phases over one decade are 21 resamplings of the same sessions, so the independent sample is roughly the number of non-overlapping periods in a single phase, about 127 months. Any confidence interval read off the pooled trade count would be about four and a half times too narrow.",
+  "pricingWarning": "Both the strikes and the credit come from the same sigma = VIX/100. The mean credit and the mean profit are therefore a restatement of the measured variance risk premium, not independent confirmation of it. Only a real bid and ask would be that.",
   "span": {
     "from": "2016-01-04",
     "to": "2026-09-14",
@@ -109,7 +111,14 @@
       "totalPnl": 341.04770091124993,
       "worstAsShareOfTotal": 0.1077434021897112,
       "periodsOfProfitInWorst": 28.855717438462797,
-      "profitablePhases": 10
+      "profitablePhases": 10,
+      "weightedMeanPnl": 1.2730410634985065,
+      "meanPnlRange": [
+        1.0635959240315616,
+        1.5297661326497287
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 10,
@@ -133,7 +142,14 @@
       "totalPnl": 77.213664888164,
       "worstAsShareOfTotal": 0.08586781537245976,
       "periodsOfProfitInWorst": 23.0061151043008,
-      "profitablePhases": 10
+      "profitablePhases": 10,
+      "weightedMeanPnl": 0.28821823399837254,
+      "meanPnlRange": [
+        0.19088558047435455,
+        0.4542977805822641
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 10,
@@ -157,7 +173,14 @@
       "totalPnl": 109.16245155838462,
       "worstAsShareOfTotal": 0.34277398265168985,
       "periodsOfProfitInWorst": 91.76242502583288,
-      "profitablePhases": 10
+      "profitablePhases": 10,
+      "weightedMeanPnl": 0.4074746232115887,
+      "meanPnlRange": [
+        0.18152193399142674,
+        0.6548251963043552
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 10,
@@ -181,7 +204,14 @@
       "totalPnl": 15.378563169092848,
       "worstAsShareOfTotal": 0.4181066363725554,
       "periodsOfProfitInWorst": 112.0095024663937,
-      "profitablePhases": 10
+      "profitablePhases": 10,
+      "weightedMeanPnl": 0.057404117839092376,
+      "meanPnlRange": [
+        0.02664146920009558,
+        0.09751970290480574
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 10,
@@ -205,7 +235,14 @@
       "totalPnl": -1.0685501323620117,
       "worstAsShareOfTotal": 3.140374929141693,
       "periodsOfProfitInWorst": 470.9945621386225,
-      "profitablePhases": 6
+      "profitablePhases": 6,
+      "weightedMeanPnl": -0.003988615648981006,
+      "meanPnlRange": [
+        -0.20906073047315263,
+        0.14827672779097303
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 10,
@@ -229,7 +266,14 @@
       "totalPnl": -32.52157942108606,
       "worstAsShareOfTotal": null,
       "periodsOfProfitInWorst": null,
-      "profitablePhases": 0
+      "profitablePhases": 0,
+      "weightedMeanPnl": -0.12139447338964558,
+      "meanPnlRange": [
+        -0.1547934678747935,
+        -0.08097400837336265
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -253,7 +297,14 @@
       "totalPnl": 255.1941191600008,
       "worstAsShareOfTotal": 0.1978763153905201,
       "periodsOfProfitInWorst": 25.133262581449532,
-      "profitablePhases": 21
+      "profitablePhases": 21,
+      "weightedMeanPnl": 2.008649363703155,
+      "meanPnlRange": [
+        1.328944245191914,
+        2.4986366343679323
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -277,7 +328,14 @@
       "totalPnl": 68.21344414425218,
       "worstAsShareOfTotal": 0.12541324761559508,
       "periodsOfProfitInWorst": 15.931961490889758,
-      "profitablePhases": 21
+      "profitablePhases": 21,
+      "weightedMeanPnl": 0.536912416427772,
+      "meanPnlRange": [
+        0.35743322075683376,
+        0.6923987714792144
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -301,7 +359,14 @@
       "totalPnl": 87.89247997135612,
       "worstAsShareOfTotal": 0.6228408596090285,
       "periodsOfProfitInWorst": 79.10596042085902,
-      "profitablePhases": 21
+      "profitablePhases": 21,
+      "weightedMeanPnl": 0.6918073760863863,
+      "meanPnlRange": [
+        0.31773667838073544,
+        0.9326214427057159
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -325,7 +390,14 @@
       "totalPnl": 26.62859649237095,
       "worstAsShareOfTotal": 0.26569687140933956,
       "periodsOfProfitInWorst": 33.75012306083509,
-      "profitablePhases": 21
+      "profitablePhases": 21,
+      "weightedMeanPnl": 0.20959539967758242,
+      "meanPnlRange": [
+        0.06405895515308699,
+        0.27977542649161646
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -349,7 +421,14 @@
       "totalPnl": 2.2363166658486815,
       "worstAsShareOfTotal": 6.635353523553069,
       "periodsOfProfitInWorst": 207.91243816866117,
-      "profitablePhases": 13
+      "profitablePhases": 13,
+      "weightedMeanPnl": 0.01760219264723475,
+      "meanPnlRange": [
+        -0.37941397499213225,
+        0.26262202469626417
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "hold": 21,
@@ -373,7 +452,14 @@
       "totalPnl": -6.324778239490409,
       "worstAsShareOfTotal": null,
       "periodsOfProfitInWorst": null,
-      "profitablePhases": 0
+      "profitablePhases": 0,
+      "weightedMeanPnl": -0.04978273726735329,
+      "meanPnlRange": [
+        -0.08329438037632338,
+        -0.031024743097383962
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     }
   ],
   "sensitivity": {
@@ -397,7 +483,14 @@
         "totalPnl": 2.2363166658486815,
         "worstAsShareOfTotal": 6.635353523553069,
         "periodsOfProfitInWorst": 207.91243816866117,
-        "profitablePhases": 13
+        "profitablePhases": 13,
+        "weightedMeanPnl": 0.01760219264723475,
+        "meanPnlRange": [
+          -0.37941397499213225,
+          0.26262202469626417
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "skew": 0.05,
@@ -418,7 +511,14 @@
         "totalPnl": -0.6759161236304181,
         "worstAsShareOfTotal": 23.061483967738244,
         "periodsOfProfitInWorst": 204.20239630442748,
-        "profitablePhases": 12
+        "profitablePhases": 12,
+        "weightedMeanPnl": -0.005320179383897594,
+        "meanPnlRange": [
+          -0.4016804122674271,
+          0.23984974582264185
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "skew": 0.1,
@@ -439,7 +539,14 @@
         "totalPnl": -0.6857558902556781,
         "worstAsShareOfTotal": 12.389030473466674,
         "periodsOfProfitInWorst": 205.2223732542229,
-        "profitablePhases": 12
+        "profitablePhases": 12,
+        "weightedMeanPnl": -0.005397628821352788,
+        "meanPnlRange": [
+          -0.40132571766150127,
+          0.24013400882941854
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "skew": 0.15,
@@ -460,7 +567,14 @@
         "totalPnl": 2.161636930389546,
         "worstAsShareOfTotal": 4.819890029686913,
         "periodsOfProfitInWorst": 197.58562057353097,
-        "profitablePhases": 13
+        "profitablePhases": 13,
+        "weightedMeanPnl": 0.017014383635000175,
+        "meanPnlRange": [
+          -0.3787061542442805,
+          0.26311318185313715
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       }
     ],
     "costs": [
@@ -483,7 +597,14 @@
         "totalPnl": 14.9410785706106,
         "worstAsShareOfTotal": 1.0195725151121493,
         "periodsOfProfitInWorst": 129.496343120899,
-        "profitablePhases": 14
+        "profitablePhases": 14,
+        "weightedMeanPnl": 0.11760219264723486,
+        "meanPnlRange": [
+          -0.2794139749921324,
+          0.3626220246962644
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "costPerLeg": 0.05,
@@ -504,7 +625,14 @@
         "totalPnl": 2.2363166658486815,
         "worstAsShareOfTotal": 6.635353523553069,
         "periodsOfProfitInWorst": 207.91243816866117,
-        "profitablePhases": 13
+        "profitablePhases": 13,
+        "weightedMeanPnl": 0.01760219264723475,
+        "meanPnlRange": [
+          -0.37941397499213225,
+          0.26262202469626417
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "costPerLeg": 0.1,
@@ -525,7 +653,14 @@
         "totalPnl": -10.468445238913198,
         "worstAsShareOfTotal": 0.7114054190840895,
         "periodsOfProfitInWorst": 90.38801088752388,
-        "profitablePhases": 10
+        "profitablePhases": 10,
+        "weightedMeanPnl": -0.08239780735276506,
+        "meanPnlRange": [
+          -0.4794139749921325,
+          0.1626220246962645
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       },
       {
         "costPerLeg": 0.2,
@@ -546,7 +681,14 @@
         "totalPnl": -35.877969048437,
         "worstAsShareOfTotal": null,
         "periodsOfProfitInWorst": null,
-        "profitablePhases": 0
+        "profitablePhases": 0,
+        "weightedMeanPnl": -0.28239780735276504,
+        "meanPnlRange": [
+          -0.6794139749921324,
+          -0.0373779753037357
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
       }
     ],
     "ivScale": [
@@ -569,7 +711,14 @@
         "totalPnl": -36.0888091878449,
         "worstAsShareOfTotal": 2.93479061371747,
         "periodsOfProfitInWorst": 55.12776787513619,
-        "profitablePhases": 2
+        "profitablePhases": 2,
+        "weightedMeanPnl": -0.13471000070117545,
+        "meanPnlRange": [
+          -0.3533767754847095,
+          0.08407081153375405
+        ],
+        "independentPeriods": 268,
+        "phasesAreResamples": true
       },
       {
         "ivScale": 0.92,
@@ -590,7 +739,14 @@
         "totalPnl": -18.13356271638247,
         "worstAsShareOfTotal": 0.2180453357912348,
         "periodsOfProfitInWorst": 58.43614999205093,
-        "profitablePhases": 2
+        "profitablePhases": 2,
+        "weightedMeanPnl": -0.06768780409250642,
+        "meanPnlRange": [
+          -0.2820494655837613,
+          0.1184111001888154
+        ],
+        "independentPeriods": 268,
+        "phasesAreResamples": true
       },
       {
         "ivScale": 1,
@@ -611,7 +767,14 @@
         "totalPnl": -1.0685501323620117,
         "worstAsShareOfTotal": 3.140374929141693,
         "periodsOfProfitInWorst": 470.9945621386225,
-        "profitablePhases": 6
+        "profitablePhases": 6,
+        "weightedMeanPnl": -0.003988615648981006,
+        "meanPnlRange": [
+          -0.20906073047315263,
+          0.14827672779097303
+        ],
+        "independentPeriods": 268,
+        "phasesAreResamples": true
       },
       {
         "ivScale": 1.1,
@@ -632,7 +795,14 @@
         "totalPnl": 16.540611136164255,
         "worstAsShareOfTotal": 0.8318123985712599,
         "periodsOfProfitInWorst": 222.92572281709764,
-        "profitablePhases": 8
+        "profitablePhases": 8,
+        "weightedMeanPnl": 0.061741736230549654,
+        "meanPnlRange": [
+          -0.11753134800928323,
+          0.1808922280624173
+        ],
+        "independentPeriods": 268,
+        "phasesAreResamples": true
       }
     ]
   },
@@ -656,7 +826,14 @@
       "totalPnl": 2.2363166658486815,
       "worstAsShareOfTotal": 6.635353523553069,
       "periodsOfProfitInWorst": 207.91243816866117,
-      "profitablePhases": 13
+      "profitablePhases": 13,
+      "weightedMeanPnl": 0.01760219264723475,
+      "meanPnlRange": [
+        -0.37941397499213225,
+        0.26262202469626417
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
     },
     {
       "minVix": 15,
@@ -677,7 +854,14 @@
       "totalPnl": 14.500083887681225,
       "worstAsShareOfTotal": 0.1674216694299166,
       "periodsOfProfitInWorst": 13.616125022172346,
-      "profitablePhases": 16
+      "profitablePhases": 16,
+      "weightedMeanPnl": 0.1753032594365606,
+      "meanPnlRange": [
+        -0.6620171180786754,
+        0.3803857285214575
+      ],
+      "independentPeriods": 83,
+      "phasesAreResamples": true
     },
     {
       "minVix": 18,
@@ -698,7 +882,14 @@
       "totalPnl": 18.57047870582394,
       "worstAsShareOfTotal": 0.2554087914700204,
       "periodsOfProfitInWorst": 13.964782001267006,
-      "profitablePhases": 20
+      "profitablePhases": 20,
+      "weightedMeanPnl": 0.34850764327283534,
+      "meanPnlRange": [
+        -0.2822344014515335,
+        0.42526037055098687
+      ],
+      "independentPeriods": 53,
+      "phasesAreResamples": true
     },
     {
       "minVix": 20,
@@ -719,28 +910,42 @@
       "totalPnl": 13.892510395246305,
       "worstAsShareOfTotal": 0.04681808369971917,
       "periodsOfProfitInWorst": 1.7746908201360714,
-      "profitablePhases": 19
+      "profitablePhases": 19,
+      "weightedMeanPnl": 0.3553504485994792,
+      "meanPnlRange": [
+        -0.41436256649440856,
+        0.47466740541131147
+      ],
+      "independentPeriods": 39,
+      "phasesAreResamples": true
     },
     {
       "minVix": 25,
-      "phases": 7,
-      "n": 21,
-      "winRate": 0.9928571428571429,
-      "winRateWorstPhase": 0.95,
-      "meanPnl": 0.4792706904365776,
-      "meanPnlWorstPhase": 0.30756506953786844,
-      "meanPnlPctOfIndex": 0.0013044976579215577,
-      "meanPremiumIn": 0.6121864916829202,
-      "returnOnPremium": 0.784793839357604,
-      "worst": -0.419689157758293,
-      "worstOfAnyPhase": -4.1891153967696315,
-      "worstAsMultipleOfMeanWin": 1.4487585350215315,
-      "maxDrawdown": 0.5984450566813759,
-      "maxDrawdownWorstPhase": 4.1891153967696315,
-      "totalPnl": 9.879002233012313,
-      "worstAsShareOfTotal": 0.11411793945947125,
-      "periodsOfProfitInWorst": 2.2948966466668077,
-      "profitablePhases": 7
+      "phases": 21,
+      "n": 18,
+      "winRate": 0.9891604010025061,
+      "winRateWorstPhase": 0.9375,
+      "meanPnl": 0.35799076599047613,
+      "meanPnlWorstPhase": -1.3203593529177173,
+      "meanPnlPctOfIndex": 0.0009542891982644342,
+      "meanPremiumIn": 0.6091943454237182,
+      "returnOnPremium": 0.5692948979879525,
+      "worst": -2.4661625883400053,
+      "worstOfAnyPhase": -33.468729536262764,
+      "worstAsMultipleOfMeanWin": 5.92536705280534,
+      "maxDrawdown": 2.650193197057953,
+      "maxDrawdownWorstPhase": 33.468729536262764,
+      "totalPnl": 6.428430568110299,
+      "worstAsShareOfTotal": 0.07210302157840157,
+      "periodsOfProfitInWorst": 1.3314474745298635,
+      "profitablePhases": 19,
+      "weightedMeanPnl": 0.35808233933770894,
+      "meanPnlRange": [
+        -1.3203593529177173,
+        0.565182571794365
+      ],
+      "independentPeriods": 18,
+      "phasesAreResamples": true
     }
   ],
   "outOfSample": {
