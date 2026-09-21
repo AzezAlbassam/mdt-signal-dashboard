@@ -145,6 +145,51 @@ one, and loses that whole posted amount in 8.6 per cent of months, which is
 about once a year. Its longest run of consecutive losing months in the decade
 was two.
 
+## The trade, stated exactly
+
+SPX iron condor, four legs, one expiry, about 30 calendar days out.
+
+At entry compute `move = S0 × (VIX/100) × √(days to expiry / 365)`, then:
+
+- sell the call at `S0 + 1.00 × move`
+- sell the put at `S0 − 1.00 × move`
+- buy the call at `S0 + 1.50 × move`
+- buy the put at `S0 − 1.50 × move`
+
+Hold to expiry. No adjustment, no stop, no profit target, because hold to
+expiry is the only rule this study measures and anything else would be a
+number nobody has.
+
+Size the contract count so the maximum loss, which is the wing width less the
+net credit and is known exactly at entry, is five per cent of account equity.
+Do not size on margin, notional or credit.
+
+| Risk per month | Compounded return | Worst drawdown |
+| --- | --- | --- |
+| 3% of equity | 4.5% a year | 9.3% |
+| 5% of equity | 7.5% a year | 15.3% |
+| 6% of equity | 9.0% a year | 18.2% |
+
+A volatility filter was tested from VIX 10 to 25. It raises the money per trade
+and lowers the compounded return, because it leaves you in cash two thirds of
+the time. Skip it.
+
+### The check that decides whether to trade it at all
+
+Every premium here is a model output priced off the same VIX that sets the
+strikes. Not one real quote appears in this repository. Before risking
+anything, price the exact structure for three months and record the net credit
+you could actually be filled at, as a share of the wing width.
+
+| | Share of wing width |
+| --- | --- |
+| What the model assumes you collect | 21.5% |
+| Break-even after costs | 11.0% |
+| Below this, do not trade it | 14% |
+
+If your fills come in under 14 per cent of the wing width, the entire edge is
+inside the bid and ask, and you would be paying to carry the risk.
+
 ## What this study cannot tell you
 
 **The credit is a model output, not a quote.** The strikes and the premium come
