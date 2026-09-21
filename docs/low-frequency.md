@@ -160,6 +160,11 @@ Hold to expiry. No adjustment, no stop, no profit target, because hold to
 expiry is the only rule this study measures and anything else would be a
 number nobody has.
 
+`trade-sheet.html` in the repository root does this arithmetic for you: type
+the index level and VIX and it prints the four strikes, the credit, the most
+you can lose, the same figure on the tenth-size index, and the fill floor, for
+all three structures.
+
 Size the contract count so the maximum loss, which is the wing width less the
 net credit and is known exactly at entry, is five per cent of account equity.
 Do not size on margin, notional or credit.
