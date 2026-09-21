@@ -1,0 +1,2624 @@
+{
+  "generated": "2026-09-21",
+  "span": {
+    "from": "2016-01-04",
+    "to": "2026-09-14",
+    "sessions": 2689
+  },
+  "method": "One short option at the expected-move band, or two of the same kind, held to expiry on a cash-settled European index option. Priced off the VIX close of the entry session. Five cents a leg in costs. Averaged over every start offset.",
+  "sampleWarning": "Phases are resamplings of one decade, not independent samples. Any interval read off the pooled trade count would be about four and a half times too narrow.",
+  "grid": [
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9066786852255577,
+      "winRateWorstPhase": 0.898876404494382,
+      "meanPnl": 0.7435855778254258,
+      "meanPnlWorstPhase": 0.4558767967095807,
+      "returnOnRisk": 0.0019346294093671094,
+      "returnOnRiskWorstPhase": 0.0011874584256961042,
+      "meanRisk": 384.38088707014094,
+      "meanPremiumIn": 1.862265016768242,
+      "creditShare": 0.004821478136284936,
+      "fullLosses": 0,
+      "worst": -40.10143999736129,
+      "worstOfAnyPhase": -62.072043409074396,
+      "maxDrawdown": 63.878726597225764,
+      "maxDrawdownWorstPhase": 96.85024560647108,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.4558767967095807,
+        0.9344324944132025
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9007085359718262,
+      "winRateWorstPhase": 0.8843283582089553,
+      "meanPnl": 0.5121646260012256,
+      "meanPnlWorstPhase": 0.3985050607584922,
+      "returnOnRisk": 0.08159387165804606,
+      "returnOnRiskWorstPhase": 0.06342485924091804,
+      "meanRisk": 6.277281008847334,
+      "meanPremiumIn": 1.1862501487460269,
+      "creditShare": 0.15893950679341212,
+      "fullLosses": 0.05412544021465705,
+      "worst": -10.34057718789612,
+      "worstOfAnyPhase": -12.377840695664078,
+      "maxDrawdown": 22.063096063287556,
+      "maxDrawdownWorstPhase": 31.762658053815123,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.3985050607584922,
+        0.598049821362231
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.8589021186203812,
+      "winRateWorstPhase": 0.832089552238806,
+      "meanPnl": 1.0637025774274824,
+      "meanPnlWorstPhase": 0.9054291373250786,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 2.0002702677211777,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -19.736638737590084,
+      "worstOfAnyPhase": -27.71200737101616,
+      "maxDrawdown": 23.65660988380619,
+      "maxDrawdownWorstPhase": 30.092258003056173,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.9054291373250786,
+        1.2564784432058973
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.8368760131924649,
+      "winRateWorstPhase": 0.8097014925373134,
+      "meanPnl": 0.31037892385369914,
+      "meanPnlWorstPhase": 0.1918037832961929,
+      "returnOnRisk": 0.049465889727431614,
+      "returnOnRiskWorstPhase": 0.030549182594573062,
+      "meanRisk": 6.27868241742143,
+      "meanPremiumIn": 1.1848487401719299,
+      "creditShare": 0.1587517462187593,
+      "fullLosses": 0.03583347308401811,
+      "worst": -13.749667614145915,
+      "worstOfAnyPhase": -16.82895153400147,
+      "maxDrawdown": 23.485202766172982,
+      "maxDrawdownWorstPhase": 31.844411686047813,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.1918037832961929,
+        0.48808923458597925
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9301945329532113,
+      "winRateWorstPhase": 0.9104477611940298,
+      "meanPnl": 0.37287643871078,
+      "meanPnlWorstPhase": 0.09725884588803521,
+      "returnOnRisk": 0.0009777537446633434,
+      "returnOnRiskWorstPhase": 0.0002553234350261854,
+      "meanRisk": 381.40830074003867,
+      "meanPremiumIn": 1.1530857680738447,
+      "creditShare": 0.0030141170947823965,
+      "fullLosses": 0,
+      "worst": -36.30335622938095,
+      "worstOfAnyPhase": -58.16972832066908,
+      "maxDrawdown": 57.908164370436396,
+      "maxDrawdownWorstPhase": 98.08506427098608,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.09725884588803521,
+        0.5866670580069951
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9283288613114206,
+      "winRateWorstPhase": 0.9067164179104478,
+      "meanPnl": 0.28279223828930056,
+      "meanPnlWorstPhase": 0.2113797864873316,
+      "returnOnRisk": 0.04233102041891278,
+      "returnOnRiskWorstPhase": 0.03159337962601533,
+      "meanRisk": 6.684318162187194,
+      "meanPremiumIn": 0.7792129954061668,
+      "creditShare": 0.1044028616535514,
+      "fullLosses": 0.03732880541114651,
+      "worst": -10.661063342125232,
+      "worstOfAnyPhase": -13.237695251806946,
+      "maxDrawdown": 23.404216331728865,
+      "maxDrawdownWorstPhase": 28.845719382876894,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.2113797864873316,
+        0.39217617583157227
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9309435966236235,
+      "winRateWorstPhase": 0.914179104477612,
+      "meanPnl": 0.9000944512554494,
+      "meanPnlWorstPhase": 0.7812039323618865,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 1.3009010510620314,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -14.19492342262254,
+      "worstOfAnyPhase": -19.79491458309659,
+      "maxDrawdown": 15.03249969330381,
+      "maxDrawdownWorstPhase": 19.794914583096585,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.7812039323618865,
+        1.0049894298750324
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.922358712057689,
+      "winRateWorstPhase": 0.9029850746268657,
+      "meanPnl": 0.38278833917027405,
+      "meanPnlWorstPhase": 0.2775233478152716,
+      "returnOnRisk": 0.05752683362563884,
+      "returnOnRiskWorstPhase": 0.041701736000342486,
+      "meanRisk": 6.65505897330293,
+      "meanPremiumIn": 0.8084721842904277,
+      "creditShare": 0.10832289010137079,
+      "fullLosses": 0.011571356699647827,
+      "worst": -12.737009982023661,
+      "worstOfAnyPhase": -17.539399199331488,
+      "maxDrawdown": 14.018130012741164,
+      "maxDrawdownWorstPhase": 17.723734568377793,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.2775233478152716,
+        0.5049597525796407
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9488596344122087,
+      "winRateWorstPhase": 0.9402985074626866,
+      "meanPnl": 0.13142095182420044,
+      "meanPnlWorstPhase": -0.12829526576018158,
+      "returnOnRisk": 0.0003475539428734312,
+      "returnOnRiskWorstPhase": -0.00033967039089547265,
+      "meanRisk": 378.20360606129356,
+      "meanPremiumIn": 0.6760148680222146,
+      "creditShare": 0.0017842461906625647,
+      "fullLosses": 0,
+      "worst": -32.30656150883895,
+      "worstOfAnyPhase": -53.96523322903308,
+      "maxDrawdown": 52.88254475868696,
+      "maxDrawdownWorstPhase": 93.39418171151513,
+      "profitablePhases": 8,
+      "meanPnlRange": [
+        -0.12829526576018158,
+        0.3579998963748195
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9469939627704175,
+      "winRateWorstPhase": 0.9365671641791045,
+      "meanPnl": 0.11277210173230803,
+      "meanPnlWorstPhase": 0.04736543460622368,
+      "returnOnRisk": 0.016180516796792527,
+      "returnOnRiskWorstPhase": 0.006726933863139266,
+      "meanRisk": 6.981890202525065,
+      "meanPremiumIn": 0.48164095506829374,
+      "creditShare": 0.06453280867984863,
+      "fullLosses": 0.023893174576555425,
+      "worst": -10.77826199553608,
+      "worstOfAnyPhase": -13.855928064302715,
+      "maxDrawdown": 23.446093245592202,
+      "maxDrawdownWorstPhase": 28.400585682473064,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.04736543460622368,
+        0.1976904687138188
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9712616691821789,
+      "winRateWorstPhase": 0.9589552238805971,
+      "meanPnl": 0.6533236535737843,
+      "meanPnlWorstPhase": 0.6071974148592235,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 0.8154215275492478,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -8.70054539139785,
+      "worstOfAnyPhase": -12.908475771740545,
+      "maxDrawdown": 8.723727635258275,
+      "maxDrawdownWorstPhase": 12.908475771740541,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.6071974148592235,
+        0.7080522577751289
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9697691318687461,
+      "winRateWorstPhase": 0.9552238805970149,
+      "meanPnl": 0.32198259489005493,
+      "meanPnlWorstPhase": 0.27008882179006305,
+      "returnOnRisk": 0.046432844942593025,
+      "returnOnRiskWorstPhase": 0.03891276740830805,
+      "meanRisk": 6.934584507007806,
+      "meanPremiumIn": 0.528946650585554,
+      "creditShare": 0.0708706423641998,
+      "fullLosses": 0.0033582089552238806,
+      "worst": -8.317528027331308,
+      "worstOfAnyPhase": -13.593117113148589,
+      "maxDrawdown": 8.448286633365989,
+      "maxDrawdownWorstPhase": 13.593117113148594,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.27008882179006305,
+        0.37299064609633387
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9630443289172117,
+      "winRateWorstPhase": 0.9552238805970149,
+      "meanPnl": -0.00991579957852109,
+      "meanPnlWorstPhase": -0.25861115339550045,
+      "returnOnRisk": -0.00002641812921288087,
+      "returnOnRiskWorstPhase": -0.0006909001465614694,
+      "meanRisk": 374.8239825778513,
+      "meanPremiumIn": 0.37387277266767777,
+      "creditShare": 0.0009964680944100567,
+      "fullLosses": 0,
+      "worst": -28.275732888437535,
+      "worstOfAnyPhase": -49.5327663147438,
+      "maxDrawdown": 48.5646206349233,
+      "maxDrawdownWorstPhase": 95.11423440830177,
+      "profitablePhases": 5,
+      "meanPnlRange": [
+        -0.25861115339550045,
+        0.21609432673173806
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9313125384314382,
+      "winRateWorstPhase": 0.9176029962546817,
+      "meanPnl": 0.00434956639767239,
+      "meanPnlWorstPhase": -0.05917767799214924,
+      "returnOnRisk": 0.000631410102560183,
+      "returnOnRiskWorstPhase": -0.008176570993911865,
+      "meanRisk": 7.184339631892672,
+      "meanPremiumIn": 0.27919152570068734,
+      "creditShare": 0.03740767056508547,
+      "fullLosses": 0.01605455866733747,
+      "worst": -9.879010587616225,
+      "worstOfAnyPhase": -11.899886554359222,
+      "maxDrawdown": 22.79683291637183,
+      "maxDrawdownWorstPhase": 31.951421106291296,
+      "profitablePhases": 6,
+      "meanPnlRange": [
+        -0.05917767799214924,
+        0.07745437602333002
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9895494437922746,
+      "winRateWorstPhase": 0.9850746268656716,
+      "meanPnl": 0.41730611208517693,
+      "meanPnlWorstPhase": 0.39519587077705165,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 0.49242886677160425,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -3.755252215418814,
+      "worstOfAnyPhase": -7.806463270886662,
+      "maxDrawdown": 3.755252215418816,
+      "maxDrawdownWorstPhase": 7.80646327088666,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.39519587077705165,
+        0.44013308738692836
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9861912348370507,
+      "winRateWorstPhase": 0.9776119402985075,
+      "meanPnl": 0.2071058812037941,
+      "meanPnlWorstPhase": 0.18747059015326076,
+      "returnOnRisk": 0.02903571910554381,
+      "returnOnRiskWorstPhase": 0.02650015230956472,
+      "meanRisk": 7.131679023487374,
+      "meanPremiumIn": 0.3318521341059859,
+      "creditShare": 0.04446294158450499,
+      "fullLosses": 0.0007462686567164179,
+      "worst": -3.8920949327610996,
+      "worstOfAnyPhase": -7.197266274591137,
+      "maxDrawdown": 3.8920949327610983,
+      "maxDrawdownWorstPhase": 7.197266274591136,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.18747059015326076,
+        0.2290940924900517
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9107933773903261,
+      "winRateWorstPhase": 0.8740157480314961,
+      "meanPnl": 1.177558436076208,
+      "meanPnlWorstPhase": 0.7679189651464899,
+      "returnOnRisk": 0.003122063175077786,
+      "returnOnRiskWorstPhase": 0.0020393296714758895,
+      "meanRisk": 377.14119008548124,
+      "meanPremiumIn": 2.6469764686354273,
+      "creditShare": 0.006969594473948972,
+      "fullLosses": 0,
+      "worst": -52.97007803406092,
+      "worstOfAnyPhase": -96.0470634063383,
+      "maxDrawdown": 57.3394398011135,
+      "maxDrawdownWorstPhase": 96.0470634063383,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.7679189651464899,
+        1.5349761854028807
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.8995565007499062,
+      "winRateWorstPhase": 0.8661417322834646,
+      "meanPnl": 0.8277683427568431,
+      "meanPnlWorstPhase": 0.48288019467983967,
+      "returnOnRisk": 0.09186545007793662,
+      "returnOnRiskWorstPhase": 0.05202659353092829,
+      "meanRisk": 9.033427966282602,
+      "meanPremiumIn": 1.7137056818977816,
+      "creditShare": 0.15945686290566696,
+      "fullLosses": 0.05022321428571429,
+      "worst": -13.846248457902743,
+      "worstOfAnyPhase": -18.570770570668348,
+      "maxDrawdown": 21.194613597185658,
+      "maxDrawdownWorstPhase": 30.342656399893567,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.48288019467983967,
+        1.0953214296933413
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.8448279902512187,
+      "winRateWorstPhase": 0.8031496062992126,
+      "meanPnl": 1.52984402259692,
+      "meanPnlWorstPhase": 1.2059128926769709,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 2.9365752875765736,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -22.820429132123156,
+      "worstOfAnyPhase": -35.33313664116645,
+      "maxDrawdown": 26.768994581084506,
+      "maxDrawdownWorstPhase": 41.153080965078175,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        1.2059128926769709,
+        1.8586015827471059
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.8088442069741284,
+      "winRateWorstPhase": 0.7637795275590551,
+      "meanPnl": 0.40800741505138705,
+      "meanPnlWorstPhase": 0.14048991296577829,
+      "returnOnRisk": 0.04521336700540162,
+      "returnOnRiskWorstPhase": 0.015412937548474897,
+      "meanRisk": 9.036131020636983,
+      "meanPremiumIn": 1.711002627543397,
+      "creditShare": 0.1592053987621893,
+      "fullLosses": 0.03598085395575553,
+      "worst": -18.26769096557881,
+      "worstOfAnyPhase": -24.575255501951993,
+      "maxDrawdown": 25.88787314627638,
+      "maxDrawdownWorstPhase": 38.19609319474855,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.14048991296577829,
+        0.6252982484684022
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9362784730033746,
+      "winRateWorstPhase": 0.905511811023622,
+      "meanPnl": 0.6272718073488569,
+      "meanPnlWorstPhase": 0.2457259382632179,
+      "returnOnRisk": 0.0016819801771597298,
+      "returnOnRiskWorstPhase": 0.0006600626191061124,
+      "meanRisk": 372.84549628179894,
+      "meanPremiumIn": 1.6191034482275914,
+      "creditShare": 0.004323779693141716,
+      "fullLosses": 0,
+      "worst": -48.76647013262056,
+      "worstOfAnyPhase": -92.69754883792415,
+      "maxDrawdown": 52.380841695136,
+      "maxDrawdownWorstPhase": 92.69754883792415,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.2457259382632179,
+        0.9011633636785354
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9325289416947882,
+      "winRateWorstPhase": 0.889763779527559,
+      "meanPnl": 0.5029594010584185,
+      "meanPnlWorstPhase": 0.2560112848149516,
+      "returnOnRisk": 0.052358157627653355,
+      "returnOnRiskWorstPhase": 0.025863406719729046,
+      "meanRisk": 9.63261412023849,
+      "meanPremiumIn": 1.1145195279418925,
+      "creditShare": 0.10370457927630257,
+      "fullLosses": 0.030731510123734547,
+      "worst": -13.488443678369103,
+      "worstOfAnyPhase": -18.08349515058204,
+      "maxDrawdown": 19.58480859645483,
+      "maxDrawdownWorstPhase": 30.4416611632324,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.2560112848149516,
+        0.7021849892222373
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.929910128421447,
+      "winRateWorstPhase": 0.8976377952755905,
+      "meanPnl": 1.3812556989644842,
+      "meanPnlWorstPhase": 1.0832183069286967,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 1.9291972066146987,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -14.555538740709395,
+      "worstOfAnyPhase": -25.386586014329556,
+      "maxDrawdown": 15.594250592727846,
+      "maxDrawdownWorstPhase": 25.386586014329552,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        1.0832183069286967,
+        1.6079036764456753
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9152898856392953,
+      "winRateWorstPhase": 0.8740157480314961,
+      "meanPnl": 0.6138510231567691,
+      "meanPnlWorstPhase": 0.3536372298102694,
+      "returnOnRisk": 0.0641691115872891,
+      "returnOnRiskWorstPhase": 0.03710164051090961,
+      "meanRisk": 9.570943380644403,
+      "meanPremiumIn": 1.1761902675359814,
+      "creditShare": 0.10944158490818268,
+      "fullLosses": 0.011623547056617922,
+      "worst": -14.908192673695545,
+      "worstOfAnyPhase": -21.85875377311753,
+      "maxDrawdown": 16.154860840745755,
+      "maxDrawdownWorstPhase": 25.67133510332217,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.3536372298102694,
+        0.8161865109297568
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9527764107611547,
+      "winRateWorstPhase": 0.9291338582677166,
+      "meanPnl": 0.24979009331936494,
+      "meanPnlWorstPhase": -0.13917135538485662,
+      "returnOnRisk": 0.000677917612221849,
+      "returnOnRiskWorstPhase": -0.0003780674219551004,
+      "meanRisk": 368.2077621191987,
+      "meanPremiumIn": 0.9332707867376469,
+      "creditShare": 0.002528225755066849,
+      "fullLosses": 0,
+      "worst": -44.27553666790941,
+      "worstOfAnyPhase": -89.0842963409137,
+      "maxDrawdown": 46.64505235215194,
+      "maxDrawdownWorstPhase": 89.0842963409137,
+      "profitablePhases": 16,
+      "meanPnlRange": [
+        -0.13917135538485662,
+        0.5758412522897145
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9509016451068616,
+      "winRateWorstPhase": 0.9291338582677166,
+      "meanPnl": 0.25930510899022324,
+      "meanPnlWorstPhase": 0.055489876890635524,
+      "returnOnRisk": 0.025834198715881978,
+      "returnOnRiskWorstPhase": 0.005362671432046516,
+      "meanRisk": 10.068620433055552,
+      "meanPremiumIn": 0.6785132151248298,
+      "creditShare": 0.0631354983643849,
+      "fullLosses": 0.017239056055493064,
+      "worst": -12.491328732491311,
+      "worstOfAnyPhase": -18.475066497576215,
+      "maxDrawdown": 16.18268984355846,
+      "maxDrawdownWorstPhase": 25.494049519777402,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.055489876890635524,
+        0.3920380355024574
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9726372094113235,
+      "winRateWorstPhase": 0.952755905511811,
+      "meanPnl": 1.0218366075455354,
+      "meanPnlWorstPhase": 0.8552462124277516,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 1.2255726600331773,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -6.751940117707922,
+      "worstOfAnyPhase": -14.764685566248527,
+      "maxDrawdown": 6.84780874176934,
+      "maxDrawdownWorstPhase": 14.76468556624853,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.8552462124277516,
+        1.1570545753740509
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9688906074240717,
+      "winRateWorstPhase": 0.9448818897637795,
+      "meanPnl": 0.5301870647124823,
+      "meanPnlWorstPhase": 0.3573281865960572,
+      "returnOnRisk": 0.053222279599256135,
+      "returnOnRiskWorstPhase": 0.035992188205068054,
+      "meanRisk": 9.969226690397605,
+      "meanPremiumIn": 0.77790695778278,
+      "creditShare": 0.07238174835048067,
+      "fullLosses": 0.0037495313085864268,
+      "worst": -7.396143007969894,
+      "worstOfAnyPhase": -15.99101557220848,
+      "maxDrawdown": 7.577328151394642,
+      "maxDrawdownWorstPhase": 15.991015572208482,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.3573281865960572,
+        0.6610848313780484
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9718902324709411,
+      "winRateWorstPhase": 0.952755905511811,
+      "meanPnl": 0.024312406290438193,
+      "meanPnlWorstPhase": -0.3673141448997081,
+      "returnOnRisk": 0.00006639978896066012,
+      "returnOnRiskWorstPhase": -0.0010111440104083687,
+      "meanRisk": 363.3128821615605,
+      "meanPremiumIn": 0.5045839202856991,
+      "creditShare": 0.0013869186477249878,
+      "fullLosses": 0,
+      "worst": -39.99694024925483,
+      "worstOfAnyPhase": -85.660693008524,
+      "maxDrawdown": 41.513374817525715,
+      "maxDrawdownWorstPhase": 88.60171094787927,
+      "profitablePhases": 14,
+      "meanPnlRange": [
+        -0.3673141448997081,
+        0.2965328654418355
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9711403262092236,
+      "winRateWorstPhase": 0.952755905511811,
+      "meanPnl": 0.11285709725500179,
+      "meanPnlWorstPhase": -0.0006518081049277834,
+      "returnOnRisk": 0.010930107927299927,
+      "returnOnRiskWorstPhase": -0.00006120712876430305,
+      "meanRisk": 10.362165190317635,
+      "meanPremiumIn": 0.3849684578627484,
+      "creditShare": 0.03582182369515373,
+      "fullLosses": 0.009370898950131233,
+      "worst": -9.498296715443747,
+      "worstOfAnyPhase": -13.735485997197527,
+      "maxDrawdown": 11.383024826073381,
+      "maxDrawdownWorstPhase": 19.81272192610698,
+      "profitablePhases": 20,
+      "meanPnlRange": [
+        -0.0006518081049277834,
+        0.1865964639964647
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "single",
+      "wingSigma": null,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9898762654668166,
+      "winRateWorstPhase": 0.968503937007874,
+      "meanPnl": 0.6674046758077149,
+      "meanPnlWorstPhase": 0.6071999783753561,
+      "returnOnRisk": 0,
+      "returnOnRiskWorstPhase": null,
+      "meanRisk": 0,
+      "meanPremiumIn": 0.7530069390787173,
+      "creditShare": 0,
+      "fullLosses": 0,
+      "worst": -2.5057810126092557,
+      "worstOfAnyPhase": -7.210486625100347,
+      "maxDrawdown": 2.5538687494147037,
+      "maxDrawdownWorstPhase": 7.210486625100347,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.6071999783753561,
+        0.7128543027215875
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9895013123359581,
+      "winRateWorstPhase": 0.968503937007874,
+      "meanPnl": 0.36133638235991705,
+      "meanPnlWorstPhase": 0.32101917631202737,
+      "returnOnRisk": 0.03526165482151992,
+      "returnOnRiskWorstPhase": 0.03077510167256084,
+      "meanRisk": 10.25183446563781,
+      "meanPremiumIn": 0.49529918254257277,
+      "creditShare": 0.04608551284091428,
+      "fullLosses": 0.001124859392575928,
+      "worst": -2.5465058487249386,
+      "worstOfAnyPhase": -6.437166802677623,
+      "maxDrawdown": 2.5607417252698803,
+      "maxDrawdownWorstPhase": 6.437166802677623,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.32101917631202737,
+        0.40010800213453146
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    }
+  ],
+  "spreads": [
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.8995565007499062,
+      "winRateWorstPhase": 0.8661417322834646,
+      "meanPnl": 0.8277683427568431,
+      "meanPnlWorstPhase": 0.48288019467983967,
+      "returnOnRisk": 0.09186545007793662,
+      "returnOnRiskWorstPhase": 0.05202659353092829,
+      "meanRisk": 9.033427966282602,
+      "meanPremiumIn": 1.7137056818977816,
+      "creditShare": 0.15945686290566696,
+      "fullLosses": 0.05022321428571429,
+      "worst": -13.846248457902743,
+      "worstOfAnyPhase": -18.570770570668348,
+      "maxDrawdown": 21.194613597185658,
+      "maxDrawdownWorstPhase": 30.342656399893567,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.48288019467983967,
+        1.0953214296933413
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9007085359718262,
+      "winRateWorstPhase": 0.8843283582089553,
+      "meanPnl": 0.5121646260012256,
+      "meanPnlWorstPhase": 0.3985050607584922,
+      "returnOnRisk": 0.08159387165804606,
+      "returnOnRiskWorstPhase": 0.06342485924091804,
+      "meanRisk": 6.277281008847334,
+      "meanPremiumIn": 1.1862501487460269,
+      "creditShare": 0.15893950679341212,
+      "fullLosses": 0.05412544021465705,
+      "worst": -10.34057718789612,
+      "worstOfAnyPhase": -12.377840695664078,
+      "maxDrawdown": 22.063096063287556,
+      "maxDrawdownWorstPhase": 31.762658053815123,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.3985050607584922,
+        0.598049821362231
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9152898856392953,
+      "winRateWorstPhase": 0.8740157480314961,
+      "meanPnl": 0.6138510231567691,
+      "meanPnlWorstPhase": 0.3536372298102694,
+      "returnOnRisk": 0.0641691115872891,
+      "returnOnRiskWorstPhase": 0.03710164051090961,
+      "meanRisk": 9.570943380644403,
+      "meanPremiumIn": 1.1761902675359814,
+      "creditShare": 0.10944158490818268,
+      "fullLosses": 0.011623547056617922,
+      "worst": -14.908192673695545,
+      "worstOfAnyPhase": -21.85875377311753,
+      "maxDrawdown": 16.154860840745755,
+      "maxDrawdownWorstPhase": 25.67133510332217,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.3536372298102694,
+        0.8161865109297568
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.922358712057689,
+      "winRateWorstPhase": 0.9029850746268657,
+      "meanPnl": 0.38278833917027405,
+      "meanPnlWorstPhase": 0.2775233478152716,
+      "returnOnRisk": 0.05752683362563884,
+      "returnOnRiskWorstPhase": 0.041701736000342486,
+      "meanRisk": 6.65505897330293,
+      "meanPremiumIn": 0.8084721842904277,
+      "creditShare": 0.10832289010137079,
+      "fullLosses": 0.011571356699647827,
+      "worst": -12.737009982023661,
+      "worstOfAnyPhase": -17.539399199331488,
+      "maxDrawdown": 14.018130012741164,
+      "maxDrawdownWorstPhase": 17.723734568377793,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.2775233478152716,
+        0.5049597525796407
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9688906074240717,
+      "winRateWorstPhase": 0.9448818897637795,
+      "meanPnl": 0.5301870647124823,
+      "meanPnlWorstPhase": 0.3573281865960572,
+      "returnOnRisk": 0.053222279599256135,
+      "returnOnRiskWorstPhase": 0.035992188205068054,
+      "meanRisk": 9.969226690397605,
+      "meanPremiumIn": 0.77790695778278,
+      "creditShare": 0.07238174835048067,
+      "fullLosses": 0.0037495313085864268,
+      "worst": -7.396143007969894,
+      "worstOfAnyPhase": -15.99101557220848,
+      "maxDrawdown": 7.577328151394642,
+      "maxDrawdownWorstPhase": 15.991015572208482,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.3573281865960572,
+        0.6610848313780484
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9325289416947882,
+      "winRateWorstPhase": 0.889763779527559,
+      "meanPnl": 0.5029594010584185,
+      "meanPnlWorstPhase": 0.2560112848149516,
+      "returnOnRisk": 0.052358157627653355,
+      "returnOnRiskWorstPhase": 0.025863406719729046,
+      "meanRisk": 9.63261412023849,
+      "meanPremiumIn": 1.1145195279418925,
+      "creditShare": 0.10370457927630257,
+      "fullLosses": 0.030731510123734547,
+      "worst": -13.488443678369103,
+      "worstOfAnyPhase": -18.08349515058204,
+      "maxDrawdown": 19.58480859645483,
+      "maxDrawdownWorstPhase": 30.4416611632324,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.2560112848149516,
+        0.7021849892222373
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.8368760131924649,
+      "winRateWorstPhase": 0.8097014925373134,
+      "meanPnl": 0.31037892385369914,
+      "meanPnlWorstPhase": 0.1918037832961929,
+      "returnOnRisk": 0.049465889727431614,
+      "returnOnRiskWorstPhase": 0.030549182594573062,
+      "meanRisk": 6.27868241742143,
+      "meanPremiumIn": 1.1848487401719299,
+      "creditShare": 0.1587517462187593,
+      "fullLosses": 0.03583347308401811,
+      "worst": -13.749667614145915,
+      "worstOfAnyPhase": -16.82895153400147,
+      "maxDrawdown": 23.485202766172982,
+      "maxDrawdownWorstPhase": 31.844411686047813,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.1918037832961929,
+        0.48808923458597925
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9697691318687461,
+      "winRateWorstPhase": 0.9552238805970149,
+      "meanPnl": 0.32198259489005493,
+      "meanPnlWorstPhase": 0.27008882179006305,
+      "returnOnRisk": 0.046432844942593025,
+      "returnOnRiskWorstPhase": 0.03891276740830805,
+      "meanRisk": 6.934584507007806,
+      "meanPremiumIn": 0.528946650585554,
+      "creditShare": 0.0708706423641998,
+      "fullLosses": 0.0033582089552238806,
+      "worst": -8.317528027331308,
+      "worstOfAnyPhase": -13.593117113148589,
+      "maxDrawdown": 8.448286633365989,
+      "maxDrawdownWorstPhase": 13.593117113148594,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.27008882179006305,
+        0.37299064609633387
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.8088442069741284,
+      "winRateWorstPhase": 0.7637795275590551,
+      "meanPnl": 0.40800741505138705,
+      "meanPnlWorstPhase": 0.14048991296577829,
+      "returnOnRisk": 0.04521336700540162,
+      "returnOnRiskWorstPhase": 0.015412937548474897,
+      "meanRisk": 9.036131020636983,
+      "meanPremiumIn": 1.711002627543397,
+      "creditShare": 0.1592053987621893,
+      "fullLosses": 0.03598085395575553,
+      "worst": -18.26769096557881,
+      "worstOfAnyPhase": -24.575255501951993,
+      "maxDrawdown": 25.88787314627638,
+      "maxDrawdownWorstPhase": 38.19609319474855,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.14048991296577829,
+        0.6252982484684022
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9283288613114206,
+      "winRateWorstPhase": 0.9067164179104478,
+      "meanPnl": 0.28279223828930056,
+      "meanPnlWorstPhase": 0.2113797864873316,
+      "returnOnRisk": 0.04233102041891278,
+      "returnOnRiskWorstPhase": 0.03159337962601533,
+      "meanRisk": 6.684318162187194,
+      "meanPremiumIn": 0.7792129954061668,
+      "creditShare": 0.1044028616535514,
+      "fullLosses": 0.03732880541114651,
+      "worst": -10.661063342125232,
+      "worstOfAnyPhase": -13.237695251806946,
+      "maxDrawdown": 23.404216331728865,
+      "maxDrawdownWorstPhase": 28.845719382876894,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.2113797864873316,
+        0.39217617583157227
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9895013123359581,
+      "winRateWorstPhase": 0.968503937007874,
+      "meanPnl": 0.36133638235991705,
+      "meanPnlWorstPhase": 0.32101917631202737,
+      "returnOnRisk": 0.03526165482151992,
+      "returnOnRiskWorstPhase": 0.03077510167256084,
+      "meanRisk": 10.25183446563781,
+      "meanPremiumIn": 0.49529918254257277,
+      "creditShare": 0.04608551284091428,
+      "fullLosses": 0.001124859392575928,
+      "worst": -2.5465058487249386,
+      "worstOfAnyPhase": -6.437166802677623,
+      "maxDrawdown": 2.5607417252698803,
+      "maxDrawdownWorstPhase": 6.437166802677623,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.32101917631202737,
+        0.40010800213453146
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "call",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9861912348370507,
+      "winRateWorstPhase": 0.9776119402985075,
+      "meanPnl": 0.2071058812037941,
+      "meanPnlWorstPhase": 0.18747059015326076,
+      "returnOnRisk": 0.02903571910554381,
+      "returnOnRiskWorstPhase": 0.02650015230956472,
+      "meanRisk": 7.131679023487374,
+      "meanPremiumIn": 0.3318521341059859,
+      "creditShare": 0.04446294158450499,
+      "fullLosses": 0.0007462686567164179,
+      "worst": -3.8920949327610996,
+      "worstOfAnyPhase": -7.197266274591137,
+      "maxDrawdown": 3.8920949327610983,
+      "maxDrawdownWorstPhase": 7.197266274591136,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.18747059015326076,
+        0.2290940924900517
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9509016451068616,
+      "winRateWorstPhase": 0.9291338582677166,
+      "meanPnl": 0.25930510899022324,
+      "meanPnlWorstPhase": 0.055489876890635524,
+      "returnOnRisk": 0.025834198715881978,
+      "returnOnRiskWorstPhase": 0.005362671432046516,
+      "meanRisk": 10.068620433055552,
+      "meanPremiumIn": 0.6785132151248298,
+      "creditShare": 0.0631354983643849,
+      "fullLosses": 0.017239056055493064,
+      "worst": -12.491328732491311,
+      "worstOfAnyPhase": -18.475066497576215,
+      "maxDrawdown": 16.18268984355846,
+      "maxDrawdownWorstPhase": 25.494049519777402,
+      "profitablePhases": 21,
+      "meanPnlRange": [
+        0.055489876890635524,
+        0.3920380355024574
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.25,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9469939627704175,
+      "winRateWorstPhase": 0.9365671641791045,
+      "meanPnl": 0.11277210173230803,
+      "meanPnlWorstPhase": 0.04736543460622368,
+      "returnOnRisk": 0.016180516796792527,
+      "returnOnRiskWorstPhase": 0.006726933863139266,
+      "meanRisk": 6.981890202525065,
+      "meanPremiumIn": 0.48164095506829374,
+      "creditShare": 0.06453280867984863,
+      "fullLosses": 0.023893174576555425,
+      "worst": -10.77826199553608,
+      "worstOfAnyPhase": -13.855928064302715,
+      "maxDrawdown": 23.446093245592202,
+      "maxDrawdownWorstPhase": 28.400585682473064,
+      "profitablePhases": 10,
+      "meanPnlRange": [
+        0.04736543460622368,
+        0.1976904687138188
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 21,
+      "n": 127,
+      "winRate": 0.9711403262092236,
+      "winRateWorstPhase": 0.952755905511811,
+      "meanPnl": 0.11285709725500179,
+      "meanPnlWorstPhase": -0.0006518081049277834,
+      "returnOnRisk": 0.010930107927299927,
+      "returnOnRiskWorstPhase": -0.00006120712876430305,
+      "meanRisk": 10.362165190317635,
+      "meanPremiumIn": 0.3849684578627484,
+      "creditShare": 0.03582182369515373,
+      "fullLosses": 0.009370898950131233,
+      "worst": -9.498296715443747,
+      "worstOfAnyPhase": -13.735485997197527,
+      "maxDrawdown": 11.383024826073381,
+      "maxDrawdownWorstPhase": 19.81272192610698,
+      "profitablePhases": 20,
+      "meanPnlRange": [
+        -0.0006518081049277834,
+        0.1865964639964647
+      ],
+      "independentPeriods": 127,
+      "phasesAreResamples": true
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1.5,
+      "side": "put",
+      "structure": "spread",
+      "wingSigma": 0.5,
+      "phases": 10,
+      "n": 268,
+      "winRate": 0.9313125384314382,
+      "winRateWorstPhase": 0.9176029962546817,
+      "meanPnl": 0.00434956639767239,
+      "meanPnlWorstPhase": -0.05917767799214924,
+      "returnOnRisk": 0.000631410102560183,
+      "returnOnRiskWorstPhase": -0.008176570993911865,
+      "meanRisk": 7.184339631892672,
+      "meanPremiumIn": 0.27919152570068734,
+      "creditShare": 0.03740767056508547,
+      "fullLosses": 0.01605455866733747,
+      "worst": -9.879010587616225,
+      "worstOfAnyPhase": -11.899886554359222,
+      "maxDrawdown": 22.79683291637183,
+      "maxDrawdownWorstPhase": 31.951421106291296,
+      "profitablePhases": 6,
+      "meanPnlRange": [
+        -0.05917767799214924,
+        0.07745437602333002
+      ],
+      "independentPeriods": 268,
+      "phasesAreResamples": true
+    }
+  ],
+  "sides": [
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "put": {
+        "phases": 21,
+        "n": 127,
+        "winRate": 0.9325289416947882,
+        "winRateWorstPhase": 0.889763779527559,
+        "meanPnl": 0.5029594010584185,
+        "meanPnlWorstPhase": 0.2560112848149516,
+        "returnOnRisk": 0.052358157627653355,
+        "returnOnRiskWorstPhase": 0.025863406719729046,
+        "meanRisk": 9.63261412023849,
+        "meanPremiumIn": 1.1145195279418925,
+        "creditShare": 0.10370457927630257,
+        "fullLosses": 0.030731510123734547,
+        "worst": -13.488443678369103,
+        "worstOfAnyPhase": -18.08349515058204,
+        "maxDrawdown": 19.58480859645483,
+        "maxDrawdownWorstPhase": 30.4416611632324,
+        "profitablePhases": 21,
+        "meanPnlRange": [
+          0.2560112848149516,
+          0.7021849892222373
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
+      },
+      "call": {
+        "phases": 21,
+        "n": 127,
+        "winRate": 0.9152898856392953,
+        "winRateWorstPhase": 0.8740157480314961,
+        "meanPnl": 0.6138510231567691,
+        "meanPnlWorstPhase": 0.3536372298102694,
+        "returnOnRisk": 0.0641691115872891,
+        "returnOnRiskWorstPhase": 0.03710164051090961,
+        "meanRisk": 9.570943380644403,
+        "meanPremiumIn": 1.1761902675359814,
+        "creditShare": 0.10944158490818268,
+        "fullLosses": 0.011623547056617922,
+        "worst": -14.908192673695545,
+        "worstOfAnyPhase": -21.85875377311753,
+        "maxDrawdown": 16.154860840745755,
+        "maxDrawdownWorstPhase": 25.67133510332217,
+        "profitablePhases": 21,
+        "meanPnlRange": [
+          0.3536372298102694,
+          0.8161865109297568
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
+      },
+      "difference": -0.011810953959635738
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1.25,
+      "put": {
+        "phases": 21,
+        "n": 127,
+        "winRate": 0.9509016451068616,
+        "winRateWorstPhase": 0.9291338582677166,
+        "meanPnl": 0.25930510899022324,
+        "meanPnlWorstPhase": 0.055489876890635524,
+        "returnOnRisk": 0.025834198715881978,
+        "returnOnRiskWorstPhase": 0.005362671432046516,
+        "meanRisk": 10.068620433055552,
+        "meanPremiumIn": 0.6785132151248298,
+        "creditShare": 0.0631354983643849,
+        "fullLosses": 0.017239056055493064,
+        "worst": -12.491328732491311,
+        "worstOfAnyPhase": -18.475066497576215,
+        "maxDrawdown": 16.18268984355846,
+        "maxDrawdownWorstPhase": 25.494049519777402,
+        "profitablePhases": 21,
+        "meanPnlRange": [
+          0.055489876890635524,
+          0.3920380355024574
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
+      },
+      "call": {
+        "phases": 21,
+        "n": 127,
+        "winRate": 0.9688906074240717,
+        "winRateWorstPhase": 0.9448818897637795,
+        "meanPnl": 0.5301870647124823,
+        "meanPnlWorstPhase": 0.3573281865960572,
+        "returnOnRisk": 0.053222279599256135,
+        "returnOnRiskWorstPhase": 0.035992188205068054,
+        "meanRisk": 9.969226690397605,
+        "meanPremiumIn": 0.77790695778278,
+        "creditShare": 0.07238174835048067,
+        "fullLosses": 0.0037495313085864268,
+        "worst": -7.396143007969894,
+        "worstOfAnyPhase": -15.99101557220848,
+        "maxDrawdown": 7.577328151394642,
+        "maxDrawdownWorstPhase": 15.991015572208482,
+        "profitablePhases": 21,
+        "meanPnlRange": [
+          0.3573281865960572,
+          0.6610848313780484
+        ],
+        "independentPeriods": 127,
+        "phasesAreResamples": true
+      },
+      "difference": -0.027388080883374157
+    }
+  ],
+  "fillFloor": [
+    {
+      "hold": 21,
+      "widthSigma": 0.75,
+      "side": "put",
+      "modelCreditShare": 0.15945686290566696,
+      "floorCreditShare": 0.08289071721352721,
+      "curve": [
+        {
+          "scale": 1,
+          "creditShare": 0.15945686290566696,
+          "returnOnRisk": 0.09186545007793662
+        },
+        {
+          "scale": 0.98,
+          "creditShare": 0.15444411534112826,
+          "returnOnRisk": 0.08539260365093827
+        },
+        {
+          "scale": 0.96,
+          "creditShare": 0.14934730525759407,
+          "returnOnRisk": 0.07888941991264439
+        },
+        {
+          "scale": 0.94,
+          "creditShare": 0.1441678856225722,
+          "returnOnRisk": 0.07236017746006636
+        },
+        {
+          "scale": 0.9199999999999999,
+          "creditShare": 0.1389078566167433,
+          "returnOnRisk": 0.06580970109660907
+        },
+        {
+          "scale": 0.8999999999999999,
+          "creditShare": 0.13356984432056815,
+          "returnOnRisk": 0.05924341601645596
+        },
+        {
+          "scale": 0.8799999999999999,
+          "creditShare": 0.12815718823866043,
+          "returnOnRisk": 0.05266740639406516
+        },
+        {
+          "scale": 0.8599999999999999,
+          "creditShare": 0.12267403820274475,
+          "returnOnRisk": 0.046088478441787484
+        },
+        {
+          "scale": 0.8399999999999999,
+          "creditShare": 0.11712546106737791,
+          "returnOnRisk": 0.03951422788207256
+        },
+        {
+          "scale": 0.8199999999999998,
+          "creditShare": 0.11151755741129074,
+          "returnOnRisk": 0.032953111615393355
+        },
+        {
+          "scale": 0.7999999999999998,
+          "creditShare": 0.10585758815595388,
+          "returnOnRisk": 0.02641452313555818
+        },
+        {
+          "scale": 0.7799999999999998,
+          "creditShare": 0.10015411057990369,
+          "returnOnRisk": 0.01990887093105151
+        },
+        {
+          "scale": 0.7599999999999998,
+          "creditShare": 0.09441712260275052,
+          "returnOnRisk": 0.0134476586899766
+        },
+        {
+          "scale": 0.7399999999999998,
+          "creditShare": 0.08865821338825383,
+          "returnOnRisk": 0.007043565566898798
+        },
+        {
+          "scale": 0.7199999999999998,
+          "creditShare": 0.08289071721352721,
+          "returnOnRisk": 0.0007105240355249147
+        },
+        {
+          "scale": 0.6999999999999997,
+          "creditShare": 0.0771298661047165,
+          "returnOnRisk": -0.005536208101862271
+        },
+        {
+          "scale": 0.6799999999999997,
+          "creditShare": 0.07139293487481874,
+          "returnOnRisk": -0.011679986199038487
+        },
+        {
+          "scale": 0.6599999999999997,
+          "creditShare": 0.06569936984133534,
+          "returnOnRisk": -0.017702733940217357
+        },
+        {
+          "scale": 0.6399999999999997,
+          "creditShare": 0.060070889582711055,
+          "returnOnRisk": -0.023584923321768498
+        },
+        {
+          "scale": 0.6199999999999997,
+          "creditShare": 0.054531542570110204,
+          "returnOnRisk": -0.02930558990239222
+        },
+        {
+          "scale": 0.5999999999999996,
+          "creditShare": 0.04910770239415539,
+          "returnOnRisk": -0.0348423965668165
+        },
+        {
+          "scale": 0.5799999999999996,
+          "creditShare": 0.043827976697719644,
+          "returnOnRisk": -0.04017176223914835
+        },
+        {
+          "scale": 0.5599999999999996,
+          "creditShare": 0.03872300108349237,
+          "returnOnRisk": -0.045269075453130636
+        },
+        {
+          "scale": 0.5399999999999996,
+          "creditShare": 0.03382508468523887,
+          "returnOnRisk": -0.05010901615541282
+        },
+        {
+          "scale": 0.5199999999999996,
+          "creditShare": 0.02916767061646278,
+          "returnOnRisk": -0.05466601206111778
+        },
+        {
+          "scale": 0.49999999999999956,
+          "creditShare": 0.02478457344970885,
+          "returnOnRisk": -0.058914857423453745
+        },
+        {
+          "scale": 0.47999999999999954,
+          "creditShare": 0.02070895912709479,
+          "returnOnRisk": -0.06283152086827119
+        },
+        {
+          "scale": 0.4599999999999995,
+          "creditShare": 0.016972042791337655,
+          "returnOnRisk": -0.06639416303764942
+        },
+        {
+          "scale": 0.4399999999999995,
+          "creditShare": 0.013601500043583145,
+          "returnOnRisk": -0.06958437161351927
+        },
+        {
+          "scale": 0.4199999999999995,
+          "creditShare": 0.01061962035884193,
+          "returnOnRisk": -0.07238859780049486
+        },
+        {
+          "scale": 0.39999999999999947,
+          "creditShare": 0.008041280501432779,
+          "returnOnRisk": -0.07479974148562489
+        },
+        {
+          "scale": 0.37999999999999945,
+          "creditShare": 0.005871881520404903,
+          "returnOnRisk": -0.07681878000774106
+        },
+        {
+          "scale": 0.35999999999999943,
+          "creditShare": 0.004105472212031625,
+          "returnOnRisk": -0.07845626831499412
+        },
+        {
+          "scale": 0.3399999999999994,
+          "creditShare": 0.0027233659114459094,
+          "returnOnRisk": -0.07973346157679459
+        },
+        {
+          "scale": 0.3199999999999994,
+          "creditShare": 0.0016936296393873982,
+          "returnOnRisk": -0.08068273753722717
+        }
+      ]
+    },
+    {
+      "hold": 10,
+      "widthSigma": 0.75,
+      "side": "put",
+      "modelCreditShare": 0.15893950679341212,
+      "floorCreditShare": 0.09493476647786511,
+      "curve": [
+        {
+          "scale": 1,
+          "creditShare": 0.15893950679341212,
+          "returnOnRisk": 0.08159387165804606
+        },
+        {
+          "scale": 0.98,
+          "creditShare": 0.15403084398520236,
+          "returnOnRisk": 0.07531802056230111
+        },
+        {
+          "scale": 0.96,
+          "creditShare": 0.1490359301183984,
+          "returnOnRisk": 0.06900621721836839
+        },
+        {
+          "scale": 0.94,
+          "creditShare": 0.14395595324337923,
+          "returnOnRisk": 0.06266247358691504
+        },
+        {
+          "scale": 0.9199999999999999,
+          "creditShare": 0.13879262674732468,
+          "returnOnRisk": 0.05629133612022932
+        },
+        {
+          "scale": 0.8999999999999999,
+          "creditShare": 0.1335482671167789,
+          "returnOnRisk": 0.0498979401028774
+        },
+        {
+          "scale": 0.8799999999999999,
+          "creditShare": 0.12822588074157587,
+          "returnOnRisk": 0.04348806860222777
+        },
+        {
+          "scale": 0.8599999999999999,
+          "creditShare": 0.12282926038791567,
+          "returnOnRisk": 0.03706821614731212
+        },
+        {
+          "scale": 0.8399999999999999,
+          "creditShare": 0.11736309186392427,
+          "returnOnRisk": 0.030645657150227906
+        },
+        {
+          "scale": 0.8199999999999998,
+          "creditShare": 0.11183307122615926,
+          "returnOnRisk": 0.024228518933565705
+        },
+        {
+          "scale": 0.7999999999999998,
+          "creditShare": 0.10624603260527196,
+          "returnOnRisk": 0.017825859015044253
+        },
+        {
+          "scale": 0.7799999999999998,
+          "creditShare": 0.10061008633170634,
+          "returnOnRisk": 0.011447746007451956
+        },
+        {
+          "scale": 0.7599999999999998,
+          "creditShare": 0.09493476647786511,
+          "returnOnRisk": 0.0051053430936223235
+        },
+        {
+          "scale": 0.7399999999999998,
+          "creditShare": 0.08923118615234081,
+          "returnOnRisk": -0.0011890074978502696
+        },
+        {
+          "scale": 0.7199999999999998,
+          "creditShare": 0.08351219782475044,
+          "returnOnRisk": -0.007421701297794907
+        },
+        {
+          "scale": 0.6999999999999997,
+          "creditShare": 0.07779255455632425,
+          "returnOnRisk": -0.013577792889889287
+        },
+        {
+          "scale": 0.6799999999999997,
+          "creditShare": 0.07208906618235777,
+          "returnOnRisk": -0.019640926096494767
+        },
+        {
+          "scale": 0.6599999999999997,
+          "creditShare": 0.06642074215363275,
+          "returnOnRisk": -0.02559327898785511
+        },
+        {
+          "scale": 0.6399999999999997,
+          "creditShare": 0.06080890981423859,
+          "returnOnRisk": -0.031415531563305385
+        },
+        {
+          "scale": 0.6199999999999997,
+          "creditShare": 0.05527729331108072,
+          "returnOnRisk": -0.03708686631686213
+        },
+        {
+          "scale": 0.5999999999999996,
+          "creditShare": 0.0498520340792115,
+          "returnOnRisk": -0.04258501474342697
+        },
+        {
+          "scale": 0.5799999999999996,
+          "creditShare": 0.04456162899647004,
+          "returnOnRisk": -0.047886366153873476
+        },
+        {
+          "scale": 0.5599999999999996,
+          "creditShare": 0.03943675706793748,
+          "returnOnRisk": -0.05296615884864524
+        },
+        {
+          "scale": 0.5399999999999996,
+          "creditShare": 0.034509960336896184,
+          "returnOnRisk": -0.05779877750276374
+        },
+        {
+          "scale": 0.5199999999999996,
+          "creditShare": 0.029815140424543828,
+          "returnOnRisk": -0.06235818405597673
+        },
+        {
+          "scale": 0.49999999999999956,
+          "creditShare": 0.025386829962141248,
+          "returnOnRisk": -0.06661851164092489
+        },
+        {
+          "scale": 0.47999999999999954,
+          "creditShare": 0.021259200109537055,
+          "returnOnRisk": -0.07055485078462619
+        },
+        {
+          "scale": 0.4599999999999995,
+          "creditShare": 0.017464773988709638,
+          "returnOnRisk": -0.07414425231456503
+        },
+        {
+          "scale": 0.4399999999999995,
+          "creditShare": 0.01403283452168333,
+          "returnOnRisk": -0.07736695940842156
+        },
+        {
+          "scale": 0.4199999999999995,
+          "creditShare": 0.010987547545515541,
+          "returnOnRisk": -0.08020785874805922
+        },
+        {
+          "scale": 0.39999999999999947,
+          "creditShare": 0.008345870485261761,
+          "returnOnRisk": -0.08265810430098311
+        },
+        {
+          "scale": 0.37999999999999945,
+          "creditShare": 0.006115384805604315,
+          "returnOnRisk": -0.08471681420701373
+        },
+        {
+          "scale": 0.35999999999999943,
+          "creditShare": 0.004292274577937009,
+          "returnOnRisk": -0.08639267149133749
+        },
+        {
+          "scale": 0.3399999999999994,
+          "creditShare": 0.0028597651233357346,
+          "returnOnRisk": -0.08770517771870745
+        },
+        {
+          "scale": 0.3199999999999994,
+          "creditShare": 0.00178741762398101,
+          "returnOnRisk": -0.08868522787940321
+        }
+      ]
+    },
+    {
+      "hold": 21,
+      "widthSigma": 1,
+      "side": "call",
+      "modelCreditShare": 0.10944158490818268,
+      "floorCreditShare": 0.05611072981862721,
+      "curve": [
+        {
+          "scale": 1,
+          "creditShare": 0.10944158490818268,
+          "returnOnRisk": 0.0641691115872891
+        },
+        {
+          "scale": 0.98,
+          "creditShare": 0.10514727691392244,
+          "returnOnRisk": 0.059062262404978076
+        },
+        {
+          "scale": 0.96,
+          "creditShare": 0.10080551412604878,
+          "returnOnRisk": 0.05394856949912273
+        },
+        {
+          "scale": 0.94,
+          "creditShare": 0.09642054662756971,
+          "returnOnRisk": 0.0488338705211371
+        },
+        {
+          "scale": 0.9199999999999999,
+          "creditShare": 0.09199731276537251,
+          "returnOnRisk": 0.043724586643551944
+        },
+        {
+          "scale": 0.8999999999999999,
+          "creditShare": 0.08754150845666094,
+          "returnOnRisk": 0.038627765431264546
+        },
+        {
+          "scale": 0.8799999999999999,
+          "creditShare": 0.08305965991220625,
+          "returnOnRisk": 0.03355112448012543
+        },
+        {
+          "scale": 0.8599999999999999,
+          "creditShare": 0.07855919892466437,
+          "returnOnRisk": 0.028503095049012425
+        },
+        {
+          "scale": 0.8399999999999999,
+          "creditShare": 0.07404853946793805,
+          "returnOnRisk": 0.023492864626385956
+        },
+        {
+          "scale": 0.8199999999999998,
+          "creditShare": 0.06953715384064843,
+          "returnOnRisk": 0.018530417011463934
+        },
+        {
+          "scale": 0.7999999999999998,
+          "creditShare": 0.06503564594151404,
+          "returnOnRisk": 0.013626568037654815
+        },
+        {
+          "scale": 0.7799999999999998,
+          "creditShare": 0.0605558184639023,
+          "returnOnRisk": 0.008792994504087872
+        },
+        {
+          "scale": 0.7599999999999998,
+          "creditShare": 0.05611072981862721,
+          "returnOnRisk": 0.004042253191480874
+        },
+        {
+          "scale": 0.7399999999999998,
+          "creditShare": 0.05171473541940906,
+          "returnOnRisk": -0.000612213996471829
+        },
+        {
+          "scale": 0.7199999999999998,
+          "creditShare": 0.04738350658402058,
+          "returnOnRisk": -0.005156093719292926
+        },
+        {
+          "scale": 0.6999999999999997,
+          "creditShare": 0.04313401872177921,
+          "returnOnRisk": -0.009574239825125818
+        },
+        {
+          "scale": 0.6799999999999997,
+          "creditShare": 0.03898449872797237,
+          "returnOnRisk": -0.01385074433793126
+        },
+        {
+          "scale": 0.6599999999999997,
+          "creditShare": 0.034954319664735375,
+          "returnOnRisk": -0.017969049651955307
+        },
+        {
+          "scale": 0.6399999999999997,
+          "creditShare": 0.031063829018304328,
+          "returnOnRisk": -0.02191211222692017
+        },
+        {
+          "scale": 0.6199999999999997,
+          "creditShare": 0.027334095321514977,
+          "returnOnRisk": -0.02566262939266773
+        },
+        {
+          "scale": 0.5999999999999996,
+          "creditShare": 0.023786557085380772,
+          "returnOnRisk": -0.029203341792937213
+        },
+        {
+          "scale": 0.5799999999999996,
+          "creditShare": 0.020442558332043396,
+          "returnOnRisk": -0.032517424118539355
+        },
+        {
+          "scale": 0.5599999999999996,
+          "creditShare": 0.017322757308209535,
+          "returnOnRisk": -0.035588975504629125
+        },
+        {
+          "scale": 0.5399999999999996,
+          "creditShare": 0.014446400155650648,
+          "returnOnRisk": -0.03840361747018274
+        },
+        {
+          "scale": 0.5199999999999996,
+          "creditShare": 0.011830460600880813,
+          "returnOnRisk": -0.040949200492813066
+        },
+        {
+          "scale": 0.49999999999999956,
+          "creditShare": 0.009488661374912163,
+          "returnOnRisk": -0.04321660898095154
+        },
+        {
+          "scale": 0.47999999999999954,
+          "creditShare": 0.007430414205962307,
+          "returnOnRisk": -0.04520063725875423
+        },
+        {
+          "scale": 0.4599999999999995,
+          "creditShare": 0.005659743332428387,
+          "returnOnRisk": -0.04690088532896511
+        },
+        {
+          "scale": 0.4399999999999995,
+          "creditShare": 0.004174291649074369,
+          "returnOnRisk": -0.04832259282536062
+        },
+        {
+          "scale": 0.4199999999999995,
+          "creditShare": 0.00296454543068224,
+          "returnOnRisk": -0.04947729508218462
+        },
+        {
+          "scale": 0.39999999999999947,
+          "creditShare": 0.0020134459241726416,
+          "returnOnRisk": -0.050383152575277125
+        },
+        {
+          "scale": 0.37999999999999945,
+          "creditShare": 0.0012965720119573643,
+          "returnOnRisk": -0.05106478498329311
+        },
+        {
+          "scale": 0.35999999999999943,
+          "creditShare": 0.0007830608975491644,
+          "returnOnRisk": -0.05155244997935404
+        },
+        {
+          "scale": 0.3399999999999994,
+          "creditShare": 0.00043736424898895693,
+          "returnOnRisk": -0.05188046421846994
+        },
+        {
+          "scale": 0.3199999999999994,
+          "creditShare": 0.00022180032629917455,
+          "returnOnRisk": -0.052084886788999925
+        }
+      ]
+    },
+    {
+      "hold": 10,
+      "widthSigma": 1,
+      "side": "call",
+      "modelCreditShare": 0.10832289010137079,
+      "floorCreditShare": 0.05925412600429301,
+      "curve": [
+        {
+          "scale": 1,
+          "creditShare": 0.10832289010137079,
+          "returnOnRisk": 0.05752683362563884
+        },
+        {
+          "scale": 0.98,
+          "creditShare": 0.10398809590486675,
+          "returnOnRisk": 0.052410648282432304
+        },
+        {
+          "scale": 0.96,
+          "creditShare": 0.09960978759952668,
+          "returnOnRisk": 0.047293111575860435
+        },
+        {
+          "scale": 0.94,
+          "creditShare": 0.09519248129143523,
+          "returnOnRisk": 0.04218018320424039
+        },
+        {
+          "scale": 0.9199999999999999,
+          "creditShare": 0.09074139009248419,
+          "returnOnRisk": 0.03707839980078048
+        },
+        {
+          "scale": 0.8999999999999999,
+          "creditShare": 0.08626249161687165,
+          "returnOnRisk": 0.0319949156066594
+        },
+        {
+          "scale": 0.8799999999999999,
+          "creditShare": 0.08176259827668013,
+          "returnOnRisk": 0.026937543489836846
+        },
+        {
+          "scale": 0.8599999999999999,
+          "creditShare": 0.07724942939926496,
+          "returnOnRisk": 0.021914795466466776
+        },
+        {
+          "scale": 0.8399999999999999,
+          "creditShare": 0.07273168377005336,
+          "returnOnRisk": 0.016935921588346985
+        },
+        {
+          "scale": 0.8199999999999998,
+          "creditShare": 0.06821911067521784,
+          "returnOnRisk": 0.012010945691233944
+        },
+        {
+          "scale": 0.7999999999999998,
+          "creditShare": 0.06372257685945068,
+          "returnOnRisk": 0.007150696040068402
+        },
+        {
+          "scale": 0.7799999999999998,
+          "creditShare": 0.05925412600429301,
+          "returnOnRisk": 0.0023668283420430294
+        },
+        {
+          "scale": 0.7599999999999998,
+          "creditShare": 0.05482702635331151,
+          "returnOnRisk": -0.002328162089340527
+        },
+        {
+          "scale": 0.7399999999999998,
+          "creditShare": 0.05045580094809075,
+          "returnOnRisk": -0.0069209430609855765
+        },
+        {
+          "scale": 0.7199999999999998,
+          "creditShare": 0.04615623359008223,
+          "returnOnRisk": -0.011397368130777095
+        },
+        {
+          "scale": 0.6999999999999997,
+          "creditShare": 0.04194534212269762,
+          "returnOnRisk": -0.0157425252716702
+        },
+        {
+          "scale": 0.6799999999999997,
+          "creditShare": 0.03784130898057716,
+          "returnOnRisk": -0.01994081894060607
+        },
+        {
+          "scale": 0.6599999999999997,
+          "creditShare": 0.03386335726980599,
+          "returnOnRisk": -0.023976094239090757
+        },
+        {
+          "scale": 0.6399999999999997,
+          "creditShare": 0.03003155908320272,
+          "returnOnRisk": -0.027831813141415022
+        },
+        {
+          "scale": 0.6199999999999997,
+          "creditShare": 0.026366561573566438,
+          "returnOnRisk": -0.03149129385602355
+        },
+        {
+          "scale": 0.5999999999999996,
+          "creditShare": 0.022889215888690657,
+          "returnOnRisk": -0.03493802499763323
+        },
+        {
+          "scale": 0.5799999999999996,
+          "creditShare": 0.019620094961949133,
+          "returnOnRisk": -0.03815606596293424
+        },
+        {
+          "scale": 0.5599999999999996,
+          "creditShare": 0.016578889090260802,
+          "returnOnRisk": -0.041130543121089304
+        },
+        {
+          "scale": 0.5399999999999996,
+          "creditShare": 0.013783674154847336,
+          "returnOnRisk": -0.04384824734287453
+        },
+        {
+          "scale": 0.5199999999999996,
+          "creditShare": 0.011250057344629714,
+          "returnOnRisk": -0.04629833098513745
+        },
+        {
+          "scale": 0.49999999999999956,
+          "creditShare": 0.008990220449452056,
+          "returnOnRisk": -0.048473090576687784
+        },
+        {
+          "scale": 0.47999999999999954,
+          "creditShare": 0.007011902072582907,
+          "returnOnRisk": -0.050368804051412586
+        },
+        {
+          "scale": 0.4599999999999995,
+          "creditShare": 0.005317387601713341,
+          "returnOnRisk": -0.05198656787223939
+        },
+        {
+          "scale": 0.4399999999999995,
+          "creditShare": 0.0039026081146104597,
+          "returnOnRisk": -0.05333305041479065
+        },
+        {
+          "scale": 0.4199999999999995,
+          "creditShare": 0.0027564827214078295,
+          "returnOnRisk": -0.054421046391337435
+        },
+        {
+          "scale": 0.39999999999999947,
+          "creditShare": 0.0018606657138571406,
+          "returnOnRisk": -0.05526968921893209
+        },
+        {
+          "scale": 0.37999999999999945,
+          "creditShare": 0.0011898685314329382,
+          "returnOnRisk": -0.05590416489876464
+        },
+        {
+          "scale": 0.35999999999999943,
+          "creditShare": 0.0007129012992497668,
+          "returnOnRisk": -0.0563547875022191
+        },
+        {
+          "scale": 0.3399999999999994,
+          "creditShare": 0.00039450275076740845,
+          "returnOnRisk": -0.0566553602146825
+        },
+        {
+          "scale": 0.3199999999999994,
+          "creditShare": 0.00019788915472715665,
+          "returnOnRisk": -0.056840870469663206
+        }
+      ]
+    }
+  ],
+  "byYear": [
+    {
+      "side": "call",
+      "widthSigma": 1.25,
+      "hold": 21,
+      "rows": [
+        {
+          "year": "2016",
+          "trades": 11,
+          "winRate": 0.9956709956709957,
+          "returnOnRisk": 0.05364897216065638,
+          "worst": -0.017743345038338017
+        },
+        {
+          "year": "2017",
+          "trades": 12,
+          "winRate": 0.9840637450199203,
+          "returnOnRisk": 0.04224464715466507,
+          "worst": -0.6396795064816361
+        },
+        {
+          "year": "2018",
+          "trades": 12,
+          "winRate": 0.9402390438247012,
+          "returnOnRisk": 0.02688148825692875,
+          "worst": -1
+        },
+        {
+          "year": "2019",
+          "trades": 12,
+          "winRate": 0.9801587301587301,
+          "returnOnRisk": 0.053045096114679176,
+          "worst": -0.4832039033546831
+        },
+        {
+          "year": "2020",
+          "trades": 12,
+          "winRate": 0.9920948616600791,
+          "returnOnRisk": 0.0688926238100521,
+          "worst": -0.30061930714788604
+        },
+        {
+          "year": "2021",
+          "trades": 12,
+          "winRate": 0.9920634920634921,
+          "returnOnRisk": 0.06787290800916071,
+          "worst": -0.11042172001751388
+        },
+        {
+          "year": "2022",
+          "trades": 12,
+          "winRate": 0.9800796812749004,
+          "returnOnRisk": 0.05947983898455987,
+          "worst": -1
+        },
+        {
+          "year": "2023",
+          "trades": 12,
+          "winRate": 0.928,
+          "returnOnRisk": 0.029073815380866622,
+          "worst": -1
+        },
+        {
+          "year": "2024",
+          "trades": 12,
+          "winRate": 0.9444444444444444,
+          "returnOnRisk": 0.055990129761977675,
+          "worst": -0.48725970201415547
+        },
+        {
+          "year": "2025",
+          "trades": 12,
+          "winRate": 0.988,
+          "returnOnRisk": 0.0626431302559735,
+          "worst": -0.702912425327044
+        },
+        {
+          "year": "2026",
+          "trades": 8,
+          "winRate": 0.92,
+          "returnOnRisk": 0.03806832741499186,
+          "worst": -0.6171177691574914
+        }
+      ]
+    },
+    {
+      "side": "put",
+      "widthSigma": 0.75,
+      "hold": 21,
+      "rows": [
+        {
+          "year": "2016",
+          "trades": 11,
+          "winRate": 0.9696969696969697,
+          "returnOnRisk": 0.14961117916759145,
+          "worst": -0.8146794926230816
+        },
+        {
+          "year": "2017",
+          "trades": 12,
+          "winRate": 0.9960159362549801,
+          "returnOnRisk": 0.15623178977051044,
+          "worst": -0.010019541507441335
+        },
+        {
+          "year": "2018",
+          "trades": 12,
+          "winRate": 0.7808764940239044,
+          "returnOnRisk": -0.021694444508182722,
+          "worst": -1
+        },
+        {
+          "year": "2019",
+          "trades": 12,
+          "winRate": 0.9126984126984127,
+          "returnOnRisk": 0.0979134164248541,
+          "worst": -1
+        },
+        {
+          "year": "2020",
+          "trades": 12,
+          "winRate": 0.8774703557312253,
+          "returnOnRisk": 0.0798633267452656,
+          "worst": -1
+        },
+        {
+          "year": "2021",
+          "trades": 12,
+          "winRate": 0.9801587301587301,
+          "returnOnRisk": 0.17134997409746883,
+          "worst": -0.6813544877445961
+        },
+        {
+          "year": "2022",
+          "trades": 12,
+          "winRate": 0.7051792828685259,
+          "returnOnRisk": -0.05687055489616988,
+          "worst": -1
+        },
+        {
+          "year": "2023",
+          "trades": 12,
+          "winRate": 0.908,
+          "returnOnRisk": 0.12116035974751996,
+          "worst": -1
+        },
+        {
+          "year": "2024",
+          "trades": 12,
+          "winRate": 0.9484126984126984,
+          "returnOnRisk": 0.1409277085537706,
+          "worst": -1
+        },
+        {
+          "year": "2025",
+          "trades": 12,
+          "winRate": 0.88,
+          "returnOnRisk": 0.08223513206165825,
+          "worst": -1
+        },
+        {
+          "year": "2026",
+          "trades": 8,
+          "winRate": 0.96,
+          "returnOnRisk": 0.15651891126471262,
+          "worst": -1
+        }
+      ]
+    },
+    {
+      "side": "call",
+      "widthSigma": 1,
+      "hold": 21,
+      "rows": [
+        {
+          "year": "2016",
+          "trades": 11,
+          "winRate": 0.948051948051948,
+          "returnOnRisk": 0.07458314208710783,
+          "worst": -0.5321738431910901
+        },
+        {
+          "year": "2017",
+          "trades": 12,
+          "winRate": 0.9123505976095617,
+          "returnOnRisk": 0.06000309707381113,
+          "worst": -1
+        },
+        {
+          "year": "2018",
+          "trades": 12,
+          "winRate": 0.9243027888446215,
+          "returnOnRisk": 0.05803843949887047,
+          "worst": -1
+        },
+        {
+          "year": "2019",
+          "trades": 12,
+          "winRate": 0.8849206349206349,
+          "returnOnRisk": 0.05513317945358789,
+          "worst": -1
+        },
+        {
+          "year": "2020",
+          "trades": 12,
+          "winRate": 0.9486166007905138,
+          "returnOnRisk": 0.09304036207958169,
+          "worst": -0.834726425099416
+        },
+        {
+          "year": "2021",
+          "trades": 12,
+          "winRate": 0.9404761904761905,
+          "returnOnRisk": 0.08607682849504251,
+          "worst": -0.6301762107394708
+        },
+        {
+          "year": "2022",
+          "trades": 12,
+          "winRate": 0.952191235059761,
+          "returnOnRisk": 0.08782593166135559,
+          "worst": -1
+        },
+        {
+          "year": "2023",
+          "trades": 12,
+          "winRate": 0.832,
+          "returnOnRisk": 0.009001966783206956,
+          "worst": -1
+        },
+        {
+          "year": "2024",
+          "trades": 12,
+          "winRate": 0.873015873015873,
+          "returnOnRisk": 0.051825373036081174,
+          "worst": -1
+        },
+        {
+          "year": "2025",
+          "trades": 12,
+          "winRate": 0.972,
+          "returnOnRisk": 0.09213927638780059,
+          "worst": -1
+        },
+        {
+          "year": "2026",
+          "trades": 8,
+          "winRate": 0.8685714285714285,
+          "returnOnRisk": 0.014495351137810638,
+          "worst": -1
+        }
+      ]
+    }
+  ],
+  "rewardToRisk": [
+    {
+      "side": "call",
+      "widthSigma": 1.25,
+      "hold": 21,
+      "winRate": 0.9688905547226386,
+      "meanWin": 0.06407221030855231,
+      "meanLoss": -0.4089811077478995,
+      "rewardToRisk": 0.15666300739751318,
+      "expectancy": 0.04935578399720093,
+      "breakEvenWinRate": 0.8645560492593221
+    },
+    {
+      "side": "call",
+      "widthSigma": 1,
+      "hold": 21,
+      "winRate": 0.9152923538230885,
+      "meanWin": 0.10769188958884604,
+      "meanLoss": -0.43373301372598577,
+      "rewardToRisk": 0.24829073688377623,
+      "expectancy": 0.061829060447484846,
+      "breakEvenWinRate": 0.8010954262917889
+    },
+    {
+      "side": "put",
+      "widthSigma": 0.75,
+      "hold": 21,
+      "winRate": 0.8995502248875562,
+      "meanWin": 0.17338304424611942,
+      "meanLoss": -0.6933629734942295,
+      "rewardToRisk": 0.25006100826577005,
+      "expectancy": 0.0863186016844951,
+      "breakEvenWinRate": 0.7999609566154825
+    },
+    {
+      "side": "put",
+      "widthSigma": 1,
+      "hold": 21,
+      "winRate": 0.9325337331334332,
+      "meanWin": 0.10200197615243022,
+      "meanLoss": -0.7045332299600489,
+      "rewardToRisk": 0.14477951048272672,
+      "expectancy": 0.04758805669956449,
+      "breakEvenWinRate": 0.8735306588238319
+    }
+  ],
+  "nakedCatch": {
+    "worstTrade": {
+      "entryDate": "2020-02-21",
+      "exitDate": "2020-03-23",
+      "strike": 316.8806120970554,
+      "S1": 222.95,
+      "pnl": -92.69754883792415,
+      "premiumIn": 1.2830632591312678
+    },
+    "lossAsMultipleOfCredit": 72.24706044555238,
+    "initialMargin": 34.70567535618665,
+    "peakMultiple": 3.6700946110345556,
+    "calledOn": "2020-02-21",
+    "sameMonthAsSpread": {
+      "pnl": -7.525101443757444,
+      "maxLoss": 7.525101443757444,
+      "pnlPctOfRisk": -1
+    },
+    "note": "A single short option is not defined risk. The spread version posts its worst case on day one and cannot be called for more."
+  }
+}
