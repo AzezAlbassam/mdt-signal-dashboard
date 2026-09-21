@@ -315,7 +315,25 @@
    "m": "Wood and composite products across retail, industrial packaging and construction.",
    "fl": [
     "cyclical"
-   ]
+   ],
+   "v": {
+    "g5": 22.9,
+    "st": 13,
+    "stSrc": "data (13 consecutive increases FY2013-FY2025, not window-limited); prior research streak also 13, so data figure used",
+    "po": 29.8,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2025: 82.35m / 276.36m",
+    "dpsReg": 1.4,
+    "roic": 11.4,
+    "nde": -1.4,
+    "fcfG5": 2.2,
+    "verdict": "strong",
+    "pass": 8,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "IBP",
@@ -491,7 +509,25 @@
    "st": 21,
    "po": 28,
    "m": "Commercial and personal lines through a curated independent agency network.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 6.6,
+    "st": 21,
+    "stSrc": "research; data confirms 16 years (FY2010-FY2025, window-limited at FY2009)",
+    "po": 11.2,
+    "poBasis": "% of FCF (CFO - capex), insurer basis; 19.7% of net income",
+    "dpsReg": 3.648,
+    "roic": 19.9,
+    "nde": null,
+    "fcfG5": 11.1,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 17,
+    "src": "sec"
+   }
   },
   {
    "s": "HLNE",
@@ -570,7 +606,25 @@
    "m": "Multi-boutique asset manager run on a single shared operating platform.",
    "fl": [
     "aum-sensitive"
-   ]
+   ],
+   "v": {
+    "g5": 53.2,
+    "st": 7,
+    "stSrc": "data (FY2019-FY2025); not window-limited - the regular program began Q3 2019. Prior research streak of 8 is not supported by the series and is not used.",
+    "po": 33.5,
+    "poBasis": "common dividends ($127.8M, stripping ~$29.1M Amundi preferred) / FCF ($381.3M, CFO less capex); as-filed including preferred = 41.2%; net-income basis = 38.7%",
+    "dpsReg": 1.94,
+    "roic": 11.2,
+    "nde": 1.5,
+    "fcfG5": 9.5,
+    "verdict": "candidate",
+    "pass": 7,
+    "conf": "medium",
+    "repaired": true,
+    "reviewers": 2,
+    "yrs": 6,
+    "src": "sec"
+   }
   },
   {
    "s": "HLI",
@@ -678,7 +732,25 @@
    "st": 15,
    "po": 45,
    "m": "Best-in-class restaurant unit economics and a long domestic build-out runway.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 14.6,
+    "st": 5,
+    "stSrc": "data (FY2021-FY2025); not window-limited - the FY2020 suspension sits inside the window, so priorEstimates.streak of 15 is superseded, not combined",
+    "po": 52.7,
+    "poBasis": "dividends paid / FCF (CFO - capex), FY2025: $180.3M / $342.1M; 44.5% of net income",
+    "dpsReg": 2.72,
+    "roic": 30.4,
+    "nde": -0.2,
+    "fcfG5": 13.5,
+    "verdict": "avoid",
+    "pass": 7,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 15,
+    "src": "sec"
+   }
   },
   {
    "s": "WINA",
@@ -694,7 +766,25 @@
    "m": "Franchisor of resale retail brands; 87 employees collecting royalties on 1,300 stores.",
    "fl": [
     "special-dividend"
-   ]
+   ],
+   "v": {
+    "g5": 36.4,
+    "st": 5,
+    "stSrc": "data; the FY2020 cut (0.90 -> 0.80) is inside the window and is not window-limited, so the prior research figure of 15 was discarded rather than combined",
+    "po": 30,
+    "poBasis": "regular dividends only / FCF (3.78 x 3.55M shares = $13.4M / $44.7M). All-in including the ~$10.00 special is 109.9% of FCF and 117.9% of net income.",
+    "dpsReg": 3.78,
+    "roic": null,
+    "nde": null,
+    "fcfG5": 0.7,
+    "verdict": "avoid",
+    "pass": 4,
+    "conf": "medium",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 15,
+    "src": "sec"
+   }
   },
   {
    "s": "AWR",
@@ -1254,7 +1344,25 @@
    "st": 34,
    "po": 65,
    "m": "Regulated water and gas serving 7.5m customers across ten states.",
-   "fl": []
+   "fl": [],
+   "v": {
+    "g5": 6.6,
+    "st": 34,
+    "stSrc": "research; data confirms 18 years (window-limited, series already rising at FY2007)",
+    "po": 60.7,
+    "poBasis": "net income (FY2025 divPaid $373.8m / NI $616.4m); FCF payout not meaningful - regulated utility with FCF -$419.5m on rate-base capex",
+    "dpsReg": 1.3362,
+    "roic": 4.9,
+    "nde": 6.1,
+    "fcfG5": null,
+    "verdict": "avoid",
+    "pass": 5,
+    "conf": "high",
+    "repaired": false,
+    "reviewers": 2,
+    "yrs": 19,
+    "src": "sec"
+   }
   },
   {
    "s": "CASY",
