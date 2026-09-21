@@ -87,6 +87,42 @@ the credit was fat and the loss had a ceiling. Its ceiling is not a fixed
 percentage: the wing is measured in sigma, so a position opened at a VIX of
 seventy risks far more than one opened at fifteen.
 
+## Could you still be there at expiry?
+
+Every figure above assumes the position was carried to settlement. A naked
+short index position is margined, the requirement grows as it moves against
+you, and a broker closes you out when the equity runs out. `marginPath` tracks
+the requirement and the equity on every session a trade is open.
+
+| Structure | Mean margin | Return on margin | Closed out | Worst window |
+| --- | --- | --- | --- | --- |
+| 1.0σ strangle | 46.30 | +4.13% a month | 18 of 2,668 | closed out 9 March 2020, settled loss 242% of margin |
+| 2.0σ strangle | 44.21 | −0.13% a month | 11 of 2,668 | closed out 12 March 2020, settled loss 213% of margin |
+| 1.0σ condor, 0.25σ wings | 4.13 | +11.32% a month | none | survived, worst loss is the posted amount |
+
+On the worst window of the decade an account funded at the initial requirement
+is closed out on 9 March 2020, fourteen sessions before the expiry the study
+books, with the requirement at 3.37 times what was posted. The −91.26 in the
+grid is a loss the trader was never present to receive; they were closed out
+earlier and lower, and the settled figure is 242 per cent of the margin, which
+is the account plus a debt to the broker.
+
+That window is the one detail worth memorising. Its entry VIX was 17.1, below
+the decade's mean of 18.4. The tape was calm. No filter in this study, including
+the one that waits for VIX above 25, would have stayed out of it.
+
+It is not only the crash. The median month peaks at 1.25 times the collateral
+it took to open, so an ordinary winning month already asks for more than you
+posted.
+
+Stated as return on the capital actually at risk, the grid reads very
+differently from the win rates. The structure that wins ninety-nine months in a
+hundred earns a negative return on its margin. The defined-risk structure earns
+the most, is never closed out because its entire worst case is posted on day
+one, and loses that whole posted amount in 8.6 per cent of months, which is
+about once a year. Its longest run of consecutive losing months in the decade
+was two.
+
 ## What this study cannot tell you
 
 **The credit is a model output, not a quote.** The strikes and the premium come
@@ -104,6 +140,11 @@ half times too narrow.
 next one need not resemble 2018, 2020 or 2022, and a short premium position is
 a bet that it will not be worse.
 
-**Holding to expiry assumes you are never forced out.** Every trade here is
-carried to settlement. A real naked position is margined, and the margin grows
-as it moves against you.
+**The defined-risk figures are a model's credit.** The wing caps the loss for
+certain, but the 11.3 per cent a month is priced at VIX. Pricing the legs five
+per cent cheaper, which is roughly what VIX overstating the at-the-money quote
+would mean, takes it down by about a quarter. Only a real bid and ask settles it.
+
+**The sample is back-loaded.** Four fifths of the decade's profit comes from
+2021 onward, and the first five years, which contain the only genuine stress
+test, contribute a fifth.
