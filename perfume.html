@@ -1,0 +1,692 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="دراسة تأسيس براند عطور سعودي: حاسبة تكاليف، الزيوت، البخاخ، تركيبات أولية، وخطة جس النبض."></head><body>
+<title>دفتر براند العطر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F0F1EE; --surface:#FBFBF9; --raise:#E8EAE5; --sunk:#E3E5DF;
+  --ink:#191B19; --body:#3C403C; --muted:#656A64; --faint:#8C918A;
+  --line:#D6D9D2; --line-soft:#E4E6E0;
+  --accent:#9A5E0A; --accent-ink:#7C4A05; --accent-soft:#F2E4CC;
+  --rose:#A63F57; --cold:#1F6F78;
+  --good:#3E6B34; --good-soft:#E1EBDA; --warn:#8A6410; --warn-soft:#F3E8C8; --bad:#9A3A2C; --bad-soft:#F2DDD7;
+  --s1:#C0801F; --s2:#C04A64; --s3:#5A62C4; --s4:#008C99; --s5:#6F8A1E;
+  --g1:#8E938C; --g2:#A9ADA6; --g3:#6F746D; --g4:#C2C5BF;
+  --display:"Reem Kufi","IBM Plex Sans Arabic","Noto Kufi Arabic",Tahoma,sans-serif;
+  --text:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#121413; --surface:#1A1D1B; --raise:#222623; --sunk:#0E100F;
+  --ink:#ECEEEA; --body:#C3C7C1; --muted:#8E938D; --faint:#6C716B;
+  --line:#2D322E; --line-soft:#232724;
+  --accent:#E0A140; --accent-ink:#EDB860; --accent-soft:#33281A;
+  --rose:#D9788C; --cold:#6DB5BE;
+  --good:#8DB27C; --good-soft:#1E2A1C; --warn:#D9B24F; --warn-soft:#2E2715; --bad:#E08A78; --bad-soft:#321D18;
+  --s1:#B8801E; --s2:#CF5A74; --s3:#7078DA; --s4:#1A97A3; --s5:#7F9A2A;
+  --g1:#5E635D; --g2:#7A7F78; --g3:#4A4F49; --g4:#90958E;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121413; --surface:#1A1D1B; --raise:#222623; --sunk:#0E100F;
+  --ink:#ECEEEA; --body:#C3C7C1; --muted:#8E938D; --faint:#6C716B;
+  --line:#2D322E; --line-soft:#232724;
+  --accent:#E0A140; --accent-ink:#EDB860; --accent-soft:#33281A;
+  --rose:#D9788C; --cold:#6DB5BE;
+  --good:#8DB27C; --good-soft:#1E2A1C; --warn:#D9B24F; --warn-soft:#2E2715; --bad:#E08A78; --bad-soft:#321D18;
+  --s1:#B8801E; --s2:#CF5A74; --s3:#7078DA; --s4:#1A97A3; --s5:#7F9A2A;
+  --g1:#5E635D; --g2:#7A7F78; --g3:#4A4F49; --g4:#90958E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:var(--text);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.page{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:0 90px}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+h1,h2,h3{font-family:var(--display);color:var(--ink);text-wrap:balance;margin:0;font-weight:600}
+p{margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* header */
+header.top{padding-block:56px 30px;display:grid;gap:14px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:.78rem;letter-spacing:.04em;color:var(--accent-ink);font-weight:600}
+header.top h1{font-size:clamp(2rem,5.4vw,3.3rem);line-height:1.25}
+.lede{font-size:1.07rem;color:var(--muted);max-width:66ch}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:10px}
+.verdict div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.verdict b{display:block;color:var(--ink);font-family:var(--display);font-size:1.02rem;font-weight:600;margin-bottom:2px}
+.verdict span{font-size:.9rem;color:var(--muted)}
+
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-20px;padding-inline:20px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+nav.toc::-webkit-scrollbar{display:none}
+nav.toc a{display:inline-block;padding:12px 10px;font-size:.88rem;color:var(--muted);text-decoration:none;font-weight:500}
+nav.toc a:hover{color:var(--ink)}
+
+section{padding-block:46px 8px}
+.sec-head{display:grid;gap:6px;margin-bottom:22px;max-width:70ch}
+.sec-head .k{font-size:.78rem;color:var(--faint);font-weight:600;letter-spacing:.03em}
+.sec-head h2{font-size:clamp(1.45rem,3vw,1.9rem);line-height:1.35}
+.sec-head p{color:var(--muted)}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.presets button{font:inherit;font-size:.85rem;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--raise);color:var(--body);cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-size:.84rem;color:var(--muted);font-weight:500;display:flex;justify-content:space-between;gap:8px}
+.field label output{color:var(--ink);font-weight:600}
+.field select,.field input[type=number]{font:inherit;font-size:.95rem;padding:7px 10px;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);width:100%}
+.field input[type=range]{width:100%;accent-color:var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fold{border-top:1px solid var(--line-soft);margin-top:6px;padding-top:10px}
+.fold summary{cursor:pointer;font-size:.86rem;color:var(--accent-ink);font-weight:600;margin-bottom:10px}
+.hint{font-size:.78rem;color:var(--faint);line-height:1.5}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px}
+.kpi .l{font-size:.8rem;color:var(--muted)}
+.kpi .v{font-family:var(--text);font-size:1.55rem;font-weight:700;color:var(--ink);line-height:1.3;margin-block:2px}
+.kpi .v small{font-size:.8rem;font-weight:500;color:var(--muted);margin-inline-start:4px}
+.kpi .s{font-size:.78rem;color:var(--faint);line-height:1.5}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:99px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+
+.chart{margin-top:14px}
+.chart h3{font-size:1.02rem;margin-bottom:4px}
+.chart .sub{font-size:.84rem;color:var(--muted);margin-bottom:12px}
+.bar{display:flex;gap:2px;height:30px;position:relative}
+.bar .seg{height:100%;min-width:3px;cursor:default;transition:opacity .15s}
+.bar .seg:first-child{border-start-start-radius:4px;border-end-start-radius:4px}
+.bar .seg:last-child{border-start-end-radius:4px;border-end-end-radius:4px}
+.bar:hover .seg{opacity:.55}
+.bar .seg:hover{opacity:1}
+.legend{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:4px}
+.legend li{display:grid;grid-template-columns:12px 1fr auto auto;gap:10px;align-items:center;font-size:.88rem;padding-block:3px;border-bottom:1px solid var(--line-soft)}
+.legend li:last-child{border-bottom:0}
+.legend i{width:12px;height:12px;border-radius:3px;display:block}
+.legend .v{color:var(--ink);font-weight:600}
+.legend .p{color:var(--faint);font-size:.8rem;min-width:3.4em;text-align:left}
+.legend li.hl{background:var(--accent-soft);border-radius:4px;padding-inline:6px;margin-inline:-6px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.82rem;padding:6px 10px;border-radius:5px;z-index:20;white-space:nowrap}
+.note{font-size:.86rem;color:var(--muted);background:var(--raise);border-radius:6px;padding:10px 14px;margin-top:12px}
+.note b{color:var(--ink)}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:640px}
+th,td{text-align:start;padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-size:.78rem;color:var(--muted);font-weight:600;background:var(--raise)}
+tr:last-child td{border-bottom:0}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);font-weight:500}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:4px;background:var(--raise);color:var(--muted);white-space:nowrap}
+.tag.nat{background:var(--good-soft);color:var(--good)}
+.tag.syn{background:var(--sunk);color:var(--muted)}
+.tag.acc{background:var(--accent-soft);color:var(--accent-ink)}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:8px;align-content:start}
+.card h3{font-size:1.08rem}
+.card p,.card li{font-size:.92rem}
+.card ul{margin:0;padding-inline-start:18px;display:grid;gap:4px}
+.card .meta{font-size:.8rem;color:var(--faint)}
+.card.rec{border-color:var(--accent)}
+.card .badge{justify-self:start;font-size:.74rem;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);border-radius:4px;padding:1px 8px}
+
+/* sprayer */
+.spray{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.spray svg{width:100%;height:auto;display:block;max-width:100%}
+.spray .card{gap:10px}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.88rem}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;color:var(--ink);font-weight:500}
+
+/* formulas */
+.formula{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:18px;display:grid;gap:14px}
+.formula .fh{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;align-items:baseline}
+.formula h3{font-size:clamp(1.3rem,2.6vw,1.65rem)}
+.formula .en{font-size:.82rem;color:var(--faint);direction:ltr;unicode-bidi:isolate}
+.formula .idea{max-width:72ch;color:var(--body)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.chip.cold{color:var(--cold);border-color:currentColor}
+.chip.warm{color:var(--accent-ink);border-color:currentColor}
+.chip.rose{color:var(--rose);border-color:currentColor}
+.pyr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.pyr{grid-template-columns:1fr}}
+.pyr div{border-top:2px solid var(--line);padding-top:8px;font-size:.9rem}
+.pyr div b{display:block;font-size:.78rem;color:var(--faint);font-weight:600;margin-bottom:2px}
+.pyr div:nth-child(1){border-color:var(--s4)}
+.pyr div:nth-child(2){border-color:var(--s2)}
+.pyr div:nth-child(3){border-color:var(--s1)}
+details.full summary{cursor:pointer;font-weight:600;color:var(--accent-ink);font-size:.92rem}
+details.full[open] summary{margin-bottom:10px}
+td.lvl{font-size:.78rem;color:var(--faint);white-space:nowrap}
+tfoot td{font-weight:700;color:var(--ink);background:var(--raise)}
+
+/* timeline */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:st}
+.steps li{display:grid;grid-template-columns:110px 1fr;gap:16px;padding-block:14px;border-bottom:1px solid var(--line-soft)}
+@media (max-width:560px){.steps li{grid-template-columns:1fr;gap:4px}}
+.steps .w{font-size:.82rem;color:var(--accent-ink);font-weight:600}
+.steps h3{font-size:1rem;margin-bottom:2px}
+.steps p{font-size:.92rem;color:var(--muted)}
+.gate{margin-top:6px;font-size:.84rem;color:var(--ink);background:var(--warn-soft);border-radius:5px;padding:4px 10px;display:inline-block}
+
+.checks{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.92rem}
+.checks li::before{content:"";width:14px;height:14px;border:1.5px solid var(--accent);border-radius:3px;margin-top:6px}
+.checks b{color:var(--ink)}
+
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-size:.82rem;color:var(--faint);max-width:80ch;display:grid;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="page" dir="rtl" lang="ar">
+
+<header class="top">
+  <p class="eyebrow">دراسة تأسيس · عطور نيش سعودية بسعر ٢٠٠–٤٥٠ ريال</p>
+  <h1>براند عطور بأفضل الزيوت، ورشّة مصمّمة لكل عطر</h1>
+  <p class="lede">الفكرة قابلة للتنفيذ وبميزانية معقولة. الزيت العطري حتى لو كان من أغلى الفئات ما يتعدّى عادة ١٠–٢٠٪ من سعر القارورة، فالجودة العالية ما تحتاج سعر خيالي. التحدّي الحقيقي في التسويق وفي أول ٥٠٠ قارورة.</p>
+  <div class="verdict">
+    <div><b>التكلفة لكل قارورة</b><span>تقريباً ٧٠–١٦٠ ريال لقارورة ١٠٠ مل بزيت ممتاز وتغليف فاخر</span></div>
+    <div><b>البداية الخفيفة (جس نبض)</b><span>من ٥٠ إلى ٧٠ ألف ريال: عطرين، ٣٠٠ قارورة ٥٠ مل، وعيّنات</span></div>
+    <div><b>التصميم</b><span>أنت المشرف وصاحب الذوق، وأنا أكتب الموجز والتركيبات الأولية، والعطّار ينفّذها في المختبر</span></div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="أقسام الصفحة">
+  <a href="#calc">الحاسبة</a><a href="#oils">الزيوت</a><a href="#spray">البخاخ</a><a href="#who">مين يصمم</a><a href="#formulas">التركيبات</a><a href="#pilot">خطة جس النبض</a><a href="#legal">التراخيص</a>
+</nav>
+
+<!-- ============ CALCULATOR ============ -->
+<section id="calc">
+  <div class="sec-head">
+    <span class="k">التكاليف</span>
+    <h2>كم تكلّف القارورة، وكم تحتاج تبدأ</h2>
+    <p>غيّر أي رقم والنتائج تتحدّث مباشرة. الأرقام تقديرية مبنية على أسعار السوق المعتادة، وتتأكد منها بعروض أسعار حقيقية من الموردين.</p>
+  </div>
+
+  <div class="calc">
+    <form class="panel" id="f" autocomplete="off">
+      <div class="presets" role="group" aria-label="سيناريوهات جاهزة">
+        <button type="button" data-p="lean" id="p-lean">جس نبض خفيف</button>
+        <button type="button" data-p="std" id="p-std">إطلاق قياسي</button>
+        <button type="button" data-p="lux" id="p-lux">فخامة كاملة</button>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="size">حجم القارورة</label>
+          <select id="size"><option value="50">٥٠ مل</option><option value="100">١٠٠ مل</option></select></div>
+        <div class="field"><label for="conc">التركيز</label>
+          <select id="conc"><option value="0.2">EDP ٢٠٪</option><option value="0.25">EDP مركّز ٢٥٪</option><option value="0.3">إكسترية ٣٠٪</option></select></div>
+      </div>
+      <div class="field"><label for="oil">سعر الزيت العطري (دولار/كيلو) <output id="oilOut" class="num"></output></label>
+        <input type="range" id="oil" min="60" max="1500" step="10">
+        <span class="hint">١٠٠–٢٥٠ فئة متوسطة شائعة · ٣٠٠–٨٠٠ ممتاز غني بالطبيعي · ١٠٠٠+ فخامة</span></div>
+      <div class="field"><label for="tier">مستوى التغليف</label>
+        <select id="tier"><option value="std">عادي</option><option value="pre">ممتاز</option><option value="lux">فاخر</option></select>
+        <span class="hint">عادي: قارورة جاهزة وغطاء ثقيل · ممتاز: زجاج سميك وغطاء زاماك وعلبة صلبة · فاخر: غطاء مغناطيسي وعلبة مبطّنة</span></div>
+      <div class="row2">
+        <div class="field"><label for="scents">عدد العطور</label><input type="number" id="scents" min="1" max="6" step="1"></div>
+        <div class="field"><label for="per">قوارير لكل عطر</label><input type="number" id="per" min="50" max="5000" step="50"></div>
+      </div>
+      <div class="field"><label for="price">سعر البيع شامل الضريبة (ريال)</label><input type="number" id="price" min="100" max="2000" step="5"></div>
+      <details class="fold" id="more">
+        <summary>تكاليف التأسيس (مرّة وحدة)</summary>
+        <div class="row2">
+          <div class="field"><label for="dev">تطوير لكل عطر</label><input type="number" id="dev" min="0" step="500"></div>
+          <div class="field"><label for="brand">الهوية والتصميم</label><input type="number" id="brand" min="0" step="500"></div>
+          <div class="field"><label for="content">تصوير ومحتوى</label><input type="number" id="content" min="0" step="500"></div>
+          <div class="field"><label for="legal">تراخيص ومتجر</label><input type="number" id="legal" min="0" step="500"></div>
+          <div class="field"><label for="samples">عيّنات وتسترات</label><input type="number" id="samples" min="0" step="500"></div>
+          <div class="field"><label for="mkt">تسويق الإطلاق</label><input type="number" id="mkt" min="0" step="1000"></div>
+        </div>
+        <div class="field"><label for="deliv">توصيل لكل طلب (ريال)</label><input type="number" id="deliv" min="0" step="1"></div>
+        <p class="hint">يُضاف ١٠٪ احتياطي على المجموع. رسوم الدفع الإلكتروني محسوبة ٢٫٥٪.</p>
+      </details>
+    </form>
+
+    <div>
+      <div class="kpis">
+        <div class="kpi"><div class="l">تكلفة القارورة</div><div class="v"><span class="num" id="kUnit"></span><small>ريال</small></div><div class="s" id="kUnitS"></div></div>
+        <div class="kpi"><div class="l">صافي لك من كل قارورة</div><div class="v"><span class="num" id="kNet"></span><small>ريال</small></div><div class="s">بعد الضريبة والتوصيل والرسوم وتكلفة القارورة</div></div>
+        <div class="kpi"><div class="l">رأس المال للبداية</div><div class="v"><span class="num" id="kCap"></span><small>ريال</small></div><div class="s" id="kCapS"></div></div>
+        <div class="kpi"><div class="l">نقطة التعادل</div><div class="v"><span class="num" id="kBe"></span><small>قارورة</small></div><div class="s" id="kBeS"></div></div>
+      </div>
+
+      <div class="panel chart">
+        <h3>وين تروح تكلفة القارورة</h3>
+        <p class="sub" id="c1sub"></p>
+        <div class="bar" id="bar1" role="img"></div>
+        <ul class="legend" id="leg1"></ul>
+      </div>
+
+      <div class="panel chart">
+        <h3>وين يروح سعر البيع</h3>
+        <p class="sub">مقسوم على كل قارورة من الدفعة الأولى، بافتراض بيعها كلها</p>
+        <div class="bar" id="bar2" role="img"></div>
+        <ul class="legend" id="leg2"></ul>
+        <p class="note" id="c2note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OILS ============ -->
+<section id="oils">
+  <div class="sec-head">
+    <span class="k">الزيوت العطرية</span>
+    <h2>«أفضل الزيوت» يعني الخلطة الصح، مو كل شي طبيعي</h2>
+    <p>الطبيعي يعطي العمق والفخامة والروح. والجزيئات الصناعية الحديثة هي اللي تعطي الفوحان والثبات اللي يحبه السوق السعودي. العطر اللي يكسر الدنيا يجمع الاثنين: نسبة عالية من خامات طبيعية نادرة، وفوقها أفضل الجزيئات الحديثة.</p>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>المادة</th><th>النوع</th><th>السعر التقريبي للكيلو</th><th>وش تسوي في العطر</th></tr></thead>
+      <tbody>
+        <tr><td>ورد طائفي (زيت)</td><td><span class="tag nat">طبيعي</span></td><td class="n">٣٥٬٠٠٠–٧٠٬٠٠٠ $</td><td>التوقيع السعودي الأغلى. التولة (١٢ مل) تُباع تقريباً بـ٤٠٠–٨٠٠ دولار. ١٪ منه في قارورة إكسترية يكلّف تقريباً ٤٠–٧٥ ريال فقط</td></tr>
+        <tr><td>دهن العود الحقيقي</td><td><span class="tag nat">طبيعي</span></td><td class="n">٥٬٠٠٠–٥٠٬٠٠٠+ $</td><td>يتفاوت جداً حسب المصدر والعمر. أغلب «العود» في العطور أكورد صناعي، والحقيقي حتى ٠٫٥–١٪ منه يفرق كثير</td></tr>
+        <tr><td>زبدة السوسن (أوريس)</td><td><span class="tag nat">طبيعي</span></td><td class="n">١٠٬٠٠٠–٢٥٬٠٠٠+ $</td><td>بودرة مخملية باردة، علامة العطور الفخمة</td></tr>
+        <tr><td>ياسمين سامباك مطلق</td><td><span class="tag nat">طبيعي</span></td><td class="n">٣٬٠٠٠–٦٬٠٠٠ $</td><td>قلب زهري مشع، يرفع أي تركيبة</td></tr>
+        <tr><td>صندل (هندي/أسترالي)</td><td><span class="tag nat">طبيعي</span></td><td class="n">١٬٢٠٠–٤٬٠٠٠ $</td><td>قاعدة كريمية ناعمة تطوّل العمر</td></tr>
+        <tr><td>لبان حوجري عُماني</td><td><span class="tag nat">طبيعي</span></td><td class="n">١٥٠–٤٠٠ $</td><td>برودة راتنجية ونظافة، ينسجم مع الورد والعود</td></tr>
+        <tr><td>هيل، زعفران، برغموت</td><td><span class="tag nat">طبيعي</span></td><td class="n">٨٠–٣٠٠ $</td><td>افتتاحيات تعرفها الأنوف الخليجية فوراً</td></tr>
+        <tr><td>أمبروكسان / أمبروفيكس</td><td><span class="tag syn">جزيء حديث</span></td><td class="n">٢٠٠–٥٠٠ $</td><td>العنبر النظيف، سرّ الفوحان والثبات في أغلب العطور الناجحة</td></tr>
+        <tr><td>إيزو إي سوبر، هيديون، مسوك</td><td><span class="tag syn">جزيء حديث</span></td><td class="n">١٥–٦٠ $</td><td>الهيكل: إشعاع وانتشار وجلد ناعم. رخيصة لكن ما يستغني عنها أي عطّار</td></tr>
+        <tr><td>أكورد جاهز من بيت عطور</td><td><span class="tag acc">مركّب</span></td><td class="n">٣٠–١٥٠٠+ $</td><td>هذا اللي يشتريه أغلب البراندات: زيت مخلوط جاهز. السعر يعكس نسبة الخامات النادرة فيه</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><b>النقطة المهمة للتسعير:</b> لما تطلب الزيت اطلب فئة ٤٠٠–٩٠٠ دولار للكيلو بدل ١٠٠–٢٠٠ المعتادة في السوق المتوسط. الفرق على القارورة ١٠٠ مل تقريباً ٢٠–٥٠ ريال بس، والعميل يحس الفرق من أول رشّة. هذي ميزتك التنافسية بدون ما تمس أحد.</p>
+</section>
+
+<!-- ============ SPRAYER ============ -->
+<section id="spray">
+  <div class="sec-head">
+    <span class="k">البخاخ</span>
+    <h2>رشّة مصمّمة على شخصية العطر</h2>
+    <p>فكرتك قوية ونادراً أحد يسوّيها: البخاخ يتغيّر حسب العطر. البارد ينطلق سحابة واسعة، والثقيل يطلع رذاذ ناعم مركّز. اللي يتحكم بهذا شيئين: <b>المضخة</b> (كمية الرشة بالمل) و<b>الزر</b> (زاوية الرذاذ وحجم القطرات).</p>
+  </div>
+  <div class="spray">
+    <div class="card">
+      <svg viewBox="0 0 320 150" aria-label="رشة واسعة للعطور الباردة">
+        <rect x="262" y="58" width="44" height="34" rx="4" fill="var(--raise)" stroke="var(--line)"/>
+        <rect x="252" y="68" width="12" height="14" rx="2" fill="var(--faint)"/>
+        <path d="M252 75 L40 14 L40 136 Z" fill="var(--cold)" opacity=".13"/>
+        <g fill="var(--cold)">
+          <circle cx="210" cy="70" r="2.2"/><circle cx="190" cy="82" r="2"/><circle cx="175" cy="60" r="2.4"/><circle cx="160" cy="95" r="2"/><circle cx="150" cy="48" r="2.2"/><circle cx="135" cy="75" r="2.5"/><circle cx="120" cy="108" r="2"/><circle cx="110" cy="38" r="2.2"/><circle cx="95" cy="88" r="2.4"/><circle cx="85" cy="58" r="2"/><circle cx="70" cy="118" r="2.2"/><circle cx="62" cy="28" r="2"/><circle cx="55" cy="80" r="2.5"/><circle cx="48" cy="104" r="2"/><circle cx="46" cy="48" r="2.2"/>
+        </g>
+        <text x="40" y="148" font-size="11" fill="var(--muted)" font-family="IBM Plex Sans Arabic, sans-serif">زاوية ≈ ٦٠° · قطرات أكبر</text>
+      </svg>
+      <h3>للعطور الباردة والمنعشة</h3>
+      <dl class="spec">
+        <dt>كمية الرشة</dt><dd>٠٫١٣–٠٫١٥ مل (مضخة عالية الضخ)</dd>
+        <dt>الزر</dt><dd>زاوية واسعة، رذاذ مفتوح</dd>
+        <dt>الإحساس</dt><dd>سحابة تغطّي، انتعاش فوري</dd>
+        <dt>مثال</dt><dd>«شيح وعرفج بعد المطر»</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <svg viewBox="0 0 320 150" aria-label="رشة مركزة للعطور الثقيلة">
+        <rect x="262" y="58" width="44" height="34" rx="4" fill="var(--raise)" stroke="var(--line)"/>
+        <rect x="252" y="68" width="12" height="14" rx="2" fill="var(--faint)"/>
+        <path d="M252 75 L60 50 L60 100 Z" fill="var(--rose)" opacity=".13"/>
+        <g fill="var(--rose)">
+          <circle cx="220" cy="74" r="1.3"/><circle cx="205" cy="78" r="1.2"/><circle cx="195" cy="71" r="1.4"/><circle cx="182" cy="76" r="1.2"/><circle cx="170" cy="68" r="1.3"/><circle cx="160" cy="82" r="1.2"/><circle cx="150" cy="73" r="1.4"/><circle cx="138" cy="64" r="1.2"/><circle cx="128" cy="86" r="1.3"/><circle cx="118" cy="75" r="1.2"/><circle cx="105" cy="62" r="1.4"/><circle cx="96" cy="88" r="1.2"/><circle cx="86" cy="72" r="1.3"/><circle cx="76" cy="60" r="1.2"/><circle cx="70" cy="90" r="1.3"/>
+        </g>
+        <text x="60" y="148" font-size="11" fill="var(--muted)" font-family="IBM Plex Sans Arabic, sans-serif">زاوية ≈ ٣٠° · رذاذ ناعم جداً</text>
+      </svg>
+      <h3>للعطور الثقيلة والإكسترية</h3>
+      <dl class="spec">
+        <dt>كمية الرشة</dt><dd>٠٫٠٩–٠٫١١ مل</dd>
+        <dt>الزر</dt><dd>رذاذ ناعم (fine mist)</dd>
+        <dt>الإحساس</dt><dd>أثر مركّز على الجلد، ما يخنق</dd>
+        <dt>مثال</dt><dd>«ورد طائفي ولومي ولبان»</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <h3>كيف تنفّذها عملياً</h3>
+      <ul>
+        <li>اطلب عيّنات مضخات بعنق <b>FEA 15</b> (المعيار) من موردين مثل Aptar و Coster و Silgan و Lumson، أو موزّعيهم في دبي والصين للكميات الصغيرة.</li>
+        <li><b>اختبار الوزن:</b> زِن القارورة، رش ١٠ مرات، زِنها ثاني. الفرق ÷ ١٠ = كمية الرشة الحقيقية.</li>
+        <li><b>اختبار الورق الأسود:</b> رش على ورقة سوداء من ٢٠ سم وقِس قطر الدائرة. الواسع يوصل ٢٠ سم تقريباً، والمركّز ١٠–١٢.</li>
+        <li>الإكسترية أكثف، فجرّب المضخة على نفس العصير النهائي مو على الكحول.</li>
+        <li>المضخات المخصّصة بالكامل تبدأ عادة من ١٠ آلاف قطعة. في البداية اختر من الكتالوج وخصّص الزر والطوق فقط.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO ============ -->
+<section id="who">
+  <div class="sec-head">
+    <span class="k">التصميم</span>
+    <h2>مين يصمم العطر وأنت المشرف</h2>
+    <p>ما في طريق مختصر عن أنف محترف ومختبر فيه مئات الخامات. الناس تسألك عن عطورك، وهذا يعني إن ذوقك مثبت. دورك تكون المدير الإبداعي: تحدد الفكرة وتحكم على كل تعديل. وتقدر تبدأ بواحد من ثلاث طرق.</p>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <h3>بيت عطور (مصنّع زيوت)</h3>
+      <p>بيوت كبيرة ومتوسطة، كثير منها له مكاتب في دبي. التطوير عادة مجاني إذا التزمت تشتري الزيت منهم (حد أدنى ٥–٢٥ كيلو).</p>
+      <ul><li>سريع، ويعطيك جودة صناعية ثابتة</li><li>التركيبة تبقى ملكهم، وأنت تشتري الزيت الجاهز</li></ul>
+      <span class="meta">التكلفة: شبه صفر للتطوير، وتدفعها في سعر الزيت</span>
+    </div>
+    <div class="card rec">
+      <span class="badge">الأنسب لك</span>
+      <h3>عطّار مستقل + أنت + أنا</h3>
+      <p>أنا أكتب الموجز والتركيبة الأولية (زي اللي تحت)، والعطّار يعدّلها ويركّبها في مختبره، وأنت تشمّ وتقرر في كل جولة. ولما ترسل لي ملاحظاتك أحللها وأقترح التعديل الجاي.</p>
+      <ul><li>التركيبة ملكك بالعقد</li><li>تحكّم كامل بالفكرة والخامات</li><li>تقدر تنتقل لأي مصنع تعبئة</li></ul>
+      <span class="meta">التكلفة: تقريباً ٥٬٠٠٠–٤٠٬٠٠٠ ريال لكل عطر حسب اسم العطّار</span>
+    </div>
+    <div class="card">
+      <h3>مصنع تعبئة يقدّم «زيوت جاهزة»</h3>
+      <p>تختار من مكتبة روائح جاهزة وتحط اسمك عليها.</p>
+      <ul><li>أرخص وأسرع طريق</li><li>غالباً نفس الروائح عند براندات ثانية، وهذا عكس فكرتك تماماً</li></ul>
+      <span class="meta">ما أنصح فيه لهدفك</span>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3 style="font-size:1.02rem;margin-bottom:10px">بنود لازم تكون في عقد التطوير</h3>
+    <ul class="checks">
+      <li><span><b>ملكية التركيبة</b> أو على الأقل حصرية دائمة، مع حقك تستلم الصيغة كاملة.</span></li>
+      <li><span><b>شهادة IFRA</b> للفئة ٤ (العطور الكحولية) وقائمة مسببات الحساسية للملصق.</span></li>
+      <li><span><b>اختبار ثبات</b> على حرارة ٤٠–٤٥° ونور لمدة ٨–١٢ أسبوع. هذا ضروري لأن الصيف السعودي يخرب العطور الضعيفة.</span></li>
+      <li><span><b>عدد جولات التعديل</b> محدد، وسعر الجولة الإضافية.</span></li>
+      <li><span><b>السرية</b>، وعدم بيع نفس الزيت لأي أحد ثاني.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ FORMULAS ============ -->
+<section id="formulas">
+  <div class="sec-head">
+    <span class="k">التركيبات</span>
+    <h2>ثلاث أفكار ما جت على بال السوق</h2>
+    <p>كل وحدة مبنية على شي سعودي حقيقي ما انعمل عطرياً بهالطريقة. التركيبة المكتوبة هي «النسخة صفر» اللي تسلّمها للعطّار كنقطة بداية، والأرقام بالأجزاء من ١٠٠٠ زي أوراق العطّارين. أي تركيبة تحتاج عادة ٢٠–٥٠ تعديل قبل ما تكتمل.</p>
+  </div>
+
+  <article class="formula">
+    <div class="fh"><h3>شيح وعرفج بعد المطر</h3><span class="en">Shih &amp; Arfaj After Rain · EDP 22%</span></div>
+    <div class="chips"><span class="chip cold">بارد</span><span class="chip">أخضر ترابي</span><span class="chip">رشّة واسعة</span><span class="chip">صيفي وشتوي</span></div>
+    <p class="idea">ريحة البر بعد أول مطرة: الشيح والعرفج والأرض المبلولة. هذي الريحة يعرفها كل سعودي، وما في براند مسكها كعطر فاخر. <b>العرفج ما له زيت تجاري</b>، فالعطّار يبنيه كأكورد من تحليل الهواء حول النبتة (headspace) أو من أقرب خامات له، وهذا بالضبط اللي يخلي العطر حقك وما أحد يقلده بسهولة.</p>
+    <div class="pyr">
+      <div><b>الافتتاحية</b>برغموت، جريب فروت، عرعر، شيح، مريمية</div>
+      <div><b>القلب</b>أكورد العرفج، تراب مبلول (جيوسمين بكمية مجهرية)، بابونج، هيديون</div>
+      <div><b>القاعدة</b>فيتيفر هايتي، سيبريول، أرز، أمبروكسان، مسوك نظيفة</div>
+    </div>
+    <details class="full"><summary>النسخة صفر كاملة</summary>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>الطبقة</th><th>المادة</th><th>النوع</th><th>جزء/١٠٠٠</th><th>الدور</th></tr></thead>
+        <tbody>
+          <tr><td class="lvl">افتتاحية</td><td>Bergamot FCF</td><td><span class="tag nat">طبيعي</span></td><td class="n">60</td><td>إضاءة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Grapefruit</td><td><span class="tag nat">طبيعي</span></td><td class="n">40</td><td>حموضة منعشة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Juniper berry</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>برودة صنوبرية</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Clary sage</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>عشبي ناعم</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Artemisia (شيح)</td><td><span class="tag nat">طبيعي</span></td><td class="n">10</td><td>توقيع البر، يُراجَع مع IFRA</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Dihydromyrcenol</td><td><span class="tag syn">صناعي</span></td><td class="n">30</td><td>نظافة معدنية باردة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Violet leaf absolute</td><td><span class="tag nat">طبيعي</span></td><td class="n">3</td><td>أخضر مبلول</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Calone</td><td><span class="tag syn">صناعي</span></td><td class="n">3</td><td>هواء ومطر</td></tr>
+          <tr><td class="lvl">قلب</td><td>أكورد العرفج (يُبنى)</td><td><span class="tag acc">أكورد</span></td><td class="n">40</td><td>قلب الفكرة</td></tr>
+          <tr><td class="lvl">قلب</td><td>Hedione</td><td><span class="tag syn">صناعي</span></td><td class="n">120</td><td>شفافية وانتشار</td></tr>
+          <tr><td class="lvl">قلب</td><td>Ambrocenide 10%</td><td><span class="tag syn">صناعي</span></td><td class="n">10</td><td>خشبي عنبري جاف</td></tr>
+          <tr><td class="lvl">قلب</td><td>Geosmin 1%</td><td><span class="tag syn">صناعي</span></td><td class="n">5</td><td>تراب بعد المطر، قوي جداً</td></tr>
+          <tr><td class="lvl">قلب</td><td>Roman chamomile</td><td><span class="tag nat">طبيعي</span></td><td class="n">4</td><td>عشب بري حلو</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Iso E Super</td><td><span class="tag syn">صناعي</span></td><td class="n">200</td><td>إشعاع مخملي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Galaxolide 50</td><td><span class="tag syn">صناعي</span></td><td class="n">120</td><td>مسك نظيف</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Habanolide</td><td><span class="tag syn">صناعي</span></td><td class="n">80</td><td>مسك معدني ثابت</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Cedarwood Virginia</td><td><span class="tag nat">طبيعي</span></td><td class="n">65</td><td>خشب جاف</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Vetiver Haiti</td><td><span class="tag nat">طبيعي</span></td><td class="n">50</td><td>جذور وأرض</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ambroxan</td><td><span class="tag syn">صناعي</span></td><td class="n">50</td><td>فوحان وثبات</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ethylene brassylate</td><td><span class="tag syn">صناعي</span></td><td class="n">30</td><td>مسك ناعم</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Cypriol (نَجَرموثا)</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>دخاني خشبي، قريب من العود</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Patchouli heart</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>عمق ترابي نظيف</td></tr>
+        </tbody>
+        <tfoot><tr><td></td><td>المجموع</td><td></td><td class="n">1000</td><td></td></tr></tfoot>
+      </table></div>
+    </details>
+  </article>
+
+  <article class="formula">
+    <div class="fh"><h3>قهوة شقراء</h3><span class="en">Golden Qahwa · EDP 25%</span></div>
+    <div class="chips"><span class="chip warm">دافي</span><span class="chip">حار ومنعش</span><span class="chip">رشّة متوسطة</span><span class="chip">مجالس وضيافة</span></div>
+    <p class="idea">عطور القهوة كلها تقريباً على القهوة الغامقة المحمّصة والحلى. هنا بالعكس: القهوة السعودية الشقراء بالهيل والزعفران والقرنفل. حارة ومنعشة، بدون سكر، وقاعدتها صندل ناعم. ريحة الدلّة وقت الضيافة.</p>
+    <div class="pyr">
+      <div><b>الافتتاحية</b>هيل غواتيمالي، برغموت، فلفل وردي، زنجبيل، زعفران</div>
+      <div><b>القلب</b>قهوة خفيفة التحميص (CO2)، قرنفل، لمسة ورد طائفي، هيديون</div>
+      <div><b>القاعدة</b>صندل، كشميران، أمبروكسان، خشب الغاياك، مسوك</div>
+    </div>
+    <details class="full"><summary>النسخة صفر كاملة</summary>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>الطبقة</th><th>المادة</th><th>النوع</th><th>جزء/١٠٠٠</th><th>الدور</th></tr></thead>
+        <tbody>
+          <tr><td class="lvl">افتتاحية</td><td>Bergamot FCF</td><td><span class="tag nat">طبيعي</span></td><td class="n">80</td><td>إضاءة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Cardamom (Guatemala)</td><td><span class="tag nat">طبيعي</span></td><td class="n">40</td><td>الهيل، نجم الافتتاحية</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Pink pepper CO2</td><td><span class="tag nat">طبيعي</span></td><td class="n">15</td><td>لمعة حارة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Saffron accord</td><td><span class="tag acc">أكورد</span></td><td class="n">10</td><td>جلدي ذهبي</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Ginger CO2</td><td><span class="tag nat">طبيعي</span></td><td class="n">10</td><td>حرارة منعشة</td></tr>
+          <tr><td class="lvl">قلب</td><td>Hedione</td><td><span class="tag syn">صناعي</span></td><td class="n">120</td><td>هواء وانتشار</td></tr>
+          <tr><td class="lvl">قلب</td><td>Coffee CO2 (light roast)</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>القهوة الشقراء</td></tr>
+          <tr><td class="lvl">قلب</td><td>Clove bud</td><td><span class="tag nat">طبيعي</span></td><td class="n">5</td><td>قرنفل، مقيّد في IFRA</td></tr>
+          <tr><td class="lvl">قلب</td><td>Taif rose oil</td><td><span class="tag nat">طبيعي</span></td><td class="n">5</td><td>توقيع فاخر خفي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Iso E Super</td><td><span class="tag syn">صناعي</span></td><td class="n">180</td><td>إشعاع</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Galaxolide 50</td><td><span class="tag syn">صناعي</span></td><td class="n">100</td><td>مسك نظيف</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ethylene brassylate</td><td><span class="tag syn">صناعي</span></td><td class="n">100</td><td>مسك ناعم</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Habanolide</td><td><span class="tag syn">صناعي</span></td><td class="n">80</td><td>ثبات</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ambroxan</td><td><span class="tag syn">صناعي</span></td><td class="n">60</td><td>فوحان</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Cedarwood Atlas</td><td><span class="tag nat">طبيعي</span></td><td class="n">55</td><td>خشب دافي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Sandalwood (Australian)</td><td><span class="tag nat">طبيعي</span></td><td class="n">50</td><td>كريمي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Cashmeran</td><td><span class="tag syn">صناعي</span></td><td class="n">30</td><td>مخمل</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Guaiac wood</td><td><span class="tag nat">طبيعي</span></td><td class="n">30</td><td>دخان خفيف مثل التحميص</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Javanol</td><td><span class="tag syn">صناعي</span></td><td class="n">5</td><td>يقوّي الصندل</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Vanilla absolute</td><td><span class="tag nat">طبيعي</span></td><td class="n">5</td><td>دفء بدون حلى</td></tr>
+        </tbody>
+        <tfoot><tr><td></td><td>المجموع</td><td></td><td class="n">1000</td><td></td></tr></tfoot>
+      </table></div>
+    </details>
+  </article>
+
+  <article class="formula">
+    <div class="fh"><h3>ورد طائفي · لومي · لبان</h3><span class="en">Taif Rose, Black Lime, Hojari · Extrait 30%</span></div>
+    <div class="chips"><span class="chip rose">وردي فاخر</span><span class="chip">راتنجي</span><span class="chip">رشّة مركّزة</span><span class="chip">مساء ومناسبات</span></div>
+    <p class="idea">الورد مع العود صار مكرر في السوق. هنا الورد الطائفي الحقيقي مع اللومي (الليمون الأسود المجفف اللي في الكبسة) وهو حامض ومدخّن، ومع لبان حوجري بارد. <b>بدون عود قصداً</b>. النتيجة ورد خليجي ما يشبه شي في السوق.</p>
+    <div class="pyr">
+      <div><b>الافتتاحية</b>أكورد اللومي، فلفل وردي، إليمي</div>
+      <div><b>القلب</b>ورد طائفي، ورد تركي مطلق، جيرانيوم، لبان حوجري</div>
+      <div><b>القاعدة</b>صندل، لابدانوم، باتشولي، أمبروكسان، مسك أمبريت</div>
+    </div>
+    <details class="full"><summary>النسخة صفر كاملة</summary>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>الطبقة</th><th>المادة</th><th>النوع</th><th>جزء/١٠٠٠</th><th>الدور</th></tr></thead>
+        <tbody>
+          <tr><td class="lvl">افتتاحية</td><td>أكورد اللومي (ليم مقطّر + لمسة دخان)</td><td><span class="tag acc">أكورد</span></td><td class="n">50</td><td>حموضة مجففة، فكرة العطر</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Pink pepper CO2</td><td><span class="tag nat">طبيعي</span></td><td class="n">10</td><td>لمعة</td></tr>
+          <tr><td class="lvl">افتتاحية</td><td>Elemi</td><td><span class="tag nat">طبيعي</span></td><td class="n">10</td><td>ليموني راتنجي</td></tr>
+          <tr><td class="lvl">قلب</td><td>Hedione</td><td><span class="tag syn">صناعي</span></td><td class="n">100</td><td>يفتح الورد</td></tr>
+          <tr><td class="lvl">قلب</td><td>Phenylethyl alcohol</td><td><span class="tag syn">صناعي</span></td><td class="n">50</td><td>جسم الورد</td></tr>
+          <tr><td class="lvl">قلب</td><td>Citronellol</td><td><span class="tag syn">صناعي</span></td><td class="n">40</td><td>ورد طازج</td></tr>
+          <tr><td class="lvl">قلب</td><td>Frankincense Hojari</td><td><span class="tag nat">طبيعي</span></td><td class="n">30</td><td>برودة اللبان</td></tr>
+          <tr><td class="lvl">قلب</td><td>Rose absolute (Turkey)</td><td><span class="tag nat">طبيعي</span></td><td class="n">20</td><td>عمق عسلي</td></tr>
+          <tr><td class="lvl">قلب</td><td>Geraniol</td><td><span class="tag syn">صناعي</span></td><td class="n">20</td><td>ورد</td></tr>
+          <tr><td class="lvl">قلب</td><td>Geranium Bourbon</td><td><span class="tag nat">طبيعي</span></td><td class="n">15</td><td>أخضر نعناعي</td></tr>
+          <tr><td class="lvl">قلب</td><td>Taif rose oil</td><td><span class="tag nat">طبيعي</span></td><td class="n">10</td><td>الروح، أغلى مادة في القارورة</td></tr>
+          <tr><td class="lvl">قلب</td><td>Rose oxide</td><td><span class="tag syn">صناعي</span></td><td class="n">2</td><td>ورد معدني</td></tr>
+          <tr><td class="lvl">قلب</td><td>beta-Damascone</td><td><span class="tag syn">صناعي</span></td><td class="n">1</td><td>فاكهي مربّى، مقيّد في IFRA</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Iso E Super</td><td><span class="tag syn">صناعي</span></td><td class="n">150</td><td>إشعاع</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Habanolide</td><td><span class="tag syn">صناعي</span></td><td class="n">100</td><td>ثبات</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Galaxolide 50</td><td><span class="tag syn">صناعي</span></td><td class="n">100</td><td>مسك</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ethylene brassylate</td><td><span class="tag syn">صناعي</span></td><td class="n">84</td><td>مسك ناعم</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ambroxan</td><td><span class="tag syn">صناعي</span></td><td class="n">60</td><td>عنبر</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Sandalwood (album)</td><td><span class="tag nat">طبيعي</span></td><td class="n">60</td><td>كريمي فاخر</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Patchouli</td><td><span class="tag nat">طبيعي</span></td><td class="n">30</td><td>ظل</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Cashmeran</td><td><span class="tag syn">صناعي</span></td><td class="n">20</td><td>مخمل</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Muscenone</td><td><span class="tag syn">صناعي</span></td><td class="n">20</td><td>مسك دافي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Labdanum absolute</td><td><span class="tag nat">طبيعي</span></td><td class="n">15</td><td>عنبري جلدي</td></tr>
+          <tr><td class="lvl">قاعدة</td><td>Ambrette seed</td><td><span class="tag nat">طبيعي</span></td><td class="n">3</td><td>مسك نباتي فاخر</td></tr>
+        </tbody>
+        <tfoot><tr><td></td><td>المجموع</td><td></td><td class="n">1000</td><td></td></tr></tfoot>
+      </table></div>
+    </details>
+  </article>
+
+  <p class="note"><b>تنبيه:</b> هذي تركيبات مكتوبة على الورق وأنا ما أقدر أشم. فائدتها إنها تعطي العطّار فكرة واضحة وهيكل متوازن يبدأ منه. التوازن النهائي يطلع من المختبر ومن أنفك أنت. وقبل البيع لازم فحص IFRA لكل تركيبة. ترسل لي ملاحظاتك بعد كل جولة («الافتتاحية حادة»، «يختفي بعد ٣ ساعات») وأعطيك التعديل الجاي بالأرقام.</p>
+</section>
+
+<!-- ============ PILOT ============ -->
+<section id="pilot">
+  <div class="sec-head">
+    <span class="k">جس النبض</span>
+    <h2>البداية البسيطة خطوة بخطوة</h2>
+    <p>الهدف إنك تعرف إذا الناس بتدفع قبل ما تصرف فلوس الإنتاج الكبير. الناس اللي يسألونك عن عطورك هم أول جمهور عندك.</p>
+  </div>
+  <ol class="steps">
+    <li><span class="w">أسبوع ١–٢</span><div><h3>الموجز</h3><p>اكتب ١٠ عطور من مجموعتك ووش تحب في كل واحد: الافتتاحية؟ الثبات؟ الإحساس؟ وأنا أحولها لموجز تقني. نختار ٣ أفكار ونرسلها لعطّارين.</p></div></li>
+    <li><span class="w">أسبوع ٣–١٠</span><div><h3>التطوير</h3><p>٣–٥ جولات تعديل لكل فكرة. جرّب كل تعديل على الجلد ٨ ساعات، ومرّة وحدة على الأقل في جو حار برّا.</p></div></li>
+    <li><span class="w">أسبوع ٨–١٢</span><div><h3>اختبار أعمى</h3><p>عيّنات ٢ مل بأرقام بدون أسماء لـ٤٠–٦٠ شخص من دائرتك ومن متابعينك، مع ورقة تقييم: عجبك؟ كم ثبت؟ بكم تشتريه؟</p><span class="gate">قرار: نكمّل بالعطر اللي ٦٠٪ أو أكثر قالوا «أشتريه»</span></div></li>
+    <li><span class="w">أسبوع ١٠–١٤</span><div><h3>الهوية والتسجيل</h3><p>الاسم والشعار والقارورة والعلبة. وبالتوازي السجل التجاري والعلامة التجارية وإشعار المنتج في SFDA، ومتجر على سلة أو زد.</p></div></li>
+    <li><span class="w">أسبوع ١٢–١٦</span><div><h3>طلب مسبق</h3><p>افتح الطلب المسبق بخصم للأوائل، ومعه «صندوق اكتشاف» فيه ٣ عيّنات بـ٤٩–٧٩ ريال تنخصم من أول قارورة.</p><span class="gate">قرار: لو وصلت الطلبات المسبقة ١٥٠ أو أكثر، اطلب الدفعة كاملة</span></div></li>
+    <li><span class="w">أسبوع ١٦–٢٢</span><div><h3>الإنتاج والتعتيق</h3><p>الخلط، والتعتيق ٣–٦ أسابيع، والتبريد والفلترة، والتعبئة. العطر يتحسن كثير مع التعتيق فلا تستعجله.</p></div></li>
+    <li><span class="w">بعد ٩٠ يوم</span><div><h3>القرار الكبير</h3><p>راقب نسبة البيع ونسبة إعادة الشراء.</p><span class="gate">قرار: بيع ٧٠٪ أو أكثر من الدفعة + إعادة شراء ٢٠٪ أو أكثر = وسّع وأضف عطر ثالث</span></div></li>
+  </ol>
+</section>
+
+<!-- ============ LEGAL ============ -->
+<section id="legal">
+  <div class="sec-head">
+    <span class="k">التراخيص</span>
+    <h2>اللي تحتاجه قبل أول بيعة</h2>
+    <p>المتطلبات تتغير، فتأكد من كل بند مع الجهة نفسها قبل ما تصرف.</p>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>السجل التجاري</h3><p>من وزارة التجارة، ولازم يشمل نشاط تجارة مستحضرات التجميل والعطور. وسجّل متجرك الإلكتروني في المركز السعودي للأعمال.</p></div>
+    <div class="card"><h3>هيئة الغذاء والدواء</h3><p>كل عطر لازم يُشعَر به في نظام eCosma قبل البيع أو الاستيراد، مع ملصق عربي وإنجليزي وقائمة المكونات وشهادة تحليل، ومطابقة لـ GSO 1943. ولو بتستورد تحتاج ترخيص مستودع من الهيئة.</p></div>
+    <div class="card"><h3>العلامة التجارية</h3><p>سجّل الاسم والشعار في الهيئة السعودية للملكية الفكرية تحت الفئة ٣ (العطور) قبل الإعلان. وتأكد قبل كذا إن الاسم ما هو مسجل.</p></div>
+    <div class="card"><h3>التصنيع</h3><p>أغلب البراندات الناشئة تعبّي عند مصنع متعاقد مرخّص، في السعودية أو الإمارات أو فرنسا. وهو اللي يتكفل بالكحول وتراخيصه، وأنت تورّد له الزيت أو يشتريه بالنيابة عنك.</p></div>
+    <div class="card"><h3>الضريبة</h3><p>التسجيل في ضريبة القيمة المضافة إلزامي لما تتعدى مبيعاتك ٣٧٥ ألف ريال بالسنة، واختياري من ١٨٧٬٥ ألف. الحاسبة فوق تحسب الضريبة ١٥٪ من سعر البيع احتياطاً.</p></div>
+  </div>
+</section>
+
+<footer>
+  <span>كل الأسعار تقديرية للتخطيط، وتتغير حسب المورد والكمية وسعر الصرف (محسوب ٣٫٧٥ ريال للدولار). اطلب ٣ عروض أسعار على الأقل لكل بند.</span>
+  <span>سعر الورد الطائفي مأخوذ من أسعار التولة المعلنة (٤٠٠–٨٠٠ دولار لكل ١٢ مل). متطلبات هيئة الغذاء والدواء بحسب أدلة eCosma المنشورة في ٢٠٢٦.</span>
+</footer>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const ar=new Intl.NumberFormat('ar-SA',{maximumFractionDigits:0});
+  const f0=n=>ar.format(Math.round(n));
+  const presets={
+    lean:{size:50,conc:0.25,oil:400,tier:'pre',scents:2,per:150,price:265,dev:4000,brand:4000,content:3000,legal:4000,samples:2000,mkt:8000,deliv:28},
+    std:{size:100,conc:0.25,oil:450,tier:'pre',scents:2,per:250,price:395,dev:7500,brand:12000,content:8000,legal:6000,samples:4000,mkt:25000,deliv:28},
+    lux:{size:100,conc:0.3,oil:900,tier:'lux',scents:3,per:300,price:595,dev:15000,brand:25000,content:15000,legal:8000,samples:6000,mkt:50000,deliv:28}
+  };
+  const tiers={std:{bottle:9,pump:2.5,cap:6,box:5},pre:{bottle:18,pump:5,cap:14,box:12},lux:{bottle:35,pump:8,cap:25,box:25}};
+  const keys=Object.keys(presets.std);
+  let current='std';
+
+  function setPreset(name){
+    const p=presets[name];
+    keys.forEach(k=>{$(k).value=p[k];});
+    current=name; markPreset(); calc();
+  }
+  function markPreset(){
+    document.querySelectorAll('.presets button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===current)));
+  }
+  function v(id){return parseFloat($(id).value)||0}
+
+  const tip=$('tip');
+  function bindTip(el,text){
+    el.addEventListener('mousemove',e=>{tip.textContent=text;tip.hidden=false;
+      const w=tip.offsetWidth;let x=e.clientX-w/2;x=Math.max(8,Math.min(x,innerWidth-w-8));
+      tip.style.left=x+'px';tip.style.top=(e.clientY-40)+'px';});
+    el.addEventListener('mouseleave',()=>{tip.hidden=true});
+  }
+  function drawBar(barId,legId,items,unit){
+    const total=items.reduce((s,i)=>s+Math.max(0,i.v),0)||1;
+    const bar=$(barId),leg=$(legId);bar.innerHTML='';leg.innerHTML='';
+    bar.setAttribute('aria-label',items.map(i=>i.n+' '+f0(i.v)+' '+unit).join('، '));
+    items.forEach(i=>{
+      const pct=Math.max(0,i.v)/total*100;
+      if(pct>0){const s=document.createElement('div');s.className='seg';s.style.flex=pct+' 0 0';s.style.background=i.c;
+        bindTip(s,i.n+': '+f0(i.v)+' '+unit+' ('+f0(pct)+'٪)');bar.appendChild(s);}
+      const li=document.createElement('li');if(i.hl)li.className='hl';
+      li.innerHTML='<i style="background:'+i.c+'"></i><span>'+i.n+'</span><span class="v num">'+f0(i.v)+' '+unit+'</span><span class="p num">'+f0(pct)+'٪</span>';
+      leg.appendChild(li);
+    });
+  }
+
+  function calc(){
+    const size=v('size'),conc=v('conc'),oil=v('oil'),t=tiers[$('tier').value];
+    const scents=Math.max(1,Math.round(v('scents'))),per=Math.max(1,Math.round(v('per')));
+    const price=v('price'),deliv=v('deliv');
+    $('oilOut').textContent=f0(oil)+' $';
+    const k=size===50?0.8:1;
+    const grams=size*conc*0.88;
+    const cOil=grams/1000*oil*3.75;
+    const cGlass=(t.bottle+t.cap)*k+t.pump;
+    const cBox=t.box*k;
+    const cFill=size===100?8:5;
+    const cShip=size===100?6:4;
+    const unit=cOil+cGlass+cBox+cFill+cShip;
+    const ex=price/1.15, vat=price-ex, fees=price*0.025;
+    const rev=ex-deliv-fees;
+    const net=rev-unit;
+    const units=scents*per;
+    const oneoff=v('dev')*scents+v('brand')+v('content')+v('legal')+v('samples')+v('mkt');
+    const capital=(unit*units+oneoff)*1.1;
+    const be=rev>0?Math.ceil(capital/rev):Infinity;
+    const kgPer=grams*per/1000;
+
+    $('kUnit').textContent=f0(unit);
+    $('kUnitS').textContent='منها زيت '+f0(cOil)+' ريال ('+ar.format(Math.round(grams))+' غرام زيت)';
+    $('kNet').textContent=f0(net);
+    $('kCap').textContent=f0(capital);
+    $('kCapS').textContent=f0(units)+' قارورة · '+ar.format(Math.round(kgPer*10)/10)+' كغ زيت لكل عطر';
+    const beS=$('kBeS');
+    if(!isFinite(be)){beS.innerHTML='<span class="pill bad">السعر أقل من التكاليف</span>'}
+    else{const r=be/units;const cls=r<=0.6?'good':r<=0.95?'warn':'bad';
+      const txt=r<=0.6?'تتعادل بسرعة':r<=0.95?'تتعادل قبل ما تخلص الدفعة':'تحتاج دفعة ثانية لتتعادل';
+      beS.innerHTML='<span class="pill '+cls+'">'+txt+'</span> من أصل '+f0(units);}
+    $('kBe').textContent=isFinite(be)?f0(be):'—';
+
+    $('c1sub').textContent='المجموع '+f0(unit)+' ريال لقارورة '+f0(size)+' مل';
+    drawBar('bar1','leg1',[
+      {n:'الزيت العطري',v:cOil,c:'var(--s1)'},
+      {n:'القارورة والغطاء والبخاخ',v:cGlass,c:'var(--s2)'},
+      {n:'العلبة',v:cBox,c:'var(--s3)'},
+      {n:'الكحول والتعبئة والتعتيق',v:cFill,c:'var(--s4)'},
+      {n:'الشحن والجمارك',v:cShip,c:'var(--s5)'}
+    ],'ر.س');
+
+    const setupPer=(oneoff+ (unit*units+oneoff)*0.1)/units;
+    const profit=price-vat-unit-deliv-fees-setupPer;
+    drawBar('bar2','leg2',[
+      {n:'ضريبة القيمة المضافة',v:vat,c:'var(--g2)'},
+      {n:'تكلفة القارورة',v:unit,c:'var(--g1)'},
+      {n:'التوصيل ورسوم الدفع',v:deliv+fees,c:'var(--g4)'},
+      {n:'التأسيس والتسويق والاحتياطي',v:setupPer,c:'var(--g3)'},
+      {n:'ربحك من الدفعة الأولى',v:profit,c:'var(--accent)',hl:true}
+    ],'ر.س');
+    const next=units*net-v('mkt');
+    $('c2note').innerHTML=(profit>0
+      ?'الدفعة الأولى تربح تقريباً <b class="num">'+f0(profit*units)+'</b> ريال لو انباعت كلها. '
+      :'الدفعة الأولى ما تغطي تكاليف التأسيس، وهذا طبيعي في جس النبض. ')
+      +'الربح الحقيقي في الدفعات اللي بعدها: كل دفعة بنفس الحجم ومعها نفس ميزانية التسويق تربح تقريباً <b class="num">'+f0(next)+'</b> ريال.';
+  }
+
+  document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>setPreset(b.dataset.p)));
+  document.getElementById('f').addEventListener('input',()=>{current='';markPreset();calc();});
+  document.getElementById('f').addEventListener('submit',e=>e.preventDefault());
+  setPreset('std');
+})();
+</script>
+
+</body></html>
