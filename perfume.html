@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="دراسة تأسيس براند عطور سعودي: حاسبة تكاليف، الزيوت، البخاخ، تركيبات أولية، وخطة جس النبض."></head><body>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="دراسة تأسيس براند عطور سعودي: حاسبة تكاليف، الزيوت، البخاخ، التغليف، تركيبات أولية، العيّنة الأولى، وخطة جس النبض."></head><body>
 <title>دفتر براند العطر</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,6 +186,23 @@ tfoot td{font-weight:700;color:var(--ink);background:var(--raise)}
 
 footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-size:.82rem;color:var(--faint);max-width:80ch;display:grid;gap:6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* unboxing */
+.unbox{list-style:none;margin:0;padding:0;display:grid;gap:0;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.unbox li{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line-soft)}
+.unbox li:last-child{border-bottom:0}
+.unbox .d{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;background:var(--accent-soft);color:var(--accent-ink)}
+.unbox li.wow .d{background:var(--accent);color:var(--surface)}
+.unbox h3{font-size:1rem;margin-bottom:2px}
+.unbox p{font-size:.92rem;color:var(--muted)}
+.unbox .t{font-size:.76rem;color:var(--faint);font-weight:600}
+.door{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;align-items:start}
+@media (max-width:760px){.door{grid-template-columns:1fr}}
+.door svg{width:100%;height:auto;max-width:100%;display:block}
+.eval{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:6px}
+@media (max-width:560px){.eval{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.eval div{background:var(--raise);border-radius:6px;padding:8px 10px;font-size:.84rem}
+.eval b{display:block;color:var(--ink);font-size:.9rem}
 </style>
 
 <div class="page" dir="rtl" lang="ar">
@@ -202,7 +219,7 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-si
 </header>
 
 <nav class="toc" aria-label="أقسام الصفحة">
-  <a href="#calc">الحاسبة</a><a href="#oils">الزيوت</a><a href="#spray">البخاخ</a><a href="#who">مين يصمم</a><a href="#formulas">التركيبات</a><a href="#pilot">خطة جس النبض</a><a href="#legal">التراخيص</a>
+  <a href="#calc">الحاسبة</a><a href="#oils">الزيوت</a><a href="#spray">البخاخ</a><a href="#box">التغليف</a><a href="#who">مين يصمم</a><a href="#formulas">التركيبات</a><a href="#sample">أول عيّنة</a><a href="#pilot">خطة جس النبض</a><a href="#legal">التراخيص</a>
 </nav>
 
 <!-- ============ CALCULATOR ============ -->
@@ -359,6 +376,65 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-si
         <li>المضخات المخصّصة بالكامل تبدأ عادة من ١٠ آلاف قطعة. في البداية اختر من الكتالوج وخصّص الزر والطوق فقط.</li>
       </ul>
     </div>
+  </div>
+</section>
+
+<!-- ============ PACKAGING ============ -->
+<section id="box">
+  <div class="sec-head">
+    <span class="k">التغليف</span>
+    <h2>صندوق الباب النجدي</h2>
+    <p>أغلب علب العطور تعتمد على الشكل: تفتح وتلقى القارورة وخلاص. الفكرة هنا إن الصندوق يمشّيك بتجربة مرتبة. أول شي تشم العطر، بعدين تشوفه، وآخر شي تفهم وش فيه. والشكل مأخوذ من الأبواب النجدية الملوّنة بالمثلثات، وهذي هوية سعودية ما يقدر أحد برّا ينسخها بسهولة.</p>
+  </div>
+
+  <div class="door">
+    <div class="card">
+      <svg viewBox="0 0 300 250" aria-label="رسم الصندوق مفتوح: بابين نجديين على الجانبين والقارورة في الوسط">
+        <rect x="95" y="40" width="110" height="190" rx="3" fill="var(--sunk)" stroke="var(--line)"/>
+        <g>
+          <path d="M95 40 L28 58 L28 212 L95 230 Z" fill="var(--raise)" stroke="var(--line)"/>
+          <g fill="var(--s1)"><path d="M40 80 l12 -10 l12 10 z"/><path d="M40 110 l12 -10 l12 10 z"/><path d="M40 140 l12 -10 l12 10 z"/><path d="M40 170 l12 -10 l12 10 z"/></g>
+          <g fill="var(--s4)"><path d="M66 80 l10 -8 l10 8 z"/><path d="M66 110 l10 -8 l10 8 z"/><path d="M66 140 l10 -8 l10 8 z"/><path d="M66 170 l10 -8 l10 8 z"/></g>
+          <path d="M205 40 L272 58 L272 212 L205 230 Z" fill="var(--raise)" stroke="var(--line)"/>
+          <g fill="var(--s1)"><path d="M236 80 l12 -10 l12 10 z"/><path d="M236 110 l12 -10 l12 10 z"/><path d="M236 140 l12 -10 l12 10 z"/><path d="M236 170 l12 -10 l12 10 z"/></g>
+          <g fill="var(--s4)"><path d="M214 80 l10 -8 l10 8 z"/><path d="M214 110 l10 -8 l10 8 z"/><path d="M214 140 l10 -8 l10 8 z"/><path d="M214 170 l10 -8 l10 8 z"/></g>
+        </g>
+        <rect x="136" y="72" width="28" height="20" rx="3" fill="var(--faint)"/>
+        <rect x="124" y="92" width="52" height="110" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <rect x="104" y="180" width="10" height="26" rx="2" fill="var(--rose)"/>
+        <rect x="186" y="186" width="12" height="20" rx="1" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="150" y="246" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Sans Arabic, sans-serif">القارورة في الوسط · المادة الخام يسار · البطاقة يمين</text>
+      </svg>
+      <p class="meta">رسم توضيحي للفكرة، والتصميم النهائي يسويه مصمم تغليف.</p>
+    </div>
+    <ol class="unbox">
+      <li><span class="d">١</span><div><span class="t">الإمساك</span><h3>علبة ثقيلة بلون واحد مطفي</h3><p>بدون أي طباعة من برّا، بس الاسم محفور بالضغط. أول إحساس: وزن وهدوء.</p></div></li>
+      <li><span class="d">٢</span><div><span class="t">الفتح</span><h3>الغطاء ينزل لحاله ببطء</h3><p>علبة تلسكوبية مقاساتها مضبوطة، والهواء اللي داخلها يخلي الغطاء ينزل ٣–٤ ثواني. هنا يبدأ الانتظار.</p></div></li>
+      <li class="wow"><span class="d">٣</span><div><span class="t">النفحة الأولى</span><h3>تشم العطر قبل ما تشوفه</h3><p>بطانة البابين مطبوعة بحبر عطري بنفس ريحة العطر (حبر فيه كبسولات عطر صغيرة جداً). أول ما ينفتح الصندوق تطلع الريحة.</p></div></li>
+      <li class="wow"><span class="d">٤</span><div><span class="t">الكشف</span><h3>بابين نجديين ينفتحون للجانبين</h3><p>تسحب شريط، والبابين المزخرفين بالمثلثات ينفتحون، والقارورة واقفة في النص كأنها تستقبلك في المجلس. ولون زخرفة الباب يتغير حسب العطر.</p></div></li>
+      <li class="wow"><span class="d">٥</span><div><span class="t">الفهم</span><h3>قارورة المادة الخام</h3><p>قارورة صغيرة ١ مل فيها أغلى مادة في عطرك، مخففة ١٠٪: ورد طائفي، أو هيل، أو شيح. ومكتوب عليها «هذا اللي في عطرك». الزبون يشم الخام بنفسه، وهذي تثبت فكرة «أفضل الزيوت» بدل ما تكون كلام إعلان.</p></div></li>
+      <li><span class="d">٦</span><div><span class="t">الانتماء</span><h3>بطاقة التركيبة بخط يدك</h3><p>رقم الدفعة ورقم القارورة مكتوبة باليد («دفعة ١ · رقم ٠٤٧ من ٥٠٠»)، ونسبة المواد الطبيعية، وتوقيعك.</p></div></li>
+      <li><span class="d">٧</span><div><span class="t">اللعب</span><h3>بطاقة «رشّ هنا» سوداء</h3><p>ورقة سوداء يرشّ عليها أول رشة ويشوف شكل الرذاذ المصمم لعطره: سحابة واسعة أو رذاذ مركّز. هذي تربط الصندوق بفكرة البخاخ.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="cols" style="margin-top:14px">
+    <div class="card"><h3>لمسة لكل عطر</h3>
+      <ul>
+        <li><b>شيح وعرفج:</b> زخرفة رمادي سماوي، ومعها حجر فخار صغير غير مطلي. تنقط عليه نقطتين ويصير فوّاحة للمكتب.</li>
+        <li><b>قهوة شقراء:</b> زخرفة ذهبي وبني، والمادة الخام هيل.</li>
+        <li><b>ورد طائفي:</b> زخرفة وردي غامق وأخضر، والمادة الخام ورد طائفي مخفف.</li>
+      </ul></div>
+    <div class="card"><h3>التكلفة التقريبية لكل صندوق</h3>
+      <ul>
+        <li>علبة صلبة تلسكوبية مع بابين وحشوة: ٣٠–٦٠ ريال بكمية ٣٠٠–٥٠٠</li>
+        <li>حبر عطري على البطانة: ٢–٥ ريال</li>
+        <li>قارورة المادة الخام: ٣ ريال للهيل والشيح، و١٢–٢٥ ريال للورد الطائفي</li>
+        <li>البطاقتين: ٢–٤ ريال</li>
+      </ul>
+      <span class="meta">المجموع تقريباً ٤٠–٩٠ ريال، مقابل ١٢ في خيار «ممتاز» بالحاسبة.</span></div>
+    <div class="card rec"><span class="badge">اقتراحي</span><h3>«الإصدار الأول» مرقّم</h3>
+      <p>أول ١٠٠–٢٠٠ قارورة من كل عطر تجي بالصندوق الكامل، مرقّمة وبسعر أعلى بـ٥٠–١٠٠ ريال. وبعدها نسخة أبسط فيها الباب والمادة الخام والبطاقة، بدون الغطاء البطيء والحبر العطري. الإصدار المرقّم يصير شي يتجمّع ويتصوّر، وهو تسويقك المجاني في سناب وتيك توك.</p></div>
   </div>
 </section>
 
@@ -536,6 +612,55 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-si
   <p class="note"><b>تنبيه:</b> هذي تركيبات مكتوبة على الورق وأنا ما أقدر أشم. فائدتها إنها تعطي العطّار فكرة واضحة وهيكل متوازن يبدأ منه. التوازن النهائي يطلع من المختبر ومن أنفك أنت. وقبل البيع لازم فحص IFRA لكل تركيبة. ترسل لي ملاحظاتك بعد كل جولة («الافتتاحية حادة»، «يختفي بعد ٣ ساعات») وأعطيك التعديل الجاي بالأرقام.</p>
 </section>
 
+<!-- ============ SAMPLE ============ -->
+<section id="sample">
+  <div class="sec-head">
+    <span class="k">أول عيّنة</span>
+    <h2>كيف تشم التركيبات بيدك</h2>
+    <p>التركيبة على الورق لازم أحد يوزنها مادة مادة على ميزان دقيق. ١٠ غرام من المركّز تكفي تقريباً ٤٥ مل عطر، وهذي كمية ممتازة للتجربة. عندك ثلاث طرق.</p>
+  </div>
+  <div class="cols">
+    <div class="card rec"><span class="badge">الأسهل للبداية</span><h3>مختبر أو عطّار يركّبها لك</h3>
+      <p>ترسل التركيبات الثلاث بالأرقام، ويوزنها ويرسل لك العيّنات.</p>
+      <ul>
+        <li>في دبي فيه مختبرات تطوير عطور تشتغل مع البراندات الناشئة، وفي الرياض وجدة عطّارين محترفين ومصانع صغيرة. اسأل كل واحد: «تركّب لي تركيبة جاهزة بالغرامات؟»</li>
+        <li>وفيه خدمات تركيب بالبريد، مثل خدمة Compound my formula في Perfumers World.</li>
+        <li><b>اطلب ٣ نسخ من كل تركيبة:</b> النسخة صفر، ونسخة فيها الأكورد الرئيسي أقوى، ونسخة أنعم. بكذا تتعلم أسرع بثلاث مرات.</li>
+      </ul>
+      <span class="meta">تقريباً ٣٠٠–١٥٠٠ ريال للتركيبة حسب الخامات · ١–٣ أسابيع</span></div>
+    <div class="card"><h3>تركّبها بنفسك</h3>
+      <p>أسرع طريقة تتعلم فيها وتعدّل كل يوم، بس تحتاج صبر في البداية.</p>
+      <ul>
+        <li>ميزان دقة ٠٫٠٠١ غرام (٣٠٠–٨٠٠ ريال)، ماصّات، أكواب زجاج صغيرة، قوارير عيّنات، وورق شم.</li>
+        <li>التركيبات الثلاث فيها تقريباً ٤٥ مادة مختلفة، وكثير منها مشترك. ٥–١٠ غرام من كل مادة بتكلفك تقريباً ١٥٠٠–٤٠٠٠ ريال، ويزيد عليها الورد الطائفي.</li>
+        <li>بعض المواد تنشحن كبضاعة خطرة لأنها قابلة للاشتعال، فتأكد من الشحن للسعودية قبل ما تطلب. وخفّف العيّنات بـ DPG للشم، أو خل مصنع مرخّص يخففها بالكحول.</li>
+      </ul>
+      <span class="meta">مناسبة لو ودك تتعلم الصنعة بنفسك</span></div>
+    <div class="card"><h3>بيت عطور يطلّع لك عروض</h3>
+      <p>ترسل لهم الموجز والتركيبة كمرجع، ويرسلون لك عيّنات مجاناً عادةً إذا شافوا إنك بتشتري كميات.</p>
+      <ul><li>يعيدون تفسير الفكرة بخاماتهم، فالنتيجة ما تكون تركيبتك بالضبط</li><li>مفيدة كمقارنة جنب الطريقة الأولى</li></ul>
+      <span class="meta">مجاني تقريباً · ٢–٦ أسابيع</span></div>
+  </div>
+
+  <div class="panel" style="margin-top:14px">
+    <h3 style="font-size:1.02rem;margin-bottom:6px">لما توصلك العيّنة</h3>
+    <ul class="checks">
+      <li><span><b>خلها ترتاح:</b> المركّز يرتاح ٤٨ ساعة، بعدين ينخفف لـ٢٢–٢٥٪ ويتعتّق أسبوع على الأقل (والأفضل ٣). العطر الطازج يكذب.</span></li>
+      <li><span><b>ورق شم وجلد:</b> ورقة شم للتحليل، وجلد يدك للحكم الحقيقي. وجرّب مرة في مكان مكيّف ومرة برّا في الحر.</span></li>
+      <li><span><b>٣ عيّنات بالكثير في الجلسة الوحدة.</b> وبين عيّنة وعيّنة شم كم جلدك أو كمّك.</span></li>
+      <li><span><b>قارن مع عطر تعرفه:</b> حط عطر من مجموعتك تحبه جنب العيّنة عشان يكون عندك مرجع للقوة والثبات.</span></li>
+    </ul>
+    <div class="eval">
+      <div><b>أول دقيقة</b>الافتتاحية: حادة؟ منعشة؟</div>
+      <div><b>١٥ دقيقة</b>القلب بدأ يبان؟</div>
+      <div><b>ساعة</b>الفوحان: كم يبعد عنك؟</div>
+      <div><b>٤ ساعات</b>وش باقي؟ عجبك؟</div>
+      <div><b>٨ ساعات</b>الثبات والأثر الأخير</div>
+    </div>
+    <p class="note">اكتب ملاحظتك عند كل وقت وأرسلها لي كذا: «النسخة ب، ساعة: الجيوسمين طاغي وريحته طين». وأنا أرجع لك التعديل الجاي بالأرقام.</p>
+  </div>
+</section>
+
 <!-- ============ PILOT ============ -->
 <section id="pilot">
   <div class="sec-head">
@@ -572,7 +697,7 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-si
 
 <footer>
   <span>كل الأسعار تقديرية للتخطيط، وتتغير حسب المورد والكمية وسعر الصرف (محسوب ٣٫٧٥ ريال للدولار). اطلب ٣ عروض أسعار على الأقل لكل بند.</span>
-  <span>سعر الورد الطائفي مأخوذ من أسعار التولة المعلنة (٤٠٠–٨٠٠ دولار لكل ١٢ مل). متطلبات هيئة الغذاء والدواء بحسب أدلة eCosma المنشورة في ٢٠٢٦.</span>
+  <span>سعر الورد الطائفي مأخوذ من أسعار التولة المعلنة (٤٠٠–٨٠٠ دولار لكل ١٢ مل). متطلبات هيئة الغذاء والدواء بحسب أدلة eCosma المنشورة في ٢٠٢٦. تكاليف التغليف والعيّنات تقديرية وتتأكد منها بعروض أسعار.</span>
 </footer>
 </div>
 
