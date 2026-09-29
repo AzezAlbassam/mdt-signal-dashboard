@@ -1,0 +1,680 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Screen</title>
+<meta name="description" content="Every US-listed dividend payer and fast grower from $300M to $50B, read from its own SEC filings and ranked best to worst by ten rules for each style.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --pos-soft:#E4EBDD; --neg-soft:#F0DFD9; --warn-soft:#EFE7CC;
+  --grid:#E2E2DB;
+  --c1:#8F6A12; --c2:#0E6FA8; --c3:#A14430;
+  --v-strong:#4C6839; --v-candidate:#B08A1E; --v-watch:#9A9A90; --v-avoid:#A14430;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+  --v-strong:#86A866; --v-candidate:#CBA84A; --v-watch:#6E6E66; --v-avoid:#C86348;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --pos-soft:#232A1C; --neg-soft:#2E1F1A; --warn-soft:#322B17;
+  --grid:#2C2C27;
+  --c1:#B08D2E; --c2:#2E8FC4; --c3:#C86348;
+  --v-strong:#86A866; --v-candidate:#CBA84A; --v-watch:#6E6E66; --v-avoid:#C86348;
+}
+*{box-sizing:border-box}
+html{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px 80px}
+@media(min-width:640px){.wrap{padding:0 22px 80px}}
+header{padding:56px 0 26px}
+h1{color:var(--ink);font-size:clamp(1.9rem,5vw,2.7rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.04rem;color:var(--muted);max-width:66ch;margin:0}
+.back{display:inline-block;font-size:.8rem;color:var(--muted);text-decoration:none;margin-bottom:22px}
+.back:hover{color:var(--accent)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+p{max-width:66ch}
+
+/* tabs */
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:4px;
+ border-bottom:1px solid var(--line);margin:0 -16px;padding:0 16px}
+@media(min-width:640px){.tabs{margin:0;padding:0}}
+.tabs button{appearance:none;background:none;border:none;border-bottom:2px solid transparent;
+ color:var(--muted);font:inherit;font-size:.98rem;font-weight:650;padding:13px 14px 11px;
+ cursor:pointer;margin-bottom:-1px;display:flex;align-items:baseline;gap:8px}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tabs .ct{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:var(--faint);font-weight:600}
+.tabs .sp{flex:1}
+.tabs .asof{align-self:center;font-size:.7rem;color:var(--faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;display:none}
+@media(min-width:760px){.tabs .asof{display:block}}
+
+.intro{margin:22px 0 4px;color:var(--muted);font-size:.95rem;max-width:74ch}
+
+/* verdict tiles */
+.vt{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:18px 0 0}
+@media(min-width:640px){.vt{grid-template-columns:repeat(4,1fr)}}
+.vt button{appearance:none;text-align:left;background:var(--surface);border:1px solid var(--line);
+ border-radius:5px;padding:12px 14px 11px;cursor:pointer;font:inherit;color:inherit;position:relative;overflow:hidden}
+.vt button::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--vc)}
+.vt button:hover{border-color:var(--vc)}
+.vt button[aria-pressed="false"]{opacity:.45}
+.vt button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vt .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.3rem;color:var(--ink);font-weight:650;line-height:1.2}
+.vt .l{font-size:.72rem;color:var(--muted);line-height:1.35;margin-top:2px}
+.vt .l b{color:var(--ink);font-weight:650;text-transform:capitalize}
+
+/* controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:14px 0 0;
+ padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:5px}
+.ctl{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ctl label{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.ctl select,.ctl input[type=search]{background:var(--bg);color:var(--ink);border:1px solid var(--line);
+ border-radius:4px;padding:6px 9px;font-size:.87rem;font-family:inherit;min-width:0;width:100%}
+.ctl.q{flex:1 1 180px}
+.ctl.s{flex:0 1 170px}
+.chk{display:flex;align-items:center;gap:7px;font-size:.85rem;padding-bottom:6px;color:var(--body)}
+.chk input{accent-color:var(--accent);width:15px;height:15px;margin:0}
+
+/* chart */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:5px;margin:14px 0 0;padding:14px 14px 8px}
+.chart-h{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.chart-t{color:var(--ink);font-size:.95rem;font-weight:650;margin:0}
+.chart-s{font-size:.8rem;color:var(--muted);margin:2px 0 0;max-width:70ch}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.74rem;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+svg.sc{width:100%;height:auto;display:block;overflow:visible}
+svg.sc text{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:var(--faint)}
+svg.sc .gl{stroke:var(--grid);stroke-width:1}
+svg.sc .ax{stroke:var(--line);stroke-width:1}
+svg.sc .zone{fill:var(--accent-soft);opacity:.55}
+svg.sc .r40{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+svg.sc circle{stroke:var(--surface);stroke-width:.8;cursor:pointer}
+svg.sc circle.rv{stroke:var(--ink);stroke-width:1.2}
+svg.sc circle:hover{stroke:var(--ink);stroke-width:2}
+svg.sc text.zl{fill:var(--accent);font-family:system-ui,sans-serif;font-size:10.5px;font-weight:600}
+
+/* table */
+.tmeta{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;
+ font-size:.78rem;color:var(--faint);margin:18px 0 8px}
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.8rem;min-width:980px}
+th{text-align:right;padding:9px 7px;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap;
+ background:var(--raise)}
+th button{appearance:none;background:none;border:none;font:inherit;color:inherit;letter-spacing:inherit;
+ text-transform:inherit;cursor:pointer;padding:0}
+th button:hover,th.on button{color:var(--accent)}
+th .ar{opacity:.6;font-size:.7rem;margin-left:2px}
+th.l,td.l{text-align:left}
+td{padding:7px 7px;text-align:right;border-bottom:1px solid var(--line-soft);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;color:var(--body)}
+tbody tr.row{cursor:pointer}
+tbody tr.row:hover td{background:var(--raise)}
+tbody tr.row.open td{background:var(--raise);border-bottom-color:transparent}
+td.rk{color:var(--faint);font-size:.76rem;width:1%}
+.tk{color:var(--ink);font-weight:700}
+.nm{font-family:system-ui,sans-serif;color:var(--body);font-size:.8rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;display:block}
+.sub{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--faint);display:block;line-height:1.3}
+.vd{display:inline-block;font-family:system-ui,sans-serif;font-size:.7rem;font-weight:650;padding:2px 7px;border-radius:3px;
+ min-width:66px;text-align:center;text-transform:capitalize;letter-spacing:.01em}
+.vd.strong{background:var(--pos);color:var(--bg)}
+.vd.candidate{background:var(--accent-soft);color:var(--accent)}
+.vd.watch{background:var(--sunk);color:var(--body)}
+.vd.avoid{background:transparent;color:var(--neg);box-shadow:inset 0 0 0 1px var(--neg)}
+.vd.unrated{background:transparent;color:var(--faint);box-shadow:inset 0 0 0 1px var(--line)}
+.dots{display:inline-flex;gap:2px;vertical-align:middle;margin-right:6px}
+.dots i{width:6px;height:11px;border-radius:1.5px;display:block}
+.dots i.p{background:var(--pos)}
+.dots i.f{background:transparent;box-shadow:inset 0 0 0 1px var(--neg);opacity:.75}
+.dots i.n{background:var(--line-soft);height:3px;align-self:center}
+.pc{color:var(--ink);font-weight:650}
+.good{color:var(--pos)}
+.bad{color:var(--neg)}
+.dim{color:var(--faint)}
+.badge{font-family:system-ui,sans-serif;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+ padding:1px 4px;border-radius:2px;margin-left:5px;vertical-align:1px}
+.badge.rv{background:var(--accent-soft);color:var(--accent)}
+.badge.lo{background:var(--neg-soft);color:var(--neg)}
+.badge.md{background:var(--warn-soft);color:var(--warn)}
+tr.avoidrow td{opacity:.68}
+tr.avoidrow:hover td,tr.avoidrow.open td{opacity:1}
+.more{display:block;margin:12px auto 0;appearance:none;background:var(--surface);border:1px solid var(--line);
+ color:var(--ink);border-radius:4px;padding:8px 16px;font:inherit;font-size:.85rem;cursor:pointer}
+.more:hover{border-color:var(--accent)}
+.empty{padding:30px;text-align:center;color:var(--muted);font-family:system-ui,sans-serif;white-space:normal}
+
+/* detail */
+tr.det td{padding:0;background:var(--raise);text-align:left;white-space:normal;font-family:system-ui,sans-serif;border-bottom:1px solid var(--line)}
+.dwrap{padding:14px 16px 18px;display:grid;gap:18px;grid-template-columns:1fr;position:sticky;left:0;width:min(100vw - 34px,1076px)}
+@media(min-width:900px){.dwrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}}
+.dh{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.dh b{color:var(--ink);font-size:1.02rem}
+.dh span{font-size:.8rem;color:var(--muted)}
+.dh a{font-size:.8rem;color:var(--accent);text-decoration:none;font-weight:650}
+.dh a:hover{text-decoration:underline}
+ol.rl{list-style:none;padding:0;margin:0;font-size:.84rem}
+ol.rl li{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--line-soft)}
+ol.rl li:last-child{border-bottom:none}
+ol.rl .mk{font-weight:800;font-size:.8rem;text-align:center}
+ol.rl .mk.p{color:var(--pos)} ol.rl .mk.f{color:var(--neg)} ol.rl .mk.n{color:var(--faint)}
+ol.rl .rn{color:var(--ink)}
+ol.rl .rv{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:var(--body);text-align:right}
+ol.rl .rt{display:block;font-size:.72rem;color:var(--faint);line-height:1.35}
+@media(max-width:560px){
+ ol.rl li{grid-template-columns:18px 1fr}
+ ol.rl .rv{grid-column:2;text-align:left;white-space:normal}
+}
+.minis{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:560px){.minis{grid-template-columns:1fr 1fr}}
+.mini h4{margin:0 0 2px;font-size:.78rem;color:var(--ink);font-weight:650}
+.mini p{margin:0 0 4px;font-size:.72rem;color:var(--faint)}
+svg.mc{width:100%;height:auto;display:block;overflow:visible}
+svg.mc text{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:var(--faint)}
+svg.mc .gl{stroke:var(--grid)}
+.dnotes{grid-column:1/-1;font-size:.78rem;color:var(--muted);margin:0;padding:0 0 0 16px}
+.dnotes li{margin:2px 0;max-width:110ch}
+.dnotes li.w{color:var(--warn)}
+.why{grid-column:1/-1;font-size:.82rem;color:var(--neg);margin:0}
+
+.method{margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
+.method summary{cursor:pointer;color:var(--accent);font-weight:650;font-size:.9rem}
+.method h3{color:var(--ink);font-size:1rem;margin:22px 0 6px}
+.method p,.method li{font-size:.9rem;max-width:72ch}
+.method ol{padding-left:20px}
+.method ol li{margin:4px 0}
+.method ol li b{color:var(--ink)}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:.8rem;color:var(--faint);max-width:78ch}
+.load{padding:60px 0;text-align:center;color:var(--muted)}
+.load.err{color:var(--neg)}
+</style></head><body><div class="wrap">
+
+<header>
+ <a class="back" href="index.html">&larr; All studies</a>
+ <p class="eyebrow" id="eyebrow">Stock screen &middot; read from SEC filings</p>
+ <h1>Dividends and growth, ranked</h1>
+ <p class="lede">Every US-listed dividend payer from $300M to $15B, and every company from $300M
+ to $50B whose revenue grew a third in three years &mdash; read from its own 10-K filings and
+ ranked from best to worst by ten rules for each style.</p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Screens">
+ <button role="tab" id="tab-div" aria-controls="panel" aria-selected="true" data-tab="div">Dividends <span class="ct" id="ct-div"></span></button>
+ <button role="tab" id="tab-growth" aria-controls="panel" aria-selected="false" data-tab="growth">Growth <span class="ct" id="ct-growth"></span></button>
+ <span class="sp"></span>
+ <span class="asof" id="asof"></span>
+</nav>
+
+<main id="panel" role="tabpanel" aria-labelledby="tab-div">
+ <p class="intro" id="intro"></p>
+ <div class="vt" id="vt"></div>
+ <div class="controls">
+  <div class="ctl q"><label for="q">Search</label><input type="search" id="q" placeholder="Ticker or company" autocomplete="off"></div>
+  <div class="ctl s"><label for="sector">Sector</label><select id="sector"></select></div>
+  <div class="ctl s"><label for="cap">Size</label><select id="cap">
+   <option value="">Any size</option><option value="0-2">Under $2B</option><option value="2-5">$2B&ndash;$5B</option>
+   <option value="5-15">$5B&ndash;$15B</option><option value="15-99">Over $15B</option></select></div>
+  <label class="chk"><input type="checkbox" id="hideLow"> Hide low-confidence reads</label>
+  <label class="chk" id="rvWrap"><input type="checkbox" id="rvOnly"> Reviewed by hand only</label>
+ </div>
+ <div class="chart" id="chart"></div>
+ <div class="tmeta"><span id="tcount"></span><span>Click a row for the rule-by-rule read and its history.</span></div>
+ <div class="twrap"><table><thead id="thead"></thead><tbody id="tbody"><tr><td class="load" colspan="14">Loading&hellip;</td></tr></tbody></table></div>
+ <button class="more" id="more" hidden></button>
+
+ <details class="method" id="method">
+  <summary>How the numbers are made, and what they can&rsquo;t tell you</summary>
+  <div id="methodBody"></div>
+ </details>
+</main>
+
+<footer>Research and analysis only &mdash; not financial advice. Figures are read by code from
+companies&rsquo; XBRL filings with the SEC and can inherit filing errors; the confidence mark and
+the notes under each company say where the read needed judgement. The 43 companies marked
+<em>reviewed</em> were checked by hand against the filings. Prices are a snapshot and move daily.</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const fin = v => typeof v === 'number' && isFinite(v);
+const VERDICTS = ['strong', 'candidate', 'watch', 'avoid'];
+const VLABEL = { strong: 'Strong', candidate: 'Candidate', watch: 'Watch', avoid: 'Avoid', unrated: 'Unrated' };
+const VNOTE = {
+  strong: 'passes 80%+ of its rules, the two key ones included',
+  candidate: 'passes 60%+, worth a closer look',
+  watch: 'passes 40%+, not there yet',
+  avoid: 'fails most rules, or trips a hard stop',
+};
+
+let DATA = null, SERIES = null, seriesLoading = null;
+let tab = location.hash === '#growth' ? 'growth' : 'div';
+const state = {
+  div: { q: '', sector: '', cap: '', hideLow: false, rvOnly: false, verdicts: new Set(VERDICTS), sort: 'rank', dir: 1, shown: 120, open: null },
+  growth: { q: '', sector: '', cap: '', hideLow: false, rvOnly: false, verdicts: new Set(VERDICTS), sort: 'rank', dir: 1, shown: 120, open: null },
+};
+
+// ---- formatting ------------------------------------------------------------
+const pct = (v, d = 1) => fin(v) ? (Math.abs(v) >= 998 ? '>999%' : v.toFixed(d) + '%') : '—';
+const cap = v => !fin(v) ? '—' : v >= 1e9 ? '$' + (v / 1e9).toFixed(v >= 1e10 ? 0 : 1) + 'B' : '$' + Math.round(v / 1e6) + 'M';
+const times = v => !fin(v) ? '—' : Math.abs(v) >= 998 ? 'n/m' : v <= 0 ? 'net cash' : v.toFixed(1) + '×';
+const money = v => !fin(v) ? '—' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2));
+const mm = v => !fin(v) ? '—' : Math.abs(v) >= 1000 ? '$' + (v / 1000).toFixed(1) + 'B' : '$' + Math.round(v) + 'M';
+const cls = (v, good, bad) => !fin(v) ? 'dim' : good(v) ? 'good' : bad && bad(v) ? 'bad' : '';
+
+// ---- per-tab definitions -----------------------------------------------------
+const TABS = {
+  div: {
+    key: 'd', label: 'Dividends',
+    intro: 'Ranked by how many of the ten dividend-growth rules each company passes, then by the snowball score (yield, growth, payout, size, streak). The target is a small company whose dividend grows fast enough that the yield on what you pay today is large in twenty years.',
+    cols: [
+      { k: 'y', t: 'Yield', v: c => c.d.y, f: c => `<span class="${cls(c.d.y, v => v >= 1.5 && v <= 4)}">${pct(c.d.y, 2)}</span>` },
+      { k: 'g5', t: 'Div growth', title: 'Five-year growth of the regular dividend per share, a year', v: c => c.d.g5, f: c => `<span class="${cls(c.d.g5, v => v >= 8, v => v < 4)}">${pct(c.d.g5)}</span>` },
+      { k: 'st', t: 'Raises', title: 'Consecutive yearly increases (a + means the run starts before the filed data does)', v: c => c.d.st, f: c => fin(c.d.st) ? `<span class="${c.d.st >= 10 ? 'good' : ''}">${c.d.st}${c.d.so ? '+' : ''}</span>` : '—' },
+      { k: 'po', t: 'Payout', title: 'Regular dividends as a share of free cash flow over three years (earnings for utilities and financials)', v: c => c.d.po, f: c => `<span class="${cls(c.d.po, v => v >= 20 && v <= 60, v => v > 90)}">${pct(c.d.po, 0)}</span>` },
+      { k: 'roic', t: 'ROIC', v: c => c.d.roic, f: c => `<span class="${cls(c.d.roic, v => v > 12, v => v < 6)}">${pct(c.d.roic, 0)}</span>` },
+      { k: 'nde', t: 'Debt/EBITDA', v: c => c.d.nde, f: c => `<span class="${cls(c.d.nde, v => v < 2.5, v => v > 4)}">${times(c.d.nde)}</span>` },
+      { k: 'mc', t: 'Size', v: c => c.mc, f: c => cap(c.mc) },
+    ],
+  },
+  growth: {
+    key: 'g', label: 'Growth',
+    intro: 'Ranked by how many of the ten growth rules each company passes, then by a quality-growth score (revenue growth, free-cash-flow margin and return on capital, less dilution and a stretched price). The target is growth that pays for itself and that the owner keeps.',
+    cols: [
+      { k: 'rg', t: 'Rev growth', title: 'Revenue growth a year over the last three fiscal years', v: c => c.g.rg, f: c => `<span class="${cls(c.g.rg, v => v >= 15, v => v < 5)}">${pct(c.g.rg)}</span>` },
+      { k: 'ry', t: 'Last year', title: 'Revenue growth in the latest fiscal year', v: c => c.g.ry, f: c => `<span class="${cls(c.g.ry, v => v >= 10, v => v < 0)}">${pct(c.g.ry)}</span>` },
+      { k: 'gm', t: 'Gross m.', title: 'Gross margin', v: c => c.g.gm, f: c => `<span class="${cls(c.g.gm, v => v >= 40)}">${pct(c.g.gm, 0)}</span>` },
+      { k: 'fm', t: 'FCF m.', title: 'Free-cash-flow margin, latest year', v: c => c.g.fm, f: c => `<span class="${cls(c.g.fm, v => v >= 10, v => v < 0)}">${pct(c.g.fm, 0)}</span>` },
+      { k: 'roic', t: 'ROIC', v: c => c.g.roic, f: c => `<span class="${cls(c.g.roic, v => v >= 15, v => v < 5)}">${pct(c.g.roic, 0)}</span>` },
+      { k: 'dil', t: 'Dilution', title: 'Diluted share count growth a year over three years', v: c => c.g.dil, f: c => `<span class="${cls(c.g.dil, v => v < 3, v => v > 8)}">${pct(c.g.dil)}</span>` },
+      { k: 'peg', t: 'PEG', title: 'P/E ÷ three-year EPS growth', v: c => c.g.peg, f: c => fin(c.g.peg) ? `<span class="${cls(c.g.peg, v => v > 0 && v < 2, v => v > 3)}">${c.g.peg.toFixed(2)}</span>` : '<span class="dim">—</span>' },
+      { k: 'r40', t: 'Rule of 40', v: c => c.g.r40, f: c => `<span class="${cls(c.g.r40, v => v >= 40, v => v < 20)}">${fin(c.g.r40) ? Math.round(c.g.r40) : '—'}</span>` },
+      { k: 'mc', t: 'Size', v: c => c.mc, f: c => cap(c.mc) },
+    ],
+  },
+};
+
+// ---- ranking ------------------------------------------------------------------
+const TIER = { strong: 0, candidate: 1, watch: 2, avoid: 3, unrated: 4 };
+function rankTab(k) {
+  const rows = DATA.companies.filter(c => c[k]);
+  rows.sort((a, b) => {
+    const A = a[k], B = b[k];
+    return TIER[A.v] - TIER[B.v]
+      || (B.of ? B.pass / B.of : 0) - (A.of ? A.pass / A.of : 0)
+      || B.pass - A.pass
+      || (B.sc ?? -1e9) - (A.sc ?? -1e9)
+      || a.s.localeCompare(b.s);
+  });
+  rows.forEach((c, i) => { c['rank_' + k] = i + 1; });
+  return rows;
+}
+
+function filtered(k, ignoreVerdict = false) {
+  const st = state[tab], key = TABS[tab].key;
+  const q = st.q.trim().toLowerCase();
+  const [lo, hi] = st.cap ? st.cap.split('-').map(Number) : [null, null];
+  return RANKED[tab].filter(c => {
+    const x = c[key];
+    // unrated rows (too few testable rules) show only while every verdict is switched on
+    if (!ignoreVerdict && (x.v === 'unrated' ? st.verdicts.size < VERDICTS.length : !st.verdicts.has(x.v))) return false;
+    if (q && !c.s.toLowerCase().startsWith(q) && !c.n.toLowerCase().includes(q)) return false;
+    if (st.sector && c.sec !== st.sector) return false;
+    if (lo != null && !(c.mc >= lo * 1e9 && c.mc < hi * 1e9)) return false;
+    if (st.hideLow && x.conf === 'low') return false;
+    if (st.rvOnly && !c.ver) return false;
+    return true;
+  });
+}
+
+function sortedRows(rows) {
+  const st = state[tab];
+  if (st.sort === 'rank') return st.dir === 1 ? rows : rows.slice().reverse();
+  const col = TABS[tab].cols.find(c => c.k === st.sort);
+  const get = st.sort === 'tk' ? c => c.s : col.v;
+  return rows.slice().sort((a, b) => {
+    const A = get(a), B = get(b);
+    if (typeof A === 'string') return A.localeCompare(B) * st.dir;
+    const na = !fin(A), nb = !fin(B);
+    if (na && nb) return 0;
+    if (na) return 1;
+    if (nb) return -1;
+    return (A - B) * -st.dir;
+  });
+}
+
+// ---- rendering -----------------------------------------------------------------
+let RANKED = {};
+
+function dots(r) {
+  return '<span class="dots" aria-hidden="true">' + r.map(x => `<i class="${x === 1 ? 'p' : x === 0 ? 'f' : 'n'}"></i>`).join('') + '</span>';
+}
+
+function renderTiles() {
+  const st = state[tab], key = TABS[tab].key;
+  const base = filtered(key, true);
+  const n = v => base.filter(c => c[key].v === v).length;
+  $('#vt').innerHTML = VERDICTS.map(v => `<button type="button" aria-pressed="${st.verdicts.has(v)}" data-v="${v}" style="--vc:var(--v-${v})">
+    <div class="n">${n(v)}</div><div class="l"><b>${VLABEL[v]}</b> &middot; ${VNOTE[v]}</div></button>`).join('');
+}
+
+function renderHead() {
+  const st = state[tab];
+  const arrow = k => st.sort === k ? `<span class="ar">${st.dir === 1 ? '▾' : '▴'}</span>` : '';
+  const th = (k, t, cl = '', title = '') => `<th class="${cl}${st.sort === k ? ' on' : ''}"${title ? ` title="${esc(title)}"` : ''}><button type="button" data-sort="${k}">${t}${arrow(k)}</button></th>`;
+  $('#thead').innerHTML = '<tr>' + th('rank', '#', 'l') + th('tk', 'Company', 'l') + '<th class="l">Verdict</th><th class="l">Rules</th>'
+    + TABS[tab].cols.map(c => th(c.k, c.t, '', c.title)).join('') + '</tr>';
+}
+
+function renderBody() {
+  const st = state[tab], key = TABS[tab].key;
+  const rows = sortedRows(filtered(key));
+  const ncol = 4 + TABS[tab].cols.length;
+  $('#tcount').textContent = `${rows.length} of ${RANKED[tab].length} companies`;
+  if (!rows.length) {
+    $('#tbody').innerHTML = `<tr><td class="empty" colspan="${ncol}">No company matches these filters.</td></tr>`;
+    $('#more').hidden = true;
+    return;
+  }
+  const shown = rows.slice(0, st.shown);
+  $('#tbody').innerHTML = shown.map(c => {
+    const x = c[key];
+    const conf = x.conf === 'low' ? '<span class="badge lo" title="Low confidence: the filings needed several repairs or disagree with themselves — check before relying on it">low</span>'
+      : x.conf === 'medium' ? '<span class="badge md" title="Medium confidence: one repair or gap in the filed data">med</span>' : '';
+    const rv = c.ver && tab === 'div' ? '<span class="badge rv" title="Checked by hand against the filings">reviewed</span>' : '';
+    const open = st.open === c.s;
+    return `<tr class="row${x.v === 'avoid' ? ' avoidrow' : ''}${open ? ' open' : ''}" data-s="${c.s}" tabindex="0" aria-expanded="${open}">
+      <td class="rk l">${c['rank_' + key]}</td>
+      <td class="l"><span class="tk">${c.s}</span>${rv}${conf}<span class="nm" title="${esc(c.n)}">${esc(c.n)}</span></td>
+      <td class="l"><span class="vd ${x.v}">${VLABEL[x.v]}</span></td>
+      <td class="l">${dots(x.r)}<span class="pc">${x.pass}</span><span class="dim">/${x.of}</span></td>
+      ${TABS[tab].cols.map(col => `<td>${col.f(c)}</td>`).join('')}
+    </tr>` + (open ? `<tr class="det"><td colspan="${ncol}">${detail(c)}</td></tr>` : '');
+  }).join('');
+  const left = rows.length - shown.length;
+  $('#more').hidden = left <= 0;
+  $('#more').textContent = `Show ${Math.min(left, 120)} more (${left} left)`;
+}
+
+// ---- scatter -------------------------------------------------------------------
+function renderChart() {
+  const key = TABS[tab].key;
+  const rows = filtered(key).filter(c => c[key].v !== 'unrated');
+  const W = 1060, H = 300, L = 44, R = 12, T = 14, B = 30;
+  const conf = tab === 'div'
+    ? { x: c => c.d.y, y: c => c.d.g5, x0: 0, x1: 8, y0: -10, y1: 35, xt: [0, 1.5, 4, 6, 8], yt: [-10, 0, 8, 20, 35],
+        xl: 'Yield on the current regular dividend', yl: 'Dividend growth, 5 yrs',
+        t: 'Yield against dividend growth', s: 'The shaded box is where rules 2 and 3 both pass: a 1.5–4% yield growing at 8% a year or faster. Points past the edges sit on them.' }
+    : { x: c => c.g.ry, y: c => c.g.fm, x0: -10, x1: 80, y0: -30, y1: 50, xt: [-10, 0, 20, 40, 60, 80], yt: [-30, 0, 20, 50],
+        xl: 'Revenue growth, latest year', yl: 'Free-cash-flow margin',
+        t: 'Growth against cash generation', s: 'Above the dashed line, growth plus free-cash-flow margin reaches 40 — the Rule of 40. Points past the edges sit on them.' };
+  const sx = v => L + (Math.max(conf.x0, Math.min(conf.x1, v)) - conf.x0) / (conf.x1 - conf.x0) * (W - L - R);
+  const sy = v => T + (1 - (Math.max(conf.y0, Math.min(conf.y1, v)) - conf.y0) / (conf.y1 - conf.y0)) * (H - T - B);
+  let g = '';
+  for (const t of conf.yt) g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${sy(t)}" y2="${sy(t)}"/><text x="${L - 6}" y="${sy(t) + 3}" text-anchor="end">${t}%</text>`;
+  for (const t of conf.xt) g += `<line class="gl" y1="${T}" y2="${H - B}" x1="${sx(t)}" x2="${sx(t)}"/><text x="${sx(t)}" y="${H - B + 14}" text-anchor="middle">${t}%</text>`;
+  if (tab === 'div') {
+    g = `<rect class="zone" x="${sx(1.5)}" y="${sy(conf.y1)}" width="${sx(4) - sx(1.5)}" height="${sy(8) - sy(conf.y1)}"/>` + g
+      + `<text class="zl" x="${sx(2.75)}" y="${sy(conf.y1) + 13}" text-anchor="middle">rules 2 + 3</text>`;
+  } else {
+    const xa = Math.max(conf.x0, 40 - conf.y1), xb = Math.min(conf.x1, 40 - conf.y0);
+    g += `<line class="r40" x1="${sx(xa)}" y1="${sy(40 - xa)}" x2="${sx(xb)}" y2="${sy(40 - xb)}"/>`
+      + `<text class="zl" x="${sx(xa) + 6}" y="${sy(40 - xa) + 12}">Rule of 40</text>`;
+  }
+  g += `<text x="${W - R}" y="${H - 4}" text-anchor="end">${conf.xl} →</text>`;
+  g += `<text x="${L - 38}" y="${T - 4}">${conf.yl}</text>`;
+  const order = ['avoid', 'watch', 'candidate', 'strong'];
+  const pts = rows.filter(c => fin(conf.x(c)) && fin(conf.y(c)))
+    .sort((a, b) => order.indexOf(a[key].v) - order.indexOf(b[key].v))
+    .map(c => `<circle class="${c.ver && tab === 'div' ? 'rv' : ''}" data-s="${c.s}" cx="${sx(conf.x(c)).toFixed(1)}" cy="${sy(conf.y(c)).toFixed(1)}" r="${c[key].v === 'strong' ? 4.6 : 3.6}" fill="var(--v-${c[key].v})"><title>${c.s} · ${esc(c.n)} — ${VLABEL[c[key].v]}, ${conf.xl.toLowerCase()} ${pct(conf.x(c))}, ${conf.yl.toLowerCase()} ${pct(conf.y(c))}</title></circle>`).join('');
+  $('#chart').innerHTML = `<div class="chart-h"><div><p class="chart-t">${conf.t}</p><p class="chart-s">${conf.s}</p></div>
+    <div class="legend">${order.slice().reverse().map(v => `<span><i style="background:var(--v-${v})"></i>${VLABEL[v]}</span>`).join('')}</div></div>
+    <svg class="sc" viewBox="0 0 ${W} ${H}" role="img" aria-label="${conf.t}, ${rows.length} companies">${g}${pts}</svg>`;
+}
+
+// ---- detail --------------------------------------------------------------------
+function ruleValues(c) {
+  const d = c.d, g = c.g;
+  if (tab === 'div') return [
+    cap(c.mc),
+    `${pct(d.y, 2)} · ${money(d.dps)} on ${money(c.p)}`,
+    fin(d.g5) ? `${pct(d.g5)} a yr over ${d.gy || 5} yrs` : 'too few years',
+    fin(d.po) ? `${pct(d.po, 0)} of ${d.pb === 'fcf' ? 'free cash flow' : d.pb === 'reviewed' ? 'cash flow (reviewed)' : 'earnings'}` : '—',
+    fin(d.st) ? `${d.st}${d.so ? '+' : ''} in a row` + (d.fy1 ? ` · paying since FY${d.fy1}` : '') : '—',
+    fin(d.cov) ? `${pct(d.cov)} vs ${pct(d.g5)}` : '—',
+    pct(d.roic),
+    times(d.nde),
+    d.moat ? esc(d.moat) : 'not assessed',
+    d.cuts?.length ? `cut in FY${d.cuts.join(', FY')}` : d.r[9] === 1 ? 'no cut' : '—',
+  ];
+  return [
+    fin(g.rg) ? `${pct(g.rg)} a yr` : '—',
+    fin(g.ry) ? `${g.up}/${g.seen} yrs up · last ${pct(g.ry)}` : '—',
+    pct(g.gm),
+    fin(g.om) ? `${pct(g.om)} (${fin(g.omc) ? (g.omc >= 0 ? '+' : '') + g.omc.toFixed(1) + ' pts' : '—'})` : '—',
+    `${g.fp ?? 0} of 3 years positive`,
+    pct(g.roic),
+    times(g.nde),
+    fin(g.dil) ? `${pct(g.dil)} a yr` : '—',
+    fin(g.peg) ? `${g.peg.toFixed(2)} (P/E ${g.pe}, EPS +${g.eg}%)` : fin(g.pe) ? `P/E ${g.pe}, EPS growth ${pct(g.eg)}` : 'no positive earnings',
+    fin(g.r40) ? `${Math.round(g.r40)} (${pct(g.ry, 0)} + ${pct(g.fm, 0)})` : '—',
+  ];
+}
+
+function detail(c) {
+  const key = TABS[tab].key, x = c[key];
+  const rules = tab === 'div' ? DATA.divRules : DATA.growthRules;
+  const vals = ruleValues(c);
+  const rl = rules.map((R, i) => {
+    const r = x.r[i];
+    return `<li><span class="mk ${r === 1 ? 'p' : r === 0 ? 'f' : 'n'}">${r === 1 ? '✓' : r === 0 ? '✕' : '–'}</span>
+      <span><span class="rn">${esc(R.name)}</span><span class="rt">${esc(R.test)}</span></span><span class="rv">${vals[i]}</span></li>`;
+  }).join('');
+  const S = SERIES?.[c.s];
+  const links = [c.ver && tab === 'div' ? `<a href="dividend-stock.html#${c.ver}">Full reviewed analysis →</a>` : '',
+    `<a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${encodeURIComponent(c.cik || c.s)}&type=10-K" target="_blank" rel="noopener">10-K filings on EDGAR ↗</a>`].join('');
+  const head = `<div class="dh"><b>${esc(c.n)}</b><span>${c.x} · ${esc(c.sec)} · ${cap(c.mc)} at ${money(c.p)} · last 10-K FY${c.fy.slice(0, 4)} (to ${c.fy})</span>${links}</div>`;
+  const why = x.why?.length ? `<p class="why">Hard stop: ${esc(x.why.join('; '))}.</p>` : '';
+  let charts = '<div class="minis"><div class="mini"><p>Loading history…</p></div></div>', notes = '';
+  if (S) {
+    charts = tab === 'div'
+      ? `<div class="minis">${mini('Dividend per share', 'Regular, split-adjusted; specials stacked lighter', S.fy, [{ v: S.dps, c: 'var(--c1)' }, { v: S.dsp, c: 'var(--accent-soft)' }], money)}
+         ${mini('Free cash flow and dividends paid', '$ millions a year', S.fy, [{ v: S.fcf, c: 'var(--c2)', line: false }, { v: S.div, c: 'var(--c1)', line: true }], mm)}</div>`
+      : `<div class="minis">${mini('Revenue', '$ millions a year', S.fy, [{ v: S.rev, c: 'var(--c2)' }], mm)}
+         ${mini('Free cash flow', '$ millions a year', S.fy, [{ v: S.fcf, c: 'var(--c1)' }], mm)}</div>`;
+    const items = [...(S.splits || []).map(s => [0, `${s[0]} (between filings of ${s[1][0]} and ${s[1][1] || 'later'}); history is on today's share basis.`]), ...(S.notes || [])];
+    if (items.length) notes = `<ul class="dnotes">${items.map(n => `<li class="${n[0] ? 'w' : ''}">${esc(n[1])}</li>`).join('')}</ul>`;
+  }
+  return `<div class="dwrap">${head}${why}<ol class="rl">${rl}</ol>${charts}${notes}</div>`;
+}
+
+// Small bar chart; a series flagged line draws as a line over the bars.
+function mini(title, sub, fy, sets, fmt) {
+  const W = 300, H = 118, L = 4, R = 4, T = 14, B = 16;
+  const bars = sets.filter(s => s.v && !s.line), lines = sets.filter(s => s.v && s.line);
+  const stackTop = fy.map((_, i) => bars.reduce((s, b) => s + Math.max(0, b.v[i] || 0), 0));
+  const all = [...stackTop, ...bars.flatMap(b => b.v.map(v => v || 0)), ...lines.flatMap(l => l.v.map(v => v || 0))];
+  const hi = Math.max(0, ...all), lo = Math.min(0, ...all);
+  if (hi === lo) return `<div class="mini"><h4>${title}</h4><p>No filed figures.</p></div>`;
+  const y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const n = fy.length, bw = (W - L - R) / n;
+  let s = `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/>`;
+  fy.forEach((f, i) => {
+    let base = 0;
+    bars.forEach(b => {
+      const v = b.v[i];
+      if (!fin(v) || v === 0) return;
+      if (v > 0) { s += `<rect x="${(L + i * bw + bw * .16).toFixed(1)}" width="${(bw * .68).toFixed(1)}" y="${y(base + v).toFixed(1)}" height="${(y(base) - y(base + v)).toFixed(1)}" rx="1.5" fill="${b.c}"/>`; base += v; }
+      else s += `<rect x="${(L + i * bw + bw * .16).toFixed(1)}" width="${(bw * .68).toFixed(1)}" y="${y(0).toFixed(1)}" height="${(y(v) - y(0)).toFixed(1)}" rx="1.5" fill="var(--neg)" opacity=".75"/>`;
+    });
+    if (i === 0 || i === n - 1 || n <= 8) s += `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 3}" text-anchor="middle">${String(f).slice(2)}</text>`;
+  });
+  lines.forEach(l => {
+    const p = l.v.map((v, i) => fin(v) ? `${(L + i * bw + bw / 2).toFixed(1)},${y(v).toFixed(1)}` : null).filter(Boolean);
+    if (p.length > 1) s += `<polyline points="${p.join(' ')}" fill="none" stroke="${l.c}" stroke-width="1.8"/>`;
+    p.forEach(pt => { const [cx, cy] = pt.split(','); s += `<circle cx="${cx}" cy="${cy}" r="1.9" fill="${l.c}"/>`; });
+  });
+  const lastBar = bars[0]?.v, last = lastBar ? lastBar[n - 1] : null;
+  if (fin(last)) s += `<text x="${W - R}" y="${Math.max(9, y(Math.max(last, 0)) - 4)}" text-anchor="end" style="fill:var(--ink)">${fmt(last)}</text>`;
+  const legend = lines.length ? ` · line: dividends paid` : '';
+  return `<div class="mini"><h4>${title}</h4><p>${sub}${legend}</p><svg class="mc" viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">${s}</svg></div>`;
+}
+
+async function ensureSeries() {
+  if (SERIES) return;
+  seriesLoading ||= fetch('screen-series.json').then(r => r.json()).then(j => { SERIES = j; });
+  try { await seriesLoading; } catch { SERIES = {}; }
+  renderBody();
+}
+
+// ---- method ----------------------------------------------------------------------
+function renderMethod() {
+  const list = rules => '<ol>' + rules.map(r => `<li><b>${esc(r.name)}.</b> ${esc(r.test)}.</li>`).join('') + '</ol>';
+  $('#methodBody').innerHTML = `
+  <h3>Where every figure comes from</h3>
+  <p>Each company&rsquo;s own XBRL filings with the SEC (the structured data inside its 10-Ks and
+  10-Qs), pulled ${esc(DATA.generated)}. Prices and market values are a ${esc(DATA.prices.source)}
+  snapshot from ${esc(DATA.prices.asOf)}. Nothing is estimated by an analyst or a data vendor.</p>
+  <h3>How the dividend history is rebuilt</h3>
+  <p>A 10-K restates the last three years&rsquo; dividends per share for any split since, but
+  older years only exist in older filings, on the old share basis. The screen walks every filing
+  newest to oldest and compares each with the newer basis on the years both report; a ratio that
+  matches a split converts everything older, and a split seen in the dividend figures but not in
+  the share counts is overruled. Years with no annual figure are rebuilt from the four quarters,
+  or from dividends paid &divide; average shares. A quarter that spikes above both neighbours and
+  falls straight back is a special dividend and is left out of growth, payout and yield.</p>
+  <h3>Dividend rules</h3>${list(DATA.divRules)}
+  <p>Hard stops, whatever the count: a cut to the regular dividend in the last five years, a
+  payout above 90%, or net debt above 4&times; EBITDA. Banks, REITs, funds and partnerships are
+  left out &mdash; their payout can&rsquo;t be measured against free cash flow.</p>
+  <h3>Growth rules</h3>${list(DATA.growthRules)}
+  <p>Hard stops: revenue that fell last year, three years without free cash flow while carrying
+  net debt, or a share count growing more than 10% a year. Insurers are left out of this tab.</p>
+  <h3>Verdicts</h3>
+  <p>Strong passes at least 80% of the rules it could be tested on, including the two that matter
+  most for the style (dividend growth and payout; revenue growth and free cash flow). Candidate
+  passes 60%, watch 40%. A rule that can&rsquo;t be tested &mdash; no gross margin reported, no
+  earnings for a PEG &mdash; drops out of the count rather than counting as a fail; the moat rule
+  is only judged for the hand-reviewed companies.</p>
+  <h3>What it can&rsquo;t tell you</h3>
+  <p>Everything here describes the past. The confidence mark says how much repair a
+  company&rsquo;s filings needed: <em>low</em> means two or more repairs, a gap, or a stale 10-K,
+  and the notes under the company say which. The automated read agrees with the hand-checked
+  figures for most of the 43 reviewed companies, but filings contain errors this can&rsquo;t
+  catch. Check the filing before acting on any single number.</p>`;
+}
+
+// ---- wiring ------------------------------------------------------------------------
+function syncControls() {
+  const st = state[tab];
+  $('#q').value = st.q; $('#sector').value = st.sector; $('#cap').value = st.cap;
+  $('#hideLow').checked = st.hideLow; $('#rvOnly').checked = st.rvOnly;
+  $('#rvWrap').hidden = tab !== 'div';
+  $('#intro').textContent = TABS[tab].intro;
+  for (const b of document.querySelectorAll('.tabs button')) b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+  $('#panel').setAttribute('aria-labelledby', 'tab-' + tab);
+}
+function renderAll() { syncControls(); renderTiles(); renderChart(); renderHead(); renderBody(); }
+function refresh() { state[tab].shown = 120; renderTiles(); renderChart(); renderBody(); }
+
+document.querySelector('.tabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-tab]');
+  if (!b || b.dataset.tab === tab) return;
+  tab = b.dataset.tab;
+  history.replaceState(null, '', tab === 'growth' ? '#growth' : '#dividends');
+  renderAll();
+});
+document.querySelector('.tabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  tab = tab === 'div' ? 'growth' : 'div';
+  history.replaceState(null, '', tab === 'growth' ? '#growth' : '#dividends');
+  renderAll();
+  $('#tab-' + tab).focus();
+});
+let qTimer;
+$('#q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { state[tab].q = e.target.value; refresh(); }, 120); });
+$('#sector').addEventListener('change', e => { state[tab].sector = e.target.value; refresh(); });
+$('#cap').addEventListener('change', e => { state[tab].cap = e.target.value; refresh(); });
+$('#hideLow').addEventListener('change', e => { state[tab].hideLow = e.target.checked; refresh(); });
+$('#rvOnly').addEventListener('change', e => { state[tab].rvOnly = e.target.checked; refresh(); });
+$('#vt').addEventListener('click', e => {
+  const b = e.target.closest('button[data-v]');
+  if (!b) return;
+  const set = state[tab].verdicts, v = b.dataset.v;
+  // first click isolates a verdict; clicking the only one left brings them all back
+  if (set.size === VERDICTS.length) { set.clear(); set.add(v); }
+  else if (set.has(v) && set.size === 1) VERDICTS.forEach(x => set.add(x));
+  else set.has(v) ? set.delete(v) : set.add(v);
+  refresh();
+});
+$('#thead').addEventListener('click', e => {
+  const b = e.target.closest('button[data-sort]');
+  if (!b) return;
+  const st = state[tab], k = b.dataset.sort;
+  if (st.sort === k) st.dir *= -1; else { st.sort = k; st.dir = k === 'rank' || k === 'tk' ? 1 : 1; }
+  renderHead(); renderBody();
+});
+function toggle(s) {
+  const st = state[tab];
+  st.open = st.open === s ? null : s;
+  renderBody();
+  if (st.open) ensureSeries();
+}
+$('#tbody').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const tr = e.target.closest('tr.row');
+  if (tr) toggle(tr.dataset.s);
+});
+$('#tbody').addEventListener('keydown', e => {
+  const tr = e.target.closest('tr.row');
+  if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(tr.dataset.s); }
+});
+$('#chart').addEventListener('click', e => {
+  const pt = e.target.closest('circle[data-s]');
+  if (!pt) return;
+  const st = state[tab], s = pt.dataset.s;
+  const idx = sortedRows(filtered(TABS[tab].key)).findIndex(c => c.s === s);
+  if (idx >= st.shown) st.shown = idx + 20;
+  st.open = s;
+  renderBody();
+  ensureSeries();
+  document.querySelector(`tr.row[data-s="${CSS.escape(s)}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
+$('#more').addEventListener('click', () => { state[tab].shown += 120; renderBody(); });
+
+fetch('screen-data.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
+  DATA = j;
+  RANKED = { div: rankTab('d'), growth: rankTab('g') };
+  $('#ct-div').textContent = RANKED.div.length;
+  $('#ct-growth').textContent = RANKED.growth.length;
+  $('#asof').textContent = `filings ${j.generated} · prices ${j.prices.asOf}`;
+  $('#eyebrow').textContent = `Stock screen · ${j.companies.length.toLocaleString()} companies · read from SEC filings`;
+  const sectors = [...new Set(j.companies.map(c => c.sec))].sort();
+  $('#sector').innerHTML = '<option value="">All sectors</option>' + sectors.map(s => `<option>${esc(s)}</option>`).join('');
+  renderMethod();
+  renderAll();
+}).catch(err => {
+  $('#tbody').innerHTML = `<tr><td class="load err" colspan="12">Couldn't load screen-data.json (${esc(err.message)}).</td></tr>`;
+});
+</script>
+</body></html>

@@ -9,23 +9,29 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Refresh prices
+      - name: Refresh prices on the reviewed shortlist
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: node tools/refresh-dividends.mjs
+      - name: Rebuild the full screen from SEC filings
+        # new 10-Ks and 10-Qs land every week; SEC needs no key, only a contact in the user agent
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || 'mdt-signal-dashboard research@example.com' }}
+        run: node tools/screen/build.mjs
       - name: Commit if anything changed
         run: |
-          if git diff --quiet -- dividend-data.json; then
+          if git diff --quiet -- dividend-data.json screen-data.json screen-series.json; then
             echo "No change."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dividend-data.json
-          git commit -m "Refresh dividend screen prices"
+          git add dividend-data.json screen-data.json screen-series.json
+          git commit -m "Refresh dividend and growth screens"
           git push
