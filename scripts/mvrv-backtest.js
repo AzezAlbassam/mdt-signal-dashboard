@@ -11,7 +11,7 @@
 //                   machinery cannot beat this, it is adding nothing.
 //     z>=7          Bitcoin only, the opposite claim: the red zone marks tops.
 //
-//   ADDED AFTER THE FIRST RUN, and labelled as such wherever it is reported:
+//   ADDED AFTER THE FIRST RUN (labelled "post-hoc" in the report and on the page):
 //     mvrvLow10     stocks: the MVRV RATIO in the lowest 10% of its own history so far.
 //                   zLow10 turned out to be dominated by the earliest decades, because σ
 //                   of an exponentially growing price grows with it — Boeing's flag fired
@@ -19,6 +19,10 @@
 //     BTC eras      mvrv<1 re-run from 2013 and from 2017, because the 2011–12 weeks carry
 //                   returns no later era can repeat and could manufacture an "edge".
 //     pooled        one test per signal across stocks, averaging independent rotations.
+//     btcMemory     stocks: mvrv<1 with the cost basis given Bitcoin's memory — a fixed
+//                   52-week half-life — instead of exchange turnover. Bitcoin's realized
+//                   price fits a 42–58 week half-life (measured below on Bitcoin alone;
+//                   no stock returns were looked at to choose it).
 //     wait rank     each episode's first-signal return ranked against buying in any of the
 //                   104 weeks AFTER it instead. Weekly p-values count the 44 weeks of one
 //                   episode as 44 observations; this counts it once, against its own era.
@@ -37,10 +41,6 @@
 //                   one stream for every stock, which is not the independent null described.
 //     wait rank     needs the full 104 later weeks; episodes already running when
 //                   eligibility starts are left out (their start is unknown).
-//     btcMemory     stocks: mvrv<1 with the cost basis given Bitcoin's memory — a fixed
-//                   52-week half-life — instead of exchange turnover. Bitcoin's realized
-//                   price fits a 42–58 week half-life (measured below on Bitcoin alone;
-//                   no stock returns were looked at to choose it).
 //
 //   STOCK REALIZED PRICE   turnover model, scale k = 1 primary; k = 0.25, 0.5, 2 reported
 //                          as sensitivity, never chosen between.
@@ -157,8 +157,9 @@ function episodeTable(d, mask, eligible) {
     return peers.length === 104 ? rankAmong(fwd[h][start], peers) : null
   }
   const first = eligible.indexOf(true)
-  // An episode already running when eligibility starts has no known start: left out.
-  const known = episodes(on, { mergeGap: 4 }).filter(({ start }) => !(start === first && first > 0 && mask[first - 1]))
+  // An episode already running when eligibility starts has no known start: left out. That
+  // includes one the 4-week merge gap would join to zone weeks just before eligibility.
+  const known = episodes(on, { mergeGap: 4 }).filter(({ start }) => !mask.slice(Math.max(0, start - 5), first).some(Boolean))
   return known.map(({ start, end }) => {
     const entry = d.o[start + 1] ?? d.c[start]
     const after = (h) => (start + h < d.c.length ? d.c[start + h] / entry - 1 : null)
@@ -345,6 +346,7 @@ for (const sigName of ['mvrv<1', 'mvrvLow10', 'zLow10', 'btcMemory', 'common:mvr
 
 // ---------------------------------------------------------------- report
 
+const POSTHOC = new Set(['mvrvLow10', 'btcMemory'])
 const pct = (x, digits = 0) => (x == null || !Number.isFinite(x) ? '   —' : `${x >= 0 ? '+' : ''}${(x * 100).toFixed(digits)}%`)
 const num = (x, digits = 2) => (x == null || !Number.isFinite(x) ? '—' : x.toFixed(digits))
 const pval = (p) => (p == null || !Number.isFinite(p) ? '—' : p < 0.001 ? '<0.001' : p.toFixed(3))
@@ -371,7 +373,7 @@ for (const [ticker, a] of Object.entries(results.assets)) {
   say(`${ticker}  (${a.group})  ${a.from} → ${a.to}, ${a.weeks} weeks${a.eligibleFrom ? `; counted from ${a.eligibleFrom}` : ''}`)
   const now = a.now
   say(`  now: price ${num(now.price, 2)}, realized/cost-basis price ${num(now.rp, 2)}, MVRV ${num(now.ratio, 2)}, Z ${num(now.z, 2)}${now.zFull != null ? ` (full-sample σ: ${num(now.zFull, 2)})` : ''}`)
-  for (const [name, ev] of Object.entries(a.signals)) signalBlock(name, ev)
+  for (const [name, ev] of Object.entries(a.signals)) signalBlock(POSTHOC.has(name) ? `${name} (post-hoc)` : name, ev)
   say('  -- same weeks (≥ 200), realized-price zone vs plain 200-week average:')
   for (const [name, ev] of Object.entries(a.common)) signalBlock(name, ev)
   if (a.memoryFit) {
@@ -404,13 +406,13 @@ for (const [ticker, a] of Object.entries(results.assets)) {
   }
   for (const [name, eps] of Object.entries(a.episodes)) {
     const parts = [52, 104, 156].map((h) => { const r = eraSummary(eps, h); return `${h}w ${r.above}/${r.n} beat waiting (mean rank ${pct(r.meanRank)}, sign p=${num(r.p, 3)})` })
-    say(`  -- episodes of ${name}: ${parts.join('; ')}`)
+    say(`  -- episodes of ${name} vs waiting (post-hoc): ${parts.join('; ')}`)
   }
 }
 
 // Pooled view across stocks.
 say('='.repeat(100))
-say('EPISODES vs WAITING — each zone entry counted once, ranked against buying in any of the next 104 weeks instead')
+say('EPISODES vs WAITING (post-hoc) — each zone entry counted once, ranked against buying in any of the next 104 weeks instead')
 for (const [ticker, a] of Object.entries(results.assets)) {
   for (const name of Object.keys(a.episodes)) {
     const r = [52, 104, 156].map((h) => eraSummary(a.episodes[name], h))
@@ -418,7 +420,7 @@ for (const [ticker, a] of Object.entries(results.assets)) {
   }
 }
 say()
-say('STOCKS POOLED — average log-edge across stocks vs averaged independent rotations, one stream per stock (optimistic: stocks are not independent)')
+say('STOCKS POOLED (post-hoc) — average log-edge across stocks vs averaged independent rotations, one stream per stock (optimistic: stocks are not independent)')
 for (const [sigName, byGroup] of Object.entries(results.pooled)) {
   for (const [group, byH] of Object.entries(byGroup)) {
     say(`  ${sigName.padEnd(15)} ${group.padEnd(9)} ${HORIZONS.map((h) => `${h}w ${num(byH[h].observed, 3).padStart(6)} p=${pval(byH[h].p)}`).join('   ')}`)

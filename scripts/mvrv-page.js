@@ -37,13 +37,13 @@ const row = (r) => ({
   medAll: fix(r.medianAll, 4),
   hit: fix(r.hitSignal, 3),
   hitAll: fix(r.hitAll, 3),
-  edge: fix(r.logEdge, 3),
-  p: fix(r.p, 4),
+  edge: fix(r.logEdge, 6),
+  p: fix(r.p, 6),
 })
 const signal = (ev) => ({
   share: fix(ev.share, 3),
   h: Object.fromEntries(Object.entries(ev.byH).map(([h, r]) => [h, row(r)])),
-  acc: { ratio: fix(ev.acc.ratio, 3), p: fix(ev.acc.p, 4), lo: fix(ev.acc.null05, 3), hi: fix(ev.acc.null95, 3), cashLeft: Math.round(ev.acc.cashLeft), paidIn: ev.acc.paidIn },
+  acc: { ratio: fix(ev.acc.ratio, 4), p: fix(ev.acc.p, 6), lo: fix(ev.acc.null05, 3), hi: fix(ev.acc.null95, 3), cashLeft: Math.round(ev.acc.cashLeft), paidIn: ev.acc.paidIn },
 })
 
 /** Episodes summarised against waiting, with the report's exact one-sided sign test. */
@@ -110,7 +110,7 @@ for (const [ticker, a] of Object.entries(results.assets)) {
 
 const pooled = {}
 for (const [sigName, byGroup] of Object.entries(results.pooled)) {
-  pooled[sigName] = Object.fromEntries(Object.entries(byGroup).map(([g, byH]) => [g, Object.fromEntries(Object.entries(byH).map(([h, r]) => [h, { edge: fix(r.observed, 3), p: fix(r.p, 4) }]))]))
+  pooled[sigName] = Object.fromEntries(Object.entries(byGroup).map(([g, byH]) => [g, Object.fromEntries(Object.entries(byH).map(([h, r]) => [h, { edge: fix(r.observed, 6), p: fix(r.p, 6) }]))]))
 }
 
 const pine = {

@@ -12,9 +12,9 @@
 //
 // Z < 0 is the same statement as MVRV < 1: the average holder is under water. That line
 // does not depend on the standard deviation. Everything above zero does — and because the
-// deviation grows as Bitcoin grows, each cycle's peak Z has come in lower than the last.
-// Daily peaks: ≈10 in 2013 and 2017, ≈7 in early 2021, ≈3.7 in late 2021, ≈3 to 3.4 in
-// 2024. Weekly closes print lower peaks (8.3 in Dec 2017, 6.96 in Feb 2021).
+// deviation grows as Bitcoin grows, each cycle's peak Z since 2013 has come in lower than
+// the last. Daily peaks: ≈10.7 in 2013, 10.1 in 2017, 7.2 in early 2021, 3.7 in late 2021,
+// 3.0 to 3.4 in 2024. Weekly closes print lower peaks (8.3 in Dec 2017, 6.96 in Feb 2021).
 //
 // Use it on INDEX:BTCUSD. The standard deviation counts from "Start counting from"
 // (default 2010-07-19, as in the backtest); a later start prints different numbers above zero.
@@ -29,7 +29,7 @@
 indicator("Bitcoin MVRV Z-Score (point in time)", shorttitle = "MVRV-Z", format = format.price, precision = 2)
 
 rcSymbol     = input.symbol("COINMETRICS:BTC_MARKETCAPREAL", "Realized cap (on-chain)")
-startTime    = input.time(timestamp("UTC", 2010, 7, 19, 0, 0), "Start counting from")
+startTime    = input.time(timestamp("19 Jul 2010 00:00 +0000"), "Start counting from")
 buyBelow     = input.float(0.0, "Buy zone: Z below", step = 0.1)
 topAbove     = input.float(7.0, "Top zone: Z above", step = 0.5)
 showRealized = input.bool(true, "Draw realized price on the price chart")

@@ -59,9 +59,9 @@ BTC  (bitcoin)  2010-07-19 → 2026-09-21, 844 weeks
      2018-11-19 → 2019-03-25 (19w) entry 3934.36  worst after -21%  1y +76%  2y +369%  3y +1394%   wait rank 1y +34% 2y +48% 3y +99%
      2020-03-09 → 2020-03-09 (1w) entry 5346.81  worst after -18%  1y +1003%  2y +607%  3y +316%   wait rank 1y +100% 2y +98% 3y +97%
      2022-06-13 → 2023-01-02 (30w) entry 20550.63  worst after -25%  1y +28%  2y +224%  3y +414%   wait rank 1y +11% 2y +50% 3y    —
-  -- episodes of mvrv<1: 52w 1/7 beat waiting (mean rank +27%, sign p=0.992); 104w 2/7 beat waiting (mean rank +48%, sign p=0.938); 156w 5/6 beat waiting (mean rank +84%, sign p=0.109)
-  -- episodes of z<0.5: 52w 4/10 beat waiting (mean rank +40%, sign p=0.828); 104w 3/8 beat waiting (mean rank +44%, sign p=0.855); 156w 5/7 beat waiting (mean rank +53%, sign p=0.227)
-  -- episodes of z>=7: 52w 1/3 beat waiting (mean rank +34%, sign p=0.875); 104w 0/3 beat waiting (mean rank +17%, sign p=1.000); 156w 0/3 beat waiting (mean rank +8%, sign p=1.000)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 1/7 beat waiting (mean rank +27%, sign p=0.992); 104w 2/7 beat waiting (mean rank +48%, sign p=0.938); 156w 5/6 beat waiting (mean rank +84%, sign p=0.109)
+  -- episodes of z<0.5 vs waiting (post-hoc): 52w 4/10 beat waiting (mean rank +40%, sign p=0.828); 104w 3/8 beat waiting (mean rank +44%, sign p=0.855); 156w 5/7 beat waiting (mean rank +53%, sign p=0.227)
+  -- episodes of z>=7 vs waiting (post-hoc): 52w 1/3 beat waiting (mean rank +34%, sign p=0.875); 104w 0/3 beat waiting (mean rank +17%, sign p=1.000); 156w 0/3 beat waiting (mean rank +8%, sign p=1.000)
 ====================================================================================================
 NVDA  (requested)  1999-01-18 → 2026-09-28, 1446 weeks; counted from 2001-01-16
   now: price 233.95, realized/cost-basis price 191.15, MVRV 1.22, Z 0.92
@@ -79,14 +79,14 @@ NVDA  (requested)  1999-01-18 → 2026-09-28, 1446 weeks; counted from 2001-01-1
              104w         +140%         +69%       +68%      +76%         -58%     0.250       0.153   (n=94/1238)
              156w         +352%        +168%       +77%      +78%         -54%     0.234       0.160   (n=94/1186)
             zone-only buying vs weekly DCA: 0.91× (random-timing 90% band 0.61–1.13, p=0.424), 99 buy weeks, 75 of 1341 units still in cash
-  mvrvLow10 on +5% of eligible weeks
+  mvrvLow10 (post-hoc) on +5% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +18%         +19%       +57%      +73%         -53%     0.014       0.546   (n=68/1316)
               52w          +67%         +36%       +84%      +73%         -69%     0.167       0.298   (n=68/1290)
              104w         +138%         +69%       +74%      +76%         -34%     0.358       0.073   (n=66/1238)
              156w         +426%        +168%       +91%      +78%         -17%     0.412       0.094   (n=66/1186)
             zone-only buying vs weekly DCA: 0.90× (random-timing 90% band 0.57–1.10, p=0.342), 68 buy weeks, 75 of 1341 units still in cash
-  btcMemory on +29% of eligible weeks
+  btcMemory (post-hoc) on +29% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +19%         +19%       +70%      +74%         -67%     0.008       0.513   (n=366/1247)
               52w          +29%         +39%       +75%      +76%         -61%    -0.031       0.610   (n=366/1221)
@@ -119,10 +119,10 @@ NVDA  (requested)  1999-01-18 → 2026-09-28, 1446 weeks; counted from 2001-01-1
      peak 2007-10-15 → low 2008-11-17 (-83%): zone first on 2007-11-12, then fell a further -80%; within ±13w of low: yes
      peak 2018-09-24 → low 2018-12-17 (-54%): zone first on 2018-10-08, then fell a further -47%; within ±13w of low: yes
      peak 2021-11-15 → low 2022-10-10 (-66%): zone first on 2022-01-18, then fell a further -52%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 12/34 beat waiting (mean rank +40%, sign p=0.971); 104w 11/33 beat waiting (mean rank +36%, sign p=0.982); 156w 13/32 beat waiting (mean rank +42%, sign p=0.892)
-  -- episodes of zLow10: 52w 8/17 beat waiting (mean rank +46%, sign p=0.685); 104w 7/17 beat waiting (mean rank +39%, sign p=0.834); 156w 6/15 beat waiting (mean rank +41%, sign p=0.849)
-  -- episodes of mvrvLow10: 52w 5/11 beat waiting (mean rank +45%, sign p=0.726); 104w 4/11 beat waiting (mean rank +45%, sign p=0.887); 156w 5/9 beat waiting (mean rank +61%, sign p=0.500)
-  -- episodes of btcMemory: 52w 4/13 beat waiting (mean rank +28%, sign p=0.954); 104w 4/13 beat waiting (mean rank +33%, sign p=0.954); 156w 6/11 beat waiting (mean rank +44%, sign p=0.500)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 11/33 beat waiting (mean rank +38%, sign p=0.982); 104w 11/32 beat waiting (mean rank +36%, sign p=0.975); 156w 12/31 beat waiting (mean rank +41%, sign p=0.925)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 8/17 beat waiting (mean rank +46%, sign p=0.685); 104w 7/17 beat waiting (mean rank +39%, sign p=0.834); 156w 6/15 beat waiting (mean rank +41%, sign p=0.849)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 5/11 beat waiting (mean rank +45%, sign p=0.726); 104w 4/11 beat waiting (mean rank +45%, sign p=0.887); 156w 5/9 beat waiting (mean rank +61%, sign p=0.500)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 4/12 beat waiting (mean rank +30%, sign p=0.927); 104w 4/12 beat waiting (mean rank +36%, sign p=0.927); 156w 6/10 beat waiting (mean rank +49%, sign p=0.377)
 ====================================================================================================
 MSFT  (requested)  1986-03-10 → 2026-09-28, 2117 weeks; counted from 1988-03-07
   now: price 517.53, realized/cost-basis price 423.67, MVRV 1.22, Z 0.76
@@ -140,14 +140,14 @@ MSFT  (requested)  1986-03-10 → 2026-09-28, 2117 weeks; counted from 1988-03-0
              104w           +7%         +39%       +62%      +80%         -37%    -0.249       0.845   (n=135/1909)
              156w           +5%         +68%       +56%      +80%         -43%    -0.395       0.894   (n=135/1857)
             zone-only buying vs weekly DCA: 0.33× (random-timing 90% band 0.12–0.86, p=0.787), 150 buy weeks, 9 of 2012 units still in cash
-  mvrvLow10 on +8% of eligible weeks
+  mvrvLow10 (post-hoc) on +8% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +7%         +11%       +64%      +69%         -46%    -0.049       0.826   (n=157/1987)
               52w          +10%         +20%       +63%      +73%         -45%    -0.083       0.760   (n=154/1961)
              104w           +7%         +39%       +62%      +80%         -37%    -0.280       0.848   (n=154/1909)
              156w           +2%         +68%       +53%      +80%         -43%    -0.443       0.894   (n=154/1857)
             zone-only buying vs weekly DCA: 0.33× (random-timing 90% band 0.11–0.90, p=0.779), 161 buy weeks, 9 of 2012 units still in cash
-  btcMemory on +22% of eligible weeks
+  btcMemory (post-hoc) on +22% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +6%         +11%       +67%      +70%         -42%    -0.039       0.735   (n=420/1918)
               52w           +5%         +20%       +62%      +73%         -45%    -0.115       0.806   (n=411/1892)
@@ -177,10 +177,10 @@ MSFT  (requested)  1986-03-10 → 2026-09-28, 2117 weeks; counted from 1988-03-0
      k=0.5  on +19%  52w edge -0.097 p=0.794  104w edge -0.229 p=0.812  zone/DCA 0.74 p=0.365
   -- 50%+ drawdowns, mvrv<1:
      peak 1999-12-20 → low 2009-03-02 (-74%): zone first on 2000-04-03, then fell a further -66%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 19/37 beat waiting (mean rank +47%, sign p=0.500); 104w 15/37 beat waiting (mean rank +43%, sign p=0.906); 156w 14/35 beat waiting (mean rank +44%, sign p=0.912)
-  -- episodes of zLow10: 52w 4/10 beat waiting (mean rank +36%, sign p=0.828); 104w 5/10 beat waiting (mean rank +51%, sign p=0.623); 156w 0/8 beat waiting (mean rank +23%, sign p=1.000)
-  -- episodes of mvrvLow10: 52w 6/13 beat waiting (mean rank +40%, sign p=0.709); 104w 6/12 beat waiting (mean rank +49%, sign p=0.613); 156w 2/11 beat waiting (mean rank +32%, sign p=0.994)
-  -- episodes of btcMemory: 52w 8/15 beat waiting (mean rank +49%, sign p=0.500); 104w 5/14 beat waiting (mean rank +44%, sign p=0.910); 156w 3/13 beat waiting (mean rank +35%, sign p=0.989)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 19/37 beat waiting (mean rank +47%, sign p=0.500); 104w 15/37 beat waiting (mean rank +43%, sign p=0.906); 156w 14/35 beat waiting (mean rank +44%, sign p=0.912)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 4/10 beat waiting (mean rank +36%, sign p=0.828); 104w 5/10 beat waiting (mean rank +51%, sign p=0.623); 156w 0/8 beat waiting (mean rank +23%, sign p=1.000)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 6/13 beat waiting (mean rank +40%, sign p=0.709); 104w 6/12 beat waiting (mean rank +49%, sign p=0.613); 156w 2/11 beat waiting (mean rank +32%, sign p=0.994)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 8/15 beat waiting (mean rank +49%, sign p=0.500); 104w 5/14 beat waiting (mean rank +44%, sign p=0.910); 156w 3/13 beat waiting (mean rank +35%, sign p=0.989)
 ====================================================================================================
 AAPL  (requested)  1980-12-08 → 2026-09-28, 2391 weeks; counted from 1983-01-17
   now: price 333.69, realized/cost-basis price 254.31, MVRV 1.31, Z 1.18
@@ -198,14 +198,14 @@ AAPL  (requested)  1980-12-08 → 2026-09-28, 2391 weeks; counted from 1983-01-1
              104w          +58%         +37%       +79%      +77%         -57%     0.022       0.440   (n=102/2177)
              156w          +43%         +70%       +64%      +80%         -66%    -0.234       0.925   (n=102/2125)
             zone-only buying vs weekly DCA: 0.72× (random-timing 90% band 0.64–1.12, p=0.801), 102 buy weeks, 193 of 2280 units still in cash
-  mvrvLow10 on +4% of eligible weeks
+  mvrvLow10 (post-hoc) on +4% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +25%         +12%       +74%      +66%         -56%     0.112       0.099   (n=84/2255)
               52w          +24%         +23%       +68%      +69%         -48%     0.027       0.449   (n=84/2229)
              104w          +55%         +37%       +79%      +77%         -45%     0.160       0.187   (n=84/2177)
              156w          +32%         +70%       +65%      +80%         -58%    -0.056       0.653   (n=84/2125)
             zone-only buying vs weekly DCA: 1.04× (random-timing 90% band 0.55–1.09, p=0.098), 84 buy weeks, 402 of 2280 units still in cash
-  btcMemory on +26% of eligible weeks
+  btcMemory (post-hoc) on +26% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +14%         +13%       +63%      +67%         -54%    -0.001       0.576   (n=568/2192)
               52w          +26%         +25%       +64%      +70%         -48%    -0.027       0.708   (n=568/2166)
@@ -239,10 +239,10 @@ AAPL  (requested)  1980-12-08 → 2026-09-28, 2391 weeks; counted from 1983-01-1
      peak 1991-04-08 → low 1997-12-22 (-81%): zone first on 1991-04-29, then fell a further -73%; within ±13w of low: yes
      peak 2000-03-20 → low 2003-04-14 (-81%): zone first on 2000-04-10, then fell a further -77%; within ±13w of low: yes
      peak 2007-12-24 → low 2009-01-12 (-59%): zone first on 2007-12-31, then fell a further -54%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 33/58 beat waiting (mean rank +53%, sign p=0.179); 104w 28/58 beat waiting (mean rank +48%, sign p=0.653); 156w 28/56 beat waiting (mean rank +49%, sign p=0.553)
-  -- episodes of zLow10: 52w 12/28 beat waiting (mean rank +46%, sign p=0.828); 104w 17/27 beat waiting (mean rank +57%, sign p=0.124); 156w 13/25 beat waiting (mean rank +52%, sign p=0.500)
-  -- episodes of mvrvLow10: 52w 9/21 beat waiting (mean rank +45%, sign p=0.808); 104w 12/21 beat waiting (mean rank +55%, sign p=0.332); 156w 11/21 beat waiting (mean rank +55%, sign p=0.500)
-  -- episodes of btcMemory: 52w 10/20 beat waiting (mean rank +49%, sign p=0.588); 104w 12/19 beat waiting (mean rank +56%, sign p=0.180); 156w 8/19 beat waiting (mean rank +48%, sign p=0.820)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 33/58 beat waiting (mean rank +53%, sign p=0.179); 104w 28/58 beat waiting (mean rank +48%, sign p=0.653); 156w 28/56 beat waiting (mean rank +49%, sign p=0.553)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 12/28 beat waiting (mean rank +46%, sign p=0.828); 104w 17/27 beat waiting (mean rank +57%, sign p=0.124); 156w 13/25 beat waiting (mean rank +52%, sign p=0.500)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 9/21 beat waiting (mean rank +45%, sign p=0.808); 104w 12/21 beat waiting (mean rank +55%, sign p=0.332); 156w 11/21 beat waiting (mean rank +55%, sign p=0.500)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 10/20 beat waiting (mean rank +49%, sign p=0.588); 104w 12/19 beat waiting (mean rank +56%, sign p=0.180); 156w 8/19 beat waiting (mean rank +48%, sign p=0.820)
 ====================================================================================================
 META  (requested)  2012-05-14 → 2026-09-28, 751 weeks; counted from 2014-05-12
   now: price 728.08, realized/cost-basis price 628.06, MVRV 1.16, Z 0.51
@@ -260,14 +260,14 @@ META  (requested)  2012-05-14 → 2026-09-28, 751 weeks; counted from 2014-05-12
              104w         +100%         +56%       +96%      +84%          -7%     0.317       0.136   (n=84/543)
              156w         +140%         +66%      +100%      +92%          +9%     0.426       0.016   (n=84/491)
             zone-only buying vs weekly DCA: 0.86× (random-timing 90% band 0.73–1.02, p=0.384), 90 buy weeks, 5 of 646 units still in cash
-  mvrvLow10 on +14% of eligible weeks
+  mvrvLow10 (post-hoc) on +14% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +4%         +11%       +57%      +75%         -55%    -0.035       0.715   (n=89/621)
               52w          +43%         +29%       +85%      +78%         -60%     0.146       0.222   (n=88/595)
              104w         +108%         +56%       +97%      +84%          -7%     0.379       0.085   (n=88/543)
              156w         +157%         +66%      +100%      +92%          +9%     0.479       0.014   (n=88/491)
             zone-only buying vs weekly DCA: 0.87× (random-timing 90% band 0.73–1.02, p=0.322), 90 buy weeks, 13 of 646 units still in cash
-  btcMemory on +14% of eligible weeks
+  btcMemory (post-hoc) on +14% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +35%         +11%       +64%      +72%         -55%     0.105       0.197   (n=76/552)
               52w          +78%         +27%       +87%      +75%         -22%     0.391       0.093   (n=75/526)
@@ -297,10 +297,10 @@ META  (requested)  2012-05-14 → 2026-09-28, 751 weeks; counted from 2014-05-12
      k=0.5  on +12%  52w edge 0.303 p=0.092  104w edge 0.624 p=0.022  zone/DCA 0.84 p=0.313
   -- 50%+ drawdowns, mvrv<1:
      peak 2021-09-07 → low 2022-10-31 (-76%): zone first on 2021-11-29, then fell a further -70%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 2/6 beat waiting (mean rank +38%, sign p=0.891); 104w 2/6 beat waiting (mean rank +29%, sign p=0.891); 156w 3/4 beat waiting (mean rank +56%, sign p=0.313)
-  -- episodes of zLow10: 52w 2/6 beat waiting (mean rank +37%, sign p=0.891); 104w 2/6 beat waiting (mean rank +30%, sign p=0.891); 156w 3/4 beat waiting (mean rank +52%, sign p=0.313)
-  -- episodes of mvrvLow10: 52w 2/6 beat waiting (mean rank +37%, sign p=0.891); 104w 2/6 beat waiting (mean rank +30%, sign p=0.891); 156w 3/4 beat waiting (mean rank +52%, sign p=0.313)
-  -- episodes of btcMemory: 52w 1/3 beat waiting (mean rank +40%, sign p=0.875); 104w 2/3 beat waiting (mean rank +61%, sign p=0.500); 156w 1/2 beat waiting (mean rank +55%, sign p=0.750)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 2/6 beat waiting (mean rank +38%, sign p=0.891); 104w 2/6 beat waiting (mean rank +29%, sign p=0.891); 156w 3/4 beat waiting (mean rank +56%, sign p=0.313)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 2/6 beat waiting (mean rank +37%, sign p=0.891); 104w 2/6 beat waiting (mean rank +30%, sign p=0.891); 156w 3/4 beat waiting (mean rank +52%, sign p=0.313)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 2/6 beat waiting (mean rank +37%, sign p=0.891); 104w 2/6 beat waiting (mean rank +30%, sign p=0.891); 156w 3/4 beat waiting (mean rank +52%, sign p=0.313)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 1/3 beat waiting (mean rank +40%, sign p=0.875); 104w 2/3 beat waiting (mean rank +61%, sign p=0.500); 156w 1/2 beat waiting (mean rank +55%, sign p=0.750)
 ====================================================================================================
 AMZN  (requested)  1997-05-12 → 2026-09-28, 1534 weeks; counted from 1999-05-10
   now: price 251.52, realized/cost-basis price 224.33, MVRV 1.12, Z 0.38
@@ -318,14 +318,14 @@ AMZN  (requested)  1997-05-12 → 2026-09-28, 1534 weeks; counted from 1999-05-1
              104w         +110%         +65%      +100%      +81%         +10%     0.345       0.119   (n=66/1326)
              156w         +116%        +108%      +100%      +87%         +20%     0.204       0.279   (n=66/1274)
             zone-only buying vs weekly DCA: 0.51× (random-timing 90% band 0.23–1.11, p=0.696), 66 buy weeks, 183 of 1429 units still in cash
-  mvrvLow10 on +3% of eligible weeks
+  mvrvLow10 (post-hoc) on +3% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +26%         +11%       +60%      +66%         -27%     0.075       0.377   (n=40/1404)
               52w          +55%         +23%       +90%      +75%         -14%     0.238       0.231   (n=40/1378)
              104w         +115%         +65%      +100%      +81%         +41%     0.436       0.091   (n=40/1326)
              156w         +122%        +108%      +100%      +87%         +54%     0.284       0.206   (n=40/1274)
             zone-only buying vs weekly DCA: 1.24× (random-timing 90% band 0.18–0.94, p=0.011), 40 buy weeks, 185 of 1429 units still in cash
-  btcMemory on +19% of eligible weeks
+  btcMemory (post-hoc) on +19% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +24%         +12%       +67%      +68%         -75%    -0.001       0.574   (n=258/1335)
               52w          +62%         +26%       +84%      +79%         -84%     0.149       0.063   (n=258/1309)
@@ -357,10 +357,10 @@ AMZN  (requested)  1997-05-12 → 2026-09-28, 1534 weeks; counted from 1999-05-1
      peak 1999-04-19 → low 1999-08-02 (-57%): zone first on 1999-05-10, then fell a further -32%; within ±13w of low: yes
      peak 1999-12-06 → low 2001-09-24 (-94%): zone first on 1999-12-27, then fell a further -92%; within ±13w of low: yes
      peak 2021-07-06 → low 2022-12-27 (-55%): zone first on 2022-01-03, then fell a further -48%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 11/25 beat waiting (mean rank +45%, sign p=0.788); 104w 15/25 beat waiting (mean rank +54%, sign p=0.212); 156w 9/24 beat waiting (mean rank +44%, sign p=0.924)
-  -- episodes of zLow10: 52w 2/9 beat waiting (mean rank +36%, sign p=0.980); 104w 5/9 beat waiting (mean rank +58%, sign p=0.500); 156w 5/6 beat waiting (mean rank +67%, sign p=0.109)
-  -- episodes of mvrvLow10: 52w 2/4 beat waiting (mean rank +37%, sign p=0.688); 104w 3/4 beat waiting (mean rank +64%, sign p=0.313); 156w 2/2 beat waiting (mean rank +98%, sign p=0.250)
-  -- episodes of btcMemory: 52w 5/8 beat waiting (mean rank +59%, sign p=0.363); 104w 3/8 beat waiting (mean rank +38%, sign p=0.855); 156w 5/7 beat waiting (mean rank +68%, sign p=0.227)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 11/25 beat waiting (mean rank +45%, sign p=0.788); 104w 15/25 beat waiting (mean rank +54%, sign p=0.212); 156w 9/24 beat waiting (mean rank +44%, sign p=0.924)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 2/9 beat waiting (mean rank +36%, sign p=0.980); 104w 5/9 beat waiting (mean rank +58%, sign p=0.500); 156w 5/6 beat waiting (mean rank +67%, sign p=0.109)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 2/4 beat waiting (mean rank +37%, sign p=0.688); 104w 3/4 beat waiting (mean rank +64%, sign p=0.313); 156w 2/2 beat waiting (mean rank +98%, sign p=0.250)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 5/8 beat waiting (mean rank +59%, sign p=0.363); 104w 3/8 beat waiting (mean rank +38%, sign p=0.855); 156w 5/7 beat waiting (mean rank +68%, sign p=0.227)
 ====================================================================================================
 INTC  (control)  1972-11-13 → 2026-09-28, 2812 weeks; counted from 1976-01-12
   now: price 119.33, realized/cost-basis price 104.34, MVRV 1.14, Z 0.77
@@ -378,14 +378,14 @@ INTC  (control)  1972-11-13 → 2026-09-28, 2812 weeks; counted from 1976-01-12
              104w          +38%         +23%       +59%      +67%         -70%     0.075       0.309   (n=291/2543)
              156w          +59%         +40%       +74%      +75%         -60%     0.045       0.445   (n=275/2491)
             zone-only buying vs weekly DCA: 1.06× (random-timing 90% band 0.61–0.99, p=0.004), 296 buy weeks, 4 of 2646 units still in cash
-  mvrvLow10 on +13% of eligible weeks
+  mvrvLow10 (post-hoc) on +13% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +11%          +6%       +64%      +59%         -42%     0.041       0.233   (n=334/2621)
               52w          +24%         +11%       +69%      +63%         -61%     0.098       0.110   (n=334/2595)
              104w          +39%         +23%       +62%      +67%         -70%     0.076       0.223   (n=322/2543)
              156w          +58%         +40%       +77%      +75%         -55%     0.046       0.429   (n=302/2491)
             zone-only buying vs weekly DCA: 1.05× (random-timing 90% band 0.66–1.00, p=0.008), 334 buy weeks, 75 of 2646 units still in cash
-  btcMemory on +31% of eligible weeks
+  btcMemory (post-hoc) on +31% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +10%          +6%       +66%      +59%         -53%     0.016       0.344   (n=830/2613)
               52w          +16%         +12%       +67%      +63%         -53%     0.036       0.283   (n=830/2587)
@@ -418,10 +418,10 @@ INTC  (control)  1972-11-13 → 2026-09-28, 2812 weeks; counted from 1976-01-12
      peak 1983-08-29 → low 1986-07-14 (-61%): zone first on 1984-04-02, then fell a further -45%; within ±13w of low: yes
      peak 1987-09-28 → low 1988-11-21 (-51%): zone first on 1987-10-19, then fell a further -9%; within ±13w of low: yes
      peak 2000-08-28 → low 2009-03-02 (-83%): zone first on 2000-09-11, then fell a further -78%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 26/63 beat waiting (mean rank +45%, sign p=0.935); 104w 31/62 beat waiting (mean rank +49%, sign p=0.550); 156w 33/62 beat waiting (mean rank +56%, sign p=0.352)
-  -- episodes of zLow10: 52w 16/33 beat waiting (mean rank +51%, sign p=0.636); 104w 19/33 beat waiting (mean rank +56%, sign p=0.243); 156w 20/31 beat waiting (mean rank +65%, sign p=0.075)
-  -- episodes of mvrvLow10: 52w 13/30 beat waiting (mean rank +50%, sign p=0.819); 104w 16/30 beat waiting (mean rank +56%, sign p=0.428); 156w 17/28 beat waiting (mean rank +61%, sign p=0.172)
-  -- episodes of btcMemory: 52w 17/35 beat waiting (mean rank +49%, sign p=0.632); 104w 18/35 beat waiting (mean rank +50%, sign p=0.500); 156w 19/34 beat waiting (mean rank +50%, sign p=0.304)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 26/63 beat waiting (mean rank +45%, sign p=0.935); 104w 31/62 beat waiting (mean rank +49%, sign p=0.550); 156w 33/62 beat waiting (mean rank +56%, sign p=0.352)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 16/33 beat waiting (mean rank +51%, sign p=0.636); 104w 19/33 beat waiting (mean rank +56%, sign p=0.243); 156w 20/31 beat waiting (mean rank +65%, sign p=0.075)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 13/30 beat waiting (mean rank +50%, sign p=0.819); 104w 16/30 beat waiting (mean rank +56%, sign p=0.428); 156w 17/28 beat waiting (mean rank +61%, sign p=0.172)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 17/35 beat waiting (mean rank +49%, sign p=0.632); 104w 18/35 beat waiting (mean rank +50%, sign p=0.500); 156w 19/34 beat waiting (mean rank +50%, sign p=0.304)
 ====================================================================================================
 CSCO  (control)  1990-02-12 → 2026-09-28, 1912 weeks; counted from 1992-02-10
   now: price 112.20, realized/cost-basis price 90.51, MVRV 1.24, Z 1.03
@@ -439,14 +439,14 @@ CSCO  (control)  1990-02-12 → 2026-09-28, 1912 weeks; counted from 1992-02-10
              104w          +16%         +24%       +74%      +72%         -83%    -0.058       0.622   (n=161/1704)
              156w          +34%         +28%       +74%      +75%         -73%     0.019       0.455   (n=156/1652)
             zone-only buying vs weekly DCA: 0.66× (random-timing 90% band 0.46–0.87, p=0.586), 161 buy weeks, 111 of 1807 units still in cash
-  mvrvLow10 on +9% of eligible weeks
+  mvrvLow10 (post-hoc) on +9% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +10%          +9%       +63%      +66%         -75%    -0.079       0.897   (n=161/1782)
               52w          +24%         +15%       +64%      +67%         -80%    -0.060       0.718   (n=161/1756)
              104w          +23%         +24%       +74%      +72%         -83%    -0.053       0.629   (n=161/1704)
              156w          +34%         +28%       +78%      +75%         -73%     0.031       0.451   (n=161/1652)
             zone-only buying vs weekly DCA: 0.67× (random-timing 90% band 0.43–0.87, p=0.609), 161 buy weeks, 205 of 1807 units still in cash
-  btcMemory on +29% of eligible weeks
+  btcMemory (post-hoc) on +29% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +7%          +8%       +62%      +64%         -56%    -0.019       0.701   (n=511/1713)
               52w          +16%         +13%       +68%      +66%         -54%    -0.006       0.529   (n=511/1687)
@@ -477,10 +477,10 @@ CSCO  (control)  1990-02-12 → 2026-09-28, 1912 weeks; counted from 1992-02-10
   -- 50%+ drawdowns, mvrv<1:
      peak 1994-03-07 → low 1994-07-11 (-51%): zone first on 1994-03-21, then fell a further -41%; within ±13w of low: yes
      peak 2000-03-20 → low 2002-09-30 (-88%): zone first on 2000-05-15, then fell a further -82%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 16/33 beat waiting (mean rank +45%, sign p=0.636); 104w 15/32 beat waiting (mean rank +51%, sign p=0.702); 156w 18/31 beat waiting (mean rank +56%, sign p=0.237)
-  -- episodes of zLow10: 52w 5/18 beat waiting (mean rank +35%, sign p=0.985); 104w 9/18 beat waiting (mean rank +53%, sign p=0.593); 156w 9/17 beat waiting (mean rank +49%, sign p=0.500)
-  -- episodes of mvrvLow10: 52w 12/23 beat waiting (mean rank +47%, sign p=0.500); 104w 14/23 beat waiting (mean rank +61%, sign p=0.202); 156w 13/21 beat waiting (mean rank +56%, sign p=0.192)
-  -- episodes of btcMemory: 52w 4/15 beat waiting (mean rank +38%, sign p=0.982); 104w 8/14 beat waiting (mean rank +52%, sign p=0.395); 156w 8/13 beat waiting (mean rank +57%, sign p=0.291)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 16/33 beat waiting (mean rank +45%, sign p=0.636); 104w 15/32 beat waiting (mean rank +51%, sign p=0.702); 156w 18/31 beat waiting (mean rank +56%, sign p=0.237)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 5/18 beat waiting (mean rank +35%, sign p=0.985); 104w 9/18 beat waiting (mean rank +53%, sign p=0.593); 156w 9/17 beat waiting (mean rank +49%, sign p=0.500)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 12/23 beat waiting (mean rank +47%, sign p=0.500); 104w 14/23 beat waiting (mean rank +61%, sign p=0.202); 156w 13/21 beat waiting (mean rank +56%, sign p=0.192)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 4/15 beat waiting (mean rank +38%, sign p=0.982); 104w 8/14 beat waiting (mean rank +52%, sign p=0.395); 156w 8/13 beat waiting (mean rank +57%, sign p=0.291)
 ====================================================================================================
 C  (control)  1986-10-27 → 2026-09-28, 2084 weeks; counted from 2005-07-25
   now: price 128.50, realized/cost-basis price 118.98, MVRV 1.08, Z 0.06
@@ -498,14 +498,14 @@ C  (control)  1986-10-27 → 2026-09-28, 2084 weeks; counted from 2005-07-25
              104w          -88%          +2%        +5%      +53%         -94%    -1.652       0.944   (n=55/1002)
              156w          -83%          +2%        +5%      +52%         -92%    -1.513       0.889   (n=55/950)
             zone-only buying vs weekly DCA: 1.08× (random-timing 90% band 0.72–1.18, p=0.157), 56 buy weeks, 77 of 1105 units still in cash
-  mvrvLow10 on +8% of eligible weeks
+  mvrvLow10 (post-hoc) on +8% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          -43%          +3%       +11%      +57%         -89%    -0.549       0.974   (n=84/1080)
               52w          -70%          +3%       +12%      +55%         -95%    -1.033       0.962   (n=84/1054)
              104w          -81%          +2%       +18%      +53%         -94%    -1.167       0.909   (n=84/1002)
              156w          -81%          +2%       +12%      +52%         -92%    -1.151       0.876   (n=84/950)
             zone-only buying vs weekly DCA: 0.95× (random-timing 90% band 0.62–1.27, p=0.446), 84 buy weeks, 335 of 1105 units still in cash
-  btcMemory on +35% of eligible weeks
+  btcMemory (post-hoc) on +35% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +7%          +6%       +61%      +62%         -95%    -0.044       0.789   (n=662/1885)
               52w          +13%          +9%       +65%      +63%         -95%    -0.078       0.777   (n=662/1859)
@@ -535,10 +535,10 @@ C  (control)  1986-10-27 → 2026-09-28, 2084 weeks; counted from 2005-07-25
      k=0.5  on +40%  52w edge 0.065 p=0.089  104w edge 0.088 p=0.026  zone/DCA 1.01 p=0.266
   -- 50%+ drawdowns, mvrv<1:
      peak 2006-12-26 → low 2009-03-02 (-98%) not recovered: zone first on 2007-10-29, then fell a further -97%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 8/19 beat waiting (mean rank +37%, sign p=0.820); 104w 6/18 beat waiting (mean rank +34%, sign p=0.952); 156w 5/17 beat waiting (mean rank +30%, sign p=0.975)
-  -- episodes of zLow10: 52w 2/4 beat waiting (mean rank +41%, sign p=0.688); 104w 1/4 beat waiting (mean rank +25%, sign p=0.938); 156w 1/4 beat waiting (mean rank +26%, sign p=0.938)
-  -- episodes of mvrvLow10: 52w 2/2 beat waiting (mean rank +78%, sign p=0.250); 104w 1/2 beat waiting (mean rank +50%, sign p=0.750); 156w 1/2 beat waiting (mean rank +46%, sign p=0.750)
-  -- episodes of btcMemory: 52w 11/24 beat waiting (mean rank +44%, sign p=0.729); 104w 16/24 beat waiting (mean rank +59%, sign p=0.076); 156w 14/23 beat waiting (mean rank +61%, sign p=0.202)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 8/19 beat waiting (mean rank +37%, sign p=0.820); 104w 6/18 beat waiting (mean rank +34%, sign p=0.952); 156w 5/17 beat waiting (mean rank +30%, sign p=0.975)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 2/4 beat waiting (mean rank +41%, sign p=0.688); 104w 1/4 beat waiting (mean rank +25%, sign p=0.938); 156w 1/4 beat waiting (mean rank +26%, sign p=0.938)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 2/2 beat waiting (mean rank +78%, sign p=0.250); 104w 1/2 beat waiting (mean rank +50%, sign p=0.750); 156w 1/2 beat waiting (mean rank +46%, sign p=0.750)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 11/24 beat waiting (mean rank +44%, sign p=0.729); 104w 16/24 beat waiting (mean rank +59%, sign p=0.076); 156w 14/23 beat waiting (mean rank +61%, sign p=0.202)
 ====================================================================================================
 BAC  (control)  1972-04-03 → 2026-09-28, 2844 weeks; counted from 2001-07-02
   now: price 53.75, realized/cost-basis price 52.04, MVRV 1.03, Z 0.11
@@ -556,14 +556,14 @@ BAC  (control)  1972-04-03 → 2026-09-28, 2844 weeks; counted from 2001-07-02
              104w           +9%         +18%       +54%      +66%         -92%    -0.245       0.857   (n=207/1214)
              156w          -26%         +21%       +46%      +68%         -91%    -0.411       0.897   (n=204/1162)
             zone-only buying vs weekly DCA: 0.88× (random-timing 90% band 0.75–1.40, p=0.629), 209 buy weeks, 76 of 1317 units still in cash
-  mvrvLow10 on +16% of eligible weeks
+  mvrvLow10 (post-hoc) on +16% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           -4%          +4%       +46%      +60%         -91%    -0.134       0.940   (n=210/1292)
               52w          -13%          +8%       +44%      +60%         -92%    -0.235       0.931   (n=210/1266)
              104w           -4%         +18%       +49%      +66%         -92%    -0.265       0.868   (n=209/1214)
              156w          -45%         +21%       +43%      +68%         -91%    -0.442       0.881   (n=206/1162)
             zone-only buying vs weekly DCA: 0.99× (random-timing 90% band 0.82–1.21, p=0.477), 210 buy weeks, 77 of 1317 units still in cash
-  btcMemory on +31% of eligible weeks
+  btcMemory (post-hoc) on +31% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +11%          +6%       +67%      +61%         -91%     0.019       0.302   (n=827/2645)
               52w          +17%         +10%       +70%      +65%         -92%     0.028       0.370   (n=827/2619)
@@ -593,10 +593,10 @@ BAC  (control)  1972-04-03 → 2026-09-28, 2844 weeks; counted from 2001-07-02
      k=0.5  on +32%  52w edge 0.059 p=0.327  104w edge 0.186 p=0.098  zone/DCA 1.00 p=0.419
   -- 50%+ drawdowns, mvrv<1:
      peak 2006-11-13 → low 2009-03-02 (-94%): zone first on 2007-10-29, then fell a further -93%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 6/19 beat waiting (mean rank +45%, sign p=0.968); 104w 9/19 beat waiting (mean rank +42%, sign p=0.676); 156w 10/18 beat waiting (mean rank +51%, sign p=0.407)
-  -- episodes of zLow10: 52w 7/13 beat waiting (mean rank +56%, sign p=0.500); 104w 7/10 beat waiting (mean rank +62%, sign p=0.172); 156w 8/9 beat waiting (mean rank +76%, sign p=0.020)
-  -- episodes of mvrvLow10: 52w 12/17 beat waiting (mean rank +60%, sign p=0.072); 104w 8/14 beat waiting (mean rank +54%, sign p=0.395); 156w 9/13 beat waiting (mean rank +65%, sign p=0.133)
-  -- episodes of btcMemory: 52w 12/23 beat waiting (mean rank +49%, sign p=0.500); 104w 11/22 beat waiting (mean rank +47%, sign p=0.584); 156w 10/21 beat waiting (mean rank +48%, sign p=0.668)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 6/19 beat waiting (mean rank +45%, sign p=0.968); 104w 9/19 beat waiting (mean rank +42%, sign p=0.676); 156w 10/18 beat waiting (mean rank +51%, sign p=0.407)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 7/13 beat waiting (mean rank +56%, sign p=0.500); 104w 7/10 beat waiting (mean rank +62%, sign p=0.172); 156w 8/9 beat waiting (mean rank +76%, sign p=0.020)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 12/17 beat waiting (mean rank +60%, sign p=0.072); 104w 8/14 beat waiting (mean rank +54%, sign p=0.395); 156w 9/13 beat waiting (mean rank +65%, sign p=0.133)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 12/23 beat waiting (mean rank +49%, sign p=0.500); 104w 11/22 beat waiting (mean rank +47%, sign p=0.584); 156w 10/21 beat waiting (mean rank +48%, sign p=0.668)
 ====================================================================================================
 BA  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1976-03-01
   now: price 193.56, realized/cost-basis price 213.50, MVRV 0.91, Z -0.23
@@ -614,14 +614,14 @@ BA  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1976-03-01
              104w          +41%         +23%       +88%      +68%         -52%     0.148       0.259   (n=293/2536)
              156w          +59%         +32%       +86%      +68%         -46%     0.204       0.180   (n=292/2484)
             zone-only buying vs weekly DCA: 0.73× (random-timing 90% band 0.57–0.96, p=0.493), 293 buy weeks, 128 of 2639 units still in cash
-  mvrvLow10 on +12% of eligible weeks
+  mvrvLow10 (post-hoc) on +12% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +7%          +6%       +58%      +63%         -52%     0.005       0.502   (n=307/2614)
               52w          +25%         +17%       +70%      +66%         -50%     0.078       0.256   (n=307/2588)
              104w          +45%         +23%       +93%      +68%         -52%     0.172       0.213   (n=304/2536)
              156w          +69%         +32%       +91%      +68%         -46%     0.247       0.142   (n=298/2484)
             zone-only buying vs weekly DCA: 0.74× (random-timing 90% band 0.56–0.97, p=0.487), 307 buy weeks, 77 of 2639 units still in cash
-  btcMemory on +29% of eligible weeks
+  btcMemory (post-hoc) on +29% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +10%          +6%       +61%      +62%         -53%     0.014       0.356   (n=826/2801)
               52w          +22%         +17%       +71%      +66%         -61%     0.048       0.203   (n=820/2775)
@@ -654,10 +654,10 @@ BA  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1976-03-01
      peak 2000-12-04 → low 2003-03-10 (-63%): zone first on 2001-07-02, then fell a further -53%; within ±13w of low: yes
      peak 2007-09-24 → low 2009-03-02 (-71%): zone first on 2007-11-12, then fell a further -67%; within ±13w of low: yes
      peak 2019-02-25 → low 2020-03-16 (-78%) not recovered: zone first on 2019-05-28, then fell a further -72%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 9/31 beat waiting (mean rank +33%, sign p=0.995); 104w 14/30 beat waiting (mean rank +44%, sign p=0.708); 156w 18/30 beat waiting (mean rank +50%, sign p=0.181)
-  -- episodes of zLow10: 52w 8/22 beat waiting (mean rank +47%, sign p=0.933); 104w 9/22 beat waiting (mean rank +39%, sign p=0.857); 156w 6/19 beat waiting (mean rank +35%, sign p=0.968)
-  -- episodes of mvrvLow10: 52w 8/20 beat waiting (mean rank +51%, sign p=0.868); 104w 10/20 beat waiting (mean rank +45%, sign p=0.588); 156w 6/17 beat waiting (mean rank +39%, sign p=0.928)
-  -- episodes of btcMemory: 52w 7/20 beat waiting (mean rank +36%, sign p=0.942); 104w 8/18 beat waiting (mean rank +39%, sign p=0.760); 156w 11/18 beat waiting (mean rank +52%, sign p=0.240)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 9/31 beat waiting (mean rank +33%, sign p=0.995); 104w 14/30 beat waiting (mean rank +44%, sign p=0.708); 156w 18/30 beat waiting (mean rank +50%, sign p=0.181)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 8/22 beat waiting (mean rank +47%, sign p=0.933); 104w 9/22 beat waiting (mean rank +39%, sign p=0.857); 156w 6/19 beat waiting (mean rank +35%, sign p=0.968)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 8/20 beat waiting (mean rank +51%, sign p=0.868); 104w 10/20 beat waiting (mean rank +45%, sign p=0.588); 156w 6/17 beat waiting (mean rank +39%, sign p=0.928)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 7/20 beat waiting (mean rank +36%, sign p=0.942); 104w 8/18 beat waiting (mean rank +39%, sign p=0.760); 156w 11/18 beat waiting (mean rank +52%, sign p=0.240)
 ====================================================================================================
 NKE  (control)  1980-12-01 → 2026-09-28, 2392 weeks; counted from 1983-02-28
   now: price 33.87, realized/cost-basis price 40.47, MVRV 0.84, Z -0.17
@@ -675,14 +675,14 @@ NKE  (control)  1980-12-01 → 2026-09-28, 2392 weeks; counted from 1983-02-28
              104w          -13%         +36%       +42%      +76%         -50%    -0.245       0.852   (n=65/2171)
              156w          -23%         +50%       +46%      +84%         -63%    -0.452       0.914   (n=57/2119)
             zone-only buying vs weekly DCA: 0.14× (random-timing 90% band 0.13–0.87, p=0.942), 71 buy weeks, 24 of 2274 units still in cash
-  mvrvLow10 on +5% of eligible weeks
+  mvrvLow10 (post-hoc) on +5% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w          +10%          +8%       +72%      +62%         -33%     0.044       0.270   (n=93/2249)
               52w           +1%         +17%       +52%      +69%         -42%    -0.072       0.755   (n=88/2223)
              104w          -10%         +36%       +45%      +76%         -54%    -0.230       0.848   (n=73/2171)
              156w          +29%         +50%       +53%      +84%         -65%    -0.315       0.845   (n=60/2119)
             zone-only buying vs weekly DCA: 0.31× (random-timing 90% band 0.21–0.92, p=0.809), 107 buy weeks, 0 of 2274 units still in cash
-  btcMemory on +24% of eligible weeks
+  btcMemory (post-hoc) on +24% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +8%          +9%       +59%      +63%         -39%    -0.007       0.603   (n=515/2193)
               52w          +19%         +19%       +66%      +70%         -53%    -0.020       0.635   (n=489/2167)
@@ -714,10 +714,10 @@ NKE  (control)  1980-12-01 → 2026-09-28, 2392 weeks; counted from 1983-02-28
      peak 1982-12-06 → low 1984-11-12 (-74%): zone first on 1983-02-28, then fell a further -57%; within ±13w of low: yes
      peak 1997-02-10 → low 2000-02-22 (-65%): zone first on 1997-04-07, then fell a further -52%; within ±13w of low: yes
      peak 2021-11-01 → low 2026-09-28 (-81%) not recovered: zone first on 2022-02-28, then fell a further -74%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 19/41 beat waiting (mean rank +46%, sign p=0.734); 104w 17/39 beat waiting (mean rank +46%, sign p=0.832); 156w 17/38 beat waiting (mean rank +48%, sign p=0.791)
-  -- episodes of zLow10: 52w 8/9 beat waiting (mean rank +83%, sign p=0.020); 104w 8/8 beat waiting (mean rank +90%, sign p=0.004); 156w 5/6 beat waiting (mean rank +75%, sign p=0.109)
-  -- episodes of mvrvLow10: 52w 8/10 beat waiting (mean rank +82%, sign p=0.055); 104w 8/9 beat waiting (mean rank +76%, sign p=0.020); 156w 7/8 beat waiting (mean rank +81%, sign p=0.035)
-  -- episodes of btcMemory: 52w 14/21 beat waiting (mean rank +62%, sign p=0.095); 104w 11/19 beat waiting (mean rank +58%, sign p=0.324); 156w 9/17 beat waiting (mean rank +59%, sign p=0.500)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 19/41 beat waiting (mean rank +46%, sign p=0.734); 104w 17/39 beat waiting (mean rank +46%, sign p=0.832); 156w 17/38 beat waiting (mean rank +48%, sign p=0.791)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 8/9 beat waiting (mean rank +83%, sign p=0.020); 104w 8/8 beat waiting (mean rank +90%, sign p=0.004); 156w 5/6 beat waiting (mean rank +75%, sign p=0.109)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 8/10 beat waiting (mean rank +82%, sign p=0.055); 104w 8/9 beat waiting (mean rank +76%, sign p=0.020); 156w 7/8 beat waiting (mean rank +81%, sign p=0.035)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 14/21 beat waiting (mean rank +62%, sign p=0.095); 104w 11/19 beat waiting (mean rank +58%, sign p=0.324); 156w 9/17 beat waiting (mean rank +59%, sign p=0.500)
 ====================================================================================================
 PYPL  (control)  2015-07-06 → 2026-09-28, 587 weeks; counted from 2017-07-03
   now: price 52.80, realized/cost-basis price 52.03, MVRV 1.01, Z 0.01
@@ -735,14 +735,14 @@ PYPL  (control)  2015-07-06 → 2026-09-28, 587 weeks; counted from 2017-07-03
              104w          -41%          -2%       +30%      +50%         -79%    -0.337       0.799   (n=44/379)
              156w          -32%         -26%        +0%      +29%         -69%    -0.302       0.670   (n=44/327)
             zone-only buying vs weekly DCA: 1.28× (random-timing 90% band 0.92–1.31, p=0.085), 46 buy weeks, 32 of 482 units still in cash
-  mvrvLow10 on +13% of eligible weeks
+  mvrvLow10 (post-hoc) on +13% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           -7%          +1%       +37%      +52%         -66%    -0.154       0.912   (n=63/457)
               52w          -23%          +6%       +27%      +52%         -67%    -0.151       0.782   (n=59/431)
              104w          -27%          -2%       +30%      +50%         -79%    -0.269       0.770   (n=57/379)
              156w          -28%         -26%        +4%      +29%         -69%    -0.231       0.642   (n=56/327)
             zone-only buying vs weekly DCA: 1.03× (random-timing 90% band 0.90–1.20, p=0.496), 63 buy weeks, 31 of 482 units still in cash
-  btcMemory on +60% of eligible weeks
+  btcMemory (post-hoc) on +60% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           -9%          -3%       +30%      +44%         -63%    -0.054       0.799   (n=221/388)
               52w          -16%         -11%       +28%      +43%         -63%    -0.062       0.655   (n=195/362)
@@ -772,10 +772,10 @@ PYPL  (control)  2015-07-06 → 2026-09-28, 587 weeks; counted from 2017-07-03
      k=0.5  on +42%  52w edge -0.106 p=0.738  104w edge -0.120 p=0.615  zone/DCA 1.02 p=0.527
   -- 50%+ drawdowns, mvrv<1:
      peak 2021-07-19 → low 2026-02-09 (-87%) not recovered: zone first on 2021-10-18, then fell a further -83%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 2/5 beat waiting (mean rank +45%, sign p=0.813); 104w 4/5 beat waiting (mean rank +68%, sign p=0.188); 156w 4/4 beat waiting (mean rank +99%, sign p=0.063)
-  -- episodes of zLow10: 52w 2/3 beat waiting (mean rank +53%, sign p=0.500); 104w 2/3 beat waiting (mean rank +66%, sign p=0.500); 156w 2/3 beat waiting (mean rank +64%, sign p=0.500)
-  -- episodes of mvrvLow10: 52w 3/5 beat waiting (mean rank +49%, sign p=0.500); 104w 2/3 beat waiting (mean rank +66%, sign p=0.500); 156w 2/3 beat waiting (mean rank +64%, sign p=0.500)
-  -- episodes of btcMemory: 52w 1/2 beat waiting (mean rank +53%, sign p=0.750); 104w 1/2 beat waiting (mean rank +50%, sign p=0.750); 156w 1/1 beat waiting (mean rank +100%, sign p=0.500)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 2/5 beat waiting (mean rank +45%, sign p=0.813); 104w 4/5 beat waiting (mean rank +68%, sign p=0.188); 156w 4/4 beat waiting (mean rank +99%, sign p=0.063)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 2/3 beat waiting (mean rank +53%, sign p=0.500); 104w 2/3 beat waiting (mean rank +66%, sign p=0.500); 156w 2/3 beat waiting (mean rank +64%, sign p=0.500)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 3/5 beat waiting (mean rank +49%, sign p=0.500); 104w 2/3 beat waiting (mean rank +66%, sign p=0.500); 156w 2/3 beat waiting (mean rank +64%, sign p=0.500)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 1/2 beat waiting (mean rank +53%, sign p=0.750); 104w 1/2 beat waiting (mean rank +50%, sign p=0.750); 156w 1/1 beat waiting (mean rank +100%, sign p=0.500)
 ====================================================================================================
 DIS  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1975-04-28
   now: price 102.19, realized/cost-basis price 104.29, MVRV 0.98, Z -0.05
@@ -793,14 +793,14 @@ DIS  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1975-04-28
              104w          +18%         +22%       +69%      +77%         -46%    -0.010       0.517   (n=232/2580)
              156w          +24%         +39%       +70%      +76%         -47%    -0.069       0.641   (n=231/2528)
             zone-only buying vs weekly DCA: 0.97× (random-timing 90% band 0.62–0.94, p=0.015), 235 buy weeks, 75 of 2683 units still in cash
-  mvrvLow10 on +8% of eligible weeks
+  mvrvLow10 (post-hoc) on +8% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +7%          +6%       +68%      +62%         -36%     0.038       0.192   (n=206/2658)
               52w          +11%         +12%       +61%      +66%         -47%     0.008       0.461   (n=205/2632)
              104w          +23%         +22%       +75%      +77%         -43%     0.015       0.453   (n=202/2580)
              156w          +27%         +39%       +79%      +76%         -42%    -0.049       0.585   (n=201/2528)
             zone-only buying vs weekly DCA: 0.94× (random-timing 90% band 0.31–0.94, p=0.046), 206 buy weeks, 26 of 2683 units still in cash
-  btcMemory on +28% of eligible weeks
+  btcMemory (post-hoc) on +28% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +8%          +5%       +64%      +60%         -61%     0.020       0.275   (n=781/2801)
               52w          +14%         +11%       +68%      +64%         -70%     0.030       0.330   (n=769/2775)
@@ -831,10 +831,10 @@ DIS  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1975-04-28
   -- 50%+ drawdowns, mvrv<1:
      peak 2000-04-24 → low 2002-08-05 (-66%): zone first on 2000-11-06, then fell a further -54%; within ±13w of low: yes
      peak 2021-03-08 → low 2023-10-23 (-60%) not recovered: zone first on 2021-11-08, then fell a further -50%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 21/35 beat waiting (mean rank +57%, sign p=0.155); 104w 21/35 beat waiting (mean rank +62%, sign p=0.155); 156w 22/34 beat waiting (mean rank +62%, sign p=0.061)
-  -- episodes of zLow10: 52w 11/20 beat waiting (mean rank +52%, sign p=0.412); 104w 10/18 beat waiting (mean rank +55%, sign p=0.407); 156w 9/17 beat waiting (mean rank +55%, sign p=0.500)
-  -- episodes of mvrvLow10: 52w 12/19 beat waiting (mean rank +54%, sign p=0.180); 104w 8/17 beat waiting (mean rank +47%, sign p=0.685); 156w 7/15 beat waiting (mean rank +46%, sign p=0.696)
-  -- episodes of btcMemory: 52w 18/34 beat waiting (mean rank +48%, sign p=0.432); 104w 18/34 beat waiting (mean rank +52%, sign p=0.432); 156w 17/33 beat waiting (mean rank +53%, sign p=0.500)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 21/35 beat waiting (mean rank +57%, sign p=0.155); 104w 21/35 beat waiting (mean rank +62%, sign p=0.155); 156w 22/34 beat waiting (mean rank +62%, sign p=0.061)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 11/20 beat waiting (mean rank +52%, sign p=0.412); 104w 10/18 beat waiting (mean rank +55%, sign p=0.407); 156w 9/17 beat waiting (mean rank +55%, sign p=0.500)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 12/19 beat waiting (mean rank +54%, sign p=0.180); 104w 8/17 beat waiting (mean rank +47%, sign p=0.685); 156w 7/15 beat waiting (mean rank +46%, sign p=0.696)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 18/34 beat waiting (mean rank +48%, sign p=0.432); 104w 18/34 beat waiting (mean rank +52%, sign p=0.432); 156w 17/33 beat waiting (mean rank +53%, sign p=0.500)
 ====================================================================================================
 VZ  (control)  1983-11-21 → 2026-09-28, 2237 weeks; counted from 2002-07-08
   now: price 45.92, realized/cost-basis price 45.18, MVRV 1.02, Z 0.05
@@ -852,14 +852,14 @@ VZ  (control)  1983-11-21 → 2026-09-28, 2237 weeks; counted from 2002-07-08
              104w          +16%          +5%       +80%      +58%         -41%     0.095       0.285   (n=94/1161)
              156w          +23%          +6%       +80%      +61%         -18%     0.131       0.159   (n=91/1109)
             zone-only buying vs weekly DCA: 1.03× (random-timing 90% band 0.88–1.07, p=0.124), 94 buy weeks, 152 of 1264 units still in cash
-  mvrvLow10 on +7% of eligible weeks
+  mvrvLow10 (post-hoc) on +7% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +1%          +1%       +51%      +53%         -23%     0.002       0.528   (n=85/1239)
               52w           +4%          +2%       +64%      +56%         -27%     0.016       0.475   (n=85/1213)
              104w          +17%          +5%       +85%      +58%         -19%     0.126       0.214   (n=85/1161)
              156w          +25%          +6%       +85%      +61%         -10%     0.154       0.149   (n=82/1109)
             zone-only buying vs weekly DCA: 1.02× (random-timing 90% band 0.82–1.11, p=0.189), 85 buy weeks, 152 of 1264 units still in cash
-  btcMemory on +37% of eligible weeks
+  btcMemory (post-hoc) on +37% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +3%          +1%       +57%      +55%         -40%    -0.003       0.630   (n=760/2038)
               52w           +4%          +3%       +59%      +58%         -42%    -0.001       0.590   (n=744/2012)
@@ -890,10 +890,10 @@ VZ  (control)  1983-11-21 → 2026-09-28, 2237 weeks; counted from 2002-07-08
   -- 50%+ drawdowns, mvrv<1:
      peak 1999-10-04 → low 2008-10-20 (-62%): zone first on 2002-07-08, then fell a further -28%; within ±13w of low: yes
      peak 2019-12-16 → low 2023-10-09 (-51%) not recovered: zone first on 2020-02-24, then fell a further -43%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 8/13 beat waiting (mean rank +55%, sign p=0.291); 104w 4/13 beat waiting (mean rank +47%, sign p=0.954); 156w 5/13 beat waiting (mean rank +45%, sign p=0.867)
-  -- episodes of zLow10: 52w 3/7 beat waiting (mean rank +39%, sign p=0.773); 104w 4/7 beat waiting (mean rank +46%, sign p=0.500); 156w 3/5 beat waiting (mean rank +53%, sign p=0.500)
-  -- episodes of mvrvLow10: 52w 2/6 beat waiting (mean rank +33%, sign p=0.891); 104w 2/6 beat waiting (mean rank +39%, sign p=0.891); 156w 2/4 beat waiting (mean rank +52%, sign p=0.688)
-  -- episodes of btcMemory: 52w 16/28 beat waiting (mean rank +56%, sign p=0.286); 104w 15/28 beat waiting (mean rank +56%, sign p=0.425); 156w 11/28 beat waiting (mean rank +50%, sign p=0.908)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 8/13 beat waiting (mean rank +55%, sign p=0.291); 104w 4/13 beat waiting (mean rank +47%, sign p=0.954); 156w 5/13 beat waiting (mean rank +45%, sign p=0.867)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 3/7 beat waiting (mean rank +39%, sign p=0.773); 104w 4/7 beat waiting (mean rank +46%, sign p=0.500); 156w 3/5 beat waiting (mean rank +53%, sign p=0.500)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 2/6 beat waiting (mean rank +33%, sign p=0.891); 104w 2/6 beat waiting (mean rank +39%, sign p=0.891); 156w 2/4 beat waiting (mean rank +52%, sign p=0.688)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 16/28 beat waiting (mean rank +56%, sign p=0.286); 104w 15/28 beat waiting (mean rank +56%, sign p=0.425); 156w 11/28 beat waiting (mean rank +50%, sign p=0.908)
 ====================================================================================================
 KO  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1982-02-08
   now: price 85.65, realized/cost-basis price 74.55, MVRV 1.15, Z 0.53
@@ -911,14 +911,14 @@ KO  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1982-02-08
              104w           +3%         +16%       +58%      +77%         -30%    -0.108       0.780   (n=232/2226)
              156w           -0%         +24%       +50%      +84%         -28%    -0.173       0.805   (n=229/2174)
             zone-only buying vs weekly DCA: 0.57× (random-timing 90% band 0.33–0.87, p=0.526), 232 buy weeks, 152 of 2329 units still in cash
-  mvrvLow10 on +10% of eligible weeks
+  mvrvLow10 (post-hoc) on +10% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +6%          +6%       +71%      +68%         -24%    -0.007       0.522   (n=242/2304)
               52w           +7%         +10%       +69%      +72%         -22%    -0.026       0.560   (n=242/2278)
              104w           +3%         +16%       +59%      +77%         -25%    -0.096       0.688   (n=242/2226)
              156w           +2%         +24%       +53%      +84%         -28%    -0.155       0.730   (n=240/2174)
             zone-only buying vs weekly DCA: 0.58× (random-timing 90% band 0.32–0.89, p=0.487), 242 buy weeks, 153 of 2329 units still in cash
-  btcMemory on +29% of eligible weeks
+  btcMemory (post-hoc) on +29% of eligible weeks
             horizon   median(zone)  median(all)  hit(zone)  hit(all)  worst(zone)  log-edge  p(rotation)
               26w           +3%          +4%       +59%      +63%         -59%    -0.019       0.740   (n=817/2801)
               52w           +4%          +8%       +59%      +66%         -62%    -0.029       0.670   (n=817/2775)
@@ -948,19 +948,19 @@ KO  (control)  1969-04-07 → 2026-09-28, 3000 weeks; counted from 1982-02-08
      k=0.5  on +11%  52w edge 0.012 p=0.360  104w edge -0.006 p=0.364  zone/DCA 0.40 p=0.787
   -- 50%+ drawdowns, mvrv<1:
      peak 1998-07-06 → low 2003-03-03 (-57%): zone first on 1999-09-13, then fell a further -30%; within ±13w of low: yes
-  -- episodes of mvrv<1: 52w 14/24 beat waiting (mean rank +60%, sign p=0.271); 104w 14/23 beat waiting (mean rank +62%, sign p=0.202); 156w 11/22 beat waiting (mean rank +52%, sign p=0.584)
-  -- episodes of zLow10: 52w 8/16 beat waiting (mean rank +57%, sign p=0.598); 104w 6/15 beat waiting (mean rank +52%, sign p=0.849); 156w 6/14 beat waiting (mean rank +47%, sign p=0.788)
-  -- episodes of mvrvLow10: 52w 10/17 beat waiting (mean rank +61%, sign p=0.315); 104w 6/16 beat waiting (mean rank +54%, sign p=0.895); 156w 8/16 beat waiting (mean rank +53%, sign p=0.598)
-  -- episodes of btcMemory: 52w 12/27 beat waiting (mean rank +48%, sign p=0.779); 104w 14/26 beat waiting (mean rank +55%, sign p=0.423); 156w 11/25 beat waiting (mean rank +44%, sign p=0.788)
+  -- episodes of mvrv<1 vs waiting (post-hoc): 52w 14/24 beat waiting (mean rank +60%, sign p=0.271); 104w 14/23 beat waiting (mean rank +62%, sign p=0.202); 156w 11/22 beat waiting (mean rank +52%, sign p=0.584)
+  -- episodes of zLow10 vs waiting (post-hoc): 52w 8/16 beat waiting (mean rank +57%, sign p=0.598); 104w 6/15 beat waiting (mean rank +52%, sign p=0.849); 156w 6/14 beat waiting (mean rank +47%, sign p=0.788)
+  -- episodes of mvrvLow10 vs waiting (post-hoc): 52w 10/17 beat waiting (mean rank +61%, sign p=0.315); 104w 6/16 beat waiting (mean rank +54%, sign p=0.895); 156w 8/16 beat waiting (mean rank +53%, sign p=0.598)
+  -- episodes of btcMemory vs waiting (post-hoc): 52w 12/27 beat waiting (mean rank +48%, sign p=0.779); 104w 14/26 beat waiting (mean rank +55%, sign p=0.423); 156w 11/25 beat waiting (mean rank +44%, sign p=0.788)
 ====================================================================================================
-EPISODES vs WAITING — each zone entry counted once, ranked against buying in any of the next 104 weeks instead
+EPISODES vs WAITING (post-hoc) — each zone entry counted once, ranked against buying in any of the next 104 weeks instead
   BTC   mvrv<1     52w   1/7   mean rank +27% p=0.992   104w   2/7   mean rank +48% p=0.938   156w   5/6   mean rank +84% p=0.109
   BTC   z<0.5      52w   4/10  mean rank +40% p=0.828   104w   3/8   mean rank +44% p=0.855   156w   5/7   mean rank +53% p=0.227
   BTC   z>=7       52w   1/3   mean rank +34% p=0.875   104w   0/3   mean rank +17% p=1.000   156w   0/3   mean rank +8% p=1.000
-  NVDA  mvrv<1     52w  12/34  mean rank +40% p=0.971   104w  11/33  mean rank +36% p=0.982   156w  13/32  mean rank +42% p=0.892
+  NVDA  mvrv<1     52w  11/33  mean rank +38% p=0.982   104w  11/32  mean rank +36% p=0.975   156w  12/31  mean rank +41% p=0.925
   NVDA  zLow10     52w   8/17  mean rank +46% p=0.685   104w   7/17  mean rank +39% p=0.834   156w   6/15  mean rank +41% p=0.849
   NVDA  mvrvLow10  52w   5/11  mean rank +45% p=0.726   104w   4/11  mean rank +45% p=0.887   156w   5/9   mean rank +61% p=0.500
-  NVDA  btcMemory  52w   4/13  mean rank +28% p=0.954   104w   4/13  mean rank +33% p=0.954   156w   6/11  mean rank +44% p=0.500
+  NVDA  btcMemory  52w   4/12  mean rank +30% p=0.927   104w   4/12  mean rank +36% p=0.927   156w   6/10  mean rank +49% p=0.377
   MSFT  mvrv<1     52w  19/37  mean rank +47% p=0.500   104w  15/37  mean rank +43% p=0.906   156w  14/35  mean rank +44% p=0.912
   MSFT  zLow10     52w   4/10  mean rank +36% p=0.828   104w   5/10  mean rank +51% p=0.623   156w   0/8   mean rank +23% p=1.000
   MSFT  mvrvLow10  52w   6/13  mean rank +40% p=0.709   104w   6/12  mean rank +49% p=0.613   156w   2/11  mean rank +32% p=0.994
@@ -1018,7 +1018,7 @@ EPISODES vs WAITING — each zone entry counted once, ranked against buying in a
   KO    mvrvLow10  52w  10/17  mean rank +61% p=0.315   104w   6/16  mean rank +54% p=0.895   156w   8/16  mean rank +53% p=0.598
   KO    btcMemory  52w  12/27  mean rank +48% p=0.779   104w  14/26  mean rank +55% p=0.423   156w  11/25  mean rank +44% p=0.788
 
-STOCKS POOLED — average log-edge across stocks vs averaged independent rotations, one stream per stock (optimistic: stocks are not independent)
+STOCKS POOLED (post-hoc) — average log-edge across stocks vs averaged independent rotations, one stream per stock (optimistic: stocks are not independent)
   mvrv<1          requested 26w -0.018 p=0.752   52w  0.008 p=0.494   104w  0.070 p=0.182   156w  0.081 p=0.136
   mvrv<1          control   26w -0.021 p=0.905   52w -0.021 p=0.788   104w  0.021 p=0.368   156w  0.045 p=0.286
   mvrv<1          all       26w -0.020 p=0.910   52w -0.012 p=0.687   104w  0.038 p=0.206   156w  0.057 p=0.150
