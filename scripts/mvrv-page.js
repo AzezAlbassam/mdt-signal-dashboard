@@ -46,11 +46,15 @@ const signal = (ev) => ({
   acc: { ratio: fix(ev.acc.ratio, 3), p: fix(ev.acc.p, 4), lo: fix(ev.acc.null05, 3), hi: fix(ev.acc.null95, 3), cashLeft: Math.round(ev.acc.cashLeft), paidIn: ev.acc.paidIn },
 })
 
-/** Episodes summarised against waiting (same arithmetic as the report). */
+/** Episodes summarised against waiting, with the report's exact one-sided sign test. */
 function waitSummary(eps, h) {
   const ranks = eps.map((e) => e[`rank${h}`]).filter((r) => r != null)
   const above = ranks.filter((r) => r > 0.5).length
-  return { n: ranks.length, above, mean: ranks.length ? fix(ranks.reduce((a, b) => a + b, 0) / ranks.length, 3) : null }
+  const n = ranks.length
+  const choose = (a, b) => { let c = 1; for (let i = 1; i <= b; i += 1) c = (c * (a - b + i)) / i; return c }
+  let p = 0
+  for (let x = above; x <= n; x += 1) p += choose(n, x) / 2 ** n
+  return { n, above, mean: n ? fix(ranks.reduce((a, b) => a + b, 0) / n, 3) : null, p: n ? fix(p, 4) : null }
 }
 
 // ---------------------------------------------------------------- Bitcoin
@@ -90,6 +94,7 @@ for (const [ticker, a] of Object.entries(results.assets)) {
     symbol: d.symbol,
     group: a.group,
     from: a.from,
+    eligibleFrom: a.eligibleFrom,
     weeks: a.weeks,
     now: a.now,
     turnover: a.turnover,
@@ -113,7 +118,7 @@ const pine = {
   stock: fs.readFileSync('pine/stock-mvrv-zscore.pine', 'utf8'),
 }
 
-const payload = { generated: results.generated, draws: results.draws, btc, stocks, pooled, validation, pine }
+const payload = { generated: results.generated, pooledDraws: results.pooledDraws, btc, stocks, pooled, validation, pine }
 const json = JSON.stringify(payload).replace(/</g, '\\u003c')
 
 const html = fs.readFileSync(PAGE, 'utf8')

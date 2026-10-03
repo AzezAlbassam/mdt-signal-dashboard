@@ -13,6 +13,7 @@ import {
   costBasisFixedMemory,
   costBasisFromTurnover,
   expandingPercentRank,
+  startWeight,
   expandingStd,
   fullStd,
   mvrvRatio,
@@ -46,11 +47,11 @@ describe('Bitcoin supply from the issuance schedule', () => {
     }
   })
 
-  test('matches circulating supply as commonly quoted', () => {
-    // ~19.6M at the start of 2024, ~19.98M by late 2025 (tolerances generous: the
-    // anchors are linear between known blocks).
-    assert.ok(close(btcSupplyAt(at('2024-01-01')), 19_580_000, 40_000))
-    assert.ok(close(btcSupplyAt(at('2017-01-01')), 16_080_000, 60_000))
+  test('matches Coin Metrics supply on its anchor dates and between them', () => {
+    // Anchors come from Coin Metrics' SplyCur; mid-year dates test the interpolation.
+    assert.ok(close(btcSupplyAt(at('2024-01-01')), 19_586_943, 5_000))
+    assert.ok(close(btcSupplyAt(at('2017-01-01')), 16_077_261, 5_000))
+    assert.ok(close(btcSupplyAt(at('2011-08-15')), 7_056_200, 0.005 * 7_056_200))
   })
 })
 
@@ -99,6 +100,16 @@ describe('costBasisFixedMemory', () => {
     const prices = [10, ...new Array(52).fill(20)]
     const rp = costBasisFixedMemory(prices, 52)
     assert.ok(close(rp[52], 15, 1e-9), `got ${rp[52]}`)
+  })
+})
+
+describe('startWeight', () => {
+  test('is the share of the cost basis still at the first price', () => {
+    const w = startWeight([0, 25, 50], 100)
+    assert.deepEqual(w, [1, 0.75, 0.375])
+    const rp = costBasisFromTurnover([10, 20, 20], [0, 25, 50], 100)
+    // RP = w × first price + (1 − w) × later prices
+    assert.ok(close(rp[2], 0.375 * 10 + 0.625 * 20, 1e-12))
   })
 })
 
@@ -156,6 +167,12 @@ describe('expandingPercentRank', () => {
     const r = expandingPercentRank([1, 2, 3], { minHistory: 3 })
     assert.ok(Number.isNaN(r[1]))
     assert.equal(r[2], 1)
+  })
+
+  test('counts only finite history, so masked burn-in does not count towards minHistory', () => {
+    const r = expandingPercentRank([Number.NaN, Number.NaN, 5, 4], { minHistory: 2 })
+    assert.ok(Number.isNaN(r[2]))
+    assert.equal(r[3], 0.5)
   })
 })
 

@@ -49,9 +49,17 @@ describe('rotationNull', () => {
     const n = 400
     const fwd = Array.from({ length: n }, (_, i) => (i % 40 < 4 ? 0.5 : -0.01))
     const mask = fwd.map((x) => x > 0)
-    const r = rotationNull(mask, fwd, new Array(n).fill(true), { draws: 500, rng: seededRng(7) })
+    const r = rotationNull(mask, fwd, new Array(n).fill(true))
     assert.ok(r.observed > 0)
     assert.ok(r.p < 0.2, `p = ${r.p}`)
+  })
+
+  test('is exact: a perfectly aligned flag with no ties gets the smallest possible p', () => {
+    const n = 50
+    const fwd = Array.from({ length: n }, (_, i) => (i === 7 ? 1 : i * 0.001))
+    const mask = fwd.map((_, i) => i === 7)
+    const r = rotationNull(mask, fwd, new Array(n).fill(true))
+    assert.equal(r.p, 1 / n)
   })
 
   test('a flag unrelated to returns is not', () => {
@@ -59,21 +67,33 @@ describe('rotationNull', () => {
     const n = 1000
     const fwd = Array.from({ length: n }, () => rng() - 0.5)
     const mask = Array.from({ length: n }, (_, i) => Math.floor(i / 25) % 7 === 0)
-    const r = rotationNull(mask, fwd, new Array(n).fill(true), { draws: 500, rng: seededRng(11) })
+    const r = rotationNull(mask, fwd, new Array(n).fill(true))
     assert.ok(r.p > 0.05, `p = ${r.p}`)
   })
 })
 
 describe('pooledRotation', () => {
+  test('draws each asset independently, so identical assets do not move in lockstep', () => {
+    const n = 300
+    const mask = Array.from({ length: n }, (_, i) => Math.floor(i / 15) % 4 === 0)
+    const fwd = mask.map((_, i) => Math.sin(i / 7) * 0.1)
+    const one = rotationNull(mask, fwd, new Array(n).fill(true), { keepNulls: true })
+    const single = pooledRotation([one], { draws: 4000, seed: 5 })
+    const many = pooledRotation(new Array(8).fill(one), { draws: 4000, seed: 5 })
+    // Averaging independent draws of the same null narrows it, so the pooled p moves away
+    // from the single-asset p; lockstep draws would leave it unchanged.
+    assert.notEqual(Math.round(single.p * 100), Math.round(many.p * 100))
+  })
+
   test('pooling several weak but genuine edges gives more power than any one of them', () => {
     const tests = [1, 2, 3, 4, 5, 6].map((seed) => {
       const rng = seededRng(seed)
       const n = 600
       const mask = Array.from({ length: n }, (_, i) => Math.floor(i / 20) % 5 === 0)
       const fwd = mask.map((m) => (rng() - 0.5) * 0.4 + (m ? 0.04 : 0))
-      return rotationNull(mask, fwd, new Array(n).fill(true), { draws: 400, rng: seededRng(100 + seed), keepNulls: true })
+      return rotationNull(mask, fwd, new Array(n).fill(true), { keepNulls: true })
     })
-    const pooled = pooledRotation(tests)
+    const pooled = pooledRotation(tests, { draws: 2000, seed: 3 })
     assert.equal(pooled.assets, 6)
     assert.ok(pooled.p <= Math.min(...tests.map((t) => t.p)) + 0.02, `pooled ${pooled.p}`)
   })
@@ -107,7 +127,7 @@ describe('accumulate', () => {
     const px = [100]
     for (let i = 1; i < 300; i += 1) px.push(px[i - 1] * (1 + (rng() - 0.5) * 0.1))
     const mask = px.map((_, i) => Math.floor(i / 10) % 2 === 0)
-    const r = accumulateNull(px, px, mask, { draws: 200, rng: seededRng(9) })
+    const r = accumulateNull(px, px, mask)
     assert.ok(r.null05 < 1.05 && r.null95 > 0.95)
   })
 })

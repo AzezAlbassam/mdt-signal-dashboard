@@ -12,6 +12,8 @@
 //   - a week whose forward window runs past the data has no forward return and is
 //     excluded, so the most recent weeks never count as wins or losses.
 
+import { seededRng } from './null-models.js'
+
 /** Forward return for every week, NaN where the window does not fit. */
 export function forwardReturns(open, close, h) {
   const n = close.length
@@ -63,67 +65,68 @@ export function conditional(mask, fwd, eligible) {
 }
 
 /**
- * Rotation null: slide the flag pattern round the sample by a random offset and measure
- * the same edge. Rotation keeps how often the flag is on and how it clusters into runs —
- * only its alignment with prices is broken. The p-value is the share of rotations that
- * do at least as well as the real thing.
+ * Rotation null: slide the flag pattern round the sample and measure the same edge at
+ * every possible offset. Rotation keeps how often the flag is on and how it clusters
+ * into runs — only its alignment with prices is broken. Every offset is computed, so the
+ * p-value is exact: the share of offsets (the real one included) that do at least as well.
+ * Its smallest possible value is 1 / (number of eligible weeks).
  */
-export function rotationNull(mask, fwd, eligible, { draws = 2000, rng, keepNulls = false }) {
+export function rotationNull(mask, fwd, eligible, { keepNulls = false } = {}) {
   const idx = []
   for (let i = 0; i < fwd.length; i += 1) {
     if (eligible[i] && Number.isFinite(fwd[i])) idx.push(i)
   }
   const n = idx.length
   const logs = idx.map((i) => Math.log1p(fwd[i]))
-  const flags = idx.map((i) => Boolean(mask[i]))
-  const k = flags.filter(Boolean).length
+  const flagged = []
+  idx.forEach((i, j) => { if (mask[i]) flagged.push(j) })
+  const k = flagged.length
   if (k === 0 || k === n) return { observed: Number.NaN, p: Number.NaN, n, k }
 
   const allMean = mean(logs)
-  const edgeAt = (shift) => {
-    let s = 0
-    for (let j = 0; j < n; j += 1) {
-      if (flags[(j + shift) % n]) s += logs[j]
-    }
-    return s / k - allMean
+  // Offset s moves the flag at position f onto week (f − s) mod n.
+  const edges = new Array(n)
+  for (let s = 0; s < n; s += 1) {
+    let sum = 0
+    for (const f of flagged) sum += logs[(f - s + n) % n]
+    edges[s] = sum / k - allMean
   }
-
-  const observed = edgeAt(0)
-  const nulls = new Array(draws)
+  const observed = edges[0]
+  const tol = 1e-12 * Math.max(1, Math.abs(observed))
   let atLeast = 0
-  for (let d = 0; d < draws; d += 1) {
-    const shift = 1 + Math.floor(rng() * (n - 1))
-    nulls[d] = edgeAt(shift)
-    if (nulls[d] >= observed) atLeast += 1
-  }
-  const draw = keepNulls ? [...nulls] : undefined
-  nulls.sort((a, b) => a - b)
+  for (let s = 0; s < n; s += 1) if (edges[s] >= observed - tol) atLeast += 1
+  const others = edges.slice(1)
+  const sorted = [...others].sort((a, b) => a - b)
+  const q = (x) => sorted[Math.min(sorted.length - 1, Math.floor(x * sorted.length))]
   return {
     observed,
-    p: (atLeast + 1) / (draws + 1),
+    p: atLeast / n,
     n,
     k,
-    null05: nulls[Math.floor(0.05 * draws)],
-    null50: nulls[Math.floor(0.5 * draws)],
-    null95: nulls[Math.floor(0.95 * draws)],
-    nulls: draw,
+    null05: q(0.05),
+    null50: q(0.5),
+    null95: q(0.95),
+    nulls: keepNulls ? others : undefined,
   }
 }
 
 /**
  * Pool several assets' rotation tests into one: the observed statistic is the average
- * edge across assets, and each null draw averages one independent rotation per asset.
- * More power than any single asset, at the price of treating assets as independent —
- * which stocks in one market are not quite, so read a pooled p as optimistic.
+ * edge across assets, and each null draw averages one rotation per asset, each asset's
+ * offset drawn independently (its own seeded stream). More power than any single asset,
+ * at the price of treating assets as independent — which stocks in one market are not
+ * quite, so read a pooled p as optimistic.
  */
-export function pooledRotation(tests) {
-  const usable = tests.filter((t) => Number.isFinite(t.observed) && t.nulls)
+export function pooledRotation(tests, { draws = 10000, seed = 1 } = {}) {
+  const usable = tests.filter((t) => t && Number.isFinite(t.observed) && t.nulls && t.nulls.length)
   if (usable.length === 0) return { observed: Number.NaN, p: Number.NaN, assets: 0 }
-  const draws = Math.min(...usable.map((t) => t.nulls.length))
   const observed = mean(usable.map((t) => t.observed))
+  const rngs = usable.map((_, a) => seededRng(seed + 7919 * (a + 1)))
   let atLeast = 0
   for (let d = 0; d < draws; d += 1) {
-    if (mean(usable.map((t) => t.nulls[d])) >= observed) atLeast += 1
+    let sum = 0
+    usable.forEach((t, a) => { sum += t.nulls[Math.floor(rngs[a]() * t.nulls.length)] })
+    if (sum / usable.length >= observed) atLeast += 1
   }
   return { observed, p: (atLeast + 1) / (draws + 1), assets: usable.length }
 }
@@ -161,28 +164,23 @@ export function accumulate(open, close, mask, { from = 0 } = {}) {
   return { paidIn, dca, zone, ratio: zone / dca, cashLeft: cash, buys }
 }
 
-/** The same accumulation with the flag rotated, for a null distribution of the ratio. */
-export function accumulateNull(open, close, mask, { from = 0, draws = 2000, rng }) {
+/** The same accumulation with the flag rotated to every possible offset: an exact null for the ratio. */
+export function accumulateNull(open, close, mask, { from = 0 } = {}) {
   const span = close.length - 1 - from
   const flags = mask.slice(from, from + span)
   const observed = accumulate(open, close, mask, { from }).ratio
-  const ratios = new Array(draws)
-  let atLeast = 0
-  for (let d = 0; d < draws; d += 1) {
-    const shift = 1 + Math.floor(rng() * (span - 1))
-    const rotated = new Array(close.length).fill(false)
+  const ratios = []
+  let atLeast = 1
+  const rotated = new Array(close.length).fill(false)
+  for (let shift = 1; shift < span; shift += 1) {
     for (let j = 0; j < span; j += 1) rotated[from + j] = flags[(j + shift) % span]
-    ratios[d] = accumulate(open, close, rotated, { from }).ratio
-    if (ratios[d] >= observed) atLeast += 1
+    const r = accumulate(open, close, rotated, { from }).ratio
+    ratios.push(r)
+    if (r >= observed - 1e-12) atLeast += 1
   }
   ratios.sort((a, b) => a - b)
-  return {
-    observed,
-    p: (atLeast + 1) / (draws + 1),
-    null05: ratios[Math.floor(0.05 * draws)],
-    null50: ratios[Math.floor(0.5 * draws)],
-    null95: ratios[Math.floor(0.95 * draws)],
-  }
+  const q = (x) => ratios[Math.min(ratios.length - 1, Math.floor(x * ratios.length))]
+  return { observed, p: atLeast / span, null05: q(0.05), null50: q(0.5), null95: q(0.95) }
 }
 
 /** Runs of flagged weeks, with gaps of up to `mergeGap` unflagged weeks bridged. */

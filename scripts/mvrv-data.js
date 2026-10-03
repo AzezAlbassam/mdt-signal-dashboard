@@ -118,8 +118,11 @@ const write = (name, obj) => {
   const cryptocap = new Map(load('CRYPTOCAP_BTC_1W').bars.map((b) => [weekKey(b.t), b.c]))
 
   // Mt. Gox opened in July 2010; before that the "price" is a handful of OTC trades.
+  // The last week is dropped while it is still open (its close is after the latest daily
+  // realized-cap value in the export).
   const START = '2010-07-19'
-  const bars = price.filter((b) => iso(b.t) >= START && realized.get(weekKey(b.t)) > 0)
+  const lastDaily = load('COINMETRICS_BTC_MARKETCAPREAL_1D_daily3500').bars.at(-1).t
+  const bars = price.filter((b) => iso(b.t) >= START && realized.get(weekKey(b.t)) > 0 && b.t + 7 * 86400 <= lastDaily + 86400)
 
   // Supply is valued at the week's close: the last moment of the bar.
   const closeTime = (t) => t + 7 * 86400 - 1

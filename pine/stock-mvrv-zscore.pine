@@ -15,22 +15,25 @@
 // Z < 0 means price is below the holders' estimated average cost.
 //
 // Read this before trusting it. Shares on US exchanges change hands fast — NVDA turns over
-// ~8% of its shares a week — so this cost basis forgets in months (half-life 8 to 44 weeks
-// across the stocks tested), where Bitcoin's on-chain realized price behaves like a
-// half-life of about a year. "Fixed memory" gives the stock Bitcoin's memory instead.
-// Neither version beat random timing across the 15 stocks tested; the five large winners
-// looked better only because they are winners, and a plain 200-week average did as well.
-// Details: reports/mvrv-backtest.txt.
+// ~8% of its shares a week — so this cost basis forgets in weeks to months (half-life 8 to
+// 44 weeks across the stocks tested), where Bitcoin's on-chain realized price behaves like
+// a half-life of about a year. "Fixed memory" gives the stock Bitcoin's memory instead.
+// Across the 15 stocks tested, neither version beat random timing in the pooled test set
+// in advance; results varied by stock (clearly positive on META, negative on MSFT for every
+// variant, mixed on NVDA). Details: reports/mvrv-backtest.txt.
 //
 // Shares outstanding come from TradingView (syminfo.shares_outstanding_total, the latest
-// figure, held constant over history — the same simplification the backtest makes).
+// figure, held constant over history — the same simplification the backtest makes). The
+// count can differ from the SEC filing (META: 2.20B on TradingView vs 2.55B filed); use
+// the override to match. The first bars' cost basis is just the first price: give it
+// time (the backtest waited until that price weighed under 10%).
 
 //@version=6
 indicator("Stock MVRV Z-Score (holders' cost basis)", shorttitle = "Stock MVRV-Z", format = format.price, precision = 2)
 
 model          = input.string("Turnover", "Cost basis model", options = ["Turnover", "Fixed memory"])
 k              = input.float(1.0, "Turnover scale k", minval = 0.05, step = 0.05, tooltip = "1 = every traded share counts. Below 1 assumes much of the volume is the same shares churning, which lengthens the memory.")
-halfLifeWeeks  = input.float(52.0, "Fixed memory half-life (weeks)", minval = 1.0, tooltip = "Bitcoin's on-chain realized price behaves like a 42–58 week half-life.")
+halfLifeWeeks  = input.float(52.0, "Fixed memory half-life (weeks)", minval = 1.0, tooltip = "Bitcoin's on-chain realized price behaves like a 42–58 week half-life (measured from 2013 and from 2017).")
 sharesOverride = input.float(0.0, "Shares outstanding override (0 = automatic)", minval = 0.0)
 buyBelow       = input.float(0.0, "Zone: Z below", step = 0.1)
 showCostBasis  = input.bool(true, "Draw cost basis on the price chart")
@@ -41,7 +44,8 @@ showTable      = input.bool(true, "Show current readings")
 float shares = sharesOverride > 0.0 ? sharesOverride : syminfo.shares_outstanding_total
 bool useTurnover = model == "Turnover" and not na(shares) and shares > 0.0
 
-// Bars per week, so the fixed half-life means the same calendar time on any chart.
+// Bars per week, so the fixed half-life means the same calendar time on daily, weekly and
+// monthly charts. Intraday charts assume a 6.5-hour US session.
 float barsPerWeek = timeframe.isweekly ? 1.0 / timeframe.multiplier : timeframe.ismonthly ? 1.0 / (4.345 * timeframe.multiplier) : timeframe.isdaily ? 5.0 / timeframe.multiplier : 5.0 * 23400.0 / timeframe.in_seconds()
 float tauFixed = 1.0 - math.pow(0.5, 1.0 / (halfLifeWeeks * barsPerWeek))
 
@@ -75,13 +79,13 @@ hline(0.0, "Price = cost basis", color.new(color.green, 30), hline.style_dashed)
 bgcolor(z < buyBelow ? color.new(color.green, 85) : na)
 plot(showCostBasis ? costBasis : na, "Holders' cost basis", color.new(color.orange, 0), 2, force_overlay = true)
 
-var table info = table.new(position.top_right, 2, 4, border_width = 1)
+var table info = table.new(position.top_right, 2, 4, bgcolor = chart.bg_color, border_width = 1)
 if showTable and barstate.islast
     table.cell(info, 0, 0, "Model", text_color = color.gray)
-    table.cell(info, 1, 0, useTurnover ? "Turnover, k = " + str.tostring(k) : "Fixed memory, " + str.tostring(halfLifeWeeks) + "w" + (model == "Turnover" ? " (no share count)" : ""))
+    table.cell(info, 1, 0, useTurnover ? "Turnover, k = " + str.tostring(k) : "Fixed memory, " + str.tostring(halfLifeWeeks) + "w" + (model == "Turnover" ? " (no share count)" : ""), text_color = chart.fg_color)
     table.cell(info, 0, 1, "Cost basis", text_color = color.gray)
-    table.cell(info, 1, 1, str.tostring(costBasis, format.mintick))
+    table.cell(info, 1, 1, str.tostring(costBasis, format.mintick), text_color = chart.fg_color)
     table.cell(info, 0, 2, "MVRV", text_color = color.gray)
-    table.cell(info, 1, 2, str.tostring(mvrv, "0.00"))
+    table.cell(info, 1, 2, str.tostring(mvrv, "0.00"), text_color = chart.fg_color)
     table.cell(info, 0, 3, "Z", text_color = color.gray)
-    table.cell(info, 1, 3, str.tostring(z, "0.00"), text_color = zColor)
+    table.cell(info, 1, 3, str.tostring(z, "0.00"), text_color = z < buyBelow ? color.green : chart.fg_color)

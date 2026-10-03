@@ -24,9 +24,22 @@
 //                   episode as 44 observations; this counts it once, against its own era.
 //                   Later weeks only: weeks before a dip have the dip inside their window, so
 //                   ranking against them flatters any buy-low rule even on a random walk.
+//
+//   CHANGED AFTER AN INDEPENDENT REVIEW of the second run:
+//     eligibility   stocks start counting only once the first exported price weighs under
+//                   10% of the modelled cost basis (and never before week 104). With one
+//                   share count for all history, early turnover can be tiny — Bank of
+//                   America's 1972 price still made up 99% of its cost basis in 1974 — so a
+//                   flat 104 weeks left the zone meaning "below the first bar in the file".
+//     exact nulls   every rotation offset instead of 2000 random ones (removes Monte Carlo
+//                   noise; META's 2-year p was 0.045 by sampling and is 0.053 exactly).
+//     pooled        each stock's rotation drawn from its own stream; the first runs reused
+//                   one stream for every stock, which is not the independent null described.
+//     wait rank     needs the full 104 later weeks; episodes already running when
+//                   eligibility starts are left out (their start is unknown).
 //     btcMemory     stocks: mvrv<1 with the cost basis given Bitcoin's memory — a fixed
 //                   52-week half-life — instead of exchange turnover. Bitcoin's realized
-//                   price fits a 42–60 week half-life (measured below on Bitcoin alone;
+//                   price fits a 42–58 week half-life (measured below on Bitcoin alone;
 //                   no stock returns were looked at to choose it).
 //
 //   STOCK REALIZED PRICE   turnover model, scale k = 1 primary; k = 0.25, 0.5, 2 reported
@@ -34,9 +47,12 @@
 //   ELIGIBILITY            Bitcoin from week 52 (σ needs history; realized cap is observed).
 //                          Stocks from week 104 (the modelled cost basis must forget its
 //                          arbitrary starting value). Baseline comparison on weeks ≥ 200.
+//                          Changed after review, see below: stocks also wait until the
+//                          first price weighs under 10% of the cost basis.
 //   EXECUTION              act at the next week's open (engine/timing.js).
 //   HORIZONS               26, 52, 104, 156 weeks.
-//   NULL                   rotate the flag pattern round the sample, 2000 draws, seed 20261003.
+//   NULL                   rotate the flag pattern round the sample. First run: 2000 random
+//                          offsets; after review: every offset, so p is exact.
 //   DEEP DRAWDOWNS         falls of 50% or more from a running high.
 //
 //   node scripts/mvrv-backtest.js
@@ -44,7 +60,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { costBasisFixedMemory, costBasisFromTurnover, expandingPercentRank, mvrvRatio, mvrvZ, sma } from '../engine/mvrv.js'
+import { costBasisFixedMemory, costBasisFromTurnover, expandingPercentRank, mvrvRatio, mvrvZ, sma, startWeight } from '../engine/mvrv.js'
 import {
   accumulate,
   accumulateNull,
@@ -56,12 +72,12 @@ import {
   pooledRotation,
   rotationNull,
 } from '../engine/timing.js'
-import { seededRng } from '../engine/null-models.js'
 
 const DATA = path.resolve('data/mvrv')
 const HORIZONS = [26, 52, 104, 156]
-const DRAWS = Number(process.env.DRAWS ?? 2000)
+const POOLED_DRAWS = Number(process.env.POOLED_DRAWS ?? 10000)
 const SEED = 20261003
+const START_WEIGHT = 0.1
 const SCALES = [0.25, 0.5, 1, 2]
 const BTC_MEMORY = 52
 const STOCKS = ['NVDA', 'MSFT', 'AAPL', 'META', 'AMZN', 'INTC', 'CSCO', 'C', 'BAC', 'BA', 'NKE', 'PYPL', 'DIS', 'VZ', 'KO']
@@ -99,18 +115,18 @@ function stockSeries(d, scale) {
 // Null draws per (asset, signal, horizon), kept out of results.json for the pooled test.
 const NULLS = new Map()
 
-function evaluate(d, mask, eligible, rngSeed, poolKey = null) {
+function evaluate(d, mask, eligible, poolKey = null) {
   const byH = {}
   for (const h of HORIZONS) {
     const fwd = forwardReturns(d.o, d.c, h)
     const cond = conditional(mask, fwd, eligible)
-    const rot = rotationNull(mask, fwd, eligible, { draws: DRAWS, rng: seededRng(rngSeed + h), keepNulls: Boolean(poolKey) })
+    const rot = rotationNull(mask, fwd, eligible, { keepNulls: Boolean(poolKey) })
     byH[h] = { ...cond, p: rot.p, null05: rot.null05, null95: rot.null95 }
     if (poolKey) NULLS.set(`${poolKey}|${h}`, { observed: rot.observed, nulls: rot.nulls })
   }
   const from = eligible.indexOf(true)
   const acc = accumulate(d.o, d.c, mask, { from })
-  const accNull = accumulateNull(d.o, d.c, mask, { from, draws: DRAWS, rng: seededRng(rngSeed + 999) })
+  const accNull = accumulateNull(d.o, d.c, mask, { from })
   const share = mask.filter((m, i) => m && eligible[i]).length / eligible.filter(Boolean).length
   return { share, byH, acc: { ...acc, p: accNull.p, null05: accNull.null05, null50: accNull.null50, null95: accNull.null95 } }
 }
@@ -134,12 +150,16 @@ function episodeTable(d, mask, eligible) {
   // The episode's own forward return, ranked against entering in any of the next 104 weeks.
   const eraRank = (start, h) => {
     const peers = []
-    for (let j = start + 1; j <= Math.min(d.c.length - 1, start + 104); j += 1) {
-      if (eligible[j] && Number.isFinite(fwd[h][j])) peers.push(fwd[h][j])
+    for (let j = start + 1; j <= start + 104; j += 1) {
+      if (j < d.c.length && eligible[j] && Number.isFinite(fwd[h][j])) peers.push(fwd[h][j])
     }
-    return rankAmong(fwd[h][start], peers)
+    // Only a full set of 104 later entries counts; near the end of the data there are fewer.
+    return peers.length === 104 ? rankAmong(fwd[h][start], peers) : null
   }
-  return episodes(on, { mergeGap: 4 }).map(({ start, end }) => {
+  const first = eligible.indexOf(true)
+  // An episode already running when eligibility starts has no known start: left out.
+  const known = episodes(on, { mergeGap: 4 }).filter(({ start }) => !(start === first && first > 0 && mask[first - 1]))
+  return known.map(({ start, end }) => {
     const entry = d.o[start + 1] ?? d.c[start]
     const after = (h) => (start + h < d.c.length ? d.c[start + h] / entry - 1 : null)
     let low = Infinity
@@ -199,7 +219,7 @@ function troughTable(d, mask, eligible) {
 
 // ---------------------------------------------------------------- run
 
-const results = { generated: new Date().toISOString().slice(0, 10), draws: DRAWS, horizons: HORIZONS, assets: {} }
+const results = { generated: new Date().toISOString().slice(0, 10), nulls: 'exact (every rotation offset)', pooledDraws: POOLED_DRAWS, horizons: HORIZONS, assets: {} }
 const series = {}
 
 {
@@ -219,14 +239,13 @@ const series = {}
     '<200wMA': d.c.map((c, i) => c < ma200[i]),
   }
   const out = { group: 'bitcoin', weeks: n, from: iso(d.t[0]), to: iso(d.t[n - 1]), signals: {}, common: {}, episodes: {}, troughs: {} }
-  let k = 0
   for (const [name, m] of Object.entries(masks)) {
-    out.signals[name] = evaluate(d, m, elig, SEED + 100 * k++)
+    out.signals[name] = evaluate(d, m, elig)
     out.episodes[name] = episodeTable(d, m, elig)
     out.troughs[name] = troughTable(d, m, elig)
   }
   for (const [name, m] of Object.entries(common)) {
-    out.common[name] = evaluate(d, m, eligCommon, SEED + 100 * k++)
+    out.common[name] = evaluate(d, m, eligCommon)
     out.troughs[name] ??= troughTable(d, m, eligCommon)
   }
   // How long Bitcoin's realized price remembers: the fixed-memory cost basis that tracks it best.
@@ -250,7 +269,7 @@ const series = {}
   out.eras = {}
   for (const from of ['2013-01-01', '2017-01-01']) {
     const e = d.t.map((t, i) => i >= 52 && iso(t) >= from)
-    out.eras[from] = evaluate(d, masks['mvrv<1'], e, SEED + 100 * k++)
+    out.eras[from] = evaluate(d, masks['mvrv<1'], e)
   }
   out.now = { date: iso(d.t[n - 1]), price: d.c[n - 1], rp: s.rp[n - 1], ratio: s.ratio[n - 1], z: s.z[n - 1], zFull: s.zFull[n - 1] }
   results.assets.BTC = out
@@ -260,15 +279,20 @@ const series = {}
 for (const ticker of STOCKS) {
   const d = load(ticker)
   const n = d.c.length
-  const elig = d.c.map((_, i) => i >= 104)
-  const eligCommon = d.c.map((_, i) => i >= 200)
+  // A week counts once the first exported price weighs under 10% of the cost basis.
+  const eligibleFrom = (weights) => d.c.map((_, i) => i >= 104 && weights[i] < START_WEIGHT)
+  const elig = eligibleFrom(startWeight(d.v, d.shares, { scale: 1 }))
+  const fixedTau = 1 - 0.5 ** (1 / BTC_MEMORY)
+  const eligSlow = eligibleFrom(d.c.map((_, i) => (1 - fixedTau) ** i))
+  const eligCommon = elig.map((e, i) => e && i >= 200)
   const ma200 = sma(d.c, 200)
-  const out = { group: d.group, weeks: n, from: iso(d.t[0]), to: iso(d.t[n - 1]), signals: {}, common: {}, episodes: {}, troughs: {}, scales: {} }
+  const out = { group: d.group, weeks: n, from: iso(d.t[0]), to: iso(d.t[n - 1]), eligibleFrom: iso(d.t[elig.indexOf(true)]), signals: {}, common: {}, episodes: {}, troughs: {}, scales: {} }
 
-  let k = 0
   const primary = stockSeries(d, 1)
-  const zRank = expandingPercentRank(primary.z.map((z, i) => (i >= 1 ? z : Number.NaN)), { minHistory: 104 })
-  const ratioRank = expandingPercentRank(primary.ratio, { minHistory: 104 })
+  // Percentiles rank only weeks that are themselves eligible, so burn-in never sets the bar.
+  const onlyEligible = (xs) => xs.map((x, i) => (elig[i] ? x : Number.NaN))
+  const zRank = expandingPercentRank(onlyEligible(primary.z), { minHistory: 104 })
+  const ratioRank = expandingPercentRank(onlyEligible(primary.ratio), { minHistory: 104 })
   const slow = costBasisFixedMemory(typical(d), BTC_MEMORY)
   const masks = {
     'mvrv<1': primary.ratio.map((r) => r < 1),
@@ -277,13 +301,14 @@ for (const ticker of STOCKS) {
     btcMemory: d.c.map((c, i) => c < slow[i]),
   }
   for (const [name, m] of Object.entries(masks)) {
-    out.signals[name] = evaluate(d, m, elig, SEED + 100 * k++, `${ticker}|${name}`)
-    out.episodes[name] = episodeTable(d, m, elig)
-    out.troughs[name] = troughTable(d, m, elig)
+    const e = name === 'btcMemory' ? eligSlow : elig
+    out.signals[name] = evaluate(d, m, e, `${ticker}|${name}`)
+    out.episodes[name] = episodeTable(d, m, e)
+    out.troughs[name] = troughTable(d, m, e)
   }
   const common = { 'mvrv<1': masks['mvrv<1'], '<200wMA': d.c.map((c, i) => c < ma200[i]) }
   for (const [name, m] of Object.entries(common)) {
-    out.common[name] = evaluate(d, m, eligCommon, SEED + 100 * k++, `${ticker}|common:${name}`)
+    out.common[name] = evaluate(d, m, eligCommon, `${ticker}|common:${name}`)
     out.troughs[name] ??= troughTable(d, m, eligCommon)
   }
   // How long the modelled cost basis remembers: half-life at the median weekly turnover of the last ten years.
@@ -292,7 +317,8 @@ for (const ticker of STOCKS) {
   out.turnover = { weeklyMedian: tau, halfLifeWeeks: Math.log(0.5) / Math.log(1 - tau) }
   for (const scale of SCALES) {
     const s = scale === 1 ? primary : stockSeries(d, scale)
-    out.scales[scale] = evaluate(d, s.ratio.map((r) => r < 1), elig, SEED + 100 * k++)
+    const e = eligibleFrom(startWeight(d.v, d.shares, { scale }))
+    out.scales[scale] = { ...evaluate(d, s.ratio.map((r) => r < 1), e), eligibleFrom: iso(d.t[e.indexOf(true)]) }
   }
   out.now = { date: iso(d.t[n - 1]), price: d.c[n - 1], rp: primary.rp[n - 1], ratio: primary.ratio[n - 1], z: primary.z[n - 1], zRank: zRank[n - 1], ratioRank: ratioRank[n - 1] }
   results.assets[ticker] = out
@@ -312,7 +338,7 @@ for (const sigName of ['mvrv<1', 'mvrvLow10', 'zLow10', 'btcMemory', 'common:mvr
   for (const [group, tickers] of Object.entries(GROUPS)) {
     results.pooled[sigName][group] = {}
     for (const h of HORIZONS) {
-      results.pooled[sigName][group][h] = pooledRotation(tickers.map((t) => NULLS.get(`${t}|${sigName}|${h}`)))
+      results.pooled[sigName][group][h] = pooledRotation(tickers.map((t) => NULLS.get(`${t}|${sigName}|${h}`)), { draws: POOLED_DRAWS, seed: SEED + h })
     }
   }
 }
@@ -326,7 +352,7 @@ const lines = []
 const say = (s = '') => lines.push(s)
 
 say('MVRV zone backtest — generated by scripts/mvrv-backtest.js')
-say(`Weekly data. Act at next week's open. Rotation null ${DRAWS} draws. Forward returns are price only (no dividends).`)
+say(`Weekly data. Act at next week's open. Rotation null over every offset (exact p). Pooled tests ${POOLED_DRAWS} independent draws. Forward returns are price only (no dividends).`)
 say()
 
 function signalBlock(name, ev) {
@@ -342,7 +368,7 @@ function signalBlock(name, ev) {
 
 for (const [ticker, a] of Object.entries(results.assets)) {
   say('='.repeat(100))
-  say(`${ticker}  (${a.group})  ${a.from} → ${a.to}, ${a.weeks} weeks`)
+  say(`${ticker}  (${a.group})  ${a.from} → ${a.to}, ${a.weeks} weeks${a.eligibleFrom ? `; counted from ${a.eligibleFrom}` : ''}`)
   const now = a.now
   say(`  now: price ${num(now.price, 2)}, realized/cost-basis price ${num(now.rp, 2)}, MVRV ${num(now.ratio, 2)}, Z ${num(now.z, 2)}${now.zFull != null ? ` (full-sample σ: ${num(now.zFull, 2)})` : ''}`)
   for (const [name, ev] of Object.entries(a.signals)) signalBlock(name, ev)
@@ -392,7 +418,7 @@ for (const [ticker, a] of Object.entries(results.assets)) {
   }
 }
 say()
-say('STOCKS POOLED — average log-edge across stocks vs averaged independent rotations (optimistic: stocks are not independent)')
+say('STOCKS POOLED — average log-edge across stocks vs averaged independent rotations, one stream per stock (optimistic: stocks are not independent)')
 for (const [sigName, byGroup] of Object.entries(results.pooled)) {
   for (const [group, byH] of Object.entries(byGroup)) {
     say(`  ${sigName.padEnd(15)} ${group.padEnd(9)} ${HORIZONS.map((h) => `${h}w ${num(byH[h].observed, 3).padStart(6)} p=${pval(byH[h].p)}`).join('   ')}`)

@@ -17,23 +17,47 @@
 // holders' average cost basis moves a fraction τ of the way toward p. That is the only
 // non-Bitcoin piece here, and the one to be suspicious of.
 
-/** Block-height anchors: genesis, block 1, the first difficulty retarget, block 100,000 and the four halvings. */
-const HEIGHT_ANCHORS = [
-  [Date.UTC(2009, 0, 3, 18, 15, 5) / 1000, 0],
-  [Date.UTC(2009, 0, 9, 2, 54, 25) / 1000, 1],
-  [Date.UTC(2009, 11, 30) / 1000, 32256],
-  [Date.UTC(2010, 11, 29, 11, 57, 43) / 1000, 100000],
-  [Date.UTC(2012, 10, 28, 15, 24, 38) / 1000, 210000],
-  [Date.UTC(2016, 6, 9, 16, 46, 13) / 1000, 420000],
-  [Date.UTC(2020, 4, 11, 19, 23, 43) / 1000, 630000],
-  [Date.UTC(2024, 3, 20, 0, 9, 27) / 1000, 840000],
+/**
+ * Block-height anchors: genesis, block 1, the four halvings, and the height on 1 January
+ * of every year from 2010 to 2026 (quarterly in 2010–11, when block production was
+ * erratic) — read off Coin Metrics' daily supply (SplyCur, inverted through the issuance
+ * schedule). Linear between anchors, the pace of the last year after the last one.
+ * Against Coin Metrics' supply from July 2010: median error 0.02%, 99th percentile 0.8%.
+ */
+const utc = (y, mo, d, h = 0, mi = 0, s = 0) => Date.UTC(y, mo - 1, d, h, mi, s) / 1000
+export const HEIGHT_ANCHORS = [
+  [utc(2009, 1, 3, 18, 15, 5), 0],
+  [utc(2009, 1, 9, 2, 54, 25), 1],
+  [utc(2010, 1, 1), 32626],
+  [utc(2010, 4, 1), 48470],
+  [utc(2010, 7, 1), 63777],
+  [utc(2010, 10, 1), 83156],
+  [utc(2011, 1, 1), 100593],
+  [utc(2011, 4, 1), 116217],
+  [utc(2011, 7, 1), 134297],
+  [utc(2011, 10, 1), 147711],
+  [utc(2012, 1, 1), 160192],
+  [utc(2012, 11, 28, 15, 24, 38), 210000],
+  [utc(2013, 1, 1), 214724],
+  [utc(2014, 1, 1), 278200],
+  [utc(2015, 1, 1), 337025],
+  [utc(2016, 1, 1), 391315],
+  [utc(2016, 7, 9, 16, 46, 13), 420000],
+  [utc(2017, 1, 1), 446181],
+  [utc(2018, 1, 1), 502108],
+  [utc(2019, 1, 1), 556598],
+  [utc(2020, 1, 1), 610855],
+  [utc(2020, 5, 11, 19, 23, 43), 630000],
+  [utc(2021, 1, 1), 664036],
+  [utc(2022, 1, 1), 716743],
+  [utc(2023, 1, 1), 769913],
+  [utc(2024, 1, 1), 823911],
+  [utc(2024, 4, 20, 0, 9, 27), 840000],
+  [utc(2025, 1, 1), 877333],
+  [utc(2026, 1, 1), 930423],
 ]
 
-/**
- * Estimated block height at a unix time (seconds): linear between known anchors, and
- * extrapolated at the 2020→2024 pace after the last one. Off by a few thousand blocks
- * at most, which is a few hundredths of a percent of supply.
- */
+/** Estimated block height at a unix time (seconds). */
 export function btcBlockHeightAt(t) {
   const a = HEIGHT_ANCHORS
   if (t <= a[0][0]) return 0
@@ -46,8 +70,7 @@ export function btcBlockHeightAt(t) {
   }
   const [tp, hp] = a[a.length - 2]
   const [tl, hl] = a[a.length - 1]
-  const perSecond = (hl - hp) / (tl - tp)
-  return hl + (t - tl) * perSecond
+  return hl + (t - tl) * ((hl - hp) / (tl - tp))
 }
 
 /** Coins issued up to a block height: 50 BTC a block, halved every 210,000 blocks. */
@@ -110,6 +133,26 @@ export function costBasisFixedMemory(prices, halfLife) {
 }
 
 /**
+ * How much of the cost basis at each bar is still the arbitrary first price: the product
+ * of (1 − τ) so far. The cost basis means something only once this is small — on a stock
+ * with thin early volume it can take decades — so eligibility is gated on it.
+ */
+export function startWeight(volumes, shares, { scale = 1 } = {}) {
+  const sharesAt = typeof shares === 'number' ? () => shares : (i) => shares[i]
+  const out = new Array(volumes.length)
+  let w = 1
+  for (let i = 0; i < volumes.length; i += 1) {
+    if (i > 0) {
+      const s = sharesAt(i)
+      const tau = s > 0 ? Math.min(1, Math.max(0, (scale * volumes[i]) / s)) : 0
+      w *= 1 - tau
+    }
+    out[i] = w
+  }
+  return out
+}
+
+/**
  * Standard deviation of xs[0..i] at every i (Welford), so value i uses no data after i.
  * Sample (n − 1) definition; NaN until two points exist.
  */
@@ -141,8 +184,9 @@ export function fullStd(xs) {
  * Z = (market value − realized value) / σ(market value).
  *
  * `std: 'expanding'` divides each point by the σ known at the time — what you would
- * actually have seen. `std: 'full'` divides every point by one σ computed from all the
- * data, which is how a chart published today is drawn, and which uses the future.
+ * actually have seen, and what the widely published charts reproduce. `std: 'full'`
+ * divides every point by one σ computed from all the data, which uses the future; it is
+ * here to show how much the numbers above zero depend on that choice.
  */
 export function mvrvZ(marketValue, realizedValue, { std = 'expanding' } = {}) {
   if (marketValue.length !== realizedValue.length) {
@@ -160,22 +204,21 @@ export function mvrvRatio(marketValue, realizedValue) {
 }
 
 /**
- * Where xs[i] sits among xs[0..i], as a fraction in [0, 1] — the share of the history up
- * to and including i that is at or below it. Point-in-time: never sees later values.
- * NaN until `minHistory` points exist.
+ * Where xs[i] sits among the finite values of xs[0..i], as a fraction in [0, 1] — the share
+ * of that history at or below it. Point-in-time: never sees later values. NaN until
+ * `minHistory` finite values exist, so a series masked to NaN before it is meaningful
+ * starts ranking only after enough meaningful history.
  */
 export function expandingPercentRank(xs, { minHistory = 52 } = {}) {
   const out = new Array(xs.length).fill(Number.NaN)
+  const seenVals = []
   for (let i = 0; i < xs.length; i += 1) {
-    if (i + 1 < minHistory || !Number.isFinite(xs[i])) continue
+    if (!Number.isFinite(xs[i])) continue
+    seenVals.push(xs[i])
+    if (seenVals.length < minHistory) continue
     let atOrBelow = 0
-    let seen = 0
-    for (let j = 0; j <= i; j += 1) {
-      if (!Number.isFinite(xs[j])) continue
-      seen += 1
-      if (xs[j] <= xs[i]) atOrBelow += 1
-    }
-    out[i] = atOrBelow / seen
+    for (const v of seenVals) if (v <= xs[i]) atOrBelow += 1
+    out[i] = atOrBelow / seenVals.length
   }
   return out
 }

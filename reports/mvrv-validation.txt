@@ -1,8 +1,8 @@
 Coin Metrics daily: 5789 days, 2010-07-18 → 2026-05-23
 
 1. Weekly MVRV vs Coin Metrics CapMVRVCur, 825 Sundays
-   median abs difference 0.21%, 95th pct 3.03%
-   weeks on opposite sides of MVRV = 1: 1 (2012-04-29: 1.000 vs 1.007)
+   median abs difference 0.17%, 95th pct 1.61%
+   weeks on opposite sides of MVRV = 1: 0
 
 2. Daily Z-score from Coin Metrics data, σ expanding from 2010-07-18
    peak  2011-06-08  Z 7.66
