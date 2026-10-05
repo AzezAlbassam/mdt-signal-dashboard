@@ -245,7 +245,11 @@ async function render() {
   const chosenList = [...chosen].map((e) => `${fmtExp(e)} (${daysToExpiry(e, today)} يوم)`).join('، ')
 
   let cls, head, body
-  if (a.legs.length === 0) {
+  if (a.legs.length === 0 && a.ranked.length > 0) {
+    cls = 'warn'
+    head = `المبلغ أقل من سعر عقد واحد من العقود الصالحة`
+    body = `أرخص عقد صالح في هذه المدة يكلّف ${fmt$(Math.min(...a.ranked.map((c) => c.ask * 100)))}. السعة المريحة الكلية ≈ <b>${fmt$(a.capacity)}</b>.`
+  } else if (a.legs.length === 0) {
     cls = 'bad'
     head = `لا تدخل: ما فيه عقد ${typeName} بسيولة كافية حول ${days} يوم`
     body = `ما لقينا عقد بتقييم C أو أحسن في التواريخ ${chosenList}. شوف جدول التواريخ تحت واختر مدة على عقد شهري أو LEAPS يناير، أو وسّع نطاق الدلتا.`
