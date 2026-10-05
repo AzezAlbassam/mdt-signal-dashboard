@@ -1,0 +1,70 @@
+name: Options liquidity snapshots
+# Pulls delayed option chains from Cboe for the watchlist, keeps a rolling 20-session
+# volume history on the `options-data` branch (one force-pushed commit, so the repo never
+# grows), then redeploys the site so options.html shows the fresh numbers.
+on:
+  schedule:
+    # Weekdays, UTC. Two intraday reads (quotes) and one after the close (final volume).
+    - cron: '30 15 * * 1-5'
+    - cron: '0 19 * * 1-5'
+    - cron: '20 21 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      add:
+        description: 'Tickers to add to the watchlist (comma separated, e.g. HOOD,RKLB)'
+        required: false
+        default: ''
+      remove:
+        description: 'Tickers to remove from the watchlist'
+        required: false
+        default: ''
+      only:
+        description: 'Refresh only these tickers (blank = whole watchlist)'
+        required: false
+        default: ''
+  push:
+    branches: [claude/options-liquidity]
+    paths: ['options/**', '.github/workflows/options-data.yml']
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: options-data
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Engine tests
+        run: node --test options/engine.test.js
+      - name: Restore data branch
+        run: |
+          mkdir -p _data
+          if git fetch --depth=1 origin options-data; then git archive FETCH_HEAD | tar -x -C _data; fi
+          ls _data
+      - name: Snapshot chains
+        env:
+          ADD: ${{ inputs.add }}
+          REMOVE: ${{ inputs.remove }}
+          ONLY: ${{ inputs.only }}
+        run: node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY"
+      - name: Save data branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd _data
+          git init -q -b options-data
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -q -m "Options snapshot $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" options-data
+  deploy:
+    needs: snapshot
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/pages.yml
