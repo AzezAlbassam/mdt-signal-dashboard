@@ -40,13 +40,21 @@ export function marketOpen(now = new Date()) {
 async function fetchChain(ticker) {
   const sym = INDEXES.has(ticker) ? `_${ticker}` : ticker
   const url = `https://cdn.cboe.com/api/global/delayed_quotes/options/${encodeURIComponent(sym)}.json`
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
-    if (res.ok) return res.json()
-    if (res.status === 403 || res.status === 404) throw Object.assign(new Error('no listed options'), { noOptions: true })
-    await new Promise((r) => setTimeout(r, 2000 * attempt))
+  let status = 0
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
+      if (res.ok) return res.json()
+      status = res.status
+      if (status === 403 || status === 404) throw Object.assign(new Error('no listed options'), { noOptions: true })
+    } catch (e) {
+      if (e.noOptions) throw e
+      status = String(e.cause?.code ?? e.message)
+    }
+    // Throttled or flaky: back off hard; a full-universe run is not in a hurry.
+    await new Promise((r) => setTimeout(r, 5000 * attempt))
   }
-  throw new Error('Cboe did not answer after 3 attempts')
+  throw new Error(`Cboe did not answer (${status})`)
 }
 
 export async function snapshotTicker(ticker, dataDir, now) {
@@ -141,29 +149,39 @@ async function main() {
   const index = { updatedAt: new Date().toISOString(), marketOpen: marketOpen(), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
-  // A small pool: fast enough for ~750 tickers, gentle enough on Cboe.
-  let failures = 0
+  // A small pool first, then one slow sequential pass over whatever was throttled.
   let noOptions = 0
+  const failed = []
+  const run = async (t) => {
+    try {
+      index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
+      return true
+    } catch (e) {
+      if (!e.noOptions) return e
+      noOptions += 1
+      index.tickers[t] = { noOptions: true }
+      return true
+    }
+  }
   const queue = [...targets]
   const worker = async () => {
     while (queue.length) {
       const t = queue.shift()
-      try {
-        index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
-      } catch (e) {
-        if (e.noOptions) {
-          noOptions += 1
-          index.tickers[t] = { noOptions: true }
-        } else {
-          failures += 1
-          index.tickers[t] = { ...(index.tickers[t] ?? {}), error: String(e.message ?? e) }
-          console.log(`${t}: FAILED — ${e.message ?? e}`)
-        }
-      }
-      await new Promise((r) => setTimeout(r, 150))
+      if ((await run(t)) !== true) failed.push(t)
+      await new Promise((r) => setTimeout(r, 250))
     }
   }
-  await Promise.all(Array.from({ length: 4 }, worker))
+  await Promise.all(Array.from({ length: 3 }, worker))
+  let failures = 0
+  for (const t of failed) {
+    await new Promise((r) => setTimeout(r, 1500))
+    const r = await run(t)
+    if (r === true) continue
+    failures += 1
+    index.tickers[t] = { ...(index.tickers[t] ?? {}), error: String(r.message ?? r) }
+    console.log(`${t}: FAILED — ${r.message ?? r}`)
+  }
+  console.log(`retried ${failed.length} after throttling`)
   console.log(`${targets.length} tickers: ${targets.length - failures - noOptions} with options, ${noOptions} without, ${failures} failed`)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
   if (failures > targets.length / 2) process.exitCode = 1
