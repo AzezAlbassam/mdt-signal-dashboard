@@ -9,7 +9,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { parseOccSymbol, daysToExpiry, mergeSession, averageVolume } from './engine.js'
+import { chainRows, mergeSession, averageVolume } from './engine.js'
 
 const INDEXES = new Set(['SPX', 'NDX', 'RUT', 'VIX', 'XSP', 'DJX', 'OEX', 'XEO'])
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36'
@@ -49,34 +49,10 @@ async function fetchChain(ticker) {
   throw new Error('Cboe did not answer after 3 attempts')
 }
 
-const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Number(v))
-
 export async function snapshotTicker(ticker, dataDir, now) {
   const raw = await fetchChain(ticker)
-  const d = raw.data ?? raw
   const today = now.toISOString().slice(0, 10)
-  const roots = new Set([ticker, `${ticker}W`])
-
-  const rows = []
-  let session = ''
-  let totalVolume = 0
-  for (const o of d.options ?? []) {
-    const p = parseOccSymbol(o.option)
-    if (!p || !roots.has(p.root)) continue // adjusted roots carry non-standard deliverables
-    if (daysToExpiry(p.expiry, today) < 1) continue
-    const volume = num(o.volume) ?? 0
-    const oi = num(o.open_interest) ?? 0
-    const bid = num(o.bid) ?? 0
-    const ask = num(o.ask) ?? 0
-    totalVolume += volume
-    if (o.last_trade_time && o.last_trade_time.slice(0, 10) > session) session = o.last_trade_time.slice(0, 10)
-    if (oi === 0 && volume === 0 && bid === 0) continue
-    rows.push({
-      sym: o.option, expiry: p.expiry, type: p.type, strike: p.strike,
-      bid, ask, bidSize: num(o.bid_size) ?? 0, askSize: num(o.ask_size) ?? 0,
-      last: num(o.last_trade_price), volume, oi, iv: num(o.iv), delta: num(o.delta),
-    })
-  }
+  const { rows, session, totalVolume, price } = chainRows(raw, ticker, today)
   if (rows.length === 0) throw new Error('chain came back empty')
 
   // History: one figure per contract per session, the day's final volume.
@@ -90,6 +66,9 @@ export async function snapshotTicker(ticker, dataDir, now) {
   // Outside market hours the delayed feed can show pulled or stale quotes; keep the
   // last intraday quotes for any contract that already has them.
   const open = marketOpen(now)
+  // While the session is still trading its volume is partial: average completed sessions only.
+  const inProgress = open && history?.dates?.at(-1) === session ? 1 : 0
+  const completedSessions = (history?.dates?.length ?? 0) - inProgress
   const prev = await readJson(join(dataDir, `${ticker}.json`), null)
   const prevQuotes = new Map()
   if (prev?.rows) {
@@ -104,7 +83,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'askSize', 'last', 'volume', 'oi', 'iv', 'delta', 'adv', 'sessions']
   const out = rows.map((r) => {
     const q = !open && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
-    const { adv, sessions } = averageVolume(history?.vol?.[r.sym])
+    const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completedSessions))
     return [
       r.sym, expIndex.get(r.expiry), r.type, r.strike, q.bid, q.ask, q.bidSize, q.askSize,
       r.last, r.volume, r.oi, r.iv == null ? null : Math.round(r.iv * 10000) / 10000,
@@ -114,13 +93,14 @@ export async function snapshotTicker(ticker, dataDir, now) {
 
   const snap = {
     ticker,
-    price: num(d.current_price) ?? num(d.close),
+    price,
     cboeTimestamp: raw.timestamp ?? null,
     fetchedAt: now.toISOString(),
     quotesFrom,
     quotesIntraday,
     session,
-    historySessions: history?.dates?.length ?? 0,
+    historySessions: completedSessions,
+    sessionInProgress: Boolean(inProgress),
     historyDates: history?.dates ?? [],
     expiries,
     cols,

@@ -88,10 +88,18 @@ describe('contractMetrics', () => {
     assert.equal(m.binding, 'spread')
   })
 
-  test('without history, today\'s volume stands in and is flagged', () => {
+  test('without history, ADV is the 2%-of-OI prior, flagged', () => {
     const m = contractMetrics({ ...base, adv: undefined, sessions: 0 })
-    assert.equal(m.adv, 300)
+    assert.equal(m.adv, 80)
     assert.equal(m.advEstimated, true)
+  })
+
+  test('the prior fades as sessions arrive', () => {
+    // 2 real sessions at 600, 3 prior sessions at 80 → (1200 + 240) / 5
+    const m = contractMetrics({ ...base, sessions: 2 })
+    assert.equal(m.adv, 288)
+    assert.equal(m.advEstimated, true)
+    assert.equal(contractMetrics({ ...base, sessions: 5 }).adv, 600)
   })
 
   test('limits are adjustable', () => {

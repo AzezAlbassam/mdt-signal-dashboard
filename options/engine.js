@@ -38,11 +38,46 @@ export function isMonthly(expiry) {
   return false
 }
 
+const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Number(v))
+
+/**
+ * Turn a Cboe delayed-quotes payload into contract rows.
+ * Keeps standard roots only (TICKER, or TICKERW for index weeklies): adjusted roots like
+ * MSTR1 deliver something other than 100 shares and price accordingly.
+ * Drops expired contracts and ones with no interest, no volume and no bid.
+ */
+export function chainRows(raw, ticker, today) {
+  const d = raw?.data ?? raw ?? {}
+  const roots = new Set([ticker, `${ticker}W`])
+  const rows = []
+  let session = ''
+  let totalVolume = 0
+  for (const o of d.options ?? []) {
+    const p = parseOccSymbol(o.option)
+    if (!p || !roots.has(p.root)) continue
+    if (daysToExpiry(p.expiry, today) < 1) continue
+    const volume = num(o.volume) ?? 0
+    const oi = num(o.open_interest) ?? 0
+    const bid = num(o.bid) ?? 0
+    totalVolume += volume
+    const t = typeof o.last_trade_time === 'string' ? o.last_trade_time.slice(0, 10) : ''
+    if (t > session) session = t
+    if (oi === 0 && volume === 0 && bid === 0) continue
+    rows.push({
+      sym: o.option, expiry: p.expiry, type: p.type, strike: p.strike,
+      bid, ask: num(o.ask) ?? 0, bidSize: num(o.bid_size) ?? 0, askSize: num(o.ask_size) ?? 0,
+      last: num(o.last_trade_price), volume, oi, iv: num(o.iv), delta: num(o.delta),
+    })
+  }
+  return { rows, session, totalVolume, price: num(d.current_price) ?? num(d.close) }
+}
+
 export const DEFAULTS = {
   pctOfAdv: 0.10, // hold at most 10% of a normal day's volume
   pctOfOi: 0.05, // and at most 5% of everything outstanding
   maxSpread: 0.12, // wider than 12% of mid is not a market you exit "comfortably"
   minSessions: 5, // fewer recorded sessions than this and ADV is an estimate
+  priorTurnover: 0.02, // the estimate before history: 2% of OI trades per day (conservative for listed months)
 }
 
 /**
@@ -68,11 +103,14 @@ export function contractMetrics(c, opts = {}) {
   const mid = bid > 0 && ask >= bid ? (bid + ask) / 2 : null
   const spreadPct = mid ? (ask - bid) / mid : null
 
-  // The recorded average already includes today's session. With no history at all,
-  // today's volume stands in, flagged as an estimate.
+  // `adv` is the average over completed sessions. Until there are minSessions of them, it
+  // is shrunk toward a prior of priorTurnover × OI, weighted as the missing sessions —
+  // so day one is neither zero nor a guess, and the prior fades out as real days arrive.
   const sessions = c.sessions ?? 0
-  const adv = sessions > 0 ? c.adv : c.volume ?? 0
-  const advEstimated = sessions < o.minSessions
+  const recorded = sessions > 0 ? c.adv ?? 0 : 0
+  const missing = Math.max(0, o.minSessions - sessions)
+  const adv = missing === 0 ? recorded : (recorded * sessions + o.priorTurnover * (c.oi ?? 0) * missing) / (sessions + missing)
+  const advEstimated = missing > 0
 
   const oi = c.oi ?? 0
   const capByAdv = Math.floor(o.pctOfAdv * adv)
