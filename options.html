@@ -425,6 +425,10 @@ $('out').addEventListener('click', (e) => {
   if (d) { e.preventDefault(); $('days').value = d.dataset.setdays; render() }
   if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv', adv); render().then(() => { document.querySelector('details.more').open = true }) }
 })
+window.addEventListener('hashchange', () => {
+  const h = cleanT(decodeURIComponent(location.hash.slice(1)))
+  if (h && !['TOOL', 'MYLIST', 'SPREAD'].includes(h) && h !== cleanT($('ticker').value)) { $('ticker').value = h; render() }
+})
 $('q').addEventListener('input', renderList)
 document.querySelectorAll('#tierChips button').forEach((b) => b.addEventListener('click', () => {
   tierFilter = b.dataset.tier
