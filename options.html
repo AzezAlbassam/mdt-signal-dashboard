@@ -280,7 +280,9 @@ async function render() {
 
   const warn = []
   if (data.source === 'live') warn.push('هذا السهم مو في القائمة، فالأرقام مبنية على حجم اليوم فقط (بدون تاريخ). أضفه للقائمة لدقة أعلى.')
-  else if (estimated) warn.push(`متوسط الحجم مبني على ${snap.historySessions ?? 0} جلسة فقط — الأرقام «تقديرية» وتتحسن تلقائيًا مع كل يوم تداول (الهدف 20 جلسة).`)
+  else if (estimated) warn.push((snap.historySessions ?? 0) === 0
+    ? 'ما فيه جلسات مكتملة مسجّلة بعد، فمتوسط الحجم تقدير متحفظ (2% من العقود المفتوحة يوميًا). الأرقام تصير حقيقية تدريجيًا خلال 5 أيام تداول.'
+    : `متوسط الحجم مبني على ${snap.historySessions} ${snap.historySessions === 1 ? 'جلسة' : 'جلسات'} مكتملة مع تقدير متحفظ — يصير حقيقي بالكامل بعد 5 جلسات.`)
   if (snap.quotesIntraday === false) warn.push('الأسعار من بعد الإغلاق؛ السبريد خارج وقت السوق قد يكون أوسع من الحقيقي.')
 
   const legRows = a.legs.map((l) => `<tr>

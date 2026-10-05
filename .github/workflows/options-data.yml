@@ -22,9 +22,6 @@ on:
         description: 'Refresh only these tickers (blank = whole watchlist)'
         required: false
         default: ''
-  push:
-    branches: [claude/options-liquidity]
-    paths: ['options/**', '.github/workflows/options-data.yml']
 permissions:
   contents: write
   pages: write
