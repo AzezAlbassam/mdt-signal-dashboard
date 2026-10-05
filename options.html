@@ -1,178 +1,259 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>سيولة العقود</title>
-<meta name="description" content="كم تقدر تدخل في عقد أوبشن وتطلع منه بضغطة زر — مبني على متوسط الحجم اليومي والعقود المفتوحة والسبريد.">
+<meta name="description" content="كم تقدر تدخل في عقد أوبشن وتطلع منه بضغطة زر — وكيف تتجنب السبريد.">
 <style>
 :root{
   --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
   --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
   --line:#DBDBD3; --line-soft:#E7E7E1;
   --accent:#8F711B; --accent-soft:#EFE7CC;
-  --pos:#4C6839; --pos-soft:#E3EAD9; --neg:#93412F; --neg-soft:#F2DFD8; --warn:#856611; --warn-soft:#F3EACB;
+  --pos:#3F6B2E; --pos-soft:#E1EBD7; --neg:#9A3E2A; --neg-soft:#F4DED6; --warn:#8A6510; --warn-soft:#F4EACB;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
   --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
-  --pos:#7E9B5F; --pos-soft:#1F2A19; --neg:#C1715C; --neg-soft:#33201A; --warn:#CBA84A; --warn-soft:#322B17;
+  --pos:#8DB36C; --pos-soft:#1F2A19; --neg:#D07D66; --neg-soft:#33201A; --warn:#D2AE4E; --warn-soft:#322B17;
 }}
 :root[data-theme="dark"]{
   --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
   --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
-  --pos:#7E9B5F; --pos-soft:#1F2A19; --neg:#C1715C; --neg-soft:#33201A; --warn:#CBA84A; --warn-soft:#322B17;
+  --pos:#8DB36C; --pos-soft:#1F2A19; --neg:#D07D66; --neg-soft:#33201A; --warn:#D2AE4E; --warn-soft:#322B17;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--body);
- font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Roboto,sans-serif;line-height:1.65;
+ font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Roboto,sans-serif;line-height:1.7;
  -webkit-font-smoothing:antialiased}
-.wrap{max-width:980px;margin:0 auto;padding:0 16px 80px}
-header{padding:56px 0 26px;border-bottom:1px solid var(--line)}
-h1{color:var(--ink);font-size:clamp(1.7rem,4.6vw,2.5rem);line-height:1.2;margin:0 0 10px;font-weight:700}
-.eyebrow{font-size:.72rem;letter-spacing:.06em;color:var(--faint);font-weight:700;margin:0 0 8px}
-.lede{font-size:1.02rem;color:var(--muted);max-width:62ch;margin:0}
-.lede a,footer a,.note a{color:var(--accent)}
-h2{font-size:.82rem;color:var(--faint);font-weight:700;margin:34px 0 12px;letter-spacing:.02em}
-.num,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;unicode-bidi:isolate}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+header{padding:40px 0 18px}
+h1{color:var(--ink);font-size:clamp(1.6rem,4.4vw,2.2rem);line-height:1.25;margin:0 0 6px;font-weight:750}
+.lede{font-size:1rem;color:var(--muted);margin:0}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:10px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+nav a{flex:none;text-decoration:none;color:var(--muted);font-weight:700;font-size:.9rem;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+nav a:hover,nav a:focus-visible{color:var(--ink);border-color:var(--accent);outline:none}
+section{padding-top:26px;scroll-margin-top:60px}
+h2{color:var(--ink);font-size:1.3rem;margin:0 0 14px;font-weight:750}
+h3{color:var(--ink);font-size:1.05rem;margin:22px 0 8px;font-weight:700}
+bdi.m,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+a{color:var(--accent)}
 
-form{margin-top:22px;display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr))}
-@media (max-width:720px){form{grid-template-columns:repeat(2,minmax(0,1fr))}}
-label{display:grid;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600}
-input,select{font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);
- border:1px solid var(--line);border-radius:5px;padding:9px 11px;width:100%;min-width:0}
-input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:700}
-.seg{display:flex;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--surface)}
-.seg button{flex:1;font:inherit;font-weight:700;border:0;background:transparent;color:var(--muted);padding:9px 0;cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
-details.adv{grid-column:1/-1;background:var(--surface);border:1px solid var(--line-soft);border-radius:5px;padding:4px 14px}
-details.adv summary{cursor:pointer;font-size:.84rem;color:var(--muted);font-weight:600;padding:8px 0}
-.advgrid{display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr));padding:4px 0 14px}
-@media (max-width:720px){.advgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.hint{font-size:.72rem;color:var(--faint);font-weight:400}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media (max-width:620px){.row{grid-template-columns:1fr}}
+label{display:grid;gap:5px;font-size:.82rem;color:var(--muted);font-weight:650}
+input{font:inherit;font-size:1.05rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+input:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:800;font-size:1.25rem;letter-spacing:.02em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.daysline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.daysline input{width:96px;padding:6px 10px;font-size:.95rem}
+.mt{margin-top:14px}
 
-.verdict{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-inline-start:4px solid var(--accent);
- border-radius:6px;padding:20px 22px}
-.verdict.ok{border-inline-start-color:var(--pos)} .verdict.warn{border-inline-start-color:var(--warn)} .verdict.bad{border-inline-start-color:var(--neg)}
-.verdict h3{margin:0 0 6px;color:var(--ink);font-size:1.22rem;line-height:1.4}
-.verdict p{margin:6px 0 0;color:var(--body)}
-.kpis{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:16px}
-@media (max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.kpi{background:var(--raise);border-radius:5px;padding:10px 12px}
-.kpi .l{font-size:.72rem;color:var(--muted);font-weight:600}
-.kpi .v{font-size:1.18rem;color:var(--ink);font-weight:700}
-.kpi .s{font-size:.7rem;color:var(--faint)}
+.verdict{margin-top:18px;border-radius:10px;padding:18px;border:1px solid var(--line);background:var(--surface)}
+.verdict.ok{background:var(--pos-soft);border-color:transparent}
+.verdict.warn{background:var(--warn-soft);border-color:transparent}
+.verdict.bad{background:var(--neg-soft);border-color:transparent}
+.verdict .t{font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1.45}
+.verdict p{margin:6px 0 0}
+.tier{font-size:.84rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+.tier .dot{margin-inline-end:6px;vertical-align:middle}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.dA,.dB{background:var(--pos)} .dC{background:var(--warn)} .dD{background:var(--neg)} .dN{background:var(--faint)}
 
-.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.legs{display:grid;gap:10px;margin-top:14px}
+.leg{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.leg .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.leg .name{font-weight:800;color:var(--ink);font-size:1.05rem}
+.leg .buy{font-size:1.15rem;font-weight:800;color:var(--ink);margin-top:4px}
+.leg .how{font-size:.88rem;color:var(--body);margin-top:6px;background:var(--raise);border-radius:6px;padding:8px 10px}
+.pill{font-size:.75rem;font-weight:800;border-radius:999px;padding:2px 9px}
+.pA,.pB{background:var(--pos-soft);color:var(--pos)} .pC{background:var(--warn-soft);color:var(--warn)} .pD{background:var(--neg-soft);color:var(--neg)}
+.note{font-size:.84rem;color:var(--muted);margin:10px 0 0}
+.tip{font-size:.88rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:10px}
+
+details.more{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 16px}
+details.more>summary{cursor:pointer;font-weight:700;color:var(--muted);padding:12px 0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:8px 0 14px}
 table{border-collapse:collapse;width:100%;font-size:.84rem;white-space:nowrap}
 th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line-soft)}
-th{font-size:.7rem;color:var(--faint);font-weight:700;background:var(--raise);position:sticky;top:0}
+th{font-size:.72rem;color:var(--faint);font-weight:700;background:var(--raise)}
 tr:last-child td{border-bottom:0}
 td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left}
-tr.win td{background:var(--accent-soft)}
-.g{display:inline-block;min-width:22px;text-align:center;border-radius:4px;font-weight:800;font-size:.76rem;padding:1px 6px}
-.gA{background:var(--pos-soft);color:var(--pos)} .gB{background:var(--pos-soft);color:var(--pos);opacity:.8}
-.gC{background:var(--warn-soft);color:var(--warn)} .gD{background:var(--neg-soft);color:var(--neg)}
-.badge{font-size:.66rem;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:3px;padding:1px 5px;margin-inline-start:4px}
-.note{font-size:.82rem;color:var(--muted);margin:10px 0 0}
-.warnline{font-size:.84rem;color:var(--warn);background:var(--warn-soft);border-radius:5px;padding:8px 12px;margin-top:12px}
-.method{background:var(--surface);border:1px solid var(--line-soft);border-radius:6px;padding:4px 20px 14px}
-.method li{margin:6px 0}
-footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:.8rem;color:var(--faint)}
-.empty{padding:22px;text-align:center;color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+.adv{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:14px}
+@media (max-width:620px){.adv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.adv input{font-size:.95rem;padding:7px 10px}
+
+#list tbody tr{cursor:pointer}
+#list tbody tr:hover td{background:var(--raise)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.count{font-size:.8rem;color:var(--faint);margin-inline-start:2px}
+
+.guide p,.guide li{max-width:68ch}
+.guide ol,.guide ul{padding-inline-start:22px}
+.guide li{margin:6px 0}
+.scale{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}
+@media (max-width:620px){.scale{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.scale div{border-radius:8px;padding:10px;font-size:.86rem;font-weight:700;text-align:center}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:10px 0}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.8rem;color:var(--faint)}
+.empty{padding:20px;text-align:center;color:var(--muted)}
 </style></head><body><div class="wrap">
 <header>
-  <p class="eyebrow">أداة السيولة · عقود السوق الأمريكي</p>
-  <h1>كم أقدر أدخل في العقد… وأطلع منه بضغطة زر؟</h1>
-  <p class="lede">اكتب السهم والمدة والمبلغ. الأداة تفرز العقود حسب سهولة الخروج منها، وتعطيك الحد المريح لكل عقد، وتوزّع مبلغك على الأفضل. ما تعطيك رأي في اتجاه السهم.</p>
+  <h1>سيولة العقود</h1>
+  <p class="lede">اكتب السهم والمدة والمبلغ — وأقولك كم تدخل، في أي عقد، وبأي سعر.</p>
 </header>
+<nav>
+  <a href="#tool">ابحث عن عقد</a>
+  <a href="#mylist">قائمتي</a>
+  <a href="#spread">دليل السبريد</a>
+</nav>
 
-<form id="f" autocomplete="off" onsubmit="return false">
-  <label>السهم
-    <input id="ticker" class="tick" list="tickers" value="MSTR" spellcheck="false" maxlength="6">
-    <datalist id="tickers"></datalist>
-  </label>
-  <label>النوع
-    <div class="seg" role="group" aria-label="النوع">
-      <button type="button" data-type="C" aria-pressed="true">Call</button>
-      <button type="button" data-type="P" aria-pressed="false">Put</button>
+<section id="tool">
+  <div class="panel">
+    <div class="row">
+      <label>السهم
+        <input id="ticker" class="tick" list="tickers" value="MSTR" spellcheck="false" maxlength="6" autocomplete="off">
+        <datalist id="tickers"></datalist>
+      </label>
+      <label>المبلغ اللي تبي تدخله ($)
+        <input id="amount" type="text" inputmode="numeric" value="100,000" autocomplete="off">
+      </label>
     </div>
-  </label>
-  <label>المدة (يوم)
-    <input id="days" type="number" inputmode="numeric" min="7" max="1100" value="200">
-  </label>
-  <label>المبلغ ($)
-    <input id="amount" type="text" inputmode="numeric" value="100,000">
-  </label>
-  <details class="adv">
-    <summary>إعدادات متقدمة (الافتراضي متحفّظ)</summary>
-    <div class="advgrid">
-      <label>أقصى % من الحجم اليومي<input id="pctAdv" type="number" min="1" max="50" step="1" value="10"><span class="hint">الافتراضي 10%</span></label>
-      <label>أقصى % من العقود المفتوحة<input id="pctOi" type="number" min="1" max="30" step="1" value="5"><span class="hint">الافتراضي 5%</span></label>
-      <label>أقصى سبريد %<input id="maxSpread" type="number" min="1" max="40" step="1" value="12"><span class="hint">أوسع من كذا = نتجاهل العقد</span></label>
-      <label>أقصى عدد عقود للتوزيع<input id="maxLegs" type="number" min="1" max="10" step="1" value="4"></label>
-      <label>دلتا من<input id="dMin" type="number" min="0" max="1" step="0.05" value="0.20"></label>
-      <label>دلتا إلى<input id="dMax" type="number" min="0" max="1" step="0.05" value="0.85"></label>
-      <label>نافذة المدة ±%<input id="win" type="number" min="5" max="100" step="5" value="25"><span class="hint">200 يوم ±25% = 150–250</span></label>
+    <div class="row mt">
+      <label>النوع
+        <div class="chips" id="typeChips">
+          <button type="button" data-type="C" aria-pressed="true">Call — صعود</button>
+          <button type="button" data-type="P" aria-pressed="false">Put — نزول</button>
+        </div>
+      </label>
+      <label>المدة
+        <div class="chips" id="durChips">
+          <button type="button" data-days="60">1–3 شهور</button>
+          <button type="button" data-days="135">3–6 شهور</button>
+          <button type="button" data-days="270">6–12 شهر</button>
+          <button type="button" data-days="450">أكثر من سنة</button>
+        </div>
+        <span class="daysline">أو بالأيام: <input id="days" type="number" inputmode="numeric" min="7" max="1100" value="200"> يوم</span>
+      </label>
     </div>
-  </details>
-</form>
+  </div>
+  <div id="out"><p class="empty">جاري التحميل…</p></div>
+</section>
 
-<div id="out"><p class="empty">جاري التحميل…</p></div>
+<section id="mylist">
+  <h2>قائمتي <span class="count" id="listCount"></span></h2>
+  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. التقييم على عقود Call بين شهرين و13 شهر قريبة من السعر. اضغط أي سهم يفتح في الأداة.</p>
+  <input id="q" type="search" placeholder="ابحث عن سهم…" style="margin-top:10px;direction:ltr;text-align:right" autocomplete="off">
+  <div class="filters chips" id="tierChips">
+    <button type="button" data-tier="" aria-pressed="true">الكل</button>
+    <button type="button" data-tier="A" aria-pressed="false">🟢 ممتاز</button>
+    <button type="button" data-tier="B" aria-pressed="false">🟢 جيد</button>
+    <button type="button" data-tier="C" aria-pressed="false">🟡 ضعيف</button>
+    <button type="button" data-tier="D" aria-pressed="false">🔴 تجنّب</button>
+    <button type="button" data-tier="N" aria-pressed="false">بدون عقود</button>
+  </div>
+  <div class="tbl" id="list"><p class="empty">جاري التحميل…</p></div>
+</section>
 
-<h2>كيف تنحسب الأرقام</h2>
-<div class="method">
-  <ul>
-    <li><b>الحد المريح لكل عقد</b> = الأصغر بين <b>10% من متوسط الحجم اليومي</b> و<b>5% من العقود المفتوحة (OI)</b>. يعني لو بعت كل مركزك في يوم واحد، أنت جزء صغير من تداول ذلك اليوم وما تصير أنت السوق.</li>
-    <li><b>السبريد</b> = (Ask − Bid) ÷ المنتصف. أي عقد سبريده أوسع من 12% يُستبعد: هذي خسارة فورية تدفعها بمجرد البيع.</li>
-    <li><b>التقييم</b>: A = سبريد ≤ 3% و OI ≥ 2000 وحجم ≥ 200/يوم · B = ≤ 6% و ≥ 500 و ≥ 50 · C = ≤ 12% و ≥ 100 و ≥ 10 · D = تجنّبه. أضعف شرط هو اللي يحدد.</li>
-    <li><b>متوسط الحجم</b> = متوسط آخر 20 جلسة مكتملة لكل عقد (الجلسة الجارية ما تنحسب لأن حجمها ناقص). التسجيل بدأ مع تشغيل الأداة: قبل 5 جلسات نخلط المسجّل مع تقدير متحفظ (2% من العقود المفتوحة يوميًا)، ووزن التقدير يختفي تدريجيًا لين تكتمل 5 جلسات حقيقية.</li>
-    <li><b>بيع فوري</b> = عدد العقود المعروضة على البيد الآن. أكثر من كذا يمديك تبيع خلال اليوم بأوامر Limit قرب المنتصف، مو بضغطة Market واحدة.</li>
-    <li><b>التوزيع</b>: نبدأ بأفضل عقد (التقييم ثم السعة) ونعبّيه لحده، ثم اللي بعده. المبلغ محسوب على سعر الـ Ask (اللي تدفعه فعلًا).</li>
-    <li>العقود الشهرية (الجمعة الثالثة) وعقود يناير طويلة الأجل (LEAPS) غالبًا فيها أضعاف سيولة العقود الأسبوعية — جدول التواريخ تحت يوضح الفرق.</li>
-  </ul>
-</div>
+<section id="spread" class="guide">
+  <h2>دليل السبريد</h2>
 
-<footer id="foot">البيانات: أسعار Cboe المتأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
+  <h3>السبريد ببساطة</h3>
+  <p>كل عقد له سعرين: <b>Bid</b> (أعلى سعر يدفعه مشتري الحين) و<b>Ask</b> (أقل سعر يقبله بائع). الفرق بينهم هو السبريد — وهو خسارة فورية تدفعها لو اشتريت بالـ Ask وبعت بالـ Bid.</p>
+  <div class="ex">مثال: Bid <bdi class="m">24.20</bdi> و Ask <bdi class="m">25.80</bdi> ← السبريد <bdi class="m">$1.60</bdi> = <b>6.4%</b>.<br>
+  لو اشتريت 10 عقود وبعتها فورًا: تخسر <bdi class="m">1.60 × 100 × 10 = $1,600</bdi> والسهم ما تحرك ولا سنت.</div>
+  <p>نقيسه بالنسبة: <b>(Ask − Bid) ÷ المنتصف</b>.</p>
+  <div class="scale">
+    <div style="background:var(--pos-soft);color:var(--pos)">أقل من 3%<br>ممتاز</div>
+    <div style="background:var(--pos-soft);color:var(--pos)">3% – 6%<br>مقبول</div>
+    <div style="background:var(--warn-soft);color:var(--warn)">6% – 10%<br>حذر</div>
+    <div style="background:var(--neg-soft);color:var(--neg)">أكثر من 10%<br>ابتعد</div>
+  </div>
+
+  <h3>كيف تتخلص منه (أو تقلّله لأقل حد)</h3>
+  <ol>
+    <li><b>لا تستخدم أمر Market أبدًا على العقود.</b> دائمًا Limit. أمر Market ياخذ أسوأ سعر معروض، وأحيانًا أسوأ منه.</li>
+    <li><b>ابدأ عند المنتصف</b> (بين الـ Bid والـ Ask). ما تنفذ خلال دقيقة؟ حرّك السعر سنت إلى خمسة سنتات وانتظر. <b>لا تتجاوز ربع السبريد</b> — الأداة تكتب لك الحد لكل عقد.</li>
+    <li><b>التوقيت:</b> تجنّب أول 30 دقيقة بعد الافتتاح وآخر 10 دقائق قبل الإغلاق — هنا السبريد أوسع شي.
+      <br>أفضل وقت: <b>10:00 الصبح – 3:30 العصر بتوقيت نيويورك</b>
+      <br>= <b>5:00 – 10:30 مساءً بتوقيت الرياض</b> (من مارس لنوفمبر) · <b>6:00 – 11:30 مساءً</b> (من نوفمبر لمارس).</li>
+    <li><b>اختر التواريخ الشهرية</b> (الجمعة الثالثة من الشهر) وعقود <b>يناير طويلة الأجل (LEAPS)</b> — سيولتها أضعاف العقود الأسبوعية.</li>
+    <li><b>اختر سترايك قريب من سعر السهم</b> وبأرقام مدوّرة (150، 200، 250) — هذي اللي فيها أغلب العقود المفتوحة وأضيق سبريد.</li>
+    <li><b>قسّم الأمر الكبير:</b> بدل 50 عقد مرة وحدة، 10 عقود خمس مرات خلال ساعة. الصانع يعطيك سعر أحسن على الكمية الصغيرة.</li>
+    <li><b>حول الأرباح:</b> السبريد يتوسع قبل إعلان الأرباح بأيام ويتوسع جدًا لحظة الإعلان. لا تدخل ولا تطلع في دقائق الخبر.</li>
+  </ol>
+
+  <h3>لو السهم سبريده عالي — أتداوله ولا لا؟</h3>
+  <p><b>الجواب المختصر: لو السبريد فوق 10%، الأفضل لا.</b> لأنك تبدأ الصفقة خسران 10%، والعقد لازم يرتفع 10% بس عشان ترجع صفر.</p>
+  <p>بس انتبه: <b>السبريد يضرك أكثر كل ما كانت صفقتك أقصر.</b> لو بتمسك العقد 6 أشهر وتنتظر +100%، سبريد 6% يُحتمل. لو مضاربة أيام وهدفك +20%، نفس الـ 6% تاكل ثلث ربحك.</p>
+
+  <h3>لو مُصر تتداوله — أفضل طريقة</h3>
+  <ol>
+    <li><b>حجم صغير:</b> نص الحد المريح اللي تعطيك الأداة أو أقل.</li>
+    <li><b>Limit عند المنتصف وبصبر:</b> ممكن ينفذ بعد ساعات أو اليوم اللي بعده. لا تلاحق السعر.</li>
+    <li><b>أقرب تاريخ شهري أو LEAPS يناير، وسترايك قريب من السعر</b> — غالبًا أضيق سبريد في السلسلة كلها.</li>
+    <li><b>مدة أطول:</b> تدفع السبريد مرة وحدة على حركة أكبر، بدل ما تدفعه كل أسبوع.</li>
+    <li><b>حط أمر البيع من أول يوم:</b> Limit GTC عند هدفك. البائع الصبور ياخذ السعر بدل ما يعطيه.</li>
+    <li><b>البديل:</b> السهم نفسه (سبريده سنتات)، أو صندوق ETF سيولته عالية في نفس القطاع.</li>
+  </ol>
+</section>
+
+<footer id="foot">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
 </div>
 
 <script type="module">
-import { contractMetrics, allocate, selectExpirations, expirySummary, daysToExpiry, isMonthly, chainRows } from './options/engine.js'
+import { contractMetrics, allocate, selectExpirations, expirySummary, daysToExpiry, isMonthly, limitGuide } from './options/engine.js'
 
-const REPO = 'https://github.com/AzezAlbassam/mdt-signal-dashboard/actions/workflows/options-data.yml'
 const $ = (id) => document.getElementById(id)
-const fmt$ = (v) => '<bdi dir="ltr">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
+const money = (v) => '<bdi class="m">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
+const price = (v) => '<bdi class="m">$' + Number(v).toFixed(2) + '</bdi>'
 const fmtN = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d })
 const fmtP = (v) => v == null ? '—' : (v * 100).toFixed(1) + '%'
 const fmtExp = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) } catch { return iso } }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const parseAmount = (s) => Number(String(s).replace(/[^\d.]/g, '')) || 0
+const cleanT = (s) => String(s).trim().toUpperCase().replace(/[^A-Z.]/g, '')
+const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'] }
+const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول بحذر', D: 'تجنّب' }
+const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
 
 let type = 'C'
-const cache = new Map()
 let index = null
-
+const cache = new Map()
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem('optliq:' + k)) } catch { return null } },
   set(k, v) { try { localStorage.setItem('optliq:' + k, JSON.stringify(v)) } catch {} },
 }
+const ADV_FIELDS = ['pctAdv', 'pctOi', 'maxSpread', 'maxLegs', 'dMin', 'dMax', 'win']
+const advDefaults = { pctAdv: 10, pctOi: 5, maxSpread: 12, maxLegs: 4, dMin: 0.2, dMax: 0.85, win: 25 }
+let adv = { ...advDefaults, ...(store.get('adv') ?? {}) }
 
-const FIELDS = ['ticker', 'days', 'amount', 'pctAdv', 'pctOi', 'maxSpread', 'maxLegs', 'dMin', 'dMax', 'win']
 const saved = store.get('form')
-if (saved) { for (const k of FIELDS) if (saved[k] != null) $(k).value = saved[k]; if (saved.type) type = saved.type }
-const fromHash = decodeURIComponent(location.hash.slice(1)).toUpperCase().replace(/[^A-Z.]/g, '')
-if (fromHash) $('ticker').value = fromHash
-document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
+if (saved) { $('ticker').value = saved.ticker ?? 'MSTR'; $('amount').value = saved.amount ?? '100,000'; $('days').value = saved.days ?? 200; type = saved.type ?? 'C' }
+const fromHash = cleanT(decodeURIComponent(location.hash.slice(1)))
+if (fromHash && !['TOOL', 'MYLIST', 'SPREAD'].includes(fromHash)) $('ticker').value = fromHash
 
-function snapToContracts(snap) {
+function syncChips() {
+  document.querySelectorAll('#typeChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
+  const d = Number($('days').value)
+  document.querySelectorAll('#durChips button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.days) === d)))
+}
+
+function toContracts(snap) {
   const ci = Object.fromEntries(snap.cols.map((c, i) => [c, i]))
   return snap.rows.map((r) => ({
     sym: r[ci.sym], expiry: snap.expiries[r[ci.exp]], type: r[ci.type], strike: r[ci.strike],
-    bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize], askSize: r[ci.askSize], last: r[ci.last],
-    volume: r[ci.volume], oi: r[ci.oi], iv: r[ci.iv], delta: r[ci.delta], adv: r[ci.adv], sessions: r[ci.sessions],
+    bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize], volume: r[ci.volume], oi: r[ci.oi],
+    delta: r[ci.delta], adv: r[ci.adv], sessions: r[ci.sessions],
   }))
 }
 
@@ -180,51 +261,34 @@ async function loadTicker(t) {
   if (cache.has(t)) return cache.get(t)
   let res = null
   try {
-    const r = await fetch(`data/options/${t}.json`, { cache: 'no-cache' })
-    if (r.ok) { const snap = await r.json(); res = { source: 'snapshot', snap, contracts: snapToContracts(snap) } }
+    const r = await fetch(`data/options/${encodeURIComponent(t)}.json`, { cache: 'no-cache' })
+    if (r.ok) { const snap = await r.json(); res = { snap, contracts: toContracts(snap) } }
   } catch {}
-  if (!res) {
-    // Not on the watchlist: try Cboe straight from the browser. No history → ADV is today's volume.
-    try {
-      const sym = ['SPX', 'NDX', 'RUT', 'VIX', 'XSP'].includes(t) ? '_' + t : t
-      const r = await fetch(`https://cdn.cboe.com/api/global/delayed_quotes/options/${sym}.json`)
-      if (r.ok) {
-        const today = new Date().toISOString().slice(0, 10)
-        const { rows, price, session } = chainRows(await r.json(), t, today)
-        if (rows.length) res = { source: 'live', snap: { ticker: t, price, session, fetchedAt: new Date().toISOString(), quotesFrom: new Date().toISOString(), historySessions: 0 }, contracts: rows.map((c) => ({ ...c, sessions: 0 })) }
-      }
-    } catch {}
-  }
   cache.set(t, res)
   return res
 }
 
-function gradeTag(g) { return `<span class="g g${g}">${g}</span>` }
-function contractName(c) { return `<span class="mono">${fmtExp(c.expiry)} · ${fmtN(c.strike, c.strike % 1 ? 2 : 0)}${c.type}</span>${isMonthly(c.expiry) ? '<span class="badge">شهري</span>' : ''}` }
-const BIND = { volume: 'الحجم اليومي', oi: 'العقود المفتوحة', spread: 'السبريد' }
+const strikeTxt = (c) => fmtN(c.strike, c.strike % 1 ? 2 : 0)
 
 async function render() {
-  const t = $('ticker').value.trim().toUpperCase().replace(/[^A-Z.]/g, '')
+  const t = cleanT($('ticker').value)
   const days = Math.max(1, Number($('days').value) || 200)
   const amount = parseAmount($('amount').value)
-  const opts = {
-    pctOfAdv: Number($('pctAdv').value) / 100 || 0.1,
-    pctOfOi: Number($('pctOi').value) / 100 || 0.05,
-    maxSpread: Number($('maxSpread').value) / 100 || 0.12,
-  }
-  const maxLegs = Math.max(1, Number($('maxLegs').value) || 4)
-  const dMin = Number($('dMin').value) || 0, dMax = Number($('dMax').value) || 1
-  const win = (Number($('win').value) || 25) / 100
-  store.set('form', { ...Object.fromEntries(FIELDS.map((k) => [k, $(k).value])), type })
-  if (location.hash.slice(1) !== t) history.replaceState(null, '', '#' + t)
+  const opts = { pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100 }
+  store.set('form', { ticker: t, amount: $('amount').value, days, type })
+  syncChips()
   if (!t) return
+  if (cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
 
   $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
   const data = await loadTicker(t)
-  if ($('ticker').value.trim().toUpperCase().replace(/[^A-Z.]/g, '') !== t) return
+  if (cleanT($('ticker').value) !== t) return
+  const info = index?.tickers?.[t]
   if (!data) {
-    $('out').innerHTML = `<div class="verdict warn"><h3>${esc(t)} غير موجود في القائمة بعد</h3>
-      <p>الأداة تجمع بيانات الأسهم اللي في القائمة فقط. لإضافته: افتح <a href="${REPO}" target="_blank" rel="noopener">صفحة التحديث</a> ← Run workflow ← اكتب <b class="mono">${esc(t)}</b> في خانة add. خلال دقيقتين يظهر هنا. أو أرسله لـ Claude في المحادثة وهو يضيفه.</p></div>`
+    const msg = info?.noOptions
+      ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
+      : `<b>${esc(t)}</b> مو في قائمتك بعد. أرسله لـ Claude في المحادثة ويضيفه، ويظهر هنا بعد التحديث الجاي.`
+    $('out').innerHTML = `<div class="verdict bad"><div class="t">ما فيه بيانات</div><p>${msg}</p></div>`
     return
   }
 
@@ -232,113 +296,157 @@ async function render() {
   const today = new Date().toISOString().slice(0, 10)
   const ofType = contracts.filter((c) => c.type === type)
   const expiries = [...new Set(ofType.map((c) => c.expiry))].sort()
-  const chosen = new Set(selectExpirations(expiries, today, days, win))
-  const inWindow = ofType.filter((c) => chosen.has(c.expiry) && c.delta != null && Math.abs(c.delta) >= dMin && Math.abs(c.delta) <= dMax)
-  const a = allocate(inWindow, { amount, maxLegs, ...opts })
-
-  const legsCost = a.legs.reduce((s, l) => s + l.cost, 0)
-  const spreadToll = a.legs.reduce((s, l) => s + l.m.roundTripCostPerContract * l.contracts, 0)
-  const nContracts = a.legs.reduce((s, l) => s + l.contracts, 0)
-  const instant = a.legs.reduce((s, l) => s + Math.min(l.contracts, l.m.instantContracts), 0)
-  const estimated = (snap.historySessions ?? 0) < 5
+  const chosen = new Set(selectExpirations(expiries, today, days, adv.win / 100))
+  const inDelta = (c) => c.delta != null && Math.abs(c.delta) >= adv.dMin && Math.abs(c.delta) <= adv.dMax
+  const a = allocate(ofType.filter((c) => chosen.has(c.expiry) && inDelta(c)), { amount, maxLegs: adv.maxLegs, ...opts })
   const typeName = type === 'C' ? 'Call' : 'Put'
-  const chosenList = [...chosen].map((e) => `${fmtExp(e)} (${daysToExpiry(e, today)} يوم)`).join('، ')
+  const cost = a.legs.reduce((s, l) => s + l.cost, 0)
 
-  let cls, head, body
+  // Stock-level badge.
+  const tierKey = info?.tier ?? 'D'
+  const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
+
+  let cls, head, body = ''
   if (a.legs.length === 0 && a.ranked.length > 0) {
     cls = 'warn'
-    head = `المبلغ أقل من سعر عقد واحد من العقود الصالحة`
-    body = `أرخص عقد صالح في هذه المدة يكلّف ${fmt$(Math.min(...a.ranked.map((c) => c.ask * 100)))}. السعة المريحة الكلية ≈ <b>${fmt$(a.capacity)}</b>.`
+    head = `المبلغ أقل من سعر عقد واحد`
+    body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * 100)))}.`
   } else if (a.legs.length === 0) {
     cls = 'bad'
-    head = `لا تدخل: ما فيه عقد ${typeName} بسيولة كافية حول ${days} يوم`
-    body = `ما لقينا عقد بتقييم C أو أحسن في التواريخ ${chosenList}. شوف جدول التواريخ تحت واختر مدة على عقد شهري أو LEAPS يناير، أو وسّع نطاق الدلتا.`
-  } else if (a.unplaced < Math.max(1, ...a.legs.map((l) => l.ask * 100))) {
+    head = `لا تدخل ${esc(t)} ${typeName} بهذه المدة`
+    body = `ما فيه عقد سيولته تكفي تطلع منه براحة. جرّب مدة ثانية (شوف «التفاصيل» تحت) أو تداول السهم نفسه.`
+  } else if (a.unplaced < Math.max(...a.legs.map((l) => l.ask * 100))) {
     cls = 'ok'
-    head = `تقدر تدخل ${fmt$(legsCost)} وتطلع براحة — موزعة على ${a.legs.length === 1 ? 'عقد واحد' : a.legs.length + ' عقود'}`
-    body = `المبلغ داخل الحد المريح. السعة الكلية المريحة لـ ${esc(t)} ${typeName} في هذه المدة ≈ <b>${fmt$(a.capacity)}</b>.`
+    head = `✅ تقدر تدخل ${money(cost)} وتطلع براحة`
+    body = a.capacity > cost * 1.5 ? `والسوق يتحمّل لين ${money(a.capacity)} تقريبًا في هذه المدة.` : ''
   } else {
     cls = 'warn'
-    head = `لا تدخل أكثر من ${fmt$(a.placed)} في ${esc(t)} ${typeName} بهذه المدة`
-    body = `مبلغك ${fmt$(amount)} أكبر من اللي يقدر السوق يمتصه براحة. الباقي <b>${fmt$(a.unplaced)}</b> لو دخلته بتصير جزء كبير من تداول العقد وبتبيع بخصم. السعة الكلية لكل العقود الصالحة ≈ ${fmt$(a.capacity)}${a.capacity > a.placed + 1 ? ' (زد «أقصى عدد عقود للتوزيع» لو تبي توزع أكثر)' : ''}.`
+    head = `⚠️ لا تدخل أكثر من ${money(a.placed)}`
+    body = `مبلغك ${money(amount)} أكبر من اللي يتحمله السوق في ${esc(t)} ${typeName} بهذه المدة. لو دخلت بالباقي (${money(a.unplaced)}) بتصير أنت السوق، وتبيع بخصم.`
   }
 
-  // Nudge toward a nearby expiry that can absorb much more than the chosen ones.
-  const capOf = (e) => ofType.filter((c) => c.expiry === e && c.delta != null && Math.abs(c.delta) >= dMin && Math.abs(c.delta) <= dMax)
+  // Nudge toward a nearby longer expiry that can absorb much more.
+  const capOf = (e) => ofType.filter((c) => c.expiry === e && inDelta(c))
     .reduce((s, c) => { const m = contractMetrics(c, opts); return s + (m.grade === 'D' ? 0 : m.capDollars) }, 0)
   const near = expiries.filter((e) => !chosen.has(e)).map((e) => ({ e, dte: daysToExpiry(e, today), cap: capOf(e) }))
     .filter((x) => x.dte >= days * 0.75 && x.dte <= days * 2).sort((x, y) => y.cap - x.cap)[0]
-  const nudge = near && near.cap > Math.max(1.5 * a.capacity, amount * 0.5) && a.capacity < amount
-    ? `<div class="warnline">💡 أعلى سيولة قريبة من مدتك: <b class="mono">${fmtExp(near.e)}</b> (${near.dte} يوم) — سعة مريحة ≈ <b>${fmt$(near.cap)}</b>. غيّر المدة إلى ${near.dte} لو تناسبك.</div>` : ''
+  const nudge = near && a.capacity < amount && near.cap > Math.max(1.5 * a.capacity, amount * 0.5)
+    ? `<div class="tip">💡 تاريخ قريب فيه سيولة أكثر: <b class="mono">${fmtExp(near.e)}</b> (${near.dte} يوم) — يتحمّل ${money(near.cap)}. <a href="#" data-setdays="${near.dte}">جرّبه</a></div>` : ''
 
-  const kpis = a.legs.length ? `<div class="kpis">
-    <div class="kpi"><div class="l">المبلغ الموصى به</div><div class="v num">${fmt$(legsCost)}</div><div class="s">${fmtN(nContracts)} عقد</div></div>
-    <div class="kpi"><div class="l">بيع فوري عند البيد</div><div class="v num">${fmtN(instant)} / ${fmtN(nContracts)}</div><div class="s">عقد معروض الآن</div></div>
-    <div class="kpi"><div class="l">تكلفة السبريد لو بعت فورًا</div><div class="v num">${fmt$(spreadToll)}</div><div class="s">${fmtP(legsCost ? spreadToll / legsCost : 0)} من المبلغ</div></div>
-    <div class="kpi"><div class="l">سعر السهم</div><div class="v num">${snap.price != null ? '$' + fmtN(snap.price, 2) : '—'}</div><div class="s">التواريخ: ${a.legs.length ? [...new Set(a.legs.map((l) => fmtExp(l.expiry)))].join('، ') : '—'}</div></div>
-  </div>` : ''
+  const legsHtml = a.legs.map((l) => {
+    const g = limitGuide(l.bid, l.ask)
+    const dte = daysToExpiry(l.expiry, today)
+    return `<div class="leg">
+      <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
+        <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
+      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry) ? ' · عقد شهري' : ''}</div>
+      <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
+      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}</div>` : ''}
+    </div>`
+  }).join('')
 
   const warn = []
-  if (data.source === 'live') warn.push('هذا السهم مو في القائمة، فالأرقام مبنية على حجم اليوم فقط (بدون تاريخ). أضفه للقائمة لدقة أعلى.')
-  else if (estimated) warn.push((snap.historySessions ?? 0) === 0
-    ? 'ما فيه جلسات مكتملة مسجّلة بعد، فمتوسط الحجم تقدير متحفظ (2% من العقود المفتوحة يوميًا). الأرقام تصير حقيقية تدريجيًا خلال 5 أيام تداول.'
-    : `متوسط الحجم مبني على ${snap.historySessions} ${snap.historySessions === 1 ? 'جلسة' : 'جلسات'} مكتملة مع تقدير متحفظ — يصير حقيقي بالكامل بعد 5 جلسات.`)
-  if (snap.quotesIntraday === false) warn.push('الأسعار من بعد الإغلاق؛ السبريد خارج وقت السوق قد يكون أوسع من الحقيقي.')
+  if ((snap.historySessions ?? 0) < 5) warn.push('الأرقام تقديرية ومتحفظة لأن السجل لسه جديد — تصير دقيقة بالكامل بعد 5 أيام تداول.')
 
-  const legRows = a.legs.map((l) => `<tr>
-    <td>${contractName(l)}</td><td class="n"><b>${fmtN(l.contracts)}</b></td><td class="n"><b>${fmt$(l.cost)}</b></td><td>${gradeTag(l.m.grade)}</td>
-    <td class="n">${fmtP(l.m.spreadPct)}</td><td class="n">${fmtN(l.bid, 2)} / ${fmtN(l.ask, 2)}</td>
-    <td class="n">${fmtN(l.delta, 2)}</td><td class="n">${fmtN(l.oi)}</td><td class="n">${fmtN(l.m.adv)}${l.m.advEstimated ? '*' : ''}</td>
-    <td class="n">${fmtN(Math.min(l.contracts, l.m.instantContracts))}</td></tr>`).join('')
-
+  // Details: candidates, expiries, settings.
   const top = a.ranked.slice(0, 15)
-  const candRows = top.map((c) => `<tr class="${a.legs.some((l) => l.sym === c.sym) ? 'win' : ''}">
-    <td>${contractName(c)}</td><td class="n"><b>${fmt$(c.m.capDollars)}</b></td><td class="n">${fmtN(c.m.capContracts)}</td><td>${gradeTag(c.m.grade)}</td>
-    <td class="n">${fmtP(c.m.spreadPct)}</td><td class="n">${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</td>
-    <td class="n">${fmtN(c.delta, 2)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}${c.m.advEstimated ? '*' : ''}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
-
+  const candRows = top.map((c) => `<tr class="${a.legs.some((l) => l.sym === c.sym) ? 'hl' : ''}">
+    <td class="n">${fmtExp(c.expiry)} ${strikeTxt(c)}${c.type}</td><td class="n"><b>${money(c.m.capDollars)}</b></td>
+    <td><span class="pill p${c.m.grade}">${c.m.grade}</span></td><td class="n">${fmtP(c.m.spreadPct)}</td>
+    <td class="n">${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</td><td class="n">${fmtN(c.delta, 2)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td></tr>`).join('')
   const ex = expirySummary(ofType, today, opts).filter((e) => e.dte >= 7)
-  const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'win' : ''}">
-    <td class="mono">${fmtExp(e.expiry)}${e.monthly ? '<span class="badge">شهري</span>' : ''}</td><td class="n">${e.dte}</td>
-    <td class="n">${fmtN(e.oi)}</td><td class="n">${fmtN(e.adv)}</td><td class="n">${fmtP(e.medianSpread)}</td><td class="n"><b>${fmt$(e.capacity)}</b></td></tr>`).join('')
+  const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
+    <td class="n">${fmtExp(e.expiry)}${e.monthly ? ' ●' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
+    <td class="n">${fmtP(e.medianSpread)}</td><td class="n">${fmtN(e.oi)}</td></tr>`).join('')
 
   $('out').innerHTML = `
-    <div class="verdict ${cls}"><h3>${head}</h3><p>${body}</p>${kpis}
-      ${nudge}${warn.map((w) => `<div class="warnline">${w}</div>`).join('')}
-      <p class="note">التواريخ المختارة: ${chosenList || '—'} · آخر تحديث: ${fmtTime(snap.fetchedAt)} · الجلسة: <span class="mono">${esc(snap.session || '—')}</span></p>
-    </div>
-    ${a.legs.length ? `<h2>التوزيع المقترح</h2><div class="tbl"><table>
-      <thead><tr><th>العقد</th><th>عدد العقود</th><th>المبلغ</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>دلتا</th><th>OI</th><th>حجم/يوم</th><th>بيع فوري</th></tr></thead>
-      <tbody>${legRows}</tbody></table></div>` : ''}
-    <h2>أفضل العقود في هذه المدة (مرتبة بسهولة الخروج)</h2>
-    ${top.length ? `<div class="tbl"><table>
-      <thead><tr><th>العقد</th><th>الحد المريح ($)</th><th>الحد (عقد)</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>دلتا</th><th>OI</th><th>حجم/يوم</th><th>القيد</th></tr></thead>
-      <tbody>${candRows}</tbody></table></div>
-      <p class="note">«القيد» = الشرط اللي حدد السقف. * = متوسط حجم تقديري (أقل من 5 جلسات).</p>` : '<p class="empty">ما فيه عقود صالحة في هذه المدة ونطاق الدلتا.</p>'}
-    <h2>كل التواريخ — ${typeName} (المظلل = ضمن مدتك)</h2>
-    <div class="tbl"><table>
-      <thead><tr><th>التاريخ</th><th>أيام</th><th>OI الكلي</th><th>حجم/يوم</th><th>سبريد وسطي (قرب السعر)</th><th>السعة المريحة</th></tr></thead>
-      <tbody>${exRows}</tbody></table></div>`
+    <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
+    ${nudge}
+    ${a.legs.length ? `<div class="legs">${legsHtml}</div>
+      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل سنت أو سنتين كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
+    ${warn.map((w) => `<p class="note">⏳ ${w}</p>`).join('')}
+    <details class="more"><summary>التفاصيل والإعدادات (للمتقدمين)</summary>
+      <h3>أفضل العقود في هذه المدة</h3>
+      ${top.length ? `<div class="tbl"><table><thead><tr><th>العقد</th><th>الحد المريح</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>دلتا</th><th>OI</th><th>حجم/يوم</th></tr></thead><tbody>${candRows}</tbody></table></div>` : '<p class="note">ما فيه عقود مناسبة.</p>'}
+      <h3>كل التواريخ — ${typeName}</h3>
+      <p class="note">المظلل = ضمن مدتك · ● = عقد شهري</p>
+      <div class="tbl"><table><thead><tr><th>التاريخ</th><th>أيام</th><th>يتحمّل</th><th>سبريد وسطي</th><th>العقود المفتوحة</th></tr></thead><tbody>${exRows}</tbody></table></div>
+      <h3>الإعدادات</h3>
+      <div class="adv">
+        <label>% من الحجم اليومي<input data-adv="pctAdv" type="number" min="1" max="50" value="${adv.pctAdv}"></label>
+        <label>% من العقود المفتوحة<input data-adv="pctOi" type="number" min="1" max="30" value="${adv.pctOi}"></label>
+        <label>أقصى سبريد %<input data-adv="maxSpread" type="number" min="1" max="40" value="${adv.maxSpread}"></label>
+        <label>عدد العقود للتوزيع<input data-adv="maxLegs" type="number" min="1" max="10" value="${adv.maxLegs}"></label>
+        <label>دلتا من<input data-adv="dMin" type="number" min="0" max="1" step="0.05" value="${adv.dMin}"></label>
+        <label>دلتا إلى<input data-adv="dMax" type="number" min="0" max="1" step="0.05" value="${adv.dMax}"></label>
+      </div>
+      <p class="note">الحد المريح لكل عقد = الأصغر بين ${adv.pctAdv}% من متوسط حجمه اليومي و${adv.pctOi}% من عقوده المفتوحة. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. <a href="#" id="resetAdv">رجّع الافتراضي</a></p>
+      <p class="note">آخر تحديث: ${fmtTime(snap.fetchedAt)}</p>
+    </details>`
 }
 
-function renderIndex() {
+// --- My list ------------------------------------------------------------------
+let tierFilter = ''
+function renderList() {
   if (!index?.tickers) return
-  $('tickers').innerHTML = Object.keys(index.tickers).sort().map((t) => `<option value="${esc(t)}">`).join('')
-  $('foot').innerHTML = `البيانات: أسعار Cboe المتأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول (آخر تحديث ${fmtTime(index.updatedAt)}). الأسهم في القائمة: <span class="mono">${Object.keys(index.tickers).sort().join(' ')}</span> — <a href="${REPO}" target="_blank" rel="noopener">إضافة سهم</a>. للمعلومة فقط — مو توصية شراء أو بيع.`
+  const q = cleanT($('q').value)
+  const all = Object.entries(index.tickers).map(([t, v]) => ({ t, ...v, k: v.noOptions ? 'N' : v.tier ?? 'D' }))
+  $('listCount').textContent = `(${all.length})`
+  const order = { A: 0, B: 1, C: 2, D: 3, N: 4 }
+  const rows = all.filter((r) => (!q || r.t.includes(q)) && (!tierFilter || r.k === tierFilter))
+    .sort((x, y) => order[x.k] - order[y.k] || (y.capacity ?? 0) - (x.capacity ?? 0) || x.t.localeCompare(y.t))
+  document.querySelectorAll('#tierChips button').forEach((b) => {
+    const n = b.dataset.tier ? all.filter((r) => r.k === b.dataset.tier).length : all.length
+    b.querySelector('span')?.remove(); b.insertAdjacentHTML('beforeend', `<span class="count">${n}</span>`)
+  })
+  $('list').innerHTML = rows.length ? `<table><thead><tr><th>السهم</th><th>السيولة</th><th>سبريد وسطي</th><th>يتحمّل تقريبًا</th><th>السعر</th></tr></thead><tbody>${rows.map((r) => `
+    <tr data-t="${esc(r.t)}"><td class="n"><b>${esc(r.t)}</b></td><td><span class="dot ${TIER[r.k][1]}"></span> ${TIER[r.k][0]}</td>
+    <td class="n">${r.k === 'N' ? '—' : fmtP(r.medianSpread)}</td><td class="n">${r.k === 'N' ? '—' : money(r.capacity ?? 0)}</td>
+    <td class="n">${r.price != null ? price(r.price) : '—'}</td></tr>`).join('')}</tbody></table>` : '<p class="empty">ما فيه نتائج.</p>'
 }
 
+// --- Wiring -------------------------------------------------------------------
 let timer
-const schedule = () => { clearTimeout(timer); timer = setTimeout(render, 250) }
-$('f').addEventListener('input', schedule)
+const later = () => { clearTimeout(timer); timer = setTimeout(render, 250) }
+$('ticker').addEventListener('input', later)
+$('amount').addEventListener('input', later)
+$('days').addEventListener('input', () => { syncChips(); later() })
 $('amount').addEventListener('blur', () => { const v = parseAmount($('amount').value); if (v) $('amount').value = v.toLocaleString('en-US') })
-document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
-  type = b.dataset.type
-  document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
-  render()
+document.querySelectorAll('#typeChips button').forEach((b) => b.addEventListener('click', () => { type = b.dataset.type; render() }))
+document.querySelectorAll('#durChips button').forEach((b) => b.addEventListener('click', () => { $('days').value = b.dataset.days; render() }))
+$('out').addEventListener('input', (e) => {
+  const k = e.target.dataset?.adv
+  if (!k) return
+  const v = Number(e.target.value)
+  if (Number.isFinite(v) && v > 0) { adv[k] = v; store.set('adv', adv); clearTimeout(timer); timer = setTimeout(() => { const open = document.querySelector('details.more')?.open; render().then(() => { if (open) document.querySelector('details.more').open = true }) }, 500) }
+})
+$('out').addEventListener('click', (e) => {
+  const d = e.target.closest('[data-setdays]')
+  if (d) { e.preventDefault(); $('days').value = d.dataset.setdays; render() }
+  if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv', adv); render().then(() => { document.querySelector('details.more').open = true }) }
+})
+$('q').addEventListener('input', renderList)
+document.querySelectorAll('#tierChips button').forEach((b) => b.addEventListener('click', () => {
+  tierFilter = b.dataset.tier
+  document.querySelectorAll('#tierChips button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
+  renderList()
 }))
-window.addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)).toUpperCase(); if (h && h !== $('ticker').value.toUpperCase()) { $('ticker').value = h; render() } })
+$('list').addEventListener('click', (e) => {
+  const tr = e.target.closest('tr[data-t]')
+  if (!tr) return
+  $('ticker').value = tr.dataset.t
+  render()
+  document.getElementById('tool').scrollIntoView()
+})
 
-fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => { index = j; renderIndex() }).catch(() => {})
-render()
+fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
+  index = j
+  if (!j) return
+  $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
+  $('foot').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
+  renderList()
+  render()
+}).catch(() => render())
+syncChips()
 </script>
 </body></html>

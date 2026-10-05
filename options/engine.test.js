@@ -12,6 +12,9 @@ import {
   selectExpirations,
   allocate,
   expirySummary,
+  chainRows,
+  limitGuide,
+  tickerSummary,
 } from './engine.js'
 
 describe('parseOccSymbol', () => {
@@ -197,4 +200,34 @@ test('expirySummary rolls up per expiry', () => {
   assert.equal(rows[1].oi, 1500)
   assert.equal(rows[1].monthly, true)
   assert.ok(Math.abs(rows[1].medianSpread - 0.1 / 9.95) < 1e-12)
+})
+
+describe('chainRows', () => {
+  const o = (option, extra = {}) => ({ option, bid: 1, ask: 1.1, open_interest: 100, volume: 5, delta: 0.5, last_trade_time: '2026-10-02T15:00:00', ...extra })
+  test('keeps standard roots, maps dotted tickers, drops adjusted roots and tails', () => {
+    const raw = { data: { current_price: 500, options: [
+      o('BRKB270115C00500000'), o('BRKB1270115C00500000'), o('BRKB270115C00900000', { delta: 0.01 }),
+      o('BRKB261002C00500000'),
+    ] } }
+    const r = chainRows(raw, 'BRK.B', '2026-10-05')
+    assert.deepEqual(r.rows.map((x) => x.sym), ['BRKB270115C00500000'])
+    assert.equal(r.price, 500)
+    assert.equal(r.session, '2026-10-02')
+  })
+})
+
+test('limitGuide: start at mid, never give up more than a quarter of the spread', () => {
+  assert.deepEqual(limitGuide(24.2, 25.8), { mid: 25, buyMax: 25.4, sellMin: 24.6 })
+  assert.equal(limitGuide(0, 1), null)
+})
+
+test('tickerSummary grades a whole chain on long-dated near-the-money calls', () => {
+  const c = (strike, over = {}) => ({ expiry: '2027-03-19', type: 'C', strike, bid: 9.9, ask: 10, oi: 20000, adv: 3000, sessions: 10, delta: 0.5, ...over })
+  const deep = tickerSummary([c(100), c(110), c(120), c(90, { delta: 0.9 })], '2026-10-05')
+  // each: min(300, 1000) contracts × $1000 = $300k → $900k
+  assert.equal(deep.capacity, 900000)
+  assert.equal(deep.tier, 'A')
+  const thin = tickerSummary([c(100, { bid: 8, ask: 10, oi: 300, adv: 20 })], '2026-10-05')
+  assert.equal(thin.tier, 'D')
+  assert.equal(tickerSummary([], '2026-10-05').tier, 'D')
 })

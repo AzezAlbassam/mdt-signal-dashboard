@@ -42,13 +42,15 @@ const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Nu
 
 /**
  * Turn a Cboe delayed-quotes payload into contract rows.
- * Keeps standard roots only (TICKER, or TICKERW for index weeklies): adjusted roots like
- * MSTR1 deliver something other than 100 shares and price accordingly.
- * Drops expired contracts and ones with no interest, no volume and no bid.
+ * Keeps standard roots only (TICKER, or TICKERW for index weeklies; BRK.B trades as BRKB):
+ * adjusted roots like MSTR1 deliver something other than 100 shares and price accordingly.
+ * Drops expired contracts, ones with no interest, no volume and no bid, and the far tails
+ * (|delta| under 0.03 or over 0.98) that nobody sizes a position in.
  */
 export function chainRows(raw, ticker, today) {
   const d = raw?.data ?? raw ?? {}
-  const roots = new Set([ticker, `${ticker}W`])
+  const base = ticker.replace('.', '')
+  const roots = new Set([base, `${base}W`])
   const rows = []
   let session = ''
   let totalVolume = 0
@@ -63,10 +65,12 @@ export function chainRows(raw, ticker, today) {
     const t = typeof o.last_trade_time === 'string' ? o.last_trade_time.slice(0, 10) : ''
     if (t > session) session = t
     if (oi === 0 && volume === 0 && bid === 0) continue
+    const delta = num(o.delta)
+    if (delta != null && (Math.abs(delta) < 0.03 || Math.abs(delta) > 0.98)) continue
     rows.push({
       sym: o.option, expiry: p.expiry, type: p.type, strike: p.strike,
       bid, ask: num(o.ask) ?? 0, bidSize: num(o.bid_size) ?? 0, askSize: num(o.ask_size) ?? 0,
-      last: num(o.last_trade_price), volume, oi, iv: num(o.iv), delta: num(o.delta),
+      last: num(o.last_trade_price), volume, oi, iv: num(o.iv), delta,
     })
   }
   return { rows, session, totalVolume, price: num(d.current_price) ?? num(d.close) }
@@ -253,4 +257,41 @@ export function expirySummary(contracts, today, opts = {}) {
       }
     })
     .sort((a, b) => a.dte - b.dte)
+}
+
+/**
+ * Working-order prices that keep most of the spread in your pocket.
+ * Start at the mid; if nobody fills you, step toward the far side, but never past a
+ * quarter of the spread — beyond that you are paying the toll you came to avoid.
+ */
+export function limitGuide(bid, ask) {
+  if (!(bid > 0) || !(ask >= bid)) return null
+  const mid = (bid + ask) / 2
+  const q = (ask - bid) / 4
+  const cents = (v) => Math.round(v * 100) / 100
+  return { mid: cents(mid), buyMax: cents(mid + q), sellMin: cents(mid - q) }
+}
+
+/**
+ * One-line liquidity verdict for a whole ticker, for the watchlist view.
+ * Measured where long-dated option buyers actually trade: calls 60–400 days out with
+ * |delta| 0.30–0.70. Tier: A excellent, B fine, C thin (small size, patient limits), D avoid.
+ */
+export function tickerSummary(contracts, today, opts = {}) {
+  const pool = contracts.filter((c) => {
+    const dte = daysToExpiry(c.expiry, today)
+    return c.type === 'C' && dte >= 60 && dte <= 400 && c.delta != null && Math.abs(c.delta) >= 0.3 && Math.abs(c.delta) <= 0.7
+  })
+  const ms = pool.map((c) => contractMetrics(c, opts))
+  const spreads = ms.map((m) => m.spreadPct).filter((s) => s != null).sort((a, b) => a - b)
+  const medianSpread = spreads.length ? spreads[Math.floor(spreads.length / 2)] : null
+  const capacity = ms.reduce((s, m) => s + (m.grade === 'D' ? 0 : m.capDollars), 0)
+  const oi = contracts.reduce((s, c) => s + (c.oi ?? 0), 0)
+  let tier = 'D'
+  if (medianSpread != null) {
+    if (medianSpread <= 0.04 && capacity >= 250000) tier = 'A'
+    else if (medianSpread <= 0.08 && capacity >= 50000) tier = 'B'
+    else if (medianSpread <= 0.15 && capacity >= 10000) tier = 'C'
+  }
+  return { tier, medianSpread, capacity: Math.round(capacity), oi }
 }

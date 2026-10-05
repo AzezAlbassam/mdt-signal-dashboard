@@ -1,15 +1,15 @@
 // Pull delayed option chains from Cboe for every ticker on the watchlist, fold today's
 // volume into a rolling 20-session history, and write one compact snapshot per ticker.
 //
-//   node options/snapshot.js <dataDir> [--add MSTR,HOOD] [--remove XYZ]
+//   node options/snapshot.js <dataDir> [--add MSTR,HOOD] [--remove XYZ] [--only MSTR]
 //
-// <dataDir> holds watchlist.json, history/<T>.json and receives <T>.json + index.json.
+// <dataDir> holds watchlist.json, removed.json, history/<T>.json and receives <T>.json + index.json.
 // Runs in GitHub Actions; the page reads the snapshots as static files.
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary } from './engine.js'
 
 const INDEXES = new Set(['SPX', 'NDX', 'RUT', 'VIX', 'XSP', 'DJX', 'OEX', 'XEO'])
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36'
@@ -43,7 +43,7 @@ async function fetchChain(ticker) {
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
     if (res.ok) return res.json()
-    if (res.status === 403 || res.status === 404) throw new Error(`HTTP ${res.status} (no chain for ${ticker}?)`)
+    if (res.status === 403 || res.status === 404) throw Object.assign(new Error('no listed options'), { noOptions: true })
     await new Promise((r) => setTimeout(r, 2000 * attempt))
   }
   throw new Error('Cboe did not answer after 3 attempts')
@@ -53,7 +53,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const raw = await fetchChain(ticker)
   const today = now.toISOString().slice(0, 10)
   const { rows, session, totalVolume, price } = chainRows(raw, ticker, today)
-  if (rows.length === 0) throw new Error('chain came back empty')
+  if (rows.length === 0) throw Object.assign(new Error('no listed options'), { noOptions: true })
 
   // History: one figure per contract per session, the day's final volume.
   const histPath = join(dataDir, 'history', `${ticker}.json`)
@@ -73,23 +73,24 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const prevQuotes = new Map()
   if (prev?.rows) {
     const ci = Object.fromEntries(prev.cols.map((c, i) => [c, i]))
-    for (const r of prev.rows) prevQuotes.set(r[ci.sym], { bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize], askSize: r[ci.askSize] })
+    for (const r of prev.rows) prevQuotes.set(r[ci.sym], { bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize] })
   }
   const quotesFrom = open ? now.toISOString() : prev?.quotesFrom ?? now.toISOString()
   const quotesIntraday = open || Boolean(prev?.quotesIntraday)
 
   const expiries = [...new Set(rows.map((r) => r.expiry))].sort()
   const expIndex = new Map(expiries.map((e, i) => [e, i]))
-  const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'askSize', 'last', 'volume', 'oi', 'iv', 'delta', 'adv', 'sessions']
-  const out = rows.map((r) => {
+  const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
+  const contracts = rows.map((r) => {
     const q = !open && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
     const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completedSessions))
-    return [
-      r.sym, expIndex.get(r.expiry), r.type, r.strike, q.bid, q.ask, q.bidSize, q.askSize,
-      r.last, r.volume, r.oi, r.iv == null ? null : Math.round(r.iv * 10000) / 10000,
-      r.delta == null ? null : Math.round(r.delta * 1000) / 1000, Math.round(adv * 10) / 10, sessions,
-    ]
+    return { ...r, bid: q.bid, ask: q.ask, bidSize: q.bidSize, adv: Math.round(adv * 10) / 10, sessions }
   })
+  const out = contracts.map((c) => [
+    c.sym, expIndex.get(c.expiry), c.type, c.strike, c.bid, c.ask, c.bidSize, c.volume, c.oi,
+    c.delta == null ? null : Math.round(c.delta * 1000) / 1000, c.adv, c.sessions,
+  ])
+  const summary = tickerSummary(contracts, today)
 
   const snap = {
     ticker,
@@ -107,7 +108,11 @@ export async function snapshotTicker(ticker, dataDir, now) {
     rows: out,
   }
   await writeFile(join(dataDir, `${ticker}.json`), JSON.stringify(snap))
-  return { ticker, price: snap.price, contracts: out.length, session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt }
+  return {
+    price: snap.price, contracts: out.length, session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
+    tier: summary.tier, medianSpread: summary.medianSpread == null ? null : Math.round(summary.medianSpread * 1000) / 1000,
+    capacity: summary.capacity, oi: summary.oi,
+  }
 }
 
 async function main() {
@@ -119,34 +124,49 @@ async function main() {
   }
   await mkdir(join(dataDir, 'history'), { recursive: true })
 
+  // Watchlist = the seed in the repo ∪ what was added since − what was removed since.
   const seed = await readJson(new URL('./watchlist.json', import.meta.url), [])
-  let watchlist = await readJson(join(dataDir, 'watchlist.json'), seed)
+  const stored = await readJson(join(dataDir, 'watchlist.json'), [])
+  const removed = new Set(await readJson(join(dataDir, 'removed.json'), []))
   const add = cleanTickers(arg('--add'))
-  const remove = new Set(cleanTickers(arg('--remove')))
-  watchlist = [...new Set([...watchlist, ...add])].filter((t) => !remove.has(t))
-  await writeFile(join(dataDir, 'watchlist.json'), JSON.stringify(watchlist, null, 2))
+  for (const t of add) removed.delete(t)
+  for (const t of cleanTickers(arg('--remove'))) removed.add(t)
+  const watchlist = [...new Set([...seed, ...stored, ...add])].filter((t) => !removed.has(t))
+  await writeFile(join(dataDir, 'watchlist.json'), JSON.stringify(watchlist))
+  await writeFile(join(dataDir, 'removed.json'), JSON.stringify([...removed]))
 
   const only = cleanTickers(arg('--only'))
-  const targets = only.length ? only : watchlist
+  const targets = only.length ? only.filter((t) => !removed.has(t)) : watchlist
   const prevIndex = await readJson(join(dataDir, 'index.json'), { tickers: {} })
   const index = { updatedAt: new Date().toISOString(), marketOpen: marketOpen(), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
+  // A small pool: fast enough for ~750 tickers, gentle enough on Cboe.
   let failures = 0
-  for (const t of targets) {
-    try {
-      const s = await snapshotTicker(t, dataDir, new Date())
-      index.tickers[t] = { ...s, error: null }
-      console.log(`${t}: ${s.contracts} contracts, $${s.price}, session ${s.session}, history ${s.historySessions}`)
-    } catch (e) {
-      failures += 1
-      index.tickers[t] = { ...(index.tickers[t] ?? { ticker: t }), error: String(e.message ?? e) }
-      console.log(`${t}: FAILED — ${e.message ?? e}`)
+  let noOptions = 0
+  const queue = [...targets]
+  const worker = async () => {
+    while (queue.length) {
+      const t = queue.shift()
+      try {
+        index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
+      } catch (e) {
+        if (e.noOptions) {
+          noOptions += 1
+          index.tickers[t] = { noOptions: true }
+        } else {
+          failures += 1
+          index.tickers[t] = { ...(index.tickers[t] ?? {}), error: String(e.message ?? e) }
+          console.log(`${t}: FAILED — ${e.message ?? e}`)
+        }
+      }
+      await new Promise((r) => setTimeout(r, 150))
     }
-    await new Promise((r) => setTimeout(r, 400))
   }
+  await Promise.all(Array.from({ length: 4 }, worker))
+  console.log(`${targets.length} tickers: ${targets.length - failures - noOptions} with options, ${noOptions} without, ${failures} failed`)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
-  if (failures === targets.length && targets.length > 0) process.exitCode = 1
+  if (failures > targets.length / 2) process.exitCode = 1
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) await main()
