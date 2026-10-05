@@ -25,16 +25,30 @@ const readJson = async (p, fallback) => {
 const cleanTickers = (s) =>
   (s ?? '').split(/[,\s]+/).map((t) => t.trim().toUpperCase().replace(/^\$/, '')).filter((t) => /^[A-Z.]{1,6}$/.test(t))
 
-/** US regular session, 9:30–16:00 New York time, Monday–Friday. */
-export function marketOpen(now = new Date()) {
+/** Minutes since midnight in New York on a weekday, or null at the weekend. */
+function nyMinutes(now) {
   const p = Object.fromEntries(
     new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
       .formatToParts(now)
       .map((x) => [x.type, x.value]),
   )
-  if (p.weekday === 'Sat' || p.weekday === 'Sun') return false
-  const mins = Number(p.hour) * 60 + Number(p.minute)
-  return mins >= 570 && mins < 960
+  if (p.weekday === 'Sat' || p.weekday === 'Sun') return null
+  return Number(p.hour) * 60 + Number(p.minute)
+}
+
+/** US regular session, 9:30–16:00 New York time, Monday–Friday. */
+export function marketOpen(now = new Date()) {
+  const m = nyMinutes(now)
+  return m != null && m >= 570 && m < 960
+}
+
+/**
+ * When quotes are representative: 10:00–15:50 New York. Spreads in the first half hour
+ * and the last minutes are routinely two to three times wider than the rest of the day.
+ */
+export function quoteWindow(now = new Date()) {
+  const m = nyMinutes(now)
+  return m != null && m >= 600 && m < 950
 }
 
 async function fetchChain(ticker) {
@@ -71,9 +85,10 @@ export async function snapshotTicker(ticker, dataDir, now) {
     await writeFile(histPath, JSON.stringify(history))
   }
 
-  // Outside market hours the delayed feed can show pulled or stale quotes; keep the
-  // last intraday quotes for any contract that already has them.
+  // Outside the quote window (after hours, or the open/close scramble) keep the last
+  // representative quotes for any contract that already has them.
   const open = marketOpen(now)
+  const fresh = quoteWindow(now)
   // While the session is still trading its volume is partial: average completed sessions only.
   const inProgress = open && history?.dates?.at(-1) === session ? 1 : 0
   const completedSessions = (history?.dates?.length ?? 0) - inProgress
@@ -83,14 +98,14 @@ export async function snapshotTicker(ticker, dataDir, now) {
     const ci = Object.fromEntries(prev.cols.map((c, i) => [c, i]))
     for (const r of prev.rows) prevQuotes.set(r[ci.sym], { bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize] })
   }
-  const quotesFrom = open ? now.toISOString() : prev?.quotesFrom ?? now.toISOString()
-  const quotesIntraday = open || Boolean(prev?.quotesIntraday)
+  const quotesFrom = fresh ? now.toISOString() : prev?.quotesFrom ?? now.toISOString()
+  const quotesIntraday = fresh || Boolean(prev?.quotesIntraday)
 
   const expiries = [...new Set(rows.map((r) => r.expiry))].sort()
   const expIndex = new Map(expiries.map((e, i) => [e, i]))
   const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
   const contracts = rows.map((r) => {
-    const q = !open && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
+    const q = !fresh && prev?.quotesIntraday && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
     const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completedSessions))
     return { ...r, bid: q.bid, ask: q.ask, bidSize: q.bidSize, adv: Math.round(adv * 10) / 10, sessions }
   })
