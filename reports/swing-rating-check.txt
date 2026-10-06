@@ -1,0 +1,39 @@
+TradingView Technical Rating — live vs rebuilt, daily, 2026-10-06 (protocol §8)
+same bucket (strong sell … strong buy): 33 of 33
+same direction (buy / neutral / sell at ±0.1): 33 of 33
+MA rating identical: 28 of 33
+mean |difference|: All 0.018, MA 0.005, Osc 0.036
+
+AMEX:IWM          live -0.267 sell        rebuilt -0.267 sell         MA -0.533/-0.533  Osc 0.000/0.000
+AMEX:SPY          live  0.512 strong buy  rebuilt  0.512 strong buy   MA 0.933/0.933  Osc 0.091/0.091
+BITSTAMP:BTCUSD   live  0.347 buy         rebuilt  0.309 buy          MA 0.786/0.800  Osc -0.091/-0.182
+BITSTAMP:ETHUSD   live  0.347 buy         rebuilt  0.309 buy          MA 0.786/0.800  Osc -0.091/-0.182
+BITSTAMP:LTCUSD   live  0.231 buy         rebuilt  0.242 buy          MA 0.643/0.667  Osc -0.182/-0.182
+BITSTAMP:XRPUSD   live  0.341 buy         rebuilt  0.312 buy          MA 0.500/0.533  Osc 0.182/0.091
+NASDAQ:AAPL       live  0.309 buy         rebuilt  0.309 buy          MA 0.800/0.800  Osc -0.182/-0.182
+NASDAQ:AMZN       live  0.536 strong buy  rebuilt  0.536 strong buy   MA 0.800/0.800  Osc 0.273/0.273
+NASDAQ:GOOGL      live  0.491 buy         rebuilt  0.491 buy          MA 0.800/0.800  Osc 0.182/0.182
+NASDAQ:INTC       live -0.024 neutral     rebuilt -0.024 neutral      MA 0.133/0.133  Osc -0.182/-0.182
+NASDAQ:MSFT       live  0.558 strong buy  rebuilt  0.512 strong buy   MA 0.933/0.933  Osc 0.182/0.091
+NASDAQ:NVDA       live  0.421 buy         rebuilt  0.421 buy          MA 0.933/0.933  Osc -0.091/-0.091
+NASDAQ:QQQ        live  0.421 buy         rebuilt  0.421 buy          MA 0.933/0.933  Osc -0.091/-0.091
+NASDAQ:WMT        live -0.091 neutral     rebuilt -0.091 neutral      MA 0.000/0.000  Osc -0.182/-0.182
+NYSE:BA           live -0.467 sell        rebuilt -0.467 sell         MA -0.933/-0.933  Osc 0.000/0.000
+NYSE:C            live -0.221 sell        rebuilt -0.221 sell         MA -0.533/-0.533  Osc 0.091/0.091
+NYSE:DIS          live -0.133 sell        rebuilt -0.133 sell         MA -0.267/-0.267  Osc 0.000/0.000
+NYSE:F            live -0.400 sell        rebuilt -0.309 sell         MA -0.800/-0.800  Osc 0.000/0.182
+NYSE:GE           live -0.264 sell        rebuilt -0.264 sell         MA -0.800/-0.800  Osc 0.273/0.273
+NYSE:IBM          live -0.512 strong sell rebuilt -0.512 strong sell  MA -0.933/-0.933  Osc -0.091/-0.091
+NYSE:JNJ          live -0.018 neutral     rebuilt -0.018 neutral      MA -0.400/-0.400  Osc 0.364/0.364
+NYSE:JPM          live -0.312 sell        rebuilt -0.267 sell         MA -0.533/-0.533  Osc -0.091/0.000
+NYSE:KO           live -0.224 sell        rebuilt -0.224 sell         MA -0.267/-0.267  Osc -0.182/-0.182
+NYSE:PFE          live -0.091 neutral     rebuilt -0.091 neutral      MA 0.000/0.000  Osc -0.182/-0.182
+NYSE:PG           live  0.467 buy         rebuilt  0.467 buy          MA 0.933/0.933  Osc 0.000/0.000
+NYSE:T            live -0.242 sell        rebuilt -0.197 sell         MA -0.667/-0.667  Osc 0.182/0.273
+NYSE:XOM          live  0.536 strong buy  rebuilt  0.582 strong buy   MA 0.800/0.800  Osc 0.273/0.364
+TADAWUL:1120      live -0.379 sell        rebuilt -0.333 sell         MA -0.667/-0.667  Osc -0.091/0.000
+TADAWUL:1180      live -0.309 sell        rebuilt -0.264 sell         MA -0.800/-0.800  Osc 0.182/0.273
+TADAWUL:2010      live -0.491 sell        rebuilt -0.491 sell         MA -0.800/-0.800  Osc -0.182/-0.182
+TADAWUL:2222      live  0.124 buy         rebuilt  0.203 buy          MA 0.067/0.133  Osc 0.182/0.273
+TADAWUL:7010      live -0.648 strong sell rebuilt -0.603 strong sell  MA -0.933/-0.933  Osc -0.364/-0.273
+TADAWUL:TASI      live -0.267 sell        rebuilt -0.267 sell         MA -0.533/-0.533  Osc 0.000/0.000

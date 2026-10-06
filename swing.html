@@ -1,0 +1,1167 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مؤشرات السوينج تحت الاختبار</title>
+<meta name="description" content="33 مؤشراً من تريدنج فيو مختبرة على 33 سهماً وعملة بشروط مكتوبة مسبقاً: أيها يتفوق على الدخول العشوائي.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{
+  /* Layout: one reading column, RTL; tables scroll inside their own frame. */
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --ink:#1B1B19; --body:#43433D; --muted:#6B6B62;
+  --faint:#93938A; --line:#DBDBD3; --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611; --pos-soft:#E3EBDB; --neg-soft:#F2E1DB;
+  --ar:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83;
+  --faint:#696960; --line:#34342E; --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#8FAE6E; --neg:#D0806A; --warn:#CBA84A; --pos-soft:#25301D; --neg-soft:#3A241E; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83;
+  --faint:#696960; --line:#34342E; --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#8FAE6E; --neg:#D0806A; --warn:#CBA84A; --pos-soft:#25301D; --neg-soft:#3A241E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:var(--ar);line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding-inline:18px;padding-block:0 80px}
+header{padding-block:56px 26px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:.74rem;letter-spacing:.04em;color:var(--faint);font-weight:700;margin:0 0 8px}
+h1{color:var(--ink);font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.25;margin:0 0 12px;font-weight:700;text-wrap:balance}
+.lede{font-size:1.05rem;color:var(--muted);max-width:62ch;margin:0}
+h2{color:var(--ink);font-size:1.3rem;margin:44px 0 10px;font-weight:700;text-wrap:balance}
+h3{color:var(--ink);font-size:1.05rem;margin:22px 0 6px}
+p{max-width:68ch}
+.muted{color:var(--muted)}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums}
+.verdicts{display:grid;gap:12px;margin-top:22px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.vcard .h{font-size:.78rem;color:var(--faint);font-weight:700}
+.vcard .big{color:var(--ink);font-size:1.12rem;font-weight:700;line-height:1.4}
+.vcard p{margin:0;font-size:.9rem;color:var(--muted)}
+.callout{background:var(--accent-soft);border-radius:6px;padding:14px 18px;margin:18px 0;color:var(--ink)}
+.callout p{margin:0}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:640px}
+th{font-size:.74rem;color:var(--faint);font-weight:700;text-align:start;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--raise)}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--faint);font-size:.74rem;line-height:1.5}
+td.ind b{color:var(--ink);font-weight:600}
+td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.hl td{background:var(--accent-soft)}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.v-robust{background:var(--pos-soft);color:var(--pos)}
+.v-possible{background:var(--accent-soft);color:var(--warn)}
+.v-none{background:var(--raise);color:var(--muted)}
+.v-thin{background:var(--raise);color:var(--faint)}
+.v-worse{background:var(--neg-soft);color:var(--neg)}
+.rules{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:14px 0}
+.rule{border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:var(--surface);min-width:0}
+.rule .k{font-size:.74rem;color:var(--faint);font-weight:700}
+.rule .v{color:var(--ink);font-weight:600}
+ol,ul{padding-inline-start:22px;max-width:68ch}
+li{margin-bottom:6px}
+code{font-family:var(--mono);font-size:.82em;background:var(--raise);padding:1px 5px;border-radius:3px;direction:ltr;unicode-bidi:isolate}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:.84rem;color:var(--faint);max-width:68ch}
+a{color:var(--accent)}
+</style></head><body>
+<div class="wrap" dir="rtl" lang="ar">
+<header>
+<p class="eyebrow">33 سهماً وعملة · 20 سنة بيانات من تريدنج فيو · 85 قاعدة · كل الشروط مكتوبة قبل النتائج</p>
+<h1>أي مؤشرات السوينج تنجح فعلاً؟</h1>
+<p class="lede">اختبرنا 33 مؤشراً من مؤشرات تريدنج فيو المدمجة بإعداداتها الافتراضية، على ثلاث مدد: صفقة أسبوع إلى أسبوعين، وصفقة شهرين إلى ثلاثة، واستثمار سنة إلى سنتين. وقارنّا كل مؤشر بالدخول في وقت عشوائي، لا بالصفر.</p>
+</header>
+
+<h2>الخلاصة</h2>
+<div class="verdicts">
+<div class="vcard"><span class="h">سوينج أسبوع إلى أسبوعين (يومي)</span>
+<span class="big">مؤشر واحد اجتاز كل الشروط: اختراق قناة كيلتنر</span>
+<p>ميزة <span class="ltr">+0.077</span>R لكل صفقة، ونسبة ربح <span class="ltr">52.7%</span> مقابل <span class="ltr">49.6%</span> للدخول العشوائي. ثابت قبل 2018 وبعدها.</p></div>
+<div class="vcard"><span class="h">سوينج شهرين إلى ثلاثة (أسبوعي)</span>
+<span class="big">لا يوجد مؤشر مثبت</span>
+<p>الستوكاستك كان الأفضل بعد 2018 (<span class="ltr">61.2%</span> ربح) لكنه خسر قبل 2018، فلا يمكن الاعتماد عليه.</p></div>
+<div class="vcard"><span class="h">استثمار سنة إلى سنتين</span>
+<span class="big">ولا قاعدة توقيت تفوقت على الشراء والاحتفاظ</span>
+<p>كلها قلّلت أقصى هبوط من <span class="ltr">-48%</span> إلى نحو <span class="ltr">-38%</span>، لكنها خفّضت العائد بنحو 3–7% سنوياً.</p></div>
+</div>
+
+<div class="callout"><p><b>الدقة الحقيقية:</b> أفضل مؤشر يربح <span class="ltr">52.7%</span> من صفقاته، والدخول العشوائي يربح <span class="ltr">49.6%</span>. الفرق 3 نقاط فقط، ومنه يأتي كل الربح. من يعدك بدقة 80–90% من مؤشر فني إما اختار الأمثلة الناجحة بعد حدوثها، أو يستخدم وقفاً بعيداً جداً وهدفاً قريباً: يربح كثيراً بمبالغ صغيرة ويخسر قليلاً بمبالغ كبيرة.</p></div>
+
+<h2>كيف منعنا الغش</h2>
+<ol>
+<li><b>الشروط قبل النتائج.</b> كتبنا البروتوكول (<code>PROTOCOL-swing.md</code>) ورفعناه إلى git في <span class="ltr">2026-10-06 23:38 UTC</span> (<code>315ae08</code>) قبل حساب أي مؤشر. ثم ثبّتنا الكود والبيانات (<code>760d13c</code>) قبل تشغيل الاختبار، ثم النتائج (<code>156b31f</code>). تاريخ git لا يمكن تزويره للخلف.</li>
+<li><b>إعدادات تريدنج فيو الافتراضية فقط.</b> لم نعدّل أي رقم لأي مؤشر. تحسين الإعدادات على الماضي هو أكبر مصدر للدقة الوهمية.</li>
+<li><b>المقارنة مع العشوائي.</b> في سوق صاعد كل مؤشر شراء يبدو رابحاً. لذلك نطرح من نتيجة كل مؤشر نتيجة الدخول في يوم عشوائي على السهم نفسه وفي الفترة نفسها وبقواعد الخروج نفسها، ونكرر السحب العشوائي ألفي مرة.</li>
+<li><b>فترتان منفصلتان.</b> ما قبل 2018 للاكتشاف، و2018 حتى اليوم للحكم. المؤشر المثبت يجب أن ينجح في الاثنتين.</li>
+<li><b>تصحيح تعدد الاختبارات (Holm).</b> مع 85 قاعدة، نتوقع أن تبدو 4 منها ناجحة بالصدفة وحدها. لذلك "محتمل" ليس "مثبت".</li>
+<li><b>الشمعة الغامضة ضد الصفقة.</b> إذا لمست الشمعة الوقف والهدف معاً نحسبها خسارة، والدخول عند افتتاح الشمعة التالية للإشارة، مع عمولة 0.1% لكل جهة.</li>
+</ol>
+
+<h2>المؤشر المثبت: اختراق قناة كيلتنر (صفقة 1–2 أسبوع)</h2>
+<p>هذا هو المؤشر الوحيد الذي اجتاز كل الشروط. القواعد بالضبط كما اختُبرت:</p>
+<div class="rules">
+<div class="rule"><span class="k">الإطار</span><div class="v">يومي</div></div>
+<div class="rule"><span class="k">إشارة الشراء</span><div class="v">إغلاق يومي يخترق الحد العلوي لكيلتنر (EMA 20 + 2×ATR 10)</div></div>
+<div class="rule"><span class="k">الدخول</span><div class="v">افتتاح اليوم التالي</div></div>
+<div class="rule"><span class="k">الوقف</span><div class="v">الدخول − 2 × ATR 14</div></div>
+<div class="rule"><span class="k">الهدف</span><div class="v">الدخول + 3 × ATR 14</div></div>
+<div class="rule"><span class="k">الخروج بالوقت</span><div class="v">إغلاق الجلسة العاشرة إن لم يُلمس وقف ولا هدف</div></div>
+</div>
+<p>على <span class="ltr">1667</span> صفقة منذ 2018: نسبة ربح <span class="ltr">52.7%</span>، ومتوسط الصفقة <span class="ltr">+0.53%</span>، ومعامل الربح <span class="ltr">1.27</span>. نجح في الكريبتو (<span class="ltr">+0.137</span>R) والأسهم الأمريكية (<span class="ltr">+0.056</span>R) والسعودية (<span class="ltr">+0.116</span>R)، وعلى <span class="ltr">73%</span> من الرموز. قبل 2018 كانت ميزته <span class="ltr">+0.076</span>R، أي تقريباً الرقم نفسه.</p>
+<p class="muted">حجم الميزة صغير: نحو 0.08 من المخاطرة لكل صفقة. إذا خاطرت بـ 1% من محفظتك في كل صفقة، فالمتوقع نحو 0.08% لكل صفقة فوق الدخول العشوائي. هي ميزة حقيقية لكنها ليست ثروة سريعة، وتحتاج مئات الصفقات لتظهر.</p>
+
+<h2>الإشارات الحالية</h2>
+<p>إغلاق <span class="ltr">2026-10-05</span>. الإغلاق مرجع تقريبي، والدخول الفعلي عند افتتاح الجلسة التالية، والوقف والهدف يُعاد حسابهما منه. المؤشرات "المحتملة" معروضة للمتابعة وهي أضعف دليلاً.</p>
+<h3>صفقات 1–2 أسبوع (يومي)</h3>
+<div class="tw"><table class="sig">
+<thead><tr><th>السهم</th><th>المؤشر</th><th>الحكم</th><th>الإغلاق</th><th>الوقف</th><th>الهدف</th><th>أقصى مدة</th></tr></thead>
+<tbody><tr class="hl">
+<td><b>Nasdaq 100 ETF</b><small><span class="ltr">NASDAQ:QQQ</span></small></td>
+<td>اختراق قناة كيلتنر</td>
+<td><span class="chip v-robust">مثبت</span></td>
+<td class="n"><span class="ltr">756.20</span></td>
+<td class="n neg"><span class="ltr">737.50</span><small><span class="ltr">−2.5%</span></small></td>
+<td class="n pos"><span class="ltr">784.25</span><small><span class="ltr">+3.7%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="hl">
+<td><b>Nvidia</b><small><span class="ltr">NASDAQ:NVDA</span></small></td>
+<td>اختراق قناة كيلتنر</td>
+<td><span class="chip v-robust">مثبت</span></td>
+<td class="n"><span class="ltr">238.90</span></td>
+<td class="n neg"><span class="ltr">227.05</span><small><span class="ltr">−5.0%</span></small></td>
+<td class="n pos"><span class="ltr">256.68</span><small><span class="ltr">+7.4%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>S&amp;P 500 ETF</b><small><span class="ltr">AMEX:SPY</span></small></td>
+<td>MACD مع خط الإشارة</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">774.83</span></td>
+<td class="n neg"><span class="ltr">761.26</span><small><span class="ltr">−1.8%</span></small></td>
+<td class="n pos"><span class="ltr">795.19</span><small><span class="ltr">+2.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Russell 2000 ETF</b><small><span class="ltr">AMEX:IWM</span></small></td>
+<td>MACD مع خط الإشارة</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">283.38</span></td>
+<td class="n neg"><span class="ltr">276.04</span><small><span class="ltr">−2.6%</span></small></td>
+<td class="n pos"><span class="ltr">294.39</span><small><span class="ltr">+3.9%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Apple</b><small><span class="ltr">NASDAQ:AAPL</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">332.89</span></td>
+<td class="n neg"><span class="ltr">319.17</span><small><span class="ltr">−4.1%</span></small></td>
+<td class="n pos"><span class="ltr">353.46</span><small><span class="ltr">+6.2%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Microsoft</b><small><span class="ltr">NASDAQ:MSFT</span></small></td>
+<td>اختراق دونشيان 20</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">525.18</span></td>
+<td class="n neg"><span class="ltr">501.55</span><small><span class="ltr">−4.5%</span></small></td>
+<td class="n pos"><span class="ltr">560.63</span><small><span class="ltr">+6.8%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Amazon</b><small><span class="ltr">NASDAQ:AMZN</span></small></td>
+<td>MACD مع خط الإشارة</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">251.40</span></td>
+<td class="n neg"><span class="ltr">240.31</span><small><span class="ltr">−4.4%</span></small></td>
+<td class="n pos"><span class="ltr">268.03</span><small><span class="ltr">+6.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Alphabet</b><small><span class="ltr">NASDAQ:GOOGL</span></small></td>
+<td>MACD مع خط الإشارة</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">346.47</span></td>
+<td class="n neg"><span class="ltr">328.94</span><small><span class="ltr">−5.1%</span></small></td>
+<td class="n pos"><span class="ltr">372.77</span><small><span class="ltr">+7.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Alphabet</b><small><span class="ltr">NASDAQ:GOOGL</span></small></td>
+<td>RSI فوق 50</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">346.47</span></td>
+<td class="n neg"><span class="ltr">328.94</span><small><span class="ltr">−5.1%</span></small></td>
+<td class="n pos"><span class="ltr">372.77</span><small><span class="ltr">+7.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Nvidia</b><small><span class="ltr">NASDAQ:NVDA</span></small></td>
+<td>اختراق دونشيان 20</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">238.90</span></td>
+<td class="n neg"><span class="ltr">227.05</span><small><span class="ltr">−5.0%</span></small></td>
+<td class="n pos"><span class="ltr">256.68</span><small><span class="ltr">+7.4%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>JPMorgan</b><small><span class="ltr">NYSE:JPM</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">332.38</span></td>
+<td class="n neg"><span class="ltr">319.93</span><small><span class="ltr">−3.7%</span></small></td>
+<td class="n pos"><span class="ltr">351.05</span><small><span class="ltr">+5.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Coca-Cola</b><small><span class="ltr">NYSE:KO</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">86.51</span></td>
+<td class="n neg"><span class="ltr">84.02</span><small><span class="ltr">−2.9%</span></small></td>
+<td class="n pos"><span class="ltr">90.25</span><small><span class="ltr">+4.3%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>Ford</b><small><span class="ltr">NYSE:F</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">12.15</span></td>
+<td class="n neg"><span class="ltr">11.40</span><small><span class="ltr">−6.1%</span></small></td>
+<td class="n pos"><span class="ltr">13.27</span><small><span class="ltr">+9.2%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>TASI index</b><small><span class="ltr">TADAWUL:TASI</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">10480</span></td>
+<td class="n neg"><span class="ltr">10297</span><small><span class="ltr">−1.7%</span></small></td>
+<td class="n pos"><span class="ltr">10754</span><small><span class="ltr">+2.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>SABIC</b><small><span class="ltr">TADAWUL:2010</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">47.00</span></td>
+<td class="n neg"><span class="ltr">45.61</span><small><span class="ltr">−3.0%</span></small></td>
+<td class="n pos"><span class="ltr">49.09</span><small><span class="ltr">+4.5%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr>
+<tr class="">
+<td><b>STC</b><small><span class="ltr">TADAWUL:7010</span></small></td>
+<td>متوسط هَل 9</td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">43.10</span></td>
+<td class="n neg"><span class="ltr">42.37</span><small><span class="ltr">−1.7%</span></small></td>
+<td class="n pos"><span class="ltr">44.20</span><small><span class="ltr">+2.6%</span></small></td>
+<td class="n">10 جلسات</td>
+</tr></tbody></table></div>
+<h3>صفقات 2–3 أشهر (أسبوعي)</h3>
+<p class="muted">لا توجد إشارة من مؤشر مثبت أو محتمل على آخر شمعة.</p>
+<p class="muted">هذه مخرجات قاعدة، لا توصية شراء. سجل هذه الإشارات للأمام يبدأ من هذا التاريخ.</p>
+
+<h2>الترتيب الكامل: سوينج أسبوع إلى أسبوعين</h2>
+<p>شموع يومية. وقف 2×ATR وهدف 3×ATR وخروج بعد 10 جلسات. مرتبة من الأفضل للأسوأ حسب <b>الميزة</b>: متوسط الربح بوحدات المخاطرة (R) فوق الدخول العشوائي، للفترة 2018–2026. عمود "قبل 2018" يبيّن هل صمدت الميزة في الفترة الأخرى.</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>المؤشر وإشارة الشراء</th><th>الحكم</th><th>نسبة الربح</th><th>الميزة R</th><th>متوسط الصفقة</th><th>الصفقات</th><th>قبل 2018</th></tr></thead>
+<tbody><tr class="">
+<td class="n">1</td>
+<td class="ind"><b>TRIX 18</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">52.6%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.083</span></td>
+<td class="n pos"><span class="ltr">+0.68%</span></td>
+<td class="n"><span class="ltr">741</span></td>
+<td class="n pos"><span class="ltr">+0.084</span></td>
+</tr>
+<tr class="hl">
+<td class="n">2</td>
+<td class="ind"><b>اختراق قناة كيلتنر</b><small>الإغلاق يخترق الحد العلوي (EMA20 + 2×ATR10)</small></td>
+<td><span class="chip v-robust">مثبت</span></td>
+<td class="n"><span class="ltr">52.7%</span><small><span class="ltr">عشوائي 49.6%</span></small></td>
+<td class="n pos"><span class="ltr">+0.077</span></td>
+<td class="n pos"><span class="ltr">+0.53%</span></td>
+<td class="n"><span class="ltr">1667</span></td>
+<td class="n pos"><span class="ltr">+0.076</span></td>
+</tr>
+<tr class="">
+<td class="n">3</td>
+<td class="ind"><b>MACD فوق الصفر</b><small>MACD يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">52.3%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.074</span></td>
+<td class="n pos"><span class="ltr">+0.56%</span></td>
+<td class="n"><span class="ltr">1203</span></td>
+<td class="n pos"><span class="ltr">+0.042</span></td>
+</tr>
+<tr class="">
+<td class="n">4</td>
+<td class="ind"><b>إيشيموكو</b><small>الإغلاق يخترق أعلى السحابة</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">52.4%</span><small><span class="ltr">عشوائي 49.2%</span></small></td>
+<td class="n pos"><span class="ltr">+0.056</span></td>
+<td class="n pos"><span class="ltr">+0.35%</span></td>
+<td class="n"><span class="ltr">1406</span></td>
+<td class="n pos"><span class="ltr">+0.056</span></td>
+</tr>
+<tr class="">
+<td class="n">5</td>
+<td class="ind"><b>سوبر ترند 10، 3</b><small>يتحول إلى صاعد</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">51.7%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.054</span></td>
+<td class="n pos"><span class="ltr">+0.44%</span></td>
+<td class="n"><span class="ltr">1121</span></td>
+<td class="n pos"><span class="ltr">+0.040</span></td>
+</tr>
+<tr class="">
+<td class="n">6</td>
+<td class="ind"><b>السعر فوق متوسط 200</b><small>الإغلاق يقطع متوسط 200 للأعلى (أسبوعي: 40)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.7%</span><small><span class="ltr">عشوائي 48.5%</span></small></td>
+<td class="n pos"><span class="ltr">+0.052</span></td>
+<td class="n pos"><span class="ltr">+0.32%</span></td>
+<td class="n"><span class="ltr">870</span></td>
+<td class="n neg"><span class="ltr">−0.022</span></td>
+</tr>
+<tr class="">
+<td class="n">7</td>
+<td class="ind"><b>MACD مع خط الإشارة</b><small>MACD يقطع خط الإشارة للأعلى</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.041</span></td>
+<td class="n pos"><span class="ltr">+0.31%</span></td>
+<td class="n"><span class="ltr">2667</span></td>
+<td class="n pos"><span class="ltr">+0.043</span></td>
+</tr>
+<tr class="">
+<td class="n">8</td>
+<td class="ind"><b>RSI فوق 50</b><small>RSI 14 يقطع 50 للأعلى</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">50.5%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.041</span></td>
+<td class="n pos"><span class="ltr">+0.26%</span></td>
+<td class="n"><span class="ltr">2772</span></td>
+<td class="n pos"><span class="ltr">+0.009</span></td>
+</tr>
+<tr class="">
+<td class="n">9</td>
+<td class="ind"><b>اختراق دونشيان 20</b><small>إغلاق فوق أعلى قمة لآخر 20 شمعة</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">51.1%</span><small><span class="ltr">عشوائي 49.5%</span></small></td>
+<td class="n pos"><span class="ltr">+0.040</span></td>
+<td class="n pos"><span class="ltr">+0.36%</span></td>
+<td class="n"><span class="ltr">2448</span></td>
+<td class="n pos"><span class="ltr">+0.037</span></td>
+</tr>
+<tr class="">
+<td class="n">10</td>
+<td class="ind"><b>المذبذب الرائع AO</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.4%</span><small><span class="ltr">عشوائي 48.9%</span></small></td>
+<td class="n pos"><span class="ltr">+0.036</span></td>
+<td class="n pos"><span class="ltr">+0.33%</span></td>
+<td class="n"><span class="ltr">1517</span></td>
+<td class="n neg"><span class="ltr">−0.021</span></td>
+</tr>
+<tr class="">
+<td class="n">11</td>
+<td class="ind"><b>اختراق بولينجر العلوي</b><small>الإغلاق يخترق الحد العلوي (20، 2)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.3%</span><small><span class="ltr">عشوائي 49.3%</span></small></td>
+<td class="n pos"><span class="ltr">+0.030</span></td>
+<td class="n pos"><span class="ltr">+0.31%</span></td>
+<td class="n"><span class="ltr">1886</span></td>
+<td class="n pos"><span class="ltr">+0.052</span></td>
+</tr>
+<tr class="">
+<td class="n">12</td>
+<td class="ind"><b>زخم 12 شهر</b><small>عائد آخر سنة يتحول موجباً</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.3%</span><small><span class="ltr">عشوائي 48.7%</span></small></td>
+<td class="n pos"><span class="ltr">+0.030</span></td>
+<td class="n pos"><span class="ltr">+0.15%</span></td>
+<td class="n"><span class="ltr">599</span></td>
+<td class="n pos"><span class="ltr">+0.048</span></td>
+</tr>
+<tr class="">
+<td class="n">13</td>
+<td class="ind"><b>الزخم 10</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.1%</span><small><span class="ltr">عشوائي 48.9%</span></small></td>
+<td class="n pos"><span class="ltr">+0.025</span></td>
+<td class="n pos"><span class="ltr">+0.19%</span></td>
+<td class="n"><span class="ltr">3552</span></td>
+<td class="n pos"><span class="ltr">+0.004</span></td>
+</tr>
+<tr class="">
+<td class="n">14</td>
+<td class="ind"><b>فورتكس 14</b><small>VI+ يقطع VI− للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.8%</span><small><span class="ltr">عشوائي 48.9%</span></small></td>
+<td class="n pos"><span class="ltr">+0.024</span></td>
+<td class="n pos"><span class="ltr">+0.18%</span></td>
+<td class="n"><span class="ltr">2795</span></td>
+<td class="n neg"><span class="ltr">−0.023</span></td>
+</tr>
+<tr class="">
+<td class="n">15</td>
+<td class="ind"><b>التقييم الفني لتريدنج فيو</b><small>التقييم يتجاوز +0.5 (شراء قوي)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.1%</span><small><span class="ltr">عشوائي 49.6%</span></small></td>
+<td class="n pos"><span class="ltr">+0.024</span></td>
+<td class="n pos"><span class="ltr">+0.22%</span></td>
+<td class="n"><span class="ltr">2995</span></td>
+<td class="n pos"><span class="ltr">+0.016</span></td>
+</tr>
+<tr class="">
+<td class="n">16</td>
+<td class="ind"><b>متوسط هَل 9</b><small>ينعطف للأعلى</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">49.8%</span><small><span class="ltr">عشوائي 49.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.023</span></td>
+<td class="n pos"><span class="ltr">+0.26%</span></td>
+<td class="n"><span class="ltr">5540</span></td>
+<td class="n pos"><span class="ltr">+0.008</span></td>
+</tr>
+<tr class="">
+<td class="n">17</td>
+<td class="ind"><b>أرون 14</b><small>خط الصعود يقطع خط الهبوط للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.7%</span><small><span class="ltr">عشوائي 48.8%</span></small></td>
+<td class="n pos"><span class="ltr">+0.022</span></td>
+<td class="n pos"><span class="ltr">+0.27%</span></td>
+<td class="n"><span class="ltr">2462</span></td>
+<td class="n neg"><span class="ltr">−0.008</span></td>
+</tr>
+<tr class="">
+<td class="n">18</td>
+<td class="ind"><b>بارابوليك سار</b><small>النقاط تنتقل تحت السعر</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.4%</span><small><span class="ltr">عشوائي 49.1%</span></small></td>
+<td class="n pos"><span class="ltr">+0.017</span></td>
+<td class="n pos"><span class="ltr">+0.21%</span></td>
+<td class="n"><span class="ltr">3110</span></td>
+<td class="n pos"><span class="ltr">+0.012</span></td>
+</tr>
+<tr class="">
+<td class="n">19</td>
+<td class="ind"><b>ارتداد بولينجر السفلي</b><small>الإغلاق يعود فوق الحد السفلي</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.1%</span><small><span class="ltr">عشوائي 48.7%</span></small></td>
+<td class="n pos"><span class="ltr">+0.015</span></td>
+<td class="n pos"><span class="ltr">+0.22%</span></td>
+<td class="n"><span class="ltr">1824</span></td>
+<td class="n neg"><span class="ltr">−0.031</span></td>
+</tr>
+<tr class="">
+<td class="n">20</td>
+<td class="ind"><b>OBV حجم التداول</b><small>OBV يقطع متوسطه 20 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.7%</span><small><span class="ltr">عشوائي 49.1%</span></small></td>
+<td class="n pos"><span class="ltr">+0.015</span></td>
+<td class="n pos"><span class="ltr">+0.08%</span></td>
+<td class="n"><span class="ltr">3277</span></td>
+<td class="n pos"><span class="ltr">+0.002</span></td>
+</tr>
+<tr class="">
+<td class="n">21</td>
+<td class="ind"><b>اختراق دونشيان 55</b><small>إغلاق فوق أعلى قمة لآخر 55 شمعة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.0%</span><small><span class="ltr">عشوائي 49.9%</span></small></td>
+<td class="n pos"><span class="ltr">+0.012</span></td>
+<td class="n pos"><span class="ltr">+0.25%</span></td>
+<td class="n"><span class="ltr">1615</span></td>
+<td class="n pos"><span class="ltr">+0.042</span></td>
+</tr>
+<tr class="">
+<td class="n">22</td>
+<td class="ind"><b>ويليامز %R</b><small>يقطع −80 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.9%</span><small><span class="ltr">عشوائي 48.7%</span></small></td>
+<td class="n pos"><span class="ltr">+0.005</span></td>
+<td class="n pos"><span class="ltr">+0.16%</span></td>
+<td class="n"><span class="ltr">3354</span></td>
+<td class="n neg"><span class="ltr">−0.008</span></td>
+</tr>
+<tr class="">
+<td class="n">23</td>
+<td class="ind"><b>CCI 20</b><small>يقطع −100 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.9%</span><small><span class="ltr">عشوائي 48.7%</span></small></td>
+<td class="n neg"><span class="ltr">−0.000</span></td>
+<td class="n pos"><span class="ltr">+0.19%</span></td>
+<td class="n"><span class="ltr">2653</span></td>
+<td class="n neg"><span class="ltr">−0.019</span></td>
+</tr>
+<tr class="">
+<td class="n">24</td>
+<td class="ind"><b>تقاطع EMA 20/50</b><small>EMA20 يقطع EMA50 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.3%</span><small><span class="ltr">عشوائي 48.9%</span></small></td>
+<td class="n neg"><span class="ltr">−0.008</span></td>
+<td class="n pos"><span class="ltr">+0.05%</span></td>
+<td class="n"><span class="ltr">694</span></td>
+<td class="n pos"><span class="ltr">+0.023</span></td>
+</tr>
+<tr class="">
+<td class="n">25</td>
+<td class="ind"><b>المذبذب النهائي UO</b><small>يقطع 30 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">46.0%</span><small><span class="ltr">عشوائي 47.6%</span></small></td>
+<td class="n neg"><span class="ltr">−0.011</span></td>
+<td class="n pos"><span class="ltr">+0.23%</span></td>
+<td class="n"><span class="ltr">524</span></td>
+<td class="n neg"><span class="ltr">−0.000</span></td>
+</tr>
+<tr class="">
+<td class="n">26</td>
+<td class="ind"><b>ستوكاستك 14/3/3</b><small>%K يقطع %D للأعلى وكلاهما تحت 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.1%</span><small><span class="ltr">عشوائي 48.4%</span></small></td>
+<td class="n neg"><span class="ltr">−0.012</span></td>
+<td class="n pos"><span class="ltr">+0.19%</span></td>
+<td class="n"><span class="ltr">1817</span></td>
+<td class="n pos"><span class="ltr">+0.006</span></td>
+</tr>
+<tr class="">
+<td class="n">27</td>
+<td class="ind"><b>ADX و DMI</b><small>+DI يقطع −DI للأعلى و ADX فوق 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 48.9%</span></small></td>
+<td class="n neg"><span class="ltr">−0.013</span></td>
+<td class="n pos"><span class="ltr">+0.00%</span></td>
+<td class="n"><span class="ltr">1040</span></td>
+<td class="n neg"><span class="ltr">−0.034</span></td>
+</tr>
+<tr class="">
+<td class="n">28</td>
+<td class="ind"><b>تشايكن CMF</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.6%</span><small><span class="ltr">عشوائي 49.2%</span></small></td>
+<td class="n neg"><span class="ltr">−0.013</span></td>
+<td class="n pos"><span class="ltr">+0.02%</span></td>
+<td class="n"><span class="ltr">2615</span></td>
+<td class="n neg"><span class="ltr">−0.035</span></td>
+</tr>
+<tr class="">
+<td class="n">29</td>
+<td class="ind"><b>ستوكاستك RSI</b><small>K يقطع D للأعلى وكلاهما تحت 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">47.6%</span><small><span class="ltr">عشوائي 48.8%</span></small></td>
+<td class="n neg"><span class="ltr">−0.015</span></td>
+<td class="n pos"><span class="ltr">+0.02%</span></td>
+<td class="n"><span class="ltr">2726</span></td>
+<td class="n neg"><span class="ltr">−0.056</span></td>
+</tr>
+<tr class="">
+<td class="n">30</td>
+<td class="ind"><b>RSI خروج من التشبع البيعي</b><small>RSI 14 يقطع 30 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">47.4%</span><small><span class="ltr">عشوائي 48.0%</span></small></td>
+<td class="n neg"><span class="ltr">−0.023</span></td>
+<td class="n neg"><span class="ltr">−0.02%</span></td>
+<td class="n"><span class="ltr">770</span></td>
+<td class="n neg"><span class="ltr">−0.033</span></td>
+</tr>
+<tr class="">
+<td class="n">31</td>
+<td class="ind"><b>RSI 2 (كونورز)</b><small>RSI 2 تحت 10 والسعر فوق متوسط 200</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.5%</span><small><span class="ltr">عشوائي 49.6%</span></small></td>
+<td class="n neg"><span class="ltr">−0.024</span></td>
+<td class="n pos"><span class="ltr">+0.04%</span></td>
+<td class="n"><span class="ltr">1808</span></td>
+<td class="n pos"><span class="ltr">+0.011</span></td>
+</tr>
+<tr class="">
+<td class="n">32</td>
+<td class="ind"><b>MFI تدفق الأموال</b><small>يقطع 20 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">47.2%</span><small><span class="ltr">عشوائي 48.0%</span></small></td>
+<td class="n neg"><span class="ltr">−0.034</span></td>
+<td class="n pos"><span class="ltr">+0.07%</span></td>
+<td class="n"><span class="ltr">559</span></td>
+<td class="n pos"><span class="ltr">+0.008</span></td>
+</tr>
+<tr class="">
+<td class="n">33</td>
+<td class="ind"><b>تقاطع المتوسطات 50/200</b><small>المتوسط 50 يقطع 200 للأعلى (أسبوعي: 10/40)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">43.4%</span><small><span class="ltr">عشوائي 48.3%</span></small></td>
+<td class="n neg"><span class="ltr">−0.080</span></td>
+<td class="n neg"><span class="ltr">−0.54%</span></td>
+<td class="n"><span class="ltr">228</span></td>
+<td class="n pos"><span class="ltr">+0.036</span></td>
+</tr></tbody></table></div>
+
+<h2>الترتيب الكامل: سوينج شهرين إلى ثلاثة</h2>
+<p>شموع أسبوعية. وقف 2×ATR وهدف 4×ATR وخروج بعد 13 أسبوعاً. الدخول العشوائي هنا يربح وحده <span class="ltr">+0.19</span>R لكل صفقة بسبب صعود السوق، ولهذا لا يكفي أن يكون المؤشر رابحاً، بل يجب أن يتفوق على هذا الرقم.</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>المؤشر وإشارة الشراء</th><th>الحكم</th><th>نسبة الربح</th><th>الميزة R</th><th>متوسط الصفقة</th><th>الصفقات</th><th>قبل 2018</th></tr></thead>
+<tbody><tr class="">
+<td class="n">1</td>
+<td class="ind"><b>ستوكاستك 14/3/3</b><small>%K يقطع %D للأعلى وكلاهما تحت 20</small></td>
+<td><span class="chip v-possible">محتمل فقط</span></td>
+<td class="n"><span class="ltr">61.2%</span><small><span class="ltr">عشوائي 49.6%</span></small></td>
+<td class="n pos"><span class="ltr">+0.210</span></td>
+<td class="n pos"><span class="ltr">+5.17%</span></td>
+<td class="n"><span class="ltr">281</span></td>
+<td class="n neg"><span class="ltr">−0.123</span></td>
+</tr>
+<tr class="">
+<td class="n">2</td>
+<td class="ind"><b>سوبر ترند 10، 3</b><small>يتحول إلى صاعد</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">54.0%</span><small><span class="ltr">عشوائي 51.4%</span></small></td>
+<td class="n pos"><span class="ltr">+0.113</span></td>
+<td class="n pos"><span class="ltr">+3.40%</span></td>
+<td class="n"><span class="ltr">213</span></td>
+<td class="n neg"><span class="ltr">−0.051</span></td>
+</tr>
+<tr class="">
+<td class="n">3</td>
+<td class="ind"><b>ارتداد بولينجر السفلي</b><small>الإغلاق يعود فوق الحد السفلي</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">55.9%</span><small><span class="ltr">عشوائي 50.7%</span></small></td>
+<td class="n pos"><span class="ltr">+0.088</span></td>
+<td class="n pos"><span class="ltr">+4.25%</span></td>
+<td class="n"><span class="ltr">286</span></td>
+<td class="n neg"><span class="ltr">−0.138</span></td>
+</tr>
+<tr class="">
+<td class="n">4</td>
+<td class="ind"><b>زخم 12 شهر</b><small>عائد آخر سنة يتحول موجباً</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">55.2%</span><small><span class="ltr">عشوائي 51.3%</span></small></td>
+<td class="n pos"><span class="ltr">+0.087</span></td>
+<td class="n pos"><span class="ltr">+3.68%</span></td>
+<td class="n"><span class="ltr">252</span></td>
+<td class="n pos"><span class="ltr">+0.025</span></td>
+</tr>
+<tr class="">
+<td class="n">5</td>
+<td class="ind"><b>ستوكاستك RSI</b><small>K يقطع D للأعلى وكلاهما تحت 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">54.8%</span><small><span class="ltr">عشوائي 51.7%</span></small></td>
+<td class="n pos"><span class="ltr">+0.053</span></td>
+<td class="n pos"><span class="ltr">+3.88%</span></td>
+<td class="n"><span class="ltr">489</span></td>
+<td class="n pos"><span class="ltr">+0.000</span></td>
+</tr>
+<tr class="">
+<td class="n">6</td>
+<td class="ind"><b>RSI 2 (كونورز)</b><small>RSI 2 تحت 10 والسعر فوق متوسط 200</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.2%</span><small><span class="ltr">عشوائي 52.8%</span></small></td>
+<td class="n pos"><span class="ltr">+0.042</span></td>
+<td class="n pos"><span class="ltr">+3.03%</span></td>
+<td class="n"><span class="ltr">211</span></td>
+<td class="n pos"><span class="ltr">+0.094</span></td>
+</tr>
+<tr class="">
+<td class="n">7</td>
+<td class="ind"><b>TRIX 18</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.5%</span><small><span class="ltr">عشوائي 51.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.039</span></td>
+<td class="n pos"><span class="ltr">+4.23%</span></td>
+<td class="n"><span class="ltr">134</span></td>
+<td class="n neg"><span class="ltr">−0.084</span></td>
+</tr>
+<tr class="">
+<td class="n">8</td>
+<td class="ind"><b>أرون 14</b><small>خط الصعود يقطع خط الهبوط للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.7%</span><small><span class="ltr">عشوائي 51.4%</span></small></td>
+<td class="n pos"><span class="ltr">+0.033</span></td>
+<td class="n pos"><span class="ltr">+2.72%</span></td>
+<td class="n"><span class="ltr">451</span></td>
+<td class="n pos"><span class="ltr">+0.044</span></td>
+</tr>
+<tr class="">
+<td class="n">9</td>
+<td class="ind"><b>المذبذب الرائع AO</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">52.5%</span><small><span class="ltr">عشوائي 51.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.028</span></td>
+<td class="n pos"><span class="ltr">+2.98%</span></td>
+<td class="n"><span class="ltr">278</span></td>
+<td class="n pos"><span class="ltr">+0.002</span></td>
+</tr>
+<tr class="">
+<td class="n">10</td>
+<td class="ind"><b>CCI 20</b><small>يقطع −100 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.4%</span><small><span class="ltr">عشوائي 50.8%</span></small></td>
+<td class="n pos"><span class="ltr">+0.018</span></td>
+<td class="n pos"><span class="ltr">+3.21%</span></td>
+<td class="n"><span class="ltr">444</span></td>
+<td class="n neg"><span class="ltr">−0.011</span></td>
+</tr>
+<tr class="">
+<td class="n">11</td>
+<td class="ind"><b>ADX و DMI</b><small>+DI يقطع −DI للأعلى و ADX فوق 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">52.5%</span><small><span class="ltr">عشوائي 52.2%</span></small></td>
+<td class="n pos"><span class="ltr">+0.015</span></td>
+<td class="n pos"><span class="ltr">+3.59%</span></td>
+<td class="n"><span class="ltr">221</span></td>
+<td class="n neg"><span class="ltr">−0.000</span></td>
+</tr>
+<tr class="">
+<td class="n">12</td>
+<td class="ind"><b>بارابوليك سار</b><small>النقاط تنتقل تحت السعر</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">52.0%</span><small><span class="ltr">عشوائي 52.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.011</span></td>
+<td class="n pos"><span class="ltr">+2.63%</span></td>
+<td class="n"><span class="ltr">594</span></td>
+<td class="n pos"><span class="ltr">+0.009</span></td>
+</tr>
+<tr class="">
+<td class="n">13</td>
+<td class="ind"><b>السعر فوق متوسط 200</b><small>الإغلاق يقطع متوسط 200 للأعلى (أسبوعي: 40)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.4%</span><small><span class="ltr">عشوائي 51.0%</span></small></td>
+<td class="n pos"><span class="ltr">+0.011</span></td>
+<td class="n pos"><span class="ltr">+3.19%</span></td>
+<td class="n"><span class="ltr">377</span></td>
+<td class="n neg"><span class="ltr">−0.050</span></td>
+</tr>
+<tr class="">
+<td class="n">14</td>
+<td class="ind"><b>تقاطع المتوسطات 50/200</b><small>المتوسط 50 يقطع 200 للأعلى (أسبوعي: 10/40)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.4%</span><small><span class="ltr">عشوائي 50.8%</span></small></td>
+<td class="n pos"><span class="ltr">+0.008</span></td>
+<td class="n pos"><span class="ltr">+2.41%</span></td>
+<td class="n"><span class="ltr">208</span></td>
+<td class="n neg"><span class="ltr">−0.062</span></td>
+</tr>
+<tr class="">
+<td class="n">15</td>
+<td class="ind"><b>RSI فوق 50</b><small>RSI 14 يقطع 50 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">52.3%</span><small><span class="ltr">عشوائي 51.4%</span></small></td>
+<td class="n pos"><span class="ltr">+0.008</span></td>
+<td class="n pos"><span class="ltr">+2.87%</span></td>
+<td class="n"><span class="ltr">488</span></td>
+<td class="n neg"><span class="ltr">−0.013</span></td>
+</tr>
+<tr class="">
+<td class="n">16</td>
+<td class="ind"><b>متوسط هَل 9</b><small>ينعطف للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.9%</span><small><span class="ltr">عشوائي 51.5%</span></small></td>
+<td class="n pos"><span class="ltr">+0.007</span></td>
+<td class="n pos"><span class="ltr">+2.92%</span></td>
+<td class="n"><span class="ltr">913</span></td>
+<td class="n neg"><span class="ltr">−0.019</span></td>
+</tr>
+<tr class="">
+<td class="n">17</td>
+<td class="ind"><b>ويليامز %R</b><small>يقطع −80 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.2%</span><small><span class="ltr">عشوائي 50.7%</span></small></td>
+<td class="n neg"><span class="ltr">−0.001</span></td>
+<td class="n pos"><span class="ltr">+2.89%</span></td>
+<td class="n"><span class="ltr">531</span></td>
+<td class="n neg"><span class="ltr">−0.033</span></td>
+</tr>
+<tr class="">
+<td class="n">18</td>
+<td class="ind"><b>اختراق دونشيان 20</b><small>إغلاق فوق أعلى قمة لآخر 20 شمعة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">51.6%</span><small><span class="ltr">عشوائي 53.1%</span></small></td>
+<td class="n neg"><span class="ltr">−0.001</span></td>
+<td class="n pos"><span class="ltr">+3.06%</span></td>
+<td class="n"><span class="ltr">467</span></td>
+<td class="n neg"><span class="ltr">−0.015</span></td>
+</tr>
+<tr class="">
+<td class="n">19</td>
+<td class="ind"><b>اختراق قناة كيلتنر</b><small>الإغلاق يخترق الحد العلوي (EMA20 + 2×ATR10)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 52.7%</span></small></td>
+<td class="n neg"><span class="ltr">−0.003</span></td>
+<td class="n pos"><span class="ltr">+2.12%</span></td>
+<td class="n"><span class="ltr">334</span></td>
+<td class="n neg"><span class="ltr">−0.029</span></td>
+</tr>
+<tr class="">
+<td class="n">20</td>
+<td class="ind"><b>فورتكس 14</b><small>VI+ يقطع VI− للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 51.4%</span></small></td>
+<td class="n neg"><span class="ltr">−0.017</span></td>
+<td class="n pos"><span class="ltr">+1.96%</span></td>
+<td class="n"><span class="ltr">484</span></td>
+<td class="n pos"><span class="ltr">+0.035</span></td>
+</tr>
+<tr class="">
+<td class="n">21</td>
+<td class="ind"><b>MACD مع خط الإشارة</b><small>MACD يقطع خط الإشارة للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 51.8%</span></small></td>
+<td class="n neg"><span class="ltr">−0.020</span></td>
+<td class="n pos"><span class="ltr">+1.81%</span></td>
+<td class="n"><span class="ltr">506</span></td>
+<td class="n pos"><span class="ltr">+0.002</span></td>
+</tr>
+<tr class="">
+<td class="n">22</td>
+<td class="ind"><b>إيشيموكو</b><small>الإغلاق يخترق أعلى السحابة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 51.0%</span></small></td>
+<td class="n neg"><span class="ltr">−0.025</span></td>
+<td class="n pos"><span class="ltr">+2.91%</span></td>
+<td class="n"><span class="ltr">267</span></td>
+<td class="n pos"><span class="ltr">+0.002</span></td>
+</tr>
+<tr class="">
+<td class="n">23</td>
+<td class="ind"><b>الزخم 10</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.9%</span><small><span class="ltr">عشوائي 51.5%</span></small></td>
+<td class="n neg"><span class="ltr">−0.026</span></td>
+<td class="n pos"><span class="ltr">+2.25%</span></td>
+<td class="n"><span class="ltr">641</span></td>
+<td class="n pos"><span class="ltr">+0.002</span></td>
+</tr>
+<tr class="">
+<td class="n">24</td>
+<td class="ind"><b>تقاطع EMA 20/50</b><small>EMA20 يقطع EMA50 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">48.3%</span><small><span class="ltr">عشوائي 51.0%</span></small></td>
+<td class="n neg"><span class="ltr">−0.032</span></td>
+<td class="n pos"><span class="ltr">+2.87%</span></td>
+<td class="n"><span class="ltr">120</span></td>
+<td class="n neg"><span class="ltr">−0.019</span></td>
+</tr>
+<tr class="">
+<td class="n">25</td>
+<td class="ind"><b>اختراق دونشيان 55</b><small>إغلاق فوق أعلى قمة لآخر 55 شمعة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.4%</span><small><span class="ltr">عشوائي 54.0%</span></small></td>
+<td class="n neg"><span class="ltr">−0.033</span></td>
+<td class="n pos"><span class="ltr">+2.46%</span></td>
+<td class="n"><span class="ltr">349</span></td>
+<td class="n neg"><span class="ltr">−0.073</span></td>
+</tr>
+<tr class="">
+<td class="n">26</td>
+<td class="ind"><b>تشايكن CMF</b><small>يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.6%</span><small><span class="ltr">عشوائي 51.2%</span></small></td>
+<td class="n neg"><span class="ltr">−0.043</span></td>
+<td class="n pos"><span class="ltr">+2.41%</span></td>
+<td class="n"><span class="ltr">429</span></td>
+<td class="n pos"><span class="ltr">+0.015</span></td>
+</tr>
+<tr class="">
+<td class="n">27</td>
+<td class="ind"><b>التقييم الفني لتريدنج فيو</b><small>التقييم يتجاوز +0.5 (شراء قوي)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.1%</span><small><span class="ltr">عشوائي 53.4%</span></small></td>
+<td class="n neg"><span class="ltr">−0.054</span></td>
+<td class="n pos"><span class="ltr">+2.11%</span></td>
+<td class="n"><span class="ltr">619</span></td>
+<td class="n neg"><span class="ltr">−0.012</span></td>
+</tr>
+<tr class="">
+<td class="n">28</td>
+<td class="ind"><b>MACD فوق الصفر</b><small>MACD يقطع الصفر للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.8%</span><small><span class="ltr">عشوائي 50.7%</span></small></td>
+<td class="n neg"><span class="ltr">−0.054</span></td>
+<td class="n pos"><span class="ltr">+2.16%</span></td>
+<td class="n"><span class="ltr">219</span></td>
+<td class="n neg"><span class="ltr">−0.032</span></td>
+</tr>
+<tr class="">
+<td class="n">29</td>
+<td class="ind"><b>اختراق بولينجر العلوي</b><small>الإغلاق يخترق الحد العلوي (20، 2)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">49.7%</span><small><span class="ltr">عشوائي 52.7%</span></small></td>
+<td class="n neg"><span class="ltr">−0.056</span></td>
+<td class="n pos"><span class="ltr">+2.06%</span></td>
+<td class="n"><span class="ltr">394</span></td>
+<td class="n pos"><span class="ltr">+0.006</span></td>
+</tr>
+<tr class="">
+<td class="n">30</td>
+<td class="ind"><b>OBV حجم التداول</b><small>OBV يقطع متوسطه 20 للأعلى</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n"><span class="ltr">50.1%</span><small><span class="ltr">عشوائي 51.6%</span></small></td>
+<td class="n neg"><span class="ltr">−0.071</span></td>
+<td class="n pos"><span class="ltr">+1.97%</span></td>
+<td class="n"><span class="ltr">561</span></td>
+<td class="n pos"><span class="ltr">+0.062</span></td>
+</tr>
+<tr class="">
+<td class="n">31</td>
+<td class="ind"><b>المذبذب النهائي UO</b><small>يقطع 30 للأعلى</small></td>
+<td><span class="chip v-thin">عينة صغيرة</span></td>
+<td class="n"><span class="ltr">57.1%</span><small><span class="ltr">عشوائي 47.5%</span></small></td>
+<td class="n pos"><span class="ltr">+0.275</span></td>
+<td class="n pos"><span class="ltr">+5.92%</span></td>
+<td class="n"><span class="ltr">77</span></td>
+<td class="n neg"><span class="ltr">−0.004</span></td>
+</tr>
+<tr class="">
+<td class="n">32</td>
+<td class="ind"><b>MFI تدفق الأموال</b><small>يقطع 20 للأعلى</small></td>
+<td><span class="chip v-thin">عينة صغيرة</span></td>
+<td class="n"><span class="ltr">53.5%</span><small><span class="ltr">عشوائي 48.1%</span></small></td>
+<td class="n pos"><span class="ltr">+0.104</span></td>
+<td class="n pos"><span class="ltr">+1.47%</span></td>
+<td class="n"><span class="ltr">71</span></td>
+<td class="n neg"><span class="ltr">−0.171</span></td>
+</tr>
+<tr class="">
+<td class="n">33</td>
+<td class="ind"><b>RSI خروج من التشبع البيعي</b><small>RSI 14 يقطع 30 للأعلى</small></td>
+<td><span class="chip v-thin">عينة صغيرة</span></td>
+<td class="n"><span class="ltr">48.0%</span><small><span class="ltr">عشوائي 48.5%</span></small></td>
+<td class="n neg"><span class="ltr">−0.088</span></td>
+<td class="n pos"><span class="ltr">+1.99%</span></td>
+<td class="n"><span class="ltr">98</span></td>
+<td class="n neg"><span class="ltr">−0.281</span></td>
+</tr></tbody></table></div>
+<p class="muted">اختبار الاختيار: لو اخترت في 2018 أفضل خمسة مؤشرات أسبوعية حسب الماضي (RSI 2 (كونورز)، OBV حجم التداول، أرون 14، فورتكس 14، زخم 12 شهر)، لما تفوق أي منها بشكل مثبت بعدها، وانقلب OBV من الثاني إلى الثلاثين. أما في الإطار اليومي فقد حافظ ثلاثة من أفضل خمسة على ميزتهم بالحجم نفسه تقريباً (TRIX وكيلتنر وإيشيموكو)، وواحد منهم فقط اجتاز التصحيح.</p>
+
+<h2>الترتيب الكامل: استثمار سنة إلى سنتين</h2>
+<p>شموع أسبوعية. القاعدة تبقيك في السوق طالما شرطها متحقق، وتخرجك إلى الكاش عندما يختفي. تُقارن بالشراء والاحتفاظ للسهم نفسه. المقياس فرق نسبة شارب (العائد مقابل التذبذب)، والوسيط على 33 رمزاً من 2018.</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>القاعدة</th><th>الحكم</th><th>فرق شارب</th><th>فرق العائد السنوي</th><th>أقصى هبوط</th><th>وقت داخل السوق</th><th>تفوق في</th><th>قبل 2018</th></tr></thead>
+<tbody><tr>
+<td class="n">1</td>
+<td class="ind"><b>بارابوليك سار</b><small>داخل السوق طالما: النقاط تحت السعر</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.10</span></td>
+<td class="n neg"><span class="ltr">−4.2%</span></td>
+<td class="n"><span class="ltr">-38%</span></td>
+<td class="n"><span class="ltr">54%</span></td>
+<td class="n"><span class="ltr">33%</span></td>
+<td class="n neg"><span class="ltr">−0.13</span></td>
+</tr>
+<tr>
+<td class="n">2</td>
+<td class="ind"><b>MACD فوق الصفر</b><small>داخل السوق طالما: MACD فوق الصفر</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.11</span></td>
+<td class="n neg"><span class="ltr">−3.2%</span></td>
+<td class="n"><span class="ltr">-39%</span></td>
+<td class="n"><span class="ltr">62%</span></td>
+<td class="n"><span class="ltr">30%</span></td>
+<td class="n neg"><span class="ltr">−0.08</span></td>
+</tr>
+<tr>
+<td class="n">3</td>
+<td class="ind"><b>تقاطع EMA 20/50</b><small>داخل السوق طالما: EMA20 فوق EMA50</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.11</span></td>
+<td class="n neg"><span class="ltr">−3.8%</span></td>
+<td class="n"><span class="ltr">-44%</span></td>
+<td class="n"><span class="ltr">65%</span></td>
+<td class="n"><span class="ltr">18%</span></td>
+<td class="n neg"><span class="ltr">−0.09</span></td>
+</tr>
+<tr>
+<td class="n">4</td>
+<td class="ind"><b>السعر فوق متوسط 200</b><small>داخل السوق طالما: الإغلاق فوق متوسط 200 (أسبوعي: 40)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.11</span></td>
+<td class="n neg"><span class="ltr">−3.0%</span></td>
+<td class="n"><span class="ltr">-39%</span></td>
+<td class="n"><span class="ltr">60%</span></td>
+<td class="n"><span class="ltr">27%</span></td>
+<td class="n neg"><span class="ltr">−0.06</span></td>
+</tr>
+<tr>
+<td class="n">5</td>
+<td class="ind"><b>فورتكس 14</b><small>داخل السوق طالما: VI+ فوق VI−</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.12</span></td>
+<td class="n neg"><span class="ltr">−4.1%</span></td>
+<td class="n"><span class="ltr">-41%</span></td>
+<td class="n"><span class="ltr">59%</span></td>
+<td class="n"><span class="ltr">30%</span></td>
+<td class="n neg"><span class="ltr">−0.05</span></td>
+</tr>
+<tr>
+<td class="n">6</td>
+<td class="ind"><b>أرون 14</b><small>داخل السوق طالما: الصعود فوق الهبوط</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.13</span></td>
+<td class="n neg"><span class="ltr">−4.0%</span></td>
+<td class="n"><span class="ltr">-38%</span></td>
+<td class="n"><span class="ltr">56%</span></td>
+<td class="n"><span class="ltr">27%</span></td>
+<td class="n neg"><span class="ltr">−0.08</span></td>
+</tr>
+<tr>
+<td class="n">7</td>
+<td class="ind"><b>RSI فوق 50</b><small>داخل السوق طالما: RSI فوق 50</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.13</span></td>
+<td class="n neg"><span class="ltr">−3.9%</span></td>
+<td class="n"><span class="ltr">-42%</span></td>
+<td class="n"><span class="ltr">60%</span></td>
+<td class="n"><span class="ltr">30%</span></td>
+<td class="n neg"><span class="ltr">−0.09</span></td>
+</tr>
+<tr>
+<td class="n">8</td>
+<td class="ind"><b>تقاطع المتوسطات 50/200</b><small>داخل السوق طالما: المتوسط 50 فوق 200</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.14</span></td>
+<td class="n neg"><span class="ltr">−4.1%</span></td>
+<td class="n"><span class="ltr">-44%</span></td>
+<td class="n"><span class="ltr">61%</span></td>
+<td class="n"><span class="ltr">27%</span></td>
+<td class="n neg"><span class="ltr">−0.08</span></td>
+</tr>
+<tr>
+<td class="n">9</td>
+<td class="ind"><b>زخم 12 شهر</b><small>داخل السوق طالما: عائد آخر سنة موجب</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.15</span></td>
+<td class="n neg"><span class="ltr">−4.2%</span></td>
+<td class="n"><span class="ltr">-40%</span></td>
+<td class="n"><span class="ltr">64%</span></td>
+<td class="n"><span class="ltr">21%</span></td>
+<td class="n neg"><span class="ltr">−0.13</span></td>
+</tr>
+<tr>
+<td class="n">10</td>
+<td class="ind"><b>OBV حجم التداول</b><small>داخل السوق طالما: OBV فوق متوسطه 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.15</span></td>
+<td class="n neg"><span class="ltr">−4.4%</span></td>
+<td class="n"><span class="ltr">-41%</span></td>
+<td class="n"><span class="ltr">57%</span></td>
+<td class="n"><span class="ltr">27%</span></td>
+<td class="n neg"><span class="ltr">−0.10</span></td>
+</tr>
+<tr>
+<td class="n">11</td>
+<td class="ind"><b>سوبر ترند 10، 3</b><small>داخل السوق طالما: صاعد</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.15</span></td>
+<td class="n neg"><span class="ltr">−4.4%</span></td>
+<td class="n"><span class="ltr">-42%</span></td>
+<td class="n"><span class="ltr">57%</span></td>
+<td class="n"><span class="ltr">33%</span></td>
+<td class="n neg"><span class="ltr">−0.09</span></td>
+</tr>
+<tr>
+<td class="n">12</td>
+<td class="ind"><b>إيشيموكو</b><small>داخل السوق طالما: الإغلاق فوق السحابة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.16</span></td>
+<td class="n neg"><span class="ltr">−3.2%</span></td>
+<td class="n"><span class="ltr">-39%</span></td>
+<td class="n"><span class="ltr">56%</span></td>
+<td class="n"><span class="ltr">21%</span></td>
+<td class="n neg"><span class="ltr">−0.07</span></td>
+</tr>
+<tr>
+<td class="n">13</td>
+<td class="ind"><b>تشايكن CMF</b><small>داخل السوق طالما: فوق الصفر</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.17</span></td>
+<td class="n neg"><span class="ltr">−7.2%</span></td>
+<td class="n"><span class="ltr">-45%</span></td>
+<td class="n"><span class="ltr">63%</span></td>
+<td class="n"><span class="ltr">15%</span></td>
+<td class="n neg"><span class="ltr">−0.05</span></td>
+</tr>
+<tr>
+<td class="n">14</td>
+<td class="ind"><b>التقييم الفني لتريدنج فيو</b><small>داخل السوق طالما: التقييم فوق +0.1 (شراء)</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.18</span></td>
+<td class="n neg"><span class="ltr">−5.9%</span></td>
+<td class="n"><span class="ltr">-43%</span></td>
+<td class="n"><span class="ltr">56%</span></td>
+<td class="n"><span class="ltr">15%</span></td>
+<td class="n neg"><span class="ltr">−0.15</span></td>
+</tr>
+<tr>
+<td class="n">15</td>
+<td class="ind"><b>متوسط هَل 9</b><small>داخل السوق طالما: صاعد</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.21</span></td>
+<td class="n neg"><span class="ltr">−5.9%</span></td>
+<td class="n"><span class="ltr">-44%</span></td>
+<td class="n"><span class="ltr">54%</span></td>
+<td class="n"><span class="ltr">21%</span></td>
+<td class="n neg"><span class="ltr">−0.18</span></td>
+</tr>
+<tr>
+<td class="n">16</td>
+<td class="ind"><b>MACD مع خط الإشارة</b><small>داخل السوق طالما: MACD فوق خط الإشارة</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.22</span></td>
+<td class="n neg"><span class="ltr">−5.7%</span></td>
+<td class="n"><span class="ltr">-41%</span></td>
+<td class="n"><span class="ltr">53%</span></td>
+<td class="n"><span class="ltr">27%</span></td>
+<td class="n neg"><span class="ltr">−0.07</span></td>
+</tr>
+<tr>
+<td class="n">17</td>
+<td class="ind"><b>اختراق دونشيان 20</b><small>داخل السوق طالما: دخول عند قمة 20، خروج عند كسر قاع 10</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.23</span></td>
+<td class="n neg"><span class="ltr">−5.3%</span></td>
+<td class="n"><span class="ltr">-35%</span></td>
+<td class="n"><span class="ltr">47%</span></td>
+<td class="n"><span class="ltr">15%</span></td>
+<td class="n neg"><span class="ltr">−0.06</span></td>
+</tr>
+<tr>
+<td class="n">18</td>
+<td class="ind"><b>ADX و DMI</b><small>داخل السوق طالما: +DI فوق −DI</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.26</span></td>
+<td class="n neg"><span class="ltr">−7.4%</span></td>
+<td class="n"><span class="ltr">-40%</span></td>
+<td class="n"><span class="ltr">56%</span></td>
+<td class="n"><span class="ltr">24%</span></td>
+<td class="n neg"><span class="ltr">−0.07</span></td>
+</tr>
+<tr>
+<td class="n">19</td>
+<td class="ind"><b>اختراق دونشيان 55</b><small>داخل السوق طالما: دخول عند قمة 55، خروج عند كسر قاع 20</small></td>
+<td><span class="chip v-none">بلا ميزة</span></td>
+<td class="n neg"><span class="ltr">−0.30</span></td>
+<td class="n neg"><span class="ltr">−7.3%</span></td>
+<td class="n"><span class="ltr">-39%</span></td>
+<td class="n"><span class="ltr">45%</span></td>
+<td class="n"><span class="ltr">12%</span></td>
+<td class="n neg"><span class="ltr">−0.10</span></td>
+</tr></tbody></table></div>
+<p>الشراء والاحتفاظ خلال 2018–2026: شارب وسيط <span class="ltr">0.46</span>، وعائد سنوي وسيط <span class="ltr">7.4%</span>، وأقصى هبوط وسيط <span class="ltr">-48%</span>. كل قاعدة توقيت قلّلت الهبوط، لكن ولا واحدة رفعت العائد المعدّل بالمخاطرة في الوسيط، لا قبل 2018 ولا بعدها. على مؤشر S&amp;P 500 وحده، تحسّن السعر فوق متوسط 40 أسبوعاً قبل 2018 (أزمة 2008) ولم يتحسّن بعدها.</p>
+<div class="callout"><p><b>للاستثمار الطويل:</b> في هذا الاختبار، الشراء والاحتفاظ (أو الشراء على دفعات منتظمة) تفوّق على كل مؤشر توقيت. إذا كان الهبوط الكبير لا يُحتمل بالنسبة لك، فقاعدة مثل "السعر فوق متوسط 40 أسبوعاً" أو "MACD فوق الصفر" تقطع نحو 7–9 نقاط من أقصى هبوط، مقابل نحو 3% من العائد السنوي. هذه مقايضة، لا ميزة.</p></div>
+
+<h2>حدود الاختبار</h2>
+<ul>
+<li><b>المؤشرات المجتمعية لم تُختبر.</b> اتصال تريدنج فيو يعطي الأسعار ولا يعطي سكربتات Pine المجتمعية، فالآلاف التي في المكتبة لا يمكن تشغيلها عبره. ما اختُبر هو المؤشرات المدمجة التي تُبنى منها معظم السكربتات.</li>
+<li><b>الأسهم موجودة اليوم.</b> الشركات التي أفلست غائبة. هذا يرفع نتيجة الشراء والاحتفاظ، لكن مقارنتنا بالعشوائي على الرموز نفسها تلغي معظم أثره.</li>
+<li><b>الأسعار معدّلة للتجزئة لا للتوزيعات.</b> يظلم هذا الشراء والاحتفاظ قليلاً في المسار الثالث، ومع ذلك تفوّق.</li>
+<li><b>تصحيح في عدد القواعد.</b> نص البروتوكول قال 34 قاعدة دخول و18 قاعدة حالة، بينما جدوله يذكر 33 و19. اختُبرت كل صفوف الجدول (33 و19)، ولم يُضف أو يُحذف شيء.</li>
+<li><b>التقييم الفني لتريدنج فيو أعيد بناؤه</b> من وصفه المنشور، لأن تريدنج فيو لا يعطي تاريخه. قارنّاه بالتقييم الحي في <span class="ltr">2026-10-06</span>: نفس الفئة (شراء قوي، شراء، محايد، بيع، بيع قوي) في 33 من 33 رمزاً (<code>reports/swing-rating-check.txt</code>).</li>
+<li><b>الماضي لا يضمن المستقبل.</b> حتى المؤشر المثبت قد يتوقف عن العمل. الحكم النهائي يأتي من التسجيل المسبق للإشارات القادمة.</li>
+</ul>
+
+<footer>للبحث والتحليل فقط، وليست نصيحة مالية. كل الأرقام محسوبة من بيانات تاريخية وتصف ما حدث، لا ما سيحدث. التقارير الكاملة: <code>reports/swing-A.txt</code> و<code>swing-B.txt</code> و<code>swing-C.txt</code>.</footer>
+</div>
+</body></html>
