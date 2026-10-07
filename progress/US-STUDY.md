@@ -24,3 +24,6 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 
 ## Log
 - 2026-10-07 — protocol written.
+- 2026-10-07 — engine/study.js + scripts/us-*.js written. `node scripts/us-backtest.js --study1`
+  reproduces study 1's tables line for line (edges, win rates, p-values), so study 2 runs on
+  verified code. Screener was rate-limited (HTTP 429); universe snapshot still to do.
