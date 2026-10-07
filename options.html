@@ -446,6 +446,7 @@ async function render() {
   if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
   if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
   notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
+  if (info?.error) notes.unshift(`⚠️ آخر تحديث ما رجّع بيانات ${esc(t)} من Cboe — الأرقام هنا من ${fmtTime(snap.fetchedAt)} وممكن تكون قديمة.`)
 
   const top = a.ranked.slice(0, 15)
   const BIND = { volume: 'الحجم اليومي', oi: 'العقود المفتوحة', bid: 'المعروض على البيد', spread: 'السبريد' }

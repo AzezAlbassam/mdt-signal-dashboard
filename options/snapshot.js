@@ -6,7 +6,7 @@
 // <dataDir> holds watchlist.json, removed.json, history/<T>.json and receives <T>.json + index.json.
 // Runs in GitHub Actions; the page reads the snapshots as static files.
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import { chainRows, mergeSession, averageVolume, tickerSummary } from './engine.js'
@@ -95,7 +95,9 @@ async function fetchChain(ticker) {
       const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
       if (res.ok) return res.json()
       status = res.status
-      if (status === 403 || status === 404) throw Object.assign(new Error('no listed options'), { noOptions: true })
+      // Cboe answers 403/404 for a symbol with no chain — and, now and then, for one that
+      // has a chain. Believe it only on the second asking.
+      if ((status === 403 || status === 404) && attempt >= 2) throw Object.assign(new Error('no listed options'), { noOptions: true })
     } catch (e) {
       if (e.noOptions) throw e
       status = String(e.cause?.code ?? e.message)
@@ -175,7 +177,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   }
 }
 
-async function main() {
+export async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
   if (rest.includes('--plan')) {
     const idx = await readJson(join(dataDir ?? '.', 'index.json'), null)
@@ -216,8 +218,17 @@ async function main() {
       return true
     } catch (e) {
       if (!e.noOptions) return e
+      // A ticker that had a chain and loses it is reported as a problem, not quietly
+      // relabelled: its last snapshot stays, flagged, until three passes in a row agree.
+      const prev = prevIndex.tickers?.[t]
+      const misses = (prev?.misses ?? 0) + 1
+      if (prev && !prev.noOptions && prev.price != null && misses < 3) {
+        index.tickers[t] = { ...prev, error: 'Cboe returned no chain this pass', misses }
+        return true
+      }
       noOptions += 1
       index.tickers[t] = { noOptions: true }
+      await rm(join(dataDir, `${t}.json`), { force: true })
       return true
     }
   }
