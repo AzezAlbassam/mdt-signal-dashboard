@@ -146,6 +146,43 @@ const h1Text = [
   `Verdict: ${h1.edge > 0 && h1.p < 0.05 ? 'CONFIRMED' : 'NOT CONFIRMED'}`,
 ].join('\n')
 
+// Watchlist (PROTOCOL-addendum-1.md §A): a separate group, never part of H1/H2/H3.
+const wl = JSON.parse(fs.readFileSync('data/us/watchlist.json', 'utf8')).tickers
+const inMain = new Map(syms.map((x) => [x.symbol, x]))
+const watch = []
+for (const w of wl) {
+  const row = { ticker: w.ticker, symbol: w.symbol, inUniverse: inMain.has(w.symbol), note: w.note }
+  let x = inMain.get(w.symbol)
+  const file = w.symbol && `data/us/bars/${w.symbol.replace(':', '_')}.json.gz`
+  if (!x && file && fs.existsSync(file)) {
+    const s = load(file)
+    row.bars = s.close.length
+    if (s.close.length >= 300) x = summarizeSymbol({ symbol: w.symbol, name: w.ticker, group: 'watchlist', sector: 'watchlist' }, s, { cutoff: CUTOFF, split: SPLIT })
+    else row.note ??= `too new (${s.close.length} bars)`
+  } else if (!x && !row.note) row.note = 'no data'
+  if (x) {
+    row.rules = {}
+    for (const key of ['A', 'B']) {
+      for (const [id, t] of Object.entries(x.tracks[key].trades)) {
+        const all = [...t.I.r, ...t.II.r]
+        const base = [...x.tracks[key].base.I.r, ...x.tracks[key].base.II.r]
+        const wins = [...t.I.ret, ...t.II.ret].filter((v) => v > 0).length
+        ;(row.rules[key] ??= {})[id] = { n: all.length, win: all.length ? wins / all.length : null, edge: all.length ? all.reduce((a, b) => a + b, 0) / all.length - base.reduce((a, b) => a + b, 0) / base.length : null }
+      }
+    }
+    row.current = x.current
+  }
+  watch.push(row)
+}
+const wlText = ['Watchlist — separate group (addendum 1 §A). Per-stock numbers over both periods; n next to every figure.',
+  'A few dozen trades per stock is noise: use these to see how a rule behaved, not to pick rules.', '']
+for (const w of watch) {
+  if (!w.rules) { wlText.push(`${w.ticker.padEnd(6)} ${w.note ?? ''}`); continue }
+  const top = ['keltner_break', 'trix', 'macd_zero', 'ichimoku', 'supertrend'].map((id) => { const q = w.rules.A[id]; return `${id} n${q.n} win ${pct(q.win, 0)} edge ${f(q.edge, 2)}` })
+  wlText.push(`${w.ticker.padEnd(6)} ${w.inUniverse ? 'main' : 'extra'}  A: ${top.join(' | ')}`)
+}
+fs.writeFileSync('reports/us-watchlist.txt', wlText.join('\n') + '\n')
+
 fs.writeFileSync('reports/us-A.txt', reportAB(A, 'STUDY 2 (US)') + '\n')
 fs.writeFileSync('reports/us-B.txt', reportAB(B, 'STUDY 2 (US)') + '\n')
 fs.writeFileSync('reports/us-C.txt', reportC(C, 'STUDY 2 (US)') + '\n')
@@ -154,6 +191,6 @@ fs.writeFileSync('reports/us-sectors.txt', reportSectors() + '\n')
 const current = { A: [], B: [], C: [] }
 for (const x of syms) for (const k of ['A', 'B', 'C']) for (const c of x.current[k]) current[k].push({ symbol: x.symbol, name: x.name, sector: x.sector, ...c })
 const strip = (res) => ({ ...res, rows: res.rows.map((r) => ({ ...r })) })
-fs.writeFileSync('reports/us-results.json', JSON.stringify({ cutoff: CUTOFF, split: SPLIT, symbols: syms.length, dropped, A: strip(A), B: strip(B), C: strip(C), h1, h1i, freshN: fresh.length, current }))
+fs.writeFileSync('reports/us-results.json', JSON.stringify({ cutoff: CUTOFF, split: SPLIT, symbols: syms.length, dropped, watch, A: strip(A), B: strip(B), C: strip(C), h1, h1i, freshN: fresh.length, current }))
 console.log(h1Text)
 console.log(`\nwrote reports/us-*.txt (${((Date.now() - t0) / 1000).toFixed(0)}s)`)

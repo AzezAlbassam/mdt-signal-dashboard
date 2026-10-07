@@ -9,6 +9,8 @@ const CUTOFF = '2026-10-06'
 const RAW = process.env.US_RAW
 if (!RAW) throw new Error('set US_RAW')
 const u = new Map(JSON.parse(fs.readFileSync('data/us/universe.json', 'utf8')).symbols.map((x) => [x.symbol, x]))
+// The user's watchlist (addendum 1 §A) is stored too, for its separate report.
+for (const w of JSON.parse(fs.readFileSync('data/us/watchlist.json', 'utf8')).tickers) if (w.symbol && !u.has(w.symbol)) u.set(w.symbol, { symbol: w.symbol })
 let added = 0
 for (const f of fs.readdirSync(RAW)) {
   let raw
