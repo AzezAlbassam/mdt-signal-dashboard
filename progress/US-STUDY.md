@@ -69,3 +69,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — us.html built by scripts/study4-page.js (charts, signals, watchlist, Pine code inline) and published. Remaining: Saudi study 3; stage 2 when screener answers; links per indicator (not added — unverified URLs are not published).
 - 2026-10-07 — user: Saudi not needed; wants long swings (months–1y). Study 5 pre-registered.
 - 2026-10-07 — study 5 search: 89 passed win/edge/trades, 13 also p<0.001; shortlist of 10 frozen (weekly RSI14>30 H52 75.5%, WaveTrend H52, CRSI H52, ...). Confirmation not yet run.
+- 2026-10-07 — study 5 confirmation: CONFIRMED weekly RSI14 crosses above 30 held 52w (75.9% vs random 65.3%, edge +12.1%, Holm 0.005; period I edge only +2.6%) and held 26w (65.5%, edge +3.4%, Holm 0.03). Others not confirmed.
