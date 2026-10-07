@@ -23,6 +23,9 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Addendum 1: Pine script(s) + checked TradingView links per indicator
 - [ ] Study 3 Saudi: screener snapshot (market ksa), fetch, backtest, H1-SA, page
 
+- [ ] Stage 1 (PROTOCOL-addendum-2.md): classify page-1 symbols via search-symbols → data/us/classify.jsonl, build universe, ingest, run
+- [ ] Stage 2: when screener answers, full ≥$2B snapshot → fetch the rest → H1b + combined
+
 ## Counts
 (updated as work proceeds)
 
@@ -44,3 +47,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   Short histories returned inline (unstorable, need ≥ ~700 bars to be saved even in row format):
   GOOGM GOOGN SPCX SNDK ALAB STRD STRC STRF STRK CRWV HONA VYLR MDLN, plus GEV (634, inline).
   BAM re-fetched in row format and saved.
+- 2026-10-07 01:00Z — screener still 429; user wants TradingView only. Addendum 2: two stages.
