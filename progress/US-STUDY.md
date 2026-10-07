@@ -40,3 +40,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   which is not done): NASDAQ:ZENA (505 bars), NYSE:VOYG (332), NYSE:FIG (298), NYSE:HAWK (105)
   → report as "too new / not stored". Row-format responses are now collected too (LUNR, ARM
   re-fetched that way; volume checksums match the API summary). 195 raw files collected.
+- 2026-10-07 00:45Z — first 329 fetched. UFO lives on NASDAQ (AMEX:UFO invalid) → NASDAQ:UFO used.
+  Short histories returned inline (unstorable, need ≥ ~700 bars to be saved even in row format):
+  GOOGM GOOGN SPCX SNDK ALAB STRD STRC STRF STRK CRWV HONA VYLR MDLN, plus GEV (634, inline).
+  BAM re-fetched in row format and saved.
