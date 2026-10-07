@@ -1,0 +1,2872 @@
+{
+ "rule": "PROTOCOL-us.md §2 + addenda 2–3, stage 1",
+ "steps": {
+  "page": 600,
+  "listing": 309,
+  "alternateIssues": 301,
+  "history": 293,
+  "fixedIncome": 293,
+  "oneClass": 292
+ },
+ "count": 312,
+ "excluded": [
+  {
+   "symbol": "NASDAQ:GOOGM",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:GOOGN",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NYSE:SOJD",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NYSE:SOJE",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:STRD",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:STRC",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:STRF",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:STRK",
+   "why": "shares an identical market cap (alternate issue)"
+  },
+  {
+   "symbol": "NASDAQ:SPCX",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NYSE:GEV",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:SNDK",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:ALAB",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:CRWV",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:HONA",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NYSE:VYLR",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:MDLN",
+   "why": "not stored (history returned inline / short listing)"
+  },
+  {
+   "symbol": "NASDAQ:GOOG",
+   "why": "share class of NASDAQ:GOOGL (corr 0.997)"
+  }
+ ],
+ "symbols": [
+  {
+   "symbol": "AMEX:SPY",
+   "name": "S&P 500 ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "S&P 500",
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:QQQ",
+   "name": "Nasdaq 100 ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Nasdaq 100",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:IWM",
+   "name": "Russell 2000 ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Russell 2000",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:DIA",
+   "name": "Dow Jones ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Dow Jones",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLK",
+   "name": "Technology ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Technology",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLF",
+   "name": "Financials ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Financials",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLE",
+   "name": "Energy ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Energy",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLV",
+   "name": "Health care ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Health care",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLI",
+   "name": "Industrials ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Industrials",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLY",
+   "name": "Consumer discretionary ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Consumer discretionary",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLP",
+   "name": "Consumer staples ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Consumer staples",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLU",
+   "name": "Utilities ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Utilities",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLB",
+   "name": "Materials ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Materials",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLRE",
+   "name": "Real estate ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Real estate",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XLC",
+   "name": "Communication ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Communication",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:ITA",
+   "name": "Aerospace & defense ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Aerospace & defense",
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:UFO",
+   "name": "Space ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Space",
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:SMH",
+   "name": "Semiconductors ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Semiconductors",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XBI",
+   "name": "Biotech ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Biotech",
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:XOP",
+   "name": "Oil & gas producers ETF",
+   "group": "etf",
+   "sector": "ETF",
+   "industry": "Oil & gas producers",
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NVDA",
+   "name": "NVDA",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 5765683852696,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AAPL",
+   "name": "AAPL",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Telecommunications Equipment",
+   "cap": 4869056383398,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:GOOGL",
+   "name": "GOOGL",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Internet Software/Services",
+   "cap": 4237484095648,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MSFT",
+   "name": "MSFT",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 3930341130783,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AMZN",
+   "name": "AMZN",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Internet Retail",
+   "cap": 2764424464076,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:META",
+   "name": "META",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Internet Software/Services",
+   "cap": 1882301394208,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AVGO",
+   "name": "AVGO",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 1793977894588,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:TSLA",
+   "name": "TSLA",
+   "group": "stock",
+   "sector": "Consumer Durables",
+   "industry": "Motor Vehicles",
+   "cap": 1503513826808,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MU",
+   "name": "MU",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 1180848171158,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:LLY",
+   "name": "LLY",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 1089611373706,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AMD",
+   "name": "AMD",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 1060161898645,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BRK.B",
+   "name": "BRK.B",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Property/Casualty Insurance",
+   "cap": 973147279395,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BRK.A",
+   "name": "BRK.A",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Property/Casualty Insurance",
+   "cap": 972980491532,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:JPM",
+   "name": "JPM",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 880603963542,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:WMT",
+   "name": "WMT",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 850497578780,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:V",
+   "name": "V",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Finance/Rental/Leasing",
+   "cap": 692002416959,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:XOM",
+   "name": "XOM",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 676327303751,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:JNJ",
+   "name": "JNJ",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 613993906126,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:INTC",
+   "name": "INTC",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 594686877730,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MA",
+   "name": "MA",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Finance/Rental/Leasing",
+   "cap": 496329733333,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ABBV",
+   "name": "ABBV",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 471272532606,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CSCO",
+   "name": "CSCO",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Telecommunications Equipment",
+   "cap": 464988670592,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:PLTR",
+   "name": "PLTR",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 461555390073,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ORCL",
+   "name": "ORCL",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 437746259752,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AMAT",
+   "name": "AMAT",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 420820922455,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:LRCX",
+   "name": "LRCX",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 417838050255,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:COST",
+   "name": "COST",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 414755131428,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CVX",
+   "name": "CVX",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 410130596473,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CAT",
+   "name": "CAT",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Trucks/Construction/Farm Machinery",
+   "cap": 396901672915,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BAC",
+   "name": "BAC",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 378237768266,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:KO",
+   "name": "KO",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Beverages: Non-Alcoholic",
+   "cap": 370750641674,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DELL",
+   "name": "DELL",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Processing Hardware",
+   "cap": 364956509158,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MRK",
+   "name": "MRK",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 350190324435,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PG",
+   "name": "PG",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Household/Personal Care",
+   "cap": 344707811201,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:PANW",
+   "name": "PANW",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 343486388246,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:UNH",
+   "name": "UNH",
+   "group": "stock",
+   "sector": "Health Services",
+   "industry": "Managed Health Care",
+   "cap": 337782881457,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GE",
+   "name": "GE",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 321011458037,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MS",
+   "name": "MS",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 300009575456,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PM",
+   "name": "PM",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Tobacco",
+   "cap": 296760013323,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HD",
+   "name": "HD",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Home Improvement Chains",
+   "cap": 286027635602,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NFLX",
+   "name": "NFLX",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Internet Software/Services",
+   "cap": 286021034575,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CRWD",
+   "name": "CRWD",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 285534476420,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:RY",
+   "name": "RY",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 272258805740,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ANET",
+   "name": "ANET",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Peripherals",
+   "cap": 271617323863,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:TXN",
+   "name": "TXN",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 271444602506,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GS",
+   "name": "GS",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 261233178541,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:KLAC",
+   "name": "KLAC",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 257686585116,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MRVL",
+   "name": "MRVL",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 251679076007,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:RTX",
+   "name": "RTX",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 247030599030,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WFC",
+   "name": "WFC",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 246486187689,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AZN",
+   "name": "AZN",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 245989161590,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TMO",
+   "name": "TMO",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 242768675190,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:LIN",
+   "name": "LIN",
+   "group": "stock",
+   "sector": "Process Industries",
+   "industry": "Chemicals: Specialty",
+   "cap": 225857233430,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:APH",
+   "name": "APH",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Components",
+   "cap": 218533990768,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AMGN",
+   "name": "AMGN",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Biotechnology",
+   "cap": 217658456800,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:C",
+   "name": "C",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 215584178487,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:SHOP",
+   "name": "SHOP",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Miscellaneous Commercial Services",
+   "cap": 211575742525,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:IBM",
+   "name": "IBM",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Information Technology Services",
+   "cap": 208484922969,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AXP",
+   "name": "AXP",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Finance/Rental/Leasing",
+   "cap": 205665596560,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ADI",
+   "name": "ADI",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 203784007258,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TD",
+   "name": "TD",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 199664635391,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VZ",
+   "name": "VZ",
+   "group": "stock",
+   "sector": "Communications",
+   "industry": "Wireless Telecommunications",
+   "cap": 191036566103,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:QCOM",
+   "name": "QCOM",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 190123833452,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TTE",
+   "name": "TTE",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 187459134300,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CRM",
+   "name": "CRM",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 185166764589,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DE",
+   "name": "DE",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Trucks/Construction/Farm Machinery",
+   "cap": 184097527927,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:STX",
+   "name": "STX",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Peripherals",
+   "cap": 183194644756,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DIS",
+   "name": "DIS",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Movies/Entertainment",
+   "cap": 179627238188,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:GILD",
+   "name": "GILD",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Biotechnology",
+   "cap": 178838726956,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:TMUS",
+   "name": "TMUS",
+   "group": "stock",
+   "sector": "Communications",
+   "industry": "Wireless Telecommunications",
+   "cap": 177988403049,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BLK",
+   "name": "BLK",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 175380040651,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ETN",
+   "name": "ETN",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Electrical Products",
+   "cap": 172872955722,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SCCO",
+   "name": "SCCO",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Other Metals/Minerals",
+   "cap": 172465636268,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:PEP",
+   "name": "PEP",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Food: Specialty/Candy",
+   "cap": 171580509971,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ABT",
+   "name": "ABT",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 169854422216,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:T",
+   "name": "T",
+   "group": "stock",
+   "sector": "Communications",
+   "industry": "Wireless Telecommunications",
+   "cap": 167403782101,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SCHW",
+   "name": "SCHW",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 167399693552,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MCD",
+   "name": "MCD",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Restaurants",
+   "cap": 164491257169,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:UNP",
+   "name": "UNP",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Railroads",
+   "cap": 164327222742,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WELL",
+   "name": "WELL",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 162729793875,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NEE",
+   "name": "NEE",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 162455985183,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PFE",
+   "name": "PFE",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 156741015973,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:COP",
+   "name": "COP",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Oil & Gas Production",
+   "cap": 155393001396,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:IBKR",
+   "name": "IBKR",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 154104587245,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DHR",
+   "name": "DHR",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 151570834168,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TJX",
+   "name": "TJX",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Apparel/Footwear Retail",
+   "cap": 150729441193,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BA",
+   "name": "BA",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 150028033424,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:WDC",
+   "name": "WDC",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Peripherals",
+   "cap": 148196746346,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:UBS",
+   "name": "UBS",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 146763416140,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GLW",
+   "name": "GLW",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Components",
+   "cap": 145548777549,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ISRG",
+   "name": "ISRG",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 142992825624,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NOW",
+   "name": "NOW",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 142660981919,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:UBER",
+   "name": "UBER",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Other Transportation",
+   "cap": 141100064097,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BX",
+   "name": "BX",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 140774629062,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:FTNT",
+   "name": "FTNT",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Information Technology Services",
+   "cap": 140337408401,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CB",
+   "name": "CB",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Property/Casualty Insurance",
+   "cap": 128938159114,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:VRTX",
+   "name": "VRTX",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 127315955851,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NET",
+   "name": "NET",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Information Technology Services",
+   "cap": 126411855980,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PLD",
+   "name": "PLD",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 124726323675,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PH",
+   "name": "PH",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 124209374277,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PGR",
+   "name": "PGR",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Multi-Line Insurance",
+   "cap": 123222246994,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NEM",
+   "name": "NEM",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 122639241905,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BMY",
+   "name": "BMY",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 121725365833,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MPC",
+   "name": "MPC",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Oil Refining/Marketing",
+   "cap": 121417383868,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VLO",
+   "name": "VLO",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Oil Refining/Marketing",
+   "cap": 120704945797,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:COF",
+   "name": "COF",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 120132593600,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SNOW",
+   "name": "SNOW",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 118523152485,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:BKNG",
+   "name": "BKNG",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Other Consumer Services",
+   "cap": 118440108507,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ACN",
+   "name": "ACN",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Information Technology Services",
+   "cap": 118349611470,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:LMT",
+   "name": "LMT",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 117730981700,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SPGI",
+   "name": "SPGI",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Financial Publishing/Services",
+   "cap": 116779123176,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BMO",
+   "name": "BMO",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 115400725922,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MO",
+   "name": "MO",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Tobacco",
+   "cap": 114460939472,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MDT",
+   "name": "MDT",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 111400114062,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BNS",
+   "name": "BNS",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 111199227423,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CVS",
+   "name": "CVS",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Drugstore Chains",
+   "cap": 110541408933,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:SBUX",
+   "name": "SBUX",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Restaurants",
+   "cap": 109565400354,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PWR",
+   "name": "PWR",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Engineering & Construction",
+   "cap": 108181082534,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PSX",
+   "name": "PSX",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Oil Refining/Marketing",
+   "cap": 107651850323,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MCK",
+   "name": "MCK",
+   "group": "stock",
+   "sector": "Distribution Services",
+   "industry": "Medical Distributors",
+   "cap": 107457840884,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SYK",
+   "name": "SYK",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 106710017003,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CEG",
+   "name": "CEG",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 106433932922,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ENB",
+   "name": "ENB",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 105540792033,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TT",
+   "name": "TT",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 104816843989,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:FCX",
+   "name": "FCX",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Other Metals/Minerals",
+   "cap": 104197424421,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ADP",
+   "name": "ADP",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 103960562237,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:EQIX",
+   "name": "EQIX",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 103344775478,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:LOW",
+   "name": "LOW",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Home Improvement Chains",
+   "cap": 103048791139,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:LITE",
+   "name": "LITE",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Electrical Products",
+   "cap": 101665980633,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CM",
+   "name": "CM",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Regional Banks",
+   "cap": 101318822953,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:HOOD",
+   "name": "HOOD",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 100697216797,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SPOT",
+   "name": "SPOT",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Internet Software/Services",
+   "cap": 100497343829,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:DDOG",
+   "name": "DDOG",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 99909042933,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CNQ",
+   "name": "CNQ",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 99158150439,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CDNS",
+   "name": "CDNS",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 99017558159,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SO",
+   "name": "SO",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 98287018965,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BNY",
+   "name": "BNY",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 97521401536,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VRT",
+   "name": "VRT",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Production Equipment",
+   "cap": 97455908464,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CME",
+   "name": "CME",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 97151121012,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:SNPS",
+   "name": "SNPS",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 96809082911,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:JCI",
+   "name": "JCI",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 96167526841,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ABNB",
+   "name": "ABNB",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Hotels/Resorts/Cruise lines",
+   "cap": 96039242315,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AEM",
+   "name": "AEM",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 94778022762,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MAR",
+   "name": "MAR",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Hotels/Resorts/Cruise lines",
+   "cap": 94209651436,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MELI",
+   "name": "MELI",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Internet Retail",
+   "cap": 94194147121,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HCA",
+   "name": "HCA",
+   "group": "stock",
+   "sector": "Health Services",
+   "industry": "Hospital/Nursing Management",
+   "cap": 93571949184,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HPE",
+   "name": "HPE",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Processing Hardware",
+   "cap": 93559714419,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:APP",
+   "name": "APP",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 93294004278,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ADBE",
+   "name": "ADBE",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 92676308328,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HWM",
+   "name": "HWM",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 92362405242,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BN",
+   "name": "BN",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 91438662478,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DUK",
+   "name": "DUK",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 90180354647,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:EMR",
+   "name": "EMR",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Equipment/Instruments",
+   "cap": 90028919045,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GD",
+   "name": "GD",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 89643714074,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:USB",
+   "name": "USB",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 89260771932,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WMB",
+   "name": "WMB",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 88545090859,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CSX",
+   "name": "CSX",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Railroads",
+   "cap": 87992556109,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PNC",
+   "name": "PNC",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Major Banks",
+   "cap": 87831436701,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BE",
+   "name": "BE",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Production Equipment",
+   "cap": 87115295879,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ELV",
+   "name": "ELV",
+   "group": "stock",
+   "sector": "Health Services",
+   "industry": "Managed Health Care",
+   "cap": 86767237669,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ICE",
+   "name": "ICE",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 86168433777,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:RACE",
+   "name": "RACE",
+   "group": "stock",
+   "sector": "Consumer Durables",
+   "industry": "Motor Vehicles",
+   "cap": 84943516890,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MNST",
+   "name": "MNST",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Beverages: Non-Alcoholic",
+   "cap": 84728985257,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MMM",
+   "name": "MMM",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Conglomerates",
+   "cap": 84392816780,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:DASH",
+   "name": "DASH",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Air Freight/Couriers",
+   "cap": 83900179245,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WM",
+   "name": "WM",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Environmental Services",
+   "cap": 83092792976,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MRSH",
+   "name": "MRSH",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Insurance Brokers/Services",
+   "cap": 81956260536,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:KKR",
+   "name": "KKR",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 81388620848,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:EPD",
+   "name": "EPD",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 80462122341,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SU",
+   "name": "SU",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 79792132211,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:UPS",
+   "name": "UPS",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Air Freight/Couriers",
+   "cap": 79216268878,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ECL",
+   "name": "ECL",
+   "group": "stock",
+   "sector": "Process Industries",
+   "industry": "Chemicals: Specialty",
+   "cap": 78721874693,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CTAS",
+   "name": "CTAS",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Miscellaneous Commercial Services",
+   "cap": 78521387227,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MCO",
+   "name": "MCO",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Financial Publishing/Services",
+   "cap": 78341821552,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SHW",
+   "name": "SHW",
+   "group": "stock",
+   "sector": "Process Industries",
+   "industry": "Industrial Specialties",
+   "cap": 77964209683,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:WBD",
+   "name": "WBD",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Cable/Satellite TV",
+   "cap": 77706271190,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:INTU",
+   "name": "INTU",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 77447660974,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:RCL",
+   "name": "RCL",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Hotels/Resorts/Cruise lines",
+   "cap": 77234813457,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AMT",
+   "name": "AMT",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 76780894850,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CMCSA",
+   "name": "CMCSA",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Cable/Satellite TV",
+   "cap": 76508602152,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MDLZ",
+   "name": "MDLZ",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Food: Specialty/Candy",
+   "cap": 76093484154,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ITW",
+   "name": "ITW",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Auto Parts: OEM",
+   "cap": 76081469442,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:REGN",
+   "name": "REGN",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Major",
+   "cap": 76054904391,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:EOG",
+   "name": "EOG",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 75679070302,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NU",
+   "name": "NU",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Regional Banks",
+   "cap": 75645388588,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MSI",
+   "name": "MSI",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Telecommunications Equipment",
+   "cap": 75511498580,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TRV",
+   "name": "TRV",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Property/Casualty Insurance",
+   "cap": 75220494948,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CP",
+   "name": "CP",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Railroads",
+   "cap": 75099740134,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MRNA",
+   "name": "MRNA",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Biotechnology",
+   "cap": 74840758731,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SLB",
+   "name": "SLB",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Contract Drilling",
+   "cap": 74207163726,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BAM",
+   "name": "BAM",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 74064472149,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CMI",
+   "name": "CMI",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Auto Parts: OEM",
+   "cap": 73693177318,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HLT",
+   "name": "HLT",
+   "group": "stock",
+   "sector": "Consumer Services",
+   "industry": "Hotels/Resorts/Cruise lines",
+   "cap": 72608189780,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CI",
+   "name": "CI",
+   "group": "stock",
+   "sector": "Health Services",
+   "industry": "Managed Health Care",
+   "cap": 72499670747,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MPWR",
+   "name": "MPWR",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 72421550680,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GM",
+   "name": "GM",
+   "group": "stock",
+   "sector": "Consumer Durables",
+   "industry": "Motor Vehicles",
+   "cap": 71959803649,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CNI",
+   "name": "CNI",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Railroads",
+   "cap": 71655560157,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ROST",
+   "name": "ROST",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Apparel/Footwear Retail",
+   "cap": 71624583611,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:KMI",
+   "name": "KMI",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 71613952035,
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:ET",
+   "name": "ET",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 71414030519,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MFC",
+   "name": "MFC",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Life/Health Insurance",
+   "cap": 71231577362,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NSC",
+   "name": "NSC",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Railroads",
+   "cap": 71045875325,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CVNA",
+   "name": "CVNA",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 70297628755,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TGT",
+   "name": "TGT",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 70111620397,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CL",
+   "name": "CL",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Household/Personal Care",
+   "cap": 69553327944,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ORLY",
+   "name": "ORLY",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 68874925078,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NOC",
+   "name": "NOC",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 68632070272,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DLR",
+   "name": "DLR",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 68504911467,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:APO",
+   "name": "APO",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Managers",
+   "cap": 68473484629,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:FDX",
+   "name": "FDX",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Air Freight/Couriers",
+   "cap": 68404858624,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NBIS",
+   "name": "NBIS",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 67928468460,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:HON",
+   "name": "HON",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 67467018127,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:TER",
+   "name": "TER",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Production Equipment",
+   "cap": 67276548782,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:URI",
+   "name": "URI",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Finance/Rental/Leasing",
+   "cap": 67260480147,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:B",
+   "name": "B",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 67020414357,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:COHR",
+   "name": "COHR",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 66261801284,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:AEP",
+   "name": "AEP",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 66236833503,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:KEYS",
+   "name": "KEYS",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Equipment/Instruments",
+   "cap": 66060073031,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DB",
+   "name": "DB",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 65808294567,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:RSG",
+   "name": "RSG",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Environmental Services",
+   "cap": 65756176359,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SPG",
+   "name": "SPG",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 65273280390,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:FIX",
+   "name": "FIX",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Engineering & Construction",
+   "cap": 63981879084,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TEL",
+   "name": "TEL",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 63551043504,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:MSTR",
+   "name": "MSTR",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Internet Software/Services",
+   "cap": 63224304896,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CIEN",
+   "name": "CIEN",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Telecommunications Equipment",
+   "cap": 62913355933,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:APD",
+   "name": "APD",
+   "group": "stock",
+   "sector": "Process Industries",
+   "industry": "Chemicals: Specialty",
+   "cap": 62574637117,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WPM",
+   "name": "WPM",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 62515119322,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MET",
+   "name": "MET",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Multi-Line Insurance",
+   "cap": 61742936643,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NXPI",
+   "name": "NXPI",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Semiconductors",
+   "cap": 61623880007,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TRGP",
+   "name": "TRGP",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Gas Distributors",
+   "cap": 61267228308,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BSX",
+   "name": "BSX",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 61142994476,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TDG",
+   "name": "TDG",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Aerospace & Defense",
+   "cap": 60988248680,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:COR",
+   "name": "COR",
+   "group": "stock",
+   "sector": "Distribution Services",
+   "industry": "Medical Distributors",
+   "cap": 60371993202,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TRP",
+   "name": "TRP",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 60229998266,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GWW",
+   "name": "GWW",
+   "group": "stock",
+   "sector": "Distribution Services",
+   "industry": "Wholesale Distributors",
+   "cap": 60080074329,
+   "stage": 1
+  },
+  {
+   "symbol": "AMEX:IMO",
+   "name": "IMO",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 59090193529,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AJG",
+   "name": "AJG",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Insurance Brokers/Services",
+   "cap": 58910553618,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:MPLX",
+   "name": "MPLX",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 58570591535,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:OXY",
+   "name": "OXY",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 58308850340,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:FAST",
+   "name": "FAST",
+   "group": "stock",
+   "sector": "Distribution Services",
+   "industry": "Wholesale Distributors",
+   "cap": 58304355575,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AME",
+   "name": "AME",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Electrical Products",
+   "cap": 58168162843,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AON",
+   "name": "AON",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Insurance Brokers/Services",
+   "cap": 58120247384,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NTRA",
+   "name": "NTRA",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Biotechnology",
+   "cap": 57751361711,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CVE",
+   "name": "CVE",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 57614214432,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:PCAR",
+   "name": "PCAR",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Trucks/Construction/Farm Machinery",
+   "cap": 57542214381,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AFL",
+   "name": "AFL",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Multi-Line Insurance",
+   "cap": 56967640372,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NUE",
+   "name": "NUE",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Steel",
+   "cap": 56961675645,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:LNG",
+   "name": "LNG",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Oil & Gas Pipelines",
+   "cap": 56850588386,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:BKR",
+   "name": "BKR",
+   "group": "stock",
+   "sector": "Industrial Services",
+   "industry": "Contract Drilling",
+   "cap": 56711470804,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ALL",
+   "name": "ALL",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Multi-Line Insurance",
+   "cap": 56708455471,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TFC",
+   "name": "TFC",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Regional Banks",
+   "cap": 56500214940,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:OKE",
+   "name": "OKE",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 56251412266,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CRH",
+   "name": "CRH",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Construction Materials",
+   "cap": 55617783961,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DAL",
+   "name": "DAL",
+   "group": "stock",
+   "sector": "Transportation",
+   "industry": "Airlines",
+   "cap": 55016740208,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:D",
+   "name": "D",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 54530608686,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CAH",
+   "name": "CAH",
+   "group": "stock",
+   "sector": "Distribution Services",
+   "industry": "Medical Distributors",
+   "cap": 54055211532,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VST",
+   "name": "VST",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 53869448229,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:GRMN",
+   "name": "GRMN",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Telecommunications Equipment",
+   "cap": 53846351100,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:PSA",
+   "name": "PSA",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 53411729198,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:DVN",
+   "name": "DVN",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Integrated Oil",
+   "cap": 52821999496,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:SRE",
+   "name": "SRE",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Gas Distributors",
+   "cap": 52292416688,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:FANG",
+   "name": "FANG",
+   "group": "stock",
+   "sector": "Energy Minerals",
+   "industry": "Oil & Gas Production",
+   "cap": 51798905338,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:NDAQ",
+   "name": "NDAQ",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 51576842000,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:NKE",
+   "name": "NKE",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Apparel/Footwear",
+   "cap": 51393119359,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:O",
+   "name": "O",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 51332331202,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ROK",
+   "name": "ROK",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Electrical Products",
+   "cap": 50054082645,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:EW",
+   "name": "EW",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 49847076030,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:ETR",
+   "name": "ETR",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 49330523196,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:WAB",
+   "name": "WAB",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Trucks/Construction/Farm Machinery",
+   "cap": 49180078549,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:BDX",
+   "name": "BDX",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 49111341400,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:TEAM",
+   "name": "TEAM",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 49103866828,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:P",
+   "name": "P",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Computer Peripherals",
+   "cap": 49051054985,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:COIN",
+   "name": "COIN",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 49005084380,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:F",
+   "name": "F",
+   "group": "stock",
+   "sector": "Consumer Durables",
+   "industry": "Motor Vehicles",
+   "cap": 48967671009,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CLS",
+   "name": "CLS",
+   "group": "stock",
+   "sector": "Electronic Technology",
+   "industry": "Electronic Components",
+   "cap": 48961377343,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:HUM",
+   "name": "HUM",
+   "group": "stock",
+   "sector": "Health Services",
+   "industry": "Managed Health Care",
+   "cap": 48544866594,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:ADSK",
+   "name": "ADSK",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 48337519468,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:STT",
+   "name": "STT",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Investment Banks/Brokers",
+   "cap": 48278831527,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:A",
+   "name": "A",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Medical Specialties",
+   "cap": 47739007422,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:EBAY",
+   "name": "EBAY",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Internet Retail",
+   "cap": 47641699728,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AZO",
+   "name": "AZO",
+   "group": "stock",
+   "sector": "Retail Trade",
+   "industry": "Specialty Stores",
+   "cap": 47320185449,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:AU",
+   "name": "AU",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 47243451134,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:FNV",
+   "name": "FNV",
+   "group": "stock",
+   "sector": "Non-Energy Minerals",
+   "industry": "Precious Metals",
+   "cap": 47057353790,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:PYPL",
+   "name": "PYPL",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Miscellaneous Commercial Services",
+   "cap": 46716718333,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VMRK",
+   "name": "VMRK",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Real Estate Investment Trusts",
+   "cap": 46713045216,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:FITB",
+   "name": "FITB",
+   "group": "stock",
+   "sector": "Finance",
+   "industry": "Regional Banks",
+   "cap": 46251520790,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:CARR",
+   "name": "CARR",
+   "group": "stock",
+   "sector": "Producer Manufacturing",
+   "industry": "Industrial Machinery",
+   "cap": 46244636229,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:XYZ",
+   "name": "XYZ",
+   "group": "stock",
+   "sector": "Commercial Services",
+   "industry": "Miscellaneous Commercial Services",
+   "cap": 45985002798,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:VEEV",
+   "name": "VEEV",
+   "group": "stock",
+   "sector": "Technology Services",
+   "industry": "Packaged Software",
+   "cap": 45901159250,
+   "stage": 1
+  },
+  {
+   "symbol": "NYSE:TEVA",
+   "name": "TEVA",
+   "group": "stock",
+   "sector": "Health Technology",
+   "industry": "Pharmaceuticals: Generic",
+   "cap": 45598038059,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:XEL",
+   "name": "XEL",
+   "group": "stock",
+   "sector": "Utilities",
+   "industry": "Electric Utilities",
+   "cap": 45429654072,
+   "stage": 1
+  },
+  {
+   "symbol": "NASDAQ:CCEP",
+   "name": "CCEP",
+   "group": "stock",
+   "sector": "Consumer Non-Durables",
+   "industry": "Beverages: Non-Alcoholic",
+   "cap": 45079664759,
+   "stage": 1
+  }
+ ]
+}
