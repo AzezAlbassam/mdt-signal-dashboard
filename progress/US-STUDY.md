@@ -68,3 +68,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — pine/pullback-reversion.pine added (study 4 confirmed strategies). Weekly RSI2+E2: hold ~4 weeks, avg win +4.8%, avg loss −6.5%, worst −41%. Next: Arabic page with all of this + current signals; Saudi study.
 - 2026-10-07 — us.html built by scripts/study4-page.js (charts, signals, watchlist, Pine code inline) and published. Remaining: Saudi study 3; stage 2 when screener answers; links per indicator (not added — unverified URLs are not published).
 - 2026-10-07 — user: Saudi not needed; wants long swings (months–1y). Study 5 pre-registered.
+- 2026-10-07 — study 5 search: 89 passed win/edge/trades, 13 also p<0.001; shortlist of 10 frozen (weekly RSI14>30 H52 75.5%, WaveTrend H52, CRSI H52, ...). Confirmation not yet run.
