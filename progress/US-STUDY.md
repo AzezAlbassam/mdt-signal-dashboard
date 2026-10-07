@@ -31,6 +31,10 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 4: search on even-position US symbols → reports/study4-shortlist.json (commit before confirm)
 - [x] Study 4: confirm on odd-position US + study-1 crypto/Saudi
 
+- [x] Study 5 protocol (PROTOCOL-study5.md): long-swing entries, 624 strategies
+- [ ] Study 5: engine + tests, search, freeze shortlist, confirm, page
+- (Saudi study 3 dropped — user not interested)
+
 ## Counts
 (updated as work proceeds)
 
@@ -63,3 +67,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — study 4 confirmation: all 10 shortlisted CONFIRMED on 155 unseen US + 10 crypto/Saudi (win 62–74%, Holm p 0.005). Edge comes from US stocks; crypto/Saudi edges small/negative. Random entries with E2 already win ~61–63% (weekly) — state this. Next: current signals, Pine for weekly RSI2+E2, page.
 - 2026-10-07 — pine/pullback-reversion.pine added (study 4 confirmed strategies). Weekly RSI2+E2: hold ~4 weeks, avg win +4.8%, avg loss −6.5%, worst −41%. Next: Arabic page with all of this + current signals; Saudi study.
 - 2026-10-07 — us.html built by scripts/study4-page.js (charts, signals, watchlist, Pine code inline) and published. Remaining: Saudi study 3; stage 2 when screener answers; links per indicator (not added — unverified URLs are not published).
+- 2026-10-07 — user: Saudi not needed; wants long swings (months–1y). Study 5 pre-registered.
