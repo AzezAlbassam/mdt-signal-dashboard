@@ -1,0 +1,1792 @@
+Edge by sector, period II — DESCRIPTIVE ONLY (protocol H3: ~660 cells, ~33 look significant by chance)
+
+Track A: edge R (trades)
+  trix
+      Commercial Services          0.106  win  52.0%  n 123
+      Communications              -0.002  win  45.1%  n 71
+      Consumer Durables            0.150  win  56.5%  n 92
+      Consumer Non-Durables        0.107  win  53.6%  n 224
+      Consumer Services            0.126  win  54.8%  n 221
+      Distribution Services       -0.190  win  46.2%  n 104
+      ETF                          0.047  win  53.7%  n 449
+      Electronic Technology        0.025  win  53.7%  n 882
+      Energy Minerals             -0.010  win  47.5%  n 375
+      Finance                     -0.025  win  48.0%  n 1276
+      Health Services              0.079  win  55.7%  n 115
+      Health Technology           -0.039  win  49.4%  n 542
+      Industrial Services          0.064  win  54.3%  n 315
+      Non-Energy Minerals          0.212  win  59.7%  n 221
+      Process Industries           0.104  win  52.2%  n 90
+      Producer Manufacturing       0.005  win  49.7%  n 378
+      Retail Trade                 0.174  win  61.6%  n 307
+      Technology Services          0.072  win  52.6%  n 530
+      Transportation              -0.032  win  47.2%  n 212
+      Utilities                    0.170  win  59.9%  n 252
+  ema_20_50
+      Commercial Services          0.051  win  48.6%  n 111
+      Communications              -0.005  win  46.3%  n 67
+      Consumer Durables            0.060  win  53.5%  n 86
+      Consumer Non-Durables        0.099  win  54.2%  n 214
+      Consumer Services            0.025  win  51.0%  n 208
+      Distribution Services       -0.005  win  52.5%  n 101
+      ETF                          0.062  win  52.6%  n 424
+      Electronic Technology        0.024  win  52.7%  n 807
+      Energy Minerals             -0.005  win  48.2%  n 365
+      Finance                      0.012  win  52.2%  n 1216
+      Health Services              0.096  win  58.7%  n 109
+      Health Technology           -0.039  win  49.9%  n 501
+      Industrial Services          0.051  win  51.1%  n 311
+      Non-Energy Minerals          0.111  win  53.9%  n 206
+      Process Industries           0.167  win  61.3%  n 80
+      Producer Manufacturing       0.124  win  55.3%  n 358
+      Retail Trade                 0.106  win  59.3%  n 280
+      Technology Services          0.031  win  54.7%  n 490
+      Transportation               0.002  win  49.8%  n 203
+      Utilities                    0.055  win  55.4%  n 233
+  mfi
+      Commercial Services         -0.010  win  51.9%  n 79
+      Communications               0.146  win  47.4%  n 38
+      Consumer Durables            0.058  win  50.0%  n 46
+      Consumer Non-Durables        0.097  win  52.8%  n 123
+      Consumer Services           -0.008  win  50.0%  n 122
+      Distribution Services        0.337  win  63.6%  n 55
+      ETF                         -0.015  win  49.5%  n 291
+      Electronic Technology        0.081  win  56.7%  n 469
+      Energy Minerals              0.126  win  52.9%  n 191
+      Finance                     -0.019  win  50.0%  n 740
+      Health Services              0.050  win  53.2%  n 62
+      Health Technology            0.107  win  52.6%  n 308
+      Industrial Services          0.065  win  51.2%  n 170
+      Non-Energy Minerals          0.004  win  49.2%  n 124
+      Process Industries           0.144  win  54.2%  n 48
+      Producer Manufacturing      -0.058  win  47.3%  n 207
+      Retail Trade                 0.175  win  59.8%  n 174
+      Technology Services          0.000  win  52.4%  n 353
+      Transportation              -0.039  win  46.7%  n 135
+      Utilities                   -0.026  win  45.8%  n 120
+  stoch
+      Commercial Services         -0.039  win  49.5%  n 305
+      Communications               0.106  win  48.0%  n 150
+      Consumer Durables           -0.023  win  47.9%  n 238
+      Consumer Non-Durables        0.067  win  50.5%  n 537
+      Consumer Services            0.068  win  52.0%  n 502
+      Distribution Services        0.032  win  52.1%  n 219
+      ETF                          0.105  win  55.2%  n 921
+      Electronic Technology        0.054  win  54.3%  n 2000
+      Energy Minerals              0.038  win  50.9%  n 864
+      Finance                     -0.012  win  50.7%  n 2776
+      Health Services              0.197  win  58.3%  n 242
+      Health Technology            0.081  win  53.5%  n 1181
+      Industrial Services          0.026  win  50.9%  n 648
+      Non-Energy Minerals          0.046  win  54.8%  n 560
+      Process Industries           0.094  win  52.1%  n 192
+      Producer Manufacturing       0.033  win  52.7%  n 863
+      Retail Trade                 0.021  win  52.5%  n 692
+      Technology Services         -0.023  win  50.7%  n 1276
+      Transportation              -0.017  win  48.4%  n 502
+      Utilities                    0.058  win  50.6%  n 480
+  uo
+      Commercial Services         -0.158  win  42.7%  n 82
+      Communications               0.023  win  48.9%  n 45
+      Consumer Durables            0.034  win  45.1%  n 51
+      Consumer Non-Durables        0.072  win  52.4%  n 170
+      Consumer Services            0.081  win  52.3%  n 151
+      Distribution Services        0.136  win  59.2%  n 49
+      ETF                          0.056  win  53.2%  n 252
+      Electronic Technology        0.061  win  52.7%  n 493
+      Energy Minerals              0.047  win  53.7%  n 257
+      Finance                      0.023  win  51.7%  n 751
+      Health Services              0.197  win  59.5%  n 79
+      Health Technology            0.046  win  52.2%  n 316
+      Industrial Services          0.073  win  52.8%  n 178
+      Non-Energy Minerals          0.027  win  56.0%  n 134
+      Process Industries           0.029  win  47.5%  n 59
+      Producer Manufacturing       0.101  win  57.0%  n 230
+      Retail Trade                -0.117  win  50.8%  n 177
+      Technology Services         -0.051  win  47.9%  n 313
+      Transportation               0.066  win  51.8%  n 137
+      Utilities                   -0.066  win  47.5%  n 141
+  ao
+      Commercial Services          0.035  win  53.6%  n 252
+      Communications              -0.096  win  40.4%  n 141
+      Consumer Durables            0.118  win  53.8%  n 171
+      Consumer Non-Durables        0.056  win  51.9%  n 453
+      Consumer Services            0.050  win  51.2%  n 432
+      Distribution Services        0.097  win  55.9%  n 220
+      ETF                          0.034  win  53.7%  n 866
+      Electronic Technology        0.019  win  51.7%  n 1811
+      Energy Minerals              0.001  win  48.1%  n 738
+      Finance                      0.071  win  53.7%  n 2557
+      Health Services              0.024  win  53.6%  n 224
+      Health Technology           -0.046  win  47.9%  n 1075
+      Industrial Services          0.039  win  51.4%  n 626
+      Non-Energy Minerals          0.018  win  49.9%  n 445
+      Process Industries          -0.008  win  53.3%  n 184
+      Producer Manufacturing       0.030  win  51.2%  n 797
+      Retail Trade                 0.039  win  55.3%  n 629
+      Technology Services          0.011  win  52.4%  n 1160
+      Transportation               0.056  win  54.0%  n 402
+      Utilities                   -0.058  win  49.4%  n 472
+  bb_revert
+      Commercial Services         -0.120  win  44.9%  n 294
+      Communications               0.023  win  46.6%  n 176
+      Consumer Durables           -0.050  win  45.8%  n 216
+      Consumer Non-Durables        0.045  win  49.6%  n 566
+      Consumer Services            0.035  win  50.2%  n 506
+      Distribution Services        0.005  win  48.9%  n 231
+      ETF                          0.066  win  55.1%  n 1060
+      Electronic Technology        0.033  win  53.8%  n 2003
+      Energy Minerals              0.083  win  53.9%  n 807
+      Finance                     -0.001  win  51.7%  n 2972
+      Health Services              0.155  win  55.0%  n 280
+      Health Technology            0.057  win  52.7%  n 1198
+      Industrial Services          0.011  win  50.3%  n 690
+      Non-Energy Minerals          0.021  win  53.4%  n 483
+      Process Industries          -0.011  win  49.1%  n 220
+      Producer Manufacturing       0.061  win  55.4%  n 897
+      Retail Trade                 0.034  win  52.0%  n 658
+      Technology Services         -0.014  win  50.2%  n 1231
+      Transportation              -0.017  win  47.8%  n 498
+      Utilities                    0.056  win  51.1%  n 528
+  price_ma
+      Commercial Services         -0.052  win  50.7%  n 138
+      Communications              -0.027  win  45.9%  n 74
+      Consumer Durables            0.032  win  49.1%  n 114
+      Consumer Non-Durables       -0.000  win  49.7%  n 318
+      Consumer Services            0.049  win  51.2%  n 287
+      Distribution Services        0.187  win  58.4%  n 125
+      ETF                          0.052  win  52.4%  n 529
+      Electronic Technology        0.039  win  53.7%  n 1067
+      Energy Minerals              0.078  win  52.6%  n 428
+      Finance                      0.032  win  51.6%  n 1484
+      Health Services             -0.051  win  50.4%  n 137
+      Health Technology           -0.005  win  50.5%  n 681
+      Industrial Services          0.072  win  50.5%  n 374
+      Non-Energy Minerals         -0.071  win  49.6%  n 278
+      Process Industries           0.013  win  52.1%  n 119
+      Producer Manufacturing      -0.003  win  51.5%  n 493
+      Retail Trade                 0.047  win  55.0%  n 329
+      Technology Services          0.028  win  54.1%  n 593
+      Transportation              -0.035  win  49.0%  n 298
+      Utilities                    0.012  win  51.1%  n 327
+  macd_zero
+      Commercial Services          0.146  win  58.2%  n 194
+      Communications               0.011  win  47.5%  n 118
+      Consumer Durables            0.142  win  54.1%  n 146
+      Consumer Non-Durables        0.071  win  53.3%  n 362
+      Consumer Services            0.003  win  47.7%  n 365
+      Distribution Services        0.174  win  59.4%  n 175
+      ETF                          0.034  win  53.1%  n 714
+      Electronic Technology        0.010  win  51.1%  n 1453
+      Energy Minerals              0.022  win  47.4%  n 612
+      Finance                      0.063  win  52.9%  n 2054
+      Health Services              0.017  win  51.0%  n 194
+      Health Technology           -0.060  win  47.4%  n 862
+      Industrial Services          0.029  win  50.0%  n 492
+      Non-Energy Minerals         -0.041  win  48.2%  n 361
+      Process Industries          -0.060  win  49.7%  n 151
+      Producer Manufacturing       0.018  win  50.6%  n 625
+      Retail Trade                 0.046  win  53.8%  n 487
+      Technology Services          0.029  win  52.2%  n 912
+      Transportation               0.036  win  51.5%  n 342
+      Utilities                   -0.091  win  46.1%  n 384
+  rsi_30
+      Commercial Services         -0.031  win  49.1%  n 106
+      Communications               0.083  win  46.6%  n 73
+      Consumer Durables            0.030  win  48.8%  n 80
+      Consumer Non-Durables        0.110  win  50.5%  n 218
+      Consumer Services           -0.054  win  48.3%  n 201
+      Distribution Services        0.056  win  50.6%  n 77
+      ETF                          0.107  win  55.9%  n 356
+      Electronic Technology       -0.001  win  52.8%  n 712
+      Energy Minerals              0.163  win  57.4%  n 333
+      Finance                      0.031  win  53.3%  n 1103
+      Health Services              0.065  win  50.9%  n 112
+      Health Technology           -0.029  win  47.9%  n 472
+      Industrial Services          0.025  win  50.6%  n 255
+      Non-Energy Minerals          0.086  win  57.0%  n 214
+      Process Industries          -0.042  win  48.8%  n 80
+      Producer Manufacturing       0.021  win  52.4%  n 338
+      Retail Trade                 0.026  win  52.2%  n 247
+      Technology Services         -0.059  win  49.8%  n 478
+      Transportation              -0.069  win  44.9%  n 198
+      Utilities                   -0.027  win  49.5%  n 188
+  tsmom
+      Commercial Services          0.015  win  52.9%  n 87
+      Communications               0.036  win  45.6%  n 68
+      Consumer Durables            0.035  win  52.8%  n 89
+      Consumer Non-Durables        0.014  win  50.4%  n 244
+      Consumer Services           -0.015  win  45.1%  n 204
+      Distribution Services        0.139  win  53.8%  n 80
+      ETF                          0.013  win  52.0%  n 396
+      Electronic Technology        0.019  win  53.1%  n 816
+      Energy Minerals              0.004  win  48.8%  n 299
+      Finance                      0.023  win  53.7%  n 1072
+      Health Services              0.135  win  55.2%  n 125
+      Health Technology            0.012  win  48.4%  n 525
+      Industrial Services          0.007  win  49.8%  n 259
+      Non-Energy Minerals          0.056  win  56.1%  n 212
+      Process Industries           0.118  win  62.5%  n 80
+      Producer Manufacturing       0.006  win  53.6%  n 366
+      Retail Trade                 0.042  win  53.7%  n 229
+      Technology Services         -0.034  win  49.5%  n 428
+      Transportation               0.112  win  52.6%  n 213
+      Utilities                   -0.080  win  47.2%  n 254
+  cci
+      Commercial Services         -0.067  win  47.1%  n 431
+      Communications               0.043  win  46.3%  n 259
+      Consumer Durables           -0.070  win  46.1%  n 332
+      Consumer Non-Durables        0.064  win  51.1%  n 775
+      Consumer Services            0.037  win  50.9%  n 755
+      Distribution Services        0.022  win  53.8%  n 366
+      ETF                          0.033  win  52.7%  n 1458
+      Electronic Technology        0.030  win  53.6%  n 3061
+      Energy Minerals              0.061  win  53.0%  n 1225
+      Finance                      0.035  win  53.1%  n 4257
+      Health Services              0.015  win  51.3%  n 376
+      Health Technology            0.001  win  50.9%  n 1823
+      Industrial Services         -0.067  win  47.2%  n 1085
+      Non-Energy Minerals         -0.009  win  51.0%  n 732
+      Process Industries           0.007  win  50.5%  n 321
+      Producer Manufacturing       0.008  win  51.7%  n 1353
+      Retail Trade                -0.016  win  50.9%  n 1042
+      Technology Services          0.006  win  51.8%  n 1887
+      Transportation              -0.054  win  47.3%  n 731
+      Utilities                    0.037  win  50.8%  n 783
+  supertrend
+      Commercial Services         -0.013  win  53.5%  n 202
+      Communications              -0.131  win  37.6%  n 101
+      Consumer Durables            0.040  win  51.0%  n 147
+      Consumer Non-Durables       -0.047  win  46.9%  n 326
+      Consumer Services           -0.050  win  45.5%  n 310
+      Distribution Services        0.132  win  55.2%  n 163
+      ETF                         -0.002  win  52.8%  n 691
+      Electronic Technology        0.024  win  53.8%  n 1365
+      Energy Minerals              0.008  win  48.1%  n 538
+      Finance                      0.038  win  52.6%  n 1939
+      Health Services              0.015  win  52.8%  n 176
+      Health Technology           -0.100  win  45.5%  n 764
+      Industrial Services          0.078  win  53.9%  n 419
+      Non-Energy Minerals         -0.030  win  47.1%  n 348
+      Process Industries           0.083  win  56.3%  n 142
+      Producer Manufacturing       0.102  win  55.4%  n 572
+      Retail Trade                 0.040  win  52.6%  n 462
+      Technology Services          0.017  win  53.3%  n 872
+      Transportation               0.004  win  49.5%  n 309
+      Utilities                   -0.040  win  47.3%  n 313
+  rsi_50
+      Commercial Services          0.008  win  54.5%  n 468
+      Communications               0.125  win  50.0%  n 250
+      Consumer Durables           -0.007  win  48.2%  n 326
+      Consumer Non-Durables        0.030  win  50.8%  n 842
+      Consumer Services           -0.042  win  46.5%  n 833
+      Distribution Services        0.086  win  53.9%  n 434
+      ETF                         -0.003  win  50.7%  n 1692
+      Electronic Technology        0.030  win  51.9%  n 3405
+      Energy Minerals              0.039  win  49.1%  n 1341
+      Finance                      0.011  win  51.1%  n 4739
+      Health Services             -0.008  win  51.4%  n 420
+      Health Technology           -0.024  win  48.3%  n 2021
+      Industrial Services          0.024  win  52.5%  n 1193
+      Non-Energy Minerals         -0.047  win  47.8%  n 812
+      Process Industries           0.000  win  48.2%  n 334
+      Producer Manufacturing       0.037  win  51.9%  n 1503
+      Retail Trade                -0.038  win  49.7%  n 1150
+      Technology Services          0.017  win  52.2%  n 2053
+      Transportation               0.028  win  51.3%  n 795
+      Utilities                   -0.008  win  49.8%  n 897
+  obv
+      Commercial Services          0.024  win  54.4%  n 563
+      Communications               0.009  win  46.7%  n 287
+      Consumer Durables           -0.005  win  47.3%  n 385
+      Consumer Non-Durables        0.036  win  50.6%  n 961
+      Consumer Services            0.026  win  49.4%  n 933
+      Distribution Services        0.060  win  52.3%  n 509
+      ETF                         -0.002  win  51.9%  n 1961
+      Electronic Technology       -0.002  win  51.4%  n 3976
+      Energy Minerals              0.025  win  49.7%  n 1569
+      Finance                      0.019  win  51.9%  n 5537
+      Health Services             -0.027  win  49.2%  n 484
+      Health Technology           -0.005  win  51.1%  n 2346
+      Industrial Services          0.016  win  50.0%  n 1347
+      Non-Energy Minerals         -0.025  win  49.6%  n 999
+      Process Industries           0.054  win  52.9%  n 395
+      Producer Manufacturing       0.031  win  52.3%  n 1753
+      Retail Trade                 0.012  win  51.9%  n 1340
+      Technology Services          0.022  win  52.2%  n 2464
+      Transportation              -0.026  win  48.7%  n 944
+      Utilities                   -0.047  win  48.3%  n 1027
+  ma_cross
+      Commercial Services         -0.040  win  56.4%  n 39
+      Communications              -0.218  win  38.9%  n 18
+      Consumer Durables           -0.250  win  40.7%  n 27
+      Consumer Non-Durables       -0.050  win  44.4%  n 90
+      Consumer Services           -0.048  win  44.1%  n 68
+      Distribution Services       -0.077  win  38.7%  n 31
+      ETF                          0.020  win  50.9%  n 114
+      Electronic Technology        0.015  win  53.5%  n 258
+      Energy Minerals             -0.014  win  47.3%  n 93
+      Finance                      0.041  win  53.9%  n 360
+      Health Services             -0.117  win  51.4%  n 35
+      Health Technology            0.047  win  53.4%  n 176
+      Industrial Services         -0.035  win  49.4%  n 87
+      Non-Energy Minerals         -0.097  win  50.0%  n 72
+      Process Industries          -0.122  win  45.9%  n 37
+      Producer Manufacturing       0.041  win  52.4%  n 126
+      Retail Trade                 0.045  win  58.3%  n 72
+      Technology Services          0.256  win  64.5%  n 152
+      Transportation               0.075  win  50.7%  n 75
+      Utilities                   -0.301  win  34.3%  n 70
+  momentum
+      Commercial Services         -0.014  win  53.1%  n 612
+      Communications               0.039  win  46.5%  n 333
+      Consumer Durables            0.045  win  49.5%  n 414
+      Consumer Non-Durables       -0.006  win  48.7%  n 1051
+      Consumer Services           -0.031  win  47.2%  n 1043
+      Distribution Services        0.048  win  53.5%  n 548
+      ETF                          0.005  win  50.3%  n 2028
+      Electronic Technology        0.017  win  51.4%  n 4232
+      Energy Minerals              0.038  win  49.9%  n 1648
+      Finance                      0.018  win  52.0%  n 5846
+      Health Services             -0.012  win  48.7%  n 550
+      Health Technology           -0.020  win  48.8%  n 2537
+      Industrial Services         -0.000  win  49.7%  n 1444
+      Non-Energy Minerals          0.003  win  51.1%  n 1019
+      Process Industries          -0.054  win  47.8%  n 418
+      Producer Manufacturing      -0.001  win  51.0%  n 1852
+      Retail Trade                 0.005  win  52.4%  n 1446
+      Technology Services          0.030  win  53.0%  n 2618
+      Transportation               0.013  win  50.9%  n 957
+      Utilities                   -0.009  win  50.2%  n 1138
+  willr
+      Commercial Services         -0.017  win  50.1%  n 543
+      Communications               0.058  win  47.2%  n 305
+      Consumer Durables           -0.007  win  47.5%  n 406
+      Consumer Non-Durables        0.034  win  49.5%  n 976
+      Consumer Services            0.002  win  47.7%  n 955
+      Distribution Services        0.047  win  52.3%  n 442
+      ETF                          0.025  win  51.7%  n 1872
+      Electronic Technology        0.025  win  53.1%  n 3880
+      Energy Minerals              0.032  win  49.5%  n 1554
+      Finance                      0.002  win  50.6%  n 5400
+      Health Services              0.013  win  48.9%  n 470
+      Health Technology           -0.016  win  48.9%  n 2268
+      Industrial Services         -0.017  win  47.9%  n 1314
+      Non-Energy Minerals         -0.008  win  50.8%  n 956
+      Process Industries           0.066  win  53.6%  n 379
+      Producer Manufacturing       0.029  win  52.8%  n 1684
+      Retail Trade                -0.019  win  51.5%  n 1296
+      Technology Services         -0.002  win  50.9%  n 2407
+      Transportation              -0.027  win  47.7%  n 916
+      Utilities                    0.009  win  49.8%  n 975
+  macd_signal
+      Commercial Services         -0.003  win  54.4%  n 489
+      Communications              -0.099  win  39.3%  n 257
+      Consumer Durables            0.037  win  48.0%  n 306
+      Consumer Non-Durables       -0.030  win  49.3%  n 785
+      Consumer Services            0.014  win  49.3%  n 769
+      Distribution Services        0.098  win  54.5%  n 407
+      ETF                          0.015  win  52.3%  n 1560
+      Electronic Technology        0.001  win  52.0%  n 3200
+      Energy Minerals              0.028  win  50.0%  n 1259
+      Finance                      0.033  win  52.3%  n 4436
+      Health Services             -0.060  win  49.4%  n 407
+      Health Technology           -0.052  win  47.6%  n 1856
+      Industrial Services         -0.012  win  50.1%  n 1105
+      Non-Energy Minerals         -0.010  win  50.6%  n 794
+      Process Industries          -0.035  win  47.4%  n 323
+      Producer Manufacturing       0.019  win  53.0%  n 1384
+      Retail Trade                -0.002  win  52.2%  n 1099
+      Technology Services          0.035  win  53.8%  n 2037
+      Transportation               0.064  win  53.6%  n 702
+      Utilities                   -0.074  win  48.2%  n 828
+  hma
+      Commercial Services         -0.004  win  51.7%  n 976
+      Communications              -0.035  win  42.8%  n 486
+      Consumer Durables            0.023  win  49.1%  n 643
+      Consumer Non-Durables        0.003  win  49.7%  n 1623
+      Consumer Services           -0.003  win  47.7%  n 1516
+      Distribution Services       -0.026  win  48.7%  n 815
+      ETF                          0.015  win  52.0%  n 3150
+      Electronic Technology        0.019  win  52.5%  n 6583
+      Energy Minerals              0.007  win  49.0%  n 2542
+      Finance                      0.004  win  51.0%  n 9105
+      Health Services             -0.001  win  51.1%  n 796
+      Health Technology            0.012  win  51.3%  n 3764
+      Industrial Services          0.033  win  51.8%  n 2234
+      Non-Energy Minerals          0.007  win  50.9%  n 1596
+      Process Industries          -0.001  win  51.0%  n 653
+      Producer Manufacturing      -0.009  win  50.9%  n 2877
+      Retail Trade                 0.009  win  52.1%  n 2217
+      Technology Services         -0.005  win  51.3%  n 4089
+      Transportation              -0.008  win  48.2%  n 1495
+      Utilities                   -0.007  win  50.0%  n 1649
+  psar
+      Commercial Services         -0.016  win  51.8%  n 579
+      Communications              -0.053  win  42.9%  n 282
+      Consumer Durables            0.103  win  51.3%  n 353
+      Consumer Non-Durables       -0.022  win  48.1%  n 970
+      Consumer Services           -0.025  win  48.2%  n 902
+      Distribution Services        0.049  win  53.3%  n 482
+      ETF                          0.002  win  51.7%  n 1937
+      Electronic Technology        0.012  win  52.3%  n 3818
+      Energy Minerals              0.043  win  50.2%  n 1544
+      Finance                      0.008  win  50.9%  n 5436
+      Health Services             -0.026  win  51.6%  n 463
+      Health Technology           -0.024  win  48.9%  n 2240
+      Industrial Services          0.008  win  51.1%  n 1376
+      Non-Energy Minerals          0.001  win  49.9%  n 945
+      Process Industries          -0.007  win  49.5%  n 378
+      Producer Manufacturing      -0.004  win  50.7%  n 1690
+      Retail Trade                 0.002  win  52.4%  n 1306
+      Technology Services          0.018  win  52.7%  n 2385
+      Transportation               0.026  win  50.2%  n 871
+      Utilities                   -0.056  win  48.0%  n 1022
+  aroon
+      Commercial Services          0.033  win  54.8%  n 407
+      Communications              -0.035  win  45.7%  n 230
+      Consumer Durables           -0.032  win  48.9%  n 284
+      Consumer Non-Durables       -0.019  win  48.2%  n 718
+      Consumer Services           -0.020  win  48.0%  n 696
+      Distribution Services        0.136  win  53.0%  n 370
+      ETF                          0.017  win  52.9%  n 1359
+      Electronic Technology        0.002  win  51.4%  n 2938
+      Energy Minerals             -0.007  win  48.3%  n 1138
+      Finance                      0.022  win  52.0%  n 4049
+      Health Services             -0.028  win  50.3%  n 368
+      Health Technology           -0.010  win  50.8%  n 1706
+      Industrial Services         -0.007  win  51.1%  n 1002
+      Non-Energy Minerals         -0.036  win  47.8%  n 694
+      Process Industries           0.022  win  52.7%  n 283
+      Producer Manufacturing      -0.015  win  49.7%  n 1271
+      Retail Trade                 0.016  win  53.3%  n 977
+      Technology Services         -0.012  win  51.3%  n 1793
+      Transportation               0.010  win  49.6%  n 643
+      Utilities                   -0.056  win  47.3%  n 772
+  adx_di
+      Commercial Services         -0.120  win  51.7%  n 178
+      Communications               0.209  win  56.0%  n 91
+      Consumer Durables           -0.101  win  46.3%  n 123
+      Consumer Non-Durables        0.079  win  53.6%  n 306
+      Consumer Services           -0.126  win  43.3%  n 240
+      Distribution Services        0.088  win  54.7%  n 139
+      ETF                         -0.042  win  48.4%  n 510
+      Electronic Technology        0.082  win  55.4%  n 1185
+      Energy Minerals              0.101  win  53.4%  n 410
+      Finance                      0.037  win  52.3%  n 1632
+      Health Services             -0.107  win  46.9%  n 160
+      Health Technology           -0.072  win  47.5%  n 676
+      Industrial Services          0.045  win  50.5%  n 404
+      Non-Energy Minerals         -0.037  win  49.5%  n 287
+      Process Industries           0.027  win  50.5%  n 109
+      Producer Manufacturing      -0.054  win  47.3%  n 505
+      Retail Trade                -0.031  win  49.7%  n 437
+      Technology Services         -0.076  win  48.7%  n 770
+      Transportation              -0.054  win  44.9%  n 256
+      Utilities                    0.003  win  46.1%  n 282
+  ichimoku
+      Commercial Services         -0.005  win  52.4%  n 231
+      Communications               0.010  win  48.6%  n 146
+      Consumer Durables            0.074  win  51.2%  n 168
+      Consumer Non-Durables       -0.021  win  49.3%  n 452
+      Consumer Services            0.019  win  48.3%  n 437
+      Distribution Services       -0.009  win  50.0%  n 234
+      ETF                         -0.022  win  50.6%  n 942
+      Electronic Technology        0.033  win  51.9%  n 1779
+      Energy Minerals             -0.009  win  47.5%  n 741
+      Finance                     -0.015  win  49.9%  n 2562
+      Health Services             -0.065  win  48.5%  n 233
+      Health Technology           -0.031  win  49.5%  n 1066
+      Industrial Services         -0.008  win  49.1%  n 654
+      Non-Energy Minerals          0.011  win  49.1%  n 397
+      Process Industries           0.023  win  54.2%  n 168
+      Producer Manufacturing       0.048  win  51.7%  n 762
+      Retail Trade                -0.022  win  51.2%  n 631
+      Technology Services          0.036  win  53.0%  n 1034
+      Transportation              -0.055  win  48.5%  n 435
+      Utilities                   -0.018  win  50.5%  n 485
+  rsi2
+      Commercial Services          0.031  win  51.1%  n 327
+      Communications               0.106  win  50.8%  n 132
+      Consumer Durables           -0.070  win  47.5%  n 198
+      Consumer Non-Durables       -0.008  win  48.4%  n 519
+      Consumer Services           -0.000  win  48.7%  n 524
+      Distribution Services        0.125  win  55.3%  n 331
+      ETF                          0.031  win  51.8%  n 1211
+      Electronic Technology       -0.004  win  51.8%  n 2368
+      Energy Minerals              0.028  win  50.7%  n 817
+      Finance                     -0.022  win  50.0%  n 3222
+      Health Services              0.010  win  52.3%  n 262
+      Health Technology           -0.009  win  49.5%  n 1314
+      Industrial Services          0.024  win  50.2%  n 801
+      Non-Energy Minerals         -0.028  win  48.7%  n 519
+      Process Industries          -0.054  win  46.6%  n 249
+      Producer Manufacturing       0.060  win  54.4%  n 1023
+      Retail Trade                -0.043  win  49.7%  n 868
+      Technology Services         -0.006  win  51.4%  n 1402
+      Transportation              -0.097  win  42.7%  n 466
+      Utilities                   -0.004  win  48.4%  n 517
+  vortex
+      Commercial Services         -0.027  win  52.0%  n 490
+      Communications              -0.021  win  45.0%  n 258
+      Consumer Durables            0.009  win  47.8%  n 322
+      Consumer Non-Durables        0.008  win  49.9%  n 830
+      Consumer Services           -0.029  win  47.1%  n 817
+      Distribution Services        0.129  win  57.0%  n 421
+      ETF                          0.020  win  51.8%  n 1586
+      Electronic Technology       -0.004  win  50.7%  n 3482
+      Energy Minerals              0.011  win  49.0%  n 1352
+      Finance                      0.011  win  51.4%  n 4720
+      Health Services              0.022  win  50.6%  n 431
+      Health Technology           -0.038  win  48.8%  n 2015
+      Industrial Services         -0.028  win  49.4%  n 1165
+      Non-Energy Minerals         -0.004  win  49.5%  n 808
+      Process Industries           0.034  win  52.2%  n 337
+      Producer Manufacturing      -0.039  win  50.1%  n 1516
+      Retail Trade                 0.010  win  52.2%  n 1136
+      Technology Services         -0.027  win  51.1%  n 2125
+      Transportation               0.021  win  50.2%  n 785
+      Utilities                   -0.018  win  48.6%  n 856
+  keltner_break
+      Commercial Services         -0.004  win  51.6%  n 314
+      Communications              -0.091  win  41.3%  n 109
+      Consumer Durables           -0.009  win  49.2%  n 199
+      Consumer Non-Durables       -0.034  win  49.5%  n 436
+      Consumer Services           -0.005  win  49.8%  n 420
+      Distribution Services       -0.011  win  47.1%  n 240
+      ETF                         -0.016  win  51.2%  n 1019
+      Electronic Technology        0.020  win  53.2%  n 2123
+      Energy Minerals              0.026  win  49.4%  n 757
+      Finance                     -0.011  win  49.7%  n 2750
+      Health Services             -0.100  win  46.8%  n 222
+      Health Technology           -0.029  win  49.6%  n 1036
+      Industrial Services         -0.050  win  46.5%  n 639
+      Non-Energy Minerals         -0.007  win  49.6%  n 520
+      Process Industries           0.075  win  54.5%  n 178
+      Producer Manufacturing       0.023  win  53.6%  n 891
+      Retail Trade                 0.027  win  54.9%  n 714
+      Technology Services         -0.007  win  51.2%  n 1341
+      Transportation              -0.003  win  48.5%  n 421
+      Utilities                   -0.039  win  51.5%  n 423
+  bb_break
+      Commercial Services          0.018  win  53.2%  n 359
+      Communications              -0.058  win  42.5%  n 146
+      Consumer Durables            0.056  win  50.5%  n 214
+      Consumer Non-Durables        0.005  win  51.4%  n 510
+      Consumer Services           -0.041  win  47.4%  n 498
+      Distribution Services        0.025  win  51.0%  n 314
+      ETF                         -0.018  win  51.0%  n 1046
+      Electronic Technology       -0.011  win  51.5%  n 2423
+      Energy Minerals             -0.048  win  45.6%  n 886
+      Finance                      0.018  win  50.6%  n 3093
+      Health Services             -0.062  win  48.2%  n 282
+      Health Technology           -0.028  win  48.4%  n 1340
+      Industrial Services         -0.002  win  51.0%  n 780
+      Non-Energy Minerals         -0.045  win  48.6%  n 589
+      Process Industries           0.061  win  54.5%  n 220
+      Producer Manufacturing      -0.002  win  51.9%  n 996
+      Retail Trade                -0.038  win  49.1%  n 823
+      Technology Services         -0.003  win  52.8%  n 1483
+      Transportation               0.056  win  52.2%  n 529
+      Utilities                   -0.064  win  47.9%  n 591
+  stochrsi
+      Commercial Services         -0.066  win  46.9%  n 437
+      Communications               0.119  win  52.5%  n 219
+      Consumer Durables           -0.090  win  44.8%  n 330
+      Consumer Non-Durables        0.025  win  48.9%  n 792
+      Consumer Services            0.017  win  49.3%  n 722
+      Distribution Services        0.031  win  51.5%  n 390
+      ETF                         -0.039  win  48.3%  n 1494
+      Electronic Technology        0.009  win  51.5%  n 3148
+      Energy Minerals             -0.045  win  48.0%  n 1272
+      Finance                     -0.047  win  48.2%  n 4403
+      Health Services              0.096  win  54.4%  n 379
+      Health Technology            0.021  win  50.8%  n 1779
+      Industrial Services          0.023  win  49.6%  n 1068
+      Non-Energy Minerals          0.004  win  51.9%  n 807
+      Process Industries          -0.003  win  49.0%  n 298
+      Producer Manufacturing      -0.002  win  50.9%  n 1359
+      Retail Trade                -0.002  win  50.3%  n 1089
+      Technology Services         -0.015  win  50.3%  n 1946
+      Transportation              -0.099  win  43.1%  n 715
+      Utilities                    0.003  win  46.0%  n 776
+  cmf
+      Commercial Services         -0.040  win  49.0%  n 457
+      Communications               0.002  win  45.3%  n 223
+      Consumer Durables           -0.047  win  45.3%  n 320
+      Consumer Non-Durables        0.020  win  49.5%  n 733
+      Consumer Services           -0.070  win  46.5%  n 747
+      Distribution Services       -0.019  win  49.0%  n 382
+      ETF                         -0.010  win  50.9%  n 1510
+      Electronic Technology       -0.019  win  50.1%  n 3203
+      Energy Minerals              0.020  win  49.4%  n 1266
+      Finance                     -0.006  win  50.4%  n 4312
+      Health Services             -0.072  win  46.8%  n 391
+      Health Technology           -0.064  win  48.4%  n 1782
+      Industrial Services         -0.029  win  48.3%  n 1088
+      Non-Energy Minerals         -0.034  win  48.3%  n 752
+      Process Industries           0.054  win  52.5%  n 263
+      Producer Manufacturing       0.020  win  51.4%  n 1431
+      Retail Trade                -0.050  win  49.0%  n 1116
+      Technology Services         -0.016  win  51.0%  n 1953
+      Transportation              -0.012  win  48.3%  n 720
+      Utilities                    0.022  win  51.7%  n 766
+  donchian20
+      Commercial Services         -0.021  win  52.0%  n 477
+      Communications              -0.125  win  39.8%  n 186
+      Consumer Durables           -0.020  win  45.8%  n 286
+      Consumer Non-Durables       -0.047  win  47.7%  n 694
+      Consumer Services           -0.030  win  47.3%  n 655
+      Distribution Services        0.008  win  50.7%  n 373
+      ETF                         -0.006  win  52.5%  n 1558
+      Electronic Technology       -0.002  win  52.0%  n 3027
+      Energy Minerals             -0.036  win  46.8%  n 1151
+      Finance                     -0.001  win  51.3%  n 4104
+      Health Services             -0.136  win  45.9%  n 370
+      Health Technology           -0.075  win  47.0%  n 1664
+      Industrial Services         -0.039  win  47.7%  n 999
+      Non-Energy Minerals         -0.031  win  48.5%  n 730
+      Process Industries           0.048  win  52.3%  n 285
+      Producer Manufacturing       0.005  win  51.4%  n 1316
+      Retail Trade                -0.001  win  50.6%  n 1033
+      Technology Services         -0.019  win  51.7%  n 1959
+      Transportation               0.028  win  50.5%  n 632
+      Utilities                   -0.048  win  48.8%  n 733
+  tv_rating
+      Commercial Services          0.001  win  54.5%  n 594
+      Communications              -0.052  win  41.1%  n 258
+      Consumer Durables            0.017  win  45.8%  n 330
+      Consumer Non-Durables       -0.078  win  46.7%  n 906
+      Consumer Services           -0.029  win  46.2%  n 809
+      Distribution Services       -0.041  win  46.8%  n 509
+      ETF                         -0.013  win  50.9%  n 1969
+      Electronic Technology       -0.019  win  49.7%  n 3963
+      Energy Minerals             -0.027  win  47.5%  n 1361
+      Finance                     -0.005  win  50.7%  n 5240
+      Health Services             -0.129  win  46.9%  n 441
+      Health Technology           -0.065  win  47.4%  n 2184
+      Industrial Services         -0.012  win  48.8%  n 1311
+      Non-Energy Minerals          0.031  win  52.6%  n 859
+      Process Industries          -0.052  win  47.6%  n 391
+      Producer Manufacturing      -0.031  win  50.1%  n 1673
+      Retail Trade                -0.002  win  51.5%  n 1368
+      Technology Services          0.007  win  53.0%  n 2390
+      Transportation              -0.016  win  49.0%  n 767
+      Utilities                   -0.065  win  47.2%  n 1018
+  donchian55
+      Commercial Services         -0.034  win  51.2%  n 334
+      Communications              -0.141  win  41.3%  n 121
+      Consumer Durables            0.020  win  48.0%  n 173
+      Consumer Non-Durables       -0.104  win  45.8%  n 448
+      Consumer Services           -0.074  win  46.5%  n 417
+      Distribution Services       -0.053  win  46.7%  n 257
+      ETF                         -0.043  win  50.7%  n 1074
+      Electronic Technology       -0.015  win  51.1%  n 2091
+      Energy Minerals             -0.030  win  47.9%  n 712
+      Finance                     -0.041  win  49.0%  n 2793
+      Health Services             -0.202  win  43.6%  n 243
+      Health Technology           -0.066  win  46.9%  n 1065
+      Industrial Services         -0.097  win  44.3%  n 663
+      Non-Energy Minerals         -0.026  win  49.5%  n 479
+      Process Industries          -0.010  win  48.7%  n 199
+      Producer Manufacturing      -0.015  win  51.5%  n 892
+      Retail Trade                -0.057  win  49.7%  n 721
+      Technology Services         -0.030  win  51.3%  n 1350
+      Transportation              -0.010  win  49.4%  n 395
+      Utilities                   -0.116  win  46.6%  n 483
+
+Track B: edge R (trades)
+  rsi_30
+      Commercial Services         -0.163  win  47.1%  n 17
+      Communications               0.060  win  44.4%  n 9
+      Consumer Durables            0.194  win  80.0%  n 10
+      Consumer Non-Durables        0.364  win  63.3%  n 30
+      Consumer Services            0.322  win  70.0%  n 30
+      Distribution Services        0.670  win 100.0%  n 2
+      ETF                          0.372  win  67.3%  n 52
+      Electronic Technology        0.261  win  68.5%  n 92
+      Energy Minerals              0.199  win  68.4%  n 38
+      Finance                      0.188  win  63.9%  n 133
+      Health Services              0.163  win  66.7%  n 12
+      Health Technology            0.146  win  58.2%  n 55
+      Industrial Services          0.170  win  70.0%  n 30
+      Non-Energy Minerals          0.338  win  71.4%  n 21
+      Process Industries           0.347  win  55.6%  n 9
+      Producer Manufacturing       0.427  win  84.8%  n 33
+      Retail Trade                -0.026  win  58.3%  n 24
+      Technology Services         -0.033  win  50.0%  n 64
+      Transportation               0.648  win  82.4%  n 17
+      Utilities                   -0.212  win  50.0%  n 20
+  uo
+      Commercial Services         -0.137  win  44.4%  n 18
+      Communications               0.820  win 100.0%  n 2
+      Consumer Durables           -0.326  win  50.0%  n 12
+      Consumer Non-Durables        0.494  win  63.6%  n 22
+      Consumer Services            0.395  win  62.5%  n 16
+      Distribution Services        0.644  win 100.0%  n 3
+      ETF                          0.412  win  70.0%  n 30
+      Electronic Technology        0.408  win  71.6%  n 74
+      Energy Minerals              0.369  win  73.7%  n 38
+      Finance                      0.172  win  64.9%  n 74
+      Health Services             -0.146  win  71.4%  n 7
+      Health Technology            0.030  win  50.0%  n 40
+      Industrial Services          0.345  win  68.8%  n 16
+      Non-Energy Minerals          0.716  win  76.9%  n 13
+      Process Industries          -0.310  win  50.0%  n 4
+      Producer Manufacturing       0.102  win  65.0%  n 20
+      Retail Trade                 0.119  win  65.2%  n 23
+      Technology Services         -0.270  win  50.0%  n 56
+      Transportation               0.474  win  70.0%  n 10
+      Utilities                    0.037  win  70.6%  n 17
+  stoch
+      Commercial Services         -0.045  win  55.1%  n 49
+      Communications              -0.108  win  40.7%  n 27
+      Consumer Durables           -0.006  win  58.5%  n 41
+      Consumer Non-Durables        0.321  win  59.2%  n 98
+      Consumer Services            0.236  win  60.3%  n 78
+      Distribution Services        0.215  win  72.2%  n 36
+      ETF                          0.408  win  71.3%  n 129
+      Electronic Technology        0.185  win  64.5%  n 330
+      Energy Minerals              0.184  win  62.3%  n 162
+      Finance                      0.177  win  61.6%  n 435
+      Health Services              0.343  win  71.8%  n 39
+      Health Technology            0.167  win  55.7%  n 194
+      Industrial Services          0.229  win  62.4%  n 93
+      Non-Energy Minerals          0.009  win  51.1%  n 94
+      Process Industries           0.352  win  76.7%  n 30
+      Producer Manufacturing       0.133  win  60.1%  n 153
+      Retail Trade                 0.129  win  65.7%  n 105
+      Technology Services          0.003  win  56.3%  n 215
+      Transportation               0.431  win  65.9%  n 88
+      Utilities                    0.109  win  58.8%  n 68
+  bb_revert
+      Commercial Services         -0.014  win  55.6%  n 54
+      Communications              -0.148  win  37.9%  n 29
+      Consumer Durables           -0.000  win  60.0%  n 30
+      Consumer Non-Durables        0.318  win  63.5%  n 104
+      Consumer Services            0.109  win  59.8%  n 97
+      Distribution Services        0.249  win  70.0%  n 30
+      ETF                          0.195  win  57.8%  n 192
+      Electronic Technology        0.107  win  60.7%  n 333
+      Energy Minerals              0.100  win  60.0%  n 160
+      Finance                      0.119  win  58.5%  n 504
+      Health Services              0.236  win  66.0%  n 53
+      Health Technology            0.109  win  57.2%  n 208
+      Industrial Services          0.211  win  65.0%  n 117
+      Non-Energy Minerals          0.254  win  62.2%  n 82
+      Process Industries           0.238  win  60.6%  n 33
+      Producer Manufacturing       0.118  win  62.9%  n 143
+      Retail Trade                 0.128  win  60.6%  n 104
+      Technology Services          0.002  win  53.6%  n 194
+      Transportation               0.388  win  68.2%  n 88
+      Utilities                    0.060  win  57.0%  n 79
+  rsi2
+      Commercial Services          0.098  win  60.0%  n 35
+      Communications               0.003  win  46.7%  n 15
+      Consumer Durables           -0.098  win  47.8%  n 23
+      Consumer Non-Durables        0.104  win  49.1%  n 57
+      Consumer Services            0.259  win  57.1%  n 70
+      Distribution Services       -0.097  win  55.3%  n 47
+      ETF                          0.355  win  64.1%  n 142
+      Electronic Technology        0.052  win  54.9%  n 266
+      Energy Minerals              0.412  win  65.1%  n 106
+      Finance                      0.088  win  56.8%  n 389
+      Health Services              0.113  win  56.3%  n 32
+      Health Technology            0.057  win  53.4%  n 148
+      Industrial Services          0.148  win  63.8%  n 94
+      Non-Energy Minerals          0.066  win  53.2%  n 79
+      Process Industries           0.360  win  62.1%  n 29
+      Producer Manufacturing      -0.067  win  46.2%  n 119
+      Retail Trade                 0.049  win  59.1%  n 115
+      Technology Services          0.036  win  52.3%  n 199
+      Transportation               0.030  win  50.0%  n 68
+      Utilities                    0.394  win  64.4%  n 59
+  stochrsi
+      Commercial Services          0.099  win  58.8%  n 97
+      Communications               0.085  win  52.4%  n 42
+      Consumer Durables            0.032  win  53.4%  n 58
+      Consumer Non-Durables        0.146  win  53.9%  n 154
+      Consumer Services            0.077  win  53.7%  n 147
+      Distribution Services        0.281  win  72.7%  n 77
+      ETF                          0.170  win  59.4%  n 276
+      Electronic Technology        0.083  win  57.7%  n 612
+      Energy Minerals              0.149  win  57.4%  n 249
+      Finance                      0.099  win  57.2%  n 807
+      Health Services              0.115  win  58.1%  n 74
+      Health Technology            0.097  win  53.7%  n 367
+      Industrial Services          0.166  win  62.1%  n 198
+      Non-Energy Minerals         -0.086  win  46.1%  n 167
+      Process Industries           0.277  win  69.6%  n 56
+      Producer Manufacturing       0.066  win  57.2%  n 264
+      Retail Trade                 0.027  win  61.5%  n 208
+      Technology Services         -0.016  win  54.4%  n 390
+      Transportation               0.185  win  58.0%  n 143
+      Utilities                    0.194  win  63.7%  n 146
+  cci
+      Commercial Services          0.080  win  58.3%  n 84
+      Communications              -0.103  win  42.2%  n 45
+      Consumer Durables           -0.063  win  52.5%  n 61
+      Consumer Non-Durables        0.162  win  53.6%  n 151
+      Consumer Services            0.095  win  56.5%  n 131
+      Distribution Services        0.433  win  75.5%  n 49
+      ETF                          0.076  win  56.3%  n 263
+      Electronic Technology        0.093  win  58.0%  n 536
+      Energy Minerals              0.050  win  55.4%  n 233
+      Finance                      0.043  win  56.1%  n 785
+      Health Services              0.279  win  65.2%  n 66
+      Health Technology            0.114  win  57.3%  n 337
+      Industrial Services          0.181  win  65.3%  n 176
+      Non-Energy Minerals          0.131  win  60.7%  n 135
+      Process Industries           0.272  win  68.5%  n 54
+      Producer Manufacturing       0.073  win  61.1%  n 239
+      Retail Trade                 0.053  win  63.9%  n 158
+      Technology Services          0.039  win  55.1%  n 325
+      Transportation               0.126  win  58.6%  n 140
+      Utilities                    0.044  win  57.4%  n 136
+  mfi
+      Commercial Services         -0.463  win  30.0%  n 10
+      Communications              -0.194  win  45.5%  n 11
+      Consumer Durables           -0.101  win  45.5%  n 11
+      Consumer Non-Durables        0.808  win  80.0%  n 10
+      Consumer Services            0.231  win  50.0%  n 24
+      Distribution Services       -0.003  win  50.0%  n 6
+      ETF                          0.346  win  64.5%  n 31
+      Electronic Technology        0.044  win  52.3%  n 44
+      Energy Minerals              0.074  win  63.6%  n 22
+      Finance                      0.013  win  52.2%  n 69
+      Health Services              0.266  win  71.4%  n 14
+      Health Technology            0.314  win  60.9%  n 46
+      Industrial Services          0.688  win  85.0%  n 20
+      Non-Energy Minerals         -0.121  win  54.2%  n 24
+      Process Industries           0.077  win  44.4%  n 9
+      Producer Manufacturing      -0.512  win  30.0%  n 20
+      Retail Trade                -0.154  win  52.4%  n 21
+      Technology Services         -0.177  win  51.9%  n 54
+      Transportation               0.484  win  73.7%  n 19
+      Utilities                    0.371  win  60.0%  n 10
+  willr
+      Commercial Services          0.015  win  57.3%  n 103
+      Communications               0.034  win  53.7%  n 54
+      Consumer Durables           -0.023  win  55.1%  n 69
+      Consumer Non-Durables        0.089  win  53.4%  n 189
+      Consumer Services            0.094  win  56.0%  n 168
+      Distribution Services        0.307  win  70.9%  n 79
+      ETF                          0.087  win  54.8%  n 323
+      Electronic Technology        0.090  win  57.9%  n 658
+      Energy Minerals              0.009  win  50.0%  n 300
+      Finance                      0.070  win  55.2%  n 969
+      Health Services              0.287  win  66.3%  n 83
+      Health Technology            0.116  win  56.5%  n 414
+      Industrial Services          0.105  win  60.3%  n 229
+      Non-Energy Minerals          0.080  win  56.1%  n 189
+      Process Industries           0.204  win  63.5%  n 63
+      Producer Manufacturing       0.025  win  56.0%  n 309
+      Retail Trade                -0.010  win  57.2%  n 229
+      Technology Services         -0.015  win  55.0%  n 424
+      Transportation               0.145  win  57.3%  n 164
+      Utilities                    0.102  win  58.6%  n 174
+  tsmom
+      Commercial Services          0.376  win  75.0%  n 32
+      Communications               0.178  win  50.0%  n 24
+      Consumer Durables           -0.125  win  43.2%  n 37
+      Consumer Non-Durables       -0.038  win  51.4%  n 107
+      Consumer Services            0.058  win  57.7%  n 97
+      Distribution Services       -0.127  win  61.1%  n 36
+      ETF                          0.260  win  64.4%  n 163
+      Electronic Technology        0.038  win  55.1%  n 350
+      Energy Minerals             -0.033  win  51.9%  n 133
+      Finance                      0.081  win  57.4%  n 469
+      Health Services              0.125  win  58.9%  n 56
+      Health Technology            0.011  win  51.9%  n 216
+      Industrial Services          0.098  win  55.3%  n 114
+      Non-Energy Minerals         -0.020  win  49.5%  n 95
+      Process Industries           0.023  win  54.3%  n 35
+      Producer Manufacturing       0.028  win  52.3%  n 155
+      Retail Trade                -0.004  win  56.7%  n 97
+      Technology Services          0.140  win  57.7%  n 175
+      Transportation               0.123  win  54.4%  n 90
+      Utilities                   -0.032  win  53.4%  n 103
+  cmf
+      Commercial Services          0.063  win  60.8%  n 74
+      Communications              -0.130  win  40.0%  n 40
+      Consumer Durables           -0.008  win  50.0%  n 62
+      Consumer Non-Durables        0.100  win  53.5%  n 129
+      Consumer Services           -0.011  win  52.2%  n 134
+      Distribution Services        0.093  win  57.7%  n 71
+      ETF                          0.047  win  57.0%  n 235
+      Electronic Technology        0.027  win  55.6%  n 556
+      Energy Minerals             -0.018  win  50.0%  n 220
+      Finance                     -0.022  win  53.5%  n 753
+      Health Services              0.171  win  59.3%  n 59
+      Health Technology            0.094  win  55.8%  n 310
+      Industrial Services         -0.033  win  51.4%  n 181
+      Non-Energy Minerals         -0.009  win  51.7%  n 145
+      Process Industries           0.312  win  66.0%  n 50
+      Producer Manufacturing       0.161  win  59.5%  n 232
+      Retail Trade                 0.171  win  66.5%  n 185
+      Technology Services          0.021  win  54.0%  n 335
+      Transportation               0.074  win  53.2%  n 126
+      Utilities                    0.050  win  56.6%  n 129
+  ema_20_50
+      Commercial Services          0.267  win  73.3%  n 15
+      Communications              -0.127  win  42.9%  n 14
+      Consumer Durables           -0.006  win  44.4%  n 18
+      Consumer Non-Durables       -0.261  win  38.8%  n 49
+      Consumer Services            0.036  win  60.5%  n 43
+      Distribution Services       -0.494  win  35.7%  n 14
+      ETF                          0.192  win  60.5%  n 76
+      Electronic Technology        0.034  win  56.5%  n 168
+      Energy Minerals             -0.081  win  48.4%  n 62
+      Finance                      0.092  win  59.5%  n 200
+      Health Services              0.092  win  64.0%  n 25
+      Health Technology           -0.079  win  46.5%  n 99
+      Industrial Services          0.095  win  65.2%  n 46
+      Non-Energy Minerals         -0.090  win  50.0%  n 54
+      Process Industries          -0.057  win  35.7%  n 14
+      Producer Manufacturing       0.104  win  61.0%  n 82
+      Retail Trade                -0.111  win  47.6%  n 42
+      Technology Services          0.208  win  63.5%  n 74
+      Transportation               0.018  win  52.2%  n 46
+      Utilities                    0.018  win  57.8%  n 45
+  trix
+      Commercial Services          0.547  win  83.3%  n 18
+      Communications              -0.359  win  28.6%  n 14
+      Consumer Durables            0.713  win  75.0%  n 16
+      Consumer Non-Durables       -0.237  win  37.7%  n 53
+      Consumer Services           -0.112  win  51.2%  n 43
+      Distribution Services       -0.526  win  38.5%  n 13
+      ETF                          0.066  win  57.7%  n 78
+      Electronic Technology        0.074  win  56.3%  n 174
+      Energy Minerals             -0.130  win  47.0%  n 66
+      Finance                      0.044  win  57.0%  n 223
+      Health Services             -0.153  win  42.3%  n 26
+      Health Technology           -0.061  win  48.5%  n 103
+      Industrial Services          0.035  win  56.6%  n 53
+      Non-Energy Minerals         -0.244  win  38.6%  n 44
+      Process Industries           0.071  win  62.5%  n 16
+      Producer Manufacturing       0.143  win  57.6%  n 85
+      Retail Trade                -0.004  win  52.2%  n 46
+      Technology Services          0.146  win  59.5%  n 79
+      Transportation               0.082  win  54.8%  n 42
+      Utilities                    0.106  win  59.5%  n 42
+  aroon
+      Commercial Services          0.170  win  65.0%  n 80
+      Communications              -0.167  win  39.5%  n 43
+      Consumer Durables           -0.110  win  54.4%  n 57
+      Consumer Non-Durables       -0.130  win  43.6%  n 149
+      Consumer Services            0.070  win  56.9%  n 130
+      Distribution Services        0.140  win  70.0%  n 70
+      ETF                         -0.007  win  54.0%  n 285
+      Electronic Technology        0.068  win  58.1%  n 537
+      Energy Minerals             -0.081  win  47.1%  n 225
+      Finance                      0.061  win  58.3%  n 777
+      Health Services             -0.067  win  47.1%  n 70
+      Health Technology            0.043  win  54.5%  n 341
+      Industrial Services         -0.024  win  53.8%  n 199
+      Non-Energy Minerals          0.026  win  52.9%  n 138
+      Process Industries          -0.076  win  50.0%  n 62
+      Producer Manufacturing       0.008  win  54.5%  n 235
+      Retail Trade                 0.116  win  60.0%  n 185
+      Technology Services          0.087  win  60.4%  n 321
+      Transportation              -0.053  win  47.8%  n 136
+      Utilities                   -0.224  win  43.7%  n 158
+  macd_zero
+      Commercial Services          0.229  win  63.4%  n 41
+      Communications              -0.253  win  47.6%  n 21
+      Consumer Durables           -0.299  win  39.4%  n 33
+      Consumer Non-Durables       -0.210  win  42.0%  n 100
+      Consumer Services           -0.107  win  48.6%  n 74
+      Distribution Services        0.047  win  58.1%  n 31
+      ETF                          0.043  win  55.5%  n 128
+      Electronic Technology       -0.027  win  52.0%  n 304
+      Energy Minerals              0.004  win  50.8%  n 118
+      Finance                      0.036  win  57.7%  n 383
+      Health Services              0.038  win  56.1%  n 41
+      Health Technology            0.059  win  54.4%  n 193
+      Industrial Services          0.065  win  60.4%  n 96
+      Non-Energy Minerals         -0.032  win  51.3%  n 78
+      Process Industries           0.001  win  55.9%  n 34
+      Producer Manufacturing       0.029  win  60.3%  n 136
+      Retail Trade                 0.123  win  63.1%  n 84
+      Technology Services          0.242  win  65.8%  n 158
+      Transportation               0.081  win  49.4%  n 79
+      Utilities                   -0.201  win  46.3%  n 80
+  price_ma
+      Commercial Services          0.116  win  58.3%  n 60
+      Communications               0.033  win  46.9%  n 32
+      Consumer Durables           -0.140  win  51.9%  n 52
+      Consumer Non-Durables       -0.152  win  42.4%  n 151
+      Consumer Services            0.064  win  54.3%  n 116
+      Distribution Services        0.002  win  56.1%  n 57
+      ETF                          0.094  win  57.9%  n 228
+      Electronic Technology       -0.006  win  54.8%  n 482
+      Energy Minerals             -0.038  win  50.0%  n 186
+      Finance                      0.013  win  55.2%  n 679
+      Health Services             -0.038  win  47.7%  n 65
+      Health Technology            0.072  win  55.1%  n 314
+      Industrial Services          0.004  win  54.4%  n 169
+      Non-Energy Minerals         -0.077  win  47.5%  n 122
+      Process Industries           0.129  win  55.2%  n 58
+      Producer Manufacturing      -0.038  win  55.5%  n 229
+      Retail Trade                 0.118  win  61.0%  n 154
+      Technology Services          0.136  win  59.3%  n 270
+      Transportation              -0.019  win  49.2%  n 132
+      Utilities                   -0.045  win  51.5%  n 130
+  hma
+      Commercial Services          0.056  win  58.0%  n 169
+      Communications              -0.053  win  45.2%  n 84
+      Consumer Durables            0.024  win  54.2%  n 118
+      Consumer Non-Durables        0.066  win  51.7%  n 288
+      Consumer Services            0.054  win  51.9%  n 266
+      Distribution Services        0.093  win  61.4%  n 140
+      ETF                          0.044  win  56.2%  n 562
+      Electronic Technology       -0.009  win  55.3%  n 1175
+      Energy Minerals              0.001  win  49.0%  n 473
+      Finance                      0.037  win  55.3%  n 1609
+      Health Services             -0.067  win  49.3%  n 146
+      Health Technology            0.002  win  51.1%  n 696
+      Industrial Services          0.047  win  55.8%  n 387
+      Non-Energy Minerals         -0.030  win  50.0%  n 294
+      Process Industries          -0.079  win  50.8%  n 118
+      Producer Manufacturing      -0.014  win  54.1%  n 512
+      Retail Trade                -0.038  win  57.6%  n 389
+      Technology Services         -0.000  win  54.9%  n 718
+      Transportation               0.095  win  56.0%  n 250
+      Utilities                    0.014  win  55.9%  n 299
+  vortex
+      Commercial Services          0.087  win  61.9%  n 84
+      Communications               0.062  win  50.0%  n 44
+      Consumer Durables           -0.173  win  50.0%  n 62
+      Consumer Non-Durables       -0.125  win  46.2%  n 158
+      Consumer Services            0.053  win  54.5%  n 143
+      Distribution Services        0.098  win  65.8%  n 76
+      ETF                          0.112  win  59.7%  n 300
+      Electronic Technology       -0.032  win  54.0%  n 606
+      Energy Minerals             -0.093  win  43.0%  n 258
+      Finance                      0.075  win  58.2%  n 863
+      Health Services             -0.142  win  44.2%  n 86
+      Health Technology            0.032  win  55.7%  n 377
+      Industrial Services         -0.092  win  49.8%  n 223
+      Non-Energy Minerals          0.070  win  55.0%  n 151
+      Process Industries          -0.033  win  47.8%  n 69
+      Producer Manufacturing      -0.021  win  51.5%  n 262
+      Retail Trade                 0.090  win  59.4%  n 202
+      Technology Services          0.090  win  58.4%  n 356
+      Transportation              -0.037  win  49.3%  n 150
+      Utilities                   -0.239  win  45.6%  n 171
+  ichimoku
+      Commercial Services          0.261  win  68.4%  n 38
+      Communications               0.112  win  64.0%  n 25
+      Consumer Durables            0.020  win  45.7%  n 35
+      Consumer Non-Durables       -0.221  win  43.1%  n 109
+      Consumer Services           -0.125  win  52.1%  n 94
+      Distribution Services        0.035  win  62.9%  n 35
+      ETF                          0.003  win  53.0%  n 164
+      Electronic Technology        0.052  win  58.3%  n 333
+      Energy Minerals             -0.131  win  43.1%  n 130
+      Finance                      0.001  win  54.9%  n 448
+      Health Services             -0.069  win  50.9%  n 53
+      Health Technology           -0.013  win  52.5%  n 221
+      Industrial Services          0.017  win  55.8%  n 113
+      Non-Energy Minerals         -0.103  win  48.0%  n 98
+      Process Industries           0.088  win  51.4%  n 37
+      Producer Manufacturing      -0.045  win  53.5%  n 159
+      Retail Trade                 0.074  win  61.6%  n 99
+      Technology Services          0.166  win  61.7%  n 188
+      Transportation               0.160  win  59.1%  n 88
+      Utilities                   -0.106  win  48.9%  n 92
+  adx_di
+      Commercial Services          0.069  win  59.5%  n 42
+      Communications              -0.017  win  50.0%  n 16
+      Consumer Durables           -0.052  win  48.0%  n 25
+      Consumer Non-Durables       -0.106  win  44.6%  n 65
+      Consumer Services            0.090  win  56.5%  n 69
+      Distribution Services        0.296  win  68.6%  n 35
+      ETF                          0.026  win  58.7%  n 126
+      Electronic Technology       -0.001  win  58.5%  n 260
+      Energy Minerals              0.078  win  51.6%  n 91
+      Finance                     -0.024  win  55.9%  n 365
+      Health Services             -0.306  win  34.4%  n 32
+      Health Technology            0.008  win  52.5%  n 158
+      Industrial Services         -0.075  win  52.6%  n 78
+      Non-Energy Minerals         -0.048  win  51.7%  n 60
+      Process Industries           0.206  win  54.5%  n 33
+      Producer Manufacturing      -0.114  win  54.3%  n 116
+      Retail Trade                -0.044  win  58.2%  n 91
+      Technology Services          0.077  win  59.8%  n 169
+      Transportation               0.148  win  56.9%  n 58
+      Utilities                   -0.189  win  43.6%  n 55
+  supertrend
+      Commercial Services          0.126  win  56.8%  n 37
+      Communications               0.014  win  55.6%  n 18
+      Consumer Durables           -0.291  win  40.0%  n 30
+      Consumer Non-Durables       -0.213  win  39.7%  n 73
+      Consumer Services           -0.064  win  49.2%  n 65
+      Distribution Services       -0.215  win  54.8%  n 31
+      ETF                          0.194  win  64.0%  n 125
+      Electronic Technology        0.040  win  55.6%  n 277
+      Energy Minerals             -0.142  win  43.6%  n 101
+      Finance                      0.115  win  61.2%  n 345
+      Health Services             -0.141  win  50.0%  n 38
+      Health Technology            0.050  win  53.2%  n 154
+      Industrial Services         -0.099  win  53.5%  n 86
+      Non-Energy Minerals         -0.039  win  53.6%  n 69
+      Process Industries           0.009  win  46.4%  n 28
+      Producer Manufacturing      -0.182  win  50.0%  n 128
+      Retail Trade                -0.077  win  53.9%  n 89
+      Technology Services          0.112  win  59.4%  n 165
+      Transportation               0.056  win  56.1%  n 66
+      Utilities                   -0.346  win  34.5%  n 58
+  momentum
+      Commercial Services          0.009  win  56.3%  n 119
+      Communications              -0.009  win  43.3%  n 60
+      Consumer Durables            0.018  win  51.9%  n 79
+      Consumer Non-Durables       -0.013  win  49.5%  n 214
+      Consumer Services            0.053  win  56.8%  n 192
+      Distribution Services       -0.024  win  60.4%  n 101
+      ETF                          0.016  win  54.6%  n 410
+      Electronic Technology       -0.006  win  55.4%  n 794
+      Energy Minerals             -0.086  win  49.4%  n 348
+      Finance                     -0.006  win  54.2%  n 1156
+      Health Services             -0.059  win  49.1%  n 114
+      Health Technology           -0.030  win  51.2%  n 500
+      Industrial Services          0.018  win  54.8%  n 290
+      Non-Energy Minerals          0.120  win  57.0%  n 193
+      Process Industries           0.105  win  54.5%  n 88
+      Producer Manufacturing      -0.051  win  53.5%  n 359
+      Retail Trade                 0.043  win  57.8%  n 268
+      Technology Services          0.043  win  54.3%  n 473
+      Transportation               0.052  win  48.4%  n 186
+      Utilities                   -0.206  win  47.2%  n 218
+  obv
+      Commercial Services          0.011  win  56.3%  n 103
+      Communications               0.017  win  46.7%  n 60
+      Consumer Durables           -0.095  win  46.1%  n 76
+      Consumer Non-Durables       -0.068  win  47.4%  n 194
+      Consumer Services           -0.054  win  48.6%  n 185
+      Distribution Services        0.068  win  63.0%  n 92
+      ETF                         -0.012  win  54.2%  n 369
+      Electronic Technology       -0.016  win  54.2%  n 747
+      Energy Minerals             -0.020  win  50.5%  n 317
+      Finance                     -0.006  win  54.4%  n 1035
+      Health Services              0.038  win  52.5%  n 101
+      Health Technology            0.012  win  53.1%  n 450
+      Industrial Services          0.005  win  55.3%  n 253
+      Non-Energy Minerals          0.065  win  54.4%  n 195
+      Process Industries           0.119  win  58.8%  n 68
+      Producer Manufacturing      -0.042  win  51.5%  n 336
+      Retail Trade                -0.038  win  56.3%  n 247
+      Technology Services          0.024  win  54.9%  n 452
+      Transportation              -0.006  win  52.2%  n 182
+      Utilities                   -0.086  win  51.7%  n 207
+  rsi_50
+      Commercial Services          0.090  win  60.0%  n 80
+      Communications               0.098  win  51.0%  n 49
+      Consumer Durables           -0.184  win  45.5%  n 66
+      Consumer Non-Durables       -0.086  win  47.8%  n 182
+      Consumer Services           -0.011  win  51.0%  n 153
+      Distribution Services       -0.016  win  61.6%  n 86
+      ETF                          0.054  win  56.8%  n 310
+      Electronic Technology       -0.006  win  55.8%  n 627
+      Energy Minerals             -0.038  win  48.0%  n 271
+      Finance                     -0.032  win  54.0%  n 916
+      Health Services             -0.086  win  41.8%  n 91
+      Health Technology           -0.011  win  50.2%  n 408
+      Industrial Services          0.013  win  54.5%  n 224
+      Non-Energy Minerals          0.028  win  51.3%  n 158
+      Process Industries           0.083  win  52.6%  n 76
+      Producer Manufacturing      -0.050  win  54.1%  n 294
+      Retail Trade                 0.020  win  56.9%  n 211
+      Technology Services          0.085  win  57.3%  n 372
+      Transportation              -0.011  win  47.9%  n 169
+      Utilities                   -0.139  win  47.7%  n 176
+  macd_signal
+      Commercial Services          0.076  win  56.8%  n 95
+      Communications              -0.133  win  37.5%  n 48
+      Consumer Durables           -0.335  win  37.5%  n 64
+      Consumer Non-Durables       -0.026  win  52.8%  n 176
+      Consumer Services            0.021  win  53.2%  n 158
+      Distribution Services       -0.098  win  54.4%  n 90
+      ETF                          0.038  win  56.8%  n 324
+      Electronic Technology        0.030  win  56.9%  n 649
+      Energy Minerals             -0.090  win  48.4%  n 277
+      Finance                     -0.024  win  53.9%  n 945
+      Health Services              0.060  win  61.8%  n 89
+      Health Technology           -0.067  win  51.9%  n 399
+      Industrial Services         -0.017  win  52.6%  n 228
+      Non-Energy Minerals          0.211  win  58.9%  n 158
+      Process Industries          -0.071  win  46.5%  n 71
+      Producer Manufacturing      -0.007  win  55.7%  n 287
+      Retail Trade                 0.000  win  56.2%  n 235
+      Technology Services          0.058  win  55.5%  n 400
+      Transportation              -0.014  win  46.5%  n 155
+      Utilities                   -0.294  win  41.6%  n 197
+  ao
+      Commercial Services          0.233  win  70.5%  n 44
+      Communications               0.012  win  54.2%  n 24
+      Consumer Durables           -0.278  win  42.9%  n 42
+      Consumer Non-Durables       -0.292  win  36.6%  n 112
+      Consumer Services           -0.086  win  48.2%  n 85
+      Distribution Services        0.067  win  60.5%  n 43
+      ETF                         -0.004  win  57.0%  n 179
+      Electronic Technology       -0.045  win  53.6%  n 366
+      Energy Minerals             -0.011  win  49.7%  n 143
+      Finance                     -0.004  win  53.4%  n 487
+      Health Services             -0.164  win  51.1%  n 47
+      Health Technology            0.078  win  54.1%  n 233
+      Industrial Services         -0.099  win  53.4%  n 133
+      Non-Energy Minerals         -0.149  win  48.3%  n 89
+      Process Industries          -0.060  win  45.0%  n 40
+      Producer Manufacturing      -0.090  win  49.7%  n 165
+      Retail Trade                 0.194  win  66.1%  n 109
+      Technology Services          0.163  win  61.8%  n 212
+      Transportation               0.016  win  52.6%  n 95
+      Utilities                   -0.276  win  45.4%  n 97
+  psar
+      Commercial Services         -0.025  win  49.6%  n 123
+      Communications               0.023  win  48.3%  n 60
+      Consumer Durables           -0.028  win  52.5%  n 80
+      Consumer Non-Durables       -0.037  win  51.7%  n 201
+      Consumer Services           -0.053  win  48.9%  n 188
+      Distribution Services        0.023  win  59.6%  n 99
+      ETF                         -0.017  win  54.8%  n 394
+      Electronic Technology        0.025  win  56.7%  n 799
+      Energy Minerals             -0.102  win  45.4%  n 324
+      Finance                     -0.012  win  55.1%  n 1117
+      Health Services             -0.045  win  51.0%  n 104
+      Health Technology            0.028  win  52.6%  n 479
+      Industrial Services         -0.066  win  50.2%  n 283
+      Non-Energy Minerals          0.046  win  52.2%  n 203
+      Process Industries          -0.028  win  52.4%  n 82
+      Producer Manufacturing      -0.087  win  52.9%  n 365
+      Retail Trade                -0.025  win  57.0%  n 272
+      Technology Services         -0.060  win  51.9%  n 493
+      Transportation              -0.054  win  46.1%  n 180
+      Utilities                   -0.133  win  46.6%  n 221
+  ma_cross
+      Commercial Services          0.241  win  62.9%  n 35
+      Communications              -0.188  win  50.0%  n 18
+      Consumer Durables           -0.020  win  50.0%  n 28
+      Consumer Non-Durables       -0.185  win  38.4%  n 86
+      Consumer Services           -0.129  win  45.6%  n 68
+      Distribution Services       -0.324  win  55.2%  n 29
+      ETF                          0.112  win  61.9%  n 113
+      Electronic Technology       -0.063  win  49.6%  n 266
+      Energy Minerals             -0.096  win  46.6%  n 103
+      Finance                     -0.009  win  54.1%  n 344
+      Health Services             -0.244  win  40.5%  n 37
+      Health Technology            0.098  win  54.1%  n 172
+      Industrial Services         -0.233  win  43.8%  n 89
+      Non-Energy Minerals         -0.140  win  44.9%  n 69
+      Process Industries          -0.053  win  43.8%  n 32
+      Producer Manufacturing      -0.062  win  54.1%  n 122
+      Retail Trade                 0.002  win  52.0%  n 75
+      Technology Services          0.204  win  62.6%  n 147
+      Transportation               0.040  win  49.3%  n 69
+      Utilities                   -0.243  win  48.6%  n 74
+  tv_rating
+      Commercial Services         -0.031  win  55.6%  n 126
+      Communications              -0.038  win  46.8%  n 47
+      Consumer Durables            0.042  win  46.8%  n 77
+      Consumer Non-Durables       -0.169  win  44.6%  n 204
+      Consumer Services           -0.037  win  52.9%  n 174
+      Distribution Services       -0.137  win  53.8%  n 119
+      ETF                         -0.075  win  52.4%  n 454
+      Electronic Technology       -0.014  win  53.3%  n 932
+      Energy Minerals             -0.053  win  46.2%  n 275
+      Finance                     -0.089  win  50.2%  n 1203
+      Health Services             -0.119  win  51.4%  n 105
+      Health Technology           -0.086  win  47.3%  n 493
+      Industrial Services         -0.123  win  48.6%  n 282
+      Non-Energy Minerals         -0.076  win  48.1%  n 212
+      Process Industries          -0.167  win  41.8%  n 91
+      Producer Manufacturing      -0.054  win  52.1%  n 401
+      Retail Trade                -0.071  win  55.2%  n 308
+      Technology Services         -0.031  win  53.4%  n 547
+      Transportation              -0.125  win  44.8%  n 183
+      Utilities                   -0.128  win  48.4%  n 223
+  donchian20
+      Commercial Services         -0.106  win  46.5%  n 99
+      Communications               0.031  win  52.8%  n 36
+      Consumer Durables            0.029  win  52.0%  n 50
+      Consumer Non-Durables       -0.221  win  41.5%  n 135
+      Consumer Services           -0.154  win  48.3%  n 143
+      Distribution Services       -0.246  win  51.2%  n 84
+      ETF                         -0.092  win  53.9%  n 319
+      Electronic Technology       -0.035  win  52.8%  n 669
+      Energy Minerals             -0.015  win  47.8%  n 209
+      Finance                     -0.056  win  51.3%  n 872
+      Health Services             -0.065  win  58.6%  n 70
+      Health Technology           -0.092  win  48.7%  n 337
+      Industrial Services         -0.110  win  53.6%  n 224
+      Non-Energy Minerals         -0.107  win  46.8%  n 156
+      Process Industries          -0.283  win  40.3%  n 67
+      Producer Manufacturing      -0.114  win  48.8%  n 289
+      Retail Trade                -0.140  win  50.0%  n 226
+      Technology Services         -0.003  win  51.9%  n 401
+      Transportation              -0.117  win  44.7%  n 114
+      Utilities                   -0.130  win  50.0%  n 154
+  donchian55
+      Commercial Services         -0.039  win  52.6%  n 78
+      Communications               0.073  win  50.0%  n 24
+      Consumer Durables            0.334  win  63.6%  n 33
+      Consumer Non-Durables       -0.099  win  47.3%  n 91
+      Consumer Services           -0.117  win  46.9%  n 96
+      Distribution Services       -0.329  win  45.2%  n 73
+      ETF                         -0.099  win  53.7%  n 259
+      Electronic Technology       -0.070  win  51.3%  n 536
+      Energy Minerals             -0.007  win  47.1%  n 140
+      Finance                     -0.087  win  48.7%  n 661
+      Health Services             -0.189  win  53.8%  n 52
+      Health Technology           -0.156  win  47.1%  n 259
+      Industrial Services         -0.127  win  48.9%  n 174
+      Non-Energy Minerals          0.110  win  52.9%  n 104
+      Process Industries          -0.293  win  41.8%  n 55
+      Producer Manufacturing      -0.018  win  50.5%  n 216
+      Retail Trade                -0.174  win  48.1%  n 185
+      Technology Services         -0.010  win  52.3%  n 331
+      Transportation              -0.189  win  42.9%  n 84
+      Utilities                   -0.211  win  45.4%  n 119
+  bb_break
+      Commercial Services         -0.067  win  48.1%  n 77
+      Communications               0.126  win  51.6%  n 31
+      Consumer Durables           -0.039  win  51.1%  n 47
+      Consumer Non-Durables       -0.227  win  38.5%  n 104
+      Consumer Services           -0.126  win  48.7%  n 115
+      Distribution Services       -0.348  win  47.9%  n 71
+      ETF                         -0.179  win  47.8%  n 224
+      Electronic Technology       -0.042  win  52.5%  n 549
+      Energy Minerals             -0.025  win  47.1%  n 170
+      Finance                     -0.069  win  49.9%  n 686
+      Health Services             -0.092  win  57.9%  n 57
+      Health Technology           -0.113  win  46.8%  n 282
+      Industrial Services         -0.051  win  54.2%  n 168
+      Non-Energy Minerals         -0.022  win  50.7%  n 134
+      Process Industries          -0.428  win  35.4%  n 48
+      Producer Manufacturing      -0.028  win  50.4%  n 228
+      Retail Trade                -0.122  win  52.3%  n 176
+      Technology Services         -0.059  win  49.5%  n 329
+      Transportation              -0.189  win  41.2%  n 97
+      Utilities                   -0.098  win  51.5%  n 134
+  keltner_break
+      Commercial Services         -0.001  win  55.1%  n 69
+      Communications               0.017  win  52.6%  n 19
+      Consumer Durables            0.076  win  51.2%  n 41
+      Consumer Non-Durables       -0.308  win  37.9%  n 87
+      Consumer Services           -0.089  win  48.8%  n 80
+      Distribution Services       -0.471  win  35.7%  n 56
+      ETF                         -0.186  win  49.0%  n 208
+      Electronic Technology       -0.067  win  51.5%  n 480
+      Energy Minerals              0.068  win  52.9%  n 140
+      Finance                     -0.162  win  46.6%  n 588
+      Health Services             -0.181  win  55.8%  n 43
+      Health Technology           -0.112  win  47.1%  n 210
+      Industrial Services         -0.154  win  49.6%  n 137
+      Non-Energy Minerals          0.087  win  52.9%  n 102
+      Process Industries          -0.291  win  35.0%  n 40
+      Producer Manufacturing      -0.070  win  50.8%  n 191
+      Retail Trade                -0.067  win  50.0%  n 156
+      Technology Services         -0.001  win  54.4%  n 298
+      Transportation              -0.186  win  46.1%  n 76
+      Utilities                   -0.098  win  47.2%  n 89
+
+Track C: median ΔSharpe by sector
+  ema_20_50
+      Commercial Services         -0.068  (6 sym)
+      Communications              -0.246  (3 sym)
+      Consumer Durables           -0.172  (4 sym)
+      Consumer Non-Durables       -0.205  (10 sym)
+      Consumer Services           -0.318  (10 sym)
+      Distribution Services       -0.029  (5 sym)
+      ETF                         -0.179  (20 sym)
+      Electronic Technology       -0.167  (41 sym)
+      Energy Minerals             -0.029  (16 sym)
+      Finance                     -0.185  (59 sym)
+      Health Services             -0.339  (5 sym)
+      Health Technology           -0.101  (24 sym)
+      Industrial Services         -0.053  (14 sym)
+      Non-Energy Minerals         -0.239  (10 sym)
+      Process Industries          -0.182  (4 sym)
+      Producer Manufacturing      -0.269  (18 sym)
+      Retail Trade                -0.112  (14 sym)
+      Technology Services         -0.081  (28 sym)
+      Transportation              -0.345  (10 sym)
+      Utilities                   -0.159  (11 sym)
+  tsmom
+      Commercial Services          0.116  (6 sym)
+      Communications              -0.103  (3 sym)
+      Consumer Durables           -0.249  (4 sym)
+      Consumer Non-Durables       -0.274  (10 sym)
+      Consumer Services           -0.305  (10 sym)
+      Distribution Services       -0.100  (5 sym)
+      ETF                         -0.169  (20 sym)
+      Electronic Technology       -0.207  (41 sym)
+      Energy Minerals             -0.047  (16 sym)
+      Finance                     -0.228  (59 sym)
+      Health Services             -0.359  (5 sym)
+      Health Technology           -0.188  (24 sym)
+      Industrial Services         -0.109  (14 sym)
+      Non-Energy Minerals         -0.192  (10 sym)
+      Process Industries          -0.332  (4 sym)
+      Producer Manufacturing      -0.247  (18 sym)
+      Retail Trade                -0.187  (14 sym)
+      Technology Services         -0.099  (28 sym)
+      Transportation              -0.235  (10 sym)
+      Utilities                   -0.341  (11 sym)
+  supertrend
+      Commercial Services         -0.169  (6 sym)
+      Communications              -0.232  (3 sym)
+      Consumer Durables           -0.254  (4 sym)
+      Consumer Non-Durables       -0.250  (10 sym)
+      Consumer Services           -0.254  (10 sym)
+      Distribution Services       -0.193  (5 sym)
+      ETF                         -0.160  (20 sym)
+      Electronic Technology       -0.256  (41 sym)
+      Energy Minerals             -0.161  (16 sym)
+      Finance                     -0.168  (59 sym)
+      Health Services             -0.327  (5 sym)
+      Health Technology           -0.216  (24 sym)
+      Industrial Services         -0.183  (14 sym)
+      Non-Energy Minerals         -0.288  (10 sym)
+      Process Industries          -0.322  (4 sym)
+      Producer Manufacturing      -0.337  (18 sym)
+      Retail Trade                -0.187  (14 sym)
+      Technology Services         -0.145  (28 sym)
+      Transportation              -0.361  (10 sym)
+      Utilities                   -0.169  (11 sym)
+  ma_cross
+      Commercial Services         -0.205  (6 sym)
+      Communications              -0.201  (3 sym)
+      Consumer Durables           -0.162  (4 sym)
+      Consumer Non-Durables       -0.367  (10 sym)
+      Consumer Services           -0.217  (10 sym)
+      Distribution Services       -0.241  (5 sym)
+      ETF                         -0.207  (20 sym)
+      Electronic Technology       -0.225  (41 sym)
+      Energy Minerals             -0.134  (16 sym)
+      Finance                     -0.217  (59 sym)
+      Health Services             -0.338  (5 sym)
+      Health Technology           -0.230  (24 sym)
+      Industrial Services         -0.151  (14 sym)
+      Non-Energy Minerals         -0.270  (10 sym)
+      Process Industries          -0.445  (4 sym)
+      Producer Manufacturing      -0.273  (18 sym)
+      Retail Trade                -0.203  (14 sym)
+      Technology Services         -0.109  (28 sym)
+      Transportation              -0.434  (10 sym)
+      Utilities                   -0.209  (11 sym)
+  ichimoku
+      Commercial Services         -0.169  (6 sym)
+      Communications              -0.080  (3 sym)
+      Consumer Durables           -0.126  (4 sym)
+      Consumer Non-Durables       -0.477  (10 sym)
+      Consumer Services           -0.302  (10 sym)
+      Distribution Services       -0.264  (5 sym)
+      ETF                         -0.175  (20 sym)
+      Electronic Technology       -0.222  (41 sym)
+      Energy Minerals             -0.086  (16 sym)
+      Finance                     -0.205  (59 sym)
+      Health Services             -0.245  (5 sym)
+      Health Technology           -0.278  (24 sym)
+      Industrial Services         -0.201  (14 sym)
+      Non-Energy Minerals         -0.385  (10 sym)
+      Process Industries          -0.345  (4 sym)
+      Producer Manufacturing      -0.357  (18 sym)
+      Retail Trade                -0.134  (14 sym)
+      Technology Services         -0.113  (28 sym)
+      Transportation              -0.313  (10 sym)
+      Utilities                   -0.266  (11 sym)
+  hma
+      Commercial Services         -0.179  (6 sym)
+      Communications              -0.420  (3 sym)
+      Consumer Durables           -0.157  (4 sym)
+      Consumer Non-Durables       -0.177  (10 sym)
+      Consumer Services           -0.123  (10 sym)
+      Distribution Services       -0.248  (5 sym)
+      ETF                         -0.276  (20 sym)
+      Electronic Technology       -0.286  (41 sym)
+      Energy Minerals             -0.174  (16 sym)
+      Finance                     -0.244  (59 sym)
+      Health Services             -0.205  (5 sym)
+      Health Technology           -0.313  (24 sym)
+      Industrial Services         -0.175  (14 sym)
+      Non-Energy Minerals         -0.180  (10 sym)
+      Process Industries          -0.442  (4 sym)
+      Producer Manufacturing      -0.318  (18 sym)
+      Retail Trade                -0.247  (14 sym)
+      Technology Services         -0.287  (28 sym)
+      Transportation              -0.075  (10 sym)
+      Utilities                   -0.072  (11 sym)
+  price_ma
+      Commercial Services         -0.148  (6 sym)
+      Communications              -0.139  (3 sym)
+      Consumer Durables           -0.258  (4 sym)
+      Consumer Non-Durables       -0.446  (10 sym)
+      Consumer Services           -0.314  (10 sym)
+      Distribution Services       -0.347  (5 sym)
+      ETF                         -0.198  (20 sym)
+      Electronic Technology       -0.212  (41 sym)
+      Energy Minerals             -0.062  (16 sym)
+      Finance                     -0.222  (59 sym)
+      Health Services             -0.329  (5 sym)
+      Health Technology           -0.247  (24 sym)
+      Industrial Services         -0.260  (14 sym)
+      Non-Energy Minerals         -0.267  (10 sym)
+      Process Industries          -0.381  (4 sym)
+      Producer Manufacturing      -0.364  (18 sym)
+      Retail Trade                -0.187  (14 sym)
+      Technology Services         -0.122  (28 sym)
+      Transportation              -0.347  (10 sym)
+      Utilities                   -0.353  (11 sym)
+  macd_zero
+      Commercial Services         -0.296  (6 sym)
+      Communications              -0.237  (3 sym)
+      Consumer Durables           -0.256  (4 sym)
+      Consumer Non-Durables       -0.445  (10 sym)
+      Consumer Services           -0.194  (10 sym)
+      Distribution Services       -0.182  (5 sym)
+      ETF                         -0.246  (20 sym)
+      Electronic Technology       -0.274  (41 sym)
+      Energy Minerals              0.006  (16 sym)
+      Finance                     -0.245  (59 sym)
+      Health Services             -0.340  (5 sym)
+      Health Technology           -0.287  (24 sym)
+      Industrial Services         -0.162  (14 sym)
+      Non-Energy Minerals         -0.234  (10 sym)
+      Process Industries          -0.438  (4 sym)
+      Producer Manufacturing      -0.351  (18 sym)
+      Retail Trade                -0.121  (14 sym)
+      Technology Services         -0.130  (28 sym)
+      Transportation              -0.511  (10 sym)
+      Utilities                   -0.267  (11 sym)
+  cmf
+      Commercial Services         -0.173  (6 sym)
+      Communications              -0.384  (3 sym)
+      Consumer Durables           -0.356  (4 sym)
+      Consumer Non-Durables       -0.221  (10 sym)
+      Consumer Services           -0.292  (10 sym)
+      Distribution Services       -0.400  (5 sym)
+      ETF                         -0.185  (20 sym)
+      Electronic Technology       -0.239  (41 sym)
+      Energy Minerals             -0.234  (16 sym)
+      Finance                     -0.295  (59 sym)
+      Health Services             -0.184  (5 sym)
+      Health Technology           -0.309  (24 sym)
+      Industrial Services         -0.244  (14 sym)
+      Non-Energy Minerals         -0.381  (10 sym)
+      Process Industries          -0.195  (4 sym)
+      Producer Manufacturing      -0.376  (18 sym)
+      Retail Trade                -0.206  (14 sym)
+      Technology Services         -0.165  (28 sym)
+      Transportation              -0.315  (10 sym)
+      Utilities                   -0.165  (11 sym)
+  adx_di
+      Commercial Services         -0.072  (6 sym)
+      Communications              -0.230  (3 sym)
+      Consumer Durables           -0.314  (4 sym)
+      Consumer Non-Durables       -0.418  (10 sym)
+      Consumer Services           -0.170  (10 sym)
+      Distribution Services       -0.484  (5 sym)
+      ETF                         -0.338  (20 sym)
+      Electronic Technology       -0.265  (41 sym)
+      Energy Minerals             -0.121  (16 sym)
+      Finance                     -0.218  (59 sym)
+      Health Services             -0.638  (5 sym)
+      Health Technology           -0.327  (24 sym)
+      Industrial Services         -0.243  (14 sym)
+      Non-Energy Minerals         -0.342  (10 sym)
+      Process Industries          -0.576  (4 sym)
+      Producer Manufacturing      -0.326  (18 sym)
+      Retail Trade                -0.232  (14 sym)
+      Technology Services         -0.178  (28 sym)
+      Transportation              -0.392  (10 sym)
+      Utilities                   -0.324  (11 sym)
+  vortex
+      Commercial Services         -0.342  (6 sym)
+      Communications              -0.173  (3 sym)
+      Consumer Durables           -0.157  (4 sym)
+      Consumer Non-Durables       -0.428  (10 sym)
+      Consumer Services           -0.093  (10 sym)
+      Distribution Services       -0.554  (5 sym)
+      ETF                         -0.246  (20 sym)
+      Electronic Technology       -0.298  (41 sym)
+      Energy Minerals             -0.237  (16 sym)
+      Finance                     -0.195  (59 sym)
+      Health Services             -0.509  (5 sym)
+      Health Technology           -0.267  (24 sym)
+      Industrial Services         -0.298  (14 sym)
+      Non-Energy Minerals         -0.229  (10 sym)
+      Process Industries          -0.479  (4 sym)
+      Producer Manufacturing      -0.253  (18 sym)
+      Retail Trade                -0.273  (14 sym)
+      Technology Services         -0.203  (28 sym)
+      Transportation              -0.283  (10 sym)
+      Utilities                   -0.399  (11 sym)
+  aroon
+      Commercial Services         -0.217  (6 sym)
+      Communications              -0.210  (3 sym)
+      Consumer Durables           -0.192  (4 sym)
+      Consumer Non-Durables       -0.391  (10 sym)
+      Consumer Services           -0.107  (10 sym)
+      Distribution Services       -0.493  (5 sym)
+      ETF                         -0.248  (20 sym)
+      Electronic Technology       -0.269  (41 sym)
+      Energy Minerals             -0.114  (16 sym)
+      Finance                     -0.173  (59 sym)
+      Health Services             -0.445  (5 sym)
+      Health Technology           -0.235  (24 sym)
+      Industrial Services         -0.274  (14 sym)
+      Non-Energy Minerals         -0.277  (10 sym)
+      Process Industries          -0.382  (4 sym)
+      Producer Manufacturing      -0.299  (18 sym)
+      Retail Trade                -0.273  (14 sym)
+      Technology Services         -0.268  (28 sym)
+      Transportation              -0.344  (10 sym)
+      Utilities                   -0.345  (11 sym)
+  psar
+      Commercial Services         -0.130  (6 sym)
+      Communications              -0.491  (3 sym)
+      Consumer Durables           -0.304  (4 sym)
+      Consumer Non-Durables       -0.313  (10 sym)
+      Consumer Services           -0.298  (10 sym)
+      Distribution Services       -0.390  (5 sym)
+      ETF                         -0.201  (20 sym)
+      Electronic Technology       -0.247  (41 sym)
+      Energy Minerals             -0.250  (16 sym)
+      Finance                     -0.305  (59 sym)
+      Health Services             -0.421  (5 sym)
+      Health Technology           -0.294  (24 sym)
+      Industrial Services         -0.267  (14 sym)
+      Non-Energy Minerals         -0.222  (10 sym)
+      Process Industries          -0.419  (4 sym)
+      Producer Manufacturing      -0.245  (18 sym)
+      Retail Trade                -0.270  (14 sym)
+      Technology Services         -0.287  (28 sym)
+      Transportation              -0.233  (10 sym)
+      Utilities                   -0.393  (11 sym)
+  macd_signal
+      Commercial Services         -0.151  (6 sym)
+      Communications              -0.630  (3 sym)
+      Consumer Durables           -0.177  (4 sym)
+      Consumer Non-Durables       -0.293  (10 sym)
+      Consumer Services           -0.331  (10 sym)
+      Distribution Services       -0.579  (5 sym)
+      ETF                         -0.351  (20 sym)
+      Electronic Technology       -0.257  (41 sym)
+      Energy Minerals             -0.340  (16 sym)
+      Finance                     -0.226  (59 sym)
+      Health Services             -0.355  (5 sym)
+      Health Technology           -0.296  (24 sym)
+      Industrial Services         -0.270  (14 sym)
+      Non-Energy Minerals         -0.228  (10 sym)
+      Process Industries          -0.475  (4 sym)
+      Producer Manufacturing      -0.280  (18 sym)
+      Retail Trade                -0.314  (14 sym)
+      Technology Services         -0.208  (28 sym)
+      Transportation              -0.222  (10 sym)
+      Utilities                   -0.478  (11 sym)
+  rsi_50
+      Commercial Services         -0.103  (6 sym)
+      Communications              -0.224  (3 sym)
+      Consumer Durables           -0.301  (4 sym)
+      Consumer Non-Durables       -0.374  (10 sym)
+      Consumer Services           -0.350  (10 sym)
+      Distribution Services       -0.394  (5 sym)
+      ETF                         -0.261  (20 sym)
+      Electronic Technology       -0.265  (41 sym)
+      Energy Minerals             -0.201  (16 sym)
+      Finance                     -0.279  (59 sym)
+      Health Services             -0.404  (5 sym)
+      Health Technology           -0.325  (24 sym)
+      Industrial Services         -0.327  (14 sym)
+      Non-Energy Minerals         -0.309  (10 sym)
+      Process Industries          -0.413  (4 sym)
+      Producer Manufacturing      -0.318  (18 sym)
+      Retail Trade                -0.278  (14 sym)
+      Technology Services         -0.151  (28 sym)
+      Transportation              -0.434  (10 sym)
+      Utilities                   -0.307  (11 sym)
+  donchian55
+      Commercial Services         -0.284  (6 sym)
+      Communications              -0.007  (3 sym)
+      Consumer Durables           -0.164  (4 sym)
+      Consumer Non-Durables       -0.371  (10 sym)
+      Consumer Services           -0.423  (10 sym)
+      Distribution Services       -0.400  (5 sym)
+      ETF                         -0.384  (20 sym)
+      Electronic Technology       -0.266  (41 sym)
+      Energy Minerals             -0.145  (16 sym)
+      Finance                     -0.370  (59 sym)
+      Health Services             -0.385  (5 sym)
+      Health Technology           -0.231  (24 sym)
+      Industrial Services         -0.228  (14 sym)
+      Non-Energy Minerals         -0.349  (10 sym)
+      Process Industries          -0.461  (4 sym)
+      Producer Manufacturing      -0.416  (18 sym)
+      Retail Trade                -0.304  (14 sym)
+      Technology Services         -0.214  (28 sym)
+      Transportation              -0.504  (10 sym)
+      Utilities                   -0.341  (11 sym)
+  obv
+      Commercial Services         -0.226  (6 sym)
+      Communications              -0.359  (3 sym)
+      Consumer Durables           -0.150  (4 sym)
+      Consumer Non-Durables       -0.325  (10 sym)
+      Consumer Services           -0.270  (10 sym)
+      Distribution Services       -0.453  (5 sym)
+      ETF                         -0.369  (20 sym)
+      Electronic Technology       -0.299  (41 sym)
+      Energy Minerals             -0.140  (16 sym)
+      Finance                     -0.287  (59 sym)
+      Health Services             -0.301  (5 sym)
+      Health Technology           -0.386  (24 sym)
+      Industrial Services         -0.407  (14 sym)
+      Non-Energy Minerals         -0.254  (10 sym)
+      Process Industries          -0.423  (4 sym)
+      Producer Manufacturing      -0.367  (18 sym)
+      Retail Trade                -0.371  (14 sym)
+      Technology Services         -0.192  (28 sym)
+      Transportation              -0.293  (10 sym)
+      Utilities                   -0.367  (11 sym)
+  tv_rating
+      Commercial Services         -0.096  (6 sym)
+      Communications              -0.223  (3 sym)
+      Consumer Durables           -0.293  (4 sym)
+      Consumer Non-Durables       -0.464  (10 sym)
+      Consumer Services           -0.364  (10 sym)
+      Distribution Services       -0.436  (5 sym)
+      ETF                         -0.334  (20 sym)
+      Electronic Technology       -0.278  (41 sym)
+      Energy Minerals             -0.215  (16 sym)
+      Finance                     -0.367  (59 sym)
+      Health Services             -0.468  (5 sym)
+      Health Technology           -0.418  (24 sym)
+      Industrial Services         -0.267  (14 sym)
+      Non-Energy Minerals         -0.256  (10 sym)
+      Process Industries          -0.525  (4 sym)
+      Producer Manufacturing      -0.320  (18 sym)
+      Retail Trade                -0.296  (14 sym)
+      Technology Services         -0.212  (28 sym)
+      Transportation              -0.386  (10 sym)
+      Utilities                   -0.361  (11 sym)
+  donchian20
+      Commercial Services         -0.268  (6 sym)
+      Communications              -0.379  (3 sym)
+      Consumer Durables           -0.304  (4 sym)
+      Consumer Non-Durables       -0.472  (10 sym)
+      Consumer Services           -0.393  (10 sym)
+      Distribution Services       -0.450  (5 sym)
+      ETF                         -0.342  (20 sym)
+      Electronic Technology       -0.286  (41 sym)
+      Energy Minerals             -0.052  (16 sym)
+      Finance                     -0.328  (59 sym)
+      Health Services             -0.219  (5 sym)
+      Health Technology           -0.315  (24 sym)
+      Industrial Services         -0.290  (14 sym)
+      Non-Energy Minerals         -0.429  (10 sym)
+      Process Industries          -0.450  (4 sym)
+      Producer Manufacturing      -0.410  (18 sym)
+      Retail Trade                -0.271  (14 sym)
+      Technology Services         -0.215  (28 sym)
+      Transportation              -0.525  (10 sym)
+      Utilities                   -0.333  (11 sym)

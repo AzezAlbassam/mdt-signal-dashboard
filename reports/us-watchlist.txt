@@ -1,0 +1,49 @@
+Watchlist — separate group (addendum 1 §A). Per-stock numbers over both periods; n next to every figure.
+A few dozen trades per stock is noise: use these to see how a rule behaved, not to pick rules.
+
+MSTR   main  A: keltner_break n100 win 51% edge 0.03 | trix n50 win 48% edge 0.16 | macd_zero n82 win 50% edge -0.04 | ichimoku n88 win 52% edge 0.02 | supertrend n60 win 58% edge 0.15
+AAPL   main  A: keltner_break n139 win 60% edge 0.14 | trix n46 win 59% edge 0.08 | macd_zero n75 win 56% edge -0.00 | ichimoku n87 win 63% edge 0.11 | supertrend n73 win 53% edge -0.04
+AMZN   main  A: keltner_break n137 win 47% edge -0.13 | trix n49 win 55% edge 0.05 | macd_zero n69 win 61% edge 0.16 | ichimoku n99 win 49% edge -0.07 | supertrend n75 win 56% edge 0.03
+META   main  A: keltner_break n89 win 49% edge -0.10 | trix n29 win 52% edge 0.10 | macd_zero n46 win 57% edge -0.08 | ichimoku n59 win 53% edge 0.07 | supertrend n50 win 66% edge 0.12
+DELL   main  A: keltner_break n64 win 55% edge 0.03 | trix n21 win 62% edge 0.01 | macd_zero n31 win 52% edge 0.00 | ichimoku n32 win 53% edge 0.06 | supertrend n31 win 55% edge 0.03
+MU     main  A: keltner_break n118 win 52% edge 0.05 | trix n46 win 50% edge -0.11 | macd_zero n75 win 43% edge -0.19 | ichimoku n94 win 48% edge -0.05 | supertrend n78 win 37% edge -0.29
+INTC   main  A: keltner_break n92 win 41% edge -0.06 | trix n50 win 48% edge -0.01 | macd_zero n84 win 51% edge 0.04 | ichimoku n96 win 55% edge 0.13 | supertrend n77 win 53% edge 0.06
+ARM    extra  A: keltner_break n14 win 43% edge -0.15 | trix n5 win 60% edge 0.08 | macd_zero n9 win 56% edge 0.07 | ichimoku n10 win 60% edge 0.05 | supertrend n8 win 25% edge -0.69
+PLTR   main  A: keltner_break n34 win 44% edge -0.13 | trix n13 win 31% edge -0.35 | macd_zero n23 win 52% edge 0.22 | ichimoku n22 win 36% edge -0.14 | supertrend n18 win 67% edge 0.52
+AMD    main  A: keltner_break n110 win 55% edge 0.06 | trix n49 win 59% edge 0.30 | macd_zero n77 win 48% edge 0.06 | ichimoku n83 win 52% edge 0.07 | supertrend n70 win 54% edge 0.12
+NVDA   main  A: keltner_break n119 win 59% edge 0.12 | trix n48 win 50% edge -0.09 | macd_zero n83 win 49% edge -0.09 | ichimoku n102 win 52% edge -0.01 | supertrend n75 win 47% edge -0.14
+MSFT   main  A: keltner_break n113 win 57% edge 0.04 | trix n43 win 51% edge 0.02 | macd_zero n72 win 47% edge -0.03 | ichimoku n90 win 43% edge -0.22 | supertrend n68 win 43% edge -0.18
+GOOGL  main  A: keltner_break n115 win 57% edge 0.10 | trix n41 win 63% edge 0.27 | macd_zero n70 win 54% edge 0.04 | ichimoku n80 win 51% edge -0.02 | supertrend n71 win 56% edge 0.03
+ORCL   main  A: keltner_break n94 win 46% edge -0.08 | trix n51 win 49% edge 0.02 | macd_zero n80 win 60% edge 0.11 | ichimoku n102 win 55% edge 0.11 | supertrend n76 win 50% edge -0.01
+HPE    main  A: keltner_break n51 win 49% edge -0.14 | trix n30 win 50% edge -0.19 | macd_zero n38 win 50% edge 0.09 | ichimoku n59 win 39% edge -0.26 | supertrend n43 win 51% edge -0.08
+AMAT   main  A: keltner_break n108 win 56% edge 0.10 | trix n47 win 51% edge -0.12 | macd_zero n75 win 57% edge 0.16 | ichimoku n76 win 57% edge 0.15 | supertrend n70 win 63% edge 0.26
+CRWD   main  A: keltner_break n41 win 49% edge -0.07 | trix n15 win 67% edge 0.22 | macd_zero n22 win 64% edge 0.13 | ichimoku n35 win 54% edge -0.00 | supertrend n26 win 58% edge 0.04
+PANW   main  A: keltner_break n83 win 49% edge -0.06 | trix n33 win 61% edge 0.19 | macd_zero n52 win 54% edge -0.07 | ichimoku n60 win 58% edge 0.17 | supertrend n49 win 57% edge 0.08
+TSLA   main  A: keltner_break n85 win 55% edge 0.15 | trix n39 win 67% edge 0.10 | macd_zero n62 win 44% edge -0.14 | ichimoku n79 win 46% edge -0.15 | supertrend n60 win 48% edge -0.07
+MDB    extra  A: keltner_break n43 win 47% edge -0.17 | trix n18 win 50% edge 0.05 | macd_zero n39 win 46% edge -0.11 | ichimoku n45 win 53% edge 0.03 | supertrend n36 win 50% edge -0.20
+QCOM   main  A: keltner_break n83 win 48% edge -0.03 | trix n45 win 56% edge 0.05 | macd_zero n75 win 56% edge 0.17 | ichimoku n93 win 51% edge 0.06 | supertrend n67 win 55% edge 0.18
+IBM    main  A: keltner_break n95 win 56% edge 0.12 | trix n47 win 60% edge 0.33 | macd_zero n80 win 51% edge 0.02 | ichimoku n92 win 54% edge 0.07 | supertrend n74 win 53% edge 0.04
+COST   main  A: keltner_break n108 win 56% edge 0.07 | trix n44 win 59% edge 0.04 | macd_zero n73 win 52% edge 0.04 | ichimoku n93 win 54% edge -0.00 | supertrend n66 win 56% edge 0.02
+AVGO   main  A: keltner_break n101 win 53% edge 0.01 | trix n42 win 50% edge -0.12 | macd_zero n71 win 54% edge 0.06 | ichimoku n96 win 51% edge -0.06 | supertrend n60 win 57% edge 0.13
+MRVL   main  A: keltner_break n104 win 45% edge -0.05 | trix n47 win 45% edge -0.04 | macd_zero n72 win 42% edge -0.08 | ichimoku n84 win 51% edge 0.10 | supertrend n61 win 56% edge 0.04
+TXN    main  A: keltner_break n92 win 50% edge 0.01 | trix n46 win 50% edge 0.03 | macd_zero n77 win 53% edge 0.03 | ichimoku n104 win 52% edge 0.01 | supertrend n74 win 42% edge -0.26
+ZENA   history returned inline (505 bars), not stored
+FIG    too new (298 bars)
+GLW    main  A: keltner_break n105 win 52% edge -0.04 | trix n45 win 47% edge -0.15 | macd_zero n78 win 56% edge 0.15 | ichimoku n88 win 47% edge 0.11 | supertrend n68 win 54% edge 0.14
+APH    main  A: keltner_break n127 win 54% edge -0.02 | trix n43 win 58% edge 0.08 | macd_zero n75 win 56% edge 0.02 | ichimoku n96 win 56% edge 0.03 | supertrend n74 win 62% edge 0.04
+COHR   main  A: keltner_break n108 win 43% edge -0.25 | trix n48 win 46% edge -0.05 | macd_zero n73 win 56% edge 0.09 | ichimoku n84 win 57% edge 0.03 | supertrend n69 win 55% edge -0.08
+LITE   main  A: keltner_break n66 win 58% edge 0.10 | trix n25 win 48% edge 0.02 | macd_zero n41 win 44% edge -0.06 | ichimoku n44 win 57% edge 0.12 | supertrend n34 win 65% edge 0.14
+AAOI   extra  A: keltner_break n60 win 60% edge 0.21 | trix n23 win 52% edge 0.25 | macd_zero n37 win 59% edge 0.23 | ichimoku n40 win 53% edge 0.08 | supertrend n40 win 60% edge 0.11
+AXTI   extra  A: keltner_break n93 win 37% edge -0.10 | trix n40 win 53% edge 0.11 | macd_zero n80 win 43% edge -0.18 | ichimoku n85 win 48% edge -0.01 | supertrend n54 win 44% edge -0.05
+VIAV   extra  A: keltner_break n92 win 53% edge 0.03 | trix n48 win 48% edge 0.00 | macd_zero n79 win 48% edge -0.16 | ichimoku n89 win 44% edge -0.20 | supertrend n71 win 52% edge -0.08
+CIEN   main  A: keltner_break n105 win 48% edge -0.06 | trix n43 win 58% edge 0.06 | macd_zero n70 win 49% edge -0.06 | ichimoku n86 win 47% edge -0.06 | supertrend n75 win 48% edge -0.06
+NOK    extra  A: keltner_break n97 win 42% edge -0.00 | trix n51 win 39% edge -0.09 | macd_zero n98 win 45% edge -0.15 | ichimoku n99 win 46% edge -0.04 | supertrend n97 win 43% edge -0.19
+SPCX   too new (80 bars)
+VOYG   history returned inline (332 bars), not stored
+HAWK   too new (105 bars)
+LUNR   extra  A: keltner_break n22 win 36% edge -0.21 | trix n7 win 71% edge 0.39 | macd_zero n12 win 50% edge 0.02 | ichimoku n14 win 57% edge 0.01 | supertrend n9 win 78% edge 0.47
+RDW    extra  A: keltner_break n26 win 58% edge 0.19 | trix n9 win 56% edge 0.14 | macd_zero n20 win 45% edge -0.12 | ichimoku n18 win 50% edge 0.19 | supertrend n15 win 40% edge -0.13
+SPIR   extra  A: keltner_break n22 win 55% edge 0.36 | trix n14 win 43% edge 0.46 | macd_zero n23 win 39% edge -0.03 | ichimoku n20 win 50% edge 0.20 | supertrend n17 win 41% edge -0.13
+RKLB   extra  A: keltner_break n27 win 63% edge 0.52 | trix n9 win 78% edge 0.32 | macd_zero n11 win 82% edge 0.68 | ichimoku n17 win 59% edge 0.24 | supertrend n14 win 57% edge 0.29
+ASTS   extra  A: keltner_break n28 win 61% edge 0.17 | trix n15 win 53% edge 0.28 | macd_zero n22 win 41% edge -0.02 | ichimoku n26 win 46% edge -0.10 | supertrend n16 win 69% edge 0.55
+PL     extra  A: keltner_break n21 win 43% edge -0.14 | trix n10 win 50% edge 0.22 | macd_zero n23 win 43% edge -0.10 | ichimoku n21 win 52% edge 0.23 | supertrend n15 win 47% edge -0.01

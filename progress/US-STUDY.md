@@ -13,17 +13,17 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 ## Checklist
 - [x] Study 1 finished (`reports/swing-*.txt`, `swing.html`)
 - [x] Protocol for study 2 committed before any download
-- [ ] Universe snapshot from the screener → `data/us/universe-snapshot.json`, `data/us/universe.json`
-- [ ] Fetch daily bars for every symbol (batches; see counts below)
-- [ ] Backtest: `node scripts/us-backtest.js`
-- [ ] H1 confirmatory result
+- [x] Universe snapshot from the screener → `data/us/universe-snapshot.json`, `data/us/universe.json`
+- [x] Fetch daily bars for every symbol (batches; see counts below)
+- [x] Backtest: `node scripts/us-backtest.js`
+- [x] H1 confirmatory result
 - [ ] Arabic page `us.html` + artifact
 - [ ] Addendum 1 (PROTOCOL-addendum-1.md): watchlist group (46 tickers, separate report)
 - [ ] Addendum 1: example win/loss charts per indicator (selection rule in §B)
 - [ ] Addendum 1: Pine script(s) + checked TradingView links per indicator
 - [ ] Study 3 Saudi: screener snapshot (market ksa), fetch, backtest, H1-SA, page
 
-- [ ] Stage 1 (PROTOCOL-addendum-2.md): classify page-1 symbols via search-symbols → data/us/classify.jsonl, build universe, ingest, run
+- [x] Stage 1 (PROTOCOL-addendum-2.md / addendum 3): classify page-1 symbols via search-symbols → data/us/classify.jsonl, build universe, ingest, run
 - [ ] Stage 2: when screener answers, full ≥$2B snapshot → fetch the rest → H1b + combined
 
 ## Counts
@@ -48,3 +48,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   GOOGM GOOGN SPCX SNDK ALAB STRD STRC STRF STRK CRWV HONA VYLR MDLN, plus GEV (634, inline).
   BAM re-fetched in row format and saved.
 - 2026-10-07 01:00Z — screener still 429; user wants TradingView only. Addendum 2: two stages.
+- 2026-10-07 01:25Z — stage 1 run (312 symbols). H1 NOT CONFIRMED (Keltner edge −0.011R, p 0.90). Robust A: trix, ema_20_50, stoch, ao. Robust B: rsi2. C: none. Next: Arabic page us.html, example charts, then Saudi study 3.
