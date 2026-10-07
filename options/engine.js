@@ -83,6 +83,7 @@ export const DEFAULTS = {
   minSessions: 5, // fewer recorded sessions than this and ADV is an estimate
   priorTurnover: 0.02, // the estimate before history: 2% of OI trades per day (conservative for listed months)
   maxLegs: 6, // how many contracts an amount is spread across, at most
+  gradeOi: [2000, 500, 100], // open interest needed for grades A, B, C (in contracts)
 }
 
 /**
@@ -90,13 +91,19 @@ export const DEFAULTS = {
  * Spread is the toll paid on the way out; open interest says whether a market exists
  * beyond today's quotes. The weaker of the two decides.
  */
-export function grade({ spreadPct, oi }) {
+export function grade({ spreadPct, oi }, [oiA, oiB, oiC] = DEFAULTS.gradeOi) {
   if (spreadPct == null || !(spreadPct >= 0)) return 'D'
-  if (spreadPct <= 0.03 && oi >= 2000) return 'A'
-  if (spreadPct <= 0.06 && oi >= 500) return 'B'
-  if (spreadPct <= 0.10 && oi >= 100) return 'C'
+  if (spreadPct <= 0.03 && oi >= oiA) return 'A'
+  if (spreadPct <= 0.06 && oi >= oiB) return 'B'
+  if (spreadPct <= 0.10 && oi >= oiC) return 'C'
   return 'D'
 }
+
+/**
+ * Round a size down to the contract's lot. US equity options trade in whole contracts of
+ * 100 shares; crypto options trade in fractions of a coin (0.01 BTC), one coin per unit.
+ */
+const toLot = (x, lot) => Math.floor(x / lot + 1e-9) * lot
 
 /**
  * Per-contract exit metrics.
@@ -126,10 +133,12 @@ export function contractMetrics(c, opts = {}) {
   const advEstimated = missing > 0
 
   const oi = c.oi ?? 0
-  const capByAdv = Math.floor(o.pctOfAdv * adv)
-  const capByOi = Math.floor(o.pctOfOi * oi)
+  const lot = c.lot ?? 1
+  const mult = c.multiplier ?? 100
+  const capByAdv = toLot(o.pctOfAdv * adv, lot)
+  const capByOi = toLot(o.pctOfOi * oi, lot)
   const bidSize = bid > 0 ? c.bidSize ?? 0 : 0
-  const byBid = Math.floor(Math.min(bidSize, adv))
+  const byBid = toLot(Math.min(bidSize, adv), lot)
   const exit = Math.max(capByAdv, byBid)
   const tradable = bid > 0 && spreadPct != null && spreadPct <= o.maxSpread
   const capContracts = tradable ? Math.max(0, Math.min(exit, capByOi)) : 0
@@ -145,12 +154,12 @@ export function contractMetrics(c, opts = {}) {
     capContracts,
     binding,
     // Entry pays the ask; that is the cash the position really ties up.
-    capDollars: capContracts * ask * 100,
+    capDollars: capContracts * ask * mult,
     // Selling right now at the bid, without walking the book.
     instantContracts: bid > 0 ? c.bidSize ?? 0 : 0,
     // Round-trip toll if bought at the ask and sold at the bid immediately.
-    roundTripCostPerContract: mid ? (ask - bid) * 100 : null,
-    grade: tradable ? grade({ spreadPct, oi }) : 'D',
+    roundTripCostPerContract: mid ? (ask - bid) * mult : null,
+    grade: tradable ? grade({ spreadPct, oi }, o.gradeOi) : 'D',
   }
 }
 
@@ -244,13 +253,14 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
     for (const c of top) {
       if (remaining <= 0) break
       const leg = legs.get(c.sym)
-      const perContract = c.ask * 100
+      const perContract = c.ask * (c.multiplier ?? 100)
+      const lot = c.lot ?? 1
       const held = leg?.cost ?? 0
       const room = Math.min(remaining, c.m.capDollars - held, perLeg - held)
-      const n = Math.floor(room / perContract)
-      if (n < 1 || (!leg && n * perContract < minCost)) continue
+      const n = toLot(room / perContract, lot)
+      if (n < lot || (!leg && n * perContract < minCost)) continue
       const add = n * perContract
-      legs.set(c.sym, { ...c, contracts: (leg?.contracts ?? 0) + n, cost: held + add })
+      legs.set(c.sym, { ...c, contracts: Math.round(((leg?.contracts ?? 0) + n) / lot) * lot, cost: held + add })
       remaining -= add
     }
   }
@@ -326,12 +336,18 @@ export function expirySummary(contracts, today, opts = {}) {
  * Start at the mid; if nobody fills you, step toward the far side, but never past a
  * quarter of the spread — beyond that you are paying the toll you came to avoid.
  */
-export function limitGuide(bid, ask) {
+export function limitGuide(bid, ask, tick = 0.01) {
   if (!(bid > 0) || !(ask >= bid)) return null
   const mid = (bid + ask) / 2
   const q = (ask - bid) / 4
-  const cents = (v) => Math.round(v * 100) / 100
-  return { mid: cents(mid), buyMax: cents(mid + q), sellMin: cents(mid - q) }
+  // Prices must sit on the tick grid; round in the direction that keeps the promise
+  // (never pay more than mid + a quarter, never sell below mid − a quarter).
+  const dp = Math.max(0, Math.ceil(-Math.log10(tick) - 1e-9))
+  const fix = (v) => Number(v.toFixed(dp))
+  const down = (v) => fix(Math.floor(v / tick + 1e-9) * tick)
+  const up = (v) => fix(Math.ceil(v / tick - 1e-9) * tick)
+  const m = fix(Math.round(mid / tick) * tick)
+  return { mid: m, buyMax: Math.max(m, down(mid + q)), sellMin: Math.min(m, up(mid - q)) }
 }
 
 /**

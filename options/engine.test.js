@@ -267,6 +267,9 @@ describe('chainRows', () => {
 test('limitGuide: start at mid, never give up more than a quarter of the spread', () => {
   assert.deepEqual(limitGuide(24.2, 25.8), { mid: 25, buyMax: 25.4, sellMin: 24.6 })
   assert.equal(limitGuide(0, 1), null)
+  // Binance BTC options move in 5 USDT ticks
+  assert.deepEqual(limitGuide(9800, 10000, 5), { mid: 9900, buyMax: 9950, sellMin: 9850 })
+  assert.deepEqual(limitGuide(9805, 9890, 5), { mid: 9850, buyMax: 9865, sellMin: 9830 })
 })
 
 test('tickerSummary grades a whole chain on long-dated near-the-money calls', () => {
@@ -286,4 +289,29 @@ test('bucketCapacities sizes each duration and type separately', () => {
   // each contract: min(100, 1000) = 100 contracts × $1000
   assert.deepEqual(caps.C, [100000, 0, 100000, 100000, 0])
   assert.deepEqual(caps.P, [0, 0, 100000, 0, 0])
+})
+
+describe('crypto contracts: fractional lots, one coin per unit', () => {
+  // A BTC option quoted in USDT per coin, traded in 0.01 BTC, open interest in coins.
+  const btc = { sym: 'BTC-270326-120000-C', bid: 9800, ask: 10000, bidSize: 0.8, oi: 60, adv: 4.5, sessions: 5, lot: 0.01, multiplier: 1 }
+
+  test('sizes in coins and dollars without the 100-share multiplier', () => {
+    // way out: max(10% of 4.5 = 0.45, min(0.8, 4.5) = 0.8) = 0.8; 5% of 60 = 3
+    const m = contractMetrics(btc, { gradeOi: [20, 5, 1] })
+    assert.equal(m.capContracts, 0.8)
+    assert.equal(m.capDollars, 8000)
+    assert.equal(m.roundTripCostPerContract, 200)
+    assert.equal(m.grade, 'A')
+  })
+
+  test('allocates in 0.01 lots', () => {
+    const r = allocate([btc], { amount: 5555, gradeOi: [20, 5, 1] })
+    assert.equal(r.legs[0].contracts, 0.55)
+    assert.equal(r.placed, 5500)
+  })
+
+  test('equity defaults are unchanged', () => {
+    const m = contractMetrics({ bid: 9.9, ask: 10, bidSize: 0, oi: 4000, adv: 600, sessions: 10 })
+    assert.equal(m.capDollars, 60 * 10 * 100)
+  })
 })
