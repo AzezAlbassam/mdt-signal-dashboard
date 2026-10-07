@@ -18,6 +18,10 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Backtest: `node scripts/us-backtest.js`
 - [ ] H1 confirmatory result
 - [ ] Arabic page `us.html` + artifact
+- [ ] Addendum 1 (PROTOCOL-addendum-1.md): watchlist group (46 tickers, separate report)
+- [ ] Addendum 1: example win/loss charts per indicator (selection rule in §B)
+- [ ] Addendum 1: Pine script(s) + checked TradingView links per indicator
+- [ ] Study 3 Saudi: screener snapshot (market ksa), fetch, backtest, H1-SA, page
 
 ## Counts
 (updated as work proceeds)
@@ -31,3 +35,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   listings from the first screener page (≥ ~$45B; saved in scratchpad, re-pull for the
   snapshot). Collect with `node scripts/us-collect.js <rawDir>` (only files after
   2026-10-07T00:15Z), then `US_RAW=<rawDir> node scripts/us-ingest.js` once universe.json exists.
+- 2026-10-07 00:25Z — user asked for: their 46-ticker watchlist, example charts, indicator links, Saudi study. Addendum 1 written before any study 2 result.
