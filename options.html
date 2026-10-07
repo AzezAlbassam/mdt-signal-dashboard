@@ -118,23 +118,16 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   <a href="#tool">ابحث عن عقد</a>
   <a href="#mylist">قائمتي</a>
   <a href="#spread">دليل السبريد</a>
+  <a href="#binance">شروط باينانس</a>
 </nav>
 
 <section id="tool">
   <div class="panel">
-    <div class="chips" id="marketChips">
-      <button type="button" data-market="us" aria-pressed="true">🇺🇸 الأسهم الأمريكية</button>
-      <button type="button" data-market="bn" aria-pressed="false">🟡 باينانس — العملات الرقمية</button>
-    </div>
     <div class="row">
-      <label id="tickerBox">السهم
+      <label>السهم
         <input id="ticker" class="tick" list="tickers" value="MSTR" spellcheck="false" maxlength="6" autocomplete="off">
         <datalist id="tickers"></datalist>
       </label>
-      <div id="coinBox" hidden>
-        <div class="lbl">العملة</div>
-        <div class="chips" id="coinChips"><span class="note" style="margin:0">جاري التحميل…</span></div>
-      </div>
       <label>المبلغ اللي تبي تدخله ($)
         <input id="amount" type="text" inputmode="numeric" value="100,000" autocomplete="off">
       </label>
@@ -159,10 +152,8 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
 </section>
 
 <section id="mylist">
-  <h2><span id="listTitle">قائمتي</span> <span class="count" id="listCount"></span></h2>
-  <p class="note" style="margin-top:-6px" id="listNote">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق. اضغط أي سهم يفتح في الأداة.</p>
-  <div id="bnList" hidden></div>
-  <div id="usList">
+  <h2>قائمتي <span class="count" id="listCount"></span></h2>
+  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق. اضغط أي سهم يفتح في الأداة.</p>
   <input id="q" type="search" placeholder="ابحث عن سهم…" style="margin-top:10px;direction:ltr;text-align:right" autocomplete="off">
   <div class="filters chips" id="tierChips">
     <button type="button" data-tier="" aria-pressed="true">الكل</button>
@@ -173,7 +164,6 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
     <button type="button" data-tier="N" aria-pressed="false">بدون عقود</button>
   </div>
   <div class="tbl" id="list"><p class="empty">جاري التحميل…</p></div>
-  </div>
 </section>
 
 <section id="spread" class="guide">
@@ -204,14 +194,6 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
     <li><b>حول الأرباح:</b> السبريد يتوسع قبل إعلان الأرباح بأيام ويتوسع جدًا لحظة الإعلان. لا تدخل ولا تطلع في دقائق الخبر.</li>
   </ol>
 
-  <h3>عقود باينانس (العملات الرقمية)</h3>
-  <ul>
-    <li>نفس القواعد: Limit دائمًا، ابدأ من المنتصف، ولا تتجاوز ربع السبريد.</li>
-    <li>السوق مفتوح 24 ساعة، بس السيولة مو نفسها: <b>عطلة نهاية الأسبوع</b> غالبًا أضعف والسبريد أوسع.</li>
-    <li>عقود باينانس تنتهي يوميًا الساعة <b>11:00 الصبح بتوقيت الرياض</b> (08:00 غرينتش) — تجنّب الدقائق اللي حولها.</li>
-    <li>الكمية بالعملة نفسها (مثلًا 0.5 BTC)، والسعر بالدولار (USDT) لكل عملة واحدة.</li>
-  </ul>
-
   <h3>لو السهم سبريده عالي — أتداوله ولا لا؟</h3>
   <p><b>الجواب المختصر: لو السبريد فوق 10%، الأفضل لا.</b> لأنك تبدأ الصفقة خسران 10%، والعقد لازم يرتفع 10% بس عشان ترجع صفر.</p>
   <p>بس انتبه: <b>السبريد يضرك أكثر كل ما كانت صفقتك أقصر.</b> لو بتمسك العقد 6 أشهر وتنتظر +100%، سبريد 6% يُحتمل. لو مضاربة أيام وهدفك +20%، نفس الـ 6% تاكل ثلث ربحك.</p>
@@ -227,12 +209,49 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   </ol>
 </section>
 
+<section id="binance" class="guide">
+  <h2>شروط باينانس — كيف تختار العقد الأنسب</h2>
+  <p>باينانس ما تسمح للموقع يقرأ بياناتها، فهذي الشروط تطبقها بنفسك في التطبيق قبل ما تشتري. العقد اللي يعدّي كل الشروط هو الأنسب من ناحية السيولة.</p>
+
+  <h3>الشروط بالترتيب (من الأهم)</h3>
+  <ol>
+    <li><b>فيه مشتري حقيقي (Bid):</b> غيّر الأعمدة إلى Bid/Ask من أيقونة الأعمدة فوق. لو الـ Bid = <b>5</b> أو رقم تافه ← <b>ما فيه مشتري، تجاهل العقد</b>. ولا تعتمد على <b>Mark</b> — هذا سعر نظري مو سعر بيع.</li>
+    <li><b>السبريد صغير:</b> (Ask − Bid) ÷ المنتصف.
+      <div class="scale">
+        <div style="background:var(--pos-soft);color:var(--pos)">أقل من 5%<br>ممتاز</div>
+        <div style="background:var(--pos-soft);color:var(--pos)">5% – 10%<br>مقبول</div>
+        <div style="background:var(--warn-soft);color:var(--warn)">10% – 15%<br>حذر</div>
+        <div style="background:var(--neg-soft);color:var(--neg)">أكثر من 15%<br>لا</div>
+      </div></li>
+    <li><b>العقود المفتوحة (Open USDT) كبيرة:</b> مركزك ما يتجاوز <b>5%</b> منها. الرقم المكتوب = كمية البيتكوين المفتوحة × سعر البيتكوين.</li>
+    <li><b>فيه تداول فعلي:</b> افتح تفاصيل العقد وشوف حجم تداول 24 ساعة (Volume). صفر لأيام = محد يتداوله.</li>
+    <li><b>الكمية على الـ Bid تكفيك:</b> في دفتر الأوامر، الكمية المعروضة عند أعلى Bid ≥ الكمية اللي بتشتريها — يعني تقدر تبيع كلها فورًا.</li>
+    <li><b>التاريخ:</b> اختر تاريخ أغلب سترايكاته فيها أرقام في Open — القريبة والفصلية (ديسمبر، مارس) أعمق بكثير. لو أغلب الأعمدة <b>0.00</b> ← التاريخ ما فيه سوق.</li>
+    <li><b>السترايك:</b> قريب من سعر البيتكوين وبأرقام مدوّرة (90,000 / 100,000) — هنا تتجمع السيولة.</li>
+    <li><b>التنفيذ:</b> Limit عند المنتصف، مو Market. تجنّب الساعة <b>11:00 الصبح بتوقيت الرياض</b> (انتهاء العقود اليومي) وعطلة نهاية الأسبوع.</li>
+  </ol>
+
+  <h3>احسب حدك المريح لعقد واحد</h3>
+  <p class="note" style="margin-top:0">انسخ الأرقام من التطبيق. الحد = 5% من العقود المفتوحة.</p>
+  <div class="panel" style="margin-top:8px">
+    <div class="row">
+      <label>Open (USDT) للعقد<input id="bOpen" type="text" inputmode="decimal" placeholder="780,000"></label>
+      <label>سعر البيتكوين (أو العملة)<input id="bSpot" type="text" inputmode="decimal" placeholder="83,000"></label>
+    </div>
+    <div class="row">
+      <label>Bid<input id="bBid" type="text" inputmode="decimal" placeholder="5,100"></label>
+      <label>Ask<input id="bAsk" type="text" inputmode="decimal" placeholder="5,500"></label>
+    </div>
+    <div id="bOut" class="note" style="margin:0">اكتب الأرقام وتطلع النتيجة هنا.</div>
+  </div>
+  <div class="ex">مثال من صورك (7 أكتوبر): كول 100,000 يونيو 2027، Open = 780,000$، البيتكوين 83,000$ ← المفتوح 9.4 BTC ← حدك 5% = <b>0.46 BTC</b>. لو سعر العقد ~5,300$ ← حدك تقريبًا <b>2,400$</b> في هذا العقد. وكل كول يونيو مجتمعة ~7,000$، ومارس 2027 ~17,000$.</div>
+</section>
+
 <footer id="foot">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
 </div>
 
 <script type="module">
 import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates } from './options/engine.js'
-import * as bn from './options/binance.js'
 
 const $ = (id) => document.getElementById(id)
 const money = (v) => '<bdi class="m">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
@@ -263,26 +282,14 @@ const saved = store.get('form2') ?? {}
 let type = saved.type ?? 'C'
 let sel = saved.sel ?? { bucket: 'm6' }
 let index = null
-let current = null // { t, snap, contracts, gradeOi? }
-let market = saved.market === 'bn' ? 'bn' : 'us'
-let coin = saved.coin ?? 'BTC'
-let bnAssets = null
-const BN_ERR = {
-  network: 'المتصفح ما قدر يوصل لباينانس. لو تستخدم VPN أو شبكة تحجب باينانس جرّب بدونها، أو حدّث الصفحة.',
-  region: 'باينانس رفضت الطلب من موقعك الحالي (منطقة محظورة). جرّب بدون VPN.',
-  rate: 'باينانس طلبت التمهّل (كثرة طلبات). انتظر دقيقة وحدّث.',
-  http: 'باينانس رجّعت خطأ. حدّث الصفحة بعد شوي.',
-}
+let current = null // { t, snap, contracts }
 const cache = new Map()
 if (saved.ticker) $('ticker').value = saved.ticker
 if (saved.amount) $('amount').value = saved.amount
 const fromHash = cleanT(decodeURIComponent(location.hash.slice(1)))
 if (fromHash && !['TOOL', 'MYLIST', 'SPREAD'].includes(fromHash)) $('ticker').value = fromHash
 
-const opts = () => ({ pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs, ...(current?.gradeOi ? { gradeOi: current.gradeOi } : {}) })
-const isBn = () => market === 'bn'
-const unitTxt = (c, n) => isBn() ? `<bdi class="m">${fmtN(n, 2)}</bdi> ${esc(current?.t ?? '')}` : contractsTxt(n)
-const priceOf = (c, v) => { const dp = c?.tick ? Math.max(2, Math.ceil(-Math.log10(c.tick) - 1e-9)) : 2; return '<bdi class="m">$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: Math.min(dp, 2), maximumFractionDigits: dp }) + '</bdi>' }
+const opts = () => ({ pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs })
 const bucketIdx = () => {
   if (sel.bucket) return BUCKETS.findIndex((b) => b.key === sel.bucket)
   const d = daysToExpiry(sel.expiry, today)
@@ -297,19 +304,6 @@ function toContracts(snap) {
     bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize], volume: r[ci.volume], oi: r[ci.oi],
     delta: r[ci.delta], adv: r[ci.adv], sessions: r[ci.sessions],
   }))
-}
-
-// Binance: live from the browser, plus top-of-book bids for every candidate whose size
-// could depend on them (all expiries of the chosen type), so every number on the page —
-// buttons, dates, verdict — comes from the same complete data.
-async function loadCoin(asset) {
-  const d = await bn.loadAsset(asset)
-  const o = { pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, gradeOi: d.gradeOi }
-  const need = d.contracts.filter((c) => c.type === type && daysToExpiry(c.expiry, today) >= 7 && c.delta != null && Math.abs(c.delta) >= adv.dMin && Math.abs(c.delta) <= adv.dMax)
-  await bn.fillDepth(need, o, (done, all) => {
-    if (current?.t !== asset) $('out').innerHTML = `<p class="empty">جاري قراءة عمق السوق من باينانس… ${done} / ${all}</p>`
-  })
-  return { t: asset, gradeOi: d.gradeOi, contracts: d.contracts, snap: { price: d.price, fetchedAt: d.fetchedAt, quotesFrom: d.fetchedAt, quotesIntraday: true, historySessions: 5, live: true } }
 }
 
 async function loadTicker(t) {
@@ -344,38 +338,25 @@ function renderPickers() {
   $('dateChips').innerHTML = expiries.map((e) => {
     const cap = comfortableFor(current.contracts, [e])
     const dot = cap >= amount && cap > 0 ? 'dA' : cap > 0 ? 'dC' : 'dD'
-    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e) && !isBn() ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
+    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
   }).join('')
   $('datesNote').textContent = expiries.length ? `(🟢 يتحمّل مبلغك كامل · 🟡 أقل منه · 🔴 ما يتحمّل)` : ''
 }
 
 async function render() {
-  const t = isBn() ? coin : cleanT($('ticker').value)
+  const t = cleanT($('ticker').value)
   const amount = parseAmount($('amount').value)
-  store.set('form2', { ticker: isBn() ? (saved.ticker ?? 'MSTR') : t, amount: $('amount').value, type, sel, market, coin })
-  if (!isBn()) saved.ticker = t
-  syncMarket()
+  store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
   if (!t) return
-  if (!isBn() && cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
+  if (cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
 
   if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
-  let data
-  if (isBn()) {
-    try {
-      data = await loadCoin(t)
-    } catch (e) {
-      $('out').innerHTML = `<div class="verdict bad"><div class="t">ما قدرت أجيب بيانات باينانس</div><p>${BN_ERR[e.kind] ?? BN_ERR.http}</p></div>`
-      return
-    }
-    if (!isBn() || coin !== t) return
-  } else {
-    data = await loadTicker(t)
-    if (isBn() || cleanT($('ticker').value) !== t) return
-  }
+  const data = await loadTicker(t)
+  if (cleanT($('ticker').value) !== t) return
   current = data
   renderPickers()
   renderList()
-  const info = isBn() ? null : index?.tickers?.[t]
+  const info = index?.tickers?.[t]
   if (!data) {
     const msg = info?.noOptions
       ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
@@ -399,16 +380,14 @@ async function render() {
   const toll = a.legs.reduce((s, l) => s + l.m.roundTripCostPerContract * l.contracts, 0)
 
   const tierKey = info?.tier ?? 'D'
-  const tierLine = isBn()
-    ? `<div class="tier">🟡 عقود ${esc(t)} على باينانس · سعر ${esc(t)} ${priceOf(null, snap.price)} · أسعار مباشرة</div>`
-    : `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
+  const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
 
   let cls, head, body = ''
   if (exps.length === 0) {
     const far = allExp[allExp.length - 1]
     cls = 'bad'
     head = `ما فيه عقود ${typeName} لـ ${esc(t)} بهذه المدة`
-    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, today)} يوم). ${isBn() ? 'عقود باينانس ما تروح أبعد من كذا.' : 'عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.'}` : ''
+    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, today)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
   } else if (a.comfortable === 0) {
     const quoted = cands.map((c) => contractMetrics(c, o)).filter((m) => m.spreadPct != null)
     const best = quoted.length ? Math.min(...quoted.map((m) => m.spreadPct)) : null
@@ -420,7 +399,7 @@ async function render() {
   } else if (a.legs.length === 0) {
     cls = 'warn'
     head = `المبلغ أقل من سعر عقد واحد`
-    body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * (c.multiplier ?? 100) * (c.lot ?? 1))))}.`
+    body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * 100)))}.`
   } else if (amount <= a.comfortable && toll / cost > 0.08) {
     cls = 'warn'
     head = `⚠️ السيولة تكفي ${money(cost)} — بس السبريد غالي`
@@ -438,8 +417,7 @@ async function render() {
   // Show where the number comes from: each expiry in range and how many contracts exist on it.
   if (exps.length) {
     const oiOf = (e) => ofType.filter((c) => c.expiry === e).reduce((s, c) => s + (c.oi ?? 0), 0)
-    const oiTxt = (e) => isBn() ? `${fmtN(oiOf(e), 2)} ${esc(t)} مفتوحة` : `${fmtN(oiOf(e))} عقد مفتوح`
-    body += `<br><span class="note" style="display:inline">التواريخ في ${durTxt}: ${exps.map((e) => `<bdi class="m">${fmtExpShort(e)}</bdi> (${oiTxt(e)})`).join('، ')}.</span>`
+    body += `<br><span class="note" style="display:inline">التواريخ في ${durTxt}: ${exps.map((e) => `<bdi class="m">${fmtExpShort(e)}</bdi> (${fmtN(oiOf(e))} عقد مفتوح)`).join('، ')}.</span>`
   }
 
   // Nudge to a duration that can absorb more.
@@ -453,40 +431,39 @@ async function render() {
   }
 
   const legsHtml = a.legs.map((l) => {
-    const g = limitGuide(l.bid, l.ask, l.tick ?? 0.01)
+    const g = limitGuide(l.bid, l.ask)
     const dte = daysToExpiry(l.expiry, today)
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
-      <div class="note" style="margin:2px 0 0">${dte} يوم${!isBn() && isMonthly(l.expiry) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${isBn() ? (l.depthKnown ? unitTxt(l, l.bidSize) : '—') : `${fmtN(l.bidSize)} عقد`}${isBn() ? ` · تداول 24 ساعة: ${unitTxt(l, l.volume)}` : ''}</div>
-      <div class="buy">اشترِ ${unitTxt(l, l.contracts)} ≈ ${money(l.cost)}</div>
-      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${priceOf(l, g.mid)}</b> — ولا تدفع أكثر من ${priceOf(l, g.buyMax)}</div>` : ''}
+      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
+      <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
+      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}</div>` : ''}
     </div>`
   }).join('')
 
   const notes = []
-  if (snap.live) notes.push(`أسعار مباشرة من باينانس (${fmtTime(snap.fetchedAt)}) · «الحجم اليومي» هنا = تداول آخر 24 ساعة. <a href="#" id="bnRefresh">تحديث الآن</a>`)
-  else if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
-  if (!snap.live && (snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
-  if (!snap.live) notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
+  if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
+  if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
+  notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
 
   const top = a.ranked.slice(0, 15)
   const BIND = { volume: 'الحجم اليومي', oi: 'العقود المفتوحة', bid: 'المعروض على البيد', spread: 'السبريد' }
   const candRows = top.map((c) => `<tr class="${a.legs.some((l) => l.sym === c.sym) ? 'hl' : ''}">
     <td class="n"><bdi>${fmtExpShort(c.expiry)} · ${strikeTxt(c)}${c.type}</bdi></td><td class="n"><b>${money(c.m.capDollars)}</b></td>
     <td><span class="pill p${c.m.grade}">${GRADE_TXT[c.m.grade]}</span></td><td class="n"><bdi>${fmtP(c.m.spreadPct)}</bdi></td>
-    <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize, isBn() ? 2 : 0)}</td><td class="n">${fmtN(c.oi, isBn() ? 2 : 0)}</td><td class="n">${fmtN(c.m.adv, isBn() ? 2 : 0)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
+    <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
   const ex = expirySummary(ofType, today, o).filter((e) => e.dte >= 7)
   const chosen = new Set(exps)
   const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
-    <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly && !isBn() ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
+    <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
     <td class="n"><bdi>${fmtP(e.medianSpread)}</bdi></td><td class="n">${fmtN(e.oi)}</td></tr>`).join('')
 
   $('out').innerHTML = `
     <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
     ${nudge}
     ${a.legs.length ? `<div class="legs">${legsHtml}</div>
-      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل ${isBn() ? 'خطوة سعر أو خطوتين' : 'سنت أو سنتين'} كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
+      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل سنت أو سنتين كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
     ${notes.map((w) => `<p class="note">${w}</p>`).join('')}
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
@@ -511,79 +488,9 @@ async function render() {
     </details>`
 }
 
-// --- Market switch ------------------------------------------------------------
-function syncMarket() {
-  document.querySelectorAll('#marketChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.market === market)))
-  $('tickerBox').hidden = isBn()
-  $('coinBox').hidden = !isBn()
-  $('usList').hidden = isBn()
-  $('bnList').hidden = !isBn()
-  $('listTitle').textContent = isBn() ? 'كل العملات على باينانس' : 'قائمتي'
-  $('listNote').textContent = isBn()
-    ? 'كم يتحمّل كل عملة للمدة والنوع المختارين فوق — نفس رقم الأداة. الأسعار مباشرة من باينانس.'
-    : 'كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق. اضغط أي سهم يفتح في الأداة.'
-  if (isBn() && bnAssets) {
-    $('coinChips').innerHTML = bnAssets.map((a) => `<button type="button" data-coin="${esc(a)}" aria-pressed="${a === coin}">${esc(a)}</button>`).join('')
-  }
-}
-
-async function ensureAssets() {
-  if (bnAssets) return
-  try {
-    bnAssets = await bn.listAssets()
-    if (!bnAssets.includes(coin)) coin = bnAssets[0]
-  } catch (e) {
-    $('coinChips').innerHTML = `<span class="note" style="margin:0">${BN_ERR[e.kind] ?? BN_ERR.http}</span>`
-  }
-}
-
-// Every coin for the chosen duration and type, computed exactly like the tool.
-const bnTable = new Map()
-function renderBnList() {
-  if (!bnAssets) { $('bnList').innerHTML = ''; return }
-  const bi = bucketIdx()
-  const b = BUCKETS[bi]
-  const key = (a) => `${a}|${type}|${b.key}|${JSON.stringify(adv)}`
-  const rows = bnAssets.map((a) => ({ a, v: bnTable.get(key(a)) }))
-  const missing = rows.filter((r) => r.v === undefined).length
-  $('listCount').textContent = `(${bnAssets.length})`
-  $('bnList').innerHTML = `<div class="tbl"><table><thead><tr><th>العملة</th><th>يتحمّل · ${BUCKET_TXT[b.key]} · ${type === 'C' ? 'Call' : 'Put'}</th><th>تواريخ في المدة</th></tr></thead><tbody>${rows
-    .sort((x, y) => (y.v?.cap ?? -1) - (x.v?.cap ?? -1))
-    .map((r) => `<tr data-coin="${esc(r.a)}" style="cursor:pointer"><td class="n"><b><bdi>${esc(r.a)}</bdi></b></td><td class="n">${r.v === undefined ? '…' : r.v.err ? '—' : `<b>${money(r.v.cap)}</b>`}</td><td class="n">${r.v?.n ?? ''}</td></tr>`).join('')}</tbody></table></div>
-    ${missing ? `<p class="note"><a href="#" id="bnAll">احسب كل العملات</a> — يقرأ عمق السوق لكل عملة، ياخذ دقيقة تقريبًا.</p>` : ''}`
-}
-
-async function computeAllCoins() {
-  const bi = bucketIdx()
-  const b = BUCKETS[bi]
-  for (const a of bnAssets ?? []) {
-    const k = `${a}|${type}|${b.key}|${JSON.stringify(adv)}`
-    if (bnTable.has(k)) continue
-    try {
-      const d = a === current?.t && isBn() ? current : await loadCoin(a)
-      const ex = expiriesInRange([...new Set(d.contracts.filter((c) => c.type === type).map((c) => c.expiry))].sort(), today, b.lo, b.hi)
-      const cap = allocate(candidates(d.contracts, { type, expiries: ex, dMin: adv.dMin, dMax: adv.dMax }), { amount: 0, pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs, gradeOi: d.gradeOi }).comfortable
-      bnTable.set(k, { cap, n: ex.length })
-    } catch {
-      bnTable.set(k, { err: true })
-    }
-    renderBnList()
-  }
-}
-
 // --- My list ------------------------------------------------------------------
 let tierFilter = ''
 function renderList() {
-  if (isBn()) {
-    // The open coin's own figure is always known; the rest on request.
-    if (current?.contracts && current.gradeOi) {
-      const b = BUCKETS[bucketIdx()]
-      const ex = expiriesInRange([...new Set(current.contracts.filter((c) => c.type === type).map((c) => c.expiry))].sort(), today, b.lo, b.hi)
-      bnTable.set(`${current.t}|${type}|${b.key}|${JSON.stringify(adv)}`, { cap: comfortableFor(current.contracts, ex), n: ex.length })
-    }
-    renderBnList()
-    return
-  }
   if (!index?.tickers) return
   const q = cleanT($('q').value)
   const bi = bucketIdx()
@@ -609,21 +516,6 @@ const later = () => { clearTimeout(timer); timer = setTimeout(render, 250) }
 $('ticker').addEventListener('input', later)
 $('amount').addEventListener('input', later)
 $('amount').addEventListener('blur', () => { const v = parseAmount($('amount').value); if (v) $('amount').value = v.toLocaleString('en-US') })
-$('marketChips').addEventListener('click', async (e) => {
-  const b = e.target.closest('button')
-  if (!b || b.dataset.market === market) return
-  market = b.dataset.market
-  current = null
-  syncMarket()
-  if (isBn()) await ensureAssets()
-  render()
-})
-$('coinChips').addEventListener('click', (e) => { const b = e.target.closest('button[data-coin]'); if (b) { coin = b.dataset.coin; render() } })
-$('bnList').addEventListener('click', (e) => {
-  if (e.target.id === 'bnAll') { e.preventDefault(); e.target.closest('p').textContent = 'جاري الحساب…'; computeAllCoins(); return }
-  const tr = e.target.closest('tr[data-coin]')
-  if (tr) { coin = tr.dataset.coin; render(); document.getElementById('tool').scrollIntoView() }
-})
 $('typeChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { type = b.dataset.type; render() } })
 $('durChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { bucket: b.dataset.bucket }; render() } })
 $('dateChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { expiry: b.dataset.expiry }; render() } })
@@ -638,7 +530,6 @@ $('out').addEventListener('input', (e) => {
 $('out').addEventListener('click', (e) => {
   const d = e.target.closest('[data-setbucket]')
   if (d) { e.preventDefault(); sel = { bucket: d.dataset.setbucket }; render() }
-  if (e.target.id === 'bnRefresh') { e.preventDefault(); bn.clearCache(); current = null; render(); return }
   if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv3', adv); render().then(() => { document.querySelector('details.more').open = true }) }
 })
 window.addEventListener('hashchange', () => {
@@ -646,6 +537,25 @@ window.addEventListener('hashchange', () => {
   if (h && !['TOOL', 'MYLIST', 'SPREAD'].includes(h) && h !== cleanT($('ticker').value)) { $('ticker').value = h; render() }
 })
 $('q').addEventListener('input', renderList)
+
+// Binance checker: the rules above, applied to numbers copied from the app.
+const bNum = (id) => parseAmount($(id).value)
+function renderBinanceCheck() {
+  const open = bNum('bOpen'), spot = bNum('bSpot'), bid = bNum('bBid'), ask = bNum('bAsk')
+  if (!open || !spot || !ask) { $('bOut').textContent = 'اكتب الأرقام وتطلع النتيجة هنا.'; return }
+  const coins = open / spot
+  const cap = Math.floor(coins * 0.05 * 100) / 100
+  const mid = bid > 0 ? (bid + ask) / 2 : null
+  const spread = mid ? (ask - bid) / mid : null
+  const lines = [`العقود المفتوحة: <b>${fmtN(coins, 2)}</b> عملة ← حدك المريح <b>${fmtN(cap, 2)}</b> عملة ≈ <b>${money(cap * ask)}</b>.`]
+  if (!bid || bid <= ask * 0.02) lines.push('🔴 الـ Bid صفر أو رقم تافه — ما فيه مشتري حقيقي. لا تدخل هذا العقد.')
+  else if (spread > 0.15) lines.push(`🔴 السبريد ${fmtP(spread)} — غالي جدًا، تخسر هذي النسبة بمجرد ما تبيع.`)
+  else if (spread > 0.10) lines.push(`🟡 السبريد ${fmtP(spread)} — حذر، ادخل بمبلغ صغير وبأوامر Limit.`)
+  else lines.push(`🟢 السبريد ${fmtP(spread)} — ${spread <= 0.05 ? 'ممتاز' : 'مقبول'}. ادخل بـ Limit عند ${money(mid)}.`)
+  if (cap < 0.01) lines.push('🔴 العقود المفتوحة قليلة جدًا — حتى أصغر كمية (0.01) أكبر من حدك.')
+  $('bOut').innerHTML = lines.join('<br>')
+}
+for (const id of ['bOpen', 'bSpot', 'bBid', 'bAsk']) $(id).addEventListener('input', renderBinanceCheck)
 $('tierChips').addEventListener('click', (e) => {
   const b = e.target.closest('button')
   if (!b) return
@@ -669,7 +579,6 @@ fetch('data/options/validation.json', { cache: 'no-cache' }).then((r) => r.ok ? 
     : `⚠️ الفحص الآلي لقى مشكلة في ${bad} سهم — الأرقام لهذي الأسهم ممكن تكون غير دقيقة.`
   $('foot').insertAdjacentHTML('beforeend', `<br>${line}`)
 }).catch(() => {})
-if (isBn()) ensureAssets().then(() => syncMarket())
 fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
   index = j
   if (j) {

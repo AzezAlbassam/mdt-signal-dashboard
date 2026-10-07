@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Engine tests
-        run: node --test options/engine.test.js options/validate.test.js options/binance.test.js
+        run: node --test options/engine.test.js options/validate.test.js
       - name: Snapshot
         env:
           GH_TOKEN: ${{ github.token }}
