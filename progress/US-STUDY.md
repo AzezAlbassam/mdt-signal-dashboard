@@ -26,6 +26,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Stage 1 (PROTOCOL-addendum-2.md / addendum 3): classify page-1 symbols via search-symbols → data/us/classify.jsonl, build universe, ingest, run
 - [ ] Stage 2: when screener answers, full ≥$2B snapshot → fetch the rest → H1b + combined
 
+- [x] Study 4 protocol (PROTOCOL-study4.md) committed before any computation
+- [ ] Study 4: indicators (engine/indicators2.js) + no-look-ahead tests
+- [ ] Study 4: search on even-position US symbols → reports/study4-shortlist.json (commit before confirm)
+- [ ] Study 4: confirm on odd-position US + study-1 crypto/Saudi
+
 ## Counts
 (updated as work proceeds)
 
@@ -53,3 +58,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   reports/pre-dedupe/. Edges barely move; four Robust A rules and RSI2 (B) unchanged. Labels at
   the threshold flipped from permutation noise: rsi_50 A Possible→No, mfi B Possible→No,
   tsmom B Possible→Robust (Holm p 0.0875→0.0375; treat as borderline). H1 still NOT CONFIRMED.
+- 2026-10-07 — user: wants many more indicators, trader-style strategies, ≥60% win rate. Study 4 pre-registered: 912 strategies, search/confirm split by stock.
