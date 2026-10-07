@@ -18,9 +18,14 @@ const walk = (d) => {
     else if (/get-ohlcv-\d+\.txt$/.test(e.name) && fs.statSync(p).mtimeMs > since) {
       try {
         const j = JSON.parse(fs.readFileSync(p, 'utf8'))
-        if (j?.bars?.t && j.symbol && j.interval === '1D') {
+        if (j?.bars && j.symbol && j.interval === '1D') {
+          // Row format ([{t,o,h,l,c,v}]) is turned into columns so ingest sees one shape.
+          if (Array.isArray(j.bars)) j.bars = Object.fromEntries(['t', 'o', 'h', 'l', 'c', 'v'].map((k) => [k, j.bars.map((b) => b[k])]))
           const dst = path.join(out, `${j.symbol.replace(':', '_')}.json`)
-          if (!fs.existsSync(dst) || fs.statSync(dst).size < fs.statSync(p).size) { fs.copyFileSync(p, dst); n += 1 }
+          if (!fs.existsSync(dst) || JSON.parse(fs.readFileSync(dst, 'utf8')).bars.t.length < j.bars.t.length) {
+            fs.writeFileSync(dst, JSON.stringify(j))
+            n += 1
+          }
         }
       } catch {}
     }

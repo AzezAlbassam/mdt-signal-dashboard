@@ -36,3 +36,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   snapshot). Collect with `node scripts/us-collect.js <rawDir>` (only files after
   2026-10-07T00:15Z), then `US_RAW=<rawDir> node scripts/us-ingest.js` once universe.json exists.
 - 2026-10-07 00:25Z — user asked for: their 46-ticker watchlist, example charts, indicator links, Saudi study. Addendum 1 written before any study 2 result.
+- 2026-10-07 00:35Z — watchlist extras fetched. Inline-only (not storable without hand-copying,
+  which is not done): NASDAQ:ZENA (505 bars), NYSE:VOYG (332), NYSE:FIG (298), NYSE:HAWK (105)
+  → report as "too new / not stored". Row-format responses are now collected too (LUNR, ARM
+  re-fetched that way; volume checksums match the API summary). 195 raw files collected.
