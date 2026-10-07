@@ -81,11 +81,17 @@ describe('contractMetrics', () => {
     assert.equal(m.binding, 'oi')
   })
 
-  test('a deep bid on a thinly traded small cap still counts', () => {
-    // 10% of ADV is 0 contracts, but 1981 sit on the bid; 5% of 9019 OI = 450
+  test('a deep bid counts, but only up to one normal day of volume', () => {
+    // 1981 on the bid, 200 trade a day: the bid path is worth 200, not 1981; 5% of OI = 450
+    const m = contractMetrics({ bid: 2.15, ask: 2.35, bidSize: 1981, oi: 9019, adv: 200, sessions: 10 })
+    assert.equal(m.capByAdv, 20)
+    assert.equal(m.capContracts, 200)
+    assert.equal(m.binding, 'bid')
+  })
+
+  test('a deep bid on a contract that barely trades is worth almost nothing', () => {
     const m = contractMetrics({ bid: 2.15, ask: 2.35, bidSize: 1981, oi: 9019, adv: 4, sessions: 10 })
-    assert.equal(m.capByAdv, 0)
-    assert.equal(m.capContracts, 450)
+    assert.equal(m.capContracts, 4)
   })
 
   test('the bid binds when it is the only way out', () => {
@@ -180,16 +186,23 @@ describe('allocate', () => {
     sym: `T${strike}`, strike, bid: 9.9, ask: 10, bidSize: 20, oi: 10000, volume: 500, adv: 1000, sessions: 10, ...over,
   })
 
-  test('fills the best leg to its cap, then the next', () => {
+  test('spreads a large amount: no contract takes more than half while others have room', () => {
     const contracts = [
       mk(100, { adv: 300 }), // cap 30 → $30,000, grade A
       mk(110, { adv: 250 }), // cap 25 → $25,000, grade A
-      mk(120, { bid: 9, ask: 10 }), // spread ~10.5% → C
+      mk(120, { bid: 9, ask: 10 }), // spread ~10.5% → D, ranked last
     ]
     const r = allocate(contracts, { amount: 50000 })
-    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 30], [110, 20]])
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 25], [110, 25]])
     assert.equal(r.placed, 50000)
     assert.equal(r.unplaced, 0)
+  })
+
+  test('tops up past half when the others are full', () => {
+    const r = allocate([mk(100, { adv: 600 }), mk(110, { adv: 100 })], { amount: 60000 })
+    // caps: 60 contracts and max(10% of 100, min(20 on the bid, 100)) = 20.
+    // Half-limit pass gives 30 + 20; the top-up gives the first 10 more.
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 40], [110, 20]])
   })
 
   test('reports what does not fit', () => {
@@ -200,9 +213,16 @@ describe('allocate', () => {
     assert.equal(r.comfortable, 10000)
   })
 
-  test('leftovers too small for their own order are not split off', () => {
-    const r = allocate([mk(100, { adv: 300 }), mk(110, { adv: 300 })], { amount: 31000 })
-    assert.deepEqual(r.legs.map((l) => l.contracts), [30])
+  test('a leg too small to be worth its own order is not split off', () => {
+    // second contract can only take one contract ($1,000) — under 5% of $50,000
+    const r = allocate([mk(100, { adv: 1000 }), mk(110, { adv: 10, bidSize: 0 })], { amount: 50000 })
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 50]])
+  })
+
+  test('never places more than the comfortable figure', () => {
+    const cs = [mk(100, { adv: 300 }), mk(110, { adv: 250 }), mk(120, { adv: 200 })]
+    const r = allocate(cs, { amount: 1e7, maxLegs: 2 })
+    assert.equal(r.placed, r.comfortable)
   })
 
   test('too wide a spread is never used', () => {

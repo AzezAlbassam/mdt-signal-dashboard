@@ -142,11 +142,13 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const contracts = rows.map((r) => {
     const q = !fresh && prev?.quotesIntraday && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
     const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completedSessions))
-    return { ...r, bid: q.bid, ask: q.ask, bidSize: q.bidSize, adv: Math.round(adv * 10) / 10, sessions }
+    // Round here, once: the summary below must be computed from exactly the values the
+    // page will read, or a contract on a delta boundary counts in one and not the other.
+    const delta = r.delta == null ? null : Math.round(r.delta * 1000) / 1000
+    return { ...r, bid: q.bid, ask: q.ask, bidSize: q.bidSize, delta, adv: Math.round(adv * 10) / 10, sessions }
   })
   const out = contracts.map((c) => [
-    c.sym, expIndex.get(c.expiry), c.type, c.strike, c.bid, c.ask, c.bidSize, c.volume, c.oi,
-    c.delta == null ? null : Math.round(c.delta * 1000) / 1000, c.adv, c.sessions,
+    c.sym, expIndex.get(c.expiry), c.type, c.strike, c.bid, c.ask, c.bidSize, c.volume, c.oi, c.delta, c.adv, c.sessions,
   ])
   const summary = tickerSummary(contracts, today)
 

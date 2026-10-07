@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Engine tests
-        run: node --test options/engine.test.js
+        run: node --test options/engine.test.js options/validate.test.js
       - name: Snapshot
         env:
           GH_TOKEN: ${{ github.token }}
@@ -74,6 +74,7 @@ jobs:
           if [ "$EVENT" != "schedule" ]; then
             restore
             node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY"
+            node options/validate.js _data --write || echo '::warning::validation found problems'
             save_and_deploy
             exit 0
           fi
@@ -86,6 +87,7 @@ jobs:
             case "$next" in
               run)
                 node options/snapshot.js _data
+                node options/validate.js _data --write || echo '::warning::validation found problems'
                 save_and_deploy ;;
               wait*)
                 s=${next#wait }

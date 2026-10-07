@@ -361,6 +361,10 @@ async function render() {
     cls = 'warn'
     head = `المبلغ أقل من سعر عقد واحد`
     body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * 100)))}.`
+  } else if (amount <= a.comfortable && toll / cost > 0.08) {
+    cls = 'warn'
+    head = `⚠️ السيولة تكفي ${money(cost)} — بس السبريد غالي`
+    body = `تقدر تدخل وتطلع، لكن لو بعت فورًا تخسر ${fmtP(toll / cost)} من المبلغ بسبب السبريد. ادخل بأوامر Limit وبصبر، أو قلّل المبلغ. الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(a.comfortable)}.`
   } else if (amount <= a.comfortable) {
     cls = 'ok'
     head = `✅ تقدر تدخل ${money(cost)} وتطلع براحة`
@@ -370,7 +374,12 @@ async function render() {
     head = `⚠️ لا تدخل أكثر من ${money(a.comfortable)}`
     body = `هذا الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}. مبلغك ${money(amount)} أكبر منه — الباقي (${money(a.unplaced)}) لو دخلته بتصير أنت السوق وتبيع بخصم.`
   }
-  if (a.legs.length && cost > 0) body += ` تكلفة السبريد لو بعت فورًا: ${money(toll)} (${fmtP(toll / cost)}).`
+  if (a.legs.length && cost > 0 && !head.includes('السبريد غالي')) body += ` تكلفة السبريد لو بعت فورًا: ${money(toll)} (${fmtP(toll / cost)}).`
+  // Show where the number comes from: each expiry in range and how many contracts exist on it.
+  if (exps.length) {
+    const oiOf = (e) => ofType.filter((c) => c.expiry === e).reduce((s, c) => s + (c.oi ?? 0), 0)
+    body += `<br><span class="note" style="display:inline">التواريخ في ${durTxt}: ${exps.map((e) => `<bdi class="m">${fmtExpShort(e)}</bdi> (${fmtN(oiOf(e))} عقد مفتوح)`).join('، ')}.</span>`
+  }
 
   // Nudge to a duration that can absorb more.
   let nudge = ''
@@ -420,7 +429,7 @@ async function render() {
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
       <p class="note" style="margin-top:0">لكل عقد:<br>
-      ① <b>طريق الخروج</b> = الأكبر بين: المشترين المعروضين على البيد الحين، أو ${adv.pctAdv}% من متوسط تداوله اليومي.<br>
+      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة).<br>
       ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
       الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
       <h3>أفضل العقود هنا</h3>
@@ -504,6 +513,14 @@ $('list').addEventListener('click', (e) => {
   document.getElementById('tool').scrollIntoView()
 })
 
+fetch('data/options/validation.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((v) => {
+  if (!v) return
+  const bad = Object.keys(v.failed ?? {}).length + (v.fetchErrors?.length ?? 0)
+  const line = bad === 0
+    ? `✓ فحص آلي بعد آخر تحديث: ${fmtN(v.tickers)} سهم و${fmtN(v.contracts)} عقد — كل الأرقام مطابقة لإعادة الحساب، بدون أخطاء.`
+    : `⚠️ الفحص الآلي لقى مشكلة في ${bad} سهم — الأرقام لهذي الأسهم ممكن تكون غير دقيقة.`
+  $('foot').insertAdjacentHTML('beforeend', `<br>${line}`)
+}).catch(() => {})
 fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
   index = j
   if (j) {

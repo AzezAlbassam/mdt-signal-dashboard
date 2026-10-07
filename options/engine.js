@@ -103,10 +103,10 @@ export function grade({ spreadPct, oi }) {
  * `c` carries bid, ask, bidSize, oi, volume (today) and, when history exists, adv + sessions.
  *
  * Size = min(5% of open interest, a way out), where the way out is whichever is larger:
- *   - right now, into the displayed bid (bid size), or
- *   - over the day, into normal flow (10% of average daily volume).
- * Small names often trade little but are quoted deep (market makers show hundreds of
- * contracts at a wide price); the bid path captures that, the spread prices it, and the
+ *   - over the day, into normal flow: 10% of average daily volume, or
+ *   - right now, into the displayed bid — but never more than one normal day's volume.
+ * A displayed bid is real but thin: market makers quote hundreds of contracts and pull
+ * back once hit, so a size the contract never actually trades is not an exit. The
  * open-interest cap keeps you from becoming the market.
  */
 export function contractMetrics(c, opts = {}) {
@@ -129,10 +129,11 @@ export function contractMetrics(c, opts = {}) {
   const capByAdv = Math.floor(o.pctOfAdv * adv)
   const capByOi = Math.floor(o.pctOfOi * oi)
   const bidSize = bid > 0 ? c.bidSize ?? 0 : 0
-  const exit = Math.max(capByAdv, bidSize)
+  const byBid = Math.floor(Math.min(bidSize, adv))
+  const exit = Math.max(capByAdv, byBid)
   const tradable = bid > 0 && spreadPct != null && spreadPct <= o.maxSpread
   const capContracts = tradable ? Math.max(0, Math.min(exit, capByOi)) : 0
-  const binding = !tradable ? 'spread' : capByOi <= exit ? 'oi' : bidSize >= capByAdv ? 'bid' : 'volume'
+  const binding = !tradable ? 'spread' : capByOi <= exit ? 'oi' : byBid > capByAdv ? 'bid' : 'volume'
 
   return {
     mid,
@@ -230,23 +231,34 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
 
   // The comfortable maximum is what the top legs hold when filled to their caps —
   // the one number the page and the watchlist both quote.
-  const comfortable = ranked.slice(0, maxLegs).reduce((s, c) => s + c.m.capDollars, 0)
+  const top = ranked.slice(0, maxLegs)
+  const comfortable = top.reduce((s, c) => s + c.m.capDollars, 0)
   const crumb = Math.min(amount, comfortable) * 0.05
 
-  const legs = []
+  // Fill in rank order, first with no contract taking more than half the amount (so a
+  // large amount is spread when there is room), then top up to the caps if needed.
+  // Orders too small to be worth placing (under 5%) are skipped unless nothing else fits.
+  const legs = new Map()
   let remaining = amount
-  for (const c of ranked) {
-    if (legs.length >= maxLegs || remaining <= 0) break
-    const perContract = c.ask * 100
-    const contractsWanted = Math.floor(Math.min(remaining, c.m.capDollars) / perContract)
-    if (contractsWanted < 1) continue
-    const cost = contractsWanted * perContract
-    // Crumbs are not worth a separate order: past the first leg, skip anything under 5%.
-    if (legs.length && cost < crumb) continue
-    legs.push({ ...c, contracts: contractsWanted, cost })
-    remaining -= cost
+  const fill = (perLeg, minCost) => {
+    for (const c of top) {
+      if (remaining <= 0) break
+      const leg = legs.get(c.sym)
+      const perContract = c.ask * 100
+      const held = leg?.cost ?? 0
+      const room = Math.min(remaining, c.m.capDollars - held, perLeg - held)
+      const n = Math.floor(room / perContract)
+      if (n < 1 || (!leg && n * perContract < minCost)) continue
+      const add = n * perContract
+      legs.set(c.sym, { ...c, contracts: (leg?.contracts ?? 0) + n, cost: held + add })
+      remaining -= add
+    }
   }
-  return { ranked, legs, placed: amount - remaining, unplaced: remaining, comfortable }
+  fill(amount * 0.5, crumb)
+  fill(Infinity, crumb)
+  if (legs.size === 0) fill(Infinity, 0)
+
+  return { ranked, legs: [...legs.values()], placed: amount - remaining, unplaced: remaining, comfortable }
 }
 
 /** Duration buckets, in calendar days to expiry: the choices the page offers. */
