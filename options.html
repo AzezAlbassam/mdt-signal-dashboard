@@ -42,19 +42,21 @@ h3{color:var(--ink);font-size:1.05rem;margin:22px 0 8px;font-weight:700}
 bdi.m,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 a{color:var(--accent)}
 
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:14px}
 .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 @media (max-width:620px){.row{grid-template-columns:1fr}}
+.lbl{font-size:.82rem;color:var(--muted);font-weight:650;margin-bottom:5px}
 label{display:grid;gap:5px;font-size:.82rem;color:var(--muted);font-weight:650}
 input{font:inherit;font-size:1.05rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
 input:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:800;font-size:1.25rem;letter-spacing:.02em}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{font:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer}
+.chips button{font:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer;line-height:1.3}
 .chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
-.daysline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.82rem;color:var(--muted)}
-.daysline input{width:96px;padding:6px 10px;font-size:.95rem}
-.mt{margin-top:14px}
+.chips button small{display:block;font-size:.72rem;font-weight:600;opacity:.85}
+.chips.dates{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+.chips.dates button{font-size:.8rem;padding:6px 8px;border-radius:8px;text-align:center}
+.chips button .dot{margin-inline-end:5px}
 
 .verdict{margin-top:18px;border-radius:10px;padding:18px;border:1px solid var(--line);background:var(--surface)}
 .verdict.ok{background:var(--pos-soft);border-color:transparent}
@@ -73,7 +75,7 @@ input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:8
 .leg .name{font-weight:800;color:var(--ink);font-size:1.05rem}
 .leg .buy{font-size:1.15rem;font-weight:800;color:var(--ink);margin-top:4px}
 .leg .how{font-size:.88rem;color:var(--body);margin-top:6px;background:var(--raise);border-radius:6px;padding:8px 10px}
-.pill{font-size:.75rem;font-weight:800;border-radius:999px;padding:2px 9px}
+.pill{font-size:.75rem;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap}
 .pA,.pB{background:var(--pos-soft);color:var(--pos)} .pC{background:var(--warn-soft);color:var(--warn)} .pD{background:var(--neg-soft);color:var(--neg)}
 .note{font-size:.84rem;color:var(--muted);margin:10px 0 0}
 .tip{font-size:.88rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:10px}
@@ -81,20 +83,22 @@ input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:8
 details.more{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 16px}
 details.more>summary{cursor:pointer;font-weight:700;color:var(--muted);padding:12px 0}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:8px 0 14px}
-table{border-collapse:collapse;width:100%;font-size:.84rem;white-space:nowrap}
-th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line-soft)}
-th{font-size:.72rem;color:var(--faint);font-weight:700;background:var(--raise)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+th{font-size:.74rem;color:var(--faint);font-weight:700;background:var(--raise)}
 tr:last-child td{border-bottom:0}
-td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left}
+td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+td.n bdi{direction:ltr;unicode-bidi:isolate}
 tr.hl td{background:var(--accent-soft)}
 .adv{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:14px}
 @media (max-width:620px){.adv{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .adv input{font-size:.95rem;padding:7px 10px}
 
+#list table{table-layout:auto}
 #list tbody tr{cursor:pointer}
 #list tbody tr:hover td{background:var(--raise)}
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.count{font-size:.8rem;color:var(--faint);margin-inline-start:2px}
+.count{font-size:.8rem;color:var(--faint);margin-inline-start:4px}
 
 .guide p,.guide li{max-width:68ch}
 .guide ol,.guide ul{padding-inline-start:22px}
@@ -108,7 +112,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
 </style></head><body><div class="wrap">
 <header>
   <h1>سيولة العقود</h1>
-  <p class="lede">اكتب السهم والمدة والمبلغ — وأقولك كم تدخل، في أي عقد، وبأي سعر.</p>
+  <p class="lede">اكتب السهم والمبلغ واختر المدة — وأقولك كم تدخل، في أي عقد، وبأي سعر.</p>
 </header>
 <nav>
   <a href="#tool">ابحث عن عقد</a>
@@ -127,22 +131,20 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
         <input id="amount" type="text" inputmode="numeric" value="100,000" autocomplete="off">
       </label>
     </div>
-    <div class="row mt">
-      <label>النوع
-        <div class="chips" id="typeChips">
-          <button type="button" data-type="C" aria-pressed="true">Call — صعود</button>
-          <button type="button" data-type="P" aria-pressed="false">Put — نزول</button>
-        </div>
-      </label>
-      <label>المدة
-        <div class="chips" id="durChips">
-          <button type="button" data-days="60">1–3 شهور</button>
-          <button type="button" data-days="135">3–6 شهور</button>
-          <button type="button" data-days="270">6–12 شهر</button>
-          <button type="button" data-days="450">أكثر من سنة</button>
-        </div>
-        <span class="daysline">أو بالأيام: <input id="days" type="number" inputmode="numeric" min="7" max="1100" value="200"> يوم</span>
-      </label>
+    <div>
+      <div class="lbl">النوع</div>
+      <div class="chips" id="typeChips">
+        <button type="button" data-type="C" aria-pressed="true">Call — صعود</button>
+        <button type="button" data-type="P" aria-pressed="false">Put — نزول</button>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">المدة</div>
+      <div class="chips" id="durChips"></div>
+    </div>
+    <div>
+      <div class="lbl">أو اختر تاريخ انتهاء محدد <span class="count" id="datesNote"></span></div>
+      <div class="chips dates" id="dateChips"></div>
     </div>
   </div>
   <div id="out"><p class="empty">جاري التحميل…</p></div>
@@ -150,7 +152,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
 
 <section id="mylist">
   <h2>قائمتي <span class="count" id="listCount"></span></h2>
-  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. التقييم على عقود Call بين شهرين و13 شهر قريبة من السعر. اضغط أي سهم يفتح في الأداة.</p>
+  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق. اضغط أي سهم يفتح في الأداة.</p>
   <input id="q" type="search" placeholder="ابحث عن سهم…" style="margin-top:10px;direction:ltr;text-align:right" autocomplete="off">
   <div class="filters chips" id="tierChips">
     <button type="button" data-tier="" aria-pressed="true">الكل</button>
@@ -206,46 +208,54 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   </ol>
 </section>
 
-<footer id="foot">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
+<footer id="foot">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
 </div>
 
 <script type="module">
-import { contractMetrics, allocate, selectExpirations, expirySummary, daysToExpiry, isMonthly, limitGuide } from './options/engine.js'
+import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates } from './options/engine.js'
 
 const $ = (id) => document.getElementById(id)
 const money = (v) => '<bdi class="m">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
+const short$ = (v) => '<bdi>' + shortRaw(v) + '</bdi>'
+const shortRaw = (v) => v >= 1e6 ? '$' + (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M' : v >= 1e3 ? '$' + Math.round(v / 1e3) + 'k' : '$' + Math.round(v)
 const price = (v) => '<bdi class="m">$' + Number(v).toFixed(2) + '</bdi>'
 const fmtN = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d })
 const fmtP = (v) => v == null ? '—' : (v * 100).toFixed(1) + '%'
 const fmtExp = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+const fmtExpShort = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit', timeZone: 'UTC' })
 const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) } catch { return iso } }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const parseAmount = (s) => Number(String(s).replace(/[^\d.]/g, '')) || 0
 const cleanT = (s) => String(s).trim().toUpperCase().replace(/[^A-Z.]/g, '')
 const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'] }
-const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول بحذر', D: 'تجنّب' }
+const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول', D: 'سبريد عالي' }
+const BUCKET_TXT = { m1: '1–3 شهور', m3: '3–6 شهور', m6: '6–12 شهر', y1: '1–2 سنة', y2: 'أكثر من سنتين' }
 const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
+const today = new Date().toISOString().slice(0, 10)
 
-let type = 'C'
-let index = null
-const cache = new Map()
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem('optliq:' + k)) } catch { return null } },
   set(k, v) { try { localStorage.setItem('optliq:' + k, JSON.stringify(v)) } catch {} },
 }
-const ADV_FIELDS = ['pctAdv', 'pctOi', 'maxSpread', 'maxLegs', 'dMin', 'dMax', 'win']
-const advDefaults = { pctAdv: 10, pctOi: 5, maxSpread: 12, maxLegs: 4, dMin: 0.2, dMax: 0.85, win: 25 }
-let adv = { ...advDefaults, ...(store.get('adv') ?? {}) }
-
-const saved = store.get('form')
-if (saved) { $('ticker').value = saved.ticker ?? 'MSTR'; $('amount').value = saved.amount ?? '100,000'; $('days').value = saved.days ?? 200; type = saved.type ?? 'C' }
+const advDefaults = { pctAdv: 10, pctOi: 5, maxSpread: 15, maxLegs: 6, dMin: 0.2, dMax: 0.85 }
+let adv = { ...advDefaults, ...(store.get('adv3') ?? {}) }
+const saved = store.get('form2') ?? {}
+let type = saved.type ?? 'C'
+let sel = saved.sel ?? { bucket: 'm6' }
+let index = null
+let current = null // { t, snap, contracts }
+const cache = new Map()
+if (saved.ticker) $('ticker').value = saved.ticker
+if (saved.amount) $('amount').value = saved.amount
 const fromHash = cleanT(decodeURIComponent(location.hash.slice(1)))
 if (fromHash && !['TOOL', 'MYLIST', 'SPREAD'].includes(fromHash)) $('ticker').value = fromHash
 
-function syncChips() {
-  document.querySelectorAll('#typeChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
-  const d = Number($('days').value)
-  document.querySelectorAll('#durChips button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.days) === d)))
+const opts = () => ({ pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs })
+const bucketIdx = () => {
+  if (sel.bucket) return BUCKETS.findIndex((b) => b.key === sel.bucket)
+  const d = daysToExpiry(sel.expiry, today)
+  const i = BUCKETS.findIndex((b) => d >= b.lo && d < b.hi)
+  return i < 0 ? 0 : i
 }
 
 function toContracts(snap) {
@@ -262,27 +272,51 @@ async function loadTicker(t) {
   let res = null
   try {
     const r = await fetch(`data/options/${encodeURIComponent(t)}.json`, { cache: 'no-cache' })
-    if (r.ok) { const snap = await r.json(); res = { snap, contracts: toContracts(snap) } }
+    if (r.ok) { const snap = await r.json(); res = { t, snap, contracts: toContracts(snap) } }
   } catch {}
   cache.set(t, res)
   return res
 }
 
 const strikeTxt = (c) => fmtN(c.strike, c.strike % 1 ? 2 : 0)
+const inDelta = (c) => c.delta != null && Math.abs(c.delta) >= adv.dMin && Math.abs(c.delta) <= adv.dMax
+
+function comfortableFor(contracts, expiries) {
+  return allocate(candidates(contracts, { type, expiries, dMin: adv.dMin, dMax: adv.dMax }), { amount: 0, ...opts() }).comfortable
+}
+
+function renderPickers() {
+  const amount = parseAmount($('amount').value)
+  const ofType = current ? current.contracts.filter((c) => c.type === type) : []
+  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, today) >= 7)
+  document.querySelectorAll('#typeChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
+  $('durChips').innerHTML = BUCKETS.map((b) => {
+    const ex = expiriesInRange(expiries, today, b.lo, b.hi)
+    const cap = current ? comfortableFor(current.contracts, ex) : null
+    const sub = !current ? '' : ex.length === 0 ? 'ما فيه عقود' : `يتحمّل ${short$(cap)}`
+    return `<button type="button" data-bucket="${b.key}" aria-pressed="${sel.bucket === b.key}">${BUCKET_TXT[b.key]}${sub ? `<small>${sub}</small>` : ''}</button>`
+  }).join('')
+  $('dateChips').innerHTML = expiries.map((e) => {
+    const cap = comfortableFor(current.contracts, [e])
+    const dot = cap >= amount && cap > 0 ? 'dA' : cap > 0 ? 'dC' : 'dD'
+    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
+  }).join('')
+  $('datesNote').textContent = expiries.length ? `(🟢 يتحمّل مبلغك كامل · 🟡 أقل منه · 🔴 ما يتحمّل)` : ''
+}
 
 async function render() {
   const t = cleanT($('ticker').value)
-  const days = Math.max(1, Number($('days').value) || 200)
   const amount = parseAmount($('amount').value)
-  const opts = { pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100 }
-  store.set('form', { ticker: t, amount: $('amount').value, days, type })
-  syncChips()
+  store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
   if (!t) return
   if (cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
 
-  $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
+  if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
   const data = await loadTicker(t)
   if (cleanT($('ticker').value) !== t) return
+  current = data
+  renderPickers()
+  renderList()
   const info = index?.tickers?.[t]
   if (!data) {
     const msg = info?.noOptions
@@ -293,45 +327,60 @@ async function render() {
   }
 
   const { snap, contracts } = data
-  const today = new Date().toISOString().slice(0, 10)
+  const o = opts()
   const ofType = contracts.filter((c) => c.type === type)
-  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort()
-  const chosen = new Set(selectExpirations(expiries, today, days, adv.win / 100))
-  const inDelta = (c) => c.delta != null && Math.abs(c.delta) >= adv.dMin && Math.abs(c.delta) <= adv.dMax
-  const a = allocate(ofType.filter((c) => chosen.has(c.expiry) && inDelta(c)), { amount, maxLegs: adv.maxLegs, ...opts })
+  const allExp = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, today) >= 7)
+  if (sel.expiry && !allExp.includes(sel.expiry)) sel = { bucket: 'm6' }
+  const bucket = sel.bucket ? BUCKETS.find((b) => b.key === sel.bucket) : null
+  const exps = sel.expiry ? [sel.expiry] : expiriesInRange(allExp, today, bucket.lo, bucket.hi)
+  const cands = candidates(contracts, { type, expiries: exps, dMin: adv.dMin, dMax: adv.dMax })
+  const a = allocate(cands, { amount, ...o })
   const typeName = type === 'C' ? 'Call' : 'Put'
+  const durTxt = sel.expiry ? `تاريخ ${fmtExp(sel.expiry)}` : `مدة ${BUCKET_TXT[sel.bucket]}`
   const cost = a.legs.reduce((s, l) => s + l.cost, 0)
+  const toll = a.legs.reduce((s, l) => s + l.m.roundTripCostPerContract * l.contracts, 0)
 
-  // Stock-level badge.
   const tierKey = info?.tier ?? 'D'
   const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
 
   let cls, head, body = ''
-  if (a.legs.length === 0 && a.ranked.length > 0) {
+  if (exps.length === 0) {
+    const far = allExp[allExp.length - 1]
+    cls = 'bad'
+    head = `ما فيه عقود ${typeName} لـ ${esc(t)} بهذه المدة`
+    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, today)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
+  } else if (a.comfortable === 0) {
+    const quoted = cands.map((c) => contractMetrics(c, o)).filter((m) => m.spreadPct != null)
+    const best = quoted.length ? Math.min(...quoted.map((m) => m.spreadPct)) : null
+    cls = 'bad'
+    head = `لا تدخل ${esc(t)} ${typeName} في ${durTxt}`
+    body = best != null && best > o.maxSpread
+      ? `المشترين موجودين، بس السبريد غالي: أضيق عقد هنا سبريده ${fmtP(best)} — يعني تخسر هذي النسبة بمجرد ما تبيع. جرّب مدة ثانية أو شوف <a href="#spread">دليل السبريد</a>.`
+      : `ما فيه مشترين معروضين على هذي العقود الحين.`
+  } else if (a.legs.length === 0) {
     cls = 'warn'
     head = `المبلغ أقل من سعر عقد واحد`
     body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * 100)))}.`
-  } else if (a.legs.length === 0) {
-    cls = 'bad'
-    head = `لا تدخل ${esc(t)} ${typeName} بهذه المدة`
-    body = `ما فيه عقد سيولته تكفي تطلع منه براحة. جرّب مدة ثانية (شوف «التفاصيل» تحت) أو تداول السهم نفسه.`
-  } else if (a.unplaced < Math.max(...a.legs.map((l) => l.ask * 100))) {
+  } else if (amount <= a.comfortable) {
     cls = 'ok'
     head = `✅ تقدر تدخل ${money(cost)} وتطلع براحة`
-    body = a.capacity > cost * 1.5 ? `والسوق يتحمّل لين ${money(a.capacity)} تقريبًا في هذه المدة.` : ''
+    body = `الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(a.comfortable)}.`
   } else {
     cls = 'warn'
-    head = `⚠️ لا تدخل أكثر من ${money(a.placed)}`
-    body = `مبلغك ${money(amount)} أكبر من اللي يتحمله السوق في ${esc(t)} ${typeName} بهذه المدة. لو دخلت بالباقي (${money(a.unplaced)}) بتصير أنت السوق، وتبيع بخصم.`
+    head = `⚠️ لا تدخل أكثر من ${money(a.comfortable)}`
+    body = `هذا الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}. مبلغك ${money(amount)} أكبر منه — الباقي (${money(a.unplaced)}) لو دخلته بتصير أنت السوق وتبيع بخصم.`
   }
+  if (a.legs.length && cost > 0) body += ` تكلفة السبريد لو بعت فورًا: ${money(toll)} (${fmtP(toll / cost)}).`
 
-  // Nudge toward a nearby longer expiry that can absorb much more.
-  const capOf = (e) => ofType.filter((c) => c.expiry === e && inDelta(c))
-    .reduce((s, c) => { const m = contractMetrics(c, opts); return s + (m.grade === 'D' ? 0 : m.capDollars) }, 0)
-  const near = expiries.filter((e) => !chosen.has(e)).map((e) => ({ e, dte: daysToExpiry(e, today), cap: capOf(e) }))
-    .filter((x) => x.dte >= days * 0.75 && x.dte <= days * 2).sort((x, y) => y.cap - x.cap)[0]
-  const nudge = near && a.capacity < amount && near.cap > Math.max(1.5 * a.capacity, amount * 0.5)
-    ? `<div class="tip">💡 تاريخ قريب فيه سيولة أكثر: <b class="mono">${fmtExp(near.e)}</b> (${near.dte} يوم) — يتحمّل ${money(near.cap)}. <a href="#" data-setdays="${near.dte}">جرّبه</a></div>` : ''
+  // Nudge to a duration that can absorb more.
+  let nudge = ''
+  if (a.comfortable < amount) {
+    const other = BUCKETS.map((b) => ({ b, cap: comfortableFor(contracts, expiriesInRange(allExp, today, b.lo, b.hi)) }))
+      .filter((x) => x.b.key !== sel.bucket).sort((x, y) => y.cap - x.cap)[0]
+    if (other && other.cap > Math.max(a.comfortable * 1.5, amount * 0.5)) {
+      nudge = `<div class="tip">💡 مدة <b>${BUCKET_TXT[other.b.key]}</b> تتحمّل ${money(other.cap)} في ${esc(t)} ${typeName}. <a href="#" data-setbucket="${other.b.key}">جرّبها</a></div>`
+    }
+  }
 
   const legsHtml = a.legs.map((l) => {
     const g = limitGuide(l.bid, l.ask)
@@ -339,49 +388,55 @@ async function render() {
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
-      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry) ? ' · عقد شهري' : ''}</div>
+      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
       <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
       ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}</div>` : ''}
     </div>`
   }).join('')
 
-  const warn = []
-  if ((snap.historySessions ?? 0) < 5) warn.push('الأرقام تقديرية ومتحفظة لأن السجل لسه جديد — تصير دقيقة بالكامل بعد 5 أيام تداول.')
+  const notes = []
+  if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
+  if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
+  notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
 
-  // Details: candidates, expiries, settings.
   const top = a.ranked.slice(0, 15)
+  const BIND = { volume: 'الحجم اليومي', oi: 'العقود المفتوحة', bid: 'المعروض على البيد', spread: 'السبريد' }
   const candRows = top.map((c) => `<tr class="${a.legs.some((l) => l.sym === c.sym) ? 'hl' : ''}">
-    <td class="n">${fmtExp(c.expiry)} ${strikeTxt(c)}${c.type}</td><td class="n"><b>${money(c.m.capDollars)}</b></td>
-    <td><span class="pill p${c.m.grade}">${c.m.grade}</span></td><td class="n">${fmtP(c.m.spreadPct)}</td>
-    <td class="n">${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</td><td class="n">${fmtN(c.delta, 2)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td></tr>`).join('')
-  const ex = expirySummary(ofType, today, opts).filter((e) => e.dte >= 7)
+    <td class="n"><bdi>${fmtExpShort(c.expiry)} · ${strikeTxt(c)}${c.type}</bdi></td><td class="n"><b>${money(c.m.capDollars)}</b></td>
+    <td><span class="pill p${c.m.grade}">${GRADE_TXT[c.m.grade]}</span></td><td class="n"><bdi>${fmtP(c.m.spreadPct)}</bdi></td>
+    <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
+  const ex = expirySummary(ofType, today, o).filter((e) => e.dte >= 7)
+  const chosen = new Set(exps)
   const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
-    <td class="n">${fmtExp(e.expiry)}${e.monthly ? ' ●' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
-    <td class="n">${fmtP(e.medianSpread)}</td><td class="n">${fmtN(e.oi)}</td></tr>`).join('')
+    <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
+    <td class="n"><bdi>${fmtP(e.medianSpread)}</bdi></td><td class="n">${fmtN(e.oi)}</td></tr>`).join('')
 
   $('out').innerHTML = `
     <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
     ${nudge}
     ${a.legs.length ? `<div class="legs">${legsHtml}</div>
       <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل سنت أو سنتين كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
-    ${warn.map((w) => `<p class="note">⏳ ${w}</p>`).join('')}
-    <details class="more"><summary>التفاصيل والإعدادات (للمتقدمين)</summary>
-      <h3>أفضل العقود في هذه المدة</h3>
-      ${top.length ? `<div class="tbl"><table><thead><tr><th>العقد</th><th>الحد المريح</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>دلتا</th><th>OI</th><th>حجم/يوم</th></tr></thead><tbody>${candRows}</tbody></table></div>` : '<p class="note">ما فيه عقود مناسبة.</p>'}
+    ${notes.map((w) => `<p class="note">${w}</p>`).join('')}
+    <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
+      <h3>كيف ينحسب «الحد المريح»</h3>
+      <p class="note" style="margin-top:0">لكل عقد:<br>
+      ① <b>طريق الخروج</b> = الأكبر بين: المشترين المعروضين على البيد الحين، أو ${adv.pctAdv}% من متوسط تداوله اليومي.<br>
+      ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
+      الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
+      <h3>أفضل العقود هنا</h3>
+      ${top.length ? `<div class="tbl"><table><thead><tr><th>العقد</th><th>حده</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>على البيد</th><th>OI</th><th>حجم/يوم</th><th>المحدِّد</th></tr></thead><tbody>${candRows}</tbody></table></div>` : '<p class="note">ما فيه عقود مناسبة.</p>'}
       <h3>كل التواريخ — ${typeName}</h3>
-      <p class="note">المظلل = ضمن مدتك · ● = عقد شهري</p>
       <div class="tbl"><table><thead><tr><th>التاريخ</th><th>أيام</th><th>يتحمّل</th><th>سبريد وسطي</th><th>العقود المفتوحة</th></tr></thead><tbody>${exRows}</tbody></table></div>
       <h3>الإعدادات</h3>
       <div class="adv">
         <label>% من الحجم اليومي<input data-adv="pctAdv" type="number" min="1" max="50" value="${adv.pctAdv}"></label>
-        <label>% من العقود المفتوحة<input data-adv="pctOi" type="number" min="1" max="30" value="${adv.pctOi}"></label>
+        <label>أقصى % من العقود المفتوحة<input data-adv="pctOi" type="number" min="1" max="30" value="${adv.pctOi}"></label>
         <label>أقصى سبريد %<input data-adv="maxSpread" type="number" min="1" max="40" value="${adv.maxSpread}"></label>
-        <label>عدد العقود للتوزيع<input data-adv="maxLegs" type="number" min="1" max="10" value="${adv.maxLegs}"></label>
+        <label>عدد العقود للتوزيع<input data-adv="maxLegs" type="number" min="1" max="15" value="${adv.maxLegs}"></label>
         <label>دلتا من<input data-adv="dMin" type="number" min="0" max="1" step="0.05" value="${adv.dMin}"></label>
         <label>دلتا إلى<input data-adv="dMax" type="number" min="0" max="1" step="0.05" value="${adv.dMax}"></label>
       </div>
-      <p class="note">الحد المريح لكل عقد = الأصغر بين ${adv.pctAdv}% من متوسط حجمه اليومي و${adv.pctOi}% من عقوده المفتوحة. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. <a href="#" id="resetAdv">رجّع الافتراضي</a></p>
-      <p class="note">آخر تحديث: ${fmtTime(snap.fetchedAt)}</p>
+      <p class="note"><a href="#" id="resetAdv">رجّع الافتراضي</a> · الإعدادات تغيّر أرقام الأداة فقط؛ عمود «يتحمّل» في القائمة محسوب بالافتراضي.</p>
     </details>`
 }
 
@@ -390,18 +445,20 @@ let tierFilter = ''
 function renderList() {
   if (!index?.tickers) return
   const q = cleanT($('q').value)
-  const all = Object.entries(index.tickers).map(([t, v]) => ({ t, ...v, k: v.noOptions ? 'N' : v.tier ?? 'D' }))
+  const bi = bucketIdx()
+  const all = Object.entries(index.tickers).map(([t, v]) => ({ t, ...v, k: v.noOptions ? 'N' : v.tier ?? 'D', cap: v.caps?.[type]?.[bi] ?? null }))
   $('listCount').textContent = `(${all.length})`
-  const order = { A: 0, B: 1, C: 2, D: 3, N: 4 }
   const rows = all.filter((r) => (!q || r.t.includes(q)) && (!tierFilter || r.k === tierFilter))
-    .sort((x, y) => order[x.k] - order[y.k] || (y.capacity ?? 0) - (x.capacity ?? 0) || x.t.localeCompare(y.t))
+    .sort((x, y) => (x.k === 'N') - (y.k === 'N') || (y.cap ?? -1) - (x.cap ?? -1) || x.t.localeCompare(y.t))
   document.querySelectorAll('#tierChips button').forEach((b) => {
     const n = b.dataset.tier ? all.filter((r) => r.k === b.dataset.tier).length : all.length
-    b.querySelector('span')?.remove(); b.insertAdjacentHTML('beforeend', `<span class="count">${n}</span>`)
+    b.querySelector('.count')?.remove(); b.insertAdjacentHTML('beforeend', `<span class="count">${n}</span>`)
   })
-  $('list').innerHTML = rows.length ? `<table><thead><tr><th>السهم</th><th>السيولة</th><th>سبريد وسطي</th><th>يتحمّل تقريبًا</th><th>السعر</th></tr></thead><tbody>${rows.map((r) => `
-    <tr data-t="${esc(r.t)}"><td class="n"><b>${esc(r.t)}</b></td><td><span class="dot ${TIER[r.k][1]}"></span> ${TIER[r.k][0]}</td>
-    <td class="n">${r.k === 'N' ? '—' : fmtP(r.medianSpread)}</td><td class="n">${r.k === 'N' ? '—' : money(r.capacity ?? 0)}</td>
+  const capHead = `يتحمّل · ${BUCKET_TXT[BUCKETS[bi].key]} · ${type === 'C' ? 'Call' : 'Put'}`
+  $('list').innerHTML = rows.length ? `<table><thead><tr><th>السهم</th><th>السيولة</th><th>${capHead}</th><th>سبريد وسطي</th><th>السعر</th></tr></thead><tbody>${rows.map((r) => `
+    <tr data-t="${esc(r.t)}"><td class="n"><b><bdi>${esc(r.t)}</bdi></b></td><td><span class="dot ${TIER[r.k][1]}"></span> ${TIER[r.k][0]}</td>
+    <td class="n">${r.k === 'N' || r.cap == null ? '—' : `<b>${money(r.cap)}</b>`}</td>
+    <td class="n"><bdi>${r.k === 'N' ? '—' : fmtP(r.medianSpread)}</bdi></td>
     <td class="n">${r.price != null ? price(r.price) : '—'}</td></tr>`).join('')}</tbody></table>` : '<p class="empty">ما فيه نتائج.</p>'
 }
 
@@ -410,31 +467,35 @@ let timer
 const later = () => { clearTimeout(timer); timer = setTimeout(render, 250) }
 $('ticker').addEventListener('input', later)
 $('amount').addEventListener('input', later)
-$('days').addEventListener('input', () => { syncChips(); later() })
 $('amount').addEventListener('blur', () => { const v = parseAmount($('amount').value); if (v) $('amount').value = v.toLocaleString('en-US') })
-document.querySelectorAll('#typeChips button').forEach((b) => b.addEventListener('click', () => { type = b.dataset.type; render() }))
-document.querySelectorAll('#durChips button').forEach((b) => b.addEventListener('click', () => { $('days').value = b.dataset.days; render() }))
+$('typeChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { type = b.dataset.type; render() } })
+$('durChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { bucket: b.dataset.bucket }; render() } })
+$('dateChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { expiry: b.dataset.expiry }; render() } })
 $('out').addEventListener('input', (e) => {
   const k = e.target.dataset?.adv
   if (!k) return
   const v = Number(e.target.value)
-  if (Number.isFinite(v) && v > 0) { adv[k] = v; store.set('adv', adv); clearTimeout(timer); timer = setTimeout(() => { const open = document.querySelector('details.more')?.open; render().then(() => { if (open) document.querySelector('details.more').open = true }) }, 500) }
+  if (!Number.isFinite(v) || v <= 0) return
+  adv[k] = v; store.set('adv3', adv)
+  clearTimeout(timer); timer = setTimeout(() => render().then(() => { document.querySelector('details.more').open = true }), 500)
 })
 $('out').addEventListener('click', (e) => {
-  const d = e.target.closest('[data-setdays]')
-  if (d) { e.preventDefault(); $('days').value = d.dataset.setdays; render() }
-  if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv', adv); render().then(() => { document.querySelector('details.more').open = true }) }
+  const d = e.target.closest('[data-setbucket]')
+  if (d) { e.preventDefault(); sel = { bucket: d.dataset.setbucket }; render() }
+  if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv3', adv); render().then(() => { document.querySelector('details.more').open = true }) }
 })
 window.addEventListener('hashchange', () => {
   const h = cleanT(decodeURIComponent(location.hash.slice(1)))
   if (h && !['TOOL', 'MYLIST', 'SPREAD'].includes(h) && h !== cleanT($('ticker').value)) { $('ticker').value = h; render() }
 })
 $('q').addEventListener('input', renderList)
-document.querySelectorAll('#tierChips button').forEach((b) => b.addEventListener('click', () => {
+$('tierChips').addEventListener('click', (e) => {
+  const b = e.target.closest('button')
+  if (!b) return
   tierFilter = b.dataset.tier
   document.querySelectorAll('#tierChips button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
   renderList()
-}))
+})
 $('list').addEventListener('click', (e) => {
   const tr = e.target.closest('tr[data-t]')
   if (!tr) return
@@ -445,12 +506,11 @@ $('list').addEventListener('click', (e) => {
 
 fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
   index = j
-  if (!j) return
-  $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
-  $('foot').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تلقائيًا 3 مرات كل يوم تداول (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
-  renderList()
+  if (j) {
+    $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
+    $('foot').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
+  }
   render()
 }).catch(() => render())
-syncChips()
 </script>
 </body></html>

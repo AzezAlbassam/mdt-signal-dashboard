@@ -15,6 +15,7 @@ import {
   chainRows,
   limitGuide,
   tickerSummary,
+  bucketCapacities,
 } from './engine.js'
 
 describe('parseOccSymbol', () => {
@@ -48,20 +49,21 @@ test('isMonthly: third Friday, and Thursday before a Good Friday', () => {
 })
 
 describe('grade: the weakest constraint decides', () => {
-  test('A needs all three', () => {
-    assert.equal(grade({ spreadPct: 0.02, oi: 5000, adv: 500 }), 'A')
-    assert.equal(grade({ spreadPct: 0.02, oi: 5000, adv: 100 }), 'B')
-    assert.equal(grade({ spreadPct: 0.10, oi: 5000, adv: 500 }), 'C')
+  test('spread and open interest both have to clear the bar', () => {
+    assert.equal(grade({ spreadPct: 0.02, oi: 5000 }), 'A')
+    assert.equal(grade({ spreadPct: 0.02, oi: 1000 }), 'B')
+    assert.equal(grade({ spreadPct: 0.09, oi: 5000 }), 'C')
+    assert.equal(grade({ spreadPct: 0.12, oi: 5000 }), 'D')
   })
   test('no quote is D', () => {
-    assert.equal(grade({ spreadPct: null, oi: 5000, adv: 500 }), 'D')
+    assert.equal(grade({ spreadPct: null, oi: 5000 }), 'D')
   })
 })
 
 describe('contractMetrics', () => {
   const base = { bid: 9.8, ask: 10.2, bidSize: 40, oi: 4000, volume: 300, adv: 600, sessions: 10 }
 
-  test('cap is the smaller of 10% ADV and 5% OI', () => {
+  test('cap is the larger way out (10% ADV or the bid), held under 5% OI', () => {
     const m = contractMetrics(base)
     assert.equal(m.capByAdv, 60)
     assert.equal(m.capByOi, 200)
@@ -72,10 +74,24 @@ describe('contractMetrics', () => {
     assert.equal(m.grade, 'B')
   })
 
-  test('open interest binds on a thinly held contract', () => {
+  test('open interest caps even a deep bid', () => {
+    // way out: max(60, 40) = 60; held under 5% of 300 = 15
     const m = contractMetrics({ ...base, oi: 300 })
     assert.equal(m.capContracts, 15)
     assert.equal(m.binding, 'oi')
+  })
+
+  test('a deep bid on a thinly traded small cap still counts', () => {
+    // 10% of ADV is 0 contracts, but 1981 sit on the bid; 5% of 9019 OI = 450
+    const m = contractMetrics({ bid: 2.15, ask: 2.35, bidSize: 1981, oi: 9019, adv: 4, sessions: 10 })
+    assert.equal(m.capByAdv, 0)
+    assert.equal(m.capContracts, 450)
+  })
+
+  test('the bid binds when it is the only way out', () => {
+    const m = contractMetrics({ ...base, adv: 50, bidSize: 30 })
+    assert.equal(m.capContracts, 30)
+    assert.equal(m.binding, 'bid')
   })
 
   test('no bid means nothing is exitable', () => {
@@ -177,16 +193,28 @@ describe('allocate', () => {
   })
 
   test('reports what does not fit', () => {
-    const r = allocate([mk(100, { adv: 100, oi: 1000 })], { amount: 100000 })
-    // cap = min(10, 50) = 10 contracts × $1000
+    const r = allocate([mk(100, { adv: 100, oi: 1000, bidSize: 5 })], { amount: 100000 })
+    // cap = min(max(10, 5), 50) = 10 contracts × $1000
     assert.equal(r.placed, 10000)
     assert.equal(r.unplaced, 90000)
-    assert.equal(r.capacity, 10000)
+    assert.equal(r.comfortable, 10000)
   })
 
-  test('grade-D contracts are never used', () => {
-    const r = allocate([mk(100, { oi: 50, adv: 5 })], { amount: 10000 })
+  test('leftovers too small for their own order are not split off', () => {
+    const r = allocate([mk(100, { adv: 300 }), mk(110, { adv: 300 })], { amount: 31000 })
+    assert.deepEqual(r.legs.map((l) => l.contracts), [30])
+  })
+
+  test('too wide a spread is never used', () => {
+    const r = allocate([mk(100, { bid: 8, ask: 10 })], { amount: 10000 })
     assert.equal(r.legs.length, 0)
+  })
+
+  test('comfortable is what the top legs hold, whatever the amount', () => {
+    const cs = [mk(100, { adv: 300 }), mk(110, { adv: 250 })]
+    assert.equal(allocate(cs, { amount: 0 }).comfortable, 55000)
+    assert.equal(allocate(cs, { amount: 1e9 }).placed, 55000)
+    assert.equal(allocate(cs, { amount: 0, maxLegs: 1 }).comfortable, 30000)
   })
 })
 
@@ -222,7 +250,7 @@ test('limitGuide: start at mid, never give up more than a quarter of the spread'
 })
 
 test('tickerSummary grades a whole chain on long-dated near-the-money calls', () => {
-  const c = (strike, over = {}) => ({ expiry: '2027-03-19', type: 'C', strike, bid: 9.9, ask: 10, oi: 20000, adv: 3000, sessions: 10, delta: 0.5, ...over })
+  const c = (strike, over = {}) => ({ expiry: '2027-06-17', type: 'C', strike, bid: 9.9, ask: 10, oi: 20000, adv: 3000, sessions: 10, delta: 0.5, ...over })
   const deep = tickerSummary([c(100), c(110), c(120), c(90, { delta: 0.9 })], '2026-10-05')
   // each: min(300, 1000) contracts × $1000 = $300k → $900k
   assert.equal(deep.capacity, 900000)
@@ -230,4 +258,12 @@ test('tickerSummary grades a whole chain on long-dated near-the-money calls', ()
   const thin = tickerSummary([c(100, { bid: 8, ask: 10, oi: 300, adv: 20 })], '2026-10-05')
   assert.equal(thin.tier, 'D')
   assert.equal(tickerSummary([], '2026-10-05').tier, 'D')
+})
+
+test('bucketCapacities sizes each duration and type separately', () => {
+  const c = (expiry, type, over = {}) => ({ expiry, type, strike: 100, bid: 9.9, ask: 10, bidSize: 0, oi: 20000, adv: 1000, sessions: 10, delta: type === 'C' ? 0.5 : -0.5, ...over })
+  const caps = bucketCapacities([c('2026-11-20', 'C'), c('2027-06-17', 'C'), c('2027-06-17', 'P'), c('2028-01-21', 'C')], '2026-10-05')
+  // each contract: min(100, 1000) = 100 contracts × $1000
+  assert.deepEqual(caps.C, [100000, 0, 100000, 100000, 0])
+  assert.deepEqual(caps.P, [0, 0, 100000, 0, 0])
 })

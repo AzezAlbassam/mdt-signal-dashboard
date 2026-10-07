@@ -42,6 +42,41 @@ export function marketOpen(now = new Date()) {
   return m != null && m >= 570 && m < 960
 }
 
+/** The most recent weekday 16:05 New York at or before `now`: when a session's volume is final. */
+export function lastClose(now = new Date()) {
+  let t = new Date(Math.floor(now.getTime() / 60000) * 60000)
+  for (let i = 0; i < 6 * 1440; i += 1) {
+    if (nyMinutes(t) === 965) return t
+    t = new Date(t.getTime() - 60000)
+  }
+  return null
+}
+
+/**
+ * What a long-running job should do next. GitHub's scheduler can start a job hours late,
+ * so one job stays alive through the session instead of trusting the clock to start it:
+ *   - inside the quote window: snapshot about once an hour
+ *   - shortly before the window or the close: wait for it
+ *   - otherwise: one snapshot if the last close is not captured yet, then stop
+ * Returns { action: 'run' } | { action: 'wait', seconds } | { action: 'stop' }.
+ */
+export function plan(now, lastUpdate) {
+  const m = nyMinutes(now)
+  const since = lastUpdate ? (now - lastUpdate) / 60000 : Infinity
+  const close = lastClose(now)
+  const closeCaptured = lastUpdate && close && lastUpdate >= close
+  if (m != null && m >= 600 && m < 950) {
+    if (since >= 55) return { action: 'run' }
+    return { action: 'wait', seconds: Math.round(Math.min(60 - since, 950 - m) * 60) + 30 }
+  }
+  if (m != null && m < 600 && 600 - m <= 150) {
+    if (!closeCaptured) return { action: 'run' }
+    return { action: 'wait', seconds: (600 - m) * 60 + 30 }
+  }
+  if (m != null && m >= 950 && m < 965) return { action: 'wait', seconds: (965 - m) * 60 + 30 }
+  return closeCaptured ? { action: 'stop' } : { action: 'run' }
+}
+
 /**
  * When quotes are representative: 10:00–15:50 New York. Spreads in the first half hour
  * and the last minutes are routinely two to three times wider than the rest of the day.
@@ -134,12 +169,18 @@ export async function snapshotTicker(ticker, dataDir, now) {
   return {
     price: snap.price, contracts: out.length, session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
     tier: summary.tier, medianSpread: summary.medianSpread == null ? null : Math.round(summary.medianSpread * 1000) / 1000,
-    capacity: summary.capacity, oi: summary.oi,
+    capacity: summary.capacity, caps: summary.caps, oi: summary.oi,
   }
 }
 
 async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
+  if (rest.includes('--plan')) {
+    const idx = await readJson(join(dataDir ?? '.', 'index.json'), null)
+    const p = plan(new Date(), idx?.updatedAt ? new Date(idx.updatedAt) : null)
+    console.log(p.action === 'wait' ? `wait ${p.seconds}` : p.action)
+    return
+  }
   if (!dataDir) throw new Error('usage: node options/snapshot.js <dataDir> [--add T,..] [--remove T,..]')
   const arg = (name) => {
     const i = rest.indexOf(name)

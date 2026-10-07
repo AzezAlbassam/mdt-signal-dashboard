@@ -1,13 +1,18 @@
 name: Options liquidity snapshots
 # Pulls delayed option chains from Cboe for the watchlist, keeps a rolling 20-session
 # volume history on the `options-data` branch (one force-pushed commit, so the repo never
-# grows), then redeploys the site so options.html shows the fresh numbers.
+# grows), and redeploys the site after every pass so options.html shows fresh numbers.
+#
+# GitHub starts scheduled jobs late, sometimes by hours, so the schedule only *starts* a
+# job; the job itself stays up through the session (options/snapshot.js --plan decides
+# when to snapshot: about hourly between 10:00 and 15:50 New York, then once after the
+# close for final volume). Several starters cover a late or dropped one; extras queue
+# behind the running job and exit at once when there is nothing left to do.
 on:
   schedule:
-    # Weekdays, UTC. Two intraday reads (quotes) and one after the close (final volume).
-    - cron: '30 15 * * 1-5'
-    - cron: '0 19 * * 1-5'
-    - cron: '20 21 * * 1-5'
+    - cron: '7 12,14,16,18 * * 1-5'
+    - cron: '25 21 * * 1-5'
+    - cron: '40 2 * * 2-6'
   workflow_dispatch:
     inputs:
       add:
@@ -24,14 +29,13 @@ on:
         default: ''
 permissions:
   contents: write
-  pages: write
-  id-token: write
+  actions: write
 jobs:
   snapshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 350
     concurrency:
-      group: options-data
+      group: options-data-${{ github.event_name == 'schedule' && 'session' || 'manual' }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
@@ -40,29 +44,53 @@ jobs:
           node-version: 22
       - name: Engine tests
         run: node --test options/engine.test.js
-      - name: Restore data branch
-        run: |
-          mkdir -p _data
-          if git fetch --depth=1 origin options-data; then git archive FETCH_HEAD | tar -x -C _data; fi
-          ls _data
-      - name: Snapshot chains
+      - name: Snapshot
         env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
           ADD: ${{ inputs.add }}
           REMOVE: ${{ inputs.remove }}
           ONLY: ${{ inputs.only }}
-        run: node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY"
-      - name: Save data branch
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          cd _data
-          git init -q -b options-data
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git commit -q -m "Options snapshot $(date -u +%FT%TZ)"
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" options-data
-  deploy:
-    needs: snapshot
-    if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/pages.yml
+          # Each pass starts from the branch as it is now, so a manual run in between is kept.
+          restore() {
+            rm -rf _data && mkdir -p _data
+            if git fetch -q --depth=1 origin options-data; then git archive FETCH_HEAD | tar -x -C _data; fi
+          }
+          save_and_deploy() {
+            (
+              cd _data
+              rm -rf .git && git init -q -b options-data
+              git config user.name 'github-actions[bot]'
+              git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+              git add -A
+              git commit -q -m "Options snapshot $(date -u +%FT%TZ)"
+              git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" options-data
+            )
+            gh workflow run pages.yml --ref main -R "$REPO" || echo 'deploy dispatch failed'
+          }
+
+          if [ "$EVENT" != "schedule" ]; then
+            restore
+            node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY"
+            save_and_deploy
+            exit 0
+          fi
+
+          deadline=$((SECONDS + 330 * 60))
+          while [ $SECONDS -lt $deadline ]; do
+            restore
+            next=$(node options/snapshot.js _data --plan)
+            echo "$(date -u +%H:%M) UTC → $next"
+            case "$next" in
+              run)
+                node options/snapshot.js _data
+                save_and_deploy ;;
+              wait*)
+                s=${next#wait }
+                [ $((SECONDS + s)) -ge $deadline ] && break
+                sleep "$s" ;;
+              *) break ;;
+            esac
+          done
