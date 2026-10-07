@@ -27,3 +27,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — engine/study.js + scripts/us-*.js written. `node scripts/us-backtest.js --study1`
   reproduces study 1's tables line for line (edges, win rates, p-values), so study 2 runs on
   verified code. Screener was rate-limited (HTTP 429); universe snapshot still to do.
+- 2026-10-07 00:25Z — fetch started (screener still 429): 20 ETFs + 309 largest clean
+  listings from the first screener page (≥ ~$45B; saved in scratchpad, re-pull for the
+  snapshot). Collect with `node scripts/us-collect.js <rawDir>` (only files after
+  2026-10-07T00:15Z), then `US_RAW=<rawDir> node scripts/us-ingest.js` once universe.json exists.
