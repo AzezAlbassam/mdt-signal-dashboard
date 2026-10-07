@@ -83,6 +83,13 @@ for (let i = 0; i < r.length; i += 1) {
 r = r.filter((x) => !gone.has(x.symbol))
 steps.oneClass = r.length
 
+// POST-HOC (2026-10-07, after the first stage-1 results, at the user's request): BRK.A and
+// BRK.B are one company; their returns correlate at 0.971, just under rule 4's 0.98, so the
+// rule kept both. BRK.A (lower volume) is removed. reports/pre-dedupe/ holds the tables from
+// before this change so the effect is visible.
+r = r.filter((x) => x.symbol !== 'NYSE:BRK.A' || drop(x, 'POST-HOC: share class of NYSE:BRK.B (corr 0.971)'))
+steps.postHocDedupe = r.length
+
 r.sort((a, b) => b.market_cap_basic - a.market_cap_basic)
 const etfSyms = new Set(ETFS.map(([s]) => s))
 const etfs = ETFS.filter(([s]) => fs.existsSync(file(s)) || drop({ symbol: s }, 'ETF not stored'))

@@ -6,9 +6,10 @@
   "alternateIssues": 301,
   "history": 293,
   "fixedIncome": 293,
-  "oneClass": 292
+  "oneClass": 292,
+  "postHocDedupe": 291
  },
- "count": 312,
+ "count": 311,
  "excluded": [
   {
    "symbol": "NASDAQ:GOOGM",
@@ -77,6 +78,10 @@
   {
    "symbol": "NASDAQ:GOOG",
    "why": "share class of NASDAQ:GOOGL (corr 0.997)"
+  },
+  {
+   "symbol": "NYSE:BRK.A",
+   "why": "POST-HOC: share class of NYSE:BRK.B (corr 0.971)"
   }
  ],
  "symbols": [
@@ -346,15 +351,6 @@
    "sector": "Finance",
    "industry": "Property/Casualty Insurance",
    "cap": 973147279395,
-   "stage": 1
-  },
-  {
-   "symbol": "NYSE:BRK.A",
-   "name": "BRK.A",
-   "group": "stock",
-   "sector": "Finance",
-   "industry": "Property/Casualty Insurance",
-   "cap": 972980491532,
    "stage": 1
   },
   {

@@ -49,3 +49,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   BAM re-fetched in row format and saved.
 - 2026-10-07 01:00Z — screener still 429; user wants TradingView only. Addendum 2: two stages.
 - 2026-10-07 01:25Z — stage 1 run (312 symbols). H1 NOT CONFIRMED (Keltner edge −0.011R, p 0.90). Robust A: trix, ema_20_50, stoch, ao. Robust B: rsi2. C: none. Next: Arabic page us.html, example charts, then Saudi study 3.
+- 2026-10-07 — POST-HOC at user's request: BRK.A removed (duplicate of BRK.B). Before-tables in
+  reports/pre-dedupe/. Edges barely move; four Robust A rules and RSI2 (B) unchanged. Labels at
+  the threshold flipped from permutation noise: rsi_50 A Possible→No, mfi B Possible→No,
+  tsmom B Possible→Robust (Holm p 0.0875→0.0375; treat as borderline). H1 still NOT CONFIRMED.
