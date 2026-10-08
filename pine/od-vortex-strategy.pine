@@ -1,0 +1,531 @@
+// This Source Code is subject to the terms of the Mozilla Public License 2.0
+// O→D Vortex Live — Strategy Tester version of pine/od-vortex.pine.
+
+//@version=6
+strategy("O→D Vortex Live — Strategy", shorttitle = "VORTEX LIVE S", overlay = true, pyramiding = 0, process_orders_on_close = true, calc_on_every_tick = false, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, initial_capital = 100000, commission_type = strategy.commission.percent, commission_value = 0.01, slippage = 0, margin_long = 0, margin_short = 0, max_labels_count = 50, max_polylines_count = 20)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WHAT THIS IS
+//
+// The same engine as pine/od-vortex.pine — "Vortex Live" v1, the causal version of the O→D
+// vortex idea from @dimitri41201857's US500 2h video — run as a strategy, so TradingView's
+// Strategy Tester reports the win rate ("Percent profitable"), the number of trades and the
+// average holding time ("Avg # bars in trades") natively, on whatever chart and timeframe it
+// is added to. The engine block below is copied verbatim from the indicator, and both mirror
+// engine/vortex-live.js bar for bar (same pivots, projections, entries and exits). See the
+// indicator's header for the rules, why the video's own version cannot be traded, and the
+// measured result.
+//
+// HOW THE ORDERS MATCH THE REFERENCE
+//   - process_orders_on_close = true: every fill is at the close of the bar that gave the
+//     signal, exactly as the reference fills.
+//   - Orders are placed on closed bars only. On history a bar counts as closed once its
+//     time_close has passed, so a last bar loaded while the market is shut and still forming
+//     (a weekly bar mid-week, a monthly bar mid-month) gets no order. Otherwise the Tester
+//     would fill at its provisional close, and that trade could change or vanish after the bar
+//     completes. The cross-check table uses the same rule.
+//   - Standard candles only: on Heikin Ashi, Renko, Kagi, Line Break, Point & Figure or Range
+//     charts the prices and the fills would be synthetic, so the script stops with an error.
+//   - Orders go through strategy.order(), which is not limited by pyramiding and never reverses
+//     on its own. An exit and a new entry can fall on the same close — including a re-entry on
+//     the SAME side, which does occur on real data — and both must be filled, exit first.
+//     strategy.entry() with pyramiding = 0 could silently drop that re-entry. pyramiding = 0 is
+//     kept; the engine itself never holds more than one position.
+//   - Size: 100 % of equity per trade, margin checks off (margin_long / margin_short = 0) so a
+//     short of 100 % equity is never margin-called. Sizing changes net profit and drawdown,
+//     not the win rate or the holding time.
+//   - Cost: commission 0.01 % per side = 0.02 % round trip (indices, gold, FX). For crypto set
+//     Properties → Commission to 0.05 (0.10 % round trip) and the cost input below to 0.10.
+//     TradingView charges commission on each fill's value; the reference subtracts the
+//     round-trip cost from the return. The two differ by about cost × return — far below a
+//     basis point — so a trade's win/loss can only differ when its gross return is within
+//     a hair of the cost.
+//   - The small table compares the engine's own count, win rate and holding time with the
+//     Tester's. They should agree. If TradingView counts bars in a trade inclusively, its
+//     average is higher by exactly 1.
+//
+// Results depend on the first bar of the loaded history (the ATR seed and the zigzag start
+// both do). Deep Backtesting runs from an earlier first bar than the chart, so its numbers will
+// differ from the indicator's table on the same chart.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── constants ────────────────────────────────────────────────────────────────
+float VL_E_BIG            = 1000000000000.0
+int   VL_MIN_WALL_N       = 4
+int   VL_MIN_WALL_WINDOWS = 3
+int   VL_MIN_N            = 8
+int   VL_FUTURE           = 499
+
+color VL_BUY   = #26a69a
+color VL_SELL  = #ef5350
+color VL_VEC   = #b2b5be
+color VL_TBG   = color.new(#131722, 8)
+color VL_THEAD = color.new(#1e222d, 0)
+color VL_WARN  = #ffa726
+color VL_MUTED = #787b86
+
+// ── inputs ───────────────────────────────────────────────────────────────────
+string VL_G_ENGINE = "المحرك — Engine (spec v1; keep the defaults to compare with the measurement)"
+string VL_G_VIEW   = "العرض — Display"
+
+int   atrLenIn  = input.int(14, "طول ATR", minval = 1, maxval = 500, group = VL_G_ENGINE, tooltip = "ATR length. Computed as Pine ta.atr with the reference's exact arithmetic. Spec: 14.")
+float atrMultIn = input.float(4.0, "مضاعف ATR للانعكاس", minval = 0.1, maxval = 50.0, step = 0.5, group = VL_G_ENGINE, tooltip = "Zigzag reversal threshold = this multiple × ATR / close of the current bar. Spec: 4.")
+int   kIn       = input.int(5, "عدد الموجات السابقة K", minval = 3, maxval = 50, group = VL_G_ENGINE, tooltip = "Completed swings feeding the medians that project N, D and the walls. Spec: 5.")
+float levelIn   = input.float(0.85, "مستوى ملامسة الجدار", minval = 0.05, maxval = 5.0, step = 0.05, group = VL_G_ENGINE, tooltip = "Enter when contact ≤ |e| < stop. Spec: 0.85.")
+float stopIn    = input.float(1.25, "مستوى الوقف", minval = 0.1, maxval = 10.0, step = 0.05, group = VL_G_ENGINE, tooltip = "Stop when |e| reaches this on the entry side; also the upper edge of the entry band. Spec: 1.25.")
+float skipIn    = input.float(3.0, "تجاهل قرب O و D (%)", minval = 0.0, maxval = 49.0, step = 0.5, group = VL_G_ENGINE, tooltip = "No entries in the first and last X % of the projected N; time exit after N − skip. Spec: 3 %.")
+float costIn    = input.float(0.02, "التكلفة ذهاباً وإياباً (%) — للجدول", minval = 0.0, maxval = 5.0, step = 0.01, group = VL_G_ENGINE, tooltip = "Round-trip cost used by the engine's own statistics in the cross-check table. The Strategy Tester uses Properties → Commission instead (0.01 % per side by default); keep this equal to twice that.")
+
+bool  showProjIn  = input.bool(true, "الإسقاط الحي (المتجه والجداران)", group = VL_G_VIEW, tooltip = "Draw the live projection: the vector O → projected D and the two half-ellipse walls.")
+bool  showBandIn  = input.bool(true, "نطاق الملامسة", group = VL_G_VIEW, tooltip = "Dotted lines at the contact level of each wall.")
+bool  showCheckIn = input.bool(true, "جدول المطابقة مع Strategy Tester", group = VL_G_VIEW, tooltip = "The engine's own trade count, win rate and holding time, to compare with the Strategy Tester.")
+
+if levelIn >= stopIn
+    runtime.error("مستوى الملامسة يجب أن يكون أقل من مستوى الوقف — the contact level must be below the stop level.")
+if not chart.is_standard
+    runtime.error("استخدم الشموع العادية — the engine needs standard candles (not Heikin Ashi, Renko, Kagi, Line Break, Point & Figure or Range).")
+
+float vlSkipFrac = skipIn / 100.0
+float vlCostFrac = costIn / 100.0
+
+// ── engine helpers (stateless) ───────────────────────────────────────────────
+
+// Median exactly as the reference: copy, sort ascending; odd count → the middle value,
+// even count → the mean of the two middle values. na for an empty array.
+vlMedian(array<float> xs) =>
+    float result = na
+    int c = array.size(xs)
+    if c > 0
+        array<float> s = array.copy(xs)
+        array.sort(s, order.ascending)
+        int m = int(math.floor(c / 2.0))
+        result := c % 2 == 1 ? array.get(s, m) : (array.get(s, m - 1) + array.get(s, m)) / 2.0
+    result
+
+// Position e of `price` against a projection (PO, PD, N, Wup, Wdn), i bars after O:
+// e = (price − vector) / (W_side × ellipse). A zero-width wall reads ±VL_E_BIG by the side of
+// the vector, and 0 exactly on it.
+vlPositionE(float PO, float PD, int N, float wUp, float wDn, int i, float price) =>
+    float vec = PO + ((PD - PO) * i) / N
+    float u = 2.0 * i / N - 1.0
+    float shp = math.sqrt(math.max(0.0, 1.0 - u * u))
+    float dev = price - vec
+    float W = dev > 0 ? wUp : wDn
+    float wall = W * shp
+    float e = wall > 0 ? dev / wall : dev > 0 ? VL_E_BIG : dev < 0 ? -VL_E_BIG : 0.0
+    e
+
+// A completed swing a → b: n, size = |ln(pb/pa)| and, for n ≥ 4, the wall ratios the video's
+// construction gives on it (price pinned to the pivot prices at both ends — those two points
+// have ellipse 0 and never count — OHLC4 inside, skip = round(skipFrac × n)), as fractions of
+// |pb − pa|. `o4s` holds OHLC4 by bar, element 0 being bar `o4Base`.
+vlMeasureWindow(array<float> o4s, int o4Base, int ia, float pa, int ib, float pb, float skipFrac) =>
+    int   n  = ib - ia
+    float sz = math.abs(math.log(pb / pa))
+    float ru = na
+    float rd = na
+    if n >= VL_MIN_WALL_N and pb != pa
+        int   skip = math.round(skipFrac * n)
+        float wUp  = 0.0
+        float wDn  = 0.0
+        if n - skip >= skip
+            for i = skip to n - skip
+                float u   = 2.0 * i / n - 1.0
+                float shp = math.sqrt(math.max(0.0, 1.0 - u * u))
+                int   k   = ia + i - o4Base
+                if shp > 0 and k >= 0 and k < array.size(o4s)
+                    float p = array.get(o4s, k)
+                    if not na(p)
+                        float vec = pa + ((pb - pa) * i) / n
+                        float dev = p - vec
+                        wUp := math.max(wUp, dev / shp)
+                        wDn := math.max(wDn, -dev / shp)
+        float span = math.abs(pb - pa)
+        ru := wUp / span
+        rd := wDn / span
+    [n, sz, ru, rd]
+
+// ── the engine: one bar-by-bar state machine ─────────────────────────────────
+// Called once per bar, unconditionally, by each user (the chart, and one request.security per
+// timeframe); every call site keeps its own state. Order inside a bar: ATR → zigzag (pivot,
+// window, projection) → exit of the open trade → entry. Returns only simple values.
+vortexCore(int atrLen, float atrMult, int K, float level, float stopE, float skipFrac, int minN, float cost) =>
+    int   t  = bar_index
+    bool  ok = not na(open) and not na(high) and not na(low) and not na(close) and close > 0
+    float o4 = ok ? (open + high + low + close) / 4 : na
+
+    var int firstTime = time
+    var int nBars = 0
+    nBars += 1
+
+    // Own OHLC4 history, so no loop ever indexes series history with a dynamic offset.
+    // Element 0 is bar o4Base; bars before the last confirmed pivot are dropped (never needed).
+    var array<float> o4s = array.new<float>()
+    var int o4Base = bar_index
+    array.push(o4s, o4)
+
+    // 1a. ATR — Pine ta.atr(atrLen), in the reference's exact arithmetic.
+    var float atrPrevClose = na
+    var int   atrCount     = 0
+    var float atrSum       = 0.0
+    var float atrVal       = na
+    float thr = na
+    if ok
+        float tr = na(atrPrevClose) ? high - low : math.max(math.max(high - low, math.abs(high - atrPrevClose)), math.abs(low - atrPrevClose))
+        atrPrevClose := close
+        if na(atrVal)
+            atrSum   += tr
+            atrCount += 1
+            if atrCount == atrLen
+                atrVal := atrSum / atrLen
+        else
+            float alpha = 1.0 / atrLen
+            atrVal := alpha * tr + (1.0 - alpha) * atrVal
+        if not na(atrVal)
+            thr := (atrMult * atrVal) / close
+
+    // 1b. Zigzag with the current bar's threshold. Starts on the first bar with an ATR.
+    var bool  zzStarted = false
+    var int   zzDir     = 0
+    var int   hiIdx     = na
+    var float hiPx      = na
+    var int   loIdx     = na
+    var float loPx      = na
+    var int   cIdx      = na
+    var float cPx       = na
+    int   pvKind = 0      // +1 a high was confirmed on this bar, −1 a low, 0 none
+    int   pvIdx  = na
+    float pvPx   = na
+    if not na(thr)
+        if not zzStarted
+            zzStarted := true
+            hiIdx := t
+            hiPx  := high
+            loIdx := t
+            loPx  := low
+            int dropStart = t - o4Base
+            if dropStart > 0
+                o4s    := array.copy(array.slice(o4s, dropStart, array.size(o4s)))
+                o4Base := t
+        else if zzDir == 0
+            if high > hiPx
+                hiIdx := t
+                hiPx  := high
+            if low < loPx
+                loIdx := t
+                loPx  := low
+            if loIdx < hiIdx and hiPx >= loPx * (1 + thr)
+                zzDir  := 1
+                cIdx   := hiIdx
+                cPx    := hiPx
+                pvKind := -1
+                pvIdx  := loIdx
+                pvPx   := loPx
+            else if hiIdx < loIdx and loPx <= hiPx * (1 - thr)
+                zzDir  := -1
+                cIdx   := loIdx
+                cPx    := loPx
+                pvKind := 1
+                pvIdx  := hiIdx
+                pvPx   := hiPx
+        else if zzDir == 1
+            if high > cPx
+                cIdx := t
+                cPx  := high
+            else if low <= cPx * (1 - thr)
+                pvKind := 1
+                pvIdx  := cIdx
+                pvPx   := cPx
+                zzDir  := -1
+                cIdx   := t
+                cPx    := low
+        else
+            if low < cPx
+                cIdx := t
+                cPx  := low
+            else if high >= cPx * (1 + thr)
+                pvKind := -1
+                pvIdx  := cIdx
+                pvPx   := cPx
+                zzDir  := 1
+                cIdx   := t
+                cPx    := high
+
+    // 2–3. The swing the new pivot completes, and the projection drawn from it.
+    var int   pivCount   = 0
+    var int   prevPivIdx = na
+    var float prevPivPx  = na
+    var array<float> wN  = array.new<float>()    // the last K swings: n
+    var array<float> wSz = array.new<float>()    //                    size
+    var array<float> wRu = array.new<float>()    //                    Wup / |ΔP| (na if n < 4)
+    var array<float> wRd = array.new<float>()    //                    Wdn / |ΔP| (na if n < 4)
+    var bool  gOn       = false                  // a projection is live for entries
+    var int   gId       = -1
+    var int   gConf     = na
+    var int   gIO       = na
+    var float gPO       = na
+    var int   gN        = na
+    var float gPD       = na
+    var float gWup      = na
+    var float gWdn      = na
+    var int   gSkip     = na
+    var int   projCount = 0
+    if pvKind != 0
+        pivCount += 1
+        if pivCount >= 2
+            [wn, wsz, wru, wrd] = vlMeasureWindow(o4s, o4Base, prevPivIdx, prevPivPx, pvIdx, pvPx, skipFrac)
+            array.push(wN, float(wn))
+            array.push(wSz, wsz)
+            array.push(wRu, wru)
+            array.push(wRd, wrd)
+            if array.size(wN) > K
+                array.shift(wN)
+                array.shift(wSz)
+                array.shift(wRu)
+                array.shift(wRd)
+        prevPivIdx := pvIdx
+        prevPivPx  := pvPx
+        int dropPiv = pvIdx - o4Base
+        if dropPiv > 0
+            o4s    := array.copy(array.slice(o4s, dropPiv, array.size(o4s)))
+            o4Base := pvIdx
+        // A new pivot ends the old projection's life for entries, projectable or not.
+        gOn := false
+        if array.size(wN) >= K
+            array<float> rus = array.new<float>()
+            array<float> rds = array.new<float>()
+            for j = 0 to array.size(wRu) - 1
+                float r = array.get(wRu, j)
+                if not na(r)
+                    array.push(rus, r)
+                    array.push(rds, array.get(wRd, j))
+            if array.size(rus) >= VL_MIN_WALL_WINDOWS
+                bool  falling = pvKind == 1
+                int   NN      = math.max(minN, math.round(vlMedian(wN)))
+                float mSize   = vlMedian(wSz)
+                float PDx     = pvPx * math.exp(falling ? -mSize : mSize)
+                float span    = math.abs(PDx - pvPx)
+                gIO   := pvIdx
+                gPO   := pvPx
+                gN    := NN
+                gPD   := PDx
+                gWup  := span * vlMedian(rus)
+                gWdn  := span * vlMedian(rds)
+                gSkip := math.round(skipFrac * NN)
+                gConf := t
+                gId   := projCount
+                projCount += 1
+                gOn   := true
+
+    // 4–7. Exit of the open trade (against its own projection), then a possible entry.
+    var int   posSide      = 0
+    var int   posEntryIdx  = na
+    var float posEntryPx   = na
+    var int   posEntryTime = na
+    var int   posProj      = -1
+    var int   pIO          = na
+    var float pPO          = na
+    var int   pN           = na
+    var float pPD          = na
+    var float pWup         = na
+    var float pWdn         = na
+    var int   pSkip        = na
+    var int   lastEnteredId = -1
+    var int   nT      = 0
+    var int   nWin    = 0
+    var float sRet    = 0.0
+    var float sWin    = 0.0
+    var float sLoss   = 0.0
+    var float sBars   = 0.0
+    var float sDays   = 0.0
+    var float sSq     = 0.0
+    var float medBars = na
+    var float medDays = na
+    var array<float> tBars = array.new<float>()
+    var array<float> tDays = array.new<float>()
+    bool  buy      = false
+    bool  sell     = false
+    int   exitCode = 0       // 1 target, 2 stop, 3 time
+    int   exitSide = 0
+    float exitRet  = na
+    float entryE   = na
+    float eLive    = na
+    if ok
+        if posSide != 0 and t > posEntryIdx
+            int iX     = t - pIO
+            int reason = 0
+            if iX > pN - pSkip
+                reason := 3
+            else
+                float eX = vlPositionE(pPO, pPD, pN, pWup, pWdn, iX, o4)
+                if (posSide > 0 ? eX <= -stopE : eX >= stopE)
+                    reason := 2
+                else if (posSide > 0 ? eX >= 0 : eX <= 0)
+                    reason := 1
+            if reason != 0
+                float ret  = posSide * (close - posEntryPx) / posEntryPx - cost
+                float days = (time - posEntryTime) / 86400000.0
+                int   nb   = t - posEntryIdx
+                nT    += 1
+                if ret > 0
+                    nWin += 1
+                sRet  += ret
+                sWin  += math.max(0.0, ret)
+                sLoss += math.max(0.0, -ret)
+                sBars += nb
+                sDays += days
+                sSq   += ret * ret
+                array.push(tBars, float(nb))
+                array.push(tDays, days)
+                medBars  := vlMedian(tBars)
+                medDays  := vlMedian(tDays)
+                exitCode := reason
+                exitSide := posSide
+                exitRet  := ret
+                posSide  := 0
+        if gOn and t >= gConf
+            int iE = t - gIO
+            if iE >= gSkip and iE <= gN - gSkip
+                float eE = vlPositionE(gPO, gPD, gN, gWup, gWdn, iE, o4)
+                eLive := eE
+                float aE = math.abs(eE)
+                if posSide == 0 and lastEnteredId != gId and aE >= level and aE < stopE
+                    int side = eE < 0 ? 1 : -1
+                    posSide      := side
+                    posEntryIdx  := t
+                    posEntryPx   := close
+                    posEntryTime := time
+                    posProj      := gId
+                    pIO   := gIO
+                    pPO   := gPO
+                    pN    := gN
+                    pPD   := gPD
+                    pWup  := gWup
+                    pWdn  := gWdn
+                    pSkip := gSkip
+                    lastEnteredId := gId
+                    entryE := eE
+                    buy    := side > 0
+                    sell   := side < 0
+
+    [buy, sell, exitCode, exitSide, exitRet, entryE, posSide, posEntryPx, posProj, pvKind, pvIdx, pvPx, gOn, gId, gIO, gPO, gN, gPD, gWup, gWdn, gSkip, eLive, pIO, pPO, pN, pPD, pWup, pWdn, nT, nWin, sRet, sWin, sLoss, sBars, sDays, sSq, medBars, medDays, nBars, firstTime]
+
+// ── run it ───────────────────────────────────────────────────────────────────
+[cBuy, cSell, cExit, cExitSide, cExitRet, cEntryE, cPosSide, cPosPx, cPosProj, cPivKind, cPivIdx, cPivPx, cGOn, cGId, cGIO, cGPO, cGN, cGPD, cGWup, cGWdn, cGSkip, cELive, cPIO, cPPO, cPN, cPPD, cPWup, cPWdn, cNT, cNW, cSR, cSW, cSL, cSB, cSD, cSQ, cMB, cMD, cBars, cT0] = vortexCore(atrLenIn, atrMultIn, kIn, levelIn, stopIn, vlSkipFrac, VL_MIN_N, vlCostFrac)
+
+// Has this bar closed? barstate.isconfirmed alone is true on EVERY historical bar, including a
+// last bar that is still forming because the chart was loaded while the market is shut (a
+// weekly bar mid-week, a monthly bar mid-month, a 4H bar across a session break). So on the
+// last historical bar it also needs time_close to have passed. Realtime bars (calc_on_every_tick
+// = false) are only calculated on their close.
+bool  vlClosed = barstate.isconfirmed and (barstate.isrealtime or not barstate.islast or na(time_close) or timenow >= time_close)
+
+// ── orders: market orders filled at THIS bar's close, the exit first ─────────
+// Closed bars only, so the Tester never fills at the provisional close of a bar still forming.
+if vlClosed
+    float vlQty = math.abs(strategy.position_size)
+    if cExit != 0 and vlQty > 0
+        strategy.order("خروج", strategy.position_size > 0 ? strategy.short : strategy.long, qty = vlQty, comment = cExit == 1 ? "هدف ✓" : cExit == 2 ? "وقف ✕" : "وقت ⏱")
+    if cBuy
+        strategy.order("شراء", strategy.long, comment = "شراء · e " + str.tostring(cEntryE, "0.00"))
+    if cSell
+        strategy.order("بيع", strategy.short, comment = "بيع · e " + str.tostring(cEntryE, "0.00"))
+
+// The chart's state as of its last CLOSED bar, for the drawing and the table. Same gate as the
+// orders, so the table and the Tester count the same trades.
+bool  vlNow    = vlClosed
+bool  dGOn     = vlNow ? cGOn : cGOn[1]
+int   dGId     = vlNow ? cGId : cGId[1]
+int   dGIO     = vlNow ? cGIO : cGIO[1]
+float dGPO     = vlNow ? cGPO : cGPO[1]
+int   dGN      = vlNow ? cGN : cGN[1]
+float dGPD     = vlNow ? cGPD : cGPD[1]
+float dGWup    = vlNow ? cGWup : cGWup[1]
+float dGWdn    = vlNow ? cGWdn : cGWdn[1]
+int   dPosSide = vlNow ? cPosSide : nz(cPosSide[1])
+int   dPosProj = vlNow ? cPosProj : cPosProj[1]
+int   dPIO     = vlNow ? cPIO : cPIO[1]
+float dPPO     = vlNow ? cPPO : cPPO[1]
+int   dPN      = vlNow ? cPN : cPN[1]
+float dPPD     = vlNow ? cPPD : cPPD[1]
+float dPWup    = vlNow ? cPWup : cPWup[1]
+float dPWdn    = vlNow ? cPWdn : cPWdn[1]
+int   lN       = vlNow ? cNT : nz(cNT[1])
+int   lW       = vlNow ? cNW : nz(cNW[1])
+float lSR      = vlNow ? cSR : nz(cSR[1])
+float lSW      = vlNow ? cSW : nz(cSW[1])
+float lSL      = vlNow ? cSL : nz(cSL[1])
+float lSB      = vlNow ? cSB : nz(cSB[1])
+float lSD      = vlNow ? cSD : nz(cSD[1])
+float lSQ      = vlNow ? cSQ : nz(cSQ[1])
+float lMB      = vlNow ? cMB : cMB[1]
+float lMD      = vlNow ? cMD : cMD[1]
+
+vlPct(float x) =>
+    na(x) ? "—" : (x >= 0 ? "+" : "") + str.tostring(x * 100.0, "0.00") + "%"
+
+// ── the live projection (redrawn on the last bar only) ───────────────────────
+// Points beyond 500 bars into the future are cut off (TradingView's drawing limit).
+vlDrawGeometry(array<polyline> polys, array<label> labs, int iO, float PO, int N, float PD, float wUp, float wDn, float lvl, bool band, int transp, string tag) =>
+    int iMax = math.min(N, bar_index + VL_FUTURE - iO)
+    if iMax >= 1
+        array<chart.point> pVec = array.new<chart.point>()
+        array<chart.point> pUp  = array.new<chart.point>()
+        array<chart.point> pDn  = array.new<chart.point>()
+        array<chart.point> bUp  = array.new<chart.point>()
+        array<chart.point> bDn  = array.new<chart.point>()
+        for i = 0 to iMax
+            float vec = PO + ((PD - PO) * i) / N
+            float u   = 2.0 * i / N - 1.0
+            float shp = math.sqrt(math.max(0.0, 1.0 - u * u))
+            array.push(pVec, chart.point.from_index(iO + i, vec))
+            array.push(pUp, chart.point.from_index(iO + i, vec + wUp * shp))
+            array.push(pDn, chart.point.from_index(iO + i, vec - wDn * shp))
+            if band
+                array.push(bUp, chart.point.from_index(iO + i, vec + lvl * wUp * shp))
+                array.push(bDn, chart.point.from_index(iO + i, vec - lvl * wDn * shp))
+        array.push(polys, polyline.new(pVec, curved = false, closed = false, xloc = xloc.bar_index, line_color = color.new(VL_VEC, transp), line_style = line.style_dashed, line_width = 1))
+        array.push(polys, polyline.new(pUp, curved = false, closed = false, xloc = xloc.bar_index, line_color = color.new(VL_SELL, transp), line_style = line.style_solid, line_width = 2))
+        array.push(polys, polyline.new(pDn, curved = false, closed = false, xloc = xloc.bar_index, line_color = color.new(VL_BUY, transp), line_style = line.style_solid, line_width = 2))
+        if band
+            array.push(polys, polyline.new(bUp, curved = false, closed = false, xloc = xloc.bar_index, line_color = color.new(VL_SELL, math.min(90, transp + 40)), line_style = line.style_dotted, line_width = 1))
+            array.push(polys, polyline.new(bDn, curved = false, closed = false, xloc = xloc.bar_index, line_color = color.new(VL_BUY, math.min(90, transp + 40)), line_style = line.style_dotted, line_width = 1))
+        array.push(labs, label.new(iO, PO, "O" + tag, xloc = xloc.bar_index, yloc = yloc.price, style = label.style_label_center, color = color.new(VL_VEC, math.min(90, transp + 60)), textcolor = color.new(color.white, transp), size = size.tiny, tooltip = "O — المحور الذي بدأ منه الإسقاط"))
+        if iO + N <= bar_index + VL_FUTURE
+            array.push(labs, label.new(iO + N, PD, "D" + tag, xloc = xloc.bar_index, yloc = yloc.price, style = label.style_label_center, color = color.new(VL_VEC, math.min(90, transp + 60)), textcolor = color.new(color.white, transp), size = size.tiny, tooltip = "D المتوقَّع: O × exp(∓ وسيط حجم آخر K موجات) بعد N = " + str.tostring(N) + " شمعة"))
+    true
+
+var array<polyline> vlPolys = array.new<polyline>()
+var array<label>    vlGeomLabels = array.new<label>()
+if barstate.islast
+    while array.size(vlPolys) > 0
+        polyline.delete(array.pop(vlPolys))
+    while array.size(vlGeomLabels) > 0
+        label.delete(array.pop(vlGeomLabels))
+    if showProjIn
+        if dGOn
+            vlDrawGeometry(vlPolys, vlGeomLabels, dGIO, dGPO, dGN, dGPD, dGWup, dGWdn, levelIn, showBandIn, 0, "")
+        if dPosSide != 0 and (not dGOn or dPosProj != dGId)
+            vlDrawGeometry(vlPolys, vlGeomLabels, dPIO, dPPO, dPN, dPPD, dPWup, dPWdn, levelIn, false, 60, "′")
+
+// ── cross-check with the Strategy Tester ─────────────────────────────────────
+var table vlCheck = table.new(position.top_right, 2, 7, bgcolor = VL_TBG, frame_color = color.new(VL_MUTED, 50), frame_width = 1, border_color = color.new(VL_MUTED, 75), border_width = 1)
+
+vlCheckRow(table tb, int row, string name, string value, color fg, string tip) =>
+    table.cell(tb, 1, row, name, text_color = color.new(color.white, 15), bgcolor = row == 0 ? VL_THEAD : VL_TBG, text_size = size.small, tooltip = tip)
+    table.cell(tb, 0, row, value, text_color = fg, bgcolor = row == 0 ? VL_THEAD : VL_TBG, text_size = size.small, tooltip = tip)
+    true
+
+if barstate.islast and showCheckIn
+    float ex = lN > 0 ? lSR / lN : na
+    float hw = lN > 1 ? 1.96 * math.sqrt(math.max(0.0, (lSQ - lN * ex * ex) / (lN - 1))) / math.sqrt(lN) : na
+    color exCol = na(hw) ? color.white : ex - hw > 0 ? VL_BUY : ex + hw < 0 ? VL_SELL : VL_MUTED
+    string pf = lSL > 0 ? str.tostring(lSW / lSL, "0.00") : lSW > 0 ? "∞" : "—"
+    vlCheckRow(vlCheck, 0, "محرك المؤشر", "للمطابقة", color.white, "The engine's own statistics on this chart, to compare with the Strategy Tester (closed trades only).")
+    vlCheckRow(vlCheck, 1, "الصفقات المغلقة", str.tostring(lN), lN < 30 ? VL_WARN : color.white, "Total closed trades in the Strategy Tester.")
+    vlCheckRow(vlCheck, 2, "نسبة الربح", lN > 0 ? str.tostring(100.0 * lW / lN, "0.0") + "%  (" + str.tostring(lW) + "/" + str.tostring(lN) + ")" : "—", color.white, "Percent profitable in the Strategy Tester. On its own it does not say whether the method makes money.")
+    vlCheckRow(vlCheck, 3, "متوسط المدة", lN > 0 ? str.tostring(lSB / lN, "0.0") + " شمعة · " + str.tostring(lSD / lN, "0.0") + " يوم" : "—", color.white, "Avg # bars in trades in the Strategy Tester (higher by exactly 1 if it counts both ends).")
+    vlCheckRow(vlCheck, 4, "المدة المعتادة (الوسيط)", lN > 0 ? str.tostring(lMB, "0.0") + " شمعة · " + str.tostring(lMD, "0.0") + " يوم" : "—", color.white, "Median holding time: half the trades are shorter, half longer.")
+    vlCheckRow(vlCheck, 5, "متوسط العائد/صفقة", lN > 0 ? vlPct(ex) + (na(hw) ? "" : "  ±" + str.tostring(hw * 100.0, "0.00") + "%") : "—", exCol, "Mean return per trade after the round-trip cost input, ± a rough 95 % interval. Green/red only when the whole interval is above/below 0.")
+    vlCheckRow(vlCheck, 6, "عامل الربح", lN > 0 ? pf : "—", color.white, "Gross wins ÷ gross losses (the reference's definition, on returns).")

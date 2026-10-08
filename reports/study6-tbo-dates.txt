@@ -1,0 +1,20 @@
+Study 6 — FLT on BTC daily vs TBO signals the vendor's team reported in public (report only)
+
+Not a match measurement. The TBO dates come from Kitco columns by The Better Traders'
+co-founder, read through search-result summaries (kitco.com is blocked here); they are
+article dates or months, not exact signal bars. FLT dates: BITSTAMP:BTCUSD daily,
+engine/study6.js (BC) and the Pine script's display-only breakdown cluster (BD,
+3 breakdown bars of the last 5). Nothing was tuned to these dates.
+
+TBO event (as reported)                                  FLT on BTC daily                     agreement
+daily breakout cluster, Nov 2023 (before a +40% run)     BC 2023-12-03 (breakouts from Nov 1)  late by weeks
+daily breakout cluster, Feb 2024 (before +42%)           BC 2024-02-09                         same month
+daily breakout cluster, Nov 2024 (before +43%)           BC 2024-11-13                         same month
+daily breakout cluster, article 2025-05-20               BC 2025-05-22                         2 days later
+TBO breakdown, articles 2025-11-04 / 2025-11-18          BD 2025-11-21                         3+ days later
+cluster that "began January 31" 2026 (breakdown side)    breakdown bars 01-25, 01-29, 01-31;   bar matches, no
+                                                         no BD cluster (3 in 7 bars, not 5)    cluster
+fresh TBO breakdown, article 2026-06-05                  BD 2026-06-03                         2 days earlier
+
+FLT also printed BC on 2024-03-01, 2024-07-19, 2025-07-11 and 2025-10-03; whether TBO did
+is unknown. Reading: same moves, FLT usually a few days slower than TBO.

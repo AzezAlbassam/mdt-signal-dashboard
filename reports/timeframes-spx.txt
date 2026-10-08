@@ -1,0 +1,30 @@
+
+SPX 2015-01-02 → 2026-09-16 — 2943 sessions
+Intraday (5m / 15m / 1h / 4h) is gated on this data plan and NOT measured.
+
+━━━ numeric ladder (Σ×45) — short the first touch ━━━
+
+timeframe   bars  levels touched | zero-rev  chance     p  | trades  win%   95% CI       need   expectancy   95% CI
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+daily       2943     346     319  |     5.6%    6.8%  0.799  |    319  27.9% [23%, 34%]   40.0%       -0.53%  [-0.75, -0.28]
+weekly       612     160     152  |     4.6%    5.7%  0.729  |    152  34.2% [27%, 42%]   40.0%       -0.30%  [-0.68, +0.09]
+monthly      141      32      32  |     0.0%    0.9%  1.000  |     32  50.0% [34%, 66%]   40.0%       +0.50%  [-0.44, +1.28]
+
+━━━ MA50 at peak — long the first touch ━━━
+
+timeframe   bars  levels touched | zero-rev  chance     p  | trades  win%   95% CI       need   expectancy   95% CI
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+daily       2943     160     139  |    11.5%    7.1%  0.021  |    139  36.3% [28%, 45%]   40.0%       -0.06%  [-0.45, +0.33]
+weekly       612      57      41  |     0.0%    3.6%  1.000  |     41  29.3% [18%, 44%]   40.0%       -0.54%  [-1.15, +0.20]
+monthly      141       8       3  |    33.3%    2.3%  0.027  |      3  33.3% [6%, 79%]    40.0%       -0.33%  [-2.00, +3.00]
+
+zero-rev  = share of touched levels where price turned at the level (his claim).
+chance    = the same share for randomly displaced levels at the same anchors.
+p         = how often chance matched or beat him; p > 0.05 = no detectable edge.
+need      = break-even win rate for a 2% stop / 3% target.
+expectancy= mean return per trade, timeouts included.
+
+MA50 daily, zero-reversal (pen<=0.5%, exc>=2%, 20 sessions)
+  his rate          : 11.5%  on 139 touched
+  vs displaced level: 7.1%  p=0.021
+  vs random anchor  : 8.5%  p=0.120

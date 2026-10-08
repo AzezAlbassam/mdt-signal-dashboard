@@ -1,0 +1,53 @@
+Study 5 CONFIRMATION — 155 unseen US symbols + 10 crypto/Saudi.
+Confirmed = win ≥ 60% and edge > 0, Holm p < 0.05.
+
+CONFIRMED     weekly|rsi_30|H52|F0
+   all  n 539  win 75.9% (random 65.3%)  mean 29.8% median 19.0%  edge 12.1%  vs SPY 9.1%  p 0.0005 Holm 0.0050
+   I    n 277  win 71.1%  edge 2.6%     II  n 262  win 80.9%  edge 22.0%
+   us 76.7% (506) edge 13.7% | crypto 100.0% (7) | saudi 53.8% (26) edge 2.5%
+   search: win 75.5% edge 12.7%
+not confirmed weekly|wavetrend|H52|F0
+   all  n 412  win 70.4% (random 63.7%)  mean 28.1% median 17.0%  edge 4.2%  vs SPY 11.9%  p 0.1419 Holm 0.4258
+   I    n 234  win 68.4%  edge -0.5%     II  n 178  win 73.0%  edge 10.5%
+   us 69.6% (381) edge 11.6% | crypto 88.9% (9) | saudi 77.3% (22) edge 7.8%
+   search: win 76.2% edge 8.8%
+not confirmed weekly|crsi|H52|F0
+   all  n 1072  win 69.0% (random 68.5%)  mean 23.0% median 12.6%  edge 0.8%  vs SPY 6.9%  p 0.2304 Holm 0.4258
+   I    n 530  win 72.5%  edge -0.5%     II  n 542  win 65.7%  edge 2.1%
+   us 69.6% (1014) edge 3.0% | crypto 64.7% (17) | saudi 56.1% (41) edge 0.0%
+   search: win 73.4% edge 5.2%
+CONFIRMED     weekly|rsi_30|H26|F0
+   all  n 606  win 65.5% (random 61.7%)  mean 11.1% median 7.5%  edge 3.4%  vs SPY 2.4%  p 0.0035 Holm 0.0315
+   I    n 302  win 60.9%  edge 0.7%     II  n 304  win 70.1%  edge 6.2%
+   us 66.1% (566) edge 3.8% | crypto 77.8% (9) | saudi 51.6% (31) edge -1.9%
+   search: win 65.6% edge 3.7%
+not confirmed weekly|rsi2|H26|F1
+   all  n 1825  win 68.6% (random 65.2%)  mean 11.8% median 7.7%  edge 2.7%  vs SPY 5.0%  p 0.0115 Holm 0.0805
+   I    n 931  win 68.0%  edge 1.5%     II  n 894  win 69.2%  edge 3.9%
+   us 69.2% (1747) edge 2.5% | crypto 57.1% (28) | saudi 54.0% (50) edge -0.1%
+   search: win 69.6% edge 2.2%
+not confirmed weekly|crsi|H13|F0
+   all  n 1686  win 62.6% (random 59.9%)  mean 5.5% median 4.3%  edge 1.2%  vs SPY 1.2%  p 0.0575 Holm 0.2874
+   I    n 757  win 61.0%  edge 1.0%     II  n 929  win 63.8%  edge 1.4%
+   us 63.0% (1583) edge 1.8% | crypto 54.5% (33) | saudi 55.7% (70) edge 0.5%
+   search: win 63.1% edge 2.2%
+not confirmed weekly|down3|H13|F0
+   all  n 4970  win 62.7% (random 60.3%)  mean 5.4% median 4.2%  edge 0.9%  vs SPY 1.9%  p 0.0770 Holm 0.3078
+   I    n 2498  win 63.2%  edge 1.1%     II  n 2472  win 62.1%  edge 0.6%
+   us 63.2% (4710) edge 1.0% | crypto 53.2% (79) | saudi 53.6% (181) edge 1.3%
+   search: win 64.4% edge 1.5%
+not confirmed weekly|rsi2|H13|F1
+   all  n 2148  win 62.2% (random 60.5%)  mean 4.9% median 3.9%  edge 0.9%  vs SPY 1.4%  p 0.0425 Holm 0.2549
+   I    n 1087  win 63.2%  edge 0.6%     II  n 1061  win 61.1%  edge 1.2%
+   us 62.6% (2057) edge 1.1% | crypto 55.2% (29) | saudi 50.0% (62) edge 0.6%
+   search: win 63.2% edge 1.3%
+not confirmed weekly|down3|H13|F1
+   all  n 2551  win 63.3% (random 60.3%)  mean 5.3% median 3.9%  edge 1.2%  vs SPY 2.1%  p 0.0100 Holm 0.0800
+   I    n 1320  win 64.2%  edge 1.2%     II  n 1231  win 62.3%  edge 1.2%
+   us 63.6% (2443) edge 1.2% | crypto 55.3% (38) | saudi 55.7% (70) edge 1.4%
+   search: win 63.2% edge 1.3%
+not confirmed weekly|ma_cross|H13|F1
+   all  n 1833  win 57.0% (random 58.4%)  mean 4.2% median 2.3%  edge 0.5%  vs SPY 1.2%  p 0.1574 Holm 0.4258
+   I    n 871  win 59.7%  edge 1.7%     II  n 962  win 54.6%  edge -0.6%
+   us 57.4% (1740) edge 0.1% | crypto 60.7% (28) | saudi 46.2% (65) edge -1.5%
+   search: win 61.2% edge 1.1%

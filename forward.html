@@ -1,0 +1,357 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forward Test</title>
+<meta name="description" content="Log calls before the outcome and score them honestly — the only way to tell an edge from a good month.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px 80px}
+header{padding:74px 0 32px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.08rem;color:var(--muted);max-width:60ch;margin:0}
+h2{color:var(--ink);font-size:1.32rem;letter-spacing:-.02em;margin:0 0 6px;font-weight:650}
+h3{color:var(--ink);font-size:1rem;margin:0 0 6px;font-weight:650}
+.sec{margin:46px 0 0;padding-top:28px;border-top:1px solid var(--line-soft)}
+.num{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;margin:0 0 10px}
+p{margin:0 0 14px;max-width:66ch}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em}
+code{background:var(--sunk);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:20px 22px;margin:20px 0}
+.form{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.f label{display:block;font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin-bottom:5px}
+input,select{width:100%;background:var(--sunk);border:1px solid var(--line);color:var(--ink);
+ border-radius:4px;padding:8px 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ font-size:.9rem}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+button{background:var(--accent);color:var(--bg);border:none;border-radius:4px;
+ padding:9px 18px;font-size:.88rem;font-weight:650;cursor:pointer;font-family:inherit}
+button:hover{filter:brightness(1.1)}
+button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+button.ghost:hover{color:var(--accent);border-color:var(--accent);filter:none}
+button.mini{padding:4px 10px;font-size:.76rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.86rem}
+th{text-align:left;font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;
+ padding-right:14px;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.pos{color:var(--pos)} .neg{color:var(--neg)} .warnc{color:var(--warn)}
+.pill{display:inline-block;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+ font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
+.pill.open{color:var(--warn);border-color:var(--warn)}
+.pill.win{color:var(--pos);border-color:var(--pos)}
+.pill.loss{color:var(--neg);border-color:var(--neg)}
+.pill.flat{color:var(--faint)}
+.verdict{border-radius:5px;padding:14px 18px;margin:14px 0;font-size:.93rem;
+ border:1px solid var(--line);background:var(--raise);color:var(--ink)}
+.verdict.unknown{border-color:var(--warn);background:var(--accent-soft)}
+.verdict.edge{border-color:var(--pos)}
+.verdict.noedge{border-color:var(--neg)}
+.empty{color:var(--faint);font-size:.9rem;padding:14px 0}
+.warn{background:var(--accent-soft);border:1px solid var(--accent);border-radius:5px;
+ padding:16px 20px;margin:20px 0;font-size:.93rem;color:var(--ink)}
+footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
+ font-size:.82rem;color:var(--faint);max-width:66ch}
+a{color:var(--accent)}
+.back{display:inline-block;margin-bottom:26px;font-size:.85rem;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.scroll{overflow-x:auto}
+</style></head><body><div class="wrap">
+
+<header>
+ <a class="back" href="index.html">&larr; back</a>
+ <p class="eyebrow">The only test that settles it</p>
+ <h1>Forward test</h1>
+ <p class="lede">Log the call <i>before</i> the outcome. Everything else &mdash; charts marked
+ up afterwards, a good month, a screenshot &mdash; is compatible with having no edge at all.</p>
+</header>
+
+<section class="sec">
+<p class="num">Why this page exists</p>
+<h2>You can settle a big claim in five trades</h2>
+<p>The number of forward calls needed to prove an edge scales with
+<code>1 &divide; (edge)&sup2;</code>. That has a blunt consequence: <b>the bigger the claim,
+the less evidence it takes to confirm</b> &mdash; and the longer a big claim goes unconfirmed,
+the more that silence means.</p>
+
+<div class="scroll"><table>
+<thead><tr><th>To show a true win rate of&hellip;</th><th>&hellip;beats a 40% break-even</th><th class="n">forward trades needed</th></tr></thead>
+<tbody>
+<tr><td>100% &mdash; <span dir="rtl">دقة ١٠٠٪١٠٠</span></td><td>certainly</td><td class="n"><b>2</b></td></tr>
+<tr><td>90% &mdash; his stated time-analysis rate</td><td>overwhelmingly</td><td class="n"><b>5</b></td></tr>
+<tr><td>60% &mdash; a very strong edge</td><td>clearly</td><td class="n">38</td></tr>
+<tr><td>50% &mdash; a good, realistic edge</td><td>yes</td><td class="n">151</td></tr>
+<tr><td>45% &mdash; a small real edge</td><td>barely</td><td class="n">600</td></tr>
+<tr><td>42% &mdash; a marginal edge</td><td>hardly</td><td class="n">3,729</td></tr>
+</tbody></table></div>
+
+<p>At 5% significance and 80% power, against his own 2% stop / 3% target. Computed by
+<code>engine/power.js</code>; the table is checked against it by the test suite.</p>
+
+<div class="warn"><b>The asymmetry.</b> Establishing a 90% claim takes <b>five</b> calls made
+in advance. Across 98 public posts spanning four years, there were <b>two</b>. That is not
+proof of anything about him &mdash; but it means the claim has never actually been tested,
+by him or by anyone. Five honest calls would do it. This page is for making them.</p>
+</section>
+
+<section class="sec">
+<p class="num">01</p>
+<h2>Log a call</h2>
+<p>Fill this in <b>before</b> you know the result. The timestamp is recorded and shown, and
+entries cannot be edited afterwards &mdash; only resolved. That constraint is the whole
+point of the page.</p>
+
+<div class="card">
+ <div class="form">
+  <div class="f"><label for="src">Source</label>
+   <select id="src">
+    <option value="him">@zero_en3kas</option>
+    <option value="indicator">the indicator</option>
+    <option value="me">me</option>
+   </select></div>
+  <div class="f"><label for="sym">Instrument</label><input id="sym" value="SPX" maxlength="12"></div>
+  <div class="f"><label for="dir">Direction</label>
+   <select id="dir"><option value="long">long</option><option value="short">short</option></select></div>
+  <div class="f"><label for="entry">Entry</label><input id="entry" type="number" step="any" placeholder="6435"></div>
+  <div class="f"><label for="stop">Stop %</label><input id="stop" type="number" step="any" value="2"></div>
+  <div class="f"><label for="tgt">Target %</label><input id="tgt" type="number" step="any" value="3"></div>
+ </div>
+ <div class="row">
+  <button id="add">Log it</button>
+  <span class="mono" id="be" style="color:var(--muted);font-size:.84rem"></span>
+ </div>
+</div>
+</section>
+
+<section class="sec">
+<p class="num">02</p>
+<h2>The scoreboard</h2>
+<div id="boards"></div>
+</section>
+
+<section class="sec">
+<p class="num">03</p>
+<h2>The log</h2>
+<div class="scroll"><table>
+<thead><tr><th>logged</th><th>source</th><th>call</th><th class="n">entry</th>
+<th class="n">stop/tgt</th><th>result</th><th></th></tr></thead>
+<tbody id="log"></tbody></table></div>
+<div class="row">
+ <button class="ghost mini" id="exp">Export JSON</button>
+ <button class="ghost mini" id="imp">Import</button>
+ <button class="ghost mini" id="clr">Clear all</button>
+ <input type="file" id="file" accept="application/json" style="display:none">
+</div>
+</section>
+
+<footer>Stored in this browser only &mdash; nothing is uploaded, and clearing site data erases
+it, so export if it matters. Research and analysis only, not financial advice.
+The sample sizes come from <code>engine/power.js</code> and the interval from
+<code>engine/stats.js</code>; both are covered by the test suite.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='mizan-forward-v1';
+
+// Kept identical to engine/stats.js and engine/power.js — those are the source of truth,
+// and the test suite asserts the reference table above matches them.
+function wilson(s,n,z){z=z||1.96;if(!n)return null;
+ var p=s/n,z2=z*z,d=1+z2/n,c=(p+z2/(2*n))/d,
+     sp=(z/d)*Math.sqrt(p*(1-p)/n+z2/(4*n*n));
+ return [Math.max(0,c-sp),Math.min(1,c+sp)];}
+
+function nq(p){ // inverse normal, Acklam
+ var a=[-3.969683028665376e1,2.209460984245205e2,-2.759285104469687e2,1.383577518672690e2,-3.066479806614716e1,2.506628277459239],
+     b=[-5.447609879822406e1,1.615858368580409e2,-1.556989798598866e2,6.680131188771972e1,-1.328068155288572e1],
+     c=[-7.784894002430293e-3,-3.223964580411365e-1,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783],
+     d=[7.784695709041462e-3,3.224671290700398e-1,2.445134137142996,3.754408661907416],q,r;
+ if(p<0.02425){q=Math.sqrt(-2*Math.log(p));
+  return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+ if(p<=0.97575){q=p-0.5;r=q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+ q=Math.sqrt(-2*Math.log(1-p));
+ return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+
+function sampleSize(p0,p1){if(!(p1>p0))return null;
+ var num=nq(0.95)*Math.sqrt(p0*(1-p0))+nq(0.80)*Math.sqrt(p1*(1-p1));
+ return Math.ceil(Math.pow(num/(p1-p0),2));}
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
+function save(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}
+
+var items=load();
+var $=function(id){return document.getElementById(id)};
+var SRC={him:'@zero_en3kas',indicator:'the indicator',me:'me'};
+var pct=function(x){return x==null?'—':(x*100).toFixed(1)+'%'};
+
+function showBreakEven(){
+ var s=+$('stop').value,t=+$('tgt').value;
+ if(s>0&&t>0){var be=s/(s+t);
+  $('be').textContent='break-even '+pct(be)+' — needs '+(sampleSize(be,Math.min(0.999,be+0.15))||'—')+' trades to prove a +15pp edge';}
+ else $('be').textContent='';
+}
+$('stop').addEventListener('input',showBreakEven);
+$('tgt').addEventListener('input',showBreakEven);
+showBreakEven();
+
+$('add').addEventListener('click',function(){
+ var e=+$('entry').value,s=+$('stop').value,t=+$('tgt').value;
+ if(!(e>0)){$('entry').focus();return}
+ if(!(s>0&&t>0))return;
+ items.push({id:Date.now()+'-'+Math.round(Math.random()*1e6),
+  at:new Date().toISOString(),src:$('src').value,sym:$('sym').value.trim().toUpperCase()||'?',
+  dir:$('dir').value,entry:e,stop:s,tgt:t,result:null});
+ save(items);$('entry').value='';render();
+});
+
+function setResult(id,r){
+ for(var i=0;i<items.length;i++)if(items[i].id===id){items[i].result=r;items[i].resolvedAt=new Date().toISOString()}
+ save(items);render();
+}
+function del(id){items=items.filter(function(x){return x.id!==id});save(items);render()}
+
+function board(src){
+ var rows=items.filter(function(x){return x.src===src});
+ if(!rows.length)return null;
+ var res=rows.filter(function(x){return x.result==='win'||x.result==='loss'});
+ var w=res.filter(function(x){return x.result==='win'}).length,l=res.length-w;
+ var open=rows.filter(function(x){return !x.result}).length;
+ var rets=rows.filter(function(x){return x.result}).map(function(x){
+  return x.result==='win'?x.tgt:x.result==='loss'?-x.stop:0});
+ var exp=rets.length?rets.reduce(function(a,b){return a+b},0)/rets.length:null;
+ // Break-even averaged over the calls actually made.
+ var be=rows.reduce(function(a,x){return a+x.stop/(x.stop+x.tgt)},0)/rows.length;
+ var rate=res.length?w/res.length:null;
+ var ci=wilson(w,res.length);
+ return {src:src,n:rows.length,open:open,resolved:res.length,w:w,l:l,rate:rate,ci:ci,be:be,exp:exp};
+}
+
+function verdictFor(b){
+ if(!b.resolved)return {cls:'unknown',html:'<b>No resolved calls yet.</b> Log some and mark the outcomes.'};
+ if(b.ci[0]>b.be)
+  return {cls:'edge',html:'<b>Edge confirmed.</b> Even the low end of the interval ('+pct(b.ci[0])+
+   ') clears the '+pct(b.be)+' break-even, on '+b.resolved+' resolved calls.'};
+ if(b.ci[1]<b.be)
+  return {cls:'noedge',html:'<b>No edge — confirmed negative.</b> Even the high end ('+pct(b.ci[1])+
+   ') falls short of the '+pct(b.be)+' break-even, on '+b.resolved+' resolved calls.'};
+ var need=b.rate>b.be?sampleSize(b.be,b.rate):null;
+ var more=need?Math.max(0,need-b.resolved):null;
+ return {cls:'unknown',html:'<b>Not enough evidence yet.</b> '+b.resolved+' resolved, '+
+  pct(b.rate)+' win rate, interval ['+pct(b.ci[0])+', '+pct(b.ci[1])+'] straddles the '+
+  pct(b.be)+' break-even.'+(more!=null
+   ? ' At this rate it would take about <b>'+need+'</b> resolved calls to be sure — <b>'+more+' more</b>.'
+   : ' The rate is below break-even, so there is nothing to confirm yet.')};
+}
+
+function render(){
+ var bs=$('boards');bs.innerHTML='';
+ var any=false;
+ ['him','indicator','me'].forEach(function(s){
+  var b=board(s);if(!b)return;any=true;
+  var v=verdictFor(b);
+  var d=document.createElement('div');d.className='card';
+  d.innerHTML='<h3>'+SRC[s]+'</h3>'+
+   '<div class="scroll"><table><thead><tr><th class="n">logged</th><th class="n">open</th>'+
+   '<th class="n">resolved</th><th class="n">W/L</th><th class="n">win rate</th>'+
+   '<th class="n">95% CI</th><th class="n">break-even</th><th class="n">expectancy</th></tr></thead>'+
+   '<tbody><tr><td class="n">'+b.n+'</td><td class="n">'+b.open+'</td><td class="n">'+b.resolved+'</td>'+
+   '<td class="n">'+b.w+'/'+b.l+'</td><td class="n">'+pct(b.rate)+'</td>'+
+   '<td class="n">'+(b.ci?'['+pct(b.ci[0])+', '+pct(b.ci[1])+']':'—')+'</td>'+
+   '<td class="n">'+pct(b.be)+'</td>'+
+   '<td class="n '+(b.exp==null?'':b.exp>=0?'pos':'neg')+'">'+
+    (b.exp==null?'—':(b.exp>=0?'+':'')+b.exp.toFixed(2)+'%')+'</td></tr></tbody></table></div>'+
+   '<div class="verdict '+v.cls+'">'+v.html+'</div>';
+  bs.appendChild(d);
+ });
+ if(!any)bs.innerHTML='<p class="empty">Nothing logged yet. The scoreboard appears once you log a call.</p>';
+
+ var tb=$('log');tb.innerHTML='';
+ if(!items.length){tb.innerHTML='<tr><td colspan="7" class="empty">No calls logged.</td></tr>';return}
+ items.slice().reverse().forEach(function(x){
+  var tr=document.createElement('tr');
+  var when=new Date(x.at);
+  var pill=x.result?'<span class="pill '+x.result+'">'+x.result+'</span>'
+                   :'<span class="pill open">open</span>';
+  var actions=x.result
+   ?'<button class="ghost mini" data-r="'+x.id+'">reopen</button> '+
+    '<button class="ghost mini" data-d="'+x.id+'">delete</button>'
+   :'<button class="mini" data-w="'+x.id+'">win</button> '+
+    '<button class="ghost mini" data-l="'+x.id+'">loss</button> '+
+    '<button class="ghost mini" data-f="'+x.id+'">flat</button>';
+  tr.innerHTML='<td class="n" style="font-size:.78rem">'+when.toISOString().slice(0,16).replace('T',' ')+'</td>'+
+   '<td>'+SRC[x.src]+'</td>'+
+   '<td>'+x.sym+' <span class="'+(x.dir==='long'?'pos':'neg')+'">'+x.dir+'</span></td>'+
+   '<td class="n">'+x.entry+'</td>'+
+   '<td class="n">'+x.stop+'/'+x.tgt+'</td>'+
+   '<td>'+pill+'</td><td class="n">'+actions+'</td>';
+  tb.appendChild(tr);
+ });
+}
+
+document.addEventListener('click',function(e){
+ var t=e.target;if(t.tagName!=='BUTTON')return;
+ if(t.dataset.w)setResult(t.dataset.w,'win');
+ else if(t.dataset.l)setResult(t.dataset.l,'loss');
+ else if(t.dataset.f)setResult(t.dataset.f,'flat');
+ else if(t.dataset.r)setResult(t.dataset.r,null);
+ else if(t.dataset.d){if(confirm('Delete this logged call?'))del(t.dataset.d)}
+});
+
+$('exp').addEventListener('click',function(){
+ var blob=new Blob([JSON.stringify(items,null,1)],{type:'application/json'});
+ var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+ a.download='forward-test.json';a.click();URL.revokeObjectURL(a.href);
+});
+$('imp').addEventListener('click',function(){$('file').click()});
+$('file').addEventListener('change',function(e){
+ var f=e.target.files[0];if(!f)return;
+ var r=new FileReader();
+ r.onload=function(){try{var v=JSON.parse(r.result);
+  if(Array.isArray(v)){items=v;save(items);render()}}catch(err){alert('Could not read that file.')}};
+ r.readAsText(f);
+});
+$('clr').addEventListener('click',function(){
+ if(confirm('Delete every logged call? Export first if you want to keep them.')){
+  items=[];save(items);render()}
+});
+
+render();
+})();
+</script>
+</body></html>

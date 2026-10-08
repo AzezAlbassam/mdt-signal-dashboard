@@ -1,0 +1,488 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Geometric Balance</title>
+<meta name="description" content="Reconstructing and measuring the publicly-taught method of @zero_en3kas — what can be implemented, what cannot, and whether any of it beats chance.">
+<style>
+:root{
+  --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
+  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --line:#DBDBD3; --line-soft:#E7E7E1;
+  --accent:#8F711B; --accent-soft:#EFE7CC;
+  --pos:#4C6839; --neg:#93412F; --warn:#856611;
+  --grid:#E2E2DB;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}}
+:root[data-theme="dark"]{
+  --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --line:#34342E; --line-soft:#292925;
+  --accent:#CBA84A; --accent-soft:#322B17;
+  --pos:#7E9B5F; --neg:#C1715C; --warn:#CBA84A;
+  --grid:#2C2C27;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:0 22px 80px}
+header{padding:74px 0 32px;border-bottom:1px solid var(--line)}
+h1{color:var(--ink);font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.025em;
+ line-height:1.05;margin:0 0 14px;font-weight:650}
+.eyebrow{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:1.08rem;color:var(--muted);max-width:60ch;margin:0}
+h2{color:var(--ink);font-size:1.32rem;letter-spacing:-.02em;margin:0 0 6px;font-weight:650}
+h3{color:var(--ink);font-size:1.02rem;margin:0 0 6px;font-weight:650;letter-spacing:-.01em}
+.sec{margin:52px 0 0;padding-top:30px;border-top:1px solid var(--line-soft)}
+.sec:first-of-type{border-top:none}
+.num{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+ font-weight:700;margin:0 0 10px}
+p{margin:0 0 14px;max-width:64ch}
+.ar{font-size:1.02rem;line-height:1.9;color:var(--ink)}
+blockquote{margin:18px 0;padding:16px 20px;background:var(--surface);
+ border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px}
+blockquote p{margin:0 0 6px}
+blockquote p:last-child{margin:0}
+blockquote .tr{color:var(--muted);font-size:.93rem;font-style:italic}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em}
+code{background:var(--sunk);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:22px 24px;margin:26px 0}
+.verdict dl{display:grid;grid-template-columns:1fr;gap:14px;margin:0}
+@media(min-width:620px){.verdict dl{grid-template-columns:auto 1fr;gap:12px 24px;align-items:baseline}}
+.verdict dt{color:var(--muted);font-size:.9rem}
+.verdict dd{margin:0;color:var(--ink);font-weight:600}
+.yes{color:var(--pos)} .no{color:var(--neg)} .part{color:var(--warn)}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.87rem}
+th{text-align:left;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;
+ color:var(--faint);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+td.neg{color:var(--neg)}
+td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;
+ padding-right:14px;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:20px;margin:22px 0}
+.fig figcaption{font-size:.84rem;color:var(--muted);margin-top:14px;max-width:62ch}
+.ctl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:4px 0 18px}
+.ctl label{font-size:.8rem;color:var(--muted);letter-spacing:.02em}
+input[type=range]{flex:1;min-width:180px;accent-color:var(--accent)}
+input[type=number]{background:var(--sunk);border:1px solid var(--line);color:var(--ink);
+ border-radius:4px;padding:7px 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ font-size:.9rem;width:130px}
+input[type=number]:focus{outline:2px solid var(--accent);outline-offset:1px}
+.readout{display:flex;gap:26px;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ font-size:.86rem;margin-top:14px}
+.readout div span{display:block;font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;
+ color:var(--faint);font-family:system-ui,sans-serif;font-weight:700;margin-bottom:3px}
+.readout b{color:var(--ink);font-weight:650;font-size:1.04rem}
+.ladder{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.rung{background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent);
+ border-radius:4px;padding:7px 13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ font-size:.9rem;font-weight:650}
+.warn{background:var(--accent-soft);border:1px solid var(--accent);border-radius:5px;
+ padding:16px 20px;margin:22px 0;font-size:.93rem;color:var(--ink)}
+.warn b{font-weight:700}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+ font-size:.82rem;color:var(--faint);max-width:64ch}
+a{color:var(--accent)}
+.back{display:inline-block;margin-bottom:26px;font-size:.85rem;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+/* SVG presentation attributes do not accept var() — these have to come from CSS. */
+#axis{stroke:var(--grid)}
+#rally,#lblRally{stroke:var(--accent);fill:none}
+#lblRally{fill:var(--accent);stroke:none}
+#origin{fill:var(--accent)}
+#derived{stroke:var(--pos);fill:none}
+#lblDeriv{fill:var(--pos);stroke:none}
+</style></head><body><div class="wrap">
+
+<header>
+ <a class="back" href="index.html">&larr; back</a>
+ <p class="eyebrow">98 public posts &middot; 118 charts &middot; 2,943 SPX sessions</p>
+ <h1>The Geometric Balance</h1>
+ <p class="lede">Reconstructing what <span dir="rtl">ابو نايف</span> (@zero_en3kas) actually
+ teaches, implementing the parts that are functions of the price data, and measuring whether
+ any of it beats a line drawn at random.</p>
+</header>
+
+<section class="sec">
+<p class="num">The answer</p>
+<h2>Two of his rules port cleanly. His flagship cannot. None of it beats chance.</h2>
+
+<div class="verdict"><dl>
+ <dt>Read his posts?</dt>
+ <dd class="part">Partly — 98 public posts, including every teaching post</dd>
+ <dt>Build a TradingView indicator?</dt>
+ <dd class="yes">Yes — <code>pine/mizan-levels.pine</code>, two rules</dd>
+ <dt>Clone <bdi dir="rtl">الميزان الهندسي</bdi>?</dt>
+ <dd class="no">No — it is measured in on-screen degrees</dd>
+ <dt>Match his numbers exactly?</dt>
+ <dd class="part">His arithmetic yes; his charts no</dd>
+ <dt>Does it have an edge?</dt>
+ <dd class="no">No — indistinguishable from random levels</dd>
+</dl></div>
+</section>
+
+<section class="sec">
+<p class="num">01 &mdash; the rule he gave away in full</p>
+<h2>The numeric ladder</h2>
+<p>Posted free on 24 December 2023 as a two-part lesson. It is the most completely
+specified thing on his account, and it is three lines of arithmetic:</p>
+
+<blockquote>
+<p class="ar" dir="rtl">بنشتغل على آخر موجة قمتها ٤٦٠٦ وقاعها ٤١٠٣ وبتكون المعادلة كالتالي
+( مجموع القاع * ٤٥ ) — القاع ٤١٠٣ ٤+١+٠+٣ = ٨ — ٨ *٤٥ = ٣٦٠ — نضيف ٣٦٠ للقاع مرتين ونرسم الترندات</p>
+<p class="tr">We work on the last wave, peak 4606 and low 4103. The equation is (digit sum of
+the low &times; 45). The low 4103: 4+1+0+3 = 8. 8 &times; 45 = 360. We add 360 to the low
+twice and draw the trends.</p>
+</blockquote>
+
+<p><b>His anchors are real prints.</b> SPX bottomed at <span class="mono">4103.78</span> on
+27 October 2023 and peaked at <span class="mono">4607.07</span> on 27 July 2023. He is
+reading genuine swing extremes. The arithmetic reproduces exactly &mdash; try it:</p>
+
+<div class="fig">
+ <div class="ctl">
+  <label for="anchor">Wave low</label>
+  <input type="number" id="anchor" value="4103" step="1" min="1">
+  <label for="rungs">Rungs</label>
+  <input type="number" id="rungs" value="2" min="1" max="10" style="width:70px">
+ </div>
+ <div class="readout">
+  <div><span>digit sum</span><b id="ds">8</b></div>
+  <div><span>&times; 45 = step</span><b id="step">360</b></div>
+ </div>
+ <div class="ladder" id="ladder"></div>
+ <figcaption>His own worked example is the default. The digit sum is a single pass, not a
+ digital root &mdash; and note how a one-point change in the low moves every rung by 45 or
+ more. He quoted 4103 for a print of 4103.78; rounding the other way changes the whole ladder.</figcaption>
+</div>
+</section>
+
+<section class="sec">
+<p class="num">02 &mdash; why the flagship cannot be ported</p>
+<h2>The angles are a property of the picture</h2>
+
+<p>On 7 October 2024 he posted a Tadawul chart with two trendlines from one origin,
+labelled <b>51&deg;</b> and <b>24&deg;</b>, and the rule written across it in yellow:</p>
+
+<blockquote><p class="mono" style="font-size:1.12rem;color:var(--accent)">51 % 2.125 = 24</p>
+<p class="tr">Measure the angle of the rally leg, divide by 2.125, draw a second line from
+the same origin at the result. That line is the support.</p></blockquote>
+
+<p>A chart angle is <code>atan(&Delta;price &times; pxPerPrice &divide; &Delta;bars &times; pxPerBar)</code>.
+It describes the picture, not the prices. Reconstructing his chart's pixel scale reproduces
+his figures exactly &mdash; <b>his own numbers are internally consistent</b>. The trouble is
+that "his chart's scale" is his monitor. Drag the slider:</p>
+
+<div class="fig">
+ <div class="ctl">
+  <label for="zoom">Price-axis height</label>
+  <input type="range" id="zoom" min="50" max="220" value="100">
+  <span class="mono" id="zoomval" style="color:var(--muted)">100%</span>
+ </div>
+ <svg id="chart" viewBox="0 0 560 300" width="100%" height="300" role="img"
+      aria-label="The same price leg drawn at different chart scales, showing the angle change">
+  <line id="axis" x1="40" y1="270" x2="540" y2="270" stroke-width="1"/>
+  <line id="rally" stroke-width="2"/>
+  <line id="derived" stroke-width="2" stroke-dasharray="5 3"/>
+  <circle id="origin" r="4"/>
+  <text id="lblRally" font-size="13" font-family="ui-monospace,monospace"></text>
+  <text id="lblDeriv" font-size="13" font-family="ui-monospace,monospace"></text>
+ </svg>
+ <div class="readout">
+  <div><span>rally leg</span><b id="aRally">51.0&deg;</b></div>
+  <div><span>&divide; 2.125</span><b id="aDeriv">24.0&deg;</b></div>
+  <div><span>support, 40 bars out</span><b id="lvl">11,697</b></div>
+ </div>
+ <figcaption>The same Tadawul leg &mdash; the August 2024 low to the early-October peak,
+ identical price data throughout. At his posted scale (100%) it measures 51&deg; and derives
+ a support at 11,697 &mdash; within ~13 points of the line he actually drew. Double the axis
+ and the same leg becomes 68&deg;, the derived line 32&deg;, and the support falls to 11,578.
+ At 220% it is 69.8&deg; and 11,561. Nothing about Tadawul changed.</figcaption>
+</div>
+
+<p>He knows this, which is why the setup post is emphatic: <span dir="rtl" class="ar">ريست
+للشارت &larr; الإعدادات &larr; المقاييس والخطوط &larr; <b>قفل نسبة السعر</b></span> &mdash;
+reset, settings, scales and lines, <b>lock price ratio</b> &mdash; and the Tadawul post
+specifies the daily frame <span dir="rtl">بدون تصغير او تكبير</span>, with no zooming. But
+locking the ratio freezes whatever is on screen at that moment. It does not define a scale
+anyone else shares.</p>
+
+<div class="warn"><b>Consequence for the indicator.</b> Pine Script sees prices and bar
+indices, never pixels. There is no faithful port of an angle rule &mdash; any version would
+have to invent a price-per-bar convention and would then be drawing that invention rather
+than his method. This is not a limit of effort or of Pine. The quantity is not in the data.</div>
+</section>
+
+<section class="sec">
+<p class="num">03 &mdash; the measurement</p>
+<h2>Neither rule beats a line drawn at random</h2>
+
+<p>His claim is precise and therefore testable: <span dir="rtl">زيرو انعكاس ومن أول لمسة</span>
+&mdash; price turns at the level, from the first touch, without penetrating it. That splits
+into two numbers per touch: how far past the level price went, and how far it then travelled back.</p>
+
+<p>A hit rate alone means nothing, because any line in a moving market gets touched and is
+followed by movement. So every rule is scored against a <b>matched null</b>: same anchors,
+same scoring, same thresholds, with only the level price randomised.</p>
+
+<table>
+<thead><tr><th>Rule, scored against its null</th><th class="n">levels</th><th class="n">touched</th>
+<th class="n">his</th><th class="n">chance</th><th class="n">p</th></tr></thead>
+<tbody>
+<tr><td>MA50 at peak &mdash; vs same-side random</td><td class="n">160</td><td class="n">160</td><td class="n">3.8%</td><td class="n">3.1%</td><td class="n">0.369</td></tr>
+<tr><td>Numeric &times;45 &mdash; vs same-side random</td><td class="n">346</td><td class="n">319</td><td class="n">3.8%</td><td class="n">4.1%</td><td class="n">0.615</td></tr>
+<tr><td>Numeric &times;45 &mdash; vs random multiplier</td><td class="n">346</td><td class="n">319</td><td class="n">3.8%</td><td class="n">4.3%</td><td class="n">0.631</td></tr>
+</tbody></table>
+
+<p>2,943 SPX sessions, 2015&ndash;2026. Nothing clears <span class="mono">p = 0.05</span> at
+any of the four thresholds tested. The sharpest test is the last row: rebuild his ladder with
+a <i>random constant</i> in place of 45, hold everything else fixed, and it scores slightly
+better than 45 does. <b>The multiplier carries no information.</b></p>
+
+<div class="warn"><b>A false positive worth recording.</b> The first version of this test
+displaced null levels uniformly <i>around</i> the anchor, so half landed below it and were
+touched on the next bar &mdash; a different regime entirely. Against that broken null the
+numeric rule "beat chance" at <span class="mono">p&nbsp;=&nbsp;0.003</span>. Fixing the null
+made the effect vanish. The null model <i>is</i> the experiment.</div>
+</section>
+
+<section class="sec">
+<p class="num">04 &mdash; his public record</p>
+<h2>Two forward calls: one hit, one bad miss</h2>
+
+<p>He claims <span dir="rtl">دقة هذه الشارتات كانت ١٠٠٪١٠٠</span> &mdash; these charts were
+100% accurate &mdash; and a 90% success rate for his time analysis. Nearly all the supporting
+evidence is charts marked up <i>after</i> the move, which proves nothing. He makes that
+argument himself, sharply, in January 2024: credibility is zero unless you prove it on your
+public accounts, on the chart.</p>
+
+<p>Held to his own standard, the 98 public posts contain two unambiguous forward-dated calls.</p>
+
+<table>
+<thead><tr><th>Date</th><th>The call</th><th>What happened</th></tr></thead>
+<tbody>
+<tr><td class="n">2025&#8209;02&#8209;25</td>
+ <td>Buy SPX Tuesday at 5960/5930 &mdash; <span dir="rtl">موجه صاعده طيبه</span>, a good rising wave</td>
+ <td><b class="no">Wrong.</b> SPX closed 5955, then fell to 5521 by 13 March &mdash; <b>&minus;7.4%</b>.
+ He called a good rising wave days from a major top.</td></tr>
+<tr><td class="n">2025&#8209;10&#8209;11</td>
+ <td>Next Monday, <span dir="rtl">شمعة خضراء تسركم</span> &mdash; a green candle that will please you</td>
+ <td><b class="yes">Right.</b> Monday 13 October closed <b>+1.56%</b>.</td></tr>
+</tbody></table>
+
+<p>One for two is a coin flip, not 90&ndash;100%.</p>
+</section>
+
+<section class="sec">
+<p class="num">05 &mdash; what this site already knew</p>
+<h2>You have measured his advice once before</h2>
+
+<p>The <a href="spx.html">$2 SPX study</a> on this site tests a strategy that is his, posted
+6 September 2024: in SPX the best out-of-the-money strikes are priced 3 to 4; split $1,000
+across four contracts at a strike priced 2.5.</p>
+
+<p>Measured over 655 sessions: a <b>98.1% win rate</b> and <b>&minus;0.12% per trade</b>
+&mdash; negative, because the 1.9% of losses cost &minus;99% each. What turned it positive
+was a later entry and a larger target. That fix came from measurement, not from geometry.</p>
+</section>
+
+<section class="sec">
+<p class="num">06 &mdash; on the paid indicator</p>
+<h2>Not examined, and not cloned</h2>
+<p>He sells <span dir="rtl">زيرو انعكاس</span> and <span dir="rtl">الميزان الهندسي</span>
+through a Salla store, and has said plainly that he wrote the code himself
+<span dir="rtl">لضمان عدم التسريب</span> &mdash; to guarantee it does not leak. Working
+backwards from that to avoid paying is a different act from implementing what he published,
+and it was not done here.</p>
+<p>What <i>was</i> used is explicitly licensed. On 9 July 2025 he wrote:
+<span dir="rtl" class="ar">جميع الاستراتيجيات بحسابي مسموح لأي مبرمج ينزلها بمؤشر مجاني</span>
+&mdash; every strategy on my account, any programmer may publish as a free indicator.</p>
+</section>
+
+<section class="sec">
+<p class="num">07 &mdash; three follow-up questions</p>
+<h2>Timeframe, win rate, and stocks versus index</h2>
+
+<div class="warn"><b>Data limit.</b> This data plan serves SPX daily only &mdash; intraday
+bars are gated, and so is every other symbol tried (NDX, QQQ). So the timeframe answer
+covers daily and above but <i>not</i> the 5-minute and 1-hour charts he actually posts,
+and the stocks question is answered structurally rather than by direct comparison.</div>
+
+<h3>Which timeframe?</h3>
+<p>Numeric ladder, short the first touch, 2% stop / 3% target. Break-even is 40%.</p>
+<table>
+<thead><tr><th>timeframe</th><th class="n">trades</th><th class="n">win rate</th>
+<th class="n">95% CI</th><th class="n">expectancy</th><th class="n">95% CI</th></tr></thead>
+<tbody>
+<tr><td>daily</td><td class="n">319</td><td class="n">27.9%</td><td class="n">[23%, 34%]</td><td class="n neg">&minus;0.53%</td><td class="n">[&minus;0.76, &minus;0.29]</td></tr>
+<tr><td>weekly</td><td class="n">152</td><td class="n">34.2%</td><td class="n">[27%, 42%]</td><td class="n neg">&minus;0.30%</td><td class="n">[&minus;0.66, +0.08]</td></tr>
+<tr><td>monthly</td><td class="n">32</td><td class="n">50.0%</td><td class="n">[34%, 66%]</td><td class="n">+0.50%</td><td class="n">[&minus;0.44, +1.28]</td></tr>
+</tbody></table>
+<p>Monthly looks best and means least &mdash; its win interval straddles the 40% break-even
+in both directions and its expectancy straddles zero. Sixteen wins against sixteen losses
+at a 3:2 payoff is what a coin flip pays. <b>The only interval clear of break-even is
+daily&rsquo;s, and it is clear on the wrong side.</b></p>
+
+<h3>The win rate</h3>
+<p>It is not one number. On identical levels it runs from <b>15% to 68%</b> purely by moving
+the exits. Two things underneath it matter more.</p>
+
+<p><b>First, every win rate has a bar to clear</b> &mdash;
+<code>stop &divide; (stop + target)</code>.</p>
+<table>
+<thead><tr><th>rule</th><th class="n">stop/tgt</th><th class="n">win</th><th class="n">needs</th>
+<th class="n">edge</th><th class="n">expectancy</th></tr></thead>
+<tbody>
+<tr><td>numeric &times;45 (short)</td><td class="n">2/2</td><td class="n">43.6%</td><td class="n">50.0%</td><td class="n neg">&minus;6.4pp</td><td class="n neg">&minus;0.24%</td></tr>
+<tr><td>numeric &times;45 (short)</td><td class="n">2/3</td><td class="n">27.9%</td><td class="n">40.0%</td><td class="n neg">&minus;12.1pp</td><td class="n neg">&minus;0.53%</td></tr>
+<tr><td>numeric &times;45 (short)</td><td class="n">5/5</td><td class="n"><b>68.4%</b></td><td class="n">50.0%</td><td class="n">+18.4pp</td><td class="n neg"><b>&minus;0.58%</b></td></tr>
+<tr><td>MA50 at peak (long)</td><td class="n">2/3</td><td class="n">36.3%</td><td class="n">40.0%</td><td class="n neg">&minus;3.7pp</td><td class="n neg">&minus;0.06%</td></tr>
+<tr><td>MA50 at peak (long)</td><td class="n">5/5</td><td class="n">44.6%</td><td class="n">50.0%</td><td class="n neg">&minus;5.4pp</td><td class="n">+0.20%</td></tr>
+</tbody></table>
+<p>The 5/5 row is the whole trap in one line: a <b>68.4% win rate that loses money</b>. Of
+its 319 trades, <b>243 timed out</b> &mdash; the headline rate describes 24% of the
+positions actually opened. The rest sat for twenty sessions and were marked to the close.
+This is the identical arithmetic the <a href="spx.html">$2 SPX study</a> already found.</p>
+
+<p><b>Second, flip the direction and the win rate flips exactly.</b> On the same levels,
+122 wins / 158 losses short is 158 wins / 122 losses long &mdash; a perfect mirror, with the
+expectancies summing to exactly zero. Over this whole sample no bar was ever wide enough to
+trigger both exits, so the result is decided entirely by which way you face relative to the
+market&rsquo;s drift. To be exact about what that proves: a win rate quoted without its
+direction and payoff is not information. It does <i>not</i> on its own show the levels are
+uninformative &mdash; any entry price mirrors this way. That evidence is the null models.</p>
+
+<h3>And the one result that looked real</h3>
+<p>The MA50 rows were the only ones not clearly negative, so they got a second, harder null.</p>
+<table>
+<thead><tr><th>MA50 at peak</th><th class="n">stop/tgt</th><th class="n">his</th>
+<th class="n">vs displaced level</th><th class="n">vs random anchor bar</th></tr></thead>
+<tbody>
+<tr><td>long the touch</td><td class="n">2/5</td><td class="n">+0.14%</td><td class="n">&minus;0.31%, p=0.011</td><td class="n"><b>+0.15%, p=0.498</b></td></tr>
+<tr><td>long the touch</td><td class="n">5/5</td><td class="n">+0.20%</td><td class="n">&minus;0.21%, p=0.022</td><td class="n"><b>+0.49%, p=0.780</b></td></tr>
+</tbody></table>
+<p>Against a randomly displaced level it looks significant. Against levels the same distance
+below a <b>random bar instead of a swing peak</b>, it vanishes. So the apparent edge is
+&ldquo;buy a dip of about this depth in a rising market&rdquo;, not &ldquo;the MA50 at the
+peak&rdquo;. <b>The peak contributes nothing.</b> That is the second positive result in this
+study to die against a harder null.</p>
+
+<h3>Stocks or NDX?</h3>
+<p>NDX and QQQ are gated, so this is not a direct comparison. But the property that decides
+it <i>is</i> measurable: his ladder is built from the <b>digit sum of the price</b>, so
+re-quoting the same market rewrites every level. Indices never split. Stocks do.</p>
+<table>
+<thead><tr><th>identical SPX series, re-quoted</th><th class="n">sample low</th>
+<th class="n">digit sum</th><th class="n">win% (his &divide;10 rule)</th><th class="n">expectancy</th></tr></thead>
+<tbody>
+<tr><td>index, unchanged</td><td class="n">1988.12</td><td class="n">26</td><td class="n">27.9%</td><td class="n neg">&minus;0.53%</td></tr>
+<tr><td>after a 2:1 split</td><td class="n">994.06</td><td class="n">22</td><td class="n">27.8%</td><td class="n neg">&minus;0.54%</td></tr>
+<tr><td>after a 4:1 split</td><td class="n">497.03</td><td class="n">20</td><td class="n">18.3%</td><td class="n neg">&minus;0.90%</td></tr>
+<tr><td>after a 10:1 split</td><td class="n">198.81</td><td class="n">18</td><td class="n">25.1%</td><td class="n neg">&minus;0.61%</td></tr>
+</tbody></table>
+<p>His &divide;10 rule does most of its job &mdash; it keeps the ladder on the same scale as
+the price, so the trade count survives. What it cannot fix is the digit sum:
+<b>26 &rarr; 22 &rarr; 20 &rarr; 18 for a market that never changed.</b> So the answer is
+<b>index rather than stocks</b>, for a structural reason rather than a performance one. On
+an index that never splits this instability never fires; on a stock it fires on the split
+date. NVDA&rsquo;s 10:1 in 2024 and TSLA&rsquo;s 3:1 in 2022 would each have rewritten the
+whole ladder overnight.</p>
+</section>
+
+<footer>Research and analysis only &mdash; not financial advice. Quotations are his, in his
+words, with dates. Every figure is measured from historical data and describes what already
+happened, not what will. Options can lose the entire amount invested.
+Full working: <code>METHOD.md</code>, <code>engine/</code>, <code>scripts/backtest.js</code>.</footer>
+</div>
+
+<script>
+(function(){
+  // ── numeric ladder ────────────────────────────────────────────────────────
+  var anchorEl=document.getElementById('anchor'),rungsEl=document.getElementById('rungs'),
+      dsEl=document.getElementById('ds'),stepEl=document.getElementById('step'),
+      ladderEl=document.getElementById('ladder');
+
+  function digitSum(v){
+    var n=Math.floor(Math.abs(v)),s=0;
+    if(!isFinite(n))return 0;
+    String(n).split('').forEach(function(c){s+=Number(c)});
+    return s;
+  }
+  function divisor(p){return p>=1000?1:p>=100?10:100}
+
+  function drawLadder(){
+    var a=Number(anchorEl.value),n=Math.max(1,Math.min(10,Number(rungsEl.value)||1));
+    if(!isFinite(a)||a<=0){ladderEl.textContent='';return}
+    var ds=digitSum(a),step=(ds*45)/divisor(a);
+    dsEl.textContent=ds;
+    stepEl.textContent=step.toLocaleString(undefined,{maximumFractionDigits:2});
+    ladderEl.textContent='';
+    for(var i=1;i<=n;i++){
+      var d=document.createElement('div');
+      d.className='rung';
+      d.textContent=(a+step*i).toLocaleString(undefined,{maximumFractionDigits:2});
+      ladderEl.appendChild(d);
+    }
+  }
+  anchorEl.addEventListener('input',drawLadder);
+  rungsEl.addEventListener('input',drawLadder);
+  drawLadder();
+
+  // ── the angle demonstration ───────────────────────────────────────────────
+  // His Tadawul leg: Aug-2024 low 11,300 to the early-Oct peak 12,400, ~40 sessions.
+  // pxPerPrice solved from the 51 degrees he labelled, at ~7 px per bar.
+  var LOW=11300,HIGH=12400,BARS=40,PX_BAR=7,PX_PRICE=0.31434,DIVISOR=2.125;
+
+  var zoom=document.getElementById('zoom'),zoomval=document.getElementById('zoomval'),
+      rally=document.getElementById('rally'),derived=document.getElementById('derived'),
+      origin=document.getElementById('origin'),lblR=document.getElementById('lblRally'),
+      lblD=document.getElementById('lblDeriv'),aR=document.getElementById('aRally'),
+      aD=document.getElementById('aDeriv'),lvl=document.getElementById('lvl');
+
+  var OX=40,OY=270; // origin in svg units
+
+  function render(){
+    var f=Number(zoom.value)/100, pxPrice=PX_PRICE*f;
+    zoomval.textContent=Math.round(f*100)+'%';
+
+    var runPx=BARS*PX_BAR, risePx=(HIGH-LOW)*pxPrice;
+    var angle=Math.atan2(risePx,runPx)*180/Math.PI;
+    var derivedAngle=angle/DIVISOR;
+
+    // Support price the derived line reaches 40 bars out, at THIS scale.
+    var support=LOW+(runPx*Math.tan(derivedAngle*Math.PI/180))/pxPrice;
+
+    // Draw at 1.8x so the geometry is visible in a 560x300 box.
+    var K=1.8, rx=OX+runPx*K, ry=OY-risePx*K;
+    var dy=OY-runPx*Math.tan(derivedAngle*Math.PI/180)*K;
+
+    rally.setAttribute('x1',OX);rally.setAttribute('y1',OY);
+    rally.setAttribute('x2',rx);rally.setAttribute('y2',Math.max(8,ry));
+    derived.setAttribute('x1',OX);derived.setAttribute('y1',OY);
+    derived.setAttribute('x2',rx);derived.setAttribute('y2',dy);
+    origin.setAttribute('cx',OX);origin.setAttribute('cy',OY);
+
+    lblR.setAttribute('x',rx+8);lblR.setAttribute('y',Math.max(16,ry)+4);
+    lblR.textContent=angle.toFixed(1)+'°';
+    lblD.setAttribute('x',rx+8);lblD.setAttribute('y',dy+4);
+    lblD.textContent=derivedAngle.toFixed(1)+'°';
+
+    aR.textContent=angle.toFixed(1)+'°';
+    aD.textContent=derivedAngle.toFixed(1)+'°';
+    lvl.textContent=Math.round(support).toLocaleString();
+  }
+  zoom.addEventListener('input',render);
+  render();
+})();
+</script>
+</body></html>

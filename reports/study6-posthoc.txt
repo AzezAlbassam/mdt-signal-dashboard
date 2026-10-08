@@ -1,0 +1,39 @@
+Study 6 — POST-HOC robustness of the two passing tests (report only; the verdict stands as run)
+
+── Crypto: FLT breakout cluster, hold 20 days (daily|BC|H20|F0) ─ n 251, mean +19.81%, edge +14.01%
+  median trade +6.02% vs median random entry -1.13%
+  5%-trimmed mean: trades +12.50% vs random +0.80%
+  the 5 best trades are 30% of the summed return; without them the mean is +14.13%
+  leave one symbol out: edge from +11.81% (without BITSTAMP:XRPUSD) to +15.03% (without BINANCE:VETUSDT)
+  symbols with a positive edge: 20 of 24
+    BITSTAMP:BTCUSD    n  36  win  64% (random 55%)  mean   +17.96%  edge   +12.78%
+    BITSTAMP:ETHUSD    n  25  win  60% (random 54%)  mean   +21.65%  edge   +13.34%
+    BITSTAMP:LTCUSD    n   8  win  75% (random 49%)  mean    +6.19%  edge    +5.12%
+    BITSTAMP:XRPUSD    n  16  win  63% (random 42%)  mean   +56.23%  edge   +46.34%
+    BINANCE:BNBUSDT    n  18  win  78% (random 57%)  mean   +25.45%  edge   +18.88%
+    BINANCE:SOLUSDT    n  12  win  42% (random 49%)  mean   +15.72%  edge    +9.34%
+    BINANCE:DOGEUSDT   n   6  win  67% (random 49%)  mean   +71.09%  edge   +52.50%
+    BINANCE:ADAUSDT    n  13  win  69% (random 48%)  mean   +27.43%  edge   +21.72%
+    BINANCE:TRXUSDT    n  15  win  73% (random 58%)  mean    +9.53%  edge    +6.67%
+    BINANCE:LINKUSDT   n  13  win  62% (random 55%)  mean   +11.22%  edge    +5.99%
+    BINANCE:AVAXUSDT   n   5  win 100% (random 50%)  mean   +49.99%  edge   +38.76%
+    BINANCE:XLMUSDT    n   7  win  29% (random 46%)  mean   +47.37%  edge   +42.93%
+    BINANCE:BCHUSDT    n   8  win  50% (random 48%)  mean    +3.44%  edge    +0.32%
+    BINANCE:DOTUSDT    n   4  win  50% (random 39%)  mean   +12.40%  edge   +13.47%
+    BINANCE:HBARUSDT   n   5  win  40% (random 46%)  mean   +12.47%  edge    +6.60%
+    BINANCE:UNIUSDT    n   6  win  17% (random 45%)  mean    +7.88%  edge    +6.86%
+    BINANCE:ETCUSDT    n   7  win  43% (random 47%)  mean   +25.48%  edge   +20.31%
+    BINANCE:ATOMUSDT   n   9  win  67% (random 51%)  mean    +9.16%  edge    +2.38%
+    BINANCE:NEARUSDT   n   7  win  29% (random 47%)  mean    -4.41%  edge   -10.28%
+    BINANCE:FILUSDT    n   4  win  50% (random 40%)  mean   +14.35%  edge   +15.96%
+    BINANCE:AAVEUSDT   n   6  win  67% (random 47%)  mean    +6.97%  edge    +5.21%
+    BINANCE:ALGOUSDT   n   5  win  40% (random 46%)  mean    -3.29%  edge    -6.93%
+    BINANCE:VETUSDT    n  14  win  43% (random 50%)  mean    +3.88%  edge    -3.22%
+    BINANCE:ICPUSDT    n   2  win  50% (random 43%)  mean    -9.02%  edge    -9.11%
+
+── US: MOD bullish divergence, exit FLT Close Long (daily|MOD|X|F0) ─ n 6091, mean +6.42%, edge +1.75%
+  median trade +0.36% vs median random entry -1.01%
+  5%-trimmed mean: trades +3.51% vs random +2.06%
+  the 5 best trades are 10% of the summed return; without them the mean is +5.80%
+  leave one symbol out: edge from +1.61% (without NASDAQ:LITE) to +1.83% (without NASDAQ:WDC)
+  symbols with a positive edge: 208 of 311
