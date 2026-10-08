@@ -37,7 +37,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 
 - [x] Study 6 protocol (PROTOCOL-study6.md): open look-alikes of TBO / TBT Divergence (FLT, MOD), 20 tests
 - [x] Study 6: fetch crypto daily (20 BINANCE pairs), engine + tests + Pine, run (reports/study6.txt)
-- [ ] Study 6: post-hoc robustness (report only), Arabic page + artifact
+- [x] Study 6: post-hoc robustness (report only), Arabic page study6.html + artifact (https://claude.ai/artifact/SBdKqaVBRjZD6pxYpNwPJi)
+- [ ] Study 6: Pine vs engine agreement — needs a TradingView chart-data export (scripts/study6-verify.js)
 
 ## Counts
 (updated as work proceeds)

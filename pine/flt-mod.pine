@@ -12,6 +12,12 @@
 // fixed by the protocol and have no inputs on purpose — changing them would make the
 // chart differ from the tested indicator. Use it on the DAILY chart (the tested one).
 //
+// Study 6 result (reports/study6.txt, long only, daily, vs random entries with the same exit):
+//   crypto (24 pairs): BC breakout cluster held 20 bars beat random entries — win 58.6% vs
+//   50.6%, positive before and after 2022. US (311): MOD divergence exited at Close Long beat
+//   random entries by a small margin (+1.75% per trade). Open Long and Cross Up did not beat
+//   random entries in either market.
+//
 // Signals are decided on a bar's close; the backtest buys at the next bar's open.
 // MOD is known 5 bars after the pivot low (the pivot needs 5 bars on its right), so the
 // label sits on the bar where it became known, never earlier.
