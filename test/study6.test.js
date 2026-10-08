@@ -5,7 +5,7 @@ import fs from 'node:fs'
 import zlib from 'node:zlib'
 
 import * as I from '../engine/indicators.js'
-import { events6, exit6, pivotLowsConfirmed, ENTRIES6 } from '../engine/study6.js'
+import { events6, exit6, exitLong, addMonths, pivotLowsConfirmed, ENTRIES6 } from '../engine/study6.js'
 
 const loadGz = (f) => JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString('utf8'))
 const spy = loadGz('data/us/bars/AMEX_SPY.json.gz')
@@ -105,5 +105,37 @@ describe('study 6 exits', () => {
     assert.ok(Math.abs(t.ret - ((32.5 * 0.999) / (13 * 1.001) - 1)) < 1e-12)
     assert.equal(exit6(long, 9, 'H20', []).exitIndex, 29)
     assert.equal(exit6(long, 10, 'H20', []), null)
+  })
+})
+
+describe('addendum 1 exits', () => {
+  test('calendar months, clamped to the end of the month', () => {
+    assert.equal(addMonths('2024-01-31', 1), '2024-02-29')
+    assert.equal(addMonths('2023-11-15', 3), '2024-02-15')
+    assert.equal(addMonths('2025-08-31', 6), '2026-02-28')
+    assert.equal(addMonths('2024-02-29', 12), '2025-02-28')
+  })
+  const s = {
+    date: ['2024-01-01', '2024-01-02', '2024-02-15', '2024-03-29', '2024-04-02', '2024-04-03', '2024-07-01'],
+    open: [10, 10, 11, 12, 13, 14, 15], close: [10, 11, 12, 13, 14, 15, 16],
+  }
+  const none = new Array(7).fill(false)
+  test('M3 sells at the close of the first bar on or after +3 months', () => {
+    const t = exitLong(s, 0, 'M3', none)
+    assert.equal(t.exitIndex, 4) // 2024-04-01 has no bar → 2024-04-02
+    assert.ok(Math.abs(t.ret - ((14 * 0.999) / (10 * 1.001) - 1)) < 1e-12)
+    assert.equal(exitLong(s, 0, 'M12', none), null)
+  })
+  test('XD sells at the next open after Cross Down, never on the signal bar', () => {
+    const cd = none.slice(); cd[0] = true; cd[2] = true
+    const t = exitLong(s, 0, 'XD', cd)
+    assert.equal(t.exitIndex, 3)
+    assert.equal(t.reason, 'cross-down')
+    const last = none.slice(); last[6] = true
+    assert.equal(exitLong(s, 0, 'XD', last), null)
+  })
+  test('random-entry populations exist for every long exit on BTC', () => {
+    const x = events6(btc)
+    for (const k of ['M3', 'M6', 'M12', 'XD']) assert.ok(btc.close.some((_, i) => i >= 250 && exitLong(btc, i, k, x.flt.crossDown)), k)
   })
 })

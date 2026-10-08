@@ -9,6 +9,7 @@ import { tradesFor, COST } from './swing.js'
 const ok = Number.isFinite
 export const ENTRIES6 = ['OL', 'CU', 'BC', 'MOD', 'DB']
 export const EXITS6 = ['X', 'H20']
+export const EXITS6L = ['M3', 'M6', 'M12', 'XD'] // addendum 1: medium and long holds
 export const WARMUP6 = 250
 export const CAP6 = 250
 export const SPLIT6 = { crypto: '2022-01-01', us: '2018-01-01' }
@@ -43,6 +44,7 @@ export function flt(s) {
     openLong: crossOver(fast, midFast),
     closeLong: crossOver(midFast, fast),
     crossUp: crossOver(fast, slow),
+    crossDown: crossOver(slow, fast),
     cluster,
   }
 }
@@ -117,16 +119,37 @@ export function exit6(s, i, kind, closeLong) {
   return cap < n ? done(s, i, cap, s.close[cap], 'cap') : null
 }
 
+/** ISO date + m calendar months; a day past the month's end is clamped to its last day. */
+export function addMonths(date, m) {
+  const [y, mo, d] = date.split('-').map(Number)
+  const last = new Date(Date.UTC(y, mo - 1 + m + 1, 0)).getUTCDate()
+  return new Date(Date.UTC(y, mo - 1 + m, Math.min(d, last))).toISOString().slice(0, 10)
+}
+
+/** Addendum 1 exits: M3/M6/M12 calendar holds, XD = until FLT Cross Down (≤ 24 months). */
+export function exitLong(s, i, kind, crossDown) {
+  const n = s.close.length
+  if (i + 1 >= n) return null
+  const months = kind === 'XD' ? 24 : Number(kind.slice(1))
+  const target = addMonths(s.date[i], months)
+  for (let j = i + 1; j < n; j += 1) {
+    if (s.date[j] >= target) return done(s, i, j, s.close[j], kind === 'XD' ? 'cap' : 'time')
+    if (kind === 'XD' && crossDown[j]) return j + 1 < n ? done(s, i, j + 1, s.open[j + 1], 'cross-down') : null
+  }
+  return null
+}
+
 /** Per-symbol trades and random-entry populations, keyed for scripts/study5-common.js `pool`. */
-export function summarize6(meta, s, split, { keep = false } = {}) {
+export function summarize6(meta, s, split, { keep = false, exits = EXITS6 } = {}) {
   const x = events6(s)
   const per = (i) => (s.date[i] < split ? 'I' : 'II')
   const pack = (ts) => ({ ret: Float64Array.from(ts, (t) => t.ret), bars: Uint16Array.from(ts, (t) => t.bars), excess: Float64Array.from(ts, (t) => t.excess) })
   const base = {}
   const trades = {}
   const lists = {}
-  for (const ex of EXITS6) {
-    const oc = s.close.map((_, i) => (i >= WARMUP6 ? exit6(s, i, ex, x.flt.closeLong) : null))
+  const exitFor = (i, ex) => (EXITS6.includes(ex) ? exit6(s, i, ex, x.flt.closeLong) : exitLong(s, i, ex, x.flt.crossDown))
+  for (const ex of exits) {
+    const oc = s.close.map((_, i) => (i >= WARMUP6 ? exitFor(i, ex) : null))
     const b = { I: [], II: [] }
     oc.forEach((o, i) => o && b[per(i)].push(o))
     base[`${ex}|F0`] = Object.fromEntries(['I', 'II'].map((p) => [p, { ret: Float64Array.from(b[p], (o) => o.ret), wins: b[p].filter((o) => o.ret > 0).length }]))
