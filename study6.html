@@ -159,23 +159,25 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
 <h2>على TradingView</h2>
 <ol class="steps">
   <li>افتح Pine Editor أسفل الشارت، احذف ما فيه، والصق الكود التالي، ثم Add to chart.</li>
-  <li>استخدمه على الفريم اليومي، وهو الفريم الذي اختُبر.</li>
+  <li>يشتغل على كل الفريمات (كل القواعد بعدد الشموع لا بالأيام). الباك تيست تم على اليومي فقط، فنتائج الفريمات الأخرى لم تُختبر بعد.</li>
+  <li>الألوان قابلة للتغيير من Settings ← Colours، والقيم الافتراضية مختارة لتناسب شموع ذهبية ورمادية على خلفية داكنة. تغيير الألوان لا يغيّر أي إشارة.</li>
   <li>لا توجد إعدادات للأطوال عمداً: تغييرها يجعل الشارت مختلفاً عن المؤشر الذي اختُبر.</li>
   <li>للتأكد أن الشارت يطابق الباك تيست <span class="ltr">100%</span>: من قائمة الشارت اختر Export chart data، وأرسل لي الملف. السكربت <span class="ltr"><code>scripts/study6-verify.js</code></span> يقارن كل إشارة في كل شمعة ويذكر أي اختلاف. لم أستطع تشغيل الكود داخل TradingView من هنا، فالتطابق لم يُقَس بعد.</li>
 </ol>
 <div class="code"><button type="button" id="copy">نسخ الكود</button><pre id="pine">//@version=5
 // FLT + MOD — study 6 (PROTOCOL-study6.md). Two open indicators in one script, so it fits
 // a free TradingView plan:
-//   FLT (Four-Line Trend)            — four EMA lines, a cloud, Open/Close Long, Cross Up,
-//                                       breakouts and breakout clusters
+//   FLT (Four-Line Trend)            — four EMA lines, shaded clouds, Open/Close Long,
+//                                       Cross Up, breakouts and breakout clusters
 //   MOD (Multi-Oscillator Divergence) — regular divergence on RSI, MACD, OBV and MFI;
 //                                       a signal needs 2 of the 4
 // They are built from the PUBLIC description of TBO and TBT Divergence (The Better
 // Traders). They are NOT those products: their code is closed and was never seen here.
 //
-// The rules below are exactly the ones the backtest (engine/study6.js) uses. Settings are
-// fixed by the protocol and have no inputs on purpose — changing them would make the
-// chart differ from the tested indicator. Use it on the DAILY chart (the tested one).
+// Works on any timeframe (every rule counts bars, not days). The backtest was run on the
+// DAILY chart only; results on other timeframes are untested.
+// The signal rules are exactly the ones the backtest (engine/study6.js) uses, so the
+// lengths have no inputs on purpose. Only colours and display options can be changed.
 //
 // Study 6 result (reports/study6.txt, long only, daily, vs random entries with the same exit):
 //   crypto (24 pairs): BC breakout cluster held 20 bars beat random entries — win 58.6% vs
@@ -188,9 +190,18 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
 // label sits on the bar where it became known, never earlier.
 indicator(&quot;FLT + MOD (study 6)&quot;, shorttitle=&quot;FLT+MOD&quot;, overlay=true, max_labels_count=500, max_lines_count=500)
 
-showBearish = input.bool(true, &quot;Show bearish divergences (not tested)&quot;)
-showHidden  = input.bool(false, &quot;Show hidden divergences (not tested)&quot;)
-showLevels  = input.bool(true, &quot;Show last pivot high/low levels (not tested)&quot;)
+// ── display options (signals do not depend on these) ──────────────────────────────────
+showBearish = input.bool(true, &quot;Bearish divergences (not tested)&quot;, group=&quot;Display&quot;)
+showHidden  = input.bool(false, &quot;Hidden divergences (not tested)&quot;, group=&quot;Display&quot;)
+showLevels  = input.bool(true, &quot;Last pivot high/low levels (not tested)&quot;, group=&quot;Display&quot;)
+showDots    = input.bool(true, &quot;Single breakout / breakdown dots&quot;, group=&quot;Display&quot;)
+bullCol  = input.color(#26A69A, &quot;Bullish (cloud, Open Long, divergence)&quot;, group=&quot;Colours&quot;)
+bearCol  = input.color(#C94F4F, &quot;Bearish (cloud, divergence)&quot;, group=&quot;Colours&quot;)
+fastCol  = input.color(#64B5F6, &quot;Fast line EMA 20&quot;, group=&quot;Colours&quot;)
+slowCol  = input.color(#B39DDB, &quot;Slow line EMA 200&quot;, group=&quot;Colours&quot;)
+clusCol  = input.color(#F2F2F2, &quot;Breakout cluster&quot;, group=&quot;Colours&quot;)
+closeCol = input.color(#FF8A65, &quot;Close Long&quot;, group=&quot;Colours&quot;)
+dbCol    = input.color(#FFD54F, &quot;Breakout after divergence&quot;, group=&quot;Colours&quot;)
 
 // ── FLT ───────────────────────────────────────────────────────────────────────────────
 fast    = ta.ema(close, 20)
@@ -205,13 +216,19 @@ crossDown = ta.crossunder(fast, slow) // display only
 
 prevHigh  = ta.highest(high, 20)[1]
 prevLow   = ta.lowest(low, 20)[1]
-breakout  = close &gt; prevHigh and close &gt; math.max(math.max(fast, midFast), math.max(midSlow, slow))
-breakdown = close &lt; prevLow and close &lt; math.min(math.min(fast, midFast), math.min(midSlow, slow)) // display only
+topLine   = math.max(math.max(fast, midFast), math.max(midSlow, slow))
+botLine   = math.min(math.min(fast, midFast), math.min(midSlow, slow))
+breakout  = close &gt; prevHigh and close &gt; topLine
+breakdown = close &lt; prevLow and close &lt; botLine // display only
 
 var int lastCluster = na
 cluster = math.sum(breakout ? 1 : 0, 5) &gt;= 3 and (na(lastCluster) or bar_index - lastCluster &gt; 20)
 if cluster
     lastCluster := bar_index
+var int lastDown = na
+downCluster = math.sum(breakdown ? 1 : 0, 5) &gt;= 3 and (na(lastDown) or bar_index - lastDown &gt; 20) // display only
+if downCluster
+    lastDown := bar_index
 
 // ── MOD ───────────────────────────────────────────────────────────────────────────────
 rsiV = ta.rsi(close, 14)
@@ -226,9 +243,14 @@ for j = 1 to K
     pivLow  := pivLow  and low[K]  &lt; low[K + j]  and low[K]  &lt; low[K - j]
     pivHigh := pivHigh and high[K] &gt; high[K + j] and high[K] &gt; high[K - j]
 
-count(a2, b2, c2, d2, a1, b1, c1, d1, up) =&gt;
-    up ? (a2 &gt; a1 ? 1 : 0) + (b2 &gt; b1 ? 1 : 0) + (c2 &gt; c1 ? 1 : 0) + (d2 &gt; d1 ? 1 : 0) :
-         (a2 &lt; a1 ? 1 : 0) + (b2 &lt; b1 ? 1 : 0) + (c2 &lt; c1 ? 1 : 0) + (d2 &lt; d1 ? 1 : 0)
+// how many of the 4 oscillators are higher (up = true) or lower than at the earlier pivot
+count4(a2, b2, c2, d2, a1, b1, c1, d1, up) =&gt;
+    int n = 0
+    if up
+        n := (a2 &gt; a1 ? 1 : 0) + (b2 &gt; b1 ? 1 : 0) + (c2 &gt; c1 ? 1 : 0) + (d2 &gt; d1 ? 1 : 0)
+    else
+        n := (a2 &lt; a1 ? 1 : 0) + (b2 &lt; b1 ? 1 : 0) + (c2 &lt; c1 ? 1 : 0) + (d2 &lt; d1 ? 1 : 0)
+    n
 
 // previous pivot low / high: bar, price and the four oscillators at that bar
 var int   pl1  = na
@@ -244,42 +266,42 @@ var float ph1m = na
 var float ph1o = na
 var float ph1f = na
 
-modBull = false
-modBear = false
-hidBull = false
-hidBear = false
-modN = 0
+// oscillators at the candidate pivot (K bars back), compared on every bar
+rK = rsiV[K]
+mK = macdLine[K]
+oK = obvV[K]
+fK = mfiV[K]
+lowUp   = count4(rK, mK, oK, fK, pl1r, pl1m, pl1o, pl1f, true)
+lowDn   = count4(rK, mK, oK, fK, pl1r, pl1m, pl1o, pl1f, false)
+highUp  = count4(rK, mK, oK, fK, ph1r, ph1m, ph1o, ph1f, true)
+highDn  = count4(rK, mK, oK, fK, ph1r, ph1m, ph1o, ph1f, false)
+p2      = bar_index - K
+nearLow  = not na(pl1) and p2 - pl1 &lt;= 60
+nearHigh = not na(ph1) and p2 - ph1 &lt;= 60
+
+modBull = pivLow and nearLow and low[K] &lt; pl1p and lowUp &gt;= 2
+hidBull = pivLow and nearLow and low[K] &gt; pl1p and lowDn &gt;= 2
+modBear = pivHigh and nearHigh and high[K] &gt; ph1p and highDn &gt;= 2
+hidBear = pivHigh and nearHigh and high[K] &lt; ph1p and highUp &gt;= 2
+
+if modBull or (showHidden and hidBull)
+    line.new(pl1, pl1p, p2, low[K], color=modBull ? bullCol : color.new(bullCol, 50), width=2, style=modBull ? line.style_solid : line.style_dotted)
+if (showBearish and modBear) or (showHidden and hidBear)
+    line.new(ph1, ph1p, p2, high[K], color=modBear ? bearCol : color.new(bearCol, 50), width=2, style=modBear ? line.style_solid : line.style_dotted)
 if pivLow
-    p2 = bar_index - K
-    if not na(pl1) and p2 - pl1 &lt;= 60
-        if low[K] &lt; pl1p
-            modN := count(rsiV[K], macdLine[K], obvV[K], mfiV[K], pl1r, pl1m, pl1o, pl1f, true)
-            modBull := modN &gt;= 2
-        else if low[K] &gt; pl1p
-            hidBull := count(rsiV[K], macdLine[K], obvV[K], mfiV[K], pl1r, pl1m, pl1o, pl1f, false) &gt;= 2
-        if modBull or (showHidden and hidBull)
-            line.new(pl1, pl1p, p2, low[K], color=modBull ? color.lime : color.new(color.lime, 60), width=2, style=modBull ? line.style_solid : line.style_dotted)
     pl1  := p2
     pl1p := low[K]
-    pl1r := rsiV[K]
-    pl1m := macdLine[K]
-    pl1o := obvV[K]
-    pl1f := mfiV[K]
+    pl1r := rK
+    pl1m := mK
+    pl1o := oK
+    pl1f := fK
 if pivHigh
-    p2 = bar_index - K
-    if not na(ph1) and p2 - ph1 &lt;= 60
-        if high[K] &gt; ph1p
-            modBear := count(rsiV[K], macdLine[K], obvV[K], mfiV[K], ph1r, ph1m, ph1o, ph1f, false) &gt;= 2
-        else if high[K] &lt; ph1p
-            hidBear := count(rsiV[K], macdLine[K], obvV[K], mfiV[K], ph1r, ph1m, ph1o, ph1f, true) &gt;= 2
-        if (showBearish and modBear) or (showHidden and hidBear)
-            line.new(ph1, ph1p, p2, high[K], color=modBear ? color.red : color.new(color.red, 60), width=2, style=modBear ? line.style_solid : line.style_dotted)
     ph1  := p2
     ph1p := high[K]
-    ph1r := rsiV[K]
-    ph1m := macdLine[K]
-    ph1o := obvV[K]
-    ph1f := mfiV[K]
+    ph1r := rK
+    ph1m := mK
+    ph1o := oK
+    ph1f := fK
 
 // DB: the first breakout 1..20 bars after a MOD bullish signal (one per MOD signal)
 var int  lastMod = na
@@ -292,12 +314,20 @@ if modBull
     lastMod := bar_index
     used := false
 
-// ── drawing ───────────────────────────────────────────────────────────────────────────
-pf = plot(midFast, &quot;Mid Fast EMA 50&quot;, color.new(color.teal, 30))
-ps = plot(midSlow, &quot;Mid Slow EMA 100&quot;, color.new(color.orange, 30))
-fill(pf, ps, midFast &gt; midSlow ? color.new(color.teal, 80) : color.new(color.red, 80), title=&quot;Cloud&quot;)
-plot(fast, &quot;Fast EMA 20&quot;, color.new(color.aqua, 0), 2)
-plot(slow, &quot;Slow EMA 200&quot;, color.new(color.purple, 0), 2)
+// ── shaded clouds (display only) ──────────────────────────────────────────────────────
+// Strength = how many neighbouring lines are stacked in order: +3 all up, −3 all down.
+// The stronger the stack, the more solid the shade.
+strength = (fast &gt; midFast ? 1 : -1) + (midFast &gt; midSlow ? 1 : -1) + (midSlow &gt; slow ? 1 : -1)
+shade    = math.abs(strength) == 3 ? 55 : 76
+mainCol  = not na(slow) ? color.new(midFast &gt; midSlow ? bullCol : bearCol, shade) : na
+ribbCol  = not na(slow) ? color.new(fast &gt; midFast ? bullCol : bearCol, shade + 12) : na
+
+pFast = plot(fast, &quot;Fast EMA 20&quot;, fastCol, 2)
+pMidF = plot(midFast, &quot;Mid Fast EMA 50&quot;, color.new(midFast &gt; midSlow ? bullCol : bearCol, 55), 1)
+pMidS = plot(midSlow, &quot;Mid Slow EMA 100&quot;, color.new(midFast &gt; midSlow ? bullCol : bearCol, 55), 1)
+plot(slow, &quot;Slow EMA 200&quot;, slowCol, 2)
+fill(pMidF, pMidS, mainCol, title=&quot;Cloud EMA 50–100&quot;)
+fill(pFast, pMidF, ribbCol, title=&quot;Ribbon EMA 20–50&quot;)
 
 var float lastPH = na
 var float lastPL = na
@@ -305,19 +335,21 @@ if pivHigh
     lastPH := high[K]
 if pivLow
     lastPL := low[K]
-plot(showLevels ? lastPH : na, &quot;Resistance (last pivot high)&quot;, color.new(color.red, 50), 1, plot.style_circles)
-plot(showLevels ? lastPL : na, &quot;Support (last pivot low)&quot;, color.new(color.green, 50), 1, plot.style_circles)
+plot(showLevels ? lastPH : na, &quot;Resistance (last pivot high)&quot;, color.new(bearCol, 40), 1, plot.style_circles)
+plot(showLevels ? lastPL : na, &quot;Support (last pivot low)&quot;, color.new(bullCol, 40), 1, plot.style_circles)
 
-plotshape(breakout and not cluster, &quot;Breakout&quot;, shape.circle, location.abovebar, color.new(color.white, 30), size=size.tiny)
-plotshape(cluster, &quot;Breakout cluster (BC)&quot;, shape.diamond, location.abovebar, color.white, size=size.small, text=&quot;BC&quot;, textcolor=color.white)
-plotshape(breakdown, &quot;Breakdown (not tested)&quot;, shape.circle, location.belowbar, color.new(color.gray, 30), size=size.tiny)
-plotshape(openLong, &quot;Open Long (OL)&quot;, shape.triangleup, location.belowbar, color.lime, size=size.small, text=&quot;OL&quot;, textcolor=color.lime)
-plotshape(closeLong, &quot;Close Long&quot;, shape.xcross, location.abovebar, color.orange, size=size.small, text=&quot;CL&quot;, textcolor=color.orange)
-plotshape(crossUp, &quot;Cross Up (CU)&quot;, shape.arrowup, location.belowbar, color.aqua, size=size.normal, text=&quot;CU&quot;, textcolor=color.aqua)
-plotshape(crossDown, &quot;Cross Down (not tested)&quot;, shape.arrowdown, location.abovebar, color.purple, size=size.normal, text=&quot;CD&quot;, textcolor=color.purple)
-plotshape(modBull, &quot;MOD bullish divergence&quot;, shape.labelup, location.belowbar, color.new(color.lime, 0), text=&quot;DIV&quot;, textcolor=color.black)
-plotshape(showBearish and modBear, &quot;MOD bearish divergence (not tested)&quot;, shape.labeldown, location.abovebar, color.new(color.red, 0), text=&quot;DIV&quot;, textcolor=color.white)
-plotshape(db, &quot;DB: breakout after divergence&quot;, shape.star, location.belowbar, color.yellow, size=size.normal, text=&quot;DB&quot;, textcolor=color.yellow)
+// ── signals ───────────────────────────────────────────────────────────────────────────
+plotshape(showDots and breakout and not cluster, &quot;Breakout&quot;, shape.circle, location.abovebar, color.new(clusCol, 35), size=size.tiny)
+plotshape(cluster, &quot;Breakout cluster (BC)&quot;, shape.diamond, location.abovebar, clusCol, size=size.small, text=&quot;BC&quot;, textcolor=clusCol)
+plotshape(showDots and breakdown and not downCluster, &quot;Breakdown (not tested)&quot;, shape.circle, location.belowbar, color.new(bearCol, 35), size=size.tiny)
+plotshape(downCluster, &quot;Breakdown cluster (not tested)&quot;, shape.diamond, location.belowbar, bearCol, size=size.small, text=&quot;BD&quot;, textcolor=bearCol)
+plotshape(openLong, &quot;Open Long (OL)&quot;, shape.triangleup, location.belowbar, bullCol, size=size.small, text=&quot;OL&quot;, textcolor=bullCol)
+plotshape(closeLong, &quot;Close Long&quot;, shape.xcross, location.abovebar, closeCol, size=size.small, text=&quot;CL&quot;, textcolor=closeCol)
+plotshape(crossUp, &quot;Cross Up (CU)&quot;, shape.arrowup, location.belowbar, fastCol, size=size.normal, text=&quot;CU&quot;, textcolor=fastCol)
+plotshape(crossDown, &quot;Cross Down (not tested)&quot;, shape.arrowdown, location.abovebar, slowCol, size=size.normal, text=&quot;CD&quot;, textcolor=slowCol)
+plotshape(modBull, &quot;MOD bullish divergence&quot;, shape.labelup, location.belowbar, bullCol, text=&quot;DIV&quot;, textcolor=#1E1E1E)
+plotshape(showBearish and modBear, &quot;MOD bearish divergence (not tested)&quot;, shape.labeldown, location.abovebar, bearCol, text=&quot;DIV&quot;, textcolor=#FFFFFF)
+plotshape(db, &quot;DB: breakout after divergence&quot;, shape.flag, location.belowbar, dbCol, size=size.small, text=&quot;DB&quot;, textcolor=dbCol)
 
 // Numeric copies for &quot;Export chart data&quot;, so scripts/study6-verify.js can compare them
 // bar by bar with the backtest.
@@ -333,9 +365,23 @@ alertcondition(openLong, &quot;FLT Open Long&quot;, &quot;FLT Open Long on {{tic
 alertcondition(closeLong, &quot;FLT Close Long&quot;, &quot;FLT Close Long on {{ticker}}&quot;)
 alertcondition(crossUp, &quot;FLT Cross Up&quot;, &quot;FLT Cross Up on {{ticker}}&quot;)
 alertcondition(cluster, &quot;FLT Breakout cluster&quot;, &quot;FLT breakout cluster on {{ticker}}&quot;)
+alertcondition(downCluster, &quot;FLT Breakdown cluster&quot;, &quot;FLT breakdown cluster on {{ticker}}&quot;)
 alertcondition(modBull, &quot;MOD bullish divergence&quot;, &quot;MOD bullish divergence on {{ticker}}&quot;)
 alertcondition(db, &quot;DB breakout after divergence&quot;, &quot;Breakout after MOD divergence on {{ticker}}&quot;)
 </pre></div>
+
+<h2>مقارنة مع تواريخ TBO المنشورة</h2>
+<p>المقارنة الوحيدة الممكنة بدون اشتراك: تواريخ إشارات TBO على البيتكوين اليومي كما ذكرها الشريك المؤسس لـ The Better Traders في مقالاته على Kitco، مقابل إشارات FLT. التواريخ من ملخصات البحث (موقع Kitco محجوب هنا) وهي تواريخ مقالات أو أشهر، لا شموع محددة. هذه ليست قياساً للتطابق، ولم أعدّل أي إعداد لتقريب التواريخ.</p>
+<div class="tbl"><table><thead><tr><th>ما ذكروه عن TBO</th><th>FLT على البيتكوين اليومي</th><th>التوافق</th></tr></thead><tbody>
+<tr><td>تجمّع اختراق يومي، نوفمبر 2023</td><td>BC <span class="ltr">2023-12-03</span> (الاختراقات من 1 نوفمبر)</td><td>متأخر بأسابيع</td></tr>
+<tr><td>تجمّع اختراق يومي، فبراير 2024</td><td>BC <span class="ltr">2024-02-09</span></td><td>نفس الشهر</td></tr>
+<tr><td>تجمّع اختراق يومي، نوفمبر 2024</td><td>BC <span class="ltr">2024-11-13</span></td><td>نفس الشهر</td></tr>
+<tr><td>تجمّع اختراق يومي، مقال <span class="ltr">2025-05-20</span></td><td>BC <span class="ltr">2025-05-22</span></td><td>بعده بيومين</td></tr>
+<tr><td>Breakdown، مقالا <span class="ltr">2025-11-04</span> و <span class="ltr">2025-11-18</span></td><td>BD <span class="ltr">2025-11-21</span></td><td>بعده بـ 3 أيام أو أكثر</td></tr>
+<tr><td>تجمّع «بدأ 31 يناير» 2026 (جهة الهبوط)</td><td>شموع كسر في 25 و 29 و 31 يناير، بدون تجمّع BD</td><td>الشمعة تطابق، التجمّع لا</td></tr>
+<tr><td>Breakdown جديد، مقال <span class="ltr">2026-06-05</span></td><td>BD <span class="ltr">2026-06-03</span></td><td>قبله بيومين</td></tr>
+</tbody></table></div>
+<p class="muted">الخلاصة: نفس الحركات تقريباً، و FLT غالباً أبطأ من TBO ببضعة أيام. FLT طلع أيضاً BC في <span class="ltr">2024-03-01</span> و <span class="ltr">2024-07-19</span> و <span class="ltr">2025-07-11</span> و <span class="ltr">2025-10-03</span>، ولا نعرف هل طلع TBO فيها.</p>
 
 <h2>حدود الدراسة</h2>
 <ul class="findings">
