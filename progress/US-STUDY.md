@@ -36,7 +36,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - (Saudi study 3 dropped — user not interested)
 
 - [x] Study 6 protocol (PROTOCOL-study6.md): open look-alikes of TBO / TBT Divergence (FLT, MOD), 20 tests
-- [ ] Study 6: fetch crypto daily (20 BINANCE pairs), engine + tests + Pine, run, report, page
+- [x] Study 6: fetch crypto daily (20 BINANCE pairs), engine + tests + Pine, run (reports/study6.txt)
+- [ ] Study 6: post-hoc robustness (report only), Arabic page + artifact
 
 ## Counts
 (updated as work proceeds)
@@ -74,3 +75,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — study 5 search: 89 passed win/edge/trades, 13 also p<0.001; shortlist of 10 frozen (weekly RSI14>30 H52 75.5%, WaveTrend H52, CRSI H52, ...). Confirmation not yet run.
 - 2026-10-07 — study 5 confirmation: CONFIRMED weekly RSI14 crosses above 30 held 52w (75.9% vs random 65.3%, edge +12.1%, Holm 0.005; period I edge only +2.6%) and held 26w (65.5%, edge +3.4%, Holm 0.03). Others not confirmed.
 - 2026-10-08 — user asked for @MooninPapa's TBO and TBT Divergence rebuilt 100% and backtested. Both are closed-source paid scripts; youtube/tradingview/thebettertraders are blocked here; user has no subscription. Agreed: open look-alikes with different names (FLT, MOD), no match claim. Study 6 pre-registered.
+- 2026-10-08 — study 6 run: 2 of 20 beat random entries. Crypto BC H20 (breakout cluster, hold 20 days): n 251, win 58.6% vs 50.6%, edge +14.0%, both periods +, Holm 0.01. US MOD X (divergence, exit Close Long): n 6091, win 51.9% vs 44.5%, edge +1.75%, Holm 0.01. Everything else fails, incl. Open Long and Cross Up everywhere.
