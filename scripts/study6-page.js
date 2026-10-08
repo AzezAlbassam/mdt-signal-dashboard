@@ -23,7 +23,8 @@ const NAME = {
   MOD: ['دايفرجنس MOD', 'قاع أدنى للسعر ومذبذبان من 4 أعلى'],
   DB: ['اختراق بعد دايفرجنس', 'أول اختراق خلال 20 شمعة بعد MOD'],
 }
-const EXIT = { X: 'حتى Close Long', H20: '20 شمعة' }
+const EXIT = { X: 'حتى Close Long', H20: '20 شمعة', M3: '3 أشهر', M6: '6 أشهر', M12: '12 شهراً', XD: 'حتى Cross Down' }
+const RL = JSON.parse(fs.readFileSync('reports/study6-long.json', 'utf8'))
 
 // ── per-coin check for the passing crypto test (post-hoc, report only) ────────────────
 const crypto = CRYPTO6.map((c) => ({ c, s: loadCrypto(c) }))
@@ -85,8 +86,8 @@ const today = crypto.map(({ c, s }) => {
 })
 
 // ── results tables ────────────────────────────────────────────────────────────────────
-function table(group) {
-  const rows = R.rows.filter((r) => r.group === group)
+function table(group, all = R.rows) {
+  const rows = all.filter((r) => r.group === group)
   let h = '<div class="tbl"><table><thead><tr><th>الإشارة</th><th>الخروج</th><th>الصفقات</th><th>نسبة الربح</th><th>عشوائي</th><th>الوسيط</th><th>التفوّق</th><th>قبل / بعد</th><th>p بعد Holm</th><th>الحكم</th></tr></thead><tbody>'
   for (const r of rows) {
     const a = r.all
@@ -244,6 +245,21 @@ ${table('us')}
   <p class="cap">التفوّق على الدخول العشوائي لكل عملة · الرقم بعد النسبة = عدد الصفقات · مرّر على الشريط للتفاصيل</p>
   ${coinChart()}
 </div>
+
+<h2>الصفقات المتوسطة والطويلة</h2>
+<p>ملحق سُجّلت شروطه قبل الحساب (${ltr('<code>PROTOCOL-study6-addendum-1.md</code>')}): نفس الإشارات الخمس، مع احتفاظ 3 أو 6 أو 12 شهراً، أو حتى Cross Down بحد أقصى سنتين. النتيجة: <b>${ltr(`${RL.rows.filter((r) => r.beats).length} من ${RL.rows.length}`)}</b> اختباراً تفوّق على الدخول العشوائي. في الأسهم كانت كل الإشارات مثل العشوائي أو أسوأ قليلاً. في الكريبتو المتوسطات كبيرة لكنها من صفقات قليلة في 2020–2021، والوسيط غالباً سالب.</p>
+<details><summary>الجدول الكامل: 40 اختباراً</summary>
+<h3 style="margin-top:12px">الكريبتو</h3>
+${table('crypto', RL.rows)}
+<h3 style="margin-top:12px">الأسهم الأمريكية</h3>
+${table('us', RL.rows)}
+</details>
+<p>ما نجح فعلاً للمدى المتوسط والطويل في دراسات هذا المشروع:</p>
+<ul class="findings">
+  <li><b>طويلة، سنة: L52.</b> RSI(14) الأسبوعي يرجع فوق 30، والاحتفاظ 52 أسبوعاً (دراسة 5). على ${ltr('539')} صفقة في أسهم لم تُستخدم في البحث: ربح ${ltr('75.9%')} مقابل ${ltr('65.3%')} عشوائياً، والصفقة الوسطى ${ltr('+19%')}. التفوّق قبل 2018 كان ${ltr('+2.6%')} فقط. أضفتها للمؤشر كعلامة L52.</li>
+  <li><b>متوسطة إلى طويلة، 6 أشهر:</b> نفس L52 مع احتفاظ 26 أسبوعاً: ربح ${ltr('65.5%')} مقابل ${ltr('61.7%')}، وتفوّق ${ltr('+3.4%')}.</li>
+  <li><b>متوسطة، نحو 4–5 أشهر:</b> DIV ثم الخروج عند CL في الأسهم: تفوّق صغير ${ltr('+1.75%')} للصفقة.</li>
+</ul>
 
 <h2>البيتكوين مع FLT و MOD</h2>
 <div class="fig" id="btcfig">

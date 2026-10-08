@@ -19,6 +19,12 @@
 //   random entries by a small margin (+1.75% per trade). Open Long and Cross Up did not beat
 //   random entries in either market.
 //
+// L52 (long-term, from study 5 — reports/study5-confirm.txt): weekly RSI(14) crosses back
+//   above 30; buy at the next week's open and hold 52 weeks. 539 trades on unseen US stocks:
+//   win 75.9% vs 65.3% for random entries, median +19%. Before 2018 the edge was small
+//   (+2.6%); crypto had only 7 such trades. The mark sits on the first bar of the entry week,
+//   on any chart timeframe up to weekly.
+//
 // Signals are decided on a bar's close; the backtest buys at the next bar's open.
 // MOD is known 5 bars after the pivot low (the pivot needs 5 bars on its right), so the
 // label sits on the bar where it became known, never earlier.
@@ -36,6 +42,8 @@ slowCol  = input.color(#B39DDB, "Slow line EMA 200", group="Colours")
 clusCol  = input.color(#F2F2F2, "Breakout cluster", group="Colours")
 closeCol = input.color(#FF8A65, "Close Long", group="Colours")
 dbCol    = input.color(#FFD54F, "Breakout after divergence", group="Colours")
+showL52  = input.bool(true, "L52: weekly RSI(14) back above 30 (study 5)", group="Long-term")
+l52Col   = input.color(#ECEFF1, "L52 label", group="Long-term")
 
 // ── FLT ───────────────────────────────────────────────────────────────────────────────
 fast    = ta.ema(close, 20)
@@ -148,6 +156,10 @@ if modBull
     lastMod := bar_index
     used := false
 
+// ── L52: last completed week's RSI(14) cross above 30, marked on the entry week ────────
+wkCross = request.security(syminfo.tickerid, "W", ta.crossover(ta.rsi(close, 14), 30)[1], lookahead=barmerge.lookahead_on)
+l52 = showL52 and wkCross and timeframe.change("W")
+
 // ── shaded clouds (display only) ──────────────────────────────────────────────────────
 // Strength = how many neighbouring lines are stacked in order: +3 all up, −3 all down.
 // The stronger the stack, the more solid the shade.
@@ -184,6 +196,7 @@ plotshape(crossDown, "Cross Down (not tested)", shape.arrowdown, location.aboveb
 plotshape(modBull, "MOD bullish divergence", shape.labelup, location.belowbar, bullCol, text="DIV", textcolor=#1E1E1E)
 plotshape(showBearish and modBear, "MOD bearish divergence (not tested)", shape.labeldown, location.abovebar, bearCol, text="DIV", textcolor=#FFFFFF)
 plotshape(db, "DB: breakout after divergence", shape.flag, location.belowbar, dbCol, size=size.small, text="DB", textcolor=dbCol)
+plotshape(l52, "L52: long-term entry (study 5)", shape.labelup, location.belowbar, l52Col, text="L52", textcolor=#1E1E1E)
 
 // Numeric copies for "Export chart data", so scripts/study6-verify.js can compare them
 // bar by bar with the backtest.
@@ -202,3 +215,4 @@ alertcondition(cluster, "FLT Breakout cluster", "FLT breakout cluster on {{ticke
 alertcondition(downCluster, "FLT Breakdown cluster", "FLT breakdown cluster on {{ticker}}")
 alertcondition(modBull, "MOD bullish divergence", "MOD bullish divergence on {{ticker}}")
 alertcondition(db, "DB breakout after divergence", "Breakout after MOD divergence on {{ticker}}")
+alertcondition(l52, "L52 long-term entry", "Weekly RSI(14) back above 30 on {{ticker}} (L52)")
