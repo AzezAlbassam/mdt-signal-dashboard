@@ -71,6 +71,7 @@ export function mod(s) {
   ]
   const at = pivotLowsConfirmed(s.low, 5)
   const bull = new Array(s.close.length).fill(false)
+  const hidden = new Array(s.close.length).fill(false) // addendum 2: higher low, ≥ 2 oscillators lower
   const count = new Int8Array(s.close.length)
   let p1 = -1
   for (let c = 0; c < at.length; c += 1) {
@@ -81,10 +82,14 @@ export function mod(s) {
       for (const o of osc) if (ok(o[p1]) && ok(o[p2]) && o[p2] > o[p1]) k += 1
       count[c] = k
       bull[c] = k >= 2
+    } else if (p1 >= 0 && p2 - p1 <= 60 && s.low[p2] > s.low[p1]) {
+      let k = 0
+      for (const o of osc) if (ok(o[p1]) && ok(o[p2]) && o[p2] < o[p1]) k += 1
+      hidden[c] = k >= 2
     }
     p1 = p2
   }
-  return { bull, count }
+  return { bull, hidden, count }
 }
 
 /** All five entry events (§2), each a boolean per bar. */

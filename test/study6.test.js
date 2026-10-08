@@ -5,7 +5,8 @@ import fs from 'node:fs'
 import zlib from 'node:zlib'
 
 import * as I from '../engine/indicators.js'
-import { events6, exit6, exitLong, addMonths, pivotLowsConfirmed, ENTRIES6 } from '../engine/study6.js'
+import { events6, exit6, exitLong, addMonths, pivotLowsConfirmed, mod, ENTRIES6 } from '../engine/study6.js'
+import { toWeekly } from '../engine/swing.js'
 
 const loadGz = (f) => JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString('utf8'))
 const spy = loadGz('data/us/bars/AMEX_SPY.json.gz')
@@ -137,5 +138,34 @@ describe('addendum 1 exits', () => {
   test('random-entry populations exist for every long exit on BTC', () => {
     const x = events6(btc)
     for (const k of ['M3', 'M6', 'M12', 'XD']) assert.ok(btc.close.some((_, i) => i >= 250 && exitLong(btc, i, k, x.flt.crossDown)), k)
+  })
+})
+
+describe('addendum 2: weekly MOD, regular and hidden', () => {
+  const aapl = toWeekly({ ...loadGz('data/us/bars/NASDAQ_AAPL.json.gz'), group: 'us' }, '2026-10-06')
+  test('no look-ahead on weekly bars', () => {
+    const a = mod(aapl)
+    assert.ok(a.bull.some(Boolean) && a.hidden.some(Boolean))
+    for (const frac of [0.5, 0.8]) {
+      const n = Math.floor(aapl.close.length * frac)
+      const b = mod(cut(aapl, n))
+      assert.deepEqual(a.bull.slice(0, n), b.bull)
+      assert.deepEqual(a.hidden.slice(0, n), b.hidden)
+    }
+  })
+  test('every hidden signal: confirmed pivot, higher low, at least 2 of 4 oscillators lower', () => {
+    const s = aapl
+    const { hidden, bull } = mod(s)
+    const at = pivotLowsConfirmed(s.low, 5)
+    const osc = [I.rsi(s.close, 14), I.macd(s.close).macd, I.obv(s.close, s.volume), I.mfi(s.high, s.low, s.close, s.volume, 14)]
+    for (let c = 0; c < s.close.length; c += 1) {
+      if (!hidden[c]) continue
+      assert.ok(!bull[c])
+      const p2 = at[c]
+      let p1 = -1
+      for (let k = c - 1; k >= 0; k -= 1) if (at[k] >= 0) { p1 = at[k]; break }
+      assert.ok(p2 === c - 5 && p1 >= 0 && p2 - p1 <= 60 && s.low[p2] > s.low[p1])
+      assert.ok(osc.filter((o) => o[p2] < o[p1]).length >= 2)
+    }
   })
 })
