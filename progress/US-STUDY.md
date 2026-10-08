@@ -35,6 +35,9 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Study 5: engine + tests, search, freeze shortlist, confirm, page
 - (Saudi study 3 dropped — user not interested)
 
+- [x] Study 6 protocol (PROTOCOL-study6.md): open look-alikes of TBO / TBT Divergence (FLT, MOD), 20 tests
+- [ ] Study 6: fetch crypto daily (20 BINANCE pairs), engine + tests + Pine, run, report, page
+
 ## Counts
 (updated as work proceeds)
 
@@ -70,3 +73,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-07 — user: Saudi not needed; wants long swings (months–1y). Study 5 pre-registered.
 - 2026-10-07 — study 5 search: 89 passed win/edge/trades, 13 also p<0.001; shortlist of 10 frozen (weekly RSI14>30 H52 75.5%, WaveTrend H52, CRSI H52, ...). Confirmation not yet run.
 - 2026-10-07 — study 5 confirmation: CONFIRMED weekly RSI14 crosses above 30 held 52w (75.9% vs random 65.3%, edge +12.1%, Holm 0.005; period I edge only +2.6%) and held 26w (65.5%, edge +3.4%, Holm 0.03). Others not confirmed.
+- 2026-10-08 — user asked for @MooninPapa's TBO and TBT Divergence rebuilt 100% and backtested. Both are closed-source paid scripts; youtube/tradingview/thebettertraders are blocked here; user has no subscription. Agreed: open look-alikes with different names (FLT, MOD), no match claim. Study 6 pre-registered.
