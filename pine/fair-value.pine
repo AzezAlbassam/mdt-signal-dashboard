@@ -29,7 +29,14 @@
 //   is exactly what a turning business will not repeat. Override it if you know better.
 // - Pre-revenue companies (biotech, early tech) have no fundamental fair value; the
 //   line is only the cash left per share, and the table shows months of runway.
-// - Unlike the other scripts in this folder, this one has not been backtested.
+// - Tested (study 7, PROTOCOL-study7.md, reports/study7.txt): on 552 stocks from the
+//   user's TradingView watchlists, each May 2012-2025, ranking stocks by this line's upside
+//   did not predict their next 12 months (mean rank correlation -0.03, p = 0.99). Stocks
+//   below the green line had the lower median return in 10 of 14 years; they only led in
+//   sharp rebound years (2020, 2021, 2025). No method or blend tested did better on stocks
+//   it was not tuned on. The test could only use annual data and six of the ten methods
+//   (no book value or cash in the connector), so it is close to this script, not identical.
+//   Read the line as "what the numbers imply", not as a buy signal.
 
 //@version=6
 indicator("Fair Value (by company type)", shorttitle = "Fair Value", overlay = true, format = format.price, max_lines_count = 5, max_labels_count = 5)

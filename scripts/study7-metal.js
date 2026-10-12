@@ -14,8 +14,12 @@ if (!START) throw new Error('usage: study7-metal.js gold|silver')
 const MIN_YEARS = 20
 
 const { bars } = JSON.parse(fs.readFileSync(`data/fv/${metal}-monthly.json`, 'utf8'))
+// Metal bars are stamped at 22:00–23:00 UTC on the eve of the month's first session, so
+// the UTC date can fall in the previous month; three days later is always the bar's month.
+// (Found on the first run: months appeared twice. Stock bars, stamped 13:30 UTC on the
+// first trading day, never had this problem — no stock file has a repeated month.)
 const rows = bars.t
-  .map((t, i) => ({ m: monthKey(t), c: bars.c[i] }))
+  .map((t, i) => ({ m: monthKey(t + 3 * 86400), c: bars.c[i] }))
   .filter((r) => r.m >= START && r.m <= LAST_COMPLETE && r.c > 0)
 const yearsOf = (m) => {
   const [y, mo] = m.split('-').map(Number)
