@@ -12,7 +12,7 @@ function inline(file) {
     .filter((l) => !/^import .* from /.test(l))
     .map((l) => l.replace(/^export (const|function|async function)/, '$1'))
     .join('\n')
-  return `// ---- ${file}\nconst { ${names.join(', ')} } = (() => {\n${body}\nreturn { ${names.join(', ')} }\n})()\n`
+  return `// ---- ${file}\nconst { ${names.join(', ')} } = (() => {\n${body}\nreturn { ${names.join(', ')} }\n})();\n`
 }
 
 const engine = ['engine/fairvalue.js', 'engine/score.js'].map(inline).join('\n')
