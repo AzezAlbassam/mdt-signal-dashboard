@@ -1,0 +1,271 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// Fair value line, with the valuation method chosen by the kind of company.
+//
+// Every method answers "what is one share worth?" from the company's own reported
+// numbers. Which methods count, and how much, depends on the company type:
+//
+//   Mature / profitable   P/E vs own history 30%, DCF 30%, EV/EBITDA vs own history 25%, Graham 15%
+//   Growth / tech         PEG 30%, DCF 30%, P/E vs own history 20%, P/S vs own history 20%
+//   Heavy / cyclical      EV/EBITDA vs own history 40%, P/E on 5-year average EPS 30%, P/B vs own history 30%
+//   Financial             P/B justified by ROE 50%, P/E vs own history 50%
+//   Unprofitable growth   P/S vs own history 100%
+//   Pre-revenue           net cash per share 100% (a floor, not a fair value)
+//
+// "Auto" picks the type from TradingView's sector and the numbers themselves (no
+// revenue -> pre-revenue, losses -> unprofitable, and so on), bar by bar, so a company
+// that turns profitable switches methods on the chart. Methods with no data drop out
+// and the rest are re-weighted; "Data coverage" in the table says how much survived.
+//
+// "Own history" means the median multiple of the past N years up to that bar (sampled
+// monthly), applied to today's fundamentals: nothing on the chart uses data from its
+// future. It says "cheap or expensive against itself", not against peers.
+//
+// Read this before trusting it.
+// - Fair value is a range built on assumptions (discount rate, growth), not a fact.
+//   Change the discount rate from 9% to 10% and the DCF moves 15-20%.
+// - Pine cannot see peers or sector averages, nor analysts' long-term growth. PEG and
+//   DCF use the company's own past growth (3-year EPS / revenue CAGR, capped), which
+//   is exactly what a turning business will not repeat. Override it if you know better.
+// - Pre-revenue companies (biotech, early tech) have no fundamental fair value; the
+//   line is only the cash left per share, and the table shows months of runway.
+// - Unlike the other scripts in this folder, this one has not been backtested.
+
+//@version=6
+indicator("Fair Value (by company type)", shorttitle = "Fair Value", overlay = true, format = format.price, max_lines_count = 5, max_labels_count = 5)
+
+const string MATURE = "Mature / profitable"
+const string GROWTH = "Growth / tech"
+const string HEAVY  = "Heavy / cyclical"
+const string FIN    = "Financial"
+const string UNPROF = "Unprofitable growth"
+const string PRE    = "Pre-revenue"
+
+profileIn     = input.string("Auto", "Company type", options = ["Auto", "Mature / profitable", "Growth / tech", "Heavy / cyclical", "Financial", "Unprofitable growth", "Pre-revenue"])
+years         = input.int(5, "Years of own history for multiples", minval = 1, maxval = 20)
+discount      = input.float(9.0, "Discount rate %", minval = 1.0, step = 0.5) / 100.0
+termGrowth    = input.float(2.5, "Terminal growth %", minval = 0.0, maxval = 5.0, step = 0.5) / 100.0
+overrideGrow  = input.bool(false, "Override growth", inline = "g")
+growthIn      = input.float(10.0, "%", step = 1.0, inline = "g", tooltip = "Used by PEG and DCF instead of the company's own 3-year growth.") / 100.0
+maxGrowth     = input.float(25.0, "Growth cap %", minval = 5.0, step = 5.0) / 100.0
+pegTarget     = input.float(1.0, "Fair PEG", minval = 0.25, step = 0.25, tooltip = "1 = Peter Lynch's rule: fair P/E equals the growth rate.")
+margin        = input.float(20.0, "Margin of safety %", minval = 0.0, maxval = 90.0, step = 5.0) / 100.0
+showMethods   = input.bool(false, "Draw every method")
+showTarget    = input.bool(true, "Show analysts' average target (today only)")
+showTable     = input.bool(true, "Show table")
+
+if discount <= termGrowth
+    runtime.error("Discount rate must be above terminal growth.")
+
+// ---------------------------------------------------------------- data
+
+// Converted to the chart's currency, so ADRs reporting in another currency still line up.
+fin(string id, string period) => request.financial(syminfo.tickerid, id, period, barmerge.gaps_off, true, syminfo.currency)
+// Only on the bar a new fiscal year arrives, to collect one value per year.
+finNew(string id, string period) => request.financial(syminfo.tickerid, id, period, barmerge.gaps_on, true, syminfo.currency)
+
+float epsTTM  = fin("EARNINGS_PER_SHARE_DILUTED", "TTM")
+float revTTM  = fin("TOTAL_REVENUE", "TTM")
+float fcfTTM  = fin("FREE_CASH_FLOW", "TTM")
+float ebitda  = fin("EBITDA", "TTM")
+float bvps    = fin("BOOK_VALUE_PER_SHARE", "FQ")
+float debt    = fin("TOTAL_DEBT", "FQ")
+float cash    = fin("CASH_N_SHORT_TERM_INVEST", "FQ")
+float sharesQ = fin("TOTAL_SHARES_OUTSTANDING", "FQ")
+float epsFY   = finNew("EARNINGS_PER_SHARE_DILUTED", "FY")
+float revFY   = finNew("TOTAL_REVENUE", "FY")
+
+float shares    = nz(sharesQ, syminfo.shares_outstanding_total)
+float mcap      = close * shares
+float netDebt   = nz(debt) - nz(cash)
+float revPS     = revTTM / shares
+float fcfPS     = fcfTTM / shares
+float netCashPS = na(cash) ? na : -netDebt / shares
+
+var array<float> epsYears = array.new<float>()
+var array<float> revYears = array.new<float>()
+if not na(epsFY)
+    epsYears.push(epsFY)
+if not na(revFY)
+    revYears.push(revFY)
+
+// Compound annual growth over the last (up to) 3 fiscal years.
+cagr(array<float> a) =>
+    int n = math.min(3, a.size() - 1)
+    float result = na
+    if n >= 1
+        float last  = a.get(a.size() - 1)
+        float first = a.get(a.size() - 1 - n)
+        if first > 0 and last > 0
+            result := math.pow(last / first, 1.0 / n) - 1.0
+    result
+
+float epsG = cagr(epsYears)
+float revG = cagr(revYears)
+
+// Cyclicals are valued on average earnings across the cycle, not on one good or bad year.
+int   nNorm   = math.min(5, epsYears.size())
+float epsNorm = nNorm > 0 ? epsYears.slice(epsYears.size() - nNorm, epsYears.size()).avg() : na
+
+// ---------------------------------------------------------------- own-history multiples
+
+remember(array<float> a, float x, int cap) =>
+    if not na(x) and x > 0
+        a.push(x)
+        if a.size() > cap
+            a.shift()
+    a.size()
+
+// At least a year of monthly samples before a median counts.
+med(array<float> a) => a.size() >= 12 ? a.median() : na
+
+var array<float> peHist   = array.new<float>()
+var array<float> peNHist  = array.new<float>()
+var array<float> psHist   = array.new<float>()
+var array<float> pbHist   = array.new<float>()
+var array<float> evebHist = array.new<float>()
+
+if timeframe.change("1M")
+    int cap = years * 12
+    remember(peHist, close / epsTTM, cap)
+    remember(peNHist, close / epsNorm, cap)
+    remember(psHist, close / revPS, cap)
+    remember(pbHist, close / bvps, cap)
+    remember(evebHist, ebitda > 0 ? (mcap + netDebt) / ebitda : na, cap)
+
+// ---------------------------------------------------------------- methods
+
+clampG(float g) => na(g) ? na : math.max(-0.05, math.min(maxGrowth, g))
+float gPeg = overrideGrow ? growthIn : clampG(nz(epsG, revG))
+float gDcf = overrideGrow ? growthIn : clampG(nz(revG, epsG))
+
+// Two-stage DCF on free cash flow per share: growth fades from g1 to terminal over 10 years.
+dcf(float fcf0, float g1, float r, float gT) =>
+    float value = na
+    if fcf0 > 0 and not na(g1)
+        float pv = 0.0
+        float cf = fcf0
+        for i = 1 to 10
+            float g = g1 + (gT - g1) * (i - 1) / 9.0
+            cf *= 1.0 + g
+            pv += cf / math.pow(1.0 + r, i)
+        value := pv + cf * (1.0 + gT) / (r - gT) / math.pow(1.0 + r, 10)
+    value
+
+float roe = bvps > 0 ? epsTTM / bvps : na
+
+float fvPE     = epsTTM > 0 ? epsTTM * med(peHist) : na
+float fvPEG    = epsTTM > 0 and gPeg > 0 ? epsTTM * gPeg * 100.0 * pegTarget : na
+float fvDCF    = dcf(fcfPS, gDcf, discount, termGrowth)
+float fvGraham = epsTTM > 0 and bvps > 0 ? math.sqrt(22.5 * epsTTM * bvps) : na
+float fvEV     = ebitda > 0 and shares > 0 ? (med(evebHist) * ebitda - netDebt) / shares : na
+float fvPS     = revPS > 0 ? revPS * med(psHist) : na
+float fvPB     = bvps > 0 ? bvps * med(pbHist) : na
+float fvPBJ    = bvps > 0 and not na(roe) ? bvps * math.min(4.0, (roe - termGrowth) / (discount - termGrowth)) : na
+float fvCash   = netCashPS
+float fvPEN    = epsNorm > 0 ? epsNorm * med(peNHist) : na
+
+var array<string> names = array.from("P/E vs own history", "PEG", "DCF (free cash flow)", "Graham number", "EV/EBITDA vs own history", "P/S vs own history", "P/B vs own history", "P/B justified by ROE", "Net cash per share", "P/E on 5y avg EPS")
+array<float> values = array.from(fvPE, fvPEG, fvDCF, fvGraham, fvEV, fvPS, fvPB, fvPBJ, fvCash, fvPEN)
+
+// ---------------------------------------------------------------- company type
+
+var array<string> heavySectors = array.from("Energy Minerals", "Non-Energy Minerals", "Process Industries", "Producer Manufacturing", "Industrial Services", "Transportation", "Consumer Durables")
+var array<string> techSectors  = array.from("Electronic Technology", "Technology Services")
+
+string profile = switch
+    profileIn != "Auto"                                    => profileIn
+    na(revTTM) or revTTM <= 0 or revTTM < 0.01 * mcap      => PRE
+    syminfo.sector == "Finance"                            => FIN
+    not (epsTTM > 0)                                       => UNPROF
+    heavySectors.includes(syminfo.sector)                  => HEAVY
+    techSectors.includes(syminfo.sector) or revG > 0.15    => GROWTH
+    =>                                                        MATURE
+
+array<float> weights = switch profile
+    MATURE => array.from(0.30, 0.00, 0.30, 0.15, 0.25, 0.00, 0.00, 0.00, 0.00, 0.00)
+    GROWTH => array.from(0.20, 0.30, 0.30, 0.00, 0.00, 0.20, 0.00, 0.00, 0.00, 0.00)
+    HEAVY  => array.from(0.00, 0.00, 0.00, 0.00, 0.40, 0.00, 0.30, 0.00, 0.00, 0.30)
+    FIN    => array.from(0.50, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.50, 0.00, 0.00)
+    UNPROF => array.from(0.00, 0.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.00, 0.00, 0.00)
+    =>        array.from(0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.00, 0.00)
+
+// ---------------------------------------------------------------- blend
+
+float sumW  = 0.0
+float sumV  = 0.0
+float lowV  = na
+float highV = na
+for i = 0 to 9
+    float x  = values.get(i)
+    float wi = weights.get(i)
+    if wi > 0 and not na(x) and x > 0
+        sumW  += wi
+        sumV  += wi * x
+        lowV  := na(lowV) ? x : math.min(lowV, x)
+        highV := na(highV) ? x : math.max(highV, x)
+
+float fair  = sumW > 0 ? sumV / sumW : na
+float cheap = fair * (1.0 - margin)
+float rich  = fair * (1.0 + margin)
+
+// ---------------------------------------------------------------- display
+
+pFair  = plot(fair, "Fair value", color.new(color.blue, 0), 2, plot.style_stepline)
+pCheap = plot(cheap, "Buy below (margin of safety)", color.new(color.green, 30), 1, plot.style_stepline)
+pRich  = plot(rich, "Expensive above", color.new(color.red, 30), 1, plot.style_stepline)
+fill(pFair, pCheap, color.new(color.green, 90))
+fill(pFair, pRich, color.new(color.red, 92))
+
+plot(showMethods ? fvPE : na, "P/E vs own history", color.new(color.orange, 40), 1, plot.style_stepline)
+plot(showMethods ? fvPEG : na, "PEG", color.new(color.purple, 40), 1, plot.style_stepline)
+plot(showMethods ? fvDCF : na, "DCF", color.new(color.teal, 40), 1, plot.style_stepline)
+plot(showMethods ? fvGraham : na, "Graham", color.new(color.olive, 40), 1, plot.style_stepline)
+plot(showMethods ? fvEV : na, "EV/EBITDA", color.new(color.maroon, 40), 1, plot.style_stepline)
+plot(showMethods ? fvPS : na, "P/S", color.new(color.fuchsia, 40), 1, plot.style_stepline)
+plot(showMethods ? fvPB : na, "P/B", color.new(color.navy, 40), 1, plot.style_stepline)
+plot(showMethods ? fvPBJ : na, "P/B from ROE", color.new(color.aqua, 40), 1, plot.style_stepline)
+plot(showMethods ? fvCash : na, "Net cash", color.new(color.gray, 40), 1, plot.style_stepline)
+plot(showMethods ? fvPEN : na, "P/E on avg EPS", color.new(color.yellow, 40), 1, plot.style_stepline)
+
+alertcondition(ta.crossunder(close, cheap), "Below buy zone", "{{ticker}} fell below fair value minus the margin of safety")
+alertcondition(ta.crossover(close, rich), "Above expensive line", "{{ticker}} rose above fair value plus the margin")
+
+// Analysts' target exists only as today's value, so it is drawn on the last bars only.
+var line  targetLine  = na
+var label targetLabel = na
+if showTarget and barstate.islast and not na(syminfo.target_price_average)
+    line.delete(targetLine)
+    label.delete(targetLabel)
+    targetLine  := line.new(bar_index - 20, syminfo.target_price_average, bar_index + 5, syminfo.target_price_average, color = color.new(color.gray, 0), style = line.style_dotted)
+    targetLabel := label.new(bar_index + 5, syminfo.target_price_average, "Analysts' avg target " + str.tostring(syminfo.target_price_average, format.mintick), style = label.style_label_left, color = color.new(color.gray, 80), textcolor = chart.fg_color, size = size.small)
+
+var table info = table.new(position.top_right, 3, 17, bgcolor = chart.bg_color, border_width = 1)
+if showTable and barstate.islast
+    table.cell(info, 0, 0, "Type", text_color = color.gray)
+    table.cell(info, 1, 0, profile + (profileIn == "Auto" ? " (auto)" : ""), text_color = chart.fg_color)
+    table.cell(info, 2, 0, "Weight", text_color = color.gray)
+    for i = 0 to 9
+        float x  = values.get(i)
+        float wi = weights.get(i)
+        bool used = wi > 0 and not na(x) and x > 0
+        color c = used ? chart.fg_color : color.gray
+        table.cell(info, 0, i + 1, names.get(i), text_color = c, text_halign = text.align_left)
+        table.cell(info, 1, i + 1, na(x) ? "no data" : str.tostring(x, format.mintick), text_color = c)
+        table.cell(info, 2, i + 1, wi > 0 ? str.tostring(wi * 100.0, "0") + "%" + (used ? "" : " (dropped)") : "-", text_color = c)
+    float upside = fair / close - 1.0
+    table.cell(info, 0, 11, "Fair value", text_color = color.gray)
+    table.cell(info, 1, 11, str.tostring(fair, format.mintick), text_color = color.blue)
+    table.cell(info, 2, 11, na(upside) ? "" : (upside >= 0 ? "+" : "") + str.tostring(upside * 100.0, "0") + "% vs price", text_color = upside >= 0 ? color.green : color.red)
+    table.cell(info, 0, 12, "Methods' range", text_color = color.gray)
+    table.cell(info, 1, 12, na(lowV) ? "" : str.tostring(lowV, format.mintick) + " - " + str.tostring(highV, format.mintick), text_color = chart.fg_color)
+    table.cell(info, 0, 13, "Data coverage", text_color = color.gray)
+    table.cell(info, 1, 13, str.tostring(sumW * 100.0, "0") + "%", text_color = sumW < 0.6 ? color.orange : chart.fg_color)
+    table.cell(info, 0, 14, "Growth used (PEG / DCF)", text_color = color.gray)
+    table.cell(info, 1, 14, (na(gPeg) ? "-" : str.tostring(gPeg * 100.0, "0.0") + "%") + " / " + (na(gDcf) ? "-" : str.tostring(gDcf * 100.0, "0.0") + "%"), text_color = chart.fg_color)
+    table.cell(info, 0, 15, "Discount / terminal", text_color = color.gray)
+    table.cell(info, 1, 15, str.tostring(discount * 100.0, "0.0") + "% / " + str.tostring(termGrowth * 100.0, "0.0") + "%", text_color = chart.fg_color)
+    if profile == PRE
+        float runwayMonths = fcfTTM < 0 and not na(cash) ? cash / -fcfTTM * 12.0 : na
+        table.cell(info, 0, 16, "Cash runway", text_color = color.gray)
+        table.cell(info, 1, 16, na(runwayMonths) ? "n/a" : str.tostring(runwayMonths, "0") + " months", text_color = runwayMonths < 18 ? color.red : chart.fg_color)
