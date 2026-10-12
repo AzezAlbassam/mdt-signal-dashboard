@@ -1,0 +1,97 @@
+// Study 7: pull the TradingView connector responses out of the session transcripts
+// (Claude Code saves every tool call and its result verbatim as JSONL), so no number is
+// ever copied by hand.
+//   node scripts/study7-collect.js <transcript.jsonl> [more.jsonl ...]
+// Writes data/fv/raw/fin/<SYM>.json, data/fv/raw/px/<SYM>.json, data/fv/sectors.json,
+// data/fv/gold-monthly.json and data/fv/fetch-log.json.
+import fs from 'node:fs'
+import path from 'node:path'
+
+const files = process.argv.slice(2)
+if (files.length === 0) throw new Error('usage: study7-collect.js <transcript.jsonl> ...')
+
+const out = 'data/fv'
+for (const d of ['raw/fin', 'raw/px']) fs.mkdirSync(path.join(out, d), { recursive: true })
+
+const calls = new Map() // tool_use_id -> { name, input }
+const results = [] // { id, text }
+for (const f of files) {
+  for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
+    if (!line.trim()) continue
+    let j
+    try {
+      j = JSON.parse(line)
+    } catch {
+      continue
+    }
+    const content = j?.message?.content
+    if (!Array.isArray(content)) continue
+    for (const c of content) {
+      if (c?.type === 'tool_use') calls.set(c.id, { name: c.name, input: c.input })
+      if (c?.type === 'tool_result') {
+        const text = typeof c.content === 'string' ? c.content : (c.content ?? []).map((x) => x.text ?? '').join('')
+        results.push({ id: c.tool_use_id, text })
+      }
+    }
+  }
+}
+
+const file = (sym) => `${sym.replace(':', '_')}.json`
+const log = { fin: {}, px: {}, sectorMissing: [] }
+const sectors = {}
+let gold = null
+let nFin = 0
+let nPx = 0
+
+for (const { id, text } of results) {
+  const call = calls.get(id)
+  if (!call?.name?.startsWith('mcp__Trading_view_MCP__')) continue
+  const { name, input } = call
+  let j
+  try {
+    j = JSON.parse(text)
+  } catch {
+    j = { success: false, error: text.slice(0, 200) }
+  }
+
+  if (name.endsWith('get-financial-history') && input.period === 'fy' && input.date_from === '2000-01-01') {
+    const sym = input.symbol
+    if (j.success && j.labels) {
+      const dst = path.join(out, 'raw/fin', file(sym))
+      // Keep the longest response if a symbol was fetched twice.
+      if (!fs.existsSync(dst) || JSON.parse(fs.readFileSync(dst, 'utf8')).labels.length < j.labels.length) {
+        fs.writeFileSync(dst, JSON.stringify({ symbol: sym, labels: j.labels, series: j.series }))
+        nFin += 1
+      }
+      log.fin[sym] = 'ok'
+    } else if (log.fin[sym] !== 'ok') log.fin[sym] = String(j.error ?? 'failed').slice(0, 120)
+  }
+
+  if (name.endsWith('get-ohlcv') && ['M', '1M', 'month', '1mo'].includes(input.interval) && j.bars) {
+    const sym = input.symbol
+    const bars = Array.isArray(j.bars) ? Object.fromEntries(['t', 'o', 'h', 'l', 'c', 'v'].map((k) => [k, j.bars.map((b) => b[k])])) : j.bars
+    if (sym === 'TVC:GOLD') {
+      if (!gold || gold.bars.t.length < bars.t.length) gold = { symbol: sym, interval: 'M', bars }
+      continue
+    }
+    const dst = path.join(out, 'raw/px', file(sym))
+    if (!fs.existsSync(dst) || JSON.parse(fs.readFileSync(dst, 'utf8')).bars.t.length < bars.t.length) {
+      fs.writeFileSync(dst, JSON.stringify({ symbol: sym, interval: 'M', bars }))
+      nPx += 1
+    }
+    log.px[sym] = 'ok'
+  } else if (name.endsWith('get-ohlcv') && input.symbol !== 'TVC:GOLD' && !j.bars && log.px[input.symbol] !== 'ok') {
+    log.px[input.symbol] = String(j.error ?? 'failed').slice(0, 120)
+  }
+
+  if (name.endsWith('get-symbol-data-batch') && j.data) {
+    for (const [sym, row] of Object.entries(j.data)) sectors[sym] = row
+    for (const m of j.missing ?? []) log.sectorMissing.push(m)
+  }
+}
+
+if (Object.keys(sectors).length) fs.writeFileSync(path.join(out, 'sectors.json'), JSON.stringify(sectors, null, 1))
+if (gold) fs.writeFileSync(path.join(out, 'gold-monthly.json'), JSON.stringify(gold))
+fs.writeFileSync(path.join(out, 'fetch-log.json'), JSON.stringify(log, null, 1))
+console.log(`fundamentals written ${nFin}, prices written ${nPx}, sectors ${Object.keys(sectors).length}, gold ${gold ? gold.bars.t.length + ' bars' : 'none'}`)
+console.log(`fin ok ${Object.values(log.fin).filter((x) => x === 'ok').length} / ${Object.keys(log.fin).length}; px ok ${Object.values(log.px).filter((x) => x === 'ok').length}`)
