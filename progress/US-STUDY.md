@@ -43,7 +43,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 7 protocol (PROTOCOL-study7.md) + addendum 1 (silver), before any data
 - [x] Study 7: fetch (subagents; scripts/study7-collect.js reads the transcripts), search → pick V3, check
 - [x] Study 7: H1 not confirmed (mean IC −0.032), H2 not confirmed (V3 vs V0 +0.026, p 0.17); gold/silver descriptive reports
-- [ ] Study 7 follow-up (only if the user wants it): pre-register "below green line AND trend turned up"
+- [x] Study 8 (PROTOCOL-study8.md): below green line AND above 10-month average, fresh S&P 500 stocks → H1, H2 not confirmed (reports/study8.txt)
 
 ## Counts
 (updated as work proceeds)
@@ -88,3 +88,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-08 — user asked for 5 US stocks for an end-of-October entry. Screen: L52 (study 5) at/near trigger, ≥ ~$45B; 6 candidates rated (ticker-analyst pipeline, one agent each). Top 5: AON 6.5, CRH 6.5, MCD 6.4, O 6.3, PEP 6.2 (all Monitor); NKE 5.0 Avoid. reports/picks-2026-10-L52.md — check Oct 2027.
 - 2026-10-08 — user wants a ~3-month swing (end Oct → early 2027), not an investment. Addendum 2 (weekly MOD regular/hidden, F0/F1, H8/H13): 0 of 8. Closest MODW H13 F1 edge +1.50%, Holm 0.062, period I negative. Per protocol §3, no stock list given as a recommendation. Pointed the user to study 4's confirmed weekly RSI(2) pullback (max 13 weeks) instead.
 - 2026-10-12 — study 7 done: reports/study7*.txt; pine/metal-log-regression.pine (gold + silver).
+- 2026-10-12 — study 8 done: trend filter did not help; fair-value.pine unchanged apart from its header.

@@ -37,6 +37,10 @@
 //   it was not tuned on. The test could only use annual data and six of the ten methods
 //   (no book value or cash in the connector), so it is close to this script, not identical.
 //   Read the line as "what the numbers imply", not as a buy signal.
+// - Also tested (study 8, PROTOCOL-study8.md, reports/study8.txt): "below the green line
+//   AND above the 10-month average" on 267 S&P 500 stocks outside the user's watchlists,
+//   2012-2025. It did not beat cheap stocks still falling (+0.3%/yr median, p = 0.94) nor
+//   the whole group (+0.2%/yr, p = 0.94). So no trend filter was added.
 
 //@version=6
 indicator("Fair Value (by company type)", shorttitle = "Fair Value", overlay = true, format = format.price, max_lines_count = 5, max_labels_count = 5)
