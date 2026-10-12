@@ -48,11 +48,14 @@ for (const { id, text } of results) {
   const call = calls.get(id)
   if (!call?.name?.startsWith('mcp__Trading_view_MCP__')) continue
   const { name, input } = call
+  // Results too large to show inline are saved whole to a file; the transcript names it.
+  const saved = text.match(/Output has been saved to (\S+\.txt)/)?.[1]
+  const body = saved && fs.existsSync(saved) ? fs.readFileSync(saved, 'utf8') : text
   let j
   try {
-    j = JSON.parse(text)
+    j = JSON.parse(body)
   } catch {
-    j = { success: false, error: text.slice(0, 200) }
+    j = { success: false, error: body.slice(0, 200) }
   }
 
   if (name.endsWith('get-financial-history') && input.period === 'fy' && input.date_from === '2000-01-01') {
