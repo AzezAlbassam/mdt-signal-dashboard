@@ -1,7 +1,7 @@
 // This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 //
-// Logarithmic regression band for gold (works on any symbol; built for TVC:GOLD or
-// OANDA:XAUUSD on the monthly or weekly chart).
+// Logarithmic regression band for gold and silver (works on any symbol; built for
+// TVC:GOLD / OANDA:XAUUSD and TVC:SILVER / OANDA:XAGUSD on the monthly or weekly chart).
 //
 //   ln(price) = a + b·t      fitted by least squares, t in years since "Fit from"
 //   band      = exp(fit ± k·SD of the residuals)
@@ -10,9 +10,12 @@
 // the coin's first day). Gold has no first day; a steady long-run growth rate (a straight
 // line on a log chart) is the natural shape. Log time is offered for comparison.
 //
-// Why 1971-08: before Nixon closed the gold window the price was fixed by law ($20.67, then
-// $35), so it says nothing about a market trend. TradingView's TVC:GOLD goes back to 1833;
-// fitting through the fixed era would drag the line down.
+// Start date ("Auto" picks it from the ticker):
+// - gold 1971-08: before Nixon closed the gold window the price was fixed by law ($20.67,
+//   then $35), so it says nothing about a market trend. TVC:GOLD goes back to 1833;
+//   fitting through the fixed era would drag the line down.
+// - silver 1968-07: the US Treasury sold silver at $1.29 until 1967, capping the price,
+//   and silver certificates stopped being redeemable on 1968-06-24.
 //
 // Two ways to fit, and the difference matters:
 // - "Past only": each bar's band uses only the prices up to that bar. What you see at any
@@ -23,14 +26,16 @@
 // On the last bar both are the same fit, so today's reading (the table) does not depend
 // on the mode.
 //
-// Gold since 1971 has had two or three full boom-and-bust cycles. That is too few for any
-// statistics: touches of the lower band are a handful of episodes, not a proven signal.
-// See reports/study7-gold.txt for each episode and what followed.
+// Gold since 1971 and silver since 1968 have each had two or three full boom-and-bust
+// cycles. That is too few for any statistics: touches of the lower band are a handful of
+// episodes, not a proven signal. See reports/study7-gold.txt and reports/study7-silver.txt
+// for each episode and what followed.
 
 //@version=6
-indicator("Gold Log Regression Band", shorttitle = "Gold LogReg", overlay = true, max_polylines_count = 12)
+indicator("Gold / Silver Log Regression Band", shorttitle = "Metal LogReg", overlay = true, max_polylines_count = 12)
 
-startTime  = input.time(timestamp("1971-08-01T00:00:00"), "Fit from")
+startPreset = input.string("Auto", "Fit from", options = ["Auto", "Custom"], inline = "s", tooltip = "Auto: silver (ticker contains SILVER or XAG) from 1968-07, everything else from 1971-08.")
+customStart = input.time(timestamp("1971-08-01T00:00:00"), "", inline = "s")
 axis       = input.string("Linear time (exponential trend)", "Time axis", options = ["Linear time (exponential trend)", "Log time (power law)"])
 mode       = input.string("Past only", "Fit", options = ["Past only", "All data (redraws history)"])
 minYears   = input.float(20.0, "Past only: years of data before the band is drawn", minval = 1.0)
@@ -39,6 +44,9 @@ k2         = input.float(2.0, "Outer bands (SD)", minval = 0.25, step = 0.25)
 projYears  = input.float(3.0, "Project today's fit forward (years)", minval = 0.0, step = 1.0)
 showBg     = input.bool(true, "Shade bars below the inner lower band (Past only)")
 showTable  = input.bool(true, "Show table")
+
+bool isSilver = str.contains(syminfo.ticker, "SILVER") or str.contains(syminfo.ticker, "XAG")
+int startTime = startPreset == "Custom" ? customStart : isSilver ? timestamp("1968-07-01T00:00:00") : timestamp("1971-08-01T00:00:00")
 
 const float YEAR_MS = 365.2425 * 24.0 * 3600.0 * 1000.0
 bool logTime = axis == "Log time (power law)"

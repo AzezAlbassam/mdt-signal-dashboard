@@ -1,15 +1,19 @@
-// Study 7, part B (PROTOCOL-study7.md §B2): gold's log regression band, descriptive only.
-//   node scripts/study7-gold.js → reports/study7-gold.txt
-// Same fit as pine/gold-log-regression.pine with its defaults: ln(close) on years since
-// 1971-08, bands at ±1 and ±2 SD of the residuals.
+// Study 7, part B (PROTOCOL-study7.md §B2, addendum 1): log regression band for a metal,
+// descriptive only.
+//   node scripts/study7-metal.js gold    → reports/study7-gold.txt   (from 1971-08)
+//   node scripts/study7-metal.js silver  → reports/study7-silver.txt (from 1968-07)
+// Same fit as pine/metal-log-regression.pine with its defaults: ln(close) on years since
+// the start month, bands at ±1 and ±2 SD of the residuals.
 import fs from 'node:fs'
 import { monthKey } from '../engine/fairvalue.js'
 
 const LAST_COMPLETE = '2026-09'
-const START = '1971-08'
+const metal = process.argv[2]
+const START = { gold: '1971-08', silver: '1968-07' }[metal]
+if (!START) throw new Error('usage: study7-metal.js gold|silver')
 const MIN_YEARS = 20
 
-const { bars } = JSON.parse(fs.readFileSync('data/fv/gold-monthly.json', 'utf8'))
+const { bars } = JSON.parse(fs.readFileSync(`data/fv/${metal}-monthly.json`, 'utf8'))
 const rows = bars.t
   .map((t, i) => ({ m: monthKey(t), c: bars.c[i] }))
   .filter((r) => r.m >= START && r.m <= LAST_COMPLETE && r.c > 0)
@@ -81,7 +85,7 @@ function table(title, series) {
 
 const last = past[past.length - 1]
 const L = [
-  'Study 7 part B — gold log regression band (TVC:GOLD monthly closes), descriptive only',
+  `Study 7 part B — ${metal} log regression band (TVC:${metal.toUpperCase()} monthly closes), descriptive only`,
   `Fit: ln(close) on years since ${START}; data ${rows[0].m} to ${rows[rows.length - 1].m} (${rows.length} months).`,
   'Too few independent cycles for a test; nothing here is "confirmed". Returns are price only.',
   '',
@@ -98,5 +102,5 @@ const L = [
     return `${r.m}  ${String(r.c.toFixed(0)).padStart(5)}  ${p ? p.z.toFixed(2).padStart(6) : '     –'}  ${hind[idx.get(r.m)].z.toFixed(2).padStart(6)}`
   }),
 ]
-fs.writeFileSync('reports/study7-gold.txt', L.join('\n') + '\n')
+fs.writeFileSync(`reports/study7-${metal}.txt`, L.join('\n') + '\n')
 console.log(L.slice(0, 40).join('\n'))

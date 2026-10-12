@@ -3,7 +3,7 @@
 // ever copied by hand.
 //   node scripts/study7-collect.js <transcript.jsonl> [more.jsonl ...]
 // Writes data/fv/raw/fin/<SYM>.json, data/fv/raw/px/<SYM>.json, data/fv/sectors.json,
-// data/fv/gold-monthly.json and data/fv/fetch-log.json.
+// data/fv/gold-monthly.json, data/fv/silver-monthly.json and data/fv/fetch-log.json.
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -39,7 +39,8 @@ for (const f of files) {
 const file = (sym) => `${sym.replace(':', '_')}.json`
 const log = { fin: {}, px: {}, sectorMissing: [] }
 const sectors = {}
-let gold = null
+const METALS = { 'TVC:GOLD': 'gold', 'TVC:SILVER': 'silver' }
+const metals = {}
 let nFin = 0
 let nPx = 0
 
@@ -70,8 +71,9 @@ for (const { id, text } of results) {
   if (name.endsWith('get-ohlcv') && ['M', '1M', 'month', '1mo'].includes(input.interval) && j.bars) {
     const sym = input.symbol
     const bars = Array.isArray(j.bars) ? Object.fromEntries(['t', 'o', 'h', 'l', 'c', 'v'].map((k) => [k, j.bars.map((b) => b[k])])) : j.bars
-    if (sym === 'TVC:GOLD') {
-      if (!gold || gold.bars.t.length < bars.t.length) gold = { symbol: sym, interval: 'M', bars }
+    if (METALS[sym]) {
+      const prev = metals[METALS[sym]]
+      if (!prev || prev.bars.t.length < bars.t.length) metals[METALS[sym]] = { symbol: sym, interval: 'M', bars }
       continue
     }
     const dst = path.join(out, 'raw/px', file(sym))
@@ -80,7 +82,7 @@ for (const { id, text } of results) {
       nPx += 1
     }
     log.px[sym] = 'ok'
-  } else if (name.endsWith('get-ohlcv') && input.symbol !== 'TVC:GOLD' && !j.bars && log.px[input.symbol] !== 'ok') {
+  } else if (name.endsWith('get-ohlcv') && !METALS[input.symbol] && !j.bars && log.px[input.symbol] !== 'ok') {
     log.px[input.symbol] = String(j.error ?? 'failed').slice(0, 120)
   }
 
@@ -91,7 +93,7 @@ for (const { id, text } of results) {
 }
 
 if (Object.keys(sectors).length) fs.writeFileSync(path.join(out, 'sectors.json'), JSON.stringify(sectors, null, 1))
-if (gold) fs.writeFileSync(path.join(out, 'gold-monthly.json'), JSON.stringify(gold))
+for (const [name, m] of Object.entries(metals)) fs.writeFileSync(path.join(out, `${name}-monthly.json`), JSON.stringify(m))
 fs.writeFileSync(path.join(out, 'fetch-log.json'), JSON.stringify(log, null, 1))
-console.log(`fundamentals written ${nFin}, prices written ${nPx}, sectors ${Object.keys(sectors).length}, gold ${gold ? gold.bars.t.length + ' bars' : 'none'}`)
+console.log(`fundamentals written ${nFin}, prices written ${nPx}, sectors ${Object.keys(sectors).length}, metals ${Object.entries(metals).map(([k, m]) => `${k} ${m.bars.t.length} bars`).join(', ') || 'none'}`)
 console.log(`fin ok ${Object.values(log.fin).filter((x) => x === 'ok').length} / ${Object.keys(log.fin).length}; px ok ${Object.values(log.px).filter((x) => x === 'ok').length}`)
