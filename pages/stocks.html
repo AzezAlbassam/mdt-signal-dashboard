@@ -1,0 +1,1040 @@
+<title>تقييم أسهمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Reem+Kufi:wght@600;700&display=swap">
+<style>
+/* Layout: a working table first (tabs, add box, rows), the explanation of the score after it. */
+:root {
+  --bg: #f5f6f8; --fg: #15202b; --muted: #5b6876; --line: #d8dde4; --panel: #ffffff; --soft: #eef1f5;
+  --accent: #2563c9; --good: #18865a; --mid: #a86e05; --bad: #c43d31;
+  --seg-a: #2563c9; --seg-b: #7c4bc4; --seg-c: #148a7a; --seg-d: #b5651d; --seg-e: #5c6b7a;
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1218; --fg: #e4e9ef; --muted: #95a2b0; --line: #26313e; --panel: #131a23; --soft: #18212c;
+  --accent: #6aa3ff; --good: #3ccf91; --mid: #f0b54a; --bad: #ff7466;
+  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1218; --fg: #e4e9ef; --muted: #95a2b0; --line: #26313e; --panel: #131a23; --soft: #18212c;
+  --accent: #6aa3ff; --good: #3ccf91; --mid: #f0b54a; --bad: #ff7466;
+  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.7; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 22px; }
+h1, h2 { font-family: var(--display); margin: 0; line-height: 1.3; text-wrap: balance; }
+h1 { font-size: clamp(28px, 4.5vw, 40px); }
+h2 { font-size: 22px; }
+p { margin: 0; max-width: 72ch; }
+.lead { color: var(--muted); }
+.n { font-family: var(--mono); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; color: var(--muted); font-weight: 600; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs .cnt { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-inline-start: 4px; }
+
+.bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.add { position: relative; flex: 1 1 320px; display: flex; gap: 8px; min-width: 0; }
+.add input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: inherit; }
+.btn { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); white-space: nowrap; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: .55; cursor: default; }
+.results { position: absolute; top: 100%; inset-inline: 0; margin: 4px 0 0; padding: 4px; list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; z-index: 5; max-height: 300px; overflow: auto; box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+.results li button { width: 100%; text-align: start; background: none; border: 0; padding: 8px 10px; border-radius: 6px; color: var(--fg); display: flex; justify-content: space-between; gap: 10px; }
+.results li button:hover, .results li button:focus-visible { background: var(--soft); }
+.results .sym { font-family: var(--mono); color: var(--muted); direction: ltr; }
+.status { color: var(--muted); font-size: 13px; }
+.notice { border-inline-start: 3px solid var(--mid); padding: 8px 12px; background: var(--panel); border-radius: 6px; }
+.notice.bad { border-color: var(--bad); }
+
+.tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; min-width: 960px; }
+th, td { padding: 10px 12px; text-align: start; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: 12.5px; color: var(--muted); font-weight: 600; background: var(--soft); white-space: nowrap; }
+th button { background: none; border: 0; color: inherit; font-weight: 600; padding: 0; }
+tbody tr.row { cursor: pointer; }
+tbody tr.row:hover { background: var(--soft); }
+.stock b { display: block; font-family: var(--mono); direction: ltr; text-align: start; }
+.stock span { color: var(--muted); font-size: 13px; }
+.score { display: flex; align-items: center; gap: 10px; }
+.score .big { font-family: var(--mono); font-size: 20px; font-weight: 600; min-width: 2.6em; }
+.segs { display: grid; grid-template-columns: repeat(5, 14px); gap: 3px; direction: ltr; }
+.segs i { height: 18px; border-radius: 3px; background: var(--soft); position: relative; overflow: hidden; }
+.segs i b { position: absolute; inset-inline: 0; bottom: 0; }
+.hi { color: var(--good); } .md { color: var(--mid); } .lo { color: var(--bad); }
+.x { background: none; border: 0; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px 8px; border-radius: 6px; }
+.x:hover { color: var(--bad); background: var(--soft); }
+.dim { color: var(--muted); }
+.skel { display: inline-block; width: 60px; height: 12px; border-radius: 4px; background: var(--soft); }
+
+.detail td { background: var(--bg); padding: 18px; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.part { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
+.part h3 { margin: 0; font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; }
+.part h3 .n { font-size: 15px; }
+.part p { font-size: 13.5px; color: var(--muted); }
+.part p b { color: var(--fg); font-weight: 500; }
+.ctx { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.ctx div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: help; }
+.ctx div span { display: block; font-size: 12px; color: var(--muted); }
+.ctx div b { font-family: var(--mono); font-weight: 500; direction: ltr; unicode-bidi: isolate; }
+.ctx-t { margin-top: 16px; font-size: 13px; color: var(--muted); }
+
+.about { display: grid; gap: 12px; }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.legend div { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; font-size: 14px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; margin-top: 6px; }
+.result { border-inline-start: 3px solid var(--accent); padding-inline-start: 14px; display: grid; gap: 6px; max-width: 76ch; }
+</style>
+
+<div class="wrap" dir="rtl">
+  <header style="display:grid;gap:8px">
+    <h1>تقييم أسهمي</h1>
+    <p class="lead">كل سهم في قائمتك بدرجة من 10، تُحسب من أرقامه في TradingView. اضغط على أي سهم تشوف تفاصيل الدرجة وباقي المقاييس.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="السوق">
+    <button role="tab" id="tab-us" data-m="us" aria-selected="true">السوق الأمريكي<span class="cnt" id="cnt-us"></span></button>
+    <button role="tab" id="tab-sa" data-m="sa" aria-selected="false">السوق السعودي<span class="cnt" id="cnt-sa"></span></button>
+  </nav>
+
+  <div class="bar">
+    <form class="add" id="addForm" autocomplete="off">
+      <input id="q" type="search" placeholder="أضف سهم: اكتب الرمز أو اسم الشركة" aria-label="بحث عن سهم">
+      <button class="btn primary" id="addBtn" type="submit">+ بحث</button>
+      <ul class="results" id="results" hidden></ul>
+    </form>
+    <button class="btn" id="refresh" type="button">تحديث الأسعار</button>
+    <span class="status" id="status">جاري التحميل…</span>
+  </div>
+  <div class="notice" id="notice" hidden></div>
+
+  <div class="tbl">
+    <table>
+      <thead><tr>
+        <th><button data-sort="sym">السهم</button></th>
+        <th><button data-sort="price">السعر</button></th>
+        <th><button data-sort="score">الدرجة من 10</button></th>
+        <th><button data-sort="gstar" title="كم نمو سنوي في التدفق النقدي يفترضه السعر الحالي">النمو المفترض</button></th>
+        <th><button data-sort="greal" title="نمو الإيراد السنوي لآخر 3 سنوات">النمو الفعلي</button></th>
+        <th><button data-sort="pe">P/E</button></th>
+        <th><button data-sort="fpe">Fwd P/E</button></th>
+        <th><button data-sort="z" title="خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر">Altman Z</button></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="9" class="dim">جاري التحميل…</td></tr></tbody>
+    </table>
+  </div>
+
+  <section class="about">
+    <h2>كيف تنحسب الدرجة</h2>
+    <div class="legend">
+      <div><i style="background:var(--seg-a)"></i><p><b>السعر (0–2):</b> هل السهم أرخص من عادته في آخر 5 سنوات؟ وهل النمو اللي يفترضه سعره معقول مقارنة بنموه الفعلي؟</p></div>
+      <div><i style="background:var(--seg-b)"></i><p><b>الجودة (0–2):</b> هامش الربح، وكم من الأرباح يتحول لكاش فعلي.</p></div>
+      <div><i style="background:var(--seg-c)"></i><p><b>النمو (0–2):</b> نمو الإيراد وربح السهم سنوياً في آخر 3 سنوات.</p></div>
+      <div><i style="background:var(--seg-d)"></i><p><b>الأمان (0–2):</b> الدين مقارنة بالأرباح، وكم سنة خسارة في آخر 5 سنوات.</p></div>
+      <div><i style="background:var(--seg-e)"></i><p><b>الاتجاه (0–2):</b> 8 فحوصات: هل الأرقام تتحسن هذي السنة عن اللي قبلها؟</p></div>
+    </div>
+    <p>كل جزء يغطي ضعف غيره: السهم الرخيص بس ضعيف ياخذ درجة سعر عالية وجودة منخفضة، والسهم القوي بس غالي بالعكس. الأرقام اللي ما لها تاريخ نختبرها عليه (توقعات المحللين، Altman Z، العائد على رأس المال) تظهر في التفاصيل، وما تدخل في الدرجة.</p>
+    <div class="result">
+      <b>نتيجة الاختبار (2012–2025، 819 سهم أمريكي)</b>
+      <p>الدرجة رتبت الأسهم أفضل من العشوائي بفرق صغير: الارتباط مع عائد السنة التالية +0.03 في المتوسط، وموجب في 10 سنوات من 14. لكن أعلى خُمس ما تفوّق على أدنى خُمس في المتوسط (−0.6% سنوياً)، لأن الأسهم الضعيفة انفجرت في سنوات المضاربة (2020 و2025). يعني الدرجة ملخص صادق لصحة الشركة وسعرها، مو توقع لسعرها السنة الجاية. في السعودي التاريخ قصير، والنتيجة ما يُعتمد عليها.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+// ---- engine/fairvalue.js
+const { METHODS, WEIGHTS, PARAMS, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
+// Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
+// annual fundamentals and monthly closes, so it can be scored against later returns.
+//
+// Months are keys "YYYY-MM". Fiscal year Y is usable from May of Y+1 onward (§A2), so at
+// any month nothing reported later than that month is seen.
+
+const METHODS = ['pe', 'peg', 'dcf', 'graham', 'ev', 'ps', 'pb', 'pbj', 'cash', 'pen']
+
+const MATURE = 'Mature / profitable'
+const GROWTH = 'Growth / tech'
+const HEAVY = 'Heavy / cyclical'
+const FIN = 'Financial'
+const UNPROF = 'Unprofitable growth'
+const PRE = 'Pre-revenue'
+
+// Same order as METHODS; copied from pine/fair-value.pine.
+const WEIGHTS = {
+  [MATURE]: [0.3, 0, 0.3, 0.15, 0.25, 0, 0, 0, 0, 0],
+  [GROWTH]: [0.2, 0.3, 0.3, 0, 0, 0.2, 0, 0, 0, 0],
+  [HEAVY]: [0, 0, 0, 0, 0.4, 0, 0.3, 0, 0, 0.3],
+  [FIN]: [0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0],
+  [UNPROF]: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+  [PRE]: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+}
+
+const HEAVY_SECTORS = ['Energy Minerals', 'Non-Energy Minerals', 'Process Industries', 'Producer Manufacturing', 'Industrial Services', 'Transportation', 'Consumer Durables']
+const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
+
+const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
+
+const pos = (x) => Number.isFinite(x) && x > 0
+
+/** Last fiscal year whose numbers are public at month "YYYY-MM": May of Y+1 onward. */
+function lastUsableFiscalYear(month) {
+  const [y, m] = month.split('-').map(Number)
+  return m >= 5 ? y - 1 : y - 2
+}
+
+function monthKey(unixSec) {
+  const d = new Date(unixSec * 1000)
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+}
+
+function addMonths(month, k) {
+  const [y, m] = month.split('-').map(Number)
+  const t = y * 12 + (m - 1) + k
+  return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}`
+}
+
+/**
+ * Turns a get_financial_history (fy) response into one record per fiscal year, sorted.
+ * Shares = net income / EPS of the same year (§A2).
+ */
+function parseFundamentals(resp) {
+  const s = resp.series
+  const out = []
+  resp.labels.forEach((label, i) => {
+    const year = Number(label)
+    if (!Number.isInteger(year)) return
+    const v = (k) => {
+      const x = s[k]?.[i]?.value
+      return Number.isFinite(x) ? x : null
+    }
+    const eps = v('eps')
+    const ni = v('net_income')
+    const shares = eps && ni && Math.sign(eps) === Math.sign(ni) ? ni / eps : null
+    out.push({ year, eps, rev: v('revenue'), fcf: v('fcf'), ebitda: v('ebitda'), debt: v('total_debt'), ni, shares, gp: v('gross_profit') })
+  })
+  return out.sort((a, b) => a.year - b.year)
+}
+
+/** Compound annual growth over the last (up to) 3 values, as the Pine script's cagr(). */
+function cagr(values) {
+  const n = Math.min(3, values.length - 1)
+  if (n < 1) return null
+  const last = values[values.length - 1]
+  const first = values[values.length - 1 - n]
+  return first > 0 && last > 0 ? Math.pow(last / first, 1 / n) - 1 : null
+}
+
+function dcf(fcf0, g1, r, gT) {
+  if (!pos(fcf0) || g1 == null) return null
+  let pv = 0
+  let cf = fcf0
+  for (let i = 1; i <= 10; i += 1) {
+    const g = g1 + ((gT - g1) * (i - 1)) / 9
+    cf *= 1 + g
+    pv += cf / Math.pow(1 + r, i)
+  }
+  return pv + (cf * (1 + gT)) / (r - gT) / Math.pow(1 + r, 10)
+}
+
+function median(a) {
+  const s = [...a].sort((x, y) => x - y)
+  const n = s.length
+  return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2
+}
+
+/**
+ * Everything the indicator knows at one month: the fundamentals then public, and the
+ * per-share values built from them. Null when no fiscal year is public yet.
+ */
+function stateAt(funds, month) {
+  const fy = lastUsableFiscalYear(month)
+  const known = funds.filter((f) => f.year <= fy)
+  if (known.length === 0) return null
+  const f = known[known.length - 1]
+  const epsList = known.map((k) => k.eps).filter((x) => x != null)
+  const revList = known.map((k) => k.rev).filter((x) => x != null)
+  const lastEps = epsList.slice(-PARAMS.normYears)
+  return {
+    fiscalYear: f.year,
+    eps: f.eps,
+    rev: f.rev,
+    ebitda: f.ebitda,
+    debt: f.debt ?? 0,
+    shares: f.shares,
+    revPS: pos(f.shares) && f.rev != null ? f.rev / f.shares : null,
+    fcfPS: pos(f.shares) && f.fcf != null ? f.fcf / f.shares : null,
+    epsNorm: lastEps.length ? lastEps.reduce((a, b) => a + b, 0) / lastEps.length : null,
+    epsG: cagr(epsList),
+    revG: cagr(revList),
+  }
+}
+
+/** The four own-history multiples at one month (null when not positive). */
+function multiplesAt(st, close) {
+  if (!st) return { pe: null, pen: null, ps: null, ev: null }
+  const m = (x) => (pos(x) ? x : null)
+  return {
+    pe: pos(st.eps) ? m(close / st.eps) : null,
+    pen: pos(st.epsNorm) ? m(close / st.epsNorm) : null,
+    ps: pos(st.revPS) ? m(close / st.revPS) : null,
+    ev: pos(st.ebitda) && pos(st.shares) ? m((close * st.shares + st.debt) / st.ebitda) : null,
+  }
+}
+
+function profileOf(st, close, sector) {
+  const mcap = pos(st.shares) ? close * st.shares : null
+  if (st.rev == null || st.rev <= 0 || (mcap != null && st.rev < 0.01 * mcap)) return PRE
+  if (sector === 'Finance') return FIN
+  if (!(st.eps > 0)) return UNPROF
+  if (HEAVY_SECTORS.includes(sector)) return HEAVY
+  if (TECH_SECTORS.includes(sector) || st.revG > 0.15) return GROWTH
+  return MATURE
+}
+
+const clampG = (g) => (g == null ? null : Math.max(-0.05, Math.min(PARAMS.maxGrowth, g)))
+
+/**
+ * Fair value by every method at month `month`, for a stock with fundamentals `funds`,
+ * monthly closes `closes` (Map month -> close) and TradingView sector `sector`.
+ * Only months up to `month` are read.
+ */
+function fairValuesAt(funds, closes, sector, month) {
+  const close = closes.get(month)
+  const st = stateAt(funds, month)
+  if (!pos(close) || !st) return null
+
+  // Own-history medians over the window ending this month, as the Pine script's arrays.
+  const hist = { pe: [], pen: [], ps: [], ev: [] }
+  for (let k = PARAMS.windowMonths - 1; k >= 0; k -= 1) {
+    const mk = addMonths(month, -k)
+    const c = closes.get(mk)
+    if (!pos(c)) continue
+    const mult = multiplesAt(stateAt(funds, mk), c)
+    for (const key of Object.keys(hist)) if (mult[key] != null) hist[key].push(mult[key])
+  }
+  const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
+
+  const { discount: r, termGrowth: gT, pegTarget } = PARAMS
+  const gPeg = clampG(st.epsG ?? st.revG)
+  const gDcf = clampG(st.revG ?? st.epsG)
+  const ok = (x) => (pos(x) ? x : null)
+  const medEv = med('ev')
+  const values = {
+    pe: pos(st.eps) && med('pe') != null ? ok(st.eps * med('pe')) : null,
+    peg: pos(st.eps) && gPeg > 0 ? ok(st.eps * gPeg * 100 * pegTarget) : null,
+    dcf: ok(dcf(st.fcfPS, gDcf, r, gT)),
+    graham: null,
+    ev: pos(st.ebitda) && pos(st.shares) && medEv != null ? ok((medEv * st.ebitda - st.debt) / st.shares) : null,
+    ps: pos(st.revPS) && med('ps') != null ? ok(st.revPS * med('ps')) : null,
+    pb: null,
+    pbj: null,
+    cash: null,
+    pen: pos(st.epsNorm) && med('pen') != null ? ok(st.epsNorm * med('pen')) : null,
+  }
+  return { close, profile: profileOf(st, close, sector), values, fiscalYear: st.fiscalYear }
+}
+
+/** Weighted blend over methods that have a value, re-weighted as the Pine script does. */
+function blend(values, weights) {
+  let sw = 0
+  let sv = 0
+  METHODS.forEach((m, i) => {
+    const w = weights[i]
+    const x = values[m]
+    if (w > 0 && pos(x)) {
+      sw += w
+      sv += w * x
+    }
+  })
+  return sw > 0 ? { fair: sv / sw, coverage: sw } : null
+}
+
+const one = (m) => METHODS.map((k) => (k === m ? 1 : 0))
+const equal = (ms) => METHODS.map((k) => (ms.includes(k) ? 1 : 0))
+
+/** The candidates of §A6. V0 uses the company-type weights; the rest ignore the type. */
+const VARIANTS = {
+  V0: null,
+  V1: one('pe'),
+  V2: one('peg'),
+  V3: one('dcf'),
+  V4: one('ev'),
+  V5: one('ps'),
+  V6: one('pen'),
+  V7: equal(['pe', 'peg', 'dcf', 'ev', 'ps', 'pen']),
+  V8: equal(['pe', 'ev', 'ps', 'pen']),
+  V9: equal(['peg', 'dcf']),
+}
+
+/** Fair value of one variant, or null (pre-revenue stock-years are always left out). */
+function variantFair(fv, variant) {
+  if (!fv || fv.profile === PRE) return null
+  const w = VARIANTS[variant] ?? WEIGHTS[fv.profile]
+  return blend(fv.values, w)?.fair ?? null
+}
+
+// ---------------------------------------------------------------- statistics
+
+function ranks(a) {
+  const idx = a.map((x, i) => [x, i]).sort((p, q) => p[0] - q[0])
+  const r = new Array(a.length)
+  for (let i = 0; i < idx.length; ) {
+    let j = i
+    while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j += 1
+    const avg = (i + j) / 2 + 1
+    for (let k = i; k <= j; k += 1) r[idx[k][1]] = avg
+    i = j + 1
+  }
+  return r
+}
+
+function spearman(x, y) {
+  const rx = ranks(x)
+  const ry = ranks(y)
+  const n = x.length
+  const mx = rx.reduce((a, b) => a + b, 0) / n
+  const my = ry.reduce((a, b) => a + b, 0) / n
+  let sxy = 0
+  let sxx = 0
+  let syy = 0
+  for (let i = 0; i < n; i += 1) {
+    sxy += (rx[i] - mx) * (ry[i] - my)
+    sxx += (rx[i] - mx) ** 2
+    syy += (ry[i] - my) ** 2
+  }
+  return sxx > 0 && syy > 0 ? sxy / Math.sqrt(sxx * syy) : 0
+}
+
+// Regularized incomplete beta (Numerical Recipes continued fraction), for Student's t.
+function lgamma(x) {
+  const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]
+  let y = x
+  const tmp = x + 5.5 - (x + 0.5) * Math.log(x + 5.5)
+  let ser = 1.000000000190015
+  for (const ci of c) ser += ci / ++y
+  return -tmp + Math.log((2.5066282746310005 * ser) / x)
+}
+
+function betacf(a, b, x) {
+  let qab = a + b
+  let qap = a + 1
+  let qam = a - 1
+  let c = 1
+  let d = 1 - (qab * x) / qap
+  if (Math.abs(d) < 1e-30) d = 1e-30
+  d = 1 / d
+  let h = d
+  for (let m = 1; m <= 200; m += 1) {
+    const m2 = 2 * m
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2))
+    d = 1 + aa * d
+    if (Math.abs(d) < 1e-30) d = 1e-30
+    c = 1 + aa / c
+    if (Math.abs(c) < 1e-30) c = 1e-30
+    d = 1 / d
+    h *= d * c
+    aa = (-(a + m) * (qab + m) * x) / ((a + m2) * (qap + m2))
+    d = 1 + aa * d
+    if (Math.abs(d) < 1e-30) d = 1e-30
+    c = 1 + aa / c
+    if (Math.abs(c) < 1e-30) c = 1e-30
+    d = 1 / d
+    const del = d * c
+    h *= del
+    if (Math.abs(del - 1) < 3e-14) break
+  }
+  return h
+}
+
+function ibeta(a, b, x) {
+  if (x <= 0) return 0
+  if (x >= 1) return 1
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x))
+  return x < (a + 1) / (a + b + 2) ? (bt * betacf(a, b, x)) / a : 1 - (bt * betacf(b, a, 1 - x)) / b
+}
+
+/** One-sided p-value of a one-sample t-test that the mean of `xs` is above zero. */
+function tTestGreater(xs) {
+  const n = xs.length
+  const mean = xs.reduce((a, b) => a + b, 0) / n
+  const sd = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1))
+  const t = mean / (sd / Math.sqrt(n))
+  const df = n - 1
+  const tail = 0.5 * ibeta(df / 2, 0.5, df / (df + t * t))
+  return { t, df, p: t > 0 ? tail : 1 - tail }
+}
+
+// ---------------------------------------------------------------- study 8
+
+/**
+ * PROTOCOL-study8.md §3: close above the simple average of the last 10 monthly closes,
+ * this month included. Null when any of those 10 months is missing.
+ */
+function trendUp(closes, month, n = 10) {
+  let sum = 0
+  for (let k = 0; k < n; k += 1) {
+    const c = closes.get(addMonths(month, -k))
+    if (!pos(c)) return null
+    sum += c
+  }
+  return closes.get(month) > sum / n
+}
+
+/** Exact one-sided sign-flip p-value that the mean of `xs` is above zero. */
+function signFlipGreater(xs) {
+  const n = xs.length
+  const obs = xs.reduce((a, b) => a + b, 0) / n
+  let ge = 0
+  for (let mask = 0; mask < 1 << n; mask += 1) {
+    const s = xs.reduce((a, x, i) => a + (mask & (1 << i) ? -x : x), 0) / n
+    if (s >= obs - 1e-12) ge += 1
+  }
+  return ge / (1 << n)
+}
+
+/** Holm step-down adjustment; returns adjusted p-values in the input order. */
+function holm(ps) {
+  const order = ps.map((p, i) => [p, i]).sort((a, b) => a[0] - b[0])
+  const out = new Array(ps.length)
+  let running = 0
+  order.forEach(([p, i], r) => {
+    running = Math.max(running, Math.min(1, (ps.length - r) * p))
+    out[i] = running
+  })
+  return out
+}
+
+return { METHODS, WEIGHTS, PARAMS, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
+})()
+
+// ---- engine/score.js
+const { lin, impliedGrowth, scoreAt } = (() => {
+// Study 9 (PROTOCOL-study9.md §1): a 0–10 score in five parts of 0–2 — price, quality,
+// growth, safety, direction — where each part covers a blind spot of another.
+// Pure functions; the stock page uses this same file, so the page's score is the tested one.
+// At month "YYYY-MM" only fiscal years public by then (May of Y+1, as in study 7) and
+// closes up to that month are read.
+
+
+/** 0 at a, 1 at b, straight in between, clamped (falls when a > b). */
+const lin = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)))
+
+const pos = (x) => Number.isFinite(x) && x > 0
+const num = (x) => Number.isFinite(x)
+
+const MULTS = ['pe', 'ps', 'ev', 'pfcf']
+
+function multiplesNow(funds, closes, month) {
+  const c = closes.get(month)
+  const st = stateAt(funds, month)
+  if (!pos(c) || !st) return null
+  const m = multiplesAt(st, c)
+  return { pe: m.pe, ps: m.ps, ev: m.ev, pfcf: pos(st.fcfPS) ? c / st.fcfPS : null }
+}
+
+/** g* such that the study 7 DCF of today's FCF per share equals the price, in [−20%, 60%]. */
+function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
+  if (!pos(fcfPS) || !pos(price)) return null
+  let lo = -0.2
+  let hi = 0.6
+  if (dcf(fcfPS, lo, r, gT) >= price) return lo
+  if (dcf(fcfPS, hi, r, gT) <= price) return hi
+  for (let i = 0; i < 60; i += 1) {
+    const mid = (lo + hi) / 2
+    if (dcf(fcfPS, mid, r, gT) > price) hi = mid
+    else lo = mid
+  }
+  return (lo + hi) / 2
+}
+
+/**
+ * The score at `month` for a stock with annual fundamentals `funds` (parseFundamentals),
+ * monthly closes `closes` (Map "YYYY-MM" → close) and TradingView sector `sector`.
+ * Returns { total, parts: {A..E}, detail } or { total: null, reason }.
+ */
+function scoreAt(funds, closes, sector, month) {
+  const close = closes.get(month)
+  const fy = lastUsableFiscalYear(month)
+  const known = funds.filter((f) => f.year <= fy)
+  if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
+  const f0 = known[known.length - 1]
+  if (f0.year < fy - 1) return { total: null, reason: 'stale fundamentals' }
+  const f1 = known.length > 1 ? known[known.length - 2] : null
+  const st = stateAt(funds, month)
+  const fin = sector === 'Finance'
+  const mcap = pos(f0.shares) ? close * f0.shares : null
+  if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
+
+  const detail = {}
+
+  // A. Price
+  const now = multiplesNow(funds, closes, month)
+  const window = []
+  for (let k = 59; k >= 0; k -= 1) {
+    const mk = addMonths(month, -k)
+    if (closes.has(mk)) window.push(multiplesNow(funds, closes, mk))
+  }
+  const shares = []
+  for (const key of MULTS) {
+    const v = now?.[key]
+    if (!pos(v)) continue
+    const hist = window.map((w) => w?.[key]).filter(pos)
+    if (hist.length < 12) continue
+    const below = hist.filter((x) => x < v).length + 0.5 * hist.filter((x) => x === v).length
+    shares.push(below / hist.length)
+    detail[`pct_${key}`] = below / hist.length
+  }
+  const a1 = shares.length ? 1 - shares.reduce((a, b) => a + b, 0) / shares.length : null
+  const gStar = impliedGrowth(st.fcfPS, close)
+  const gReal = st.revG ?? st.epsG ?? 0
+  const a2 = gStar == null ? null : lin(gStar - gReal, 0.2, 0)
+  Object.assign(detail, { a1, a2, gStar, gReal })
+  const A = a1 != null && a2 != null ? a1 + a2 : a1 != null ? 2 * a1 : a2 != null ? 2 * a2 : null
+
+  // B. Quality
+  let b1 = null
+  if (num(f0.ebitda)) b1 = lin(f0.ebitda / f0.rev, 0, 0.3)
+  else if (num(f0.ni)) b1 = lin(f0.ni / f0.rev, 0, 0.2)
+  const last3 = known.slice(-3).filter((f) => num(f.ni) && num(f.fcf))
+  let b2 = null
+  if (last3.length) {
+    const sNi = last3.reduce((a, f) => a + f.ni, 0)
+    const sFcf = last3.reduce((a, f) => a + f.fcf, 0)
+    b2 = sNi > 0 ? lin(sFcf / sNi, 0, 0.8) : sFcf > 0 ? 0.5 : 0
+  }
+  Object.assign(detail, { b1, b2 })
+  const B = b1 != null && b2 != null ? b1 + b2 : null
+
+  // C. Growth
+  const c1 = st.revG == null ? null : lin(st.revG, 0, 0.2)
+  let c2 = null
+  if (st.epsG != null) c2 = lin(st.epsG, 0, 0.2)
+  else {
+    const eps = known.map((f) => f.eps).filter(num)
+    if (eps.length >= 2) c2 = eps[eps.length - 1] > eps[Math.max(0, eps.length - 4)] ? 0.5 : 0
+  }
+  Object.assign(detail, { c1, c2, revG: st.revG, epsG: st.epsG })
+  const C = c1 != null && c2 != null ? c1 + c2 : c1 != null ? 2 * c1 : c2 != null ? 2 * c2 : null
+
+  // D. Safety
+  const ni5 = known.slice(-5).map((f) => f.ni).filter(num)
+  const losses = ni5.filter((x) => x < 0).length
+  const d2 = ni5.length ? Math.max(0, 1 - losses / 3) : null
+  let d1 = null
+  if (!fin) {
+    const debt = f0.debt ?? 0
+    d1 = debt === 0 ? 1 : pos(f0.ebitda) ? lin(debt / f0.ebitda, 4, 1) : 0
+  }
+  Object.assign(detail, { d1, d2, losses })
+  const D = d2 == null ? null : fin ? 2 * d2 : d1 + d2
+
+  // E. Direction (partial Piotroski)
+  const checks = []
+  if (num(f0.ni)) checks.push(f0.ni > 0)
+  if (num(f0.fcf)) checks.push(f0.fcf > 0)
+  if (num(f0.fcf) && num(f0.ni)) checks.push(f0.fcf > f0.ni)
+  if (f1) {
+    if (num(f0.rev) && num(f1.rev)) checks.push(f0.rev > f1.rev)
+    if (num(f0.eps) && num(f1.eps)) checks.push(f0.eps > f1.eps)
+    if (num(f0.ebitda) && num(f1.ebitda) && pos(f1.rev)) checks.push(f0.ebitda / f0.rev > f1.ebitda / f1.rev)
+    if (num(f0.gp) && num(f1.gp) && pos(f1.rev)) checks.push(f0.gp / f0.rev > f1.gp / f1.rev)
+    if (!fin) {
+      if (num(f0.ebitda) && num(f1.ebitda)) {
+        if (pos(f0.ebitda) && pos(f1.ebitda) && num(f0.debt) && num(f1.debt)) checks.push(f0.debt / f0.ebitda < f1.debt / f1.ebitda)
+      } else if (num(f0.debt) && num(f1.debt)) checks.push(f0.debt < f1.debt)
+    }
+  }
+  const passed = checks.filter(Boolean).length
+  Object.assign(detail, { checks: checks.length, passed })
+  const E = checks.length >= 5 ? (2 * passed) / checks.length : null
+
+  const parts = { A, B, C, D, E }
+  if (Object.values(parts).some((x) => x == null)) return { total: null, reason: 'part missing', parts, detail }
+  return { total: A + B + C + D + E, parts, detail, fiscalYear: f0.year }
+}
+
+return { lin, impliedGrowth, scoreAt }
+})()
+
+
+(() => {
+  const SERVER = 'Trading view MCP'
+  const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols' }
+  const STALE_DAYS = 14
+  const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
+    'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
+    'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin', 'debt_to_equity']
+
+  const $ = (id) => document.getElementById(id)
+  const state = { market: 'us', lists: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, errors: {}, open: null, sort: { key: null, dir: -1 } }
+  let db = null
+  let mcp = null
+
+  const marketOf = (sym) => (sym.startsWith('TADAWUL:') ? 'sa' : 'us')
+  const fmt = (x, d = 1) => (Number.isFinite(x) ? x.toFixed(d) : '—')
+  const pct = (x, d = 0) => (Number.isFinite(x) ? `${x >= 0 ? '+' : ''}${(100 * x).toFixed(d)}%` : '—')
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+
+  function notice(text, bad = false) {
+    const n = $('notice')
+    n.hidden = !text
+    n.className = bad ? 'notice bad' : 'notice'
+    n.textContent = text || ''
+  }
+
+  function explainError(e) {
+    switch (e?.code) {
+      case 'server_not_connected': return 'ربط TradingView غير موجود في حسابك. أضفه من claude.ai ← Settings ← Connectors، وبعدها افتح الصفحة من جديد.'
+      case 'needs_reauth': return 'انتهى تسجيل الدخول في ربط TradingView. أعد ربطه من claude.ai ← Settings ← Connectors.'
+      case 'selection_required': return 'عندك أكثر من ربط باسم TradingView. اختر واحد من الرسالة اللي تطلع لك فوق الصفحة.'
+      case 'not_in_manifest': return 'الصفحة ما عندها إذن تستخدم TradingView. اسمح لها من قائمة الصلاحيات في الصفحة.'
+      case 'approval_required': return 'الطلب يحتاج موافقتك. اضغط "تحديث الأسعار" ووافق.'
+      case 'not_granted': case 'capability_disabled': case 'capability_removed': return 'الصفحة ما تقدر توصل لـ TradingView هنا. افتحها من claude.ai.'
+      case 'tool_error': return `TradingView رد بخطأ: ${e.message || ''}`
+      case 'server_unavailable': return 'TradingView ما رد الحين. جرّب بعد شوي.'
+      default: return `صار خطأ (${e?.code || 'غير معروف'}).`
+    }
+  }
+
+  async function call(tool, input, cache) {
+    try {
+      const r = await mcp.callTool(SERVER, tool, input, cache ? { cache } : undefined)
+      return r.payload
+    } catch (e) {
+      if (e?.retryable) {
+        await new Promise((ok) => setTimeout(ok, Math.min(60000, e.retryAfterMs ?? 800 + Math.random() * 1200)))
+        const r = await mcp.callTool(SERVER, tool, input, cache ? { cache } : undefined)
+        return r.payload
+      }
+      throw e
+    }
+  }
+
+  // ---------------------------------------------------------------- data
+
+  async function loadQuotes(symbols, fresh = false) {
+    for (let i = 0; i < symbols.length; i += 50) {
+      const chunk = symbols.slice(i, i + 50)
+      const p = await call(T.batch, { symbols: chunk, columns: COLS }, fresh ? { staleTime: 0, refresh: true } : { staleTime: 300000, gcTime: 3600000 })
+      for (const [sym, row] of Object.entries(p?.data ?? {})) state.quotes[sym] = row
+      for (const m of p?.missing ?? []) state.errors[m.symbol] = 'TradingView ما لقى السهم'
+    }
+  }
+
+  async function loadHistory(sym, force = false) {
+    const ref = db?.doc(`cache/${sym}`)
+    if (!force && ref) {
+      const snap = await ref.get().catch(() => null)
+      const d = snap?.exists ? snap.data() : null
+      if (d && Date.now() - d.fetchedAt < STALE_DAYS * 864e5) {
+        state.cache[sym] = d
+        return
+      }
+    }
+    const [fin, px] = await Promise.all([
+      call(T.fin, { symbol: sym, period: 'fy', date_from: '2000-01-01' }),
+      call(T.px, { symbol: sym, interval: 'M', count: 72, format: 'columns' }),
+    ])
+    if (!fin?.labels) throw { code: 'no_fundamentals' }
+    const doc = { fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, fetchedAt: Date.now() }
+    state.cache[sym] = doc
+    if (ref) await ref.set(doc).catch(() => {})
+  }
+
+  function compute(sym) {
+    const d = state.cache[sym]
+    const q = state.quotes[sym]
+    if (!d || !q) return
+    const funds = parseFundamentals(d.fin)
+    const closes = new Map()
+    d.px.t.forEach((t, i) => { if (Number.isFinite(d.px.c[i])) closes.set(monthKey(t), d.px.c[i]) })
+    const month = monthKey(Math.floor(Date.now() / 1000))
+    if (Number.isFinite(q.close)) closes.set(month, q.close)
+    const s = scoreAt(funds, closes, q.sector, month)
+    const fy = lastUsableFiscalYear(month)
+    const known = funds.filter((f) => f.year <= fy)
+    state.scores[sym] = { ...s, f0: known[known.length - 1], f1: known[known.length - 2], known }
+  }
+
+  async function runQueue(syms, worker, limit = 3) {
+    let i = 0
+    const next = async () => {
+      while (i < syms.length) {
+        const s = syms[i++]
+        try { await worker(s) } catch (e) { state.errors[s] = e?.code === 'no_fundamentals' ? 'ما فيه بيانات مالية سنوية لهذا السهم' : explainError(e) }
+        render()
+      }
+    }
+    await Promise.all(Array.from({ length: limit }, next))
+  }
+
+  let busy = false
+  let again = false
+  async function refresh(opts = {}) {
+    if (!mcp) return
+    if (busy) { again = true; return }
+    busy = true
+    try { await doRefresh(opts) } finally { busy = false }
+    if (again) { again = false; refresh() }
+  }
+
+  async function doRefresh({ fresh = false, force = false } = {}) {
+    const syms = state.lists[state.market]
+    if (!syms.length) { render(); return }
+    $('refresh').disabled = true
+    $('status').textContent = 'جاري التحديث…'
+    notice('')
+    try {
+      await loadQuotes(syms, fresh)
+    } catch (e) {
+      notice(explainError(e), true)
+      $('status').textContent = ''
+      $('refresh').disabled = false
+      render()
+      return
+    }
+    await runQueue(syms.filter((s) => force || !state.cache[s]), (s) => loadHistory(s, force))
+    syms.forEach(compute)
+    $('refresh').disabled = false
+    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })} · البيانات المالية تتجدد كل ${STALE_DAYS} يوم`
+    render()
+  }
+
+  // ---------------------------------------------------------------- lists
+
+  async function saveList(m) {
+    if (!db) return
+    try { await db.doc(`lists/${m}`).set({ symbols: state.lists[m] }) }
+    catch (e) { notice('ما قدرت أحفظ القائمة. الحفظ متاح لصاحب الصفحة بس.', true) }
+  }
+
+  async function addSymbol(sym) {
+    const m = marketOf(sym)
+    if (state.lists[m].includes(sym)) { notice(`${sym} موجود في القائمة.`); return }
+    state.lists[m] = [...state.lists[m], sym]
+    $('results').hidden = true
+    $('q').value = ''
+    if (m !== state.market) setMarket(m)
+    render()
+    await saveList(m)
+    try {
+      await loadQuotes([sym])
+      await loadHistory(sym)
+      compute(sym)
+    } catch (e) { state.errors[sym] = e?.code === 'no_fundamentals' ? 'ما فيه بيانات مالية سنوية لهذا السهم' : explainError(e) }
+    render()
+  }
+
+  async function removeSymbol(sym) {
+    const m = marketOf(sym)
+    state.lists[m] = state.lists[m].filter((s) => s !== sym)
+    if (state.open === sym) state.open = null
+    render()
+    await saveList(m)
+  }
+
+  async function search(q) {
+    if (!mcp || !q.trim()) return
+    const ul = $('results')
+    ul.hidden = false
+    ul.innerHTML = '<li class="dim" style="padding:8px 10px">جاري البحث…</li>'
+    try {
+      const p = await call(T.search, { query: q.trim(), type_filter: 'stock' }, { staleTime: 300000 })
+      const list = (p?.data?.symbols ?? []).filter((s) => /^(NASDAQ|NYSE|AMEX|NYSE ARCA|TADAWUL|CBOE):/.test(s.symbol) && s.type === 'stock')
+      ul.innerHTML = list.length
+        ? list.slice(0, 12).map((s) => `<li><button type="button" data-add="${esc(s.symbol)}"><span>${esc(s.description)}</span><span class="sym">${esc(s.symbol)}</span></button></li>`).join('')
+        : '<li class="dim" style="padding:8px 10px">ما لقيت أسهم أمريكية أو سعودية بهذا الاسم.</li>'
+    } catch (e) {
+      ul.innerHTML = `<li class="dim" style="padding:8px 10px">${esc(explainError(e))}</li>`
+    }
+  }
+
+  // ---------------------------------------------------------------- render
+
+  const SEG = ['--seg-a', '--seg-b', '--seg-c', '--seg-d', '--seg-e']
+  const tone = (x) => (x >= 7 ? 'hi' : x >= 4 ? 'md' : 'lo')
+
+  function sortValue(sym, key) {
+    const q = state.quotes[sym] || {}
+    const s = state.scores[sym] || {}
+    switch (key) {
+      case 'sym': return sym
+      case 'price': return q.close
+      case 'score': return s.total
+      case 'gstar': return s.detail?.gStar
+      case 'greal': return s.detail?.gReal
+      case 'pe': return q.price_earnings_ttm
+      case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
+      case 'z': return q.altman_z_score_ttm
+    }
+  }
+
+  function rowsInOrder() {
+    const syms = [...state.lists[state.market]]
+    const { key, dir } = state.sort
+    if (!key) return syms
+    return syms.sort((a, b) => {
+      const x = sortValue(a, key)
+      const y = sortValue(b, key)
+      if (x == null && y == null) return 0
+      if (x == null) return 1
+      if (y == null) return -1
+      return (x < y ? -1 : x > y ? 1 : 0) * dir
+    })
+  }
+
+  function scoreCell(s) {
+    if (!s) return '<span class="skel"></span>'
+    if (s.total == null) {
+      const why = { 'pre-revenue': 'بدون إيرادات كافية', 'stale fundamentals': 'بيانات مالية قديمة', 'part missing': 'بيانات ناقصة', 'no data': 'بيانات ناقصة' }[s.reason] || 'بيانات ناقصة'
+      return `<span class="dim">${why}</span>`
+    }
+    const segs = ['A', 'B', 'C', 'D', 'E'].map((k, i) => `<i title="${['السعر', 'الجودة', 'النمو', 'الأمان', 'الاتجاه'][i]}: ${fmt(s.parts[k], 1)} من 2"><b style="height:${(s.parts[k] / 2) * 100}%;background:var(${SEG[i]})"></b></i>`).join('')
+    return `<div class="score"><span class="big n ${tone(s.total)}">${fmt(s.total, 1)}</span><span class="segs">${segs}</span></div>`
+  }
+
+  function render() {
+    for (const m of ['us', 'sa']) {
+      $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
+      $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
+    }
+    const body = $('rows')
+    const syms = rowsInOrder()
+    if (!syms.length) {
+      body.innerHTML = '<tr><td colspan="9" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
+      return
+    }
+    body.innerHTML = syms.map((sym) => {
+      const q = state.quotes[sym]
+      const s = state.scores[sym]
+      const err = state.errors[sym]
+      const main = `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
+        <td class="stock"><b>${esc(sym.split(':')[1])}</b><span>${esc(q?.description ?? '')}</span></td>
+        <td class="n">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
+        <td>${err && !s ? `<span class="lo">${esc(err)}</span>` : scoreCell(s)}</td>
+        <td class="n">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
+        <td class="n">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
+        <td class="n">${fmt(q?.price_earnings_ttm)}</td>
+        <td class="n">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
+        <td class="n">${fmt(q?.altman_z_score_ttm)}</td>
+        <td><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
+      </tr>`
+      return main + (state.open === sym ? `<tr class="detail"><td colspan="9">${detail(sym)}</td></tr>` : '')
+    }).join('')
+  }
+
+  function detail(sym) {
+    const q = state.quotes[sym] || {}
+    const s = state.scores[sym]
+    if (!s || !s.detail) return `<p class="dim">${esc(state.errors[sym] || 'لسا ما اكتملت بيانات هذا السهم.')}</p>`
+    const d = s.detail
+    const f0 = s.f0 || {}
+    const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
+    const sNi = last3.reduce((a, f) => a + f.ni, 0)
+    const sFcf = last3.reduce((a, f) => a + f.fcf, 0)
+    const margin = Number.isFinite(f0.ebitda) ? f0.ebitda / f0.rev : Number.isFinite(f0.ni) ? f0.ni / f0.rev : null
+    const marginName = Number.isFinite(f0.ebitda) ? 'هامش EBITDA' : 'هامش صافي الربح'
+    const debtX = Number.isFinite(f0.ebitda) && f0.ebitda > 0 ? (f0.debt ?? 0) / f0.ebitda : null
+    const pctMean = ['pe', 'ps', 'ev', 'pfcf'].map((k) => d[`pct_${k}`]).filter(Number.isFinite)
+    const cheaper = pctMean.length ? 1 - pctMean.reduce((a, b) => a + b, 0) / pctMean.length : null
+    const p = s.parts || {}
+    const part = (title, val, html) => `<div class="part"><h3><span>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 1) + ' / 2'}</span></h3>${html}</div>`
+    const growthNext = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
+    const lastFyEps = f0.eps
+    const growthFy = Number.isFinite(q.earnings_per_share_forecast_next_fy) && lastFyEps > 0 ? q.earnings_per_share_forecast_next_fy / lastFyEps - 1 : null
+    const pegs = [growthNext, growthFy].filter((g) => g > 0).map((g) => q.price_earnings_ttm / (100 * g)).filter(Number.isFinite)
+    const pegTxt = pegs.length ? (pegs.length === 2 ? `${fmt(Math.min(...pegs), 2)}–${fmt(Math.max(...pegs), 2)}` : fmt(pegs[0], 2)) : '—'
+    const ctx = [
+      ['Fwd P/E', fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy), 'السعر ÷ توقع المحللين لربح السنة المالية الجاية. ضعفه: توقعات، والمحللين غالباً متفائلين.'],
+      ['PEG', pegTxt, 'P/E ÷ النمو المتوقع. معروض كمدى لأنه يتغير كثير حسب سنة الأساس. ضعفه: كله على رقم النمو.'],
+      ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
+      ['FCF yield', q.price_free_cash_flow_ttm > 0 ? pct(1 / q.price_free_cash_flow_ttm, 1) : '—', 'كاش فعلي ÷ القيمة السوقية. ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير.'],
+      ['P/S', fmt(q.price_sales_current), 'للشركات اللي ما تربح. ضعفه: يتجاهل الهامش.'],
+      ['P/B · ROE', `${fmt(q.price_book_fq)} · ${fmt(q.return_on_equity, 0)}%`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
+      ['ROIC', Number.isFinite(q.return_on_invested_capital_fy) ? `${fmt(q.return_on_invested_capital_fy, 1)}%` : '—', 'العائد على رأس المال المستثمر: هل النمو مربح فعلاً؟'],
+      ['Altman Z', fmt(q.altman_z_score_ttm), 'خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر. ما يصلح للبنوك.'],
+      ['Piotroski', Number.isFinite(q.piotroski_f_score_ttm) ? `${q.piotroski_f_score_ttm}/9` : '—', '9 فحوصات لتحسن الأساسيات. الاستثمار الضخم ينزّله.'],
+      ['هدف المحللين', Number.isFinite(q.price_target_1y) ? `${fmt(q.price_target_1y, 2)} (${pct(q.price_target_1y / q.close - 1)})` : '—', 'متوسط السعر المستهدف خلال سنة. مرجع فقط.'],
+    ]
+    return `<div class="dgrid">
+      ${part('السعر', p.A, `<p>أرخص من <b class="n">${cheaper == null ? '—' : pct(cheaper).replace('+', '')}</b> من شهوره في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
+        <p>السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.</p>`)}
+      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
+      ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
+      ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
+      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (ربح، كاش، إيراد، هوامش، دين) مقارنة بالسنة اللي قبلها.</p>`)}
+    </div>
+    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
+    <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
+  }
+
+  function setMarket(m) {
+    state.market = m
+    state.open = null
+    render()
+    refresh()
+  }
+
+  // ---------------------------------------------------------------- events
+
+  document.querySelector('.tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-m]')
+    if (b && b.dataset.m !== state.market) setMarket(b.dataset.m)
+  })
+  $('addForm').addEventListener('submit', (e) => { e.preventDefault(); search($('q').value) })
+  $('results').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-add]')
+    if (b) addSymbol(b.dataset.add)
+  })
+  document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
+  $('refresh').addEventListener('click', () => refresh({ fresh: true }))
+  $('rows').addEventListener('click', (e) => {
+    const del = e.target.closest('button[data-del]')
+    if (del) { e.stopPropagation(); removeSymbol(del.dataset.del); return }
+    const row = e.target.closest('tr.row')
+    if (row) { state.open = state.open === row.dataset.sym ? null : row.dataset.sym; render() }
+  })
+  $('rows').addEventListener('keydown', (e) => {
+    const row = e.target.closest('tr.row')
+    if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); state.open = state.open === row.dataset.sym ? null : row.dataset.sym; render() }
+  })
+  document.querySelector('thead').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-sort]')
+    if (!b) return
+    const k = b.dataset.sort
+    state.sort = state.sort.key === k ? { key: k, dir: -state.sort.dir } : { key: k, dir: k === 'sym' ? 1 : -1 }
+    render()
+  })
+
+  // ---------------------------------------------------------------- boot
+
+  async function boot() {
+    render()
+    ;[db, mcp] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('mcp') ?? null])
+    if (!mcp) {
+      $('status').textContent = ''
+      notice('الصفحة تحتاج ربط TradingView من claude.ai عشان تجيب الأرقام. افتحها من claude.ai وهي مسجّلة دخول.', true)
+    }
+    if (db) {
+      for (const m of ['us', 'sa']) {
+        db.doc(`lists/${m}`).onSnapshot((snap) => {
+          const syms = snap.exists ? snap.data().symbols ?? [] : []
+          const changed = JSON.stringify(syms) !== JSON.stringify(state.lists[m])
+          state.lists[m] = [...syms]
+          if (changed && m === state.market) refresh()
+          else render()
+        }, () => notice('ما قدرت أقرأ القائمة المحفوظة.', true))
+      }
+    } else {
+      notice('الحفظ غير متاح في هذا العرض، فالقائمة ما بتنحفظ.', true)
+    }
+  }
+  boot()
+})()
+</script>

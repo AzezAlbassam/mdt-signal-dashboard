@@ -46,7 +46,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 8 (PROTOCOL-study8.md): below green line AND above 10-month average, fresh S&P 500 stocks → H1, H2 not confirmed (reports/study8.txt)
 
 - [x] Study 9 (PROTOCOL-study9.md): 0–10 score → H1 confirmed (mean IC +0.027, perm p 0.0046, Holm 0.0092; t-test across years p 0.17), H2 not confirmed (top−bottom −0.6%/yr, positive 10/14 years). reports/study9.txt
-- [ ] Study 9: private stock page (artifact, TradingView connector + db), score from engine/score.js
+- [x] Study 9: private stock page https://claude.ai/artifact/TUkdHCEyfRfBorus6K5MDa — pages/stocks.template.html + scripts/build-stocks-page.js (inlines engine/score.js); lists in db lists/us, lists/sa; history cache in db cache/<SYM>, refreshed every 14 days
 
 ## Counts
 (updated as work proceeds)
