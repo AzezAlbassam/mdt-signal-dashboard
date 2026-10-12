@@ -2,6 +2,8 @@
 // (Claude Code saves every tool call and its result verbatim as JSONL), so no number is
 // ever copied by hand.
 //   node scripts/study7-collect.js <transcript.jsonl> [more.jsonl ...]
+// OUT=<dir> writes there instead of data/fv (study 8 uses data/fv8); if <dir>/symbols.json
+// exists, only those symbols are written.
 // Writes data/fv/raw/fin/<SYM>.json, data/fv/raw/px/<SYM>.json, data/fv/sectors.json,
 // data/fv/gold-monthly.json, data/fv/silver-monthly.json and data/fv/fetch-log.json.
 import fs from 'node:fs'
@@ -10,7 +12,9 @@ import path from 'node:path'
 const files = process.argv.slice(2)
 if (files.length === 0) throw new Error('usage: study7-collect.js <transcript.jsonl> ...')
 
-const out = 'data/fv'
+const out = process.env.OUT ?? 'data/fv'
+const only = fs.existsSync(path.join(out, 'symbols.json')) && out !== 'data/fv' ? new Set(JSON.parse(fs.readFileSync(path.join(out, 'symbols.json'), 'utf8'))) : null
+const keep = (sym) => !only || only.has(sym)
 for (const d of ['raw/fin', 'raw/px']) fs.mkdirSync(path.join(out, d), { recursive: true })
 
 const calls = new Map() // tool_use_id -> { name, input }
@@ -58,6 +62,7 @@ for (const { id, text } of results) {
     j = { success: false, error: body.slice(0, 200) }
   }
 
+  if (input?.symbol && !keep(input.symbol) && !METALS[input.symbol]) continue
   if (name.endsWith('get-financial-history') && input.period === 'fy' && input.date_from === '2000-01-01') {
     const sym = input.symbol
     if (j.success && j.labels) {
@@ -90,13 +95,13 @@ for (const { id, text } of results) {
   }
 
   if (name.endsWith('get-symbol-data-batch') && j.data) {
-    for (const [sym, row] of Object.entries(j.data)) sectors[sym] = row
+    for (const [sym, row] of Object.entries(j.data)) if (keep(sym)) sectors[sym] = row
     for (const m of j.missing ?? []) log.sectorMissing.push(m)
   }
 }
 
 if (Object.keys(sectors).length) fs.writeFileSync(path.join(out, 'sectors.json'), JSON.stringify(sectors, null, 1))
-for (const [name, m] of Object.entries(metals)) fs.writeFileSync(path.join(out, `${name}-monthly.json`), JSON.stringify(m))
+if (!only) for (const [name, m] of Object.entries(metals)) fs.writeFileSync(path.join(out, `${name}-monthly.json`), JSON.stringify(m))
 fs.writeFileSync(path.join(out, 'fetch-log.json'), JSON.stringify(log, null, 1))
 console.log(`fundamentals written ${nFin}, prices written ${nPx}, sectors ${Object.keys(sectors).length}, metals ${Object.entries(metals).map(([k, m]) => `${k} ${m.bars.t.length} bars`).join(', ') || 'none'}`)
 console.log(`fin ok ${Object.values(log.fin).filter((x) => x === 'ok').length} / ${Object.keys(log.fin).length}; px ok ${Object.values(log.px).filter((x) => x === 'ok').length}`)

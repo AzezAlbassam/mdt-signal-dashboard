@@ -317,3 +317,43 @@ export function tTestGreater(xs) {
   const tail = 0.5 * ibeta(df / 2, 0.5, df / (df + t * t))
   return { t, df, p: t > 0 ? tail : 1 - tail }
 }
+
+// ---------------------------------------------------------------- study 8
+
+/**
+ * PROTOCOL-study8.md §3: close above the simple average of the last 10 monthly closes,
+ * this month included. Null when any of those 10 months is missing.
+ */
+export function trendUp(closes, month, n = 10) {
+  let sum = 0
+  for (let k = 0; k < n; k += 1) {
+    const c = closes.get(addMonths(month, -k))
+    if (!pos(c)) return null
+    sum += c
+  }
+  return closes.get(month) > sum / n
+}
+
+/** Exact one-sided sign-flip p-value that the mean of `xs` is above zero. */
+export function signFlipGreater(xs) {
+  const n = xs.length
+  const obs = xs.reduce((a, b) => a + b, 0) / n
+  let ge = 0
+  for (let mask = 0; mask < 1 << n; mask += 1) {
+    const s = xs.reduce((a, x, i) => a + (mask & (1 << i) ? -x : x), 0) / n
+    if (s >= obs - 1e-12) ge += 1
+  }
+  return ge / (1 << n)
+}
+
+/** Holm step-down adjustment; returns adjusted p-values in the input order. */
+export function holm(ps) {
+  const order = ps.map((p, i) => [p, i]).sort((a, b) => a[0] - b[0])
+  const out = new Array(ps.length)
+  let running = 0
+  order.forEach(([p, i], r) => {
+    running = Math.max(running, Math.min(1, (ps.length - r) * p))
+    out[i] = running
+  })
+  return out
+}

@@ -80,3 +80,20 @@ test('spearman and the t-test', () => {
   assert.ok(Math.abs(r.t - 2) < 1e-9)
   assert.ok(Math.abs(r.p - 0.03669) < 1e-4)
 })
+
+test('study 8: trend uses only the last 10 months up to this one', async () => {
+  const { trendUp, signFlipGreater, holm } = await import('../engine/fairvalue.js')
+  const c = new Map()
+  let m = '2015-01'
+  for (let i = 0; i < 24; i += 1) {
+    c.set(m, 10 + i)
+    m = addMonths(m, 1)
+  }
+  assert.equal(trendUp(c, '2015-12'), true)
+  const c2 = new Map(c)
+  c2.set('2016-01', 1) // a later month changes nothing
+  assert.equal(trendUp(c2, '2015-12'), true)
+  assert.equal(trendUp(c, '2015-09'), null) // only 9 months exist
+  assert.equal(signFlipGreater([1, 1, 1]), 1 / 8)
+  assert.deepEqual(holm([0.01, 0.04]), [0.02, 0.04])
+})
