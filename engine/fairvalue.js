@@ -64,7 +64,7 @@ export function parseFundamentals(resp) {
     const eps = v('eps')
     const ni = v('net_income')
     const shares = eps && ni && Math.sign(eps) === Math.sign(ni) ? ni / eps : null
-    out.push({ year, eps, rev: v('revenue'), fcf: v('fcf'), ebitda: v('ebitda'), debt: v('total_debt'), ni, shares })
+    out.push({ year, eps, rev: v('revenue'), fcf: v('fcf'), ebitda: v('ebitda'), debt: v('total_debt'), ni, shares, gp: v('gross_profit') })
   })
   return out.sort((a, b) => a.year - b.year)
 }
