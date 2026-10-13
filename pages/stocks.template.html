@@ -61,7 +61,14 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .notice.bad { border-color: var(--bad); }
 
 .tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-table { border-collapse: collapse; width: 100%; min-width: 1120px; }
+table { border-collapse: collapse; width: 100%; min-width: 1260px; }
+.chip { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; cursor: help; }
+.chip.red { color: var(--bad); } .chip.green { color: var(--good); } .chip.amber { color: var(--mid); }
+ul.news, ul.ideas { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14px; }
+ul.news a, ul.ideas a { color: var(--accent); }
+ul.ideas li { display: grid; gap: 2px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+ul.ideas li:last-child { border-bottom: 0; }
+ul.ideas p { font-size: 13.5px; }
 th, td { padding: 10px 12px; text-align: start; border-bottom: 1px solid var(--line); vertical-align: middle; }
 th { font-size: 12.5px; color: var(--muted); font-weight: 600; background: var(--soft); white-space: nowrap; }
 th button { background: none; border: 0; color: inherit; font-weight: 600; padding: 0; }
@@ -135,6 +142,7 @@ tbody tr.row:hover { background: var(--soft); }
         <th><button data-sort="fair" title="القيمة العادلة من مؤشر القيمة العادلة: طرق التقييم المناسبة لنوع الشركة">القيمة العادلة</button></th>
         <th><button data-sort="upside" title="الفرق بين القيمة العادلة والسعر">الفرق</button></th>
         <th><button data-sort="score">الدرجة من 10</button></th>
+        <th><button data-sort="gap" title="الفرق بين النمو اللي يفترضه السعر والنمو المحقق، وتوقعات المحللين">التوقعات</button></th>
         <th><button data-sort="gstar" title="كم نمو سنوي في التدفق النقدي يفترضه السعر الحالي">النمو المفترض</button></th>
         <th><button data-sort="greal" title="نمو الإيراد السنوي لآخر 3 سنوات">النمو الفعلي</button></th>
         <th><button data-sort="pe">P/E</button></th>
@@ -142,11 +150,14 @@ tbody tr.row:hover { background: var(--soft); }
         <th><button data-sort="z" title="خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر">Altman Z</button></th>
         <th></th>
       </tr></thead>
-      <tbody id="rows"><tr><td colspan="11" class="dim">جاري التحميل…</td></tr></tbody>
+      <tbody id="rows"><tr><td colspan="12" class="dim">جاري التحميل…</td></tr></tbody>
     </table>
   </div>
 
   <section class="about">
+    <h2>أحدث الأفكار المنشورة</h2>
+    <p class="dim">أفكار استثمار عن أسهمك من Value Investors Club وReddit، بتاريخ النشر والسعر وقتها. تتحدث تلقائياً كل أسبوعين. محتوى VIC الكامل للأعضاء، فاللي يظهر هنا العنوان والتاريخ والسعر والرابط وملخص قصير إذا توفر.</p>
+    <div id="latestIdeas"><p class="dim">جاري التحميل…</p></div>
     <h2>كيف تنحسب الدرجة</h2>
     <div class="legend">
       <div><i style="background:var(--seg-a)"></i><p><b>السعر (0–2):</b> هل السهم أرخص من عادته في آخر 5 سنوات؟ وهل النمو اللي يفترضه سعره معقول مقارنة بنموه الفعلي؟</p></div>

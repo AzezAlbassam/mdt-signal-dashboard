@@ -1,18 +1,18 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
-  const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols' }
+  const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
   const STALE_DAYS = 14
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
-    'debt_to_equity', 'net_debt_fq']
+    'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq']
   const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'PEG', dcf: 'DCF (التدفق النقدي)', graham: 'رقم Graham', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'الكاش الصافي للسهم', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
     'Unprofitable growth': 'تنمو وتخسر', 'Pre-revenue': 'بدون إيرادات' }
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -156,6 +156,7 @@
     state.scores[sym] = { ...s, f0: known[known.length - 1], known }
     const fv = fairValuesAt(funds, closes, q.sector, month)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
+    state.exp[sym] = expectationsAt(funds, closes, month)
   }
 
   let busy = false
@@ -284,6 +285,7 @@
       case 'pe': return q.price_earnings_ttm
       case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
       case 'z': return q.altman_z_score_ttm
+      case 'gap': return state.exp[sym]?.gap
     }
   }
 
@@ -343,11 +345,11 @@
     const syms = visible()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
     if (!state.lists[state.market].length) {
-      body.innerHTML = '<tr><td colspan="11" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
+      body.innerHTML = '<tr><td colspan="12" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
       return
     }
     if (!syms.length) {
-      body.innerHTML = '<tr><td colspan="11" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
+      body.innerHTML = '<tr><td colspan="12" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
     body.innerHTML = syms.map((sym) => {
@@ -361,6 +363,7 @@
         <td class="n">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}">${pct(up)}</td>
         <td>${scoreCell(sym)}</td>
+        <td>${expCell(sym)}</td>
         <td class="n">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
         <td class="n">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
         <td class="n">${fmt(q?.price_earnings_ttm)}</td>
@@ -368,8 +371,74 @@
         <td class="n">${fmt(q?.altman_z_score_ttm)}</td>
         <td><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
-      return main + (state.open === sym ? `<tr class="detail"><td colspan="11">${detail(sym)}</td></tr>` : '')
+      return main + (state.open === sym ? `<tr class="detail"><td colspan="12">${detail(sym)}</td></tr>` : '')
     }).join('')
+  }
+
+  // Analysts' next fiscal year against the last 12 months (information only: no history to test).
+  function analysts(q) {
+    const rev = q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
+    const eps = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
+    return { rev, eps, falling: (rev != null && rev < 0) || (eps != null && eps < -0.1) }
+  }
+
+  function expCell(sym) {
+    const e = state.exp[sym]
+    const q = state.quotes[sym]
+    const chips = []
+    if (e?.flag === 'red') chips.push('<span class="chip red" title="السعر يفترض نمو أعلى بـ 10 نقاط أو أكثر من اللي تحققه الشركة، ونموها يتباطأ. اختبار: ما تنبأ بأداء أسوأ.">يتوقع أكثر من أدائها</span>')
+    if (e?.flag === 'green') chips.push('<span class="chip green" title="السعر يفترض نمو أقل بـ 10 نقاط أو أكثر من اللي تحققه الشركة، ونموها ما يتباطأ. اختبار: ما تنبأ بأداء أفضل.">السوق متشائم</span>')
+    if (q && analysts(q).falling) chips.push('<span class="chip amber" title="المحللين يتوقعون إيرادات أقل أو ربح أقل بأكثر من 10% في السنة المالية الجاية. معلومة فقط.">المحللين يتوقعون تراجع</span>')
+    return chips.join(' ') || '<span class="dim">—</span>'
+  }
+
+  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
+
+  function expBlock(sym) {
+    const e = state.exp[sym]
+    const q = state.quotes[sym] || {}
+    const a = analysts(q)
+    const flagTxt = !e ? 'ما ينحسب (التدفق النقدي الحر سالب).'
+      : e.flag === 'red' ? '<b class="lo">يتوقع أكثر من أدائها</b>: السعر يفترض نمو أعلى بكثير من المحقق، والنمو يتباطأ.'
+      : e.flag === 'green' ? '<b class="hi">السوق متشائم</b>: السعر يفترض نمو أقل بكثير من المحقق، والنمو ما يتباطأ.'
+      : 'لا تنبيه: الفرق بين المفترض والمحقق أقل من 10 نقاط، أو ما فيه تباطؤ.'
+    const news = state.news[sym]
+    const newsHtml = news === undefined ? '<p class="dim">جاري جلب الأخبار…</p>'
+      : news?.error ? `<p class="dim">${esc(news.error)}</p>`
+      : news.length ? `<ul class="news">${news.map((n) => `<li><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="dim n">${dateOf(n.published)} · ${esc(n.provider?.name ?? '')}</span></li>`).join('')}</ul>`
+      : '<p class="dim">ما فيه أخبار حديثة.</p>'
+    return `<div class="part" style="grid-column:1/-1">
+      <h3><span>التوقعات والمحفزات</span><span class="n dim">التقرير الجاي ${dateOf(q.earnings_release_next_date)}</span></h3>
+      <p>${flagTxt}</p>
+      <p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>
+      <p>المحللين للسنة المالية الجاية: الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
+      <p class="dim">اختبرنا تنبيهي "يتوقع أكثر من أدائها" و"السوق متشائم" على 819 سهم (2012–2025) وما تنبأوا بأداء السنة التالية. معروضة كمعلومة تساعدك تسأل السؤال الصح، مو كإشارة.</p>
+      <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
+    </div>`
+  }
+
+  function ideasBlock(sym) {
+    const list = (state.ideas[sym] ?? []).slice().sort((x, y) => (x.date < y.date ? 1 : -1))
+    const q = state.quotes[sym] || {}
+    if (!list.length) return '<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span></h3><p class="dim">ما فيه أفكار مسجلة لهذا السهم للحين. تنضاف تلقائياً من Value Investors Club وReddit كل أسبوعين.</p></div>'
+    return `<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span><span class="n dim">${list.length}</span></h3>
+      <ul class="ideas">${list.map((i) => {
+        const since = i.priceThen > 0 && q.close > 0 ? q.close / i.priceThen - 1 : null
+        return `<li><div><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
+          ${i.summary ? `<p>${esc(i.summary)}</p>` : ''}
+          ${i.priceThen ? `<p class="dim">السعر وقتها <span class="n">${fmt(i.priceThen, 2)}</span> · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
+      }).join('')}</ul></div>`
+  }
+
+  async function loadNews(sym) {
+    if (!mcp || state.news[sym] !== undefined) return
+    try {
+      const p = await call(T.news, { symbol: sym, limit: 6 }, { staleTime: 300000, gcTime: 3600000 })
+      state.news[sym] = (p?.data?.headlines ?? []).slice(0, 6)
+    } catch (e) {
+      state.news[sym] = { error: explainError(e) }
+    }
+    if (state.open === sym) render()
   }
 
   function fairBlock(sym) {
@@ -393,7 +462,7 @@
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -424,6 +493,8 @@
     ]
     return `<div class="dgrid">
       ${fairBlock(sym)}
+      ${expBlock(sym)}
+      ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من <b class="n">${cheaper == null ? '—' : pct(cheaper).replace('+', '')}</b> من شهوره في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
         <p>السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.</p>`)}
       ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
@@ -433,6 +504,15 @@
     </div>
     <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
+  }
+
+  function renderLatestIdeas(all) {
+    const box = $('latestIdeas')
+    if (!box) return
+    const list = all.filter((i) => i.date).sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 25)
+    box.innerHTML = list.length
+      ? `<ul class="ideas">${list.map((i) => `<li><div><b class="n">${esc((i.sym || '').split(':')[1] || i.sym)}</b> · <a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date)}</span></span></div>${i.summary ? `<p>${esc(i.summary)}</p>` : ''}</li>`).join('')}</ul>`
+      : '<p class="dim">ما فيه أفكار مسجلة للحين.</p>'
   }
 
   function setMarket(m) {
@@ -459,7 +539,7 @@
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
   $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
-  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render() }
+  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')
     if (del) { e.stopPropagation(); removeSymbol(del.dataset.del); return }
@@ -493,6 +573,15 @@
     }
     $('status').textContent = 'جاري قراءة البيانات المحفوظة…'
     await loadCacheFromDb().catch(() => {})
+    try {
+      db.collection('ideas').limit(1000).onSnapshot((snap) => {
+        const by = {}
+        for (const d of snap.docs) { const v = d.data(); (by[v.sym] ??= []).push(v) }
+        state.ideas = by
+        renderLatestIdeas(snap.docs.map((d) => d.data()))
+        render()
+      }, () => renderLatestIdeas([]))
+    } catch { renderLatestIdeas([]) }
     db.doc('meta/watchlists').onSnapshot((snap) => {
       const d = snap.exists ? snap.data() : {}
       state.groups = { us: d.us ?? [], sa: d.sa ?? [] }

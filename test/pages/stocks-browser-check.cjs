@@ -31,17 +31,20 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
     const store = {
       'lists/us': { symbols: ['NASDAQ:META', 'NASDAQ:AAPL', 'NYSE:JPM', 'NASDAQ:NOPE'] },
       'lists/sa': { symbols: ['TADAWUL:1120'] },
+      'ideas/x1': { sym: 'NYSE:JPM', source: 'VIC', title: 'JPMorgan long thesis', url: 'https://valueinvestorsclub.com/idea/x', date: '2024-10-04', priceThen: 200, side: 'long', summary: 'Test summary' },
       'meta/watchlists': { us: [{ name: 'Investments', symbols: ['NASDAQ:META'] }, { name: 'Stocks', symbols: ['NASDAQ:AAPL', 'NYSE:JPM'] }], sa: [] },
       'cache/NASDAQ:META': { sym: 'NASDAQ:META', fin: fx['NASDAQ:META'].fin, px: { t: fx['NASDAQ:META'].px.bars.t, c: fx['NASDAQ:META'].px.bars.c }, fetchedAt: Date.now() },
     }
     window.__calls = []
     const snapOf = (p) => ({ id: p.split('/').pop(), exists: !!store[p], data: () => store[p] })
     const query = (coll, filt = null, lim = 1000) => ({
+      onSnapshot: (next) => { setTimeout(async () => next(await query(coll, filt, lim).get()), 10); return () => {} },
       orderBy: () => query(coll, filt, lim),
       limit: (n) => query(coll, filt, n),
       where: (f, op, v) => query(coll, v, lim),
       get: async () => {
         const docs = Object.keys(store).filter((k) => k.startsWith(coll + '/')).map(snapOf).filter((d) => !filt || d.data().sym > filt).sort((a, b) => (a.data().sym < b.data().sym ? -1 : 1)).slice(0, lim)
+        docs.forEach((d) => { d.data = ((v) => () => v)(d.data()) })
         return { docs, size: docs.length }
       },
     })
@@ -58,6 +61,7 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
+        if (tool.endsWith('get-news')) return { payload: { data: { headlines: [{ title: 'Example headline for ' + input.symbol, link: 'https://example.com', published: 1790913837, provider: { name: 'Test' } }] } } }
         if (tool.endsWith('search-symbols')) return { payload: { data: { symbols: [{ symbol: 'TADAWUL:1212', description: 'Astra Industrial Group', type: 'stock' }] } } }
       },
     }
@@ -70,7 +74,7 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   console.log('STATUS:', await page.textContent('#status'))
   console.log('NOTICE:', await page.$eval('#notice', (n) => (n.hidden ? '(hidden)' : n.textContent)))
   console.log('ROWS:', await rows())
-  console.log('CALLS:', await page.evaluate(() => window.__calls))
+  console.log('CALLS:', await page.evaluate(() => window.__calls)); console.log('EARLY:', logs)
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
   await page.selectOption('#group', '')
@@ -78,7 +82,9 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   console.log('FILTER jpm:', await rows())
   await page.click('#rows tr.row')
   await page.waitForTimeout(200)
-  console.log('DETAIL JPM:', (await page.$eval('#rows tr.detail', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 500))
+  await page.waitForTimeout(300)
+  console.log('DETAIL JPM:', (await page.$eval('#rows tr.detail', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 1600))
+  console.log('LATEST IDEAS:', (await page.$eval('#latestIdeas', (t) => t.innerText)).replace(/\s+/g, ' '))
   await page.fill('#filter', '')
   await page.click('#tab-sa')
   await page.waitForTimeout(1200)
