@@ -96,3 +96,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-12 — study 8 done: trend filter did not help; fair-value.pine unchanged apart from its header.
 - 2026-10-12 — study 9 done; next: the stock page.
 - 2026-10-13 — stock page v3: fair value column, watchlist filter; db seeded with all 703 US watchlist stocks (lists/us), 28 watchlist groups (meta/watchlists) and 756 saved histories (cache/<SYM>, fetchedAt 2026-10-12, refreshed by the page after 14 days).
+- 2026-10-13 — stock page v7: expectation flags (study 10, information only), analysts' next year, earnings date, news, VIC ideas (22 seeded, collection `ideas`). Routine trig_01PaBTq8Mq1TbaNLVpdhQCWG adds new VIC ideas on the 1st and 15th (07:47 Riyadh). Reddit is not reachable from the search tool.
