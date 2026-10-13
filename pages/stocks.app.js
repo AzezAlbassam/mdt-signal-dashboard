@@ -101,7 +101,9 @@
     }
   }
 
-  const fresh = (d) => d && Date.now() - d.fetchedAt < STALE_DAYS * 864e5
+  // Fresh = fetched in the last 14 days AND holding monthly prices (or the page already tried
+  // to get them). Stored histories without prices are fetched again, once.
+  const fresh = (d) => d && Date.now() - d.fetchedAt < STALE_DAYS * 864e5 && (d.missing || d.px?.t?.length > 0 || d.pxTried)
 
   async function loadHistory(sym) {
     const [fin, px] = await Promise.all([
@@ -109,7 +111,7 @@
       call(T.px, { symbol: sym, interval: 'M', count: 72, format: 'columns' }).catch(() => null),
     ])
     const doc = fin?.labels
-      ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, fetchedAt: Date.now() }
+      ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, pxTried: true, fetchedAt: Date.now() }
       : { sym, missing: true, fetchedAt: Date.now() }
     state.cache[sym] = doc
     if (db) await db.doc(`cache/${sym}`).set(doc).catch(() => {})
@@ -309,7 +311,7 @@
     const s = state.scores[sym]
     if (!s) return state.errors[sym] ? `<span class="dim">${esc(state.errors[sym])}</span>` : '<span class="skel"></span>'
     if (s.total == null) {
-      const why = { 'pre-revenue': 'بدون إيرادات كافية', 'stale fundamentals': 'بيانات مالية قديمة' }[s.reason] || 'بيانات ناقصة'
+      const why = { 'pre-revenue': 'إيراداته أقل من 1% من قيمته السوقية', 'stale fundamentals': 'بيانات مالية قديمة' }[s.reason] || 'بيانات ناقصة'
       return `<span class="dim">${why}</span>`
     }
     const segs = ['A', 'B', 'C', 'D', 'E'].map((k, i) => `<i title="${['السعر', 'الجودة', 'النمو', 'الأمان', 'الاتجاه'][i]}: ${fmt(s.parts[k], 1)} من 2"><b style="height:${(s.parts[k] / 2) * 100}%;background:var(${SEG[i]})"></b></i>`).join('')
@@ -391,7 +393,7 @@
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لشركة بدون إيرادات كافية.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
