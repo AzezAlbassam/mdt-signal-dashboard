@@ -93,3 +93,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-12 — study 7 done: reports/study7*.txt; pine/metal-log-regression.pine (gold + silver).
 - 2026-10-12 — study 8 done: trend filter did not help; fair-value.pine unchanged apart from its header.
 - 2026-10-12 — study 9 done; next: the stock page.
+- 2026-10-13 — stock page v3: fair value column, watchlist filter; db seeded with all 703 US watchlist stocks (lists/us), 28 watchlist groups (meta/watchlists) and 756 saved histories (cache/<SYM>, fetchedAt 2026-10-12, refreshed by the page after 14 days).
