@@ -48,6 +48,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 9 (PROTOCOL-study9.md): 0–10 score → H1 confirmed (mean IC +0.027, perm p 0.0046, Holm 0.0092; t-test across years p 0.17), H2 not confirmed (top−bottom −0.6%/yr, positive 10/14 years). reports/study9.txt
 - [x] Study 9: private stock page https://claude.ai/artifact/TUkdHCEyfRfBorus6K5MDa — pages/stocks.template.html + scripts/build-stocks-page.js (inlines engine/score.js); lists in db lists/us, lists/sa; history cache in db cache/<SYM>, refreshed every 14 days
 
+- [x] Study 10 (PROTOCOL-study10.md): RED/GREEN expectation flags → H1, H2 not confirmed (d1 −0.1%, d2 +0.1%; Holm p 0.95). reports/study10.txt
+
 ## Counts
 (updated as work proceeds)
 
