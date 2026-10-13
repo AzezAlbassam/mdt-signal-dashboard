@@ -420,13 +420,22 @@
   function ideasBlock(sym) {
     const list = (state.ideas[sym] ?? []).slice().sort((x, y) => (x.date < y.date ? 1 : -1))
     const q = state.quotes[sym] || {}
-    if (!list.length) return '<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span></h3><p class="dim">ما فيه أفكار مسجلة لهذا السهم للحين. تنضاف تلقائياً من Value Investors Club وReddit كل أسبوعين.</p></div>'
+    if (!list.length) return '<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span></h3><p class="dim">ما فيه أفكار مسجلة لهذا السهم للحين. يتم البحث في Value Investors Club يوم 1 و15 من كل شهر.</p></div>'
     return `<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span><span class="n dim">${list.length}</span></h3>
       <ul class="ideas">${list.map((i) => {
-        const since = i.priceThen > 0 && q.close > 0 ? q.close / i.priceThen - 1 : null
+        // Split-adjusted close of the idea's month from TradingView when we have it; the
+        // price the source quotes can predate a split.
+        const px = state.cache[sym]?.px
+        let adj = null
+        if (i.date && px?.t?.length) {
+          const k = px.t.findIndex((t) => monthKey(t) === i.date.slice(0, 7))
+          if (k >= 0 && px.c[k] > 0) adj = px.c[k]
+        }
+        const base = adj ?? i.priceThen
+        const since = base > 0 && q.close > 0 ? q.close / base - 1 : null
         return `<li><div><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
           ${i.summary ? `<p>${esc(i.summary)}</p>` : ''}
-          ${i.priceThen ? `<p class="dim">السعر وقتها <span class="n">${fmt(i.priceThen, 2)}</span> · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
+          ${base ? `<p class="dim">السعر وقتها <span class="n">${fmt(base, 2)}</span>${adj ? ' (معدّل للتقسيمات، إغلاق ذاك الشهر)' : ' (كما ذكره المصدر)'} · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
       }).join('')}</ul></div>`
   }
 
