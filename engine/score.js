@@ -4,7 +4,7 @@
 // At month "YYYY-MM" only fiscal years public by then (May of Y+1, as in study 7) and
 // closes up to that month are read.
 
-import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, PS_MAX } from './fairvalue.js'
+import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, MULT_MAX } from './fairvalue.js'
 
 /** 0 at a, 1 at b, straight in between, clamped (falls when a > b). */
 export const lin = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)))
@@ -45,8 +45,8 @@ export function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  *
  * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
  * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
- * loans, so implied growth, cash conversion and the two FCF checks said nothing), and P/S
- * months above PS_MAX are left out of the price history.
+ * loans, so implied growth, cash conversion and the two FCF checks said nothing), and months
+ * with a multiple above MULT_MAX are left out of the price history.
  */
 export function scoreAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
@@ -75,7 +75,7 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   for (const key of MULTS) {
     const v = now?.[key]
     if (!pos(v)) continue
-    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && !(key === 'ps' && x > PS_MAX))
+    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && x <= MULT_MAX)
     if (hist.length < 12) continue
     const below = hist.filter((x) => x < v).length + 0.5 * hist.filter((x) => x === v).length
     shares.push(below / hist.length)

@@ -101,9 +101,9 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   "FY usable from May of Y+1" rule, so 34 stocks with mid-year fiscal years (MU, MSFT, COST, LRCX…) showed last year's
   numbers (MU fair value ≈ 10% of price) → engine `live` flag, page counts every reported year; (2) financials:
   FCF-based measures (implied growth, cash conversion, two direction checks, expectation flags) dropped, and analysts'
-  revenue not compared for banks (gross vs net revenue gave −30…−45%); (3) P/S history months above 100 skipped
+  revenue not compared for banks (gross vs net revenue gave −30…−45%); (3) own-history months with any multiple above 100 skipped (P/S, P/E, EV/EBITDA)
   (ramping-revenue stocks had fair values 20–90× price); (4) page uses the quote's share count when NI÷EPS is >1.5×
   off (MCHP preferred dividends). POST-HOC re-runs: reports/study{7,9,10}-posthoc-fixes.txt — conclusions unchanged
-  (study 9 H1 still CONFIRMED, p 0.0053 / Holm 0.0106).
+  (study 9 H1 still CONFIRMED, p 0.0040 / Holm 0.0080; study 7 IC −0.017, study 10 flags still not confirmed).
 - 2026-10-14 — 5-year price scenarios (engine/projection.js, untested, shown as scenarios). Saudi main market (271)
   being added to lists/sa; histories seeded with scripts/seed-cache.js.

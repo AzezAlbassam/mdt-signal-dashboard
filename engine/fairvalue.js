@@ -28,10 +28,11 @@ const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
 
 export const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
 
-// POST-HOC fix (2026-10-14): a month whose P/S is above 100 (revenue under 1% of market value,
-// the same line profileOf draws for pre-revenue) is no anchor for a fair P/S. Before this,
-// stocks whose revenue ramped up from almost nothing got fair values 20–90× their price.
-export const PS_MAX = 100
+// POST-HOC fix (2026-10-14): a month whose multiple is above 100 (P/S: revenue under 1% of
+// market value, the line profileOf draws for pre-revenue; P/E or EV/EBITDA: earnings near
+// zero) is no anchor for a "normal" multiple. Before this, stocks whose revenue or profit
+// ramped up from almost nothing got fair values 20–90× their price (JOBY, PTON, CVNA).
+export const MULT_MAX = 100
 
 const pos = (x) => Number.isFinite(x) && x > 0
 
@@ -171,7 +172,7 @@ export function fairValuesAt(funds, closes, sector, month, live = false) {
     const c = closes.get(mk)
     if (!pos(c)) continue
     const mult = multiplesAt(stateAt(funds, mk), c)
-    for (const key of Object.keys(hist)) if (mult[key] != null && !(key === 'ps' && mult.ps > PS_MAX)) hist[key].push(mult[key])
+    for (const key of Object.keys(hist)) if (mult[key] != null && mult[key] <= MULT_MAX) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
 

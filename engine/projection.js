@@ -9,7 +9,7 @@
 // Unprofitable companies use sales per share × P/S the same way. Pre-revenue companies (or
 // loss-makers above 20× sales) get no price path, only the revenue they would need in 5 years.
 // Shares are held at today's count (buybacks and dilution are not modelled).
-import { stateAt, addMonths, PARAMS, PS_MAX } from './fairvalue.js'
+import { stateAt, addMonths, PARAMS, MULT_MAX } from './fairvalue.js'
 
 export const YEARS = 5
 const NAMES = ['bear', 'base', 'bull']
@@ -57,7 +57,7 @@ export function projectAt(funds, closes, month, { revGrowthNext = null, revNow =
     const s = pos(c) && stateAt(funds, mk)
     if (!s) continue
     const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
-    if (pos(x) && !(!earnings && x > PS_MAX)) hist.push(x)
+    if (pos(x) && x <= MULT_MAX) hist.push(x)
   }
   const lim = earnings ? PE : PS
   const normal = hist.length >= 12 ? clamp(median(hist), lim.lo, lim.hi) : lim.dflt

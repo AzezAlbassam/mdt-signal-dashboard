@@ -235,7 +235,7 @@ details.proj[open] summary .dim { display: none; }
     </div>
     <div class="result">
       <b>تصحيحات 14 أكتوبر 2026 (بعد الاختبار)</b>
-      <p>1) الشركات اللي سنتها المالية تخلص نص السنة (مايكروسوفت، مايكرون، كوستكو، بروكتر…) كانت الصفحة تاخذ أرقام السنة اللي قبل، فطلعت قيمة مايكرون العادلة عُشر سعرها. الحين تاخذ آخر سنة منشورة. 2) البنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فشلناه من الدرجة والتنبيهات، وتوقع إيرادات المحللين للبنوك ما ينقارن بإيرادات TradingView (كان يطلع −30% إلى −45% لكل بنك). 3) الشركات اللي بدأت إيراداتها من شبه صفر كانت قيمتها العادلة 20–90 ضعف سعرها، لأن مكرر مبيعاتها القديم بالآلاف. الأشهر اللي مكرر المبيعات فيها فوق 100 ما تنحسب الحين. 4) إذا عدد الأسهم المحسوب من الأرباح بعيد عن عدد الأسهم الفعلي (أسهم ممتازة أو ربح شبه صفر)، تستخدم الصفحة العدد الفعلي.</p>
+      <p>1) الشركات اللي سنتها المالية تخلص نص السنة (مايكروسوفت، مايكرون، كوستكو، بروكتر…) كانت الصفحة تاخذ أرقام السنة اللي قبل، فطلعت قيمة مايكرون العادلة عُشر سعرها. الحين تاخذ آخر سنة منشورة. 2) البنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فشلناه من الدرجة والتنبيهات، وتوقع إيرادات المحللين للبنوك ما ينقارن بإيرادات TradingView (كان يطلع −30% إلى −45% لكل بنك). 3) الشركات اللي بدأت إيراداتها من شبه صفر كانت قيمتها العادلة 20–90 ضعف سعرها، لأن مكررها القديم بالآلاف. نفس الشي مع الأرباح اللي كانت شبه صفر. الحين أي شهر مكرره (المبيعات أو الأرباح أو EBITDA) فوق 100 ما ينحسب في "متوسط السهم". 4) إذا عدد الأسهم المحسوب من الأرباح بعيد عن عدد الأسهم الفعلي (أسهم ممتازة أو ربح شبه صفر)، تستخدم الصفحة العدد الفعلي.</p>
       <p class="dim">أعدنا اختبار الدرجة بعد التصحيح 2 و3: النتيجة نفسها (الارتباط +0.03، مؤكد؛ أعلى خُمس ما تفوّق). ونتائج القيمة العادلة والتنبيهات بعد التصحيح بعد ما تغيّرت: ما تنبأت.</p>
     </div>
     <h2>توقع السعر لـ 5 سنوات</h2>
@@ -246,7 +246,7 @@ details.proj[open] summary .dim { display: none; }
 
 <script>
 // ---- engine/fairvalue.js
-const { METHODS, WEIGHTS, PARAMS, PS_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
+const { METHODS, WEIGHTS, PARAMS, MULT_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
 // Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
 // annual fundamentals and monthly closes, so it can be scored against later returns.
 //
@@ -277,10 +277,11 @@ const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
 
 const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
 
-// POST-HOC fix (2026-10-14): a month whose P/S is above 100 (revenue under 1% of market value,
-// the same line profileOf draws for pre-revenue) is no anchor for a fair P/S. Before this,
-// stocks whose revenue ramped up from almost nothing got fair values 20–90× their price.
-const PS_MAX = 100
+// POST-HOC fix (2026-10-14): a month whose multiple is above 100 (P/S: revenue under 1% of
+// market value, the line profileOf draws for pre-revenue; P/E or EV/EBITDA: earnings near
+// zero) is no anchor for a "normal" multiple. Before this, stocks whose revenue or profit
+// ramped up from almost nothing got fair values 20–90× their price (JOBY, PTON, CVNA).
+const MULT_MAX = 100
 
 const pos = (x) => Number.isFinite(x) && x > 0
 
@@ -420,7 +421,7 @@ function fairValuesAt(funds, closes, sector, month, live = false) {
     const c = closes.get(mk)
     if (!pos(c)) continue
     const mult = multiplesAt(stateAt(funds, mk), c)
-    for (const key of Object.keys(hist)) if (mult[key] != null && !(key === 'ps' && mult.ps > PS_MAX)) hist[key].push(mult[key])
+    for (const key of Object.keys(hist)) if (mult[key] != null && mult[key] <= MULT_MAX) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
 
@@ -614,7 +615,7 @@ function holm(ps) {
   return out
 }
 
-return { METHODS, WEIGHTS, PARAMS, PS_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
+return { METHODS, WEIGHTS, PARAMS, MULT_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
 })();
 
 // ---- engine/score.js
@@ -665,8 +666,8 @@ function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  *
  * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
  * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
- * loans, so implied growth, cash conversion and the two FCF checks said nothing), and P/S
- * months above PS_MAX are left out of the price history.
+ * loans, so implied growth, cash conversion and the two FCF checks said nothing), and months
+ * with a multiple above MULT_MAX are left out of the price history.
  */
 function scoreAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
@@ -695,7 +696,7 @@ function scoreAt(funds, closes, sector, month, live = false) {
   for (const key of MULTS) {
     const v = now?.[key]
     if (!pos(v)) continue
-    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && !(key === 'ps' && x > PS_MAX))
+    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && x <= MULT_MAX)
     if (hist.length < 12) continue
     const below = hist.filter((x) => x < v).length + 0.5 * hist.filter((x) => x === v).length
     shares.push(below / hist.length)
@@ -862,7 +863,7 @@ function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null }
     const s = pos(c) && stateAt(funds, mk)
     if (!s) continue
     const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
-    if (pos(x) && !(!earnings && x > PS_MAX)) hist.push(x)
+    if (pos(x) && x <= MULT_MAX) hist.push(x)
   }
   const lim = earnings ? PE : PS
   const normal = hist.length >= 12 ? clamp(median(hist), lim.lo, lim.hi) : lim.dflt
