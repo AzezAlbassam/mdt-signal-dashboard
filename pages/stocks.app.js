@@ -270,7 +270,14 @@
 
   // ---------------------------------------------------------------- render
 
-  const SEG = ['--seg-a', '--seg-b', '--seg-c', '--seg-d', '--seg-e']
+  // The score's five parts: key, name, colour, what it measures (one line each).
+  const PARTS = [
+    ['A', 'السعر', '--seg-a', 'هل السهم أرخص من عادته في آخر 5 سنوات، وهل النمو اللي يفترضه سعره معقول مقارنة بنموه الفعلي.'],
+    ['B', 'الجودة', '--seg-b', 'هامش الربح، وكم من الأرباح يتحول لكاش فعلي.'],
+    ['C', 'النمو', '--seg-c', 'نمو الإيرادات وربح السهم سنوياً في آخر 3 سنوات.'],
+    ['D', 'الأمان', '--seg-d', 'الدين مقارنة بالأرباح، وكم سنة خسارة في آخر 5 سنوات.'],
+    ['E', 'الاتجاه', '--seg-e', 'هل أرقام الشركة (ربح، كاش، إيراد، هوامش، دين) تحسنت عن السنة اللي قبلها.'],
+  ]
   const tone = (x) => (x >= 7 ? 'hi' : x >= 4 ? 'md' : 'lo')
   const upside = (sym) => {
     const f = state.fair[sym]
@@ -323,8 +330,17 @@
       const why = { 'pre-revenue': 'إيراداته أقل من 1% من قيمته السوقية', 'stale fundamentals': 'بيانات مالية قديمة' }[s.reason] || 'بيانات ناقصة'
       return `<span class="dim">${why}</span>`
     }
-    const segs = ['A', 'B', 'C', 'D', 'E'].map((k, i) => `<i title="${['السعر', 'الجودة', 'النمو', 'الأمان', 'الاتجاه'][i]}: ${fmt(s.parts[k], 1)} من 2"><b style="height:${(s.parts[k] / 2) * 100}%;background:var(${SEG[i]})"></b></i>`).join('')
+    const segs = PARTS.map(([k, , c]) => `<i><b style="height:${(s.parts[k] / 2) * 100}%;background:var(${c})"></b></i>`).join('')
     return `<div class="score"><span class="big n ${tone(s.total)}">${fmt(s.total, 1)}</span><span class="segs">${segs}</span></div>`
+  }
+
+  // Hover box over a score: every part with its colour, value and what it measures.
+  function scoreTip(sym) {
+    const s = state.scores[sym]
+    if (!s?.parts) return ''
+    return `<b>الدرجة <span class="n ${tone(s.total)}">${fmt(s.total, 1)}</span> من 10 = مجموع 5 أجزاء، كل جزء من 0 إلى 2</b>
+      ${PARTS.map(([k, name, c, what]) => `<div class="tip-row"><i style="background:var(${c})"></i><span><b>${name}</b> ${what}</span><b class="n">${fmt(s.parts[k], 1)} / 2</b></div>`).join('')}
+      <span class="dim">اضغط على السهم تشوف أرقام كل جزء.</span>`
   }
 
   let pending = false
@@ -530,7 +546,7 @@
     const pcts = ['pe', 'ps', 'ev', 'pfcf'].map((k) => d[`pct_${k}`]).filter(Number.isFinite)
     const cheaper = pcts.length ? 1 - pcts.reduce((a, b) => a + b, 0) / pcts.length : null
     const p = s.parts || {}
-    const part = (title, val, html) => `<div class="part"><h3><span>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 1) + ' / 2'}</span></h3>${html}</div>`
+    const part = (title, val, html) => `<div class="part"><h3><span><i class="sw" style="background:var(${PARTS.find((x) => x[1] === title)[2]})"></i>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 1) + ' / 2'}</span></h3>${html}</div>`
     const growthNext = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
     const growthFy = Number.isFinite(q.earnings_per_share_forecast_next_fy) && f0.eps > 0 ? q.earnings_per_share_forecast_next_fy / f0.eps - 1 : null
     const pegs = [growthNext, growthFy].filter((g) => g > 0).map((g) => q.price_earnings_ttm / (100 * g)).filter(Number.isFinite)
@@ -598,6 +614,20 @@
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
+  const tip = $('tip')
+  const canHover = matchMedia('(hover: hover)').matches
+  $('rows').addEventListener('mouseover', (e) => {
+    const el = canHover && e.target.closest('.score')
+    if (!el) { tip.hidden = true; return }
+    tip.innerHTML = scoreTip(el.closest('tr.row')?.dataset.sym)
+    tip.hidden = !tip.innerHTML
+    const r = el.getBoundingClientRect()
+    const top = r.bottom + 8 + tip.offsetHeight > innerHeight ? r.top - 8 - tip.offsetHeight : r.bottom + 8
+    tip.style.top = `${Math.max(8, top)}px`
+    tip.style.left = `${Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), innerWidth - tip.offsetWidth - 8)}px`
+  })
+  $('rows').addEventListener('mouseleave', () => { tip.hidden = true })
+  addEventListener('scroll', () => { tip.hidden = true }, { passive: true })
   // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
   $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }

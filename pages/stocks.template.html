@@ -128,6 +128,15 @@ details.key dt { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; 
 details.key dd { margin: 0; color: var(--muted); }
 @media (max-width: 760px) { details.key dl { grid-template-columns: 1fr; gap: 4px; } details.key dd { margin-bottom: 8px; } }
 
+.tip { position: fixed; z-index: 20; width: min(360px, calc(100vw - 16px)); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: 13px; line-height: 1.6; display: grid; gap: 8px; pointer-events: none; }
+.tip[hidden] { display: none; }
+.tip-row { display: grid; grid-template-columns: 12px 1fr auto; gap: 8px; align-items: start; }
+.tip-row i, .part .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-top: 5px; }
+.part .sw { margin: 0; margin-inline-end: 8px; vertical-align: -1px; }
+.tip-row span { color: var(--muted); }
+.tip-row span b { color: var(--fg); }
+.tip-row > b { white-space: nowrap; }
+
 .only-mobile { display: none; }
 /* Phones: each stock is a card, no sideways scrolling. */
 @media (max-width: 760px) {
@@ -262,6 +271,8 @@ details.key dd { margin: 0; color: var(--muted); }
     <p class="dim">ليش مو DCF بس؟ DCF يعطيك قيمة اليوم وليس مسار سعر، ويتغير كثير مع تغيير بسيط في الخصم أو النمو البعيد، وفي اختبارنا (دراسة 7) القيمة من DCF لحالها ما تنبأت بأداء السنة التالية. هو موجود كطريقة من طرق القيمة العادلة. السيناريوهات هذي ما اختبرناها على الماضي، فهي توضح وش لازم يصير عشان يوصل السعر لكذا، مو توقع.</p>
   </section>
 </div>
+
+<div class="tip" id="tip" role="tooltip" dir="rtl" lang="ar" hidden></div>
 
 <script>
 /*ENGINE*/
