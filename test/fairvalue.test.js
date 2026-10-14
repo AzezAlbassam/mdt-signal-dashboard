@@ -97,3 +97,19 @@ test('study 8: trend uses only the last 10 months up to this one', async () => {
   assert.equal(signFlipGreater([1, 1, 1]), 1 / 8)
   assert.deepEqual(holm([0.01, 0.04]), [0.02, 0.04])
 })
+
+test('live: a fiscal year labelled this year (ends mid-year, already reported) is used', () => {
+  const f = funds() // years 2010–2021
+  const c = closes()
+  assert.equal(fairValuesAt(f, c, 'Finance', '2021-10').fiscalYear, 2020)
+  assert.equal(fairValuesAt(f, c, 'Finance', '2021-10', true).fiscalYear, 2021)
+})
+
+test('months with P/S above 100 are no anchor for the fair P/S', () => {
+  // Revenue was almost nothing until FY2014 (P/S in the thousands), then 100 (P/S about 2.5).
+  const f = funds().map((x) => ({ ...x, rev: x.year < 2015 ? 0.1 : 100 }))
+  const c = closes()
+  assert.equal(fairValuesAt(f, c, 'Technology Services', '2016-05').values.ps, null) // one clean month
+  const fv = fairValuesAt(f, c, 'Technology Services', '2017-05')
+  assert.ok(fv.values.ps > 0 && fv.values.ps < 2 * fv.close)
+})

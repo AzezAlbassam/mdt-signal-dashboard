@@ -4,7 +4,7 @@
 // At month "YYYY-MM" only fiscal years public by then (May of Y+1, as in study 7) and
 // closes up to that month are read.
 
-import { lastUsableFiscalYear, addMonths, cagr, dcf, stateAt, multiplesAt } from './fairvalue.js'
+import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, PS_MAX } from './fairvalue.js'
 
 /** 0 at a, 1 at b, straight in between, clamped (falls when a > b). */
 export const lin = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)))
@@ -14,9 +14,9 @@ const num = (x) => Number.isFinite(x)
 
 const MULTS = ['pe', 'ps', 'ev', 'pfcf']
 
-function multiplesNow(funds, closes, month) {
+function multiplesNow(funds, closes, month, fy) {
   const c = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, fy)
   if (!pos(c) || !st) return null
   const m = multiplesAt(st, c)
   return { pe: m.pe, ps: m.ps, ev: m.ev, pfcf: pos(st.fcfPS) ? c / st.fcfPS : null }
@@ -41,16 +41,23 @@ export function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  * The score at `month` for a stock with annual fundamentals `funds` (parseFundamentals),
  * monthly closes `closes` (Map "YYYY-MM" → close) and TradingView sector `sector`.
  * Returns { total, parts: {A..E}, detail } or { total: null, reason }.
+ * `live`: every fiscal year in `funds` counts as reported (see stateAt); the page uses it.
+ *
+ * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
+ * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
+ * loans, so implied growth, cash conversion and the two FCF checks said nothing), and P/S
+ * months above PS_MAX are left out of the price history.
  */
-export function scoreAt(funds, closes, sector, month) {
+export function scoreAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
   const fy = lastUsableFiscalYear(month)
-  const known = funds.filter((f) => f.year <= fy)
+  const useFy = live ? Infinity : fy
+  const known = funds.filter((f) => f.year <= useFy)
   if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
   const f0 = known[known.length - 1]
   if (f0.year < fy - 1) return { total: null, reason: 'stale fundamentals' }
   const f1 = known.length > 1 ? known[known.length - 2] : null
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, useFy)
   const fin = sector === 'Finance'
   const mcap = pos(f0.shares) ? close * f0.shares : null
   if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
@@ -58,7 +65,7 @@ export function scoreAt(funds, closes, sector, month) {
   const detail = {}
 
   // A. Price
-  const now = multiplesNow(funds, closes, month)
+  const now = multiplesNow(funds, closes, month, useFy)
   const window = []
   for (let k = 59; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
@@ -68,14 +75,14 @@ export function scoreAt(funds, closes, sector, month) {
   for (const key of MULTS) {
     const v = now?.[key]
     if (!pos(v)) continue
-    const hist = window.map((w) => w?.[key]).filter(pos)
+    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && !(key === 'ps' && x > PS_MAX))
     if (hist.length < 12) continue
     const below = hist.filter((x) => x < v).length + 0.5 * hist.filter((x) => x === v).length
     shares.push(below / hist.length)
     detail[`pct_${key}`] = below / hist.length
   }
   const a1 = shares.length ? 1 - shares.reduce((a, b) => a + b, 0) / shares.length : null
-  const gStar = impliedGrowth(st.fcfPS, close)
+  const gStar = fin ? null : impliedGrowth(st.fcfPS, close)
   const gReal = st.revG ?? st.epsG ?? 0
   const a2 = gStar == null ? null : lin(gStar - gReal, 0.2, 0)
   Object.assign(detail, { a1, a2, gStar, gReal })
@@ -87,13 +94,13 @@ export function scoreAt(funds, closes, sector, month) {
   else if (num(f0.ni)) b1 = lin(f0.ni / f0.rev, 0, 0.2)
   const last3 = known.slice(-3).filter((f) => num(f.ni) && num(f.fcf))
   let b2 = null
-  if (last3.length) {
+  if (last3.length && !fin) {
     const sNi = last3.reduce((a, f) => a + f.ni, 0)
     const sFcf = last3.reduce((a, f) => a + f.fcf, 0)
     b2 = sNi > 0 ? lin(sFcf / sNi, 0, 0.8) : sFcf > 0 ? 0.5 : 0
   }
   Object.assign(detail, { b1, b2 })
-  const B = b1 != null && b2 != null ? b1 + b2 : null
+  const B = fin ? (b1 != null ? 2 * b1 : null) : b1 != null && b2 != null ? b1 + b2 : null
 
   // C. Growth
   const c1 = st.revG == null ? null : lin(st.revG, 0, 0.2)
@@ -121,8 +128,8 @@ export function scoreAt(funds, closes, sector, month) {
   // E. Direction (partial Piotroski)
   const checks = []
   if (num(f0.ni)) checks.push(f0.ni > 0)
-  if (num(f0.fcf)) checks.push(f0.fcf > 0)
-  if (num(f0.fcf) && num(f0.ni)) checks.push(f0.fcf > f0.ni)
+  if (num(f0.fcf) && !fin) checks.push(f0.fcf > 0)
+  if (num(f0.fcf) && num(f0.ni) && !fin) checks.push(f0.fcf > f0.ni)
   if (f1) {
     if (num(f0.rev) && num(f1.rev)) checks.push(f0.rev > f1.rev)
     if (num(f0.eps) && num(f1.eps)) checks.push(f0.eps > f1.eps)
@@ -136,7 +143,7 @@ export function scoreAt(funds, closes, sector, month) {
   }
   const passed = checks.filter(Boolean).length
   Object.assign(detail, { checks: checks.length, passed })
-  const E = checks.length >= 5 ? (2 * passed) / checks.length : null
+  const E = checks.length >= (fin ? 3 : 5) ? (2 * passed) / checks.length : null
 
   const parts = { A, B, C, D, E }
   if (Object.values(parts).some((x) => x == null)) return { total: null, reason: 'part missing', parts, detail }

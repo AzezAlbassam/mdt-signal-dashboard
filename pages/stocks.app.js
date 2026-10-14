@@ -12,7 +12,7 @@
     'Unprofitable growth': 'تنمو وتخسر', 'Pre-revenue': 'بدون إيرادات' }
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -146,17 +146,24 @@
     if (!d || !q) return
     if (d.missing || !d.fin) { state.errors[sym] = NO_FIN; return }
     const funds = parseFundamentals(d.fin)
+    // Net income ÷ EPS misses the share count when preferred dividends or a near-zero EPS
+    // distort it (MCHP showed twice its shares); then the quote's count is used for the last year.
+    const qShares = q.market_cap_basic > 0 && q.close > 0 ? q.market_cap_basic / q.close : null
+    const last = funds[funds.length - 1]
+    if (qShares && last && !(last.shares > qShares / 1.5 && last.shares < qShares * 1.5)) last.shares = qShares
     const closes = new Map()
     ;(d.px?.t ?? []).forEach((t, i) => { if (Number.isFinite(d.px.c[i])) closes.set(monthKey(t), d.px.c[i]) })
     const month = monthKey(Math.floor(Date.now() / 1000))
     if (Number.isFinite(q.close)) closes.set(month, q.close)
-    const s = scoreAt(funds, closes, q.sector, month)
-    const fy = lastUsableFiscalYear(month)
-    const known = funds.filter((f) => f.year <= fy)
-    state.scores[sym] = { ...s, f0: known[known.length - 1], known }
-    const fv = fairValuesAt(funds, closes, q.sector, month)
+    // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
+    // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
+    const s = scoreAt(funds, closes, q.sector, month, true)
+    state.scores[sym] = { ...s, f0: last, known: funds }
+    const fv = fairValuesAt(funds, closes, q.sector, month, true)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
-    state.exp[sym] = expectationsAt(funds, closes, month)
+    // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
+    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, true)
+    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm })
   }
 
   let busy = false
@@ -376,8 +383,10 @@
   }
 
   // Analysts' next fiscal year against the last 12 months (information only: no history to test).
+  // Banks: TradingView's revenue is gross interest income, analysts forecast net revenue, so
+  // the two are not compared (they showed −30% to −45% for every bank).
   function analysts(q) {
-    const rev = q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
+    const rev = q.sector !== 'Finance' && q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
     const eps = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
     return { rev, eps, falling: (rev != null && rev < 0) || (eps != null && eps < -0.1) }
   }
@@ -398,7 +407,8 @@
     const e = state.exp[sym]
     const q = state.quotes[sym] || {}
     const a = analysts(q)
-    const flagTxt = !e ? 'ما ينحسب (التدفق النقدي الحر سالب).'
+    const fin = q.sector === 'Finance'
+    const flagTxt = !e ? (fin ? 'ما ينحسب للبنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فما يدل على شي.' : 'ما ينحسب (التدفق النقدي الحر سالب).')
       : e.flag === 'red' ? '<b class="lo">يتوقع أكثر من أدائها</b>: السعر يفترض نمو أعلى بكثير من المحقق، والنمو يتباطأ.'
       : e.flag === 'green' ? '<b class="hi">السوق متشائم</b>: السعر يفترض نمو أقل بكثير من المحقق، والنمو ما يتباطأ.'
       : 'لا تنبيه: الفرق بين المفترض والمحقق أقل من 10 نقاط، أو ما فيه تباطؤ.'
@@ -410,8 +420,8 @@
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>التوقعات والمحفزات</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
-      <p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>
-      <p>المحللين للسنة المالية الجاية: الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
+      ${fin ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
+      <p>المحللين للسنة المالية الجاية: ${fin ? '' : `الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · `}ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
       <p class="dim">اختبرنا تنبيهي "يتوقع أكثر من أدائها" و"السوق متشائم" على 819 سهم (2012–2025) وما تنبأوا بأداء السنة التالية. معروضة كمعلومة تساعدك تسأل السؤال الصح، مو كإشارة.</p>
       <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
     </div>`
@@ -468,10 +478,47 @@
     </div>`
   }
 
+  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e9 ? `${fmt(x / 1e9, 1)} مليار` : `${fmt(x / 1e6, 0)} مليون`)
+
+  function projBlock(sym) {
+    const p = state.proj[sym]
+    if (!p) return ''
+    const q = state.quotes[sym] || {}
+    const cur = q.currency === 'SAR' ? 'ريال' : q.currency === 'USD' ? 'دولار' : esc(q.currency ?? '')
+    const y0 = new Date().getFullYear()
+    let body
+    if (p.kind === 'pre') {
+      const cash = state.fair[sym]?.values?.cash
+      body = `<p>الشركة بدون إيرادات كافية نرسم لها مسار سعر (إيراداتها <b class="n">${big(p.rev)}</b> ${cur}). بدل التخمين: عشان سعرها اليوم يكون منطقي، تحتاج إيرادات سنوية حوالي <b class="n">${big(p.revNeeded)}</b> ${cur} بعد 5 سنوات${p.rev > 0 ? ` (<b class="n">${fmt(p.revNeeded / p.rev, 0)}×</b> إيرادات اليوم)` : ''}.</p>
+        <p class="dim">الحسبة: القيمة السوقية اليوم تكبر 9% سنوياً (العائد اللي تطلبه) لـ 5 سنوات، وتقسم على 3 (شركة ناضجة: مكرر ربح 20 × هامش ربح 15%).${cash ? ` الكاش الصافي للسهم اليوم: <b class="n">${fmt(cash, 2)}</b>.` : ''}</p>`
+    } else {
+      const cell = (x, cls = '') => `<td class="n ${cls}">${x}</td>`
+      const row = (label, xs, f = (x) => fmt(x, 2), cls = () => '') => `<tr><th>${label}</th>${xs.map((x) => cell(f(x), cls(x))).join('')}</tr>`
+      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fmt(r.bear, 2))}${cell(fmt(r.base, 2))}${cell(fmt(r.bull, 2))}</tr>`).join('')
+      const multName = (b) => (b === 'pe' ? 'P/E' : 'P/S')
+      body = `<table class="ptable"><thead><tr><th></th><th>متشائم</th><th>أساسي</th><th>متفائل</th></tr></thead><tbody>
+          <tr class="now"><th>اليوم</th>${cell(fmt(p.price, 2)).repeat(3)}</tr>${years}
+          <tr class="sum"><th>العائد سنوياً</th>${p.yearly.map((x) => cell(pct(x, 1), x >= 0 ? 'hi' : 'lo')).join('')}</tr>
+          ${row('قيمتها اليوم بخصم 9%', p.today)}
+          <tr class="grp"><th colspan="4">الافتراضات</th></tr>
+          ${row('نمو الإيرادات أول سنة', p.growth, ([a]) => pct(a))}
+          ${row('نمو الإيرادات السنة الخامسة', p.growth, ([, b]) => pct(b))}
+          ${p.margin ? row('هامش صافي الربح', p.margin, (x) => pct(x, 1)) : ''}
+          ${row('المكرر بالسنة الخامسة', p.exitMult.map((x, i) => [x, p.basis[i]]), ([x, b]) => `${multName(b)} ${fmt(x, 1)}`)}
+        </tbody></table>
+        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : 'نمو الإيرادات آخر 3 سنوات'}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = المبيعات للسهم × مكرر المبيعات.'} المكرر يتحرك من مكرر اليوم إلى متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>) × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على المبيعات.' : ''}</p>
+        <p class="dim">"قيمتها اليوم" = سعر ${y0 + 5} مخصوم 9% سنوياً: لو أعلى من سعر اليوم، السيناريو يعطي أكثر من 9% بالسنة. عدد الأسهم ثابت (ما حسبنا إعادة الشراء ولا الإصدار)، والتوزيعات مو داخلة.</p>`
+    }
+    return `<details class="part proj" style="grid-column:1/-1"${state.projOpen ? ' open' : ''}><summary><span>توقع السعر لـ 5 سنوات</span><span class="dim">اضغط للعرض</span></summary>
+      ${body}
+      <p class="dim">سيناريوهات من الافتراضات المكتوبة، مو توقع مجرّب: ما اختبرناها على الماضي. الشركات الدورية (رقائق، سلع، بتروكيماويات) يطلع المدى عندها واسع لأن هامشها يتقلب.</p>
+    </details>`
+  }
+
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -502,14 +549,15 @@
     ]
     return `<div class="dgrid">
       ${fairBlock(sym)}
+      ${projBlock(sym)}
       ${expBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من <b class="n">${cheaper == null ? '—' : pct(cheaper).replace('+', '')}</b> من شهوره في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
-        <p>السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.</p>`)}
-      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
+        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.`}</p>`)}
+      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
-      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (ربح، كاش، إيراد، هوامش، دين) مقارنة بالسنة اللي قبلها.</p>`)}
+      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
     <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
@@ -550,6 +598,8 @@
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
+  // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
+  $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')

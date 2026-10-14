@@ -28,6 +28,11 @@ const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
 
 export const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
 
+// POST-HOC fix (2026-10-14): a month whose P/S is above 100 (revenue under 1% of market value,
+// the same line profileOf draws for pre-revenue) is no anchor for a fair P/S. Before this,
+// stocks whose revenue ramped up from almost nothing got fair values 20–90× their price.
+export const PS_MAX = 100
+
 const pos = (x) => Number.isFinite(x) && x > 0
 
 /** Last fiscal year whose numbers are public at month "YYYY-MM": May of Y+1 onward. */
@@ -99,9 +104,11 @@ function median(a) {
 /**
  * Everything the indicator knows at one month: the fundamentals then public, and the
  * per-share values built from them. Null when no fiscal year is public yet.
+ * `fy` overrides the last usable fiscal year; the live page passes Infinity, because every
+ * year TradingView returns is already reported (fiscal years ending mid-year carry that
+ * year's label and are out long before May of the next year).
  */
-export function stateAt(funds, month) {
-  const fy = lastUsableFiscalYear(month)
+export function stateAt(funds, month, fy = lastUsableFiscalYear(month)) {
   const known = funds.filter((f) => f.year <= fy)
   if (known.length === 0) return null
   const f = known[known.length - 1]
@@ -152,9 +159,9 @@ const clampG = (g) => (g == null ? null : Math.max(-0.05, Math.min(PARAMS.maxGro
  * monthly closes `closes` (Map month -> close) and TradingView sector `sector`.
  * Only months up to `month` are read.
  */
-export function fairValuesAt(funds, closes, sector, month) {
+export function fairValuesAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, live ? Infinity : undefined)
   if (!pos(close) || !st) return null
 
   // Own-history medians over the window ending this month, as the Pine script's arrays.
@@ -164,7 +171,7 @@ export function fairValuesAt(funds, closes, sector, month) {
     const c = closes.get(mk)
     if (!pos(c)) continue
     const mult = multiplesAt(stateAt(funds, mk), c)
-    for (const key of Object.keys(hist)) if (mult[key] != null) hist[key].push(mult[key])
+    for (const key of Object.keys(hist)) if (mult[key] != null && !(key === 'ps' && mult.ps > PS_MAX)) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
 

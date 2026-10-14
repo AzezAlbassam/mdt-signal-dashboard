@@ -120,5 +120,5 @@ if (fs.existsSync('data/fv-sa/sectors.json')) {
   out.push(`  scored stocks per year: ${counts.join(' ')}`)
   out.push(`  left out: ${Object.entries(sa.excluded).map(([w, l]) => `${w} ${l.length}`).join(', ') || 'none'}`)
 }
-fs.writeFileSync('reports/study9.txt', out.join('\n') + '\n')
+fs.writeFileSync(process.env.OUT ?? 'reports/study9.txt', out.join('\n') + '\n')
 console.log(out.join('\n'))

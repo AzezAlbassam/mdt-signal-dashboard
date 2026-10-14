@@ -54,3 +54,20 @@ test('finance sector skips debt ÷ EBITDA', () => {
   assert.equal(s.detail.d1, null)
   assert.equal(s.parts.D, 2 * s.detail.d2)
 })
+
+test('live counts every fiscal year as reported', () => {
+  const s = scoreAt(funds(), closes(), 'Technology Services', '2021-10')
+  const live = scoreAt(funds(), closes(), 'Technology Services', '2021-10', true)
+  assert.equal(s.fiscalYear, 2020)
+  assert.equal(live.fiscalYear, 2021)
+})
+
+test('financials get no free-cash-flow measures', () => {
+  const f = funds().map((x) => ({ ...x, ebitda: null, gp: null, fcf: x.ni * 5 }))
+  const s = scoreAt(f, closes(), 'Finance', '2017-05')
+  assert.equal(s.detail.gStar, null)
+  assert.equal(s.detail.b2, null)
+  assert.equal(s.parts.B, 2 * s.detail.b1)
+  assert.equal(s.detail.checks, 3) // profit, revenue up, EPS up
+  assert.ok(s.total != null)
+})

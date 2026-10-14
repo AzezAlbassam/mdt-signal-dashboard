@@ -57,7 +57,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .fair-list div { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); }
 .fair-list div b { color: var(--fg); font-weight: 500; }
 .fair-list div.off { opacity: .55; }
-.notice { border-inline-start: 3px solid var(--mid); padding: 8px 12px; background: var(--panel); border-radius: 6px; }
+.notice { border: 1px solid var(--mid); padding: 8px 12px; background: var(--panel); border-radius: 8px; }
 .notice.bad { border-color: var(--bad); }
 
 .tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
@@ -87,7 +87,7 @@ tbody tr.row:hover { background: var(--soft); }
 .dim { color: var(--muted); }
 .skel { display: inline-block; width: 60px; height: 12px; border-radius: 4px; background: var(--soft); }
 
-.detail td { background: var(--bg); padding: 18px; }
+.detail > td { background: var(--bg); padding: 18px; }
 .dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .part { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
 .part h3 { margin: 0; font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; }
@@ -104,7 +104,22 @@ tbody tr.row:hover { background: var(--soft); }
 .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 .legend div { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; font-size: 14px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; margin-top: 6px; }
-.result { border-inline-start: 3px solid var(--accent); padding-inline-start: 14px; display: grid; gap: 6px; max-width: 76ch; }
+.result { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; max-width: 76ch; }
+
+details.proj summary { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-weight: 600; font-size: 15px; list-style: none; }
+details.proj summary::-webkit-details-marker { display: none; }
+details.proj summary::after { content: "▾"; color: var(--muted); }
+details.proj[open] summary::after { content: "▴"; }
+details.proj[open] summary .dim { display: none; }
+.ptable { min-width: 0; width: 100%; max-width: 680px; border: 1px solid var(--line); border-radius: 8px; border-collapse: separate; border-spacing: 0; overflow: hidden; margin: 4px 0 6px; }
+.ptable th, .ptable td { padding: 7px 10px; font-size: 13.5px; }
+.ptable thead th { text-align: center; }
+.ptable tbody th { font-weight: 500; color: var(--muted); background: none; white-space: normal; }
+.ptable tr.grp th { color: var(--fg); font-weight: 600; padding-top: 12px; }
+.ptable td { text-align: center; white-space: nowrap; }
+.ptable tr.now td, .ptable tr.now th { background: var(--soft); }
+.ptable tr.sum th, .ptable tr.sum td { font-weight: 600; }
+.ptable tr:last-child th, .ptable tr:last-child td { border-bottom: 0; }
 
 .only-mobile { display: none; }
 /* Phones: each stock is a card, no sideways scrolling. */
@@ -121,10 +136,10 @@ tbody tr.row:hover { background: var(--soft); }
   .filters input, .filters select { flex: 1 1 100%; }
   .only-mobile { display: block; }
   .tbl { overflow: visible; background: none; border: 0; border-radius: 0; }
-  table { min-width: 0; }
-  thead { display: none; }
-  table, tbody { display: block; }
-  tbody { display: grid; gap: 10px; }
+  .tbl > table { min-width: 0; }
+  .tbl > table > thead { display: none; }
+  .tbl > table, .tbl > table > tbody { display: block; }
+  .tbl > table > tbody { display: grid; gap: 10px; }
   tr.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; position: relative; }
   tr.row:hover { background: var(--panel); }
   tr.row[aria-expanded="true"] { border-color: var(--accent); }
@@ -136,12 +151,11 @@ tbody tr.row:hover { background: var(--soft); }
   .c-more { display: none !important; }
   .c-del { position: absolute; top: 6px; inset-inline-end: 4px; }
   .x { font-size: 22px; padding: 6px 10px; }
-  tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
-  tr.detail, tr.detail td { display: block; }
-  tr.detail td { padding: 4px 0 8px; background: none; border: 0; }
+  .tbl > table > tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
+  .tbl tr.detail, .tbl tr.detail > td { display: block; }
+  .tbl tr.detail > td { padding: 4px 0 8px; background: none; border: 0; }
   .detail .dgrid { gap: 10px; }
   .ctx { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .result, .note { padding-inline-start: 10px; }
 }
 </style>
 
@@ -219,12 +233,20 @@ tbody tr.row:hover { background: var(--soft); }
       <b>نتيجة اختبار الدرجة (2012–2025، 819 سهم أمريكي)</b>
       <p>الدرجة رتبت الأسهم أفضل من العشوائي بفرق صغير: الارتباط مع عائد السنة التالية +0.03 في المتوسط، وموجب في 10 سنوات من 14. لكن أعلى خُمس ما تفوّق على أدنى خُمس في المتوسط (−0.6% سنوياً)، لأن الأسهم الضعيفة انفجرت في سنوات المضاربة (2020 و2025). يعني الدرجة ملخص صادق لصحة الشركة وسعرها، مو توقع لسعرها السنة الجاية. في السعودي التاريخ قصير، والنتيجة ما يُعتمد عليها.</p>
     </div>
+    <div class="result">
+      <b>تصحيحات 14 أكتوبر 2026 (بعد الاختبار)</b>
+      <p>1) الشركات اللي سنتها المالية تخلص نص السنة (مايكروسوفت، مايكرون، كوستكو، بروكتر…) كانت الصفحة تاخذ أرقام السنة اللي قبل، فطلعت قيمة مايكرون العادلة عُشر سعرها. الحين تاخذ آخر سنة منشورة. 2) البنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فشلناه من الدرجة والتنبيهات، وتوقع إيرادات المحللين للبنوك ما ينقارن بإيرادات TradingView (كان يطلع −30% إلى −45% لكل بنك). 3) الشركات اللي بدأت إيراداتها من شبه صفر كانت قيمتها العادلة 20–90 ضعف سعرها، لأن مكرر مبيعاتها القديم بالآلاف. الأشهر اللي مكرر المبيعات فيها فوق 100 ما تنحسب الحين. 4) إذا عدد الأسهم المحسوب من الأرباح بعيد عن عدد الأسهم الفعلي (أسهم ممتازة أو ربح شبه صفر)، تستخدم الصفحة العدد الفعلي.</p>
+      <p class="dim">أعدنا اختبار الدرجة بعد التصحيح 2 و3: النتيجة نفسها (الارتباط +0.03، مؤكد؛ أعلى خُمس ما تفوّق). ونتائج القيمة العادلة والتنبيهات بعد التصحيح بعد ما تغيّرت: ما تنبأت.</p>
+    </div>
+    <h2>توقع السعر لـ 5 سنوات</h2>
+    <p>داخل كل سهم: ثلاث سيناريوهات (متشائم، أساسي، متفائل) لسعر السهم كل سنة لين 5 سنوات. الطريقة: الإيرادات × هامش الربح ÷ عدد الأسهم = ربح السهم، وبعدها × مكرر الربح. النمو يبدأ من توقع المحللين (أو نمو آخر 3 سنوات) ويهدأ مع الوقت، والهامش من آخر 3 سنوات، والمكرر يرجع لمتوسط السهم نفسه. الشركات اللي تخسر تنحسب على المبيعات، واللي بدون إيرادات نعرض بدالها كم إيرادات تحتاج عشان سعرها اليوم يكون منطقي.</p>
+    <p class="dim">ليش مو DCF بس؟ DCF يعطيك قيمة اليوم وليس مسار سعر، ويتغير كثير مع تغيير بسيط في الخصم أو النمو البعيد، وفي اختبارنا (دراسة 7) القيمة من DCF لحالها ما تنبأت بأداء السنة التالية. هو موجود كطريقة من طرق القيمة العادلة. السيناريوهات هذي ما اختبرناها على الماضي، فهي توضح وش لازم يصير عشان يوصل السعر لكذا، مو توقع.</p>
   </section>
 </div>
 
 <script>
 // ---- engine/fairvalue.js
-const { METHODS, WEIGHTS, PARAMS, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
+const { METHODS, WEIGHTS, PARAMS, PS_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
 // Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
 // annual fundamentals and monthly closes, so it can be scored against later returns.
 //
@@ -254,6 +276,11 @@ const HEAVY_SECTORS = ['Energy Minerals', 'Non-Energy Minerals', 'Process Indust
 const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
 
 const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
+
+// POST-HOC fix (2026-10-14): a month whose P/S is above 100 (revenue under 1% of market value,
+// the same line profileOf draws for pre-revenue) is no anchor for a fair P/S. Before this,
+// stocks whose revenue ramped up from almost nothing got fair values 20–90× their price.
+const PS_MAX = 100
 
 const pos = (x) => Number.isFinite(x) && x > 0
 
@@ -326,9 +353,11 @@ function median(a) {
 /**
  * Everything the indicator knows at one month: the fundamentals then public, and the
  * per-share values built from them. Null when no fiscal year is public yet.
+ * `fy` overrides the last usable fiscal year; the live page passes Infinity, because every
+ * year TradingView returns is already reported (fiscal years ending mid-year carry that
+ * year's label and are out long before May of the next year).
  */
-function stateAt(funds, month) {
-  const fy = lastUsableFiscalYear(month)
+function stateAt(funds, month, fy = lastUsableFiscalYear(month)) {
   const known = funds.filter((f) => f.year <= fy)
   if (known.length === 0) return null
   const f = known[known.length - 1]
@@ -379,9 +408,9 @@ const clampG = (g) => (g == null ? null : Math.max(-0.05, Math.min(PARAMS.maxGro
  * monthly closes `closes` (Map month -> close) and TradingView sector `sector`.
  * Only months up to `month` are read.
  */
-function fairValuesAt(funds, closes, sector, month) {
+function fairValuesAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, live ? Infinity : undefined)
   if (!pos(close) || !st) return null
 
   // Own-history medians over the window ending this month, as the Pine script's arrays.
@@ -391,7 +420,7 @@ function fairValuesAt(funds, closes, sector, month) {
     const c = closes.get(mk)
     if (!pos(c)) continue
     const mult = multiplesAt(stateAt(funds, mk), c)
-    for (const key of Object.keys(hist)) if (mult[key] != null) hist[key].push(mult[key])
+    for (const key of Object.keys(hist)) if (mult[key] != null && !(key === 'ps' && mult.ps > PS_MAX)) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
 
@@ -585,7 +614,7 @@ function holm(ps) {
   return out
 }
 
-return { METHODS, WEIGHTS, PARAMS, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
+return { METHODS, WEIGHTS, PARAMS, PS_MAX, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
 })();
 
 // ---- engine/score.js
@@ -605,9 +634,9 @@ const num = (x) => Number.isFinite(x)
 
 const MULTS = ['pe', 'ps', 'ev', 'pfcf']
 
-function multiplesNow(funds, closes, month) {
+function multiplesNow(funds, closes, month, fy) {
   const c = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, fy)
   if (!pos(c) || !st) return null
   const m = multiplesAt(st, c)
   return { pe: m.pe, ps: m.ps, ev: m.ev, pfcf: pos(st.fcfPS) ? c / st.fcfPS : null }
@@ -632,16 +661,23 @@ function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  * The score at `month` for a stock with annual fundamentals `funds` (parseFundamentals),
  * monthly closes `closes` (Map "YYYY-MM" → close) and TradingView sector `sector`.
  * Returns { total, parts: {A..E}, detail } or { total: null, reason }.
+ * `live`: every fiscal year in `funds` counts as reported (see stateAt); the page uses it.
+ *
+ * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
+ * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
+ * loans, so implied growth, cash conversion and the two FCF checks said nothing), and P/S
+ * months above PS_MAX are left out of the price history.
  */
-function scoreAt(funds, closes, sector, month) {
+function scoreAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
   const fy = lastUsableFiscalYear(month)
-  const known = funds.filter((f) => f.year <= fy)
+  const useFy = live ? Infinity : fy
+  const known = funds.filter((f) => f.year <= useFy)
   if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
   const f0 = known[known.length - 1]
   if (f0.year < fy - 1) return { total: null, reason: 'stale fundamentals' }
   const f1 = known.length > 1 ? known[known.length - 2] : null
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, useFy)
   const fin = sector === 'Finance'
   const mcap = pos(f0.shares) ? close * f0.shares : null
   if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
@@ -649,7 +685,7 @@ function scoreAt(funds, closes, sector, month) {
   const detail = {}
 
   // A. Price
-  const now = multiplesNow(funds, closes, month)
+  const now = multiplesNow(funds, closes, month, useFy)
   const window = []
   for (let k = 59; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
@@ -659,14 +695,14 @@ function scoreAt(funds, closes, sector, month) {
   for (const key of MULTS) {
     const v = now?.[key]
     if (!pos(v)) continue
-    const hist = window.map((w) => w?.[key]).filter(pos)
+    const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && !(key === 'ps' && x > PS_MAX))
     if (hist.length < 12) continue
     const below = hist.filter((x) => x < v).length + 0.5 * hist.filter((x) => x === v).length
     shares.push(below / hist.length)
     detail[`pct_${key}`] = below / hist.length
   }
   const a1 = shares.length ? 1 - shares.reduce((a, b) => a + b, 0) / shares.length : null
-  const gStar = impliedGrowth(st.fcfPS, close)
+  const gStar = fin ? null : impliedGrowth(st.fcfPS, close)
   const gReal = st.revG ?? st.epsG ?? 0
   const a2 = gStar == null ? null : lin(gStar - gReal, 0.2, 0)
   Object.assign(detail, { a1, a2, gStar, gReal })
@@ -678,13 +714,13 @@ function scoreAt(funds, closes, sector, month) {
   else if (num(f0.ni)) b1 = lin(f0.ni / f0.rev, 0, 0.2)
   const last3 = known.slice(-3).filter((f) => num(f.ni) && num(f.fcf))
   let b2 = null
-  if (last3.length) {
+  if (last3.length && !fin) {
     const sNi = last3.reduce((a, f) => a + f.ni, 0)
     const sFcf = last3.reduce((a, f) => a + f.fcf, 0)
     b2 = sNi > 0 ? lin(sFcf / sNi, 0, 0.8) : sFcf > 0 ? 0.5 : 0
   }
   Object.assign(detail, { b1, b2 })
-  const B = b1 != null && b2 != null ? b1 + b2 : null
+  const B = fin ? (b1 != null ? 2 * b1 : null) : b1 != null && b2 != null ? b1 + b2 : null
 
   // C. Growth
   const c1 = st.revG == null ? null : lin(st.revG, 0, 0.2)
@@ -712,8 +748,8 @@ function scoreAt(funds, closes, sector, month) {
   // E. Direction (partial Piotroski)
   const checks = []
   if (num(f0.ni)) checks.push(f0.ni > 0)
-  if (num(f0.fcf)) checks.push(f0.fcf > 0)
-  if (num(f0.fcf) && num(f0.ni)) checks.push(f0.fcf > f0.ni)
+  if (num(f0.fcf) && !fin) checks.push(f0.fcf > 0)
+  if (num(f0.fcf) && num(f0.ni) && !fin) checks.push(f0.fcf > f0.ni)
   if (f1) {
     if (num(f0.rev) && num(f1.rev)) checks.push(f0.rev > f1.rev)
     if (num(f0.eps) && num(f1.eps)) checks.push(f0.eps > f1.eps)
@@ -727,7 +763,7 @@ function scoreAt(funds, closes, sector, month) {
   }
   const passed = checks.filter(Boolean).length
   Object.assign(detail, { checks: checks.length, passed })
-  const E = checks.length >= 5 ? (2 * passed) / checks.length : null
+  const E = checks.length >= (fin ? 3 : 5) ? (2 * passed) / checks.length : null
 
   const parts = { A, B, C, D, E }
   if (Object.values(parts).some((x) => x == null)) return { total: null, reason: 'part missing', parts, detail }
@@ -746,14 +782,14 @@ const { GAP, expectationsAt } = (() => {
 
 const GAP = 0.1
 
-function expectationsAt(funds, closes, month) {
+function expectationsAt(funds, closes, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, live ? Infinity : undefined)
   if (!(close > 0) || !st) return null
   const gStar = impliedGrowth(st.fcfPS, close)
   if (gStar == null) return null
   const gReal = st.revG ?? st.epsG ?? 0
-  const known = funds.filter((f) => f.year <= lastUsableFiscalYear(month))
+  const known = funds.filter((f) => f.year <= (live ? Infinity : lastUsableFiscalYear(month)))
   const f0 = known[known.length - 1]
   const f1 = known[known.length - 2]
   const yoy = f0 && f1 && f1.rev > 0 && Number.isFinite(f0.rev) ? f0.rev / f1.rev - 1 : null
@@ -764,6 +800,104 @@ function expectationsAt(funds, closes, month) {
 }
 
 return { GAP, expectationsAt }
+})();
+
+// ---- engine/projection.js
+const { YEARS, projectAt } = (() => {
+// Five-year price scenarios for the stock page. NOT a study: nothing here was backtested, the
+// page shows it as scenarios built from stated assumptions, not as a forecast that works.
+//
+// price(t) = earnings per share(t) × P/E(t), three ways (bear / base / bull):
+//   revenue grows from a starting rate (analysts' next year when given, else the 3-year CAGR)
+//   that fades to a long-run rate by year 5, ±10 points between scenarios; net margin is the
+//   lowest / average / highest of the last 3 fiscal years; the P/E walks from today's (price ÷
+//   that scenario's earnings now) to the stock's own 5-year median P/E × 0.75 / 1 / 1.25.
+// Unprofitable companies use sales per share × P/S the same way. Pre-revenue companies (or
+// loss-makers above 20× sales) get no price path, only the revenue they would need in 5 years.
+// Shares are held at today's count (buybacks and dilution are not modelled).
+
+const YEARS = 5
+const NAMES = ['bear', 'base', 'bull']
+const SPREAD = 0.1 // bear / bull start this far below / above the base growth
+const FADE = [0.02, 0.04, 0.06] // growth reached in year 5
+const MULT = [0.75, 1, 1.25] // exit multiple × own median
+const PE = { lo: 8, hi: 35, dflt: 18 }
+const PS = { lo: 0.5, hi: 8, dflt: 2 }
+const PRE_PS = 20 // a loss-maker above this P/S has no sales path worth drawing
+// Pre-revenue: what a mature company is worth per unit of revenue (P/E 20 × 15% net margin).
+const MATURE_PS = 20 * 0.15
+
+const pos = (x) => Number.isFinite(x) && x > 0
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x))
+const median = (a) => {
+  const s = [...a].sort((x, y) => x - y)
+  const n = s.length
+  return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2
+}
+
+/**
+ * Scenarios at `month` (the page passes the current month, `closes` holding today's price).
+ * `revGrowthNext`: analysts' next-year revenue growth when comparable; `revNow`: revenue of
+ * the last 12 months (fresher than the last fiscal year). Both optional.
+ */
+function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null } = {}) {
+  const price = closes.get(month)
+  const st = stateAt(funds, month, Infinity)
+  if (!pos(price) || !st || !pos(st.shares)) return null
+  const mcap = price * st.shares
+  const rev0 = pos(revNow) ? revNow : st.rev
+  const recent = funds.filter((f) => f.year <= st.fiscalYear && pos(f.rev) && Number.isFinite(f.ni)).slice(-3)
+  const margins = recent.map((f) => f.ni / f.rev)
+  const avg = margins.reduce((a, b) => a + b, 0) / (margins.length || 1)
+  const earnings = margins.length > 0 && avg > 0
+  if (!pos(rev0) || rev0 < 0.01 * mcap || (!earnings && mcap / rev0 > PRE_PS)) {
+    return { kind: 'pre', price, rev: rev0, revNeeded: (mcap * (1 + PARAMS.discount) ** YEARS) / MATURE_PS }
+  }
+
+  // Own multiple over the last 60 months, each month with the numbers public then.
+  const hist = []
+  for (let k = 0; k < 60; k += 1) {
+    const mk = addMonths(month, -k)
+    const c = closes.get(mk)
+    const s = pos(c) && stateAt(funds, mk)
+    if (!s) continue
+    const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
+    if (pos(x) && !(!earnings && x > PS_MAX)) hist.push(x)
+  }
+  const lim = earnings ? PE : PS
+  const normal = hist.length >= 12 ? clamp(median(hist), lim.lo, lim.hi) : lim.dflt
+  const g0 = clamp(revGrowthNext ?? st.revG ?? 0, -0.15, 0.4)
+  const margin = earnings ? [Math.min(...margins), avg, Math.max(...margins)] : null
+
+  const rows = Array.from({ length: YEARS }, (_, i) => ({ t: i + 1 }))
+  const exitMult = []
+  const basis = []
+  const growth = []
+  NAMES.forEach((name, i) => {
+    // A scenario whose margin is not positive is priced on sales, at P/S 1 by year 5.
+    const onEarnings = earnings && margin[i] > 0
+    const perShare = (rev) => (onEarnings ? rev * margin[i] : rev) / st.shares
+    const exit = onEarnings || !earnings ? normal * MULT[i] : 1
+    const start = clamp(price / perShare(rev0), 0.1, 100)
+    exitMult.push(exit)
+    basis.push(onEarnings ? 'pe' : 'ps')
+    let rev = rev0
+    const g1 = g0 + (i - 1) * SPREAD
+    growth.push([g1, FADE[i]])
+    for (let t = 1; t <= YEARS; t += 1) {
+      rev *= 1 + g1 + ((FADE[i] - g1) * (t - 1)) / (YEARS - 1)
+      rows[t - 1][name] = perShare(rev) * (start + ((exit - start) * t) / YEARS)
+    }
+  })
+  const last = rows[YEARS - 1]
+  return {
+    kind: earnings ? 'earnings' : 'sales', price, g0, growthFrom: revGrowthNext != null ? 'analysts' : 'history', margin, normal, exitMult, basis, growth, rows,
+    yearly: NAMES.map((k) => (last[k] / price) ** (1 / YEARS) - 1),
+    today: NAMES.map((k) => last[k] / (1 + PARAMS.discount) ** YEARS),
+  }
+}
+
+return { YEARS, projectAt }
 })();
 
 
@@ -781,7 +915,7 @@ return { GAP, expectationsAt }
     'Unprofitable growth': 'تنمو وتخسر', 'Pre-revenue': 'بدون إيرادات' }
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [] }, groups: { us: [], sa: [] }, quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -915,17 +1049,24 @@ return { GAP, expectationsAt }
     if (!d || !q) return
     if (d.missing || !d.fin) { state.errors[sym] = NO_FIN; return }
     const funds = parseFundamentals(d.fin)
+    // Net income ÷ EPS misses the share count when preferred dividends or a near-zero EPS
+    // distort it (MCHP showed twice its shares); then the quote's count is used for the last year.
+    const qShares = q.market_cap_basic > 0 && q.close > 0 ? q.market_cap_basic / q.close : null
+    const last = funds[funds.length - 1]
+    if (qShares && last && !(last.shares > qShares / 1.5 && last.shares < qShares * 1.5)) last.shares = qShares
     const closes = new Map()
     ;(d.px?.t ?? []).forEach((t, i) => { if (Number.isFinite(d.px.c[i])) closes.set(monthKey(t), d.px.c[i]) })
     const month = monthKey(Math.floor(Date.now() / 1000))
     if (Number.isFinite(q.close)) closes.set(month, q.close)
-    const s = scoreAt(funds, closes, q.sector, month)
-    const fy = lastUsableFiscalYear(month)
-    const known = funds.filter((f) => f.year <= fy)
-    state.scores[sym] = { ...s, f0: known[known.length - 1], known }
-    const fv = fairValuesAt(funds, closes, q.sector, month)
+    // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
+    // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
+    const s = scoreAt(funds, closes, q.sector, month, true)
+    state.scores[sym] = { ...s, f0: last, known: funds }
+    const fv = fairValuesAt(funds, closes, q.sector, month, true)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
-    state.exp[sym] = expectationsAt(funds, closes, month)
+    // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
+    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, true)
+    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm })
   }
 
   let busy = false
@@ -1145,8 +1286,10 @@ return { GAP, expectationsAt }
   }
 
   // Analysts' next fiscal year against the last 12 months (information only: no history to test).
+  // Banks: TradingView's revenue is gross interest income, analysts forecast net revenue, so
+  // the two are not compared (they showed −30% to −45% for every bank).
   function analysts(q) {
-    const rev = q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
+    const rev = q.sector !== 'Finance' && q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
     const eps = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
     return { rev, eps, falling: (rev != null && rev < 0) || (eps != null && eps < -0.1) }
   }
@@ -1167,7 +1310,8 @@ return { GAP, expectationsAt }
     const e = state.exp[sym]
     const q = state.quotes[sym] || {}
     const a = analysts(q)
-    const flagTxt = !e ? 'ما ينحسب (التدفق النقدي الحر سالب).'
+    const fin = q.sector === 'Finance'
+    const flagTxt = !e ? (fin ? 'ما ينحسب للبنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فما يدل على شي.' : 'ما ينحسب (التدفق النقدي الحر سالب).')
       : e.flag === 'red' ? '<b class="lo">يتوقع أكثر من أدائها</b>: السعر يفترض نمو أعلى بكثير من المحقق، والنمو يتباطأ.'
       : e.flag === 'green' ? '<b class="hi">السوق متشائم</b>: السعر يفترض نمو أقل بكثير من المحقق، والنمو ما يتباطأ.'
       : 'لا تنبيه: الفرق بين المفترض والمحقق أقل من 10 نقاط، أو ما فيه تباطؤ.'
@@ -1179,8 +1323,8 @@ return { GAP, expectationsAt }
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>التوقعات والمحفزات</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
-      <p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>
-      <p>المحللين للسنة المالية الجاية: الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
+      ${fin ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
+      <p>المحللين للسنة المالية الجاية: ${fin ? '' : `الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · `}ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
       <p class="dim">اختبرنا تنبيهي "يتوقع أكثر من أدائها" و"السوق متشائم" على 819 سهم (2012–2025) وما تنبأوا بأداء السنة التالية. معروضة كمعلومة تساعدك تسأل السؤال الصح، مو كإشارة.</p>
       <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
     </div>`
@@ -1237,10 +1381,47 @@ return { GAP, expectationsAt }
     </div>`
   }
 
+  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e9 ? `${fmt(x / 1e9, 1)} مليار` : `${fmt(x / 1e6, 0)} مليون`)
+
+  function projBlock(sym) {
+    const p = state.proj[sym]
+    if (!p) return ''
+    const q = state.quotes[sym] || {}
+    const cur = q.currency === 'SAR' ? 'ريال' : q.currency === 'USD' ? 'دولار' : esc(q.currency ?? '')
+    const y0 = new Date().getFullYear()
+    let body
+    if (p.kind === 'pre') {
+      const cash = state.fair[sym]?.values?.cash
+      body = `<p>الشركة بدون إيرادات كافية نرسم لها مسار سعر (إيراداتها <b class="n">${big(p.rev)}</b> ${cur}). بدل التخمين: عشان سعرها اليوم يكون منطقي، تحتاج إيرادات سنوية حوالي <b class="n">${big(p.revNeeded)}</b> ${cur} بعد 5 سنوات${p.rev > 0 ? ` (<b class="n">${fmt(p.revNeeded / p.rev, 0)}×</b> إيرادات اليوم)` : ''}.</p>
+        <p class="dim">الحسبة: القيمة السوقية اليوم تكبر 9% سنوياً (العائد اللي تطلبه) لـ 5 سنوات، وتقسم على 3 (شركة ناضجة: مكرر ربح 20 × هامش ربح 15%).${cash ? ` الكاش الصافي للسهم اليوم: <b class="n">${fmt(cash, 2)}</b>.` : ''}</p>`
+    } else {
+      const cell = (x, cls = '') => `<td class="n ${cls}">${x}</td>`
+      const row = (label, xs, f = (x) => fmt(x, 2), cls = () => '') => `<tr><th>${label}</th>${xs.map((x) => cell(f(x), cls(x))).join('')}</tr>`
+      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fmt(r.bear, 2))}${cell(fmt(r.base, 2))}${cell(fmt(r.bull, 2))}</tr>`).join('')
+      const multName = (b) => (b === 'pe' ? 'P/E' : 'P/S')
+      body = `<table class="ptable"><thead><tr><th></th><th>متشائم</th><th>أساسي</th><th>متفائل</th></tr></thead><tbody>
+          <tr class="now"><th>اليوم</th>${cell(fmt(p.price, 2)).repeat(3)}</tr>${years}
+          <tr class="sum"><th>العائد سنوياً</th>${p.yearly.map((x) => cell(pct(x, 1), x >= 0 ? 'hi' : 'lo')).join('')}</tr>
+          ${row('قيمتها اليوم بخصم 9%', p.today)}
+          <tr class="grp"><th colspan="4">الافتراضات</th></tr>
+          ${row('نمو الإيرادات أول سنة', p.growth, ([a]) => pct(a))}
+          ${row('نمو الإيرادات السنة الخامسة', p.growth, ([, b]) => pct(b))}
+          ${p.margin ? row('هامش صافي الربح', p.margin, (x) => pct(x, 1)) : ''}
+          ${row('المكرر بالسنة الخامسة', p.exitMult.map((x, i) => [x, p.basis[i]]), ([x, b]) => `${multName(b)} ${fmt(x, 1)}`)}
+        </tbody></table>
+        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : 'نمو الإيرادات آخر 3 سنوات'}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = المبيعات للسهم × مكرر المبيعات.'} المكرر يتحرك من مكرر اليوم إلى متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>) × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على المبيعات.' : ''}</p>
+        <p class="dim">"قيمتها اليوم" = سعر ${y0 + 5} مخصوم 9% سنوياً: لو أعلى من سعر اليوم، السيناريو يعطي أكثر من 9% بالسنة. عدد الأسهم ثابت (ما حسبنا إعادة الشراء ولا الإصدار)، والتوزيعات مو داخلة.</p>`
+    }
+    return `<details class="part proj" style="grid-column:1/-1"${state.projOpen ? ' open' : ''}><summary><span>توقع السعر لـ 5 سنوات</span><span class="dim">اضغط للعرض</span></summary>
+      ${body}
+      <p class="dim">سيناريوهات من الافتراضات المكتوبة، مو توقع مجرّب: ما اختبرناها على الماضي. الشركات الدورية (رقائق، سلع، بتروكيماويات) يطلع المدى عندها واسع لأن هامشها يتقلب.</p>
+    </details>`
+  }
+
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -1271,14 +1452,15 @@ return { GAP, expectationsAt }
     ]
     return `<div class="dgrid">
       ${fairBlock(sym)}
+      ${projBlock(sym)}
       ${expBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من <b class="n">${cheaper == null ? '—' : pct(cheaper).replace('+', '')}</b> من شهوره في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
-        <p>السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.</p>`)}
-      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
+        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.gReal)}</b> سنوياً آخر 3 سنوات.`}</p>`)}
+      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
-      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (ربح، كاش، إيراد، هوامش، دين) مقارنة بالسنة اللي قبلها.</p>`)}
+      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
     <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
@@ -1319,6 +1501,8 @@ return { GAP, expectationsAt }
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
+  // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
+  $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')

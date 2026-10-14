@@ -57,7 +57,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .fair-list div { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); }
 .fair-list div b { color: var(--fg); font-weight: 500; }
 .fair-list div.off { opacity: .55; }
-.notice { border-inline-start: 3px solid var(--mid); padding: 8px 12px; background: var(--panel); border-radius: 6px; }
+.notice { border: 1px solid var(--mid); padding: 8px 12px; background: var(--panel); border-radius: 8px; }
 .notice.bad { border-color: var(--bad); }
 
 .tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
@@ -87,7 +87,7 @@ tbody tr.row:hover { background: var(--soft); }
 .dim { color: var(--muted); }
 .skel { display: inline-block; width: 60px; height: 12px; border-radius: 4px; background: var(--soft); }
 
-.detail td { background: var(--bg); padding: 18px; }
+.detail > td { background: var(--bg); padding: 18px; }
 .dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .part { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
 .part h3 { margin: 0; font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; }
@@ -104,7 +104,22 @@ tbody tr.row:hover { background: var(--soft); }
 .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 .legend div { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; font-size: 14px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; margin-top: 6px; }
-.result { border-inline-start: 3px solid var(--accent); padding-inline-start: 14px; display: grid; gap: 6px; max-width: 76ch; }
+.result { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; max-width: 76ch; }
+
+details.proj summary { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-weight: 600; font-size: 15px; list-style: none; }
+details.proj summary::-webkit-details-marker { display: none; }
+details.proj summary::after { content: "▾"; color: var(--muted); }
+details.proj[open] summary::after { content: "▴"; }
+details.proj[open] summary .dim { display: none; }
+.ptable { min-width: 0; width: 100%; max-width: 680px; border: 1px solid var(--line); border-radius: 8px; border-collapse: separate; border-spacing: 0; overflow: hidden; margin: 4px 0 6px; }
+.ptable th, .ptable td { padding: 7px 10px; font-size: 13.5px; }
+.ptable thead th { text-align: center; }
+.ptable tbody th { font-weight: 500; color: var(--muted); background: none; white-space: normal; }
+.ptable tr.grp th { color: var(--fg); font-weight: 600; padding-top: 12px; }
+.ptable td { text-align: center; white-space: nowrap; }
+.ptable tr.now td, .ptable tr.now th { background: var(--soft); }
+.ptable tr.sum th, .ptable tr.sum td { font-weight: 600; }
+.ptable tr:last-child th, .ptable tr:last-child td { border-bottom: 0; }
 
 .only-mobile { display: none; }
 /* Phones: each stock is a card, no sideways scrolling. */
@@ -121,10 +136,10 @@ tbody tr.row:hover { background: var(--soft); }
   .filters input, .filters select { flex: 1 1 100%; }
   .only-mobile { display: block; }
   .tbl { overflow: visible; background: none; border: 0; border-radius: 0; }
-  table { min-width: 0; }
-  thead { display: none; }
-  table, tbody { display: block; }
-  tbody { display: grid; gap: 10px; }
+  .tbl > table { min-width: 0; }
+  .tbl > table > thead { display: none; }
+  .tbl > table, .tbl > table > tbody { display: block; }
+  .tbl > table > tbody { display: grid; gap: 10px; }
   tr.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; position: relative; }
   tr.row:hover { background: var(--panel); }
   tr.row[aria-expanded="true"] { border-color: var(--accent); }
@@ -136,12 +151,11 @@ tbody tr.row:hover { background: var(--soft); }
   .c-more { display: none !important; }
   .c-del { position: absolute; top: 6px; inset-inline-end: 4px; }
   .x { font-size: 22px; padding: 6px 10px; }
-  tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
-  tr.detail, tr.detail td { display: block; }
-  tr.detail td { padding: 4px 0 8px; background: none; border: 0; }
+  .tbl > table > tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
+  .tbl tr.detail, .tbl tr.detail > td { display: block; }
+  .tbl tr.detail > td { padding: 4px 0 8px; background: none; border: 0; }
   .detail .dgrid { gap: 10px; }
   .ctx { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .result, .note { padding-inline-start: 10px; }
 }
 </style>
 
@@ -219,6 +233,14 @@ tbody tr.row:hover { background: var(--soft); }
       <b>نتيجة اختبار الدرجة (2012–2025، 819 سهم أمريكي)</b>
       <p>الدرجة رتبت الأسهم أفضل من العشوائي بفرق صغير: الارتباط مع عائد السنة التالية +0.03 في المتوسط، وموجب في 10 سنوات من 14. لكن أعلى خُمس ما تفوّق على أدنى خُمس في المتوسط (−0.6% سنوياً)، لأن الأسهم الضعيفة انفجرت في سنوات المضاربة (2020 و2025). يعني الدرجة ملخص صادق لصحة الشركة وسعرها، مو توقع لسعرها السنة الجاية. في السعودي التاريخ قصير، والنتيجة ما يُعتمد عليها.</p>
     </div>
+    <div class="result">
+      <b>تصحيحات 14 أكتوبر 2026 (بعد الاختبار)</b>
+      <p>1) الشركات اللي سنتها المالية تخلص نص السنة (مايكروسوفت، مايكرون، كوستكو، بروكتر…) كانت الصفحة تاخذ أرقام السنة اللي قبل، فطلعت قيمة مايكرون العادلة عُشر سعرها. الحين تاخذ آخر سنة منشورة. 2) البنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فشلناه من الدرجة والتنبيهات، وتوقع إيرادات المحللين للبنوك ما ينقارن بإيرادات TradingView (كان يطلع −30% إلى −45% لكل بنك). 3) الشركات اللي بدأت إيراداتها من شبه صفر كانت قيمتها العادلة 20–90 ضعف سعرها، لأن مكرر مبيعاتها القديم بالآلاف. الأشهر اللي مكرر المبيعات فيها فوق 100 ما تنحسب الحين. 4) إذا عدد الأسهم المحسوب من الأرباح بعيد عن عدد الأسهم الفعلي (أسهم ممتازة أو ربح شبه صفر)، تستخدم الصفحة العدد الفعلي.</p>
+      <p class="dim">أعدنا اختبار الدرجة بعد التصحيح 2 و3: النتيجة نفسها (الارتباط +0.03، مؤكد؛ أعلى خُمس ما تفوّق). ونتائج القيمة العادلة والتنبيهات بعد التصحيح بعد ما تغيّرت: ما تنبأت.</p>
+    </div>
+    <h2>توقع السعر لـ 5 سنوات</h2>
+    <p>داخل كل سهم: ثلاث سيناريوهات (متشائم، أساسي، متفائل) لسعر السهم كل سنة لين 5 سنوات. الطريقة: الإيرادات × هامش الربح ÷ عدد الأسهم = ربح السهم، وبعدها × مكرر الربح. النمو يبدأ من توقع المحللين (أو نمو آخر 3 سنوات) ويهدأ مع الوقت، والهامش من آخر 3 سنوات، والمكرر يرجع لمتوسط السهم نفسه. الشركات اللي تخسر تنحسب على المبيعات، واللي بدون إيرادات نعرض بدالها كم إيرادات تحتاج عشان سعرها اليوم يكون منطقي.</p>
+    <p class="dim">ليش مو DCF بس؟ DCF يعطيك قيمة اليوم وليس مسار سعر، ويتغير كثير مع تغيير بسيط في الخصم أو النمو البعيد، وفي اختبارنا (دراسة 7) القيمة من DCF لحالها ما تنبأت بأداء السنة التالية. هو موجود كطريقة من طرق القيمة العادلة. السيناريوهات هذي ما اختبرناها على الماضي، فهي توضح وش لازم يصير عشان يوصل السعر لكذا، مو توقع.</p>
   </section>
 </div>
 

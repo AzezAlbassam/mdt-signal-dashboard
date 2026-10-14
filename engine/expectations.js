@@ -7,14 +7,14 @@ import { impliedGrowth } from './score.js'
 
 export const GAP = 0.1
 
-export function expectationsAt(funds, closes, month) {
+export function expectationsAt(funds, closes, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month)
+  const st = stateAt(funds, month, live ? Infinity : undefined)
   if (!(close > 0) || !st) return null
   const gStar = impliedGrowth(st.fcfPS, close)
   if (gStar == null) return null
   const gReal = st.revG ?? st.epsG ?? 0
-  const known = funds.filter((f) => f.year <= lastUsableFiscalYear(month))
+  const known = funds.filter((f) => f.year <= (live ? Infinity : lastUsableFiscalYear(month)))
   const f0 = known[known.length - 1]
   const f1 = known[known.length - 2]
   const yoy = f0 && f1 && f1.rev > 0 && Number.isFinite(f0.rev) ? f0.rev / f1.rev - 1 : null

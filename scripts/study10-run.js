@@ -101,5 +101,5 @@ for (let y = 2016; y <= 2026; y += 1) {
   const b = ttd?.closes.get(`${y + 1}-05`)
   if (e) out.push(`${y}-05  implied ${pct(e.gStar)}  delivered ${pct(e.gReal)}  last year ${pct(e.yoy)}  gap ${pct(e.gap)}  ${e.flag.toUpperCase().padEnd(7)}  next 12m ${b ? pct(b / a - 1) : '   –'}`)
 }
-fs.writeFileSync('reports/study10.txt', out.join('\n') + '\n')
+fs.writeFileSync(process.env.OUT ?? 'reports/study10.txt', out.join('\n') + '\n')
 console.log(out.join('\n'))

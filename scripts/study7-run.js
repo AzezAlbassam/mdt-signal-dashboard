@@ -242,5 +242,5 @@ const reasons = {}
 for (const [s, why] of excluded) (reasons[why.replace(/^\d+ /, 'N ')] ??= []).push(s.split(':')[1])
 for (const [why, list] of Object.entries(reasons)) L.push(`- ${why}: ${list.length} — ${list.join(' ')}`)
 
-fs.writeFileSync('reports/study7.txt', L.join('\n') + '\n')
+fs.writeFileSync(process.env.OUT ?? 'reports/study7.txt', L.join('\n') + '\n')
 console.log(L.slice(0, 40).join('\n'))
