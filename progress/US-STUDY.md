@@ -106,4 +106,5 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   off (MCHP preferred dividends). POST-HOC re-runs: reports/study{7,9,10}-posthoc-fixes.txt — conclusions unchanged
   (study 9 H1 still CONFIRMED, p 0.0040 / Holm 0.0080; study 7 IC −0.017, study 10 flags still not confirmed).
 - 2026-10-14 — 5-year price scenarios (engine/projection.js, untested, shown as scenarios). Saudi main market (271)
-  being added to lists/sa; histories seeded with scripts/seed-cache.js.
+  added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
+  from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
