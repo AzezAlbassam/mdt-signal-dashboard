@@ -108,3 +108,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-14 — 5-year price scenarios (engine/projection.js, untested, shown as scenarios). Saudi main market (271)
   added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
   from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
+- 2026-10-14 — addendum 3 (monthly MOD on 611 watchlist stocks, H3/H6): 0 of 2. H3 close: edge +4.6%, both periods +, p 0.038, Holm 0.0755. List of last-12-month signals shown as chart readings, not recommendations.
