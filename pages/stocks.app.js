@@ -358,18 +358,18 @@
       const f = state.fair[sym]
       const up = upside(sym)
       const main = `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock"><b>${esc(sym.split(':')[1])}</b><span>${esc(q?.description ?? '')}</span></td>
-        <td class="n">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
-        <td class="n">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
-        <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}">${pct(up)}</td>
-        <td>${scoreCell(sym)}</td>
-        <td>${expCell(sym)}</td>
-        <td class="n">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
-        <td class="n">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
-        <td class="n">${fmt(q?.price_earnings_ttm)}</td>
-        <td class="n">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
-        <td class="n">${fmt(q?.altman_z_score_ttm)}</td>
-        <td><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
+        <td class="stock c-stock"><b>${esc(sym.split(':')[1])}</b><span>${esc(q?.description ?? '')}</span></td>
+        <td class="n" data-label="السعر">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
+        <td class="n" data-label="القيمة العادلة">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق">${pct(up)}</td>
+        <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
+        <td class="c-wide c-exp">${expCell(sym)}</td>
+        <td class="n c-more">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
+        <td class="n c-more">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
+        <td class="n c-more">${fmt(q?.price_earnings_ttm)}</td>
+        <td class="n c-more">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
+        <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
+        <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
       return main + (state.open === sym ? `<tr class="detail"><td colspan="12">${detail(sym)}</td></tr>` : '')
     }).join('')
@@ -408,7 +408,7 @@
       : news.length ? `<ul class="news">${news.map((n) => `<li><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="dim n">${dateOf(n.published)} · ${esc(n.provider?.name ?? '')}</span></li>`).join('')}</ul>`
       : '<p class="dim">ما فيه أخبار حديثة.</p>'
     return `<div class="part" style="grid-column:1/-1">
-      <h3><span>التوقعات والمحفزات</span><span class="n dim">التقرير الجاي ${dateOf(q.earnings_release_next_date)}</span></h3>
+      <h3><span>التوقعات والمحفزات</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
       <p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>
       <p>المحللين للسنة المالية الجاية: الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
@@ -548,6 +548,8 @@
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
   $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
+  // Phones hide the table header, so sorting there goes through this menu.
+  $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')

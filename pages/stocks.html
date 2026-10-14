@@ -22,7 +22,7 @@
   --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; color-scheme: dark }
 
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.7; }
-.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 22px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
 h1, h2 { font-family: var(--display); margin: 0; line-height: 1.3; text-wrap: balance; }
 h1 { font-size: clamp(28px, 4.5vw, 40px); }
 h2 { font-size: 22px; }
@@ -61,7 +61,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .notice.bad { border-color: var(--bad); }
 
 .tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-table { border-collapse: collapse; width: 100%; min-width: 1260px; }
+table { border-collapse: collapse; width: 100%; min-width: 1080px; }
 .chip { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; cursor: help; }
 .chip.red { color: var(--bad); } .chip.green { color: var(--good); } .chip.amber { color: var(--mid); }
 ul.news, ul.ideas { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14px; }
@@ -105,6 +105,44 @@ tbody tr.row:hover { background: var(--soft); }
 .legend div { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; font-size: 14px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; margin-top: 6px; }
 .result { border-inline-start: 3px solid var(--accent); padding-inline-start: 14px; display: grid; gap: 6px; max-width: 76ch; }
+
+.only-mobile { display: none; }
+/* Phones: each stock is a card, no sideways scrolling. */
+@media (max-width: 760px) {
+  body { font-size: 14.5px; }
+  .wrap { gap: 16px; padding-block: 16px 48px; }
+  h1 { font-size: 26px; }
+  .lead { font-size: 14px; }
+  .tabs button { flex: 1; padding: 10px 6px; }
+  .add { flex-basis: 100%; }
+  .add input, .filters input, .filters select { font-size: 16px; }
+  #refresh { flex: 1; }
+  .status { flex-basis: 100%; }
+  .filters input, .filters select { flex: 1 1 100%; }
+  .only-mobile { display: block; }
+  .tbl { overflow: visible; background: none; border: 0; border-radius: 0; }
+  table { min-width: 0; }
+  thead { display: none; }
+  table, tbody { display: block; }
+  tbody { display: grid; gap: 10px; }
+  tr.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; position: relative; }
+  tr.row:hover { background: var(--panel); }
+  tr.row[aria-expanded="true"] { border-color: var(--accent); }
+  tr.row td { display: block; padding: 0; border: 0; min-width: 0; }
+  tr.row td[data-label]::before { content: attr(data-label); display: block; font-family: var(--body); font-size: 11.5px; color: var(--muted); margin-bottom: 2px; }
+  .c-stock { grid-column: 1 / -1; padding-inline-end: 36px !important; }
+  .c-wide { grid-column: 1 / -1; }
+  .c-exp:has(> .dim) { display: none !important; }
+  .c-more { display: none !important; }
+  .c-del { position: absolute; top: 6px; inset-inline-end: 4px; }
+  .x { font-size: 22px; padding: 6px 10px; }
+  tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
+  tr.detail, tr.detail td { display: block; }
+  tr.detail td { padding: 4px 0 8px; background: none; border: 0; }
+  .detail .dgrid { gap: 10px; }
+  .ctx { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .result, .note { padding-inline-start: 10px; }
+}
 </style>
 
 <div class="wrap" dir="rtl">
@@ -131,6 +169,13 @@ tbody tr.row:hover { background: var(--soft); }
   <div class="filters">
     <input id="filter" type="search" placeholder="فلترة القائمة: رمز أو اسم" aria-label="فلترة القائمة">
     <select id="group" aria-label="قائمة TradingView"><option value="">كل الأسهم</option></select>
+    <select id="sortSel" class="only-mobile" aria-label="ترتيب">
+      <option value="sym:1">ترتيب: اسم السهم</option>
+      <option value="score:-1">ترتيب: الأعلى درجة</option>
+      <option value="upside:-1">ترتيب: الأرخص من قيمته العادلة</option>
+      <option value="gap:1">ترتيب: الأقل توقعات</option>
+      <option value="price:-1">ترتيب: السعر</option>
+    </select>
     <span class="shown" id="shown"></span>
   </div>
 
@@ -1082,18 +1127,18 @@ return { GAP, expectationsAt }
       const f = state.fair[sym]
       const up = upside(sym)
       const main = `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock"><b>${esc(sym.split(':')[1])}</b><span>${esc(q?.description ?? '')}</span></td>
-        <td class="n">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
-        <td class="n">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
-        <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}">${pct(up)}</td>
-        <td>${scoreCell(sym)}</td>
-        <td>${expCell(sym)}</td>
-        <td class="n">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
-        <td class="n">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
-        <td class="n">${fmt(q?.price_earnings_ttm)}</td>
-        <td class="n">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
-        <td class="n">${fmt(q?.altman_z_score_ttm)}</td>
-        <td><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
+        <td class="stock c-stock"><b>${esc(sym.split(':')[1])}</b><span>${esc(q?.description ?? '')}</span></td>
+        <td class="n" data-label="السعر">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
+        <td class="n" data-label="القيمة العادلة">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق">${pct(up)}</td>
+        <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
+        <td class="c-wide c-exp">${expCell(sym)}</td>
+        <td class="n c-more">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
+        <td class="n c-more">${s?.detail ? pct(s.detail.gReal) : '—'}</td>
+        <td class="n c-more">${fmt(q?.price_earnings_ttm)}</td>
+        <td class="n c-more">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
+        <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
+        <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
       return main + (state.open === sym ? `<tr class="detail"><td colspan="12">${detail(sym)}</td></tr>` : '')
     }).join('')
@@ -1132,7 +1177,7 @@ return { GAP, expectationsAt }
       : news.length ? `<ul class="news">${news.map((n) => `<li><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="dim n">${dateOf(n.published)} · ${esc(n.provider?.name ?? '')}</span></li>`).join('')}</ul>`
       : '<p class="dim">ما فيه أخبار حديثة.</p>'
     return `<div class="part" style="grid-column:1/-1">
-      <h3><span>التوقعات والمحفزات</span><span class="n dim">التقرير الجاي ${dateOf(q.earnings_release_next_date)}</span></h3>
+      <h3><span>التوقعات والمحفزات</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
       <p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.gReal)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>
       <p>المحللين للسنة المالية الجاية: الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · ربح السهم <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بآخر 12 شهر. آخر تقرير: مفاجأة الربح <b class="n">${Number.isFinite(q.eps_surprise_percent_fq) ? pct(q.eps_surprise_percent_fq / 100) : '—'}</b>، الإيرادات <b class="n">${Number.isFinite(q.revenue_surprise_percent_fq) ? pct(q.revenue_surprise_percent_fq / 100) : '—'}</b></p>
@@ -1272,6 +1317,8 @@ return { GAP, expectationsAt }
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
   $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
+  // Phones hide the table header, so sorting there goes through this menu.
+  $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')

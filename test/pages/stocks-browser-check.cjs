@@ -22,7 +22,7 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
 
 ;(async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' }).catch(() => chromium.launch())
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+  const page = await browser.newPage({ viewport: process.env.PHONE ? { width: 390, height: 844 } : { width: 1280, height: 900 }, deviceScaleFactor: process.env.PHONE ? 2 : 1 })
   const logs = []
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') logs.push(`${m.type()}: ${m.text()}`) })
   page.on('pageerror', (e) => logs.push(`PAGEERROR: ${e.message}`))
