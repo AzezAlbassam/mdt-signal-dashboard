@@ -1,9 +1,12 @@
-// Turn the get_ohlcv responses sitting in subagent transcripts into
-// data/study11/bars/<EX>_<TICKER>.json.gz. Study 7 collected a bulk fetch the same way: the
-// agents make the calls, the bars land in their transcripts, and nothing re-emits 5,000 bars
-// through a model's context.
+// Turn saved get_ohlcv responses into data/study11/bars/<EX>_<TICKER>.json.gz.
 //
-//   node scripts/study11-collect.js <workflowTranscriptDir> [...more dirs]
+//   SINCE=<ISO time> node scripts/study11-collect.js <dir> [...more dirs]
+//
+// A get_ohlcv result large enough to overflow the tool-result limit is written to
+// .../tool-results/mcp-*-get-ohlcv-*.txt instead of into the calling agent's context. That is
+// the cheap path and the one this study uses: the fetch agents ask for the full page, every
+// response spills, and the bars are read from those files here. Small responses that stayed
+// inline are recovered from the agents' .jsonl transcripts instead, so both are handled.
 //
 // Idempotent, and prefers the longest history: a symbol already on disk is replaced only by a
 // response with strictly more bars. Hygiene matches scripts/us-ingest.js, with study 11's
@@ -15,7 +18,9 @@ import zlib from 'node:zlib'
 const CUTOFF = '2026-10-16'
 const OUT = 'data/study11/bars'
 const dirs = process.argv.slice(2)
-if (!dirs.length) throw new Error('usage: study11-collect.js <transcriptDir> [...]')
+if (!dirs.length) throw new Error('usage: study11-collect.js <dir> [...]')
+// Only files written after SINCE count, so an older session's page is never mixed in.
+const since = Date.parse(process.env.SINCE ?? '2026-10-17T00:00:00Z')
 fs.mkdirSync(OUT, { recursive: true })
 
 // Every tool_result body in a transcript line, as text.
@@ -50,30 +55,39 @@ function clean(symbol, b) {
 }
 
 const walk = function* (d) {
+  if (!fs.existsSync(d)) return
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, e.name)
     if (e.isDirectory()) yield* walk(p)
-    else if (e.name.endsWith('.jsonl')) yield p
+    else if ((e.name.endsWith('.jsonl') || e.name.endsWith('.txt')) && fs.statSync(p).mtimeMs > since) yield p
   }
 }
 
 const best = new Map() // symbol -> cleaned series
 let seen = 0
+const take = (j) => {
+  if (!j?.symbol || j.interval !== '1D' || !j.bars) return
+  const b = columnar(j.bars)
+  if (!Array.isArray(b?.t) || !b.t.length) return
+  seen += 1
+  const s = clean(j.symbol, b)
+  if (!s.date.length) return
+  const prev = best.get(j.symbol)
+  if (!prev || s.date.length > prev.date.length) best.set(j.symbol, s)
+}
 for (const dir of dirs) {
   for (const file of walk(dir)) {
-    for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
-      if (!line.includes('"bars"')) continue // cheap pre-filter; the files are large
-      for (const text of toolResults(line)) {
-        let j
-        try { j = JSON.parse(text) } catch { continue }
-        if (!j?.symbol || j.interval !== '1D' || !j.bars) continue
-        const b = columnar(j.bars)
-        if (!Array.isArray(b?.t) || !b.t.length) continue
-        seen += 1
-        const s = clean(j.symbol, b)
-        if (!s.date.length) continue
-        const prev = best.get(j.symbol)
-        if (!prev || s.date.length > prev.date.length) best.set(j.symbol, s)
+    const text = fs.readFileSync(file, 'utf8')
+    if (!text.includes('"bars"')) continue // cheap pre-filter; these files are large
+    if (file.endsWith('.txt')) {
+      // a spilled tool result: the whole file is the response
+      try { take(JSON.parse(text)) } catch {}
+      continue
+    }
+    for (const line of text.split('\n')) {
+      if (!line.includes('"bars"')) continue
+      for (const body of toolResults(line)) {
+        try { take(JSON.parse(body)) } catch {}
       }
     }
   }
