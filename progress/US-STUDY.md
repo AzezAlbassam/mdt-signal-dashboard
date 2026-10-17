@@ -52,7 +52,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 
 - [x] Study 11 protocol (PROTOCOL-study11.md) + universe snapshot (data/study11/universe.json, 207 symbols) committed before any HCP value and before any download
 - [ ] Study 11: fetch daily bars for the 207 (reuse data/us/bars where present) → data/study11/bars/
-- [ ] Study 11: engine/hcp.js + no-look-ahead tests (must pass before any result)
+- [x] Study 11: engine/hcp.js + no-look-ahead tests (8 tests, full suite 350 pass)
 - [ ] Study 11: run → reports/study11.txt / .json
 - [ ] Study 11: pine/hcp.pine (header text per PROTOCOL-study11.md §7, depends on the result)
 - [ ] Study 11: freeze current projections → forward-log/hcp-2026-10-17.json
