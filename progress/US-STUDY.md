@@ -50,6 +50,13 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 
 - [x] Study 10 (PROTOCOL-study10.md): RED/GREEN expectation flags → H1, H2 not confirmed (d1 −0.1%, d2 +0.1%; Holm p 0.95). reports/study10.txt
 
+- [x] Study 11 protocol (PROTOCOL-study11.md) + universe snapshot (data/study11/universe.json, 207 symbols) committed before any HCP value and before any download
+- [ ] Study 11: fetch daily bars for the 207 (reuse data/us/bars where present) → data/study11/bars/
+- [ ] Study 11: engine/hcp.js + no-look-ahead tests (must pass before any result)
+- [ ] Study 11: run → reports/study11.txt / .json
+- [ ] Study 11: pine/hcp.pine (header text per PROTOCOL-study11.md §7, depends on the result)
+- [ ] Study 11: freeze current projections → forward-log/hcp-2026-10-17.json
+
 ## Counts
 (updated as work proceeds)
 
@@ -109,4 +116,13 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
   from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
 - 2026-10-14 — addendum 3 (monthly MOD on 611 watchlist stocks, H3/H6): 0 of 2. H3 close: edge +4.6%, both periods +, p 0.038, Holm 0.0755. List of last-12-month signals shown as chart readings, not recommendations.
+- 2026-10-17 — user sent a screenshot of @BeardoTrader's "Long term $QQQ model" (blue line, 2026-10-16)
+  and asked for the same indicator on US500/NAS100/DOW/SPY/QQQ/IWM and both watchlists. Measured the
+  line out of the image (pixel extraction, aligned to real QQQ bars to 0.15%): it is a FORWARD
+  PROJECTION, 39 bars past the last candle; mean 1.77% from the close over the visible 112 bars; not
+  an MA (change corr +0.04), not an FLD, not stepped M2 data; a 20-day MA matched it and a 10-day MA
+  beat it. Vendor method undisclosed (no TradingView script; "subscribers" implies a paid channel), so
+  family is undetermined — open look-alike under a different name (HCP), no match claim, as in study 6.
+  User chose: Pine script + pre-registered test, TradingView only (no live page). Study 11 pre-registered.
+  Scratchpad working files (this session only): .../scratchpad/{align,aligned,chart}.json, scout-*.md.
 - 2026-10-14 — pine/metal-log-regression.pine restyled at the user's request to the ETH look (upper/regression/lower, one fill, lines carried forward, price-scale values; outer bands optional) and opened to stocks/coins (Auto: start at first bar; log time for crypto). Default fit now "All data" (hindsight, stated in the header and table). Fit maths unchanged. Preview: reports/logreg-preview.png (mock). Stock band untested — offered a pre-registered test.
