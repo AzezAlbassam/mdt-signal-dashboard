@@ -1,0 +1,298 @@
+<title>Log Regression Band</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  /* Layout: one reading column; the code block is the page's main object. Colours follow the band itself. */
+  --bg:#F3F3F0; --surface:#FBFBF9; --raise:#EAEAE5; --ink:#1C1C1A; --body:#45453F; --muted:#6E6E66; --line:#DADAD2;
+  --upper:#8E3AA0; --mid:#1F4FD8; --lower:#1E86B8; --accent:#1F4FD8; --ok:#2E7D4F;
+  --sans:"IBM Plex Sans",system-ui,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#262624; --surface:#2F2F2C; --raise:#383834; --ink:#EEEBE3; --body:#CCC8BE; --muted:#9A968C; --line:#41413C;
+  --upper:#C27BD2; --mid:#6E93FF; --lower:#5FC3EE; --accent:#6E93FF; --ok:#6CC08F; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#262624; --surface:#2F2F2C; --raise:#383834; --ink:#EEEBE3; --body:#CCC8BE; --muted:#9A968C; --line:#41413C;
+  --upper:#C27BD2; --mid:#6E93FF; --lower:#5FC3EE; --accent:#6E93FF; --ok:#6CC08F; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font:15px/1.65 var(--sans)}
+.wrap{max-width:900px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{color:var(--ink);font-size:clamp(1.7rem,4.5vw,2.3rem);line-height:1.2;margin:0 0 8px;text-wrap:balance}
+h2{color:var(--ink);font-size:1.15rem;margin:0 0 10px;text-wrap:balance}
+p{margin:0;max-width:68ch}
+.lines{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:.9rem}
+.lines i{display:inline-block;width:20px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:.03em;text-transform:uppercase;background:var(--raise)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+figure{margin:0}
+figure img{display:block;width:100%;border-radius:6px;border:1px solid var(--line)}
+figcaption{font-size:.82rem;color:var(--muted);margin-top:6px}
+.code{border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px 8px 14px;border-bottom:1px solid var(--line)}
+.bar span{font:500 .82rem var(--mono);color:var(--muted)}
+button{font:600 .9rem var(--sans);color:var(--surface);background:var(--accent);border:0;border-radius:5px;padding:8px 16px;cursor:pointer}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+button.done{background:var(--ok)}
+pre{margin:0;overflow:auto;max-height:520px;padding:14px;font:12.5px/1.55 var(--mono);color:var(--ink)}
+ol,ul{margin:0;padding-left:20px;display:grid;gap:6px;max-width:68ch}
+code{font:.88em var(--mono);background:var(--raise);padding:1px 5px;border-radius:3px}
+.note{border-left:3px solid var(--muted);padding:2px 0 2px 14px;color:var(--muted);font-size:.92rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+  <header>
+    <h1>Log Regression Band</h1>
+    <p>One indicator for gold, silver, stocks and coins. It reads the ticker and picks the start date and the curve for you.</p>
+    <div class="lines"><span><i style="background:var(--upper)"></i>Upper (+1 SD)</span><span><i style="background:var(--mid)"></i>Regression</span><span><i style="background:var(--lower)"></i>Lower (−1 SD)</span></div>
+  </header>
+
+  <section>
+    <h2>What it does on each chart</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Symbol</th><th>Fit starts</th><th>Curve</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Gold (GOLD, XAU)</td><td>Aug 1971</td><td>Straight on a log chart</td><td>Before that the price was fixed by law</td></tr>
+        <tr><td>Silver (SILVER, XAG)</td><td>Jul 1968</td><td>Straight on a log chart</td><td>The Treasury capped the price until 1967–68</td></tr>
+        <tr><td>Stocks and ETFs</td><td>First bar (listing)</td><td>Straight on a log chart</td><td>A steady growth rate</td></tr>
+        <tr><td>Crypto</td><td>First bar</td><td>Curved (power law), like the ETH band</td><td>Growth slows as the coin ages</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:10px">Every choice can be overridden in the settings: <code>Fit from</code>, <code>Time axis</code>, <code>Band width</code>, <code>Outer bands</code>, <code>Carry the lines forward</code> and the colours.</p>
+  </section>
+
+  <figure>
+    <img src="logreg-preview.png" alt="The band on gold since 1971 and on Microsoft since 2000: three rising lines with a green fill between the upper and lower line">
+    <figcaption>Gold and MSFT, monthly. Drawn from the same fit outside TradingView, so the look on your chart will match but this is not a screenshot.</figcaption>
+  </figure>
+
+  <section class="code">
+    <div class="bar"><span>metal-log-regression.pine · Pine v6 · 195 lines</span><button type="button" id="copy">Copy code</button></div>
+    <pre id="src">// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// Logarithmic regression band — gold, silver, and any stock or coin.
+//
+//   ln(price) = a + b·t      fitted by least squares, t in years since "Fit from"
+//   band      = exp(fit ± k·SD of the residuals)
+//
+// Look (2026-10-14, at the user's request): three lines like the usual ETH log-regression
+// band — upper, regression, lower — with one fill between them, the lines carried into the
+// future, and their values on the price scale. Outer ±2 SD lines are optional. The fit
+// itself is the one study 7 used.
+//
+// Start date ("Auto" picks it from the ticker):
+// - gold 1971-08: before Nixon closed the gold window the price was fixed by law ($20.67,
+//   then $35), so it says nothing about a market trend. TVC:GOLD goes back to 1833.
+// - silver 1968-07: the US Treasury sold silver at $1.29 until 1967, capping the price,
+//   and silver certificates stopped being redeemable on 1968-06-24.
+// - everything else (stocks, coins): the first bar on the chart (IPO / listing).
+//
+// Time axis ("Auto"): linear time (a steady growth rate, a straight line on a log chart)
+// for metals and stocks; log time (a power law since the first day, the curved shape of
+// the crypto bands) for crypto. Either can be forced.
+//
+// Two ways to fit, and the difference matters:
+// - "All data" (default since 2026-10-14, for the ETH look): one fit through the whole
+//   history to today, drawn back over the past. History is fitted with hindsight and the
+//   past is redrawn every bar. "Price stayed above the band for years" is partly that.
+// - "Past only": each bar's band uses only the prices up to that bar — what the indicator
+//   really said at the time.
+// On the last bar both are the same fit, so today's reading does not depend on the mode.
+//
+// Evidence: gold since 1971 and silver since 1968 have had two or three full cycles — too
+// few for statistics (reports/study7-gold.txt, study7-silver.txt). For stocks the band is
+// untested, and only today's survivors have charts: a stock that fell below its band and
+// never came back is not on anyone's screen.
+
+//@version=6
+indicator("Log Regression Band", shorttitle = "LogReg Band", overlay = true, max_polylines_count = 12)
+
+startPreset = input.string("Auto", "Fit from", options = ["Auto", "Custom"], inline = "s", tooltip = "Auto: silver (SILVER / XAG) from 1968-07, gold (GOLD / XAU) from 1971-08, anything else from its first bar.")
+customStart = input.time(timestamp("1971-08-01T00:00:00"), "", inline = "s")
+axisIn     = input.string("Auto", "Time axis", options = ["Auto", "Linear time (exponential trend)", "Log time (power law)"], tooltip = "Auto: log time for crypto, linear time for everything else.")
+mode       = input.string("All data (redraws history)", "Fit", options = ["All data (redraws history)", "Past only"])
+minYearsIn = input.float(0.0, "Past only: years of data before the band is drawn (0 = auto)", minval = 0.0, tooltip = "Auto: 20 years for gold and silver, 8 for everything else.")
+k1         = input.float(1.0, "Band width (SD)", minval = 0.25, step = 0.25)
+showOuter  = input.bool(false, "Outer bands")
+k2         = input.float(2.0, "Outer bands (SD)", minval = 0.25, step = 0.25)
+projYears  = input.float(1.0, "Carry the lines forward (years)", minval = 0.0, step = 0.5)
+showTable  = input.bool(true, "Show table")
+cUp        = input.color(#AB47BC, "Upper", group = "Colours")
+cMid       = input.color(#2962FF, "Regression", group = "Colours")
+cLo        = input.color(#4FC3F7, "Lower", group = "Colours")
+cFill      = input.color(color.new(#66BB6A, 84), "Band fill", group = "Colours")
+cOuterUp   = input.color(#EF5350, "Outer upper", group = "Colours")
+cOuterLo   = input.color(#26A69A, "Outer lower", group = "Colours")
+
+bool notStock = syminfo.type != "stock" and syminfo.type != "fund"
+bool isSilver = notStock and (str.contains(syminfo.ticker, "SILVER") or str.contains(syminfo.ticker, "XAG"))
+bool isGold   = notStock and (str.contains(syminfo.ticker, "GOLD") or str.contains(syminfo.ticker, "XAU"))
+int startTime = startPreset == "Custom" ? customStart : isSilver ? timestamp("1968-07-01T00:00:00") : isGold ? timestamp("1971-08-01T00:00:00") : 0
+float minYears = minYearsIn &gt; 0 ? minYearsIn : (isSilver or isGold) ? 20.0 : 8.0
+
+const float YEAR_MS = 365.2425 * 24.0 * 3600.0 * 1000.0
+bool logTime  = axisIn == "Log time (power law)" or (axisIn == "Auto" and syminfo.type == "crypto")
+bool pastMode = mode == "Past only"
+
+// ---------------------------------------------------------------- running least squares
+
+var float n   = 0.0
+var float sx  = 0.0
+var float sy  = 0.0
+var float sxx = 0.0
+var float sxy = 0.0
+var float syy = 0.0
+var int   firstTime = na
+var array&lt;int&gt; fitTimes = array.new&lt;int&gt;()
+
+bool inFit = time &gt;= startTime and close &gt; 0
+if inFit and na(firstTime)
+    firstTime := time
+// years since the first fitted bar (Auto) or since the chosen start
+int origin = startTime &gt; 0 ? startTime : nz(firstTime, time)
+
+xOf(float t) =&gt;
+    float yrs = (t - origin) / YEAR_MS
+    logTime ? math.log(yrs + 1.0) : yrs
+
+float x = xOf(time)
+float y = math.log(close)
+if inFit
+    n   += 1.0
+    sx  += x
+    sy  += y
+    sxx += x * x
+    sxy += x * y
+    syy += y * y
+    fitTimes.push(time)
+
+float den = n * sxx - sx * sx
+float b   = n &gt; 2 and den != 0 ? (n * sxy - sx * sy) / den : na
+float a   = n &gt; 2 ? (sy - b * sx) / n : na
+float sse = a * a * n + b * b * sxx + syy + 2.0 * a * b * sx - 2.0 * a * sy - 2.0 * b * sxy
+float sd  = n &gt; 2 ? math.sqrt(math.max(sse, 0.0) / (n - 2.0)) : na
+
+bool  ready = inFit and not na(sd) and (time - firstTime) / YEAR_MS &gt;= minYears
+float mid   = a + b * x
+float z     = (y - mid) / sd
+
+// ---------------------------------------------------------------- Past only: plotted bar by bar
+// In "All data" mode these plots carry only the last bar, which puts today's values on the
+// price scale; the lines themselves are polylines drawn below.
+
+bool drawPast = pastMode and ready
+bool lastOnly = not pastMode and barstate.islast and not na(sd)
+bool show     = drawPast or lastOnly
+pU1 = plot(show ? math.exp(mid + k1 * sd) : na, "Upper", cUp, 2)
+pMd = plot(show ? math.exp(mid) : na, "Regression", cMid, 2)
+pL1 = plot(show ? math.exp(mid - k1 * sd) : na, "Lower", cLo, 2)
+plot(show and showOuter ? math.exp(mid + k2 * sd) : na, "Outer upper", cOuterUp, 1, plot.style_line)
+plot(show and showOuter ? math.exp(mid - k2 * sd) : na, "Outer lower", cOuterLo, 1, plot.style_line)
+fill(pU1, pL1, drawPast ? cFill : na)
+
+// ---------------------------------------------------------------- lines over the whole history + forward
+
+var array&lt;polyline&gt; drawn = array.new&lt;polyline&gt;()
+
+pointsAt(array&lt;int&gt; times, float offset) =&gt;
+    array&lt;chart.point&gt; pts = array.new&lt;chart.point&gt;()
+    int size = times.size()
+    int stride = math.max(1, int(math.ceil(size / 2000.0)))
+    for i = 0 to size - 1 by stride
+        int t = times.get(i)
+        pts.push(chart.point.from_time(t, math.exp(a + b * xOf(t) + offset)))
+    if (size - 1) % stride != 0
+        int tLast = times.get(size - 1)
+        pts.push(chart.point.from_time(tLast, math.exp(a + b * xOf(tLast) + offset)))
+    pts
+
+forward(float offset) =&gt;
+    array&lt;chart.point&gt; pts = array.new&lt;chart.point&gt;()
+    for i = 0 to 24
+        int t = time + int(projYears * YEAR_MS * i / 24.0)
+        pts.push(chart.point.from_time(t, math.exp(a + b * xOf(t) + offset)))
+    pts
+
+if barstate.islast and not na(sd) and fitTimes.size() &gt; 1
+    for p in drawn
+        p.delete()
+    drawn.clear()
+    // the lines: whole history in "All data", plus the forward part in both modes
+    array&lt;float&gt; offsets = array.from(k1 * sd, 0.0, -k1 * sd, k2 * sd, -k2 * sd)
+    array&lt;color&gt; colors  = array.from(cUp, cMid, cLo, cOuterUp, cOuterLo)
+    for j = 0 to 4
+        if j &lt; 3 or showOuter
+            array&lt;chart.point&gt; pts = array.new&lt;chart.point&gt;()
+            if not pastMode
+                pts := pointsAt(fitTimes, offsets.get(j))
+            if projYears &gt; 0
+                pts.concat(forward(offsets.get(j)))
+            if pts.size() &gt; 1
+                drawn.push(polyline.new(pts, xloc = xloc.bar_time, line_color = colors.get(j), line_width = j &lt; 3 ? 2 : 1, line_style = j &lt; 3 ? line.style_solid : line.style_dotted))
+    // the fill: one closed shape, upper line out and lower line back
+    array&lt;chart.point&gt; upper = array.new&lt;chart.point&gt;()
+    array&lt;chart.point&gt; lower = array.new&lt;chart.point&gt;()
+    if not pastMode
+        upper := pointsAt(fitTimes, k1 * sd)
+        lower := pointsAt(fitTimes, -k1 * sd)
+    if projYears &gt; 0
+        upper.concat(forward(k1 * sd))
+        lower.concat(forward(-k1 * sd))
+    if upper.size() &gt; 1
+        lower.reverse()
+        upper.concat(lower)
+        drawn.push(polyline.new(upper, closed = true, xloc = xloc.bar_time, line_color = color.new(cFill, 100), fill_color = cFill))
+
+// ---------------------------------------------------------------- table (same in both modes)
+
+zone(float zz) =&gt;
+    zz &lt; -k1 ? "Below the band" : zz &lt;= k1 ? "Inside the band" : "Above the band"
+
+var table info = table.new(position.top_right, 2, 6, bgcolor = chart.bg_color, border_width = 1)
+if showTable and barstate.islast and not na(sd)
+    table.cell(info, 0, 0, "Fit", text_color = color.gray)
+    table.cell(info, 1, 0, (pastMode ? "Past only" : "All data (hindsight)") + ", " + (logTime ? "log time" : "linear time") + ", from " + str.format_time(firstTime, "yyyy-MM"), text_color = chart.fg_color)
+    table.cell(info, 0, 1, logTime ? "Power-law exponent" : "Trend growth per year", text_color = color.gray)
+    table.cell(info, 1, 1, logTime ? str.tostring(b, "0.00") : str.tostring((math.exp(b) - 1.0) * 100.0, "0.0") + "%", text_color = chart.fg_color)
+    table.cell(info, 0, 2, "Position now", text_color = color.gray)
+    table.cell(info, 1, 2, (z &gt;= 0 ? "+" : "") + str.tostring(z, "0.00") + " SD — " + zone(z), text_color = z &lt; -k1 ? cLo : z &gt; k1 ? cUp : chart.fg_color)
+    table.cell(info, 0, 3, "Regression today", text_color = color.gray)
+    table.cell(info, 1, 3, str.tostring(math.exp(mid), format.mintick), text_color = cMid)
+    table.cell(info, 0, 4, "Band", text_color = color.gray)
+    table.cell(info, 1, 4, str.tostring(math.exp(mid - k1 * sd), format.mintick) + " – " + str.tostring(math.exp(mid + k1 * sd), format.mintick), text_color = chart.fg_color)
+    table.cell(info, 0, 5, "SD of residuals", text_color = color.gray)
+    table.cell(info, 1, 5, str.tostring(sd, "0.000") + " (×" + str.tostring(math.exp(sd), "0.00") + " per SD)", text_color = chart.fg_color)
+</pre>
+  </section>
+
+  <section>
+    <h2>Add it to TradingView</h2>
+    <ol>
+      <li>Open the Pine Editor, select everything in it and delete it.</li>
+      <li>Paste the code, press Save, then Add to chart.</li>
+      <li>Use the monthly or weekly chart. Daily works too, but the band is meant for years.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Read it with care</h2>
+    <ul>
+      <li>The default fit, <code>All data</code>, draws one line through the whole history to today. The past is fitted with hindsight and moves a little every month. Switch <code>Fit</code> to <code>Past only</code> to see what the band said at each date.</li>
+      <li>For gold and silver the lower band was checked on 2–3 full cycles (study 7): too few to call it a signal.</li>
+      <li>For stocks it is untested. Only companies that survived have long charts, so the band looks better on them than it would on a random stock.</li>
+    </ul>
+  </section>
+</div>
+<script>
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const b = e.currentTarget, pre = document.getElementById('src')
+  try { await navigator.clipboard.writeText(pre.textContent); b.textContent = 'Copied'; b.classList.add('done') }
+  catch { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected, press Ctrl+C' }
+  setTimeout(() => { b.textContent = 'Copy code'; b.classList.remove('done') }, 2500)
+})
+</script>
