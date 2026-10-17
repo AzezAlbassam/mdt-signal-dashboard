@@ -51,7 +51,13 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 10 (PROTOCOL-study10.md): RED/GREEN expectation flags → H1, H2 not confirmed (d1 −0.1%, d2 +0.1%; Holm p 0.95). reports/study10.txt
 
 - [x] Study 11 protocol (PROTOCOL-study11.md) + universe snapshot (data/study11/universe.json, 207 symbols) committed before any HCP value and before any download
-- [ ] Study 11: fetch daily bars for the 207 (reuse data/us/bars where present) → data/study11/bars/
+- [x] Study 11: probe (data/study11/probe.json) — of the 146 not already on disk, 94 clear the 1250-bar floor, 52 do not and were never downloaded
+- [x] Study 11: fetch the 94 → data/study11/bars/ (61 more reused from data/us/bars/, which end 2026-10-06)
+      FETCH TRICK, reuse it: a get_ohlcv result big enough to overflow the tool-result limit is
+      spilled to <session>/tool-results/mcp-*-get-ohlcv-*.txt instead of entering the agent's
+      context. So ask for count=5000 — the bigger the page, the CHEAPER it is — and read the files
+      with `node scripts/study11-collect.js <session>/tool-results <session>/subagents`.
+      Agents that report such a call as "failed" are wrong: the bars are on disk.
 - [x] Study 11: engine/hcp.js + no-look-ahead tests (8 tests, full suite 350 pass)
 - [ ] Study 11: run → reports/study11.txt / .json
 - [ ] Study 11: pine/hcp.pine (header text per PROTOCOL-study11.md §7, depends on the result)

@@ -54,12 +54,25 @@ const spearmanFromRanks = (ra, rb) => {
 
 // ── data ────────────────────────────────────────────────────────────────────────────────
 const universe = JSON.parse(fs.readFileSync('data/study11/universe.json', 'utf8')).union
+// The probe measured every symbol's available history before anything was downloaded, so a
+// symbol with no file on disk is reported as what it is — too short to qualify under §2 —
+// rather than as missing data.
+const probe = new Map(
+  (fs.existsSync('data/study11/probe.json')
+    ? JSON.parse(fs.readFileSync('data/study11/probe.json', 'utf8')).rows
+    : []).map((r) => [r.symbol, r])
+)
 const loaded = []
 const missing = []
 const tooShort = []
 for (const sym of universe) {
   const f = fileFor(sym)
-  if (!f) { missing.push(sym); continue }
+  if (!f) {
+    const p = probe.get(sym)
+    if (p && p.ok && p.bars < MIN_BARS) tooShort.push([sym, p.bars])
+    else missing.push(sym)
+    continue
+  }
   const s = gz(f)
   if (s.date.length < MIN_BARS) { tooShort.push([sym, s.date.length]); continue }
   loaded.push({ symbol: sym, ...s, index: new Map(s.date.map((d, i) => [d, i])) })

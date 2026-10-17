@@ -78,14 +78,17 @@ const take = (j) => {
 for (const dir of dirs) {
   for (const file of walk(dir)) {
     const text = fs.readFileSync(file, 'utf8')
-    if (!text.includes('"bars"')) continue // cheap pre-filter; these files are large
+    // Cheap pre-filter. It must NOT look for '"bars"': inside a .jsonl transcript the
+    // response is an escaped string, so the quotes appear as \" and that spelling never
+    // matches. Getting this wrong silently drops every response that stayed inline.
+    if (!text.includes('bars')) continue
     if (file.endsWith('.txt')) {
       // a spilled tool result: the whole file is the response
       try { take(JSON.parse(text)) } catch {}
       continue
     }
     for (const line of text.split('\n')) {
-      if (!line.includes('"bars"')) continue
+      if (!line.includes('bars')) continue
       for (const body of toolResults(line)) {
         try { take(JSON.parse(body)) } catch {}
       }
