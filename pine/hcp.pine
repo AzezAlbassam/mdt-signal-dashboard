@@ -74,29 +74,33 @@ color cFit     = input.color(#2962FF, "Fitted line", group = "Colours")
 color cProj    = input.color(#AB47BC, "Projection", group = "Colours")
 int   wFit     = input.int(2, "Line width", minval = 1, maxval = 4, group = "Colours")
 
-const float PMIN   = 20.0
-const float PMAXDIV = 3.0
+float PMIN    = 20.0
+float PMAXDIV = 3.0
 
 // ---------------------------------------------------------------- least squares helpers
+// NOTE on the loops below: in Pine `for i = 0 to n - 1` infers its direction, so when n is 0
+// it counts 0, -1 and then indexes out of bounds. Every loop over a .size() here is guarded.
+//
 // Design row at offset x (bars relative to the last bar: 0 on it, negative in the past).
-// u = x / W keeps every column O(1), which is what makes the 8x8 solve well behaved.
-f_fill(matrix<float> X, int row, float x, array<float> periods, int w) =>
+// u = x / W keeps every column O(1), which is what makes the small solve well behaved.
+f_fill(X, row, x, periods, w) =>
     X.set(row, 0, 1.0)
     X.set(row, 1, x / w)
-    for j = 0 to periods.size() - 1
-        float p = periods.get(j)
-        X.set(row, 2 + 2 * j, math.cos(2.0 * math.pi * x / p))
-        X.set(row, 3 + 2 * j, math.sin(2.0 * math.pi * x / p))
+    if periods.size() > 0
+        for j = 0 to periods.size() - 1
+            float p = periods.get(j)
+            X.set(row, 2 + 2 * j, math.cos(2.0 * math.pi * x / p))
+            X.set(row, 3 + 2 * j, math.sin(2.0 * math.pi * x / p))
+    X
 
-// Fit ln(price) over the window with the given periods; returns the coefficient column, or
-// na when the normal equations are singular.
-f_fit(array<float> y, array<float> xs, array<float> periods, int w) =>
+// Fit ln(price) over the window with the given periods; the coefficient column comes back na
+// when the normal equations are singular.
+f_fit(y, xs, periods, w) =>
     int m = 2 + 2 * periods.size()
     matrix<float> X = matrix.new<float>(w, m, 0.0)
-    for t = 0 to w - 1
-        f_fill(X, t, xs.get(t), periods, w)
     matrix<float> Y = matrix.new<float>(w, 1, 0.0)
     for t = 0 to w - 1
+        f_fill(X, t, xs.get(t), periods, w)
         Y.set(t, 0, y.get(t))
     matrix<float> Xt = X.transpose()
     matrix<float> A  = Xt.mult(X)
@@ -107,7 +111,7 @@ f_fit(array<float> y, array<float> xs, array<float> periods, int w) =>
     [X, c]
 
 // y minus the fitted values, as a plain array.
-f_resid(matrix<float> X, matrix<float> c, array<float> y, int w) =>
+f_resid(X, c, y, w) =>
     matrix<float> yhat = X.mult(c)
     array<float> r = array.new<float>(w, 0.0)
     for t = 0 to w - 1
@@ -116,7 +120,7 @@ f_resid(matrix<float> X, matrix<float> c, array<float> y, int w) =>
 
 // Goertzel power of r at period p. A frequency finder only: the amplitudes and phases that
 // get drawn come from the least-squares solve above, never from here.
-f_power(array<float> r, float p) =>
+f_power(r, p) =>
     float w0 = 2.0 * math.pi / p
     float cf = 2.0 * math.cos(w0)
     float s1 = 0.0
@@ -129,14 +133,26 @@ f_power(array<float> r, float p) =>
     float im = math.sin(w0) * s2
     re * re + im * im
 
+// The fitted model's price at offset x. Global, because Pine will not take a function
+// declared inside an if-block.
+f_at(x, periods, c, w) =>
+    int m = 2 + 2 * periods.size()
+    matrix<float> row = matrix.new<float>(1, m, 0.0)
+    f_fill(row, 0, x, periods, w)
+    float s = 0.0
+    for i = 0 to m - 1
+        s += row.get(0, i) * c.get(i, 0)
+    math.exp(s)
+
 // ---------------------------------------------------------------- the fit, once, on the last bar
 var array<polyline> drawn = array.new<polyline>()
 var table tab = table.new(position.top_right, 2, 7, border_width = 1)
 
 if barstate.islast
-    for i = 0 to drawn.size() - 1
-        polyline.delete(drawn.get(i))
-    drawn.clear()
+    if drawn.size() > 0
+        for i = 0 to drawn.size() - 1
+            polyline.delete(drawn.get(i))
+        drawn.clear()
 
     int w = math.min(W, bar_index + 1)
     bool ok = w >= 200
@@ -183,16 +199,6 @@ if barstate.islast
                     c := c1
                     r := f_resid(X, c, y, w)
 
-            // value of the fitted model at offset x
-            f_at(float x) =>
-                int m = 2 + 2 * periods.size()
-                matrix<float> row = matrix.new<float>(1, m, 0.0)
-                f_fill(row, 0, x, periods, w)
-                float s = 0.0
-                for i = 0 to m - 1
-                    s += row.get(0, i) * c.get(i, 0)
-                math.exp(s)
-
             // ---- draw. Future timestamps step by calendar time, stretched by 7/5 on daily
             // and higher so the line lands roughly on sessions rather than through weekends.
             int barMs = timeframe.in_seconds() * 1000
@@ -202,20 +208,20 @@ if barstate.islast
                 array<chart.point> past = array.new<chart.point>()
                 int stepBack = math.max(1, int(w / 300))
                 for i = w - 1 to 0 by stepBack
-                    past.push(chart.point.from_time(time[i], f_at(-i)))
+                    past.push(chart.point.from_time(time[i], f_at(-i, periods, c, w)))
                 if past.size() > 1
                     drawn.push(polyline.new(past, xloc = xloc.bar_time, line_color = cFit, line_width = wFit))
 
             if Hfwd > 0
                 array<chart.point> fwd = array.new<chart.point>()
-                fwd.push(chart.point.from_time(time, f_at(0)))
+                fwd.push(chart.point.from_time(time, f_at(0, periods, c, w)))
                 for h = 1 to Hfwd
-                    fwd.push(chart.point.from_time(time + int(h * barMs * stretch), f_at(h)))
+                    fwd.push(chart.point.from_time(time + int(h * barMs * stretch), f_at(h, periods, c, w)))
                 drawn.push(polyline.new(fwd, xloc = xloc.bar_time, line_color = cProj, line_width = wFit))
 
             if showTab
-                float now = f_at(0)
-                float end = f_at(Hfwd)
+                float now = f_at(0, periods, c, w)
+                float end = f_at(Hfwd, periods, c, w)
                 tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
                 tab.cell(1, 0, str.tostring(Hfwd) + " bars ahead", bgcolor = cProj, text_color = color.white)
                 tab.cell(0, 1, "line now")
@@ -228,8 +234,9 @@ if barstate.islast
                 tab.cell(0, 4, "implies")
                 tab.cell(0, 5, "cycles (bars)")
                 string ps = ""
-                for i = 0 to periods.size() - 1
-                    ps := ps + (i > 0 ? ", " : "") + str.tostring(periods.get(i), "#")
+                if periods.size() > 0
+                    for i = 0 to periods.size() - 1
+                        ps := ps + (i > 0 ? ", " : "") + str.tostring(periods.get(i), "#")
                 tab.cell(1, 5, ps)
                 tab.cell(0, 6, "fitted window")
                 tab.cell(1, 6, str.tostring(w) + " bars")
