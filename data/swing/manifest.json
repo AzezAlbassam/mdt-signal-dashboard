@@ -1,0 +1,236 @@
+{
+ "cutoff": "2026-10-05",
+ "symbols": [
+  {
+   "symbol": "BITSTAMP:BTCUSD",
+   "group": "crypto",
+   "bars": 4999,
+   "first": "2013-01-25",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "BITSTAMP:ETHUSD",
+   "group": "crypto",
+   "bars": 4078,
+   "first": "2015-08-07",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "BITSTAMP:LTCUSD",
+   "group": "crypto",
+   "bars": 3397,
+   "first": "2017-06-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "BITSTAMP:XRPUSD",
+   "group": "crypto",
+   "bars": 4784,
+   "first": "2013-08-04",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "AMEX:SPY",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:QQQ",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "AMEX:IWM",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:AAPL",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:MSFT",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:AMZN",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:GOOGL",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:NVDA",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:JPM",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:XOM",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:JNJ",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:PG",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:KO",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:WMT",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NASDAQ:INTC",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:BA",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:DIS",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:PFE",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:GE",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:C",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:T",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:IBM",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-16",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "NYSE:F",
+   "group": "us",
+   "bars": 4999,
+   "first": "2006-11-17",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:TASI",
+   "group": "saudi",
+   "bars": 4999,
+   "first": "2006-09-13",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:1120",
+   "group": "saudi",
+   "bars": 4999,
+   "first": "2006-09-10",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:2010",
+   "group": "saudi",
+   "bars": 4999,
+   "first": "2006-09-10",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:7010",
+   "group": "saudi",
+   "bars": 4999,
+   "first": "2006-09-09",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:1180",
+   "group": "saudi",
+   "bars": 2969,
+   "first": "2014-11-12",
+   "last": "2026-10-05"
+  },
+  {
+   "symbol": "TADAWUL:2222",
+   "group": "saudi",
+   "bars": 1700,
+   "first": "2019-12-11",
+   "last": "2026-10-05"
+  }
+ ]
+}

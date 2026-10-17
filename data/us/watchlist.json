@@ -1,0 +1,235 @@
+{
+ "source": "user TradingView lists, 2026-10-07 (PROTOCOL-addendum-1.md §A)",
+ "tickers": [
+  {
+   "ticker": "MSTR",
+   "symbol": "NASDAQ:MSTR",
+   "note": null
+  },
+  {
+   "ticker": "AAPL",
+   "symbol": "NASDAQ:AAPL",
+   "note": null
+  },
+  {
+   "ticker": "AMZN",
+   "symbol": "NASDAQ:AMZN",
+   "note": null
+  },
+  {
+   "ticker": "META",
+   "symbol": "NASDAQ:META",
+   "note": null
+  },
+  {
+   "ticker": "DELL",
+   "symbol": "NYSE:DELL",
+   "note": null
+  },
+  {
+   "ticker": "MU",
+   "symbol": "NASDAQ:MU",
+   "note": null
+  },
+  {
+   "ticker": "INTC",
+   "symbol": "NASDAQ:INTC",
+   "note": null
+  },
+  {
+   "ticker": "ARM",
+   "symbol": "NASDAQ:ARM",
+   "note": null
+  },
+  {
+   "ticker": "PLTR",
+   "symbol": "NASDAQ:PLTR",
+   "note": null
+  },
+  {
+   "ticker": "AMD",
+   "symbol": "NASDAQ:AMD",
+   "note": null
+  },
+  {
+   "ticker": "NVDA",
+   "symbol": "NASDAQ:NVDA",
+   "note": null
+  },
+  {
+   "ticker": "MSFT",
+   "symbol": "NASDAQ:MSFT",
+   "note": null
+  },
+  {
+   "ticker": "GOOGL",
+   "symbol": "NASDAQ:GOOGL",
+   "note": null
+  },
+  {
+   "ticker": "ORCL",
+   "symbol": "NYSE:ORCL",
+   "note": null
+  },
+  {
+   "ticker": "HPE",
+   "symbol": "NYSE:HPE",
+   "note": null
+  },
+  {
+   "ticker": "AMAT",
+   "symbol": "NASDAQ:AMAT",
+   "note": null
+  },
+  {
+   "ticker": "CRWD",
+   "symbol": "NASDAQ:CRWD",
+   "note": null
+  },
+  {
+   "ticker": "PANW",
+   "symbol": "NASDAQ:PANW",
+   "note": null
+  },
+  {
+   "ticker": "TSLA",
+   "symbol": "NASDAQ:TSLA",
+   "note": null
+  },
+  {
+   "ticker": "MDB",
+   "symbol": "NASDAQ:MDB",
+   "note": null
+  },
+  {
+   "ticker": "QCOM",
+   "symbol": "NASDAQ:QCOM",
+   "note": null
+  },
+  {
+   "ticker": "IBM",
+   "symbol": "NYSE:IBM",
+   "note": null
+  },
+  {
+   "ticker": "COST",
+   "symbol": "NASDAQ:COST",
+   "note": null
+  },
+  {
+   "ticker": "AVGO",
+   "symbol": "NASDAQ:AVGO",
+   "note": null
+  },
+  {
+   "ticker": "MRVL",
+   "symbol": "NASDAQ:MRVL",
+   "note": null
+  },
+  {
+   "ticker": "TXN",
+   "symbol": "NASDAQ:TXN",
+   "note": null
+  },
+  {
+   "ticker": "ZENA",
+   "symbol": "NASDAQ:ZENA",
+   "note": "history returned inline (505 bars), not stored"
+  },
+  {
+   "ticker": "FIG",
+   "symbol": "NYSE:FIG",
+   "note": "too new (298 bars)"
+  },
+  {
+   "ticker": "GLW",
+   "symbol": "NYSE:GLW",
+   "note": null
+  },
+  {
+   "ticker": "APH",
+   "symbol": "NYSE:APH",
+   "note": null
+  },
+  {
+   "ticker": "COHR",
+   "symbol": "NYSE:COHR",
+   "note": null
+  },
+  {
+   "ticker": "LITE",
+   "symbol": "NASDAQ:LITE",
+   "note": null
+  },
+  {
+   "ticker": "AAOI",
+   "symbol": "NASDAQ:AAOI",
+   "note": null
+  },
+  {
+   "ticker": "AXTI",
+   "symbol": "NASDAQ:AXTI",
+   "note": null
+  },
+  {
+   "ticker": "VIAV",
+   "symbol": "NASDAQ:VIAV",
+   "note": null
+  },
+  {
+   "ticker": "CIEN",
+   "symbol": "NYSE:CIEN",
+   "note": null
+  },
+  {
+   "ticker": "NOK",
+   "symbol": "NYSE:NOK",
+   "note": null
+  },
+  {
+   "ticker": "SPCX",
+   "symbol": "NASDAQ:SPCX",
+   "note": "too new (80 bars)"
+  },
+  {
+   "ticker": "VOYG",
+   "symbol": "NYSE:VOYG",
+   "note": "history returned inline (332 bars), not stored"
+  },
+  {
+   "ticker": "HAWK",
+   "symbol": "NYSE:HAWK",
+   "note": "too new (105 bars)"
+  },
+  {
+   "ticker": "LUNR",
+   "symbol": "NASDAQ:LUNR",
+   "note": null
+  },
+  {
+   "ticker": "RDW",
+   "symbol": "NYSE:RDW",
+   "note": null
+  },
+  {
+   "ticker": "SPIR",
+   "symbol": "NYSE:SPIR",
+   "note": null
+  },
+  {
+   "ticker": "RKLB",
+   "symbol": "NASDAQ:RKLB",
+   "note": null
+  },
+  {
+   "ticker": "ASTS",
+   "symbol": "NASDAQ:ASTS",
+   "note": null
+  },
+  {
+   "ticker": "PL",
+   "symbol": "NYSE:PL",
+   "note": null
+  }
+ ]
+}

@@ -1,0 +1,242 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// HCP — Harmonic Cycle Projection. A model line fitted to the recent past and carried
+// forward past the last bar. Works on anything with enough daily history: indices, ETFs,
+// US and non-US stocks, crypto.
+//
+//   ln(price) = a + b·t + Σ over K cycles of ( A·cos(2πt/P) + B·sin(2πt/P) )
+//
+// fitted by least squares over the last W bars, with the K periods found by a Goertzel
+// search over 200 trial periods from 20 bars to W/3, then every coefficient refit together.
+// The line is then evaluated past the last bar to give the projection.
+//
+// WHY THIS EXISTS, AND WHAT IT IS NOT
+// A chart was circulating in October 2026 showing a "long term model" line on QQQ that ran
+// about 39 bars past the last candle. Its author has never published the method, there is no
+// script for it, and it appears to sit behind a paid channel. HCP is an OPEN look-alike of
+// the SHAPE of such a line, written from scratch. It is NOT that model, not a reconstruction
+// of it, and nothing here describes anyone else's product.
+//
+// RESULT — READ THIS BEFORE TRADING ANYTHING OFF IT
+// (PROTOCOL-study11.md §7 fixed what this section must say, before the test was run.)
+//
+// HCP was tested on 153 symbols with enough history, out of a 207-symbol universe, over 101
+// evaluation dates from 2010 to 2026 — 10,309 projections, each fitted using only the bars
+// available at the time. Both pre-registered hypotheses FAILED:
+//
+//   - It does NOT track better than assuming no change at all. Over the 40 bars after the
+//     fit, HCP's average distance from the close was 38.0%, against 9.1% for a flat line at
+//     the last close (and 9.9% for a 10-day average). It was worse than that flat line in
+//     89% of all projections. Typical miss, not just the bad ones: 15.9 points worse per bar.
+//   - It has NO directional skill. Ranking symbols by their projected 40-bar return against
+//     what they actually returned gives a rank correlation of -0.015 (p 0.91) — nothing.
+//
+// Both halves of the period agree, so this is not one bad regime. See reports/study11.txt.
+//
+// So this script draws a curve that was fitted to the past and then continued. It is NOT a
+// forecast, and the forward segment is not evidence about anything. It is published because
+// a chart tool was asked for, and with the result attached because the result is the part
+// that is usually missing.
+//
+// The one thing it does do: a symbol's own projection fits that symbol better than another
+// symbol's projection would (p 0.0001). The model picks up something real about each series.
+// That is still a long way from being worth acting on, and far short of doing nothing.
+//
+// Where it looks best is also where it is most seductive: on a big index the fitted line sits
+// within a percent or two of price, so the picture is persuasive. On volatile names the fit
+// leaves a large residual and the extrapolation runs away — on BTCUSDT one fit sat 25% above
+// the close and projected +53% against a realised +2%.
+//
+// HOW TO READ IT
+// - The fitted line is NOT pinned to the last close. The gap between the line and price is
+//   part of the model's output, not an error to correct.
+// - The fit is redone from scratch on the last bar, so the historical part of the line is
+//   drawn with hindsight and is repainted on every update. Only the forward part is a
+//   statement about something not yet known. Judging the model by how well the drawn
+//   history hugs the candles is judging a curve against the points it was fitted to.
+// - A cycle found in one window is routinely absent from the next. Nothing here tests
+//   whether a period is real; the Goertzel search always returns its best K, even on noise.
+//
+// SPEED: the fit runs once, on the last bar. On a slow connection it can take a few seconds.
+// If the script times out, lower "Window" — but note that anything other than the defaults
+// is no longer the configuration that was tested.
+
+//@version=6
+indicator("Harmonic Cycle Projection", shorttitle = "HCP", overlay = true, max_polylines_count = 8, max_bars_back = 1200)
+
+int   W        = input.int(1000, "Window (bars to fit)", minval = 200, maxval = 1200, step = 50, tooltip = "1000 is the tested value. Lowering it speeds the script up and changes the model.")
+int   K        = input.int(3, "Cycles", minval = 1, maxval = 5, tooltip = "3 is the tested value.")
+int   Hfwd     = input.int(40, "Project forward (bars)", minval = 0, maxval = 250)
+bool  showPast = input.bool(true, "Draw the fitted line over the past", tooltip = "Hindsight: this part is refitted every update.")
+int   gridN    = input.int(200, "Trial periods searched", minval = 40, maxval = 300, tooltip = "200 is the tested value.")
+bool  showTab  = input.bool(true, "Show the table")
+color cFit     = input.color(#2962FF, "Fitted line", group = "Colours")
+color cProj    = input.color(#AB47BC, "Projection", group = "Colours")
+int   wFit     = input.int(2, "Line width", minval = 1, maxval = 4, group = "Colours")
+
+float PMIN    = 20.0
+float PMAXDIV = 3.0
+
+// ---------------------------------------------------------------- least squares helpers
+// NOTE on the loops below: in Pine `for i = 0 to n - 1` infers its direction, so when n is 0
+// it counts 0, -1 and then indexes out of bounds. Every loop over a .size() here is guarded.
+//
+// Design row at offset x (bars relative to the last bar: 0 on it, negative in the past).
+// u = x / W keeps every column O(1), which is what makes the small solve well behaved.
+f_fill(X, row, x, periods, w) =>
+    X.set(row, 0, 1.0)
+    X.set(row, 1, x / w)
+    if periods.size() > 0
+        for j = 0 to periods.size() - 1
+            float p = periods.get(j)
+            X.set(row, 2 + 2 * j, math.cos(2.0 * math.pi * x / p))
+            X.set(row, 3 + 2 * j, math.sin(2.0 * math.pi * x / p))
+    X
+
+// Fit ln(price) over the window with the given periods; the coefficient column comes back na
+// when the normal equations are singular.
+f_fit(y, xs, periods, w) =>
+    int m = 2 + 2 * periods.size()
+    matrix<float> X = matrix.new<float>(w, m, 0.0)
+    matrix<float> Y = matrix.new<float>(w, 1, 0.0)
+    for t = 0 to w - 1
+        f_fill(X, t, xs.get(t), periods, w)
+        Y.set(t, 0, y.get(t))
+    matrix<float> Xt = X.transpose()
+    matrix<float> A  = Xt.mult(X)
+    matrix<float> b  = Xt.mult(Y)
+    matrix<float> c  = na
+    if matrix.det(A) != 0.0
+        c := A.inv().mult(b)
+    [X, c]
+
+// y minus the fitted values, as a plain array.
+f_resid(X, c, y, w) =>
+    matrix<float> yhat = X.mult(c)
+    array<float> r = array.new<float>(w, 0.0)
+    for t = 0 to w - 1
+        r.set(t, y.get(t) - yhat.get(t, 0))
+    r
+
+// Goertzel power of r at period p. A frequency finder only: the amplitudes and phases that
+// get drawn come from the least-squares solve above, never from here.
+f_power(r, p) =>
+    float w0 = 2.0 * math.pi / p
+    float cf = 2.0 * math.cos(w0)
+    float s1 = 0.0
+    float s2 = 0.0
+    for i = 0 to r.size() - 1
+        float s = r.get(i) + cf * s1 - s2
+        s2 := s1
+        s1 := s
+    float re = s1 - math.cos(w0) * s2
+    float im = math.sin(w0) * s2
+    re * re + im * im
+
+// The fitted model's price at offset x. Global, because Pine will not take a function
+// declared inside an if-block.
+f_at(x, periods, c, w) =>
+    int m = 2 + 2 * periods.size()
+    matrix<float> row = matrix.new<float>(1, m, 0.0)
+    f_fill(row, 0, x, periods, w)
+    float s = 0.0
+    for i = 0 to m - 1
+        s += row.get(0, i) * c.get(i, 0)
+    math.exp(s)
+
+// ---------------------------------------------------------------- the fit, once, on the last bar
+var array<polyline> drawn = array.new<polyline>()
+var table tab = table.new(position.top_right, 2, 7, border_width = 1)
+
+if barstate.islast
+    if drawn.size() > 0
+        for i = 0 to drawn.size() - 1
+            polyline.delete(drawn.get(i))
+        drawn.clear()
+
+    int w = math.min(W, bar_index + 1)
+    bool ok = w >= 200
+    array<float> y  = array.new<float>(0)
+    array<float> xs = array.new<float>(0)
+    if ok
+        // oldest first; x = 0 on the last bar
+        for i = w - 1 to 0
+            float c0 = close[i]
+            if na(c0) or c0 <= 0.0
+                ok := false
+            else
+                y.push(math.log(c0))
+                xs.push(-i)
+    if ok and y.size() == w
+        // trial periods, logarithmic from PMIN to w / PMAXDIV
+        float hi = w / PMAXDIV
+        float stp = math.log(hi / PMIN) / (gridN - 1)
+        array<float> grid = array.new<float>(0)
+        for i = 0 to gridN - 1
+            grid.push(PMIN * math.exp(i * stp))
+
+        array<float> periods = array.new<float>(0)
+        [X0, c0m] = f_fit(y, xs, periods, w)
+        matrix<float> X = X0
+        matrix<float> c = c0m
+        if not na(c)
+            array<float> r = f_resid(X, c, y, w)
+            // greedy: strongest trial period in the residual, then refit everything chosen
+            for j = 1 to K
+                float bestP = na
+                float bestPow = -1.0
+                for g = 0 to grid.size() - 1
+                    float pw = f_power(r, grid.get(g))
+                    if pw > bestPow
+                        bestPow := pw
+                        bestP := grid.get(g)
+                array<float> trial = periods.copy()
+                trial.push(bestP)
+                [X1, c1] = f_fit(y, xs, trial, w)
+                if not na(c1)
+                    periods := trial
+                    X := X1
+                    c := c1
+                    r := f_resid(X, c, y, w)
+
+            // ---- draw. Future timestamps step by calendar time, stretched by 7/5 on daily
+            // and higher so the line lands roughly on sessions rather than through weekends.
+            int barMs = timeframe.in_seconds() * 1000
+            float stretch = timeframe.isdwm ? 7.0 / 5.0 : 1.0
+
+            if showPast
+                array<chart.point> past = array.new<chart.point>()
+                int stepBack = math.max(1, int(w / 300))
+                for i = w - 1 to 0 by stepBack
+                    past.push(chart.point.from_time(time[i], f_at(-i, periods, c, w)))
+                if past.size() > 1
+                    drawn.push(polyline.new(past, xloc = xloc.bar_time, line_color = cFit, line_width = wFit))
+
+            if Hfwd > 0
+                array<chart.point> fwd = array.new<chart.point>()
+                fwd.push(chart.point.from_time(time, f_at(0, periods, c, w)))
+                for h = 1 to Hfwd
+                    fwd.push(chart.point.from_time(time + int(h * barMs * stretch), f_at(h, periods, c, w)))
+                drawn.push(polyline.new(fwd, xloc = xloc.bar_time, line_color = cProj, line_width = wFit))
+
+            if showTab
+                float now = f_at(0, periods, c, w)
+                float end = f_at(Hfwd, periods, c, w)
+                tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
+                tab.cell(1, 0, str.tostring(Hfwd) + " bars ahead", bgcolor = cProj, text_color = color.white)
+                tab.cell(0, 1, "line now")
+                tab.cell(1, 1, str.tostring(now, format.mintick))
+                tab.cell(0, 2, "vs price")
+                tab.cell(1, 2, str.tostring(100.0 * (now / close - 1.0), "#.##") + "%")
+                tab.cell(0, 3, "projected")
+                tab.cell(1, 3, str.tostring(end, format.mintick))
+                tab.cell(1, 4, str.tostring(100.0 * (end / close - 1.0), "#.##") + "% vs price now")
+                tab.cell(0, 4, "implies")
+                tab.cell(0, 5, "cycles (bars)")
+                string ps = ""
+                if periods.size() > 0
+                    for i = 0 to periods.size() - 1
+                        ps := ps + (i > 0 ? ", " : "") + str.tostring(periods.get(i), "#")
+                tab.cell(1, 5, ps)
+                tab.cell(0, 6, "fitted window")
+                tab.cell(1, 6, str.tostring(w) + " bars")

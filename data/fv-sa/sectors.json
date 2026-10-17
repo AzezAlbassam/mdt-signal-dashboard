@@ -1,0 +1,426 @@
+{
+ "TADAWUL:1111": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1120": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1150": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1180": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1202": {
+  "industry": "Pulp & Paper",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1211": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1212": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1303": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1320": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1321": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1322": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1830": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1833": {
+  "industry": "Personnel Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1834": {
+  "industry": "Personnel Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:1835": {
+  "industry": "Personnel Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2020": {
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2081": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2082": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2200": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2222": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2270": {
+  "industry": "Food: Meat/Fish/Dairy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:2382": {
+  "industry": "Contract Drilling",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4001": {
+  "industry": "Food Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4002": {
+  "industry": "Hospital/Nursing Management",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4004": {
+  "industry": "Hospital/Nursing Management",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4013": {
+  "industry": "Hospital/Nursing Management",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4014": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4015": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4016": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4017": {
+  "industry": "Hospital/Nursing Management",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4050": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4071": {
+  "industry": "Advertising/Marketing Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4072": {
+  "industry": "Broadcasting",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4090": {
+  "industry": "Homebuilding",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4162": {
+  "industry": "Food Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4164": {
+  "industry": "Medical Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4165": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4190": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4193": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4200": {
+  "industry": "Wholesale Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4263": {
+  "industry": "Air Freight/Couriers",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4264": {
+  "industry": "Airlines",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4291": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4326": {
+  "industry": "Homebuilding",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4327": {
+  "industry": "Real Estate Development",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:6015": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:7200": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:7202": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:7203": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:8313": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:4018": {
+  "industry": "Hospital/Nursing Management",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:6022": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "TADAWUL:7211": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ }
+}
