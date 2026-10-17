@@ -94,7 +94,10 @@ for (const s of loaded) {
       m[h - 1] = Math.log(f.at(h)) - base
       real[h - 1] = Math.log(s.close[j + h]) - base
     }
-    pairs.push({ symbol: s.symbol, date: T, at: s.date[j], m, real, periods: f.periods })
+    // How far the fitted line sits from the close on the fit bar. §1.5 keeps this gap; the
+    // §5 anchored variant is exactly this gap removed.
+    const off = Math.log(f.at(0)) - base
+    pairs.push({ symbol: s.symbol, date: T, at: s.date[j], m, real, off, periods: f.periods })
   }
 }
 
@@ -174,8 +177,9 @@ H2.halves = [mean(h2Per(dates.filter((d) => d < mid))), mean(h2Per(dates.filter(
 })
 
 // ── §5 reported only ────────────────────────────────────────────────────────────────────
+const bySymbol = new Map(loaded.map((s) => [s.symbol, s]))
 const maOf = (sym, T, n) => { // n-day average of the close at T, held flat over the horizon
-  const s = loaded.find((x) => x.symbol === sym)
+  const s = bySymbol.get(sym)
   let j = s.index.get(T)
   if (j === undefined) { j = -1; for (let k = s.date.length - 1; k >= 0; k -= 1) if (s.date[k] <= T) { j = k; break } }
   if (j < n) return null
@@ -192,7 +196,7 @@ const benchGap = (n) => mean(used.map((p) => {
 }).filter(Number.isFinite))
 const gapModel = mean(used.map((p) => { let g = 0; for (let i = 0; i < H; i += 1) g += Math.abs(p.real[i] - p.m[i]); return g / H }))
 const gapFlat = mean(used.map((p) => { let g = 0; for (let i = 0; i < H; i += 1) g += Math.abs(p.real[i]); return g / H }))
-const anchored = mean(used.map((p) => dOf(p, H, p.m.map((v, i) => v - p.m[0] + p.m[0] * 0)))) // shape shifted to start at 0
+const anchored = mean(used.map((p) => dOf(p, H, p.m.map((v) => v - p.off))))
 const extra = Object.fromEntries(EXTRA_H.map((h) => [h, { h1: h1Effect(used, h), h2: mean(h2Per(dates, h)) }]))
 const groups = JSON.parse(fs.readFileSync('data/study11/universe.json', 'utf8')).byType
 const groupOf = (sym) => Object.entries(groups).find(([, v]) => v.includes(sym))?.[0] ?? 'other'
