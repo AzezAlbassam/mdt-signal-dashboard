@@ -59,9 +59,14 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
       with `node scripts/study11-collect.js <session>/tool-results <session>/subagents`.
       Agents that report such a call as "failed" are wrong: the bars are on disk.
 - [x] Study 11: engine/hcp.js + no-look-ahead tests (8 tests, full suite 350 pass)
-- [ ] Study 11: run → reports/study11.txt / .json
-- [ ] Study 11: pine/hcp.pine (header text per PROTOCOL-study11.md §7, depends on the result)
-- [ ] Study 11: freeze current projections → forward-log/hcp-2026-10-17.json
+- [x] Study 11: run → H1 and H2 both NOT CONFIRMED. HCP's mean gap over 40 bars is 38.0% vs 9.1% for a
+      no-change line (worse in 89% of 10,309 projections, median -15.9%); cross-sectional rank
+      correlation -0.015 (p 0.91). Both halves agree. reports/study11.txt
+- [x] Study 11: pine/hcp.pine written, §7 "not confirmed" header filled in from the run. NOT compiled on
+      TradingView yet — the user runs it; study 6's Pine had a compile error found that way (shape.star).
+- [x] Study 11: forward-log/hcp-2026-10-17.json — 153 projections frozen (85 up / 68 down).
+      SCORE THESE AROUND 2026-12-11 (40 trading bars on): the file carries its own scoring recipe.
+- [ ] Study 11: score the frozen projections once 40 bars have passed (~2026-12-11)
 
 ## Counts
 (updated as work proceeds)

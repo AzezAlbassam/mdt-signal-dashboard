@@ -17,8 +17,35 @@
 // the SHAPE of such a line, written from scratch. It is NOT that model, not a reconstruction
 // of it, and nothing here describes anyone else's product.
 //
-// RESULT  (PROTOCOL-study11.md §7 fixed this text before the test was run)
-// <<<RESULT>>>
+// RESULT — READ THIS BEFORE TRADING ANYTHING OFF IT
+// (PROTOCOL-study11.md §7 fixed what this section must say, before the test was run.)
+//
+// HCP was tested on 153 symbols with enough history, out of a 207-symbol universe, over 101
+// evaluation dates from 2010 to 2026 — 10,309 projections, each fitted using only the bars
+// available at the time. Both pre-registered hypotheses FAILED:
+//
+//   - It does NOT track better than assuming no change at all. Over the 40 bars after the
+//     fit, HCP's average distance from the close was 38.0%, against 9.1% for a flat line at
+//     the last close (and 9.9% for a 10-day average). It was worse than that flat line in
+//     89% of all projections. Typical miss, not just the bad ones: 15.9 points worse per bar.
+//   - It has NO directional skill. Ranking symbols by their projected 40-bar return against
+//     what they actually returned gives a rank correlation of -0.015 (p 0.91) — nothing.
+//
+// Both halves of the period agree, so this is not one bad regime. See reports/study11.txt.
+//
+// So this script draws a curve that was fitted to the past and then continued. It is NOT a
+// forecast, and the forward segment is not evidence about anything. It is published because
+// a chart tool was asked for, and with the result attached because the result is the part
+// that is usually missing.
+//
+// The one thing it does do: a symbol's own projection fits that symbol better than another
+// symbol's projection would (p 0.0001). The model picks up something real about each series.
+// That is still a long way from being worth acting on, and far short of doing nothing.
+//
+// Where it looks best is also where it is most seductive: on a big index the fitted line sits
+// within a percent or two of price, so the picture is persuasive. On volatile names the fit
+// leaves a large residual and the extrapolation runs away — on BTCUSDT one fit sat 25% above
+// the close and projected +53% against a realised +2%.
 //
 // HOW TO READ IT
 // - The fitted line is NOT pinned to the last close. The gap between the line and price is

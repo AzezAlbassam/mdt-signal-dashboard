@@ -238,11 +238,25 @@ for (const [name, x, what] of [['H1', H1, 'tracking: mean (gap of a no-change li
   const hv = name === 'H1' ? x.halves.map(pc) : x.halves.map((q) => q.toFixed(4))
   L.push(`    effect ${v}   p ${x.p.toFixed(4)}   Holm ${x.pHolm.toFixed(4)}   halves ${hv[0]} / ${hv[1]}`)
 }
+if (H1.effect < 0 && H1.p < 0.05) {
+  L.push('')
+  L.push('    Read H1\'s small p correctly. The §4 null swaps projections between symbols, so the')
+  L.push('    p-value asks only whether a symbol\'s OWN projection fits it better than another')
+  L.push('    symbol\'s would. It does. That is not the hypothesis: H1 asks whether HCP beats a')
+  L.push('    no-change line, and the effect is negative, so H1 fails on its first condition.')
+  L.push('    HCP carries symbol-specific information and is still far worse than doing nothing.')
+}
 L.push('')
 L.push('── Reported only (§5), no claim made from any of it ' + '─'.repeat(28))
 L.push(`  mean |gap| over ${H} bars:  HCP ${(100 * gapModel).toFixed(2)}%   no-change line ${(100 * gapFlat).toFixed(2)}%   10-day MA ${(100 * benchGap(10)).toFixed(2)}%   20-day MA ${(100 * benchGap(20)).toFixed(2)}%`)
 for (const h of EXTRA_H) L.push(`  H=${h}: H1 effect ${pc(extra[h].h1)}   H2 effect ${extra[h].h2.toFixed(4)}  (grid spacing stays ${SPACING}, so H=60 windows overlap)`)
 L.push(`  anchored variant (projection shifted to start at the close): H1 effect ${pc(anchored)}`)
+// The mean is dominated by the symbols whose fit diverges, so the median says what the
+// typical observation looks like. Reported only, like everything in this section.
+const sorted = used.map((p) => dOf(p, H)).sort((a, b) => a - b)
+const med = sorted[Math.floor(sorted.length / 2)]
+const worse = sorted.filter((v) => v < 0).length
+L.push(`  H1 effect: median ${pc(med)} (the mean is pulled by the fits that diverge); worse than a no-change line in ${(100 * worse / sorted.length).toFixed(0)}% of observations`)
 L.push('  by group (H1 effect per bar):')
 for (const [g, v] of Object.entries(byGroup).sort((a, b) => b[1].length - a[1].length)) L.push(`    ${g.padEnd(18)} n ${String(v.length).padStart(5)}  ${pc(mean(v))}`)
 if (tooShort.length) L.push('', `  below ${MIN_BARS} bars, excluded: ${tooShort.map(([s, n]) => `${s} (${n})`).join(', ')}`)

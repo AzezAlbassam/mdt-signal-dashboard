@@ -1,0 +1,40 @@
+Study 11 — HCP, a forward-projected model line (PROTOCOL-study11.md)
+HCP is an OPEN look-alike of the SHAPE of an undisclosed vendor model. It is not that
+model, not a reconstruction of it, and nothing here describes the vendor's product.
+
+Universe 207; usable 153 (>= 1250 bars); too short 54; no bars 0.
+W 1000 bars, K 3 harmonics, H 40 bars. Evaluation dates 101 (2010-07-16 .. 2026-06-11), spacing 40.
+Observations (symbol x date): 10309. Dates dropped for < 10 symbols: 18. Fits refused: 0.
+
+CONFIRMED needs all three: effect > 0, Holm p < 0.05, and effect > 0 in BOTH halves.
+
+H1  NOT CONFIRMED  tracking: mean (gap of a no-change line - gap of HCP), per bar
+    effect -28.873%   p 0.0001   Holm 0.0002   halves -22.828% / -33.030%
+H2  NOT CONFIRMED  direction: mean across dates of the cross-sectional Spearman
+    effect -0.0148   p 0.9129   Holm 0.9129   halves -0.0123 / -0.0172
+
+    Read H1's small p correctly. The §4 null swaps projections between symbols, so the
+    p-value asks only whether a symbol's OWN projection fits it better than another
+    symbol's would. It does. That is not the hypothesis: H1 asks whether HCP beats a
+    no-change line, and the effect is negative, so H1 fails on its first condition.
+    HCP carries symbol-specific information and is still far worse than doing nothing.
+
+── Reported only (§5), no claim made from any of it ────────────────────────────
+  mean |gap| over 40 bars:  HCP 37.99%   no-change line 9.12%   10-day MA 9.89%   20-day MA 10.68%
+  H=20: H1 effect -26.618%   H2 effect -0.0171  (grid spacing stays 40, so H=60 windows overlap)
+  H=60: H1 effect -30.760%   H2 effect -0.0292  (grid spacing stays 40, so H=60 windows overlap)
+  anchored variant (projection shifted to start at the close): H1 effect -5.519%
+  H1 effect: median -15.921% (the mean is pulled by the fits that diverge); worse than a no-change line in 89% of observations
+  by group (H1 effect per bar):
+    usStock            n  7583  -31.874%
+    index              n  1003  -12.478%
+    etf                n   660  -19.041%
+    yield              n   303  -43.567%
+    nonUsStock         n   202  -22.740%
+    fxCommodity        n   199  -18.400%
+    other              n    99  -12.596%
+    otc                n    96  -38.028%
+    spreadExpression   n    92  -1.310%
+    crypto             n    72  -61.058%
+
+  below 1250 bars, excluded: MEXC:SP500USDT.P (251), NASDAQ:IBIT (694), NASDAQ:SNDK (421), NASDAQ:ARM (768), NASDAQ:ZENA (513), NYSE:FIG (306), NASDAQ:XE (121), AMEX:JAGU (173), NYSE:BLSH (297), NASDAQ:CEG (1183), NASDAQ:SPCX (88), AMEX:XRP (227), NASDAQ:SOLZ (397), OTC:GTAO (212), AMEX:GLNK (1003), CBOE:FOTO (97), NASDAQ:FLNC (1247), NASDAQ:SHAZ (168), NYSE:AMTM (518), NASDAQ:IPX (1063), NASDAQ:ALMU (823), NASDAQ:OPTX (985), NASDAQ:CRWV (391), NYSE:RDDT (646), CBOE:DRAM (136), NASDAQ:SKHY (70), NYSE:BETA (239), NASDAQ:BRR (342), NASDAQ:TLN (844), NASDAQ:CRDO (1185), NASDAQ:CEPL (447), NASDAQ:BTQ (735), NASDAQ:LIFE (181), NYSE:INFQ (1168), NASDAQ:STRC (310), NYSE:CRCL (344), NASDAQ:IREN (1233), NASDAQ:CBRS (108), NASDAQ:MBLY (997), NASDAQ:FRVO (109), NASDAQ:LHAI (311), NASDAQ:BSP (76), NASDAQ:ALAB (647), NASDAQ:NNE (613), NASDAQ:TEM (587), NASDAQ:KSPI (689), NASDAQ:QNT (94), TADAWUL:5027 (41), NYSE:AMBQ (307), NASDAQ:KSMH (42), NYSE:AVEX (126), NASDAQ:KDK (830), HKEX:81024 (812), NYSE:GEV (642)
