@@ -1,7 +1,11 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
   const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
-  const STALE_DAYS = 14
+  // Fiscal years and old monthly prices barely change, quarters every three months; TradingView
+  // also caps calls per day, so each visit refreshes at most MAX_FETCH stocks, oldest first.
+  const STALE_DAYS = 45
+  const STALE_Q_DAYS = 30
+  const MAX_FETCH = 40
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
@@ -58,6 +62,7 @@
   }
 
   function explainError(e) {
+    if (/quota/i.test(`${e?.code} ${e?.message}`)) return 'وصلنا حد TradingView اليومي لعدد الطلبات. يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).'
     switch (e?.code) {
       case 'server_not_connected': return 'ربط TradingView غير موجود في حسابك. أضفه من claude.ai ← Settings ← Connectors، وبعدها افتح الصفحة من جديد.'
       case 'needs_reauth': return 'انتهى تسجيل الدخول في ربط TradingView. أعد ربطه من claude.ai ← Settings ← Connectors.'
@@ -147,7 +152,7 @@
   }
 
   // The last 16 quarters, for the last-twelve-months view (see liveContext in the engine).
-  const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_DAYS * 864e5
+  const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_Q_DAYS * 864e5
   async function loadQuarters(sym) {
     const fq = await call(T.fin, { symbol: sym, period: 'fq', date_from: '2010-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e)))
     const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
@@ -231,15 +236,20 @@
       render()
       return
     }
-    const todo = [...syms.filter((s) => !fresh(state.cache[s])), ...syms.filter((s) => !freshQ(state.quarters[s])).map((s) => `q:${s}`)]
+    const age = (d) => d?.fetchedAt ?? 0
+    const due = [...syms.filter((s) => !fresh(state.cache[s])).map((s) => [s, age(state.cache[s])]),
+      ...syms.filter((s) => !freshQ(state.quarters[s])).map((s) => [`q:${s}`, age(state.quarters[s])])].sort((a, b) => a[1] - b[1])
+    const todo = due.slice(0, MAX_FETCH).map(([s]) => s)
     let done = 0
     let authError = null
+    let quota = false
     await pool(todo, async (s) => {
-      if (authError) return
+      if (authError || quota) return
       const isQ = s.startsWith('q:')
       if (isQ) s = s.slice(2)
       try { await (isQ ? loadQuarters(s) : loadHistory(s)) } catch (e) {
         if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'not_granted'].includes(e?.code)) authError = e
+        else if (/quota/i.test(`${e?.code} ${e?.message}`)) quota = true
         else state.errors[s] = explainError(e)
       }
       compute(s)
@@ -248,9 +258,11 @@
       scheduleRender()
     }, 3)
     if (authError) notice(explainError(authError), true)
+    else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
     syms.forEach(compute)
     $('refresh').disabled = false
-    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })} · البيانات المالية تتجدد كل ${STALE_DAYS} يوم`
+    const left = due.length - done
+    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}${left > 0 ? ` · باقي ${left} سهم تتحدث بياناتها في الزيارات الجاية (${MAX_FETCH} كل مرة)` : ' · البيانات المالية محدّثة'}`
     render()
   }
 
