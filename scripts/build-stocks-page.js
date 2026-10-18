@@ -16,6 +16,6 @@ function inline(file) {
 }
 
 const engine = ['engine/fairvalue.js', 'engine/score.js', 'engine/expectations.js', 'engine/projection.js'].map(inline).join('\n')
-const page = fs.readFileSync('pages/stocks.template.html', 'utf8').replace('/*ENGINE*/', () => engine).replace('/*APP*/', () => fs.readFileSync('pages/stocks.app.js', 'utf8'))
+const page = fs.readFileSync('pages/stocks.template.html', 'utf8').replace('/*ENGINE*/', () => engine).replace('/*APP*/', () => fs.readFileSync('pages/stocks.app.js', 'utf8').replace('/*SECTORS*/null', () => fs.readFileSync('pages/sector-pe.json', 'utf8')))
 fs.writeFileSync('pages/stocks.html', page)
 console.log(`pages/stocks.html: ${page.length} bytes`)
