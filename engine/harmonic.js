@@ -348,8 +348,15 @@ export function runPattern(p, bars, atr, {
     if (vLow(b) <= p.przHi) touched = true
     if (!touched) continue
     if (entryMode === 'limit') {
+      const fill = Math.min(p.przHi, vOpen(b)) // a gap through the limit fills at the open
+      // POST-HOC FIX (see reports/harmonic-prefix/): a bar can gap clean past the whole zone,
+      // and then the "fill at the open" rule put the entry BELOW the far edge — below the
+      // level the stop is measured from. Risk collapsed to a rounding error and a single
+      // such trade printed R = 3003. A fill outside the zone is not an entry into the zone:
+      // the gap skipped the setup, so there is no trade.
+      if (fill < p.przLo) return { filled: false, reason: 'gapped-through', at: t }
       entryAt = t
-      entryV = Math.min(p.przHi, vOpen(b)) // a gap through the limit fills at the open
+      entryV = fill
       break
     }
     // Carney's confirmation: once the zone is reached, wait for a bar that closes against

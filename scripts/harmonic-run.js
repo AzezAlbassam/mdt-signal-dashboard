@@ -130,7 +130,10 @@ console.log(`\n${cells} cells, ${real.length} real trades, ${sham1.length} N1 sh
 
 // ---------------------------------------------------------------- statistics
 
-const hit = (ts) => ts.filter((t) => t.outcome === 't1').length
+// "hit" = the trade's target was reached before the stop. In the frozen rule that target is
+// T1; the §6 variant that exits at T2 reports its own outcome, which must count too or the
+// variant's row reads 0%.
+const hit = (ts) => ts.filter((t) => t.outcome === 't1' || t.outcome === 't2').length
 const timeouts = (ts) => ts.filter((t) => t.outcome === 'timeout').length
 
 function describe(ts, rng) {
@@ -142,6 +145,9 @@ function describe(ts, rng) {
     hit: h / ts.length,
     hitCI: wilsonInterval(h, ts.length),
     r: mean(rs),
+    // The median is carried beside the mean because the mean R of a stop/target rule is a
+    // tail statistic: most trades are exactly -1 and a few are very large.
+    medR: median(rs),
     rCI: bootstrapMean(rs, { draws: 2000, rng }),
     timeout: timeouts(ts) / ts.length,
     medBars: median(ts.map((t) => t.bars)),
@@ -381,16 +387,16 @@ for (const f of family1) {
 }
 say('')
 say('=== WHICH TIMEFRAME (pooled over patterns, de-duplicated) ===')
-say('  tf     n      T1 hit    95% CI      mean R    timeout  med bars  vs random entry')
+say('  tf     n      T1 hit    95% CI      mean R   median R  timeout  med bars  vs random entry')
 for (const r of tfRows) {
-  say(`  ${r.tf.padEnd(5)} ${String(r.n).padStart(6)}  ${pct(r.hit)}  ${ci(r.hitCI).padEnd(11)} ${num(r.r).padStart(8)}  ${pct(r.timeout)}  ${String(r.medBars).padStart(7)}   ${num(r.vsN2)}`)
+  say(`  ${r.tf.padEnd(5)} ${String(r.n).padStart(6)}  ${pct(r.hit)}  ${ci(r.hitCI).padEnd(11)} ${num(r.r).padStart(8)} ${num(r.medR).padStart(9)}  ${pct(r.timeout)}  ${String(r.medBars).padStart(7)}   ${num(r.vsN2)}`)
 }
 say('')
 say('=== WHICH PATTERN x TIMEFRAME (every trade, not de-duplicated) ===')
-say('  pattern       tf      n     T1 hit    95% CI       mean R      95% CI          timeout  vs N2')
+say('  pattern       tf      n     T1 hit    95% CI       mean R      95% CI         median R  timeout  vs N2')
 for (const r of cellRows) {
   const rci = r.rCI ? `[${r.rCI[0].toFixed(2)}, ${r.rCI[1].toFixed(2)}]` : '-'
-  say(`  ${r.pattern.padEnd(13)} ${r.tf.padEnd(4)} ${String(r.n).padStart(6)}  ${pct(r.hit)}  ${ci(r.hitCI).padEnd(11)} ${num(r.r).padStart(8)}  ${rci.padEnd(16)} ${pct(r.timeout)}  ${num(r.vsN2)}`)
+  say(`  ${r.pattern.padEnd(13)} ${r.tf.padEnd(4)} ${String(r.n).padStart(6)}  ${pct(r.hit)}  ${ci(r.hitCI).padEnd(11)} ${num(r.r).padStart(8)}  ${rci.padEnd(15)} ${num(r.medR).padStart(8)}  ${pct(r.timeout)}  ${num(r.vsN2)}`)
 }
 say('')
 say('=== BY SYMBOL GROUP ===')
