@@ -9,7 +9,7 @@
 // Unprofitable companies use sales per share × P/S the same way. Pre-revenue companies (or
 // loss-makers above 20× sales) get no price path, only the revenue they would need in 5 years.
 // Shares are held at today's count (buybacks and dilution are not modelled).
-import { stateAt, addMonths, PARAMS, MULT_MAX, liveShift, lastUsableFiscalYear } from './fairvalue.js'
+import { addMonths, PARAMS, MULT_MAX, stateFn } from './fairvalue.js'
 
 export const YEARS = 5
 const NAMES = ['bear', 'base', 'bull']
@@ -35,9 +35,10 @@ const median = (a) => {
  * `revGrowthNext`: analysts' next-year revenue growth when comparable; `revNow`: revenue of
  * the last 12 months (fresher than the last fiscal year). Both optional.
  */
-export function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null } = {}) {
+export function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null, live = true } = {}) {
   const price = closes.get(month)
-  const st = stateAt(funds, month, Infinity)
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   if (!pos(price) || !st || !pos(st.shares)) return null
   const mcap = price * st.shares
   const rev0 = pos(revNow) ? revNow : st.rev
@@ -51,11 +52,10 @@ export function projectAt(funds, closes, month, { revGrowthNext = null, revNow =
 
   // Own multiple over the last 60 months, each month with the numbers public then.
   const hist = []
-  const shift = liveShift(funds, month)
   for (let k = 0; k < 60; k += 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
-    const s = pos(c) && stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
+    const s = pos(c) && S(mk)
     if (!s) continue
     const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
     if (pos(x) && x <= MULT_MAX) hist.push(x)

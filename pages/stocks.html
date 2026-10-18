@@ -311,7 +311,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
 
 <script>
 // ---- engine/fairvalue.js
-const { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
+const { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm } = (() => {
 // Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
 // annual fundamentals and monthly closes, so it can be scored against later returns.
 //
@@ -360,6 +360,75 @@ const pos = (x) => Number.isFinite(x) && x > 0
 function liveShift(funds, month) {
   const last = funds.length ? funds[funds.length - 1].year : null
   return last == null ? 0 : Math.max(0, last - lastUsableFiscalYear(month))
+}
+
+/**
+ * Quarterly results (get_financial_history, period fq) → one trailing-twelve-month record per
+ * quarter that closes four consecutive quarters, oldest first, each with the record four
+ * quarters earlier (`prev`) and its revenue growth over that year (`revYoY`).
+ */
+function ttmFromQuarters(resp) {
+  const s = resp?.series ?? {}
+  const qs = []
+  ;(resp?.labels ?? []).forEach((label, i) => {
+    const m = /^Q([1-4]) (\d{4})$/.exec(label)
+    if (!m) return
+    const v = (k) => (Number.isFinite(s[k]?.[i]?.value) ? s[k][i].value : null)
+    qs.push({ label, n: Number(m[2]) * 4 + Number(m[1]), rev: v('revenue'), ni: v('net_income'), eps: v('eps'), fcf: v('fcf'), ebitda: v('ebitda'), gp: v('gross_profit'), debt: v('total_debt') })
+  })
+  qs.sort((a, b) => a.n - b.n)
+  const sum = (w, k) => (w.every((q) => q[k] != null) ? w.reduce((a, q) => a + q[k], 0) : null)
+  const out = []
+  for (let i = 3; i < qs.length; i += 1) {
+    const w = qs.slice(i - 3, i + 1)
+    // Four consecutive quarters, the last one reported (a listed but empty quarter is not).
+    if (w[3].n - w[0].n !== 3 || (w[3].rev == null && w[3].eps == null && w[3].ni == null)) continue
+    out.push({ label: w[3].label, n: w[3].n, rev: sum(w, 'rev'), ni: sum(w, 'ni'), eps: sum(w, 'eps'), fcf: sum(w, 'fcf'), ebitda: sum(w, 'ebitda'), gp: sum(w, 'gp'), debt: w[3].debt })
+  }
+  for (const t of out) {
+    t.prev = out.find((x) => x.n === t.n - 4) ?? null
+    t.revYoY = t.prev && pos(t.prev.rev) && t.rev != null ? t.rev / t.prev.rev - 1 : null
+  }
+  return out
+}
+
+/**
+ * The live page's view of a stock (POST-HOC, 2026-10-19; the studies used fiscal years only):
+ * each month gets the last twelve months out by then — the newest quarter counts as out this
+ * month and each earlier one three months before (ponytail: TradingView gives no report dates,
+ * so a quarter can sit up to ~2 months off; harmless in a 60-month history) — and months before
+ * the quarterly data starts use fiscal years on the same offset as today (liveShift). Growth
+ * over 3 years and the 5-year average EPS still come from fiscal years. `sharesNow` (market
+ * value ÷ price) replaces a net income ÷ EPS share count that is more than 1.5× off today.
+ * Returns { state(month), f0, f1, yoy, period } for scoreAt / fairValuesAt / expectationsAt.
+ */
+function liveContext(funds, ttm, month, sharesNow = null) {
+  const shift = liveShift(funds, month)
+  const fyState = (mk) => stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
+  if (!ttm?.length) return { state: fyState, f0: null, f1: null, yoy: null, period: null }
+  const avail = ttm.map((_, i) => addMonths(month, -3 * (ttm.length - 1 - i)))
+  const sharesOf = (t) => (t.eps && t.ni && Math.sign(t.eps) === Math.sign(t.ni) ? t.ni / t.eps : null)
+  const state = (mk) => {
+    const base = fyState(mk)
+    let i = -1
+    for (let j = 0; j < ttm.length; j += 1) if (avail[j] <= mk) i = j
+    if (i < 0 || !base) return base
+    const t = ttm[i]
+    let shares = sharesOf(t) ?? base.shares
+    if (mk === month && pos(sharesNow) && !(shares > sharesNow / 1.5 && shares < sharesNow * 1.5)) shares = sharesNow
+    return { ...base, period: t.label, eps: t.eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
+      shares, revPS: pos(shares) && t.rev != null ? t.rev / shares : null, fcfPS: pos(shares) && t.fcf != null ? t.fcf / shares : null }
+  }
+  const rec = (t) => t && { year: null, period: t.label, rev: t.rev, ni: t.ni, eps: t.eps, fcf: t.fcf, ebitda: t.ebitda, debt: t.debt, gp: t.gp, shares: sharesOf(t) }
+  const last = ttm[ttm.length - 1]
+  return { state, f0: rec(last), f1: rec(last.prev), yoy: last.revYoY, period: last.label }
+}
+
+/** The state per month a calculation reads: backtest rule, live fiscal years, or a liveContext. */
+function stateFn(funds, month, live) {
+  if (live?.state) return live.state
+  if (!live) return (mk) => stateAt(funds, mk)
+  return liveContext(funds, null, month).state
 }
 
 /** Last fiscal year whose numbers are public at month "YYYY-MM": May of Y+1 onward. */
@@ -491,17 +560,17 @@ const clampG = (g) => (g == null ? null : Math.max(-0.05, Math.min(PARAMS.maxGro
  */
 function fairValuesAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month, live ? Infinity : undefined)
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   if (!pos(close) || !st) return null
 
   // Own-history medians over the window ending this month, as the Pine script's arrays.
   const hist = { pe: [], pen: [], ps: [], ev: [] }
-  const shift = live ? liveShift(funds, month) : 0
   for (let k = PARAMS.windowMonths - 1; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
     if (!pos(c)) continue
-    const mult = multiplesAt(stateAt(funds, mk, lastUsableFiscalYear(mk) + shift), c)
+    const mult = multiplesAt(S(mk), c)
     for (const key of Object.keys(hist)) if (mult[key] != null && mult[key] <= MULT_MAX) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)
@@ -696,7 +765,7 @@ function holm(ps) {
   return out
 }
 
-return { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
+return { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm }
 })();
 
 // ---- engine/score.js
@@ -716,9 +785,9 @@ const num = (x) => Number.isFinite(x)
 
 const MULTS = ['pe', 'ps', 'ev', 'pfcf']
 
-function multiplesNow(funds, closes, month, fy) {
+function multiplesNow(S, closes, month) {
   const c = closes.get(month)
-  const st = stateAt(funds, month, fy)
+  const st = S(month)
   if (!pos(c) || !st) return null
   const m = multiplesAt(st, c)
   return { pe: m.pe, ps: m.ps, ev: m.ev, pfcf: pos(st.fcfPS) ? c / st.fcfPS : null }
@@ -743,7 +812,8 @@ function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  * The score at `month` for a stock with annual fundamentals `funds` (parseFundamentals),
  * monthly closes `closes` (Map "YYYY-MM" → close) and TradingView sector `sector`.
  * Returns { total, parts: {A..E}, detail } or { total: null, reason }.
- * `live`: every fiscal year in `funds` counts as reported (see stateAt); the page uses it.
+ * `live`: true (every fiscal year in `funds` counts as reported) or a liveContext (last twelve
+ * months from quarterly results; part B's margin, D's debt and E's checks then read those too).
  *
  * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
  * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
@@ -756,23 +826,23 @@ function scoreAt(funds, closes, sector, month, live = false) {
   const useFy = live ? Infinity : fy
   const known = funds.filter((f) => f.year <= useFy)
   if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
-  const f0 = known[known.length - 1]
-  if (f0.year < fy - 1) return { total: null, reason: 'stale fundamentals' }
-  const f1 = known.length > 1 ? known[known.length - 2] : null
-  const st = stateAt(funds, month, useFy)
+  if (known[known.length - 1].year < fy - 1) return { total: null, reason: 'stale fundamentals' }
+  const f0 = live?.f0 ?? known[known.length - 1]
+  const f1 = live?.f0 ? live.f1 ?? (known.length > 1 ? known[known.length - 2] : null) : known.length > 1 ? known[known.length - 2] : null
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   const fin = sector === 'Finance'
-  const mcap = pos(f0.shares) ? close * f0.shares : null
+  const mcap = pos(st?.shares) ? close * st.shares : null
   if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
 
   const detail = {}
 
   // A. Price
-  const now = multiplesNow(funds, closes, month, useFy)
+  const now = multiplesNow(S, closes, month)
   const window = []
-  const shift = live ? liveShift(funds, month) : 0
   for (let k = 59; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
-    if (closes.has(mk)) window.push(multiplesNow(funds, closes, mk, lastUsableFiscalYear(mk) + shift))
+    if (closes.has(mk)) window.push(multiplesNow(S, closes, mk))
   }
   const shares = []
   for (const key of MULTS) {
@@ -868,7 +938,7 @@ const GAP = 0.1
 
 function expectationsAt(funds, closes, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month, live ? Infinity : undefined)
+  const st = stateFn(funds, month, live)(month)
   if (!(close > 0) || !st) return null
   const gStar = impliedGrowth(st.fcfPS, close)
   if (gStar == null) return null
@@ -876,7 +946,8 @@ function expectationsAt(funds, closes, month, live = false) {
   const known = funds.filter((f) => f.year <= (live ? Infinity : lastUsableFiscalYear(month)))
   const f0 = known[known.length - 1]
   const f1 = known[known.length - 2]
-  const yoy = f0 && f1 && f1.rev > 0 && Number.isFinite(f0.rev) ? f0.rev / f1.rev - 1 : null
+  // Live with quarterly results: last twelve months against the twelve before.
+  const yoy = live?.yoy ?? (f0 && f1 && f1.rev > 0 && Number.isFinite(f0.rev) ? f0.rev / f1.rev - 1 : null)
   const slowing = yoy != null && st.revG != null && yoy < st.revG
   const gap = gStar - gReal
   const flag = gap >= GAP && slowing ? 'red' : gap <= -GAP && !slowing && yoy > 0 ? 'green' : 'neutral'
@@ -924,9 +995,10 @@ const median = (a) => {
  * `revGrowthNext`: analysts' next-year revenue growth when comparable; `revNow`: revenue of
  * the last 12 months (fresher than the last fiscal year). Both optional.
  */
-function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null } = {}) {
+function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null, live = true } = {}) {
   const price = closes.get(month)
-  const st = stateAt(funds, month, Infinity)
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   if (!pos(price) || !st || !pos(st.shares)) return null
   const mcap = price * st.shares
   const rev0 = pos(revNow) ? revNow : st.rev
@@ -940,11 +1012,10 @@ function projectAt(funds, closes, month, { revGrowthNext = null, revNow = null }
 
   // Own multiple over the last 60 months, each month with the numbers public then.
   const hist = []
-  const shift = liveShift(funds, month)
   for (let k = 0; k < 60; k += 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
-    const s = pos(c) && stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
+    const s = pos(c) && S(mk)
     if (!s) continue
     const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
     if (pos(x) && x <= MULT_MAX) hist.push(x)
@@ -990,7 +1061,11 @@ return { YEARS, projectAt }
 ;(() => {
   const SERVER = 'Trading view MCP'
   const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
-  const STALE_DAYS = 14
+  // Fiscal years and old monthly prices barely change, quarters every three months; TradingView
+  // also caps calls per day, so each visit refreshes at most MAX_FETCH stocks, oldest first.
+  const STALE_DAYS = 45
+  const STALE_Q_DAYS = 30
+  const MAX_FETCH = 40
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
@@ -1028,7 +1103,7 @@ return { YEARS, projectAt }
   const nameAr = (key) => SECTOR_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -1047,6 +1122,7 @@ return { YEARS, projectAt }
   }
 
   function explainError(e) {
+    if (/quota/i.test(`${e?.code} ${e?.message}`)) return 'وصلنا حد TradingView اليومي لعدد الطلبات. يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).'
     switch (e?.code) {
       case 'server_not_connected': return 'ربط TradingView غير موجود في حسابك. أضفه من claude.ai ← Settings ← Connectors، وبعدها افتح الصفحة من جديد.'
       case 'needs_reauth': return 'انتهى تسجيل الدخول في ربط TradingView. أعد ربطه من claude.ai ← Settings ← Connectors.'
@@ -1099,23 +1175,25 @@ return { YEARS, projectAt }
     if (firstError && !Object.keys(state.quotes).length) throw firstError
   }
 
-  // All saved histories in pages of 150, so a long list is not 700 separate reads.
-  async function loadCacheFromDb() {
+  // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters) in
+  // pages of 150, so a long list is not 700 separate reads.
+  async function loadCollection(name, into) {
     if (!db) return
     let last = ''
     for (let guard = 0; guard < 40; guard += 1) {
-      let q = db.collection('cache').orderBy('sym').limit(150)
+      let q = db.collection(name).orderBy('sym').limit(150)
       if (last) q = q.where('sym', '>', last)
       const snap = await q.get()
       for (const d of snap.docs) {
         const v = d.data()
         const sym = v.sym ?? d.id
-        state.cache[sym] = v
+        into[sym] = v
         if (v.sym) last = v.sym
       }
       if (snap.size < 150) break
     }
   }
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters)])
 
   // Fresh = fetched in the last 14 days AND holding monthly prices (or the page already tried
   // to get them). Stored histories without prices are fetched again, once.
@@ -1131,6 +1209,15 @@ return { YEARS, projectAt }
       : { sym, missing: true, fetchedAt: Date.now() }
     state.cache[sym] = doc
     if (db) await db.doc(`cache/${sym}`).set(doc).catch(() => {})
+  }
+
+  // The last 16 quarters, for the last-twelve-months view (see liveContext in the engine).
+  const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_Q_DAYS * 864e5
+  async function loadQuarters(sym) {
+    const fq = await call(T.fin, { symbol: sym, period: 'fq', date_from: '2010-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e)))
+    const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
+    state.quarters[sym] = doc
+    if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
 
   function liveFairValues(fv, q, funds) {
@@ -1173,13 +1260,15 @@ return { YEARS, projectAt }
     if (Number.isFinite(q.close)) closes.set(month, q.close)
     // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
-    const s = scoreAt(funds, closes, q.sector, month, true)
-    state.scores[sym] = { ...s, f0: last, known: funds }
-    const fv = fairValuesAt(funds, closes, q.sector, month, true)
+    // Today and the recent history from the last twelve months when quarterly results are saved.
+    const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares)
+    const s = scoreAt(funds, closes, q.sector, month, live)
+    state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
+    const fv = fairValuesAt(funds, closes, q.sector, month, live)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
-    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, true)
-    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm })
+    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
+    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
   }
 
   let busy = false
@@ -1207,13 +1296,20 @@ return { YEARS, projectAt }
       render()
       return
     }
-    const todo = syms.filter((s) => !fresh(state.cache[s]))
+    const age = (d) => d?.fetchedAt ?? 0
+    const due = [...syms.filter((s) => !fresh(state.cache[s])).map((s) => [s, age(state.cache[s])]),
+      ...syms.filter((s) => !freshQ(state.quarters[s])).map((s) => [`q:${s}`, age(state.quarters[s])])].sort((a, b) => a[1] - b[1])
+    const todo = due.slice(0, MAX_FETCH).map(([s]) => s)
     let done = 0
     let authError = null
+    let quota = false
     await pool(todo, async (s) => {
-      if (authError) return
-      try { await loadHistory(s) } catch (e) {
+      if (authError || quota) return
+      const isQ = s.startsWith('q:')
+      if (isQ) s = s.slice(2)
+      try { await (isQ ? loadQuarters(s) : loadHistory(s)) } catch (e) {
         if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'not_granted'].includes(e?.code)) authError = e
+        else if (/quota/i.test(`${e?.code} ${e?.message}`)) quota = true
         else state.errors[s] = explainError(e)
       }
       compute(s)
@@ -1222,9 +1318,11 @@ return { YEARS, projectAt }
       scheduleRender()
     }, 3)
     if (authError) notice(explainError(authError), true)
+    else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
     syms.forEach(compute)
     $('refresh').disabled = false
-    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })} · البيانات المالية تتجدد كل ${STALE_DAYS} يوم`
+    const left = due.length - done
+    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}${left > 0 ? ` · باقي ${left} سهم تتحدث بياناتها في الزيارات الجاية (${MAX_FETCH} كل مرة)` : ' · البيانات المالية محدّثة'}`
     render()
   }
 
@@ -1255,6 +1353,7 @@ return { YEARS, projectAt }
     try {
       await loadQuotes([sym])
       if (!fresh(state.cache[sym])) await loadHistory(sym)
+      if (!freshQ(state.quarters[sym])) await loadQuarters(sym).catch(() => {})
       compute(sym)
     } catch (e) { state.errors[sym] = explainError(e) }
     render()
@@ -1619,7 +1718,7 @@ return { YEARS, projectAt }
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
       ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
-    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
+    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. ${s.period ? `الأرقام من آخر 12 شهر (حتى ربع <span class="n">${esc(s.period)}</span>)، ونمو 3 سنوات من السنوات المالية حتى <span class="n">${esc(s.fiscalYear ?? '—')}</span>.` : `السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.`}</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
   }
 

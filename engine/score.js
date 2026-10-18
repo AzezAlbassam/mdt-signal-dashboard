@@ -4,7 +4,7 @@
 // At month "YYYY-MM" only fiscal years public by then (May of Y+1, as in study 7) and
 // closes up to that month are read.
 
-import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, MULT_MAX, liveShift } from './fairvalue.js'
+import { lastUsableFiscalYear, addMonths, dcf, multiplesAt, MULT_MAX, stateFn } from './fairvalue.js'
 
 /** 0 at a, 1 at b, straight in between, clamped (falls when a > b). */
 export const lin = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)))
@@ -14,9 +14,9 @@ const num = (x) => Number.isFinite(x)
 
 const MULTS = ['pe', 'ps', 'ev', 'pfcf']
 
-function multiplesNow(funds, closes, month, fy) {
+function multiplesNow(S, closes, month) {
   const c = closes.get(month)
-  const st = stateAt(funds, month, fy)
+  const st = S(month)
   if (!pos(c) || !st) return null
   const m = multiplesAt(st, c)
   return { pe: m.pe, ps: m.ps, ev: m.ev, pfcf: pos(st.fcfPS) ? c / st.fcfPS : null }
@@ -41,7 +41,8 @@ export function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  * The score at `month` for a stock with annual fundamentals `funds` (parseFundamentals),
  * monthly closes `closes` (Map "YYYY-MM" → close) and TradingView sector `sector`.
  * Returns { total, parts: {A..E}, detail } or { total: null, reason }.
- * `live`: every fiscal year in `funds` counts as reported (see stateAt); the page uses it.
+ * `live`: true (every fiscal year in `funds` counts as reported) or a liveContext (last twelve
+ * months from quarterly results; part B's margin, D's debt and E's checks then read those too).
  *
  * POST-HOC fixes (2026-10-14, after reports/study9.txt; reports/study9-posthoc-fixes.txt):
  * financials get no free-cash-flow measures (a bank's cash flow moves with deposits and
@@ -54,23 +55,23 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   const useFy = live ? Infinity : fy
   const known = funds.filter((f) => f.year <= useFy)
   if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
-  const f0 = known[known.length - 1]
-  if (f0.year < fy - 1) return { total: null, reason: 'stale fundamentals' }
-  const f1 = known.length > 1 ? known[known.length - 2] : null
-  const st = stateAt(funds, month, useFy)
+  if (known[known.length - 1].year < fy - 1) return { total: null, reason: 'stale fundamentals' }
+  const f0 = live?.f0 ?? known[known.length - 1]
+  const f1 = live?.f0 ? live.f1 ?? (known.length > 1 ? known[known.length - 2] : null) : known.length > 1 ? known[known.length - 2] : null
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   const fin = sector === 'Finance'
-  const mcap = pos(f0.shares) ? close * f0.shares : null
+  const mcap = pos(st?.shares) ? close * st.shares : null
   if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
 
   const detail = {}
 
   // A. Price
-  const now = multiplesNow(funds, closes, month, useFy)
+  const now = multiplesNow(S, closes, month)
   const window = []
-  const shift = live ? liveShift(funds, month) : 0
   for (let k = 59; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
-    if (closes.has(mk)) window.push(multiplesNow(funds, closes, mk, lastUsableFiscalYear(mk) + shift))
+    if (closes.has(mk)) window.push(multiplesNow(S, closes, mk))
   }
   const shares = []
   for (const key of MULTS) {

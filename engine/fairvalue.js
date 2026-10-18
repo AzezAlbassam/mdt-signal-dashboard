@@ -48,6 +48,75 @@ export function liveShift(funds, month) {
   return last == null ? 0 : Math.max(0, last - lastUsableFiscalYear(month))
 }
 
+/**
+ * Quarterly results (get_financial_history, period fq) → one trailing-twelve-month record per
+ * quarter that closes four consecutive quarters, oldest first, each with the record four
+ * quarters earlier (`prev`) and its revenue growth over that year (`revYoY`).
+ */
+export function ttmFromQuarters(resp) {
+  const s = resp?.series ?? {}
+  const qs = []
+  ;(resp?.labels ?? []).forEach((label, i) => {
+    const m = /^Q([1-4]) (\d{4})$/.exec(label)
+    if (!m) return
+    const v = (k) => (Number.isFinite(s[k]?.[i]?.value) ? s[k][i].value : null)
+    qs.push({ label, n: Number(m[2]) * 4 + Number(m[1]), rev: v('revenue'), ni: v('net_income'), eps: v('eps'), fcf: v('fcf'), ebitda: v('ebitda'), gp: v('gross_profit'), debt: v('total_debt') })
+  })
+  qs.sort((a, b) => a.n - b.n)
+  const sum = (w, k) => (w.every((q) => q[k] != null) ? w.reduce((a, q) => a + q[k], 0) : null)
+  const out = []
+  for (let i = 3; i < qs.length; i += 1) {
+    const w = qs.slice(i - 3, i + 1)
+    // Four consecutive quarters, the last one reported (a listed but empty quarter is not).
+    if (w[3].n - w[0].n !== 3 || (w[3].rev == null && w[3].eps == null && w[3].ni == null)) continue
+    out.push({ label: w[3].label, n: w[3].n, rev: sum(w, 'rev'), ni: sum(w, 'ni'), eps: sum(w, 'eps'), fcf: sum(w, 'fcf'), ebitda: sum(w, 'ebitda'), gp: sum(w, 'gp'), debt: w[3].debt })
+  }
+  for (const t of out) {
+    t.prev = out.find((x) => x.n === t.n - 4) ?? null
+    t.revYoY = t.prev && pos(t.prev.rev) && t.rev != null ? t.rev / t.prev.rev - 1 : null
+  }
+  return out
+}
+
+/**
+ * The live page's view of a stock (POST-HOC, 2026-10-19; the studies used fiscal years only):
+ * each month gets the last twelve months out by then — the newest quarter counts as out this
+ * month and each earlier one three months before (ponytail: TradingView gives no report dates,
+ * so a quarter can sit up to ~2 months off; harmless in a 60-month history) — and months before
+ * the quarterly data starts use fiscal years on the same offset as today (liveShift). Growth
+ * over 3 years and the 5-year average EPS still come from fiscal years. `sharesNow` (market
+ * value ÷ price) replaces a net income ÷ EPS share count that is more than 1.5× off today.
+ * Returns { state(month), f0, f1, yoy, period } for scoreAt / fairValuesAt / expectationsAt.
+ */
+export function liveContext(funds, ttm, month, sharesNow = null) {
+  const shift = liveShift(funds, month)
+  const fyState = (mk) => stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
+  if (!ttm?.length) return { state: fyState, f0: null, f1: null, yoy: null, period: null }
+  const avail = ttm.map((_, i) => addMonths(month, -3 * (ttm.length - 1 - i)))
+  const sharesOf = (t) => (t.eps && t.ni && Math.sign(t.eps) === Math.sign(t.ni) ? t.ni / t.eps : null)
+  const state = (mk) => {
+    const base = fyState(mk)
+    let i = -1
+    for (let j = 0; j < ttm.length; j += 1) if (avail[j] <= mk) i = j
+    if (i < 0 || !base) return base
+    const t = ttm[i]
+    let shares = sharesOf(t) ?? base.shares
+    if (mk === month && pos(sharesNow) && !(shares > sharesNow / 1.5 && shares < sharesNow * 1.5)) shares = sharesNow
+    return { ...base, period: t.label, eps: t.eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
+      shares, revPS: pos(shares) && t.rev != null ? t.rev / shares : null, fcfPS: pos(shares) && t.fcf != null ? t.fcf / shares : null }
+  }
+  const rec = (t) => t && { year: null, period: t.label, rev: t.rev, ni: t.ni, eps: t.eps, fcf: t.fcf, ebitda: t.ebitda, debt: t.debt, gp: t.gp, shares: sharesOf(t) }
+  const last = ttm[ttm.length - 1]
+  return { state, f0: rec(last), f1: rec(last.prev), yoy: last.revYoY, period: last.label }
+}
+
+/** The state per month a calculation reads: backtest rule, live fiscal years, or a liveContext. */
+export function stateFn(funds, month, live) {
+  if (live?.state) return live.state
+  if (!live) return (mk) => stateAt(funds, mk)
+  return liveContext(funds, null, month).state
+}
+
 /** Last fiscal year whose numbers are public at month "YYYY-MM": May of Y+1 onward. */
 export function lastUsableFiscalYear(month) {
   const [y, m] = month.split('-').map(Number)
@@ -177,17 +246,17 @@ const clampG = (g) => (g == null ? null : Math.max(-0.05, Math.min(PARAMS.maxGro
  */
 export function fairValuesAt(funds, closes, sector, month, live = false) {
   const close = closes.get(month)
-  const st = stateAt(funds, month, live ? Infinity : undefined)
+  const S = stateFn(funds, month, live)
+  const st = S(month)
   if (!pos(close) || !st) return null
 
   // Own-history medians over the window ending this month, as the Pine script's arrays.
   const hist = { pe: [], pen: [], ps: [], ev: [] }
-  const shift = live ? liveShift(funds, month) : 0
   for (let k = PARAMS.windowMonths - 1; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
     if (!pos(c)) continue
-    const mult = multiplesAt(stateAt(funds, mk, lastUsableFiscalYear(mk) + shift), c)
+    const mult = multiplesAt(S(mk), c)
     for (const key of Object.keys(hist)) if (mult[key] != null && mult[key] <= MULT_MAX) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)

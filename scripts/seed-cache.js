@@ -2,6 +2,8 @@
 // the stock page's `cache/<SYM>` documents plus ArtifactData batch files, so the page opens
 // with saved histories instead of fetching every symbol itself.
 //   node scripts/seed-cache.js <rawDir> <symbols.json> <outDir>
+//   node scripts/seed-cache.js <quartersDir> <symbols.json> <outDir> q   → `q/<SYM>` documents
+//     (quarters-collect.js output) for the last-twelve-months view; symbols without one are skipped.
 // A symbol without annual fundamentals is saved as { missing: true } (the page shows "no data"
 // and asks TradingView again after 14 days, as it does for its own fetches).
 import fs from 'node:fs'
@@ -17,7 +19,17 @@ const read = (d, sym) => {
 const fetchedAt = Date.now()
 const writes = []
 let missing = 0
+const quarters = process.argv[5] === 'q'
 for (const sym of JSON.parse(fs.readFileSync(symbolsFile, 'utf8'))) {
+  if (quarters) {
+    const f = path.join(rawDir, `${sym.replace(':', '_')}.json`)
+    if (!fs.existsSync(f)) continue
+    const { labels, series } = JSON.parse(fs.readFileSync(f, 'utf8'))
+    const file = path.resolve(outDir, 'docs', `${sym.replace(':', '_')}.json`)
+    fs.writeFileSync(file, JSON.stringify({ sym, fq: { labels, series }, fetchedAt }))
+    writes.push({ op: 'set', collection: 'q', doc_id: sym, file_path: file })
+    continue
+  }
   const fin = read('fin', sym)
   const bars = read('px', sym)?.bars
   const doc = fin?.labels

@@ -1,7 +1,11 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
   const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
-  const STALE_DAYS = 14
+  // Fiscal years and old monthly prices barely change, quarters every three months; TradingView
+  // also caps calls per day, so each visit refreshes at most MAX_FETCH stocks, oldest first.
+  const STALE_DAYS = 45
+  const STALE_Q_DAYS = 30
+  const MAX_FETCH = 40
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
@@ -39,7 +43,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -58,6 +62,7 @@
   }
 
   function explainError(e) {
+    if (/quota/i.test(`${e?.code} ${e?.message}`)) return 'وصلنا حد TradingView اليومي لعدد الطلبات. يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).'
     switch (e?.code) {
       case 'server_not_connected': return 'ربط TradingView غير موجود في حسابك. أضفه من claude.ai ← Settings ← Connectors، وبعدها افتح الصفحة من جديد.'
       case 'needs_reauth': return 'انتهى تسجيل الدخول في ربط TradingView. أعد ربطه من claude.ai ← Settings ← Connectors.'
@@ -110,23 +115,25 @@
     if (firstError && !Object.keys(state.quotes).length) throw firstError
   }
 
-  // All saved histories in pages of 150, so a long list is not 700 separate reads.
-  async function loadCacheFromDb() {
+  // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters) in
+  // pages of 150, so a long list is not 700 separate reads.
+  async function loadCollection(name, into) {
     if (!db) return
     let last = ''
     for (let guard = 0; guard < 40; guard += 1) {
-      let q = db.collection('cache').orderBy('sym').limit(150)
+      let q = db.collection(name).orderBy('sym').limit(150)
       if (last) q = q.where('sym', '>', last)
       const snap = await q.get()
       for (const d of snap.docs) {
         const v = d.data()
         const sym = v.sym ?? d.id
-        state.cache[sym] = v
+        into[sym] = v
         if (v.sym) last = v.sym
       }
       if (snap.size < 150) break
     }
   }
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters)])
 
   // Fresh = fetched in the last 14 days AND holding monthly prices (or the page already tried
   // to get them). Stored histories without prices are fetched again, once.
@@ -142,6 +149,15 @@
       : { sym, missing: true, fetchedAt: Date.now() }
     state.cache[sym] = doc
     if (db) await db.doc(`cache/${sym}`).set(doc).catch(() => {})
+  }
+
+  // The last 16 quarters, for the last-twelve-months view (see liveContext in the engine).
+  const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_Q_DAYS * 864e5
+  async function loadQuarters(sym) {
+    const fq = await call(T.fin, { symbol: sym, period: 'fq', date_from: '2010-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e)))
+    const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
+    state.quarters[sym] = doc
+    if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
 
   function liveFairValues(fv, q, funds) {
@@ -184,13 +200,15 @@
     if (Number.isFinite(q.close)) closes.set(month, q.close)
     // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
-    const s = scoreAt(funds, closes, q.sector, month, true)
-    state.scores[sym] = { ...s, f0: last, known: funds }
-    const fv = fairValuesAt(funds, closes, q.sector, month, true)
+    // Today and the recent history from the last twelve months when quarterly results are saved.
+    const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares)
+    const s = scoreAt(funds, closes, q.sector, month, live)
+    state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
+    const fv = fairValuesAt(funds, closes, q.sector, month, live)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
-    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, true)
-    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm })
+    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
+    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
   }
 
   let busy = false
@@ -218,13 +236,20 @@
       render()
       return
     }
-    const todo = syms.filter((s) => !fresh(state.cache[s]))
+    const age = (d) => d?.fetchedAt ?? 0
+    const due = [...syms.filter((s) => !fresh(state.cache[s])).map((s) => [s, age(state.cache[s])]),
+      ...syms.filter((s) => !freshQ(state.quarters[s])).map((s) => [`q:${s}`, age(state.quarters[s])])].sort((a, b) => a[1] - b[1])
+    const todo = due.slice(0, MAX_FETCH).map(([s]) => s)
     let done = 0
     let authError = null
+    let quota = false
     await pool(todo, async (s) => {
-      if (authError) return
-      try { await loadHistory(s) } catch (e) {
+      if (authError || quota) return
+      const isQ = s.startsWith('q:')
+      if (isQ) s = s.slice(2)
+      try { await (isQ ? loadQuarters(s) : loadHistory(s)) } catch (e) {
         if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'not_granted'].includes(e?.code)) authError = e
+        else if (/quota/i.test(`${e?.code} ${e?.message}`)) quota = true
         else state.errors[s] = explainError(e)
       }
       compute(s)
@@ -233,9 +258,11 @@
       scheduleRender()
     }, 3)
     if (authError) notice(explainError(authError), true)
+    else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
     syms.forEach(compute)
     $('refresh').disabled = false
-    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })} · البيانات المالية تتجدد كل ${STALE_DAYS} يوم`
+    const left = due.length - done
+    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}${left > 0 ? ` · باقي ${left} سهم تتحدث بياناتها في الزيارات الجاية (${MAX_FETCH} كل مرة)` : ' · البيانات المالية محدّثة'}`
     render()
   }
 
@@ -266,6 +293,7 @@
     try {
       await loadQuotes([sym])
       if (!fresh(state.cache[sym])) await loadHistory(sym)
+      if (!freshQ(state.quarters[sym])) await loadQuarters(sym).catch(() => {})
       compute(sym)
     } catch (e) { state.errors[sym] = explainError(e) }
     render()
@@ -630,7 +658,7 @@
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
       ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
-    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
+    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. ${s.period ? `الأرقام من آخر 12 شهر (حتى ربع <span class="n">${esc(s.period)}</span>)، ونمو 3 سنوات من السنوات المالية حتى <span class="n">${esc(s.fiscalYear ?? '—')}</span>.` : `السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.`}</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
   }
 

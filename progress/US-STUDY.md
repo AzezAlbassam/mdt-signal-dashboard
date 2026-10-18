@@ -226,3 +226,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   null P/E, × on the big tab. POST-HOC reports regenerated: study 9 H1 still CONFIRMED (p 0.0039 / Holm
   0.0078), study 7 and 10 still not confirmed. Known limit: fair value uses the last full fiscal year, which
   lags TTM for fast growers (GOOGL FY EPS 10.8 vs TTM 19.9).
+- 2026-10-18 — user: AVGO shown "price above performance" was wrong. Cause: the live page read the last full
+  fiscal year (Nov 2025) while revenue had since grown ~39%. Live page now uses the last twelve months built
+  from TradingView's 16 quarters (ttmFromQuarters / liveContext, POST-HOC, untested; backtests unchanged).
+  AVGO: flag red → neutral, implied growth 36.4% → 26.3%, score 8.39 → 9.29, fair value 185 → 266 (price
+  328.75, still −19%: growth capped at 25%). 665 quarterly histories in data/fq, seeded to the page's `q`
+  collection. Fetching them exhausted TradingView's daily tool-call quota (shared with the page, resets
+  00:00 UTC); the page now refreshes at most 40 stale symbols per visit and stops with a notice on a quota
+  error. ~309 symbols still lack quarters (fill in from the page over later visits).
