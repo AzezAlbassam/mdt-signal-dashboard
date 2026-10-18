@@ -15,6 +15,29 @@ const fam = Object.fromEntries(d.family1.map((f) => [f.id, f]))
 const r2 = (x) => (x >= 0 ? '+' : '') + x.toFixed(3)
 const p4 = (x) => (x < 0.0001 ? '<0.0001' : x.toFixed(4))
 
+// How long a trade lasts, per timeframe — reports/harmonic-holding.json, post-hoc.
+const hold = JSON.parse(fs.readFileSync('reports/harmonic-holding.json', 'utf8'))
+// Arabic counts its nouns by the number in front of them: one, two, the plural of paucity
+// for three to ten, then the singular again. A table that gets this wrong reads as machine
+// output, so the four forms are carried per unit.
+const ar = (n, [one, two, few, many]) => (n === 1 ? one : n === 2 ? two : n <= 10 ? `${n} ${few}` : `${n} ${many}`)
+const DAY = ['يوم واحد', 'يومان', 'أيام', 'يوماً']
+const WEEK = ['أسبوع واحد', 'أسبوعان', 'أسابيع', 'أسبوعاً']
+const MONTH = ['شهر واحد', 'شهران', 'أشهر', 'شهراً']
+const YEAR = ['سنة واحدة', 'سنتان', 'سنوات', 'سنة']
+const dur = (days) => {
+  if (days < 1) return 'أقل من يوم'
+  if (days < 14) return ar(Math.round(days), DAY)
+  if (days < 70) return ar(Math.round(days / 7), WEEK)
+  if (days < 400) return ar(Math.round(days / 30.44), MONTH)
+  const y = days / 365.25
+  return Math.abs(y - Math.round(y)) < 0.1 ? ar(Math.round(y), YEAR) : `${y.toFixed(1)} سنة`
+}
+const holdRows = hold.rows.map((r) => `<tr><td class="tf">${r.tf}</td>
+    <td>${dur(r.horizonDays)}</td><td>${dur(r.structureDays.median)}</td><td>${dur(r.waitDays.median)}</td>
+    <td>${dur(r.winnerDays.median)} · ${dur(r.winnerDays.p90)}</td>
+    <td>${dur(r.cycleDays.median)} · ${dur(r.cycleDays.p90)}</td></tr>`).join('\n  ')
+
 const html = `<title>مؤشر الهارمونيك XABCD</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,6 +96,20 @@ code{font:.9em var(--mono);background:var(--chip);padding:1px 5px;border-radius:
   font:12.5px/1.7 var(--mono);direction:ltr;text-align:left;overflow-x:auto;white-space:pre}
 .warn{background:color-mix(in srgb,var(--neg) 7%,var(--card));
   border:1px solid color-mix(in srgb,var(--neg) 26%,var(--rule));border-radius:4px;padding:16px 18px}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th{font-weight:600;font-size:12.5px;color:var(--muted);background:var(--chip)}
+tr:last-child td{border-bottom:0}
+td.tf{font-family:var(--mono);direction:ltr;unicode-bidi:isolate;color:var(--accent);font-weight:600}
+
+/* The key: a swatch, then what it means. Swatch colours are the indicator's own. */
+.key{display:grid;grid-template-columns:auto 1fr;gap:10px 12px;align-items:start;
+  background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.key b{display:inline-block;min-width:26px;font-family:var(--mono);font-weight:700;text-align:center}
+.key span{font-size:14.5px}
+.g{color:var(--pos)} .r{color:var(--neg)} .m{color:var(--muted)}
 </style>
 
 <div class="wrap" dir="rtl" lang="ar">
@@ -114,6 +151,47 @@ code{font:.9em var(--mono);background:var(--chip);padding:1px 5px;border-radius:
 </section>
 
 <hr>
+
+<section>
+  <h2>قراءة الشارت</h2>
+  <p>كل ما يرسمه المؤشر مشروح في مفتاح صغير أسفل يسار الشارت، وهذا هو:</p>
+  <div class="key">
+    <b class="m">▬</b><span>أضلاع النموذج <span dir="ltr">X A B C</span>.</span>
+    <b class="m">┈</b><span>ضلع <span dir="ltr">XA</span> المرجعي الذي تُقاس عليه النسب.</span>
+    <b class="g">▭</b><span><strong>البوكس هو مكان الأمر.</strong> أخضر = منطقة شراء، أحمر = منطقة بيع.
+    يبدأ من <strong>الشمعة التي تأكّد فيها النموذج</strong> — لا من النقطة C، لأن C أقدم من الإشارة —
+    وينتهي عند <strong>آخر شمعة يُحتسب فيها الوصول</strong>. فطرفا البوكس هما التاريخان المهمّان:
+    متى صار النموذج معلوماً، ومتى يموت.</span>
+    <b class="g">▬</b><span>خط الدخول: أمر محدَّد عند الحافة القريبة من البوكس.</span>
+    <b class="r">╌</b><span>الوقف: <span dir="ltr">0.25</span> من <span dir="ltr">ATR</span> خلف الحافة البعيدة.</span>
+    <b class="g">┈</b><span>الأهداف الأربعة. الاختبار يخرج عند الهدف الأول، وأرقام اللوحة كلها محسوبة عليه.</span>
+    <b class="m">■</b><span>الرمادي: النموذج <strong>لاغٍ</strong> — لم يصل إليه السعر قبل أن تُقفل النافذة.</span>
+  </div>
+  <p>وعلى البوكس نفسه مكتوب الاتجاه واسم النموذج والمنطقة، ثم <strong>حالته</strong>، وهي واحدة من أربع:</p>
+  <ul>
+    <li><strong>بانتظار وصول السعر</strong> — النافذة ما زالت مفتوحة ولم يصل بعد.</li>
+    <li><strong>تفعّل</strong> — السعر دخل المنطقة: هنا كان الأمر المحدَّد سينفّذ.</li>
+    <li><strong>لاغٍ</strong> — كسر النقطة <span dir="ltr">C</span> قبل أن يصل، أو قفزت شمعة فوق المنطقة كاملة.</li>
+    <li><strong>انتهى</strong> — أُقفلت النافذة ولم يصل.</li>
+  </ul>
+  <p class="note">النماذج اللاغية تبقى رمادية على الشارت عن قصد: نسبة ما لا يصل إليه السعر جزء من الصورة.
+  لإخفائها: الإعدادات ← <code>Display</code> ← <code>Hide patterns once they are void</code>.
+  ولعرض الكتابة بالإنجليزية إن لم تُرسم العربية عندك بشكل صحيح: أطفئ <code>Arabic text on the chart</code>.</p>
+</section>
+
+<section>
+  <h2>أي فريم لأي مدة</h2>
+  <p>القاعدة تُغلق الصفقة بعد <strong>٦٠ شمعة</strong> مهما حدث، فطول الشمعة هو ما يحدّد أفق الصفقة.
+  هذه الأرقام من نفس الـ<span class="num" dir="ltr">${d.counts.real.toLocaleString('en')}</span> صفقة، بالأيام التقويمية:</p>
+  <div class="scroll"><table>
+  <tr><th>الفريم</th><th>سقف الصفقة</th><th>تكوّن النموذج <span dir="ltr">X→C</span></th>
+      <th>انتظار الدخول</th><th>صفقة رابحة · وسيط ثم ٩٠٪</th><th>الدورة كاملة <span dir="ltr">X→الخروج</span></th></tr>
+  ${holdRows}
+  </table></div>
+  <p class="note">«سقف الصفقة» هو ما تساويه ٦٠ شمعة من تقويم فعلي. «انتظار الدخول» هو الوقت الميّت بين
+  تأكّد النموذج ولمس السعر للمنطقة. أرقام <span dir="ltr">1h</span> و<span dir="ltr">4h</span> مقرّبة
+  لليوم الكامل لأن تواريخ تلك السلاسل بلا ساعات، فما يحدث داخل الجلسة يُقرأ صفراً.</p>
+</section>
 
 <section>
   <h2>إطفاء النماذج التي لا تريدها</h2>
