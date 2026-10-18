@@ -66,6 +66,9 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
       TradingView yet — the user runs it; study 6's Pine had a compile error found that way (shape.star).
 - [x] Study 11: forward-log/hcp-2026-10-17.json — 153 projections frozen (85 up / 68 down).
       SCORE THESE AROUND 2026-12-11 (40 trading bars on): the file carries its own scoring recipe.
+- [x] Study 11: scripts/study11-verify.js — prints what the Pine table should read for a symbol/date,
+      so Pine-vs-engine agreement can be checked without a CSV export (polylines do not export)
+- [ ] Study 11: user runs pine/hcp.pine on TradingView — first compile is still unverified
 - [ ] Study 11: score the frozen projections once 40 bars have passed (~2026-12-11)
 
 ## Counts
