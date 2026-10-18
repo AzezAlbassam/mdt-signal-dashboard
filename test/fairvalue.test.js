@@ -113,3 +113,9 @@ test('months with P/S above 100 are no anchor for the fair P/S', () => {
   const fv = fairValuesAt(f, c, 'Technology Services', '2017-05')
   assert.ok(fv.values.ps > 0 && fv.values.ps < 2 * fv.close)
 })
+
+test('a fiscal year with no revenue, EPS or profit is left out', async () => {
+  const { parseFundamentals } = await import('../engine/fairvalue.js')
+  const resp = { labels: ['2023', '2024', '2025'], series: { revenue: [{ value: 10 }, { value: 12 }, { value: null }], eps: [{ value: 1 }, { value: 1.2 }, { value: null }], net_income: [{ value: 5 }, { value: 6 }, { value: null }] } }
+  assert.deepEqual(parseFundamentals(resp).map((x) => x.year), [2023, 2024])
+})

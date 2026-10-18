@@ -36,6 +36,18 @@ export const MULT_MAX = 100
 
 const pos = (x) => Number.isFinite(x) && x > 0
 
+/**
+ * Live mode: how many fiscal years ahead of the backtests' rule today's numbers are (1 for a
+ * fiscal year that ended mid-year and is already out, else 0). History months are moved by the
+ * same amount so today's multiple is compared with past multiples built the same way.
+ * POST-HOC fix (2026-10-18): before this, MSFT's P/E on FY2026 was set against a history on
+ * FY2025 and FY2024, which made it look cheaper than 93% of its months instead of 72%.
+ */
+export function liveShift(funds, month) {
+  const last = funds.length ? funds[funds.length - 1].year : null
+  return last == null ? 0 : Math.max(0, last - lastUsableFiscalYear(month))
+}
+
 /** Last fiscal year whose numbers are public at month "YYYY-MM": May of Y+1 onward. */
 export function lastUsableFiscalYear(month) {
   const [y, m] = month.split('-').map(Number)
@@ -69,6 +81,9 @@ export function parseFundamentals(resp) {
     }
     const eps = v('eps')
     const ni = v('net_income')
+    // POST-HOC fix (2026-10-18): a year TradingView lists with no revenue, EPS or profit (FUBO's
+    // 2025) is not reported yet; using it made a $1.6B-revenue company look pre-revenue.
+    if (v('revenue') == null && eps == null && ni == null) return
     const shares = eps && ni && Math.sign(eps) === Math.sign(ni) ? ni / eps : null
     out.push({ year, eps, rev: v('revenue'), fcf: v('fcf'), ebitda: v('ebitda'), debt: v('total_debt'), ni, shares, gp: v('gross_profit') })
   })
@@ -167,11 +182,12 @@ export function fairValuesAt(funds, closes, sector, month, live = false) {
 
   // Own-history medians over the window ending this month, as the Pine script's arrays.
   const hist = { pe: [], pen: [], ps: [], ev: [] }
+  const shift = live ? liveShift(funds, month) : 0
   for (let k = PARAMS.windowMonths - 1; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
     if (!pos(c)) continue
-    const mult = multiplesAt(stateAt(funds, mk), c)
+    const mult = multiplesAt(stateAt(funds, mk, lastUsableFiscalYear(mk) + shift), c)
     for (const key of Object.keys(hist)) if (mult[key] != null && mult[key] <= MULT_MAX) hist[key].push(mult[key])
   }
   const med = (key) => (hist[key].length >= PARAMS.minSamples ? median(hist[key]) : null)

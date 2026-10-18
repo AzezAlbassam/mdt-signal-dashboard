@@ -188,3 +188,12 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   User chose: Pine script + pre-registered test, TradingView only (no live page). Study 11 pre-registered.
   Scratchpad working files (this session only): .../scratchpad/{align,aligned,chart}.json, scout-*.md.
 - 2026-10-14 — pine/metal-log-regression.pine restyled at the user's request to the ETH look (upper/regression/lower, one fill, lines carried forward, price-scale values; outer bands optional) and opened to stocks/coins (Auto: start at first bar; log time for crypto). Default fit now "All data" (hindsight, stated in the header and table). Fit maths unchanged. Preview: reports/logreg-preview.png (mock). Stock band untested — offered a pre-registered test.
+- 2026-10-18 — stock page v12: tabs "أكبر 25 شركة" (29 candidates, top 25 by live market value, grouped by
+  sector, Magnificent 7 marked) and "القطاعات" (sector + industry P/E history 2011–2026 from 818 stored US
+  stocks, scripts/sector-pe.js → pages/sector-pe.json, descriptive only: bottom/top 10% zones, untested).
+  Flags reworded plainly; P/E on phone cards. Independent review found 6 defects, all fixed: live history now
+  uses the same fiscal-year offset as today (liveShift; MSFT looked cheaper than 93% of its months, really 72%),
+  revenue labels show revG not gReal, empty fiscal years dropped (FUBO), banks lose P/FCF in part A, PEG with
+  null P/E, × on the big tab. POST-HOC reports regenerated: study 9 H1 still CONFIRMED (p 0.0039 / Holm
+  0.0078), study 7 and 10 still not confirmed. Known limit: fair value uses the last full fiscal year, which
+  lags TTM for fast growers (GOOGL FY EPS 10.8 vs TTM 19.9).

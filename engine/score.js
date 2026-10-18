@@ -4,7 +4,7 @@
 // At month "YYYY-MM" only fiscal years public by then (May of Y+1, as in study 7) and
 // closes up to that month are read.
 
-import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, MULT_MAX } from './fairvalue.js'
+import { lastUsableFiscalYear, addMonths, dcf, stateAt, multiplesAt, MULT_MAX, liveShift } from './fairvalue.js'
 
 /** 0 at a, 1 at b, straight in between, clamped (falls when a > b). */
 export const lin = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)))
@@ -67,12 +67,14 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   // A. Price
   const now = multiplesNow(funds, closes, month, useFy)
   const window = []
+  const shift = live ? liveShift(funds, month) : 0
   for (let k = 59; k >= 0; k -= 1) {
     const mk = addMonths(month, -k)
-    if (closes.has(mk)) window.push(multiplesNow(funds, closes, mk))
+    if (closes.has(mk)) window.push(multiplesNow(funds, closes, mk, lastUsableFiscalYear(mk) + shift))
   }
   const shares = []
   for (const key of MULTS) {
+    if (fin && key === 'pfcf') continue // POST-HOC fix (2026-10-18): no free-cash-flow multiple for financials either
     const v = now?.[key]
     if (!pos(v)) continue
     const hist = window.map((w) => w?.[key]).filter((x) => pos(x) && x <= MULT_MAX)

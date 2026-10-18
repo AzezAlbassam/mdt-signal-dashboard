@@ -3,11 +3,11 @@
 //   node scripts/sector-pe.js → pages/sector-pe.json
 // A group's P/E = total market value ÷ total net income of its profitable members, which equals
 // the earnings-weighted average of their P/E (price ÷ EPS), so share counts are not needed.
-// Each month uses the fiscal year public then (study 7's rule); the latest month uses every
-// reported year, as the live page does. Members are today's stocks (survivorship: companies
-// that left the market are missing from the past).
+// Each month uses the fiscal year public then (study 7's rule), moved forward a year for a
+// company whose latest fiscal year is already out today (mid-year fiscal years), as the page
+// does. Members are today's stocks (survivorship: companies that left the market are missing).
 import fs from 'node:fs'
-import { stateAt, addMonths } from '../engine/fairvalue.js'
+import { stateAt, addMonths, lastUsableFiscalYear, liveShift } from '../engine/fairvalue.js'
 import { loadUniverse } from './lib/universe.js'
 
 const FIRST = '2011-05'
@@ -29,7 +29,7 @@ for (const dir of ['data/fv', 'data/fv8']) {
     if (seen.has(s.sym) || seen.has(key)) continue
     seen.add(s.sym)
     seen.add(key)
-    stocks.push({ ...s, industry: industries[s.sym]?.industry ?? null })
+    stocks.push({ ...s, industry: industries[s.sym]?.industry ?? null, shift: liveShift(s.funds, LAST) })
   }
 }
 
@@ -41,7 +41,7 @@ function series(members) {
     let n = 0
     for (const s of members) {
       const c = s.closes.get(m)
-      const st = c > 0 && stateAt(s.funds, m, m === LAST ? Infinity : undefined)
+      const st = c > 0 && stateAt(s.funds, m, lastUsableFiscalYear(m) + s.shift)
       const ni = st && s.funds.find((f) => f.year === st.fiscalYear)?.ni
       if (!(st?.eps > 0 && ni > 0)) continue
       value += (c / st.eps) * ni

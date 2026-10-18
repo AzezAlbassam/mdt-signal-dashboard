@@ -9,7 +9,7 @@
 // Unprofitable companies use sales per share × P/S the same way. Pre-revenue companies (or
 // loss-makers above 20× sales) get no price path, only the revenue they would need in 5 years.
 // Shares are held at today's count (buybacks and dilution are not modelled).
-import { stateAt, addMonths, PARAMS, MULT_MAX } from './fairvalue.js'
+import { stateAt, addMonths, PARAMS, MULT_MAX, liveShift, lastUsableFiscalYear } from './fairvalue.js'
 
 export const YEARS = 5
 const NAMES = ['bear', 'base', 'bull']
@@ -51,16 +51,18 @@ export function projectAt(funds, closes, month, { revGrowthNext = null, revNow =
 
   // Own multiple over the last 60 months, each month with the numbers public then.
   const hist = []
+  const shift = liveShift(funds, month)
   for (let k = 0; k < 60; k += 1) {
     const mk = addMonths(month, -k)
     const c = closes.get(mk)
-    const s = pos(c) && stateAt(funds, mk)
+    const s = pos(c) && stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
     if (!s) continue
     const x = earnings ? (pos(s.eps) ? c / s.eps : null) : pos(s.revPS) ? c / s.revPS : null
     if (pos(x) && x <= MULT_MAX) hist.push(x)
   }
   const lim = earnings ? PE : PS
-  const normal = hist.length >= 12 ? clamp(median(hist), lim.lo, lim.hi) : lim.dflt
+  const own = hist.length >= 12 ? median(hist) : null
+  const normal = own == null ? lim.dflt : clamp(own, lim.lo, lim.hi)
   const g0 = clamp(revGrowthNext ?? st.revG ?? 0, -0.15, 0.4)
   const margin = earnings ? [Math.min(...margins), avg, Math.max(...margins)] : null
 
@@ -86,7 +88,7 @@ export function projectAt(funds, closes, month, { revGrowthNext = null, revNow =
   })
   const last = rows[YEARS - 1]
   return {
-    kind: earnings ? 'earnings' : 'sales', price, g0, growthFrom: revGrowthNext != null ? 'analysts' : 'history', margin, normal, exitMult, basis, growth, rows,
+    kind: earnings ? 'earnings' : 'sales', price, g0, growthFrom: revGrowthNext != null ? 'analysts' : 'history', margin, normal, own, exitMult, basis, growth, rows,
     yearly: NAMES.map((k) => (last[k] / price) ** (1 / YEARS) - 1),
     today: NAMES.map((k) => last[k] / (1 + PARAMS.discount) ** YEARS),
   }
