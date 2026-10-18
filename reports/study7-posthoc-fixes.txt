@@ -1,7 +1,9 @@
-POST-HOC (2026-10-14), not evidence: the same run as reports/study7.txt after two engine fixes found
-while auditing the stock page — (1) months with any own-history multiple above 100 are left out,
-(2) financials get no free-cash-flow measures in the score. The protocol and the original report
-are unchanged; this file only shows whether the conclusions move.
+POST-HOC (2026-10-14, updated 2026-10-18), not evidence: the same run as reports/study7.txt after engine
+fixes found while auditing the stock page: (1) months with any own-history multiple above 100 are
+left out, (2) financials get no free-cash-flow measures in the score (implied growth, cash
+conversion, two direction checks, and since 18 Oct the P/FCF multiple), (3) since 18 Oct a fiscal
+year TradingView lists with no revenue, EPS or profit is left out. The protocol and the original
+report are unchanged; this file only shows whether the conclusions move.
 
 Study 7 — fair value indicator on the user's watchlist stocks (PROTOCOL-study7.md)
 Testable stocks: 552 of 756 watchlist symbols. Rebalance: end of May 2012–2025, 12-month price return.

@@ -71,3 +71,16 @@ test('financials get no free-cash-flow measures', () => {
   assert.equal(s.detail.checks, 3) // profit, revenue up, EPS up
   assert.ok(s.total != null)
 })
+
+test('live: history is built on the same fiscal-year offset as today (mid-year fiscal years)', () => {
+  // FY labels run to 2021 at 2021-10 (one year past the May rule). The price is always 20 × the
+  // EPS of the year that is out, so with a consistent history today's P/E equals every past one.
+  const f = funds()
+  const closes2 = new Map()
+  for (let m = '2015-01'; m <= '2021-10'; m = addMonths(m, 1)) {
+    const y = Number(m.slice(0, 4)) - (Number(m.slice(5)) >= 5 ? 1 : 2) + 1
+    closes2.set(m, 20 * f.find((x) => x.year === Math.min(2021, y)).eps)
+  }
+  const s = scoreAt(f, closes2, 'Technology Services', '2021-10', true)
+  assert.equal(s.detail.pct_pe, 0.5)
+})

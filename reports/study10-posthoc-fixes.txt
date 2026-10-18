@@ -1,7 +1,9 @@
-POST-HOC (2026-10-14), not evidence: the same run as reports/study10.txt after two engine fixes found
-while auditing the stock page — (1) months with any own-history multiple above 100 are left out,
-(2) financials get no free-cash-flow measures in the score. The protocol and the original report
-are unchanged; this file only shows whether the conclusions move.
+POST-HOC (2026-10-14, updated 2026-10-18), not evidence: the same run as reports/study10.txt after engine
+fixes found while auditing the stock page: (1) months with any own-history multiple above 100 are
+left out, (2) financials get no free-cash-flow measures in the score (implied growth, cash
+conversion, two direction checks, and since 18 Oct the P/FCF multiple), (3) since 18 Oct a fiscal
+year TradingView lists with no revenue, EPS or profit is left out. The protocol and the original
+report are unchanged; this file only shows whether the conclusions move.
 
 Study 10 — expectation flags (PROTOCOL-study10.md)
 RED: implied FCF growth ≥ delivered growth + 10 points, and last year's revenue growth below the 3-year CAGR.
@@ -67,21 +69,21 @@ d2: mean +0.5% over 14 years, above zero in 9; one-sided p = 0.4049
 
 Does RED catch the score's blind spot? Stocks with a study 9 score ≥ 7 (all US) — reported
 year   score≥7 & RED median (n)    score≥7 not RED median (n)
-2012        – (0)                +26.0% (239)
+2012        – (0)                +26.1% (240)
 2013    +13.2% (9)               +16.7% (173)
-2014    +23.1% (14)              +13.4% (173)
-2015     -4.1% (6)                +3.6% (153)
+2014    +18.2% (15)              +15.5% (172)
+2015     -4.1% (6)                +3.6% (155)
 2016    +15.2% (6)               +18.0% (139)
-2017    +24.3% (6)               +17.7% (143)
-2018    +11.2% (6)                +0.4% (163)
-2019    +26.7% (12)               +6.5% (233)
+2017    +24.3% (6)               +17.7% (144)
+2018    +11.2% (6)                +0.4% (160)
+2019    +26.7% (12)               +7.2% (232)
 2020    +30.6% (20)              +51.7% (199)
-2021     -0.5% (20)               -5.7% (118)
-2022     +6.6% (6)                -4.1% (260)
-2023    +19.9% (13)              +21.1% (232)
-2024     +3.6% (27)              +12.5% (222)
-2025    -12.9% (27)              +10.6% (182)
-pooled: score≥7 & RED median +9.6% (n=172); score≥7 not RED +13.8% (n=2629)
+2021     -0.5% (20)               -6.4% (118)
+2022     +6.6% (6)                -4.1% (266)
+2023    +19.9% (13)              +21.0% (231)
+2024     +3.5% (26)              +12.5% (222)
+2025    -12.9% (27)              +11.5% (184)
+pooled: score≥7 & RED median +9.2% (n=172); score≥7 not RED +13.8% (n=2635)
 
 TTD year by year — the example that prompted the study, not evidence
 2018-05  implied  +60.0%  delivered  +90.6%  last year  +51.9%  gap  -30.6%  NEUTRAL  next 12m +132.4%
