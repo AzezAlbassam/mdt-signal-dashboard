@@ -7,7 +7,7 @@
 :root {
   --bg: #f5f6f8; --fg: #15202b; --muted: #5b6876; --line: #d8dde4; --panel: #ffffff; --soft: #eef1f5;
   --accent: #2563c9; --good: #18865a; --mid: #a86e05; --bad: #c43d31;
-  --seg-a: #2563c9; --seg-b: #7c4bc4; --seg-c: #148a7a; --seg-d: #b5651d; --seg-e: #5c6b7a;
+  --seg-a: #2563c9; --seg-b: #7c4bc4; --seg-c: #148a7a; --seg-d: #b5651d; --seg-e: #5c6b7a; --chart-line: #2563c9;
   --display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
   --body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -15,11 +15,11 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0d1218; --fg: #e4e9ef; --muted: #95a2b0; --line: #26313e; --panel: #131a23; --soft: #18212c;
   --accent: #6aa3ff; --good: #3ccf91; --mid: #f0b54a; --bad: #ff7466;
-  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; color-scheme: dark } }
+  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; --chart-line: #5592f2; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #0d1218; --fg: #e4e9ef; --muted: #95a2b0; --line: #26313e; --panel: #131a23; --soft: #18212c;
   --accent: #6aa3ff; --good: #3ccf91; --mid: #f0b54a; --bad: #ff7466;
-  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; color-scheme: dark }
+  --seg-a: #6aa3ff; --seg-b: #b08cf0; --seg-c: #3cc9b4; --seg-d: #f0a35a; --seg-e: #9aa8b6; --chart-line: #5592f2; color-scheme: dark }
 
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.7; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
@@ -137,6 +137,34 @@ details.key dd { margin: 0; color: var(--muted); }
 .tip-row span b { color: var(--fg); }
 .tip-row > b { white-space: nowrap; }
 
+.wrap[data-view="sectors"] .bar, .wrap[data-view="sectors"] .filters, .wrap[data-view="sectors"] details.key, .wrap[data-view="sectors"] .tbl { display: none; }
+.wrap[data-view="big"] .add, .wrap[data-view="big"] .x { display: none; }
+tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-size: 14px; }
+.mag { font-style: normal; font-family: var(--body); font-size: 11px; font-weight: 600; color: var(--mid); margin-inline-start: 6px; white-space: nowrap; }
+.sectors { display: grid; gap: 16px; }
+.secintro { display: grid; gap: 8px; }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-weight: 600; }
+.seg button[aria-pressed="true"] { border-color: var(--accent); color: var(--fg); }
+.secgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+.sec { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px; min-width: 0; }
+.sec header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sec h3 { margin: 0; font-size: 16px; }
+.sec .pe-now b { font-size: 22px; }
+.sec p { font-size: 13.5px; }
+.sec .btn { justify-self: start; }
+.chart { position: relative; overflow: hidden; }
+.chart svg { display: block; max-width: 100%; }
+.sc .zone-hi { fill: var(--bad); opacity: .09; }
+.sc .zone-lo { fill: var(--good); opacity: .11; }
+.sc .ref { stroke: var(--line); stroke-width: 1; }
+.sc .axis { fill: var(--muted); font-size: 11px; font-family: var(--body); }
+.sc .pe-line { fill: none; stroke: var(--chart-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.sc .pe-dot { fill: var(--chart-line); stroke: var(--panel); stroke-width: 2; }
+.sc .cross { stroke: var(--muted); stroke-width: 1; }
+.ctip { position: absolute; top: 0; background: var(--fg); color: var(--bg); font-size: 12px; padding: 3px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; }
+.ctip[hidden] { display: none; }
+
 .only-mobile { display: none; }
 /* Phones: each stock is a card, no sideways scrolling. */
 @media (max-width: 760px) {
@@ -144,7 +172,8 @@ details.key dd { margin: 0; color: var(--muted); }
   .wrap { gap: 16px; padding-block: 16px 48px; }
   h1 { font-size: 26px; }
   .lead { font-size: 14px; }
-  .tabs button { flex: 1; padding: 10px 6px; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; }
+  .tabs button { padding: 10px 6px; white-space: nowrap; }
   .add { flex-basis: 100%; }
   .add input, .filters input, .filters select { font-size: 16px; }
   #refresh { flex: 1; }
@@ -175,7 +204,7 @@ details.key dd { margin: 0; color: var(--muted); }
 }
 </style>
 
-<div class="wrap" dir="rtl">
+<div class="wrap" dir="rtl" data-view="us">
   <header style="display:grid;gap:8px">
     <h1>تقييم أسهمي</h1>
     <p class="lead">كل سهم في قائمتك بدرجة من 10، تُحسب من أرقامه في TradingView. اضغط على أي سهم تشوف تفاصيل الدرجة وباقي المقاييس.</p>
@@ -184,6 +213,8 @@ details.key dd { margin: 0; color: var(--muted); }
   <nav class="tabs" role="tablist" aria-label="السوق">
     <button role="tab" id="tab-us" data-m="us" aria-selected="true">السوق الأمريكي<span class="cnt" id="cnt-us"></span></button>
     <button role="tab" id="tab-sa" data-m="sa" aria-selected="false">السوق السعودي<span class="cnt" id="cnt-sa"></span></button>
+    <button role="tab" id="tab-big" data-m="big" aria-selected="false">أكبر 25 شركة</button>
+    <button role="tab" id="tab-sectors" data-m="sectors" aria-selected="false">القطاعات</button>
   </nav>
 
   <div class="bar">
@@ -205,9 +236,12 @@ details.key dd { margin: 0; color: var(--muted); }
       <option value="upside:-1">ترتيب: الأرخص من قيمته العادلة</option>
       <option value="gap:1">ترتيب: الأقل توقعات</option>
       <option value="price:-1">ترتيب: السعر</option>
+      <option value="mcap:-1">ترتيب: الأكبر قيمة سوقية</option>
     </select>
     <span class="shown" id="shown"></span>
   </div>
+
+  <section class="sectors" id="sectorsView" hidden></section>
 
   <details class="key">
     <summary>وش تعني الألوان؟</summary>
@@ -215,11 +249,11 @@ details.key dd { margin: 0; color: var(--muted); }
       <dt><span class="hi n">7+</span> <span class="md n">4–7</span> <span class="lo">تحت <span class="n">4</span></span></dt><dd>الدرجة من 10: أخضر قوية، برتقالي متوسطة، أحمر ضعيفة.</dd>
       <dt><span class="segs" aria-hidden="true"><i><b style="height:100%;background:var(--seg-a)"></b></i><i><b style="height:100%;background:var(--seg-b)"></b></i><i><b style="height:100%;background:var(--seg-c)"></b></i><i><b style="height:100%;background:var(--seg-d)"></b></i><i><b style="height:100%;background:var(--seg-e)"></b></i></span></dt><dd>أجزاء الدرجة الخمسة بالترتيب: السعر، الجودة، النمو، الأمان، الاتجاه. كل عمود ممتلي = 2 من 2.</dd>
       <dt><span class="hi n">+20%</span> <span class="lo n">-20%</span></dt><dd>الفرق: أخضر = السعر أقل من القيمة العادلة (أرخص)، أحمر = أعلى منها (أغلى).</dd>
-      <dt><span class="chip red">السعر يتوقع أكثر من أدائها</span></dt><dd>سعر السهم ما يبرره إلا نمو أعلى بكثير من اللي تحققه الشركة، ونموها قاعد يتباطأ. السوق متفائل زيادة، وأي خيبة ممكن تنزّله.</dd>
-      <dt><span class="chip green">السعر يتوقع أقل من أدائها</span></dt><dd>السعر مسعّر كأن الشركة بتنمو أقل بكثير من اللي تحققه فعلاً، ونموها ما يتباطأ. السوق متشائم عليها، يعني ممكن تكون فرصة إذا استمرت.</dd>
-      <dt><span class="chip amber">المحللين يتوقعون تراجع</span></dt><dd>المحللين يتوقعون إيرادات أقل، أو ربح سهم أقل بأكثر من 10%، في السنة المالية الجاية.</dd>
+      <dt><span class="chip red">سعره أعلى من أدائه</span></dt><dd>السوق متحمس عليه زيادة: سعره الحالي يفترض إن الشركة بتنمو أسرع بكثير من اللي تسويه فعلاً، ونموها قاعد يبطّي. لو طلعت نتايجها أقل من المتوقع ممكن ينزل بقوة. <b>يعني: انتبه وراجع قبل تشتري.</b></dd>
+      <dt><span class="chip green">سعره أقل من أدائه</span></dt><dd>السوق مستهين فيه: مسعّره كأن الشركة بتنمو أبطأ بكثير من اللي تسويه فعلاً، ونموها مستمر. <b>يعني: ممكن تكون فرصة، تستاهل تدرسها.</b></dd>
+      <dt><span class="chip amber">المحللين متوقعين نزول</span></dt><dd>المحللين متوقعين إن إيرادات الشركة تنزل، أو أرباحها تنزل أكثر من 10%، السنة المالية الجاية.</dd>
     </dl>
-    <p class="dim">التنبيهات هذي اختبرناها على 819 سهم وما تنبأت بأداء السنة التالية، فهي سؤال تسأله عن السهم، مو إشارة شراء أو بيع.</p>
+    <p><b>هل الأحمر يعني بيع والأخضر يعني شراء؟ لا.</b> جربناها على 819 سهم من 2012 لين 2025: الأسهم الحمراء ما نزلت أكثر من غيرها، والخضراء ما طلعت أكثر من غيرها، في المتوسط. فهي تنبيه يخليك تسأل السؤال الصح عن السهم، والقرار يكون من باقي الأرقام.</p>
   </details>
   <div class="tbl">
     <table>
