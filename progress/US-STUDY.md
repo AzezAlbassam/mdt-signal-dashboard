@@ -130,6 +130,13 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
   from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
 - 2026-10-14 — addendum 3 (monthly MOD on 611 watchlist stocks, H3/H6): 0 of 2. H3 close: edge +4.6%, both periods +, p 0.038, Holm 0.0755. List of last-12-month signals shown as chart readings, not recommendations.
+- 2026-10-18 — POST-HOC (reports/study11-posthoc-damping.txt, scripts/study11-posthoc-damping.js):
+  asked whether a repaired HCP deserves a study 12. Anchoring the projection to the last close and
+  damping it toward that anchor gives a MONOTONE curve — no-change 9.81%, damping 0.9 9.89%, 0.75
+  10.21%, 0.5 11.32%, 0.25 12.95%, 0 (anchored only) 14.90%. Every bit of model left in makes it
+  worse, and the curve's best point is full damping, which IS the no-change line. So the repaired
+  family has no best case above doing nothing. STUDY 12 IS NOT PROPOSED — if a future session is
+  tempted by "but what if we anchor/damp it", this is the answer. Sampled, no null, no p-value.
 - 2026-10-18 — what the frozen projections look like, and why the result makes sense. Across the 153
   symbols HCP's implied 8-week move has a MEDIAN ABSOLUTE SIZE of 44.4%; 101 of 153 imply more than
   +/-25%; the extremes run from AXTI -97% to OTC:BCHG +977%. For the six indices the user named the
