@@ -354,6 +354,7 @@
       case 'greal': return s.detail?.revG
       case 'pe': return q.price_earnings_ttm
       case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
+      case 'peg': return peg(sym)?.v
       case 'z': return q.altman_z_score_ttm
       case 'gap': return state.exp[sym]?.gap
     }
@@ -444,11 +445,11 @@
     const syms = visible()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
     if (!state.lists[state.market].length) {
-      body.innerHTML = '<tr><td colspan="12" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
+      body.innerHTML = '<tr><td colspan="13" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
       return
     }
     if (!syms.length) {
-      body.innerHTML = '<tr><td colspan="12" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
+      body.innerHTML = '<tr><td colspan="13" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
     let lastSector = null
@@ -458,7 +459,7 @@
       if (state.market === 'big' && (q?.sector ?? '') !== lastSector) {
         lastSector = q?.sector ?? ''
         const n = syms.filter((x) => (state.quotes[x]?.sector ?? '') === lastSector).length
-        head = `<tr class="grp"><td colspan="12">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
+        head = `<tr class="grp"><td colspan="13">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
       }
       const s = state.scores[sym]
       const f = state.fair[sym]
@@ -474,10 +475,11 @@
         <td class="n c-more">${s?.detail ? pct(s.detail.revG) : '—'}</td>
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
+        <td class="n" data-label="PEG">${pegCell(sym)}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
-      return head + main + (state.open === sym ? `<tr class="detail"><td colspan="12">${detail(sym)}</td></tr>` : '')
+      return head + main + (state.open === sym ? `<tr class="detail"><td colspan="13">${detail(sym)}</td></tr>` : '')
     }).join('')
   }
 
@@ -488,6 +490,22 @@
     const rev = q.sector !== 'Finance' && q.revenue_forecast_next_fy > 0 && q.total_revenue_ttm > 0 ? q.revenue_forecast_next_fy / q.total_revenue_ttm - 1 : null
     const eps = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
     return { rev, eps, falling: (rev != null && rev < 0) || (eps != null && eps < -0.1) }
+  }
+
+  // PEG = P/E ÷ EPS growth in %. Growth: analysts' next fiscal year against the last 12 months; only
+  // when there is no forecast, the last 3 fiscal years' EPS growth. A forecast of falling EPS gives
+  // no PEG rather than falling back to past growth.
+  function peg(sym) {
+    const q = state.quotes[sym]
+    if (!(q?.price_earnings_ttm > 0)) return null
+    const fwd = analysts(q).eps
+    const g = fwd ?? state.scores[sym]?.detail?.epsG
+    return g > 0 ? { v: q.price_earnings_ttm / (100 * g), past: fwd == null } : null
+  }
+
+  const pegCell = (sym) => {
+    const p = peg(sym)
+    return p ? `${fmt(p.v, 2)}${p.past ? ' <small class="dim" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>' : ''}` : '—'
   }
 
   function expCell(sym) {
@@ -630,13 +648,9 @@
     const cheaper = pcts.length ? 1 - pcts.reduce((a, b) => a + b, 0) / pcts.length : null
     const p = s.parts || {}
     const part = (title, val, html) => `<div class="part"><h3><span><i class="sw" style="background:var(${PARTS.find((x) => x[1] === title)[2]})"></i>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 1) + ' / 2'}</span></h3>${html}</div>`
-    const growthNext = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_diluted_ttm > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_diluted_ttm - 1 : null
-    const growthFy = Number.isFinite(q.earnings_per_share_forecast_next_fy) && f0.eps > 0 ? q.earnings_per_share_forecast_next_fy / f0.eps - 1 : null
-    const pegs = q.price_earnings_ttm > 0 ? [growthNext, growthFy].filter((g) => g > 0).map((g) => q.price_earnings_ttm / (100 * g)).filter(Number.isFinite) : []
-    const pegTxt = pegs.length ? (pegs.length === 2 ? `${fmt(Math.min(...pegs), 2)}–${fmt(Math.max(...pegs), 2)}` : fmt(pegs[0], 2)) : '—'
     const ctx = [
       ['Fwd P/E', fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy), 'السعر ÷ توقع المحللين لربح السنة المالية الجاية. ضعفه: توقعات، والمحللين غالباً متفائلين.'],
-      ['PEG', pegTxt, 'P/E ÷ النمو المتوقع. معروض كمدى لأنه يتغير كثير حسب سنة الأساس. ضعفه: كله على رقم النمو.'],
+      ['PEG', pegCell(sym), 'مكرر الربح ÷ نمو الأرباح المتوقع. الشائع: تحت 1 رخيص مقارنة بنموه، فوق 2 غالي. ضعفه: كله على رقم النمو.'],
       ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
       ['FCF yield', q.price_free_cash_flow_ttm > 0 ? pct(1 / q.price_free_cash_flow_ttm, 1) : '—', 'كاش فعلي ÷ القيمة السوقية. ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير.'],
       ['P/S', fmt(q.price_sales_current), 'للشركات اللي ما تربح. ضعفه: يتجاهل الهامش.'],

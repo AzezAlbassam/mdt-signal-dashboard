@@ -75,6 +75,7 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   console.log('STATUS:', await page.textContent('#status'))
   console.log('NOTICE:', await page.$eval('#notice', (n) => (n.hidden ? '(hidden)' : n.textContent)))
   console.log('ROWS:', await rows())
+  console.log('PEG:', await page.$$eval('#rows td[data-label="PEG"]', (t) => t.slice(0, 4).map((x) => x.innerText)))
   console.log('CALLS:', await page.evaluate(() => window.__calls)); console.log('EARLY:', logs)
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
