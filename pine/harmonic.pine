@@ -10,35 +10,47 @@
 // RESULT — READ THIS BEFORE TRADING ANYTHING OFF IT
 // (PROTOCOL-harmonic.md §8 fixed what this section must say, before the test was run.)
 //
-// These patterns were tested on 40 symbols — the 20 largest US companies, the largest name in
-// every sector they miss, Rocket Lab, Bloom Energy, Hims & Hers, two Bitcoin feeds and four
-// index ETFs — across 1h, 4h, 1D, 1W and 1M. 187 (symbol, timeframe) series with enough
-// history, 20,200 trades, every pattern detected forward-only from confirmed pivots so that
-// nothing repaints. EVERY PRE-REGISTERED HYPOTHESIS FAILED:
+// Tested on 40 symbols — the 20 largest US companies, the largest name in every sector they
+// miss, Rocket Lab, Bloom Energy, Hims & Hers, two Bitcoin feeds and four index ETFs —
+// across 1h, 4h, 1D, 1W and 1M. 187 series with enough history, 19,886 trades, every pattern
+// detected forward-only from confirmed pivots so that nothing repaints.
 //
-//   · vs a MATCHED RANDOM ENTRY (same direction, same stop and target distances, same
-//     holding limit, entered on a random bar): +0.060R per trade, p 0.0225 — but 0.1125
-//     after correcting for the six tests in the family. Not confirmed.
-//   · vs THE SAME STRUCTURES WITH THE RATIOS SCRAMBLED (every published ratio multiplied by a
-//     random factor, 20 draws, everything else identical): -0.007R, p 0.67. The Fibonacci
-//     numbers themselves add NOTHING. This is the sharpest test in the study and the
-//     patterns fail it flat.
-//   · BY TIMEFRAME, separately: 4h +0.024R, 1D +0.059R, 1W +0.139R, 1M +0.123R against a
-//     random entry — none survives the correction (best Holm-adjusted p: 0.064, weekly).
-//   · THE BEST CELL FOUND BY SEARCH DID NOT SURVIVE. On half the symbols, Three Drives on 4h
-//     hit its first target 68.8% of the time. Re-tested on the other half — never looked at
-//     during the search — it hit 57.6% and LOST money (-0.045R), p 0.48.
+//   · THE GEOMETRY BEATS A RANDOM ENTRY, BARELY. Against a matched random entry — same
+//     direction, same stop and target distances, same holding limit, entered on a random bar
+//     — the patterns earn +0.082R per trade (p 0.0046, Holm-adjusted 0.0276, positive in
+//     both halves of the period). CONFIRMED. Read the size before the stars: 0.082R is
+//     about eight hundredths of one unit of risk per trade, before any commission or
+//     slippage, and this study models neither.
 //
-// What the whole sample looks like: the first target is reached 31.6% of the time, and the
-// MEDIAN trade is exactly -1R, usually stopped on the bar it was entered, because the zone's
-// far edge sits very close to its near edge. A high hit rate is not an edge, and 5-0 is the
-// clearest example in the data: it reaches its target 57-64% of the time on every timeframe
-// and still averages about -0.40R, because the wins are small and the losses are whole.
+//   · THE FIBONACCI RATIOS ADD NOTHING. Multiply every published ratio by a random factor,
+//     keep the same pivots, the same zone construction, the same entry, stop and targets,
+//     and re-run: the difference is -0.000R, p 0.51. NOT CONFIRMED, and this is the sharpest
+//     test in the study. Whatever small edge exists is in buying a confirmed retracement
+//     zone with a tight stop — not in 0.618 or 0.786 or 1.272.
 //
-// So this script draws real, correctly specified harmonic geometry. It is NOT a forecast, and
-// nothing in the test says these zones predict reversals better than a coin does. Published
-// because a chart tool was asked for, and with its result attached because the result is the
-// part that is normally missing. Full numbers: reports/harmonic.txt.
+//   · NO SINGLE TIMEFRAME SURVIVES ON ITS OWN. 4h +0.085R, 1D +0.065R, 1W +0.116R,
+//     1M +0.070R against a random entry; after correcting for the family, none reaches
+//     significance (best Holm-adjusted p 0.13).
+//
+//   · THE BEST PATTERN FOUND BY SEARCH DID NOT SURVIVE. On half the symbols, Three Drives on
+//     4h hit its first target 68.8% of the time. Re-tested on the other half — never looked
+//     at during the search — it hit 57.6% and LOST money (-0.045R). NOT CONFIRMED. The
+//     chart table below is the same machine that produced that number, which is why it
+//     prints a sample size and a confidence interval beside every win rate.
+//
+// What the whole sample looks like: the first target is reached 31.1% of the time and the
+// MEDIAN trade is exactly -1R, usually stopped on the bar it was entered, because the far
+// edge of the zone sits close to the near edge. A high hit rate is not an edge: 5-0 reaches
+// its target 57-60% of the time on every timeframe and still averages about -0.30R, because
+// its wins are small and its losses are whole.
+//
+// Two post-hoc fixes are on the record, both found after the first run and both disclosed
+// with before/after numbers in reports/harmonic-prefix/. The second one moved a verdict: it
+// removed 314 5-0 "trades" whose first target sat on the wrong side of the entry, and H1
+// went from not confirmed to confirmed. A confirmation that arrives only after a bug fix is
+// weaker than one that arrives clean, and it is reported that way rather than polished.
+//
+// Full numbers: reports/harmonic.txt.
 // ─────────────────────────────────────────────────────────────────────────────────────────
 //
 // HOW IT WORKS, AND WHY IT DOES NOT REPAINT
@@ -76,6 +88,14 @@ useFiveO   = input.bool(true, "5-0",            group = grpP, inline = "p3")
 useABCD    = input.bool(false, "AB=CD",         group = grpP, inline = "p4",
      tooltip = "Off by default: AB=CD needs only three pivots and one ratio, so it fires far more often than everything else combined (71% of all detections in the test).")
 useDrives  = input.bool(true, "Three Drives",   group = grpP, inline = "p4")
+
+grpB = "Backtest on this chart"
+btOn   = input.bool(true, "Measure every pattern on this symbol and timeframe", group = grpB,
+     tooltip = "Replays each detected pattern forward exactly as the study did: limit at the near edge of the zone, stop 0.25 ATR beyond the far edge, exit at T1, give up after the horizon. The result is what THIS symbol on THIS timeframe did — a sample of tens, not of thousands.")
+btHorizon = input.int(60, "Give up after (bars)", minval = 5, maxval = 500, group = grpB)
+showStats = input.bool(true, "Show the accuracy table", group = grpB)
+minN      = input.int(30, "Warn below this many trades", minval = 2, maxval = 200, group = grpB,
+     tooltip = "Below this the win rate is noise. In the study a cell with 32 trades read 68.8% and then 57.6% on fresh symbols.")
 
 grpS = "Display"
 showSkel  = input.bool(true,  "XABCD skeleton",   group = grpS)
@@ -171,6 +191,28 @@ if not na(atr) and atr > 0 and close > 0
 lo_(float r) => r * (1 - TOL)
 hi_(float r) => r * (1 + TOL)
 inR(float x, float a, float b) => x >= a and x <= b
+
+// ──────────────────────────── backtest bookkeeping (declared before its first use)
+type Pend
+    int   pid        // index into PATS
+    int   dirn
+    float near
+    float far
+    float cPrice     // price through this kills the structure before a fill
+    float aPrice
+    int   startBar
+    int   expiry
+    bool  filled     // named 'filled', not 'open': 'open' is the bar's open price
+    float entry
+    float stop
+    float t1
+    int   entryBar
+
+var array<string> PATS = array.from("Gartley", "Bat", "Alt Bat", "Butterfly", "Crab", "Deep Crab", "Cypher", "Shark", "5-0", "AB=CD", "Three Drives")
+var array<Pend>  pend  = array.new<Pend>()
+var array<int>   btN   = array.new<int>(11, 0)
+var array<int>   btW   = array.new<int>(11, 0)
+var array<float> btR   = array.new<float>(11, 0.0)
 
 // ───────────────────────────────────────────────────────────────────────── pattern scan
 var array<line>  skel  = array.new<line>()
@@ -355,21 +397,96 @@ if newPivot and array.size(pvP) >= 3
         // array index n-3 for every pattern drawn here.
         float aPrice = array.get(pvP, n - 3)
         float ad = math.abs(aPrice - near)
-        curName  := nm
-        curDir   := dirn
-        curNear  := near
-        curFar   := far
-        curEntry := near
-        curStop  := far - dirn * 0.25 * atr
-        curT1    := near + dirn * 0.382 * ad
-        curT2    := near + dirn * 0.618 * ad
-        curT3    := array.get(pvP, n - 1)
-        curT4    := aPrice
-        curBar   := bar_index
-        curArmed := true
-        int np = nm == "AB=CD" ? 3 : nm == "Three Drives" ? 5 : 4
-        if n >= np
-            drawPattern(nm, dirn, np, pLo, pHi)
+        // The AD leg can invert — the 5-0 completes at 50% of a BC leg that already
+        // overshot, so D often lands beyond A. The targets are retracements of AD, so an
+        // inverted leg would put the first target on the wrong side of the entry. There is
+        // no definable target, so there is no setup.
+        bool okTarget = dirn == 1 ? aPrice > near : aPrice < near
+        if okTarget
+            curName  := nm
+            curDir   := dirn
+            curNear  := near
+            curFar   := far
+            curEntry := near
+            curStop  := far - dirn * 0.25 * atr
+            curT1    := near + dirn * 0.382 * ad
+            curT2    := near + dirn * 0.618 * ad
+            curT3    := array.get(pvP, n - 1)
+            curT4    := aPrice
+            curBar   := bar_index
+            curArmed := true
+            int np = nm == "AB=CD" ? 3 : nm == "Three Drives" ? 5 : 4
+            if n >= np
+                drawPattern(nm, dirn, np, pLo, pHi)
+        // Registered even when the zone-edge target looks inverted: the fill-time test above
+        // is the one that decides, and a gap into the zone can make the leg valid.
+        if btOn
+            int pid = array.indexof(PATS, nm)
+            if pid >= 0
+                int npb = nm == "AB=CD" ? 3 : nm == "Three Drives" ? 5 : 4
+                int xBar = array.get(pvB, n - npb)
+                int cBar = array.get(pvB, n - 1)
+                array.push(pend, Pend.new(pid, dirn, near, far, array.get(pvP, n - 1), aPrice,
+                     bar_index + 1, bar_index + 1 + math.max(10, cBar - xBar), false, na, na, na, na))
+                if array.size(pend) > 60
+                    array.shift(pend)
+
+// ──────────────────────────────────────────────────────── backtest on this chart
+// Replays every registered pattern forward under the frozen rules, so the table below is
+// this symbol's own record rather than the study's average. It is the same machine that
+// produced the study's winner's curse, so it prints its sample size next to every number.
+
+if btOn and array.size(pend) > 0
+    for i = array.size(pend) - 1 to 0
+        Pend q = array.get(pend, i)
+        if bar_index >= q.startBar
+            if not q.filled
+                // waiting for the zone
+                bool brokeC = q.dirn == 1 ? high > q.cPrice : low < q.cPrice
+                bool touched = q.dirn == 1 ? low <= q.near : high >= q.near
+                bool gapped  = q.dirn == 1 ? open < q.far : open > q.far
+                if brokeC or bar_index > q.expiry
+                    array.remove(pend, i)
+                else if touched and gapped
+                    array.remove(pend, i)               // the bar jumped the whole zone: no entry
+                else if touched
+                    float fill = q.dirn == 1 ? math.min(q.near, open) : math.max(q.near, open)
+                    float a = nz(atr[1], atr)
+                    float st = q.far - q.dirn * 0.25 * a
+                    float risk = math.abs(fill - st)
+                    // The AD leg is measured from the ACTUAL fill, which a gap into the zone
+                    // can improve. A non-positive leg means the first target would sit on the
+                    // wrong side of the entry, so there is no trade.
+                    float span = q.dirn * (q.aPrice - fill)
+                    if risk > 0 and span > 0
+                        q.entry := fill
+                        q.stop := st
+                        q.t1 := fill + 0.382 * (q.aPrice - fill)
+                        q.filled := true
+                        q.entryBar := bar_index
+                    else
+                        array.remove(pend, i)
+            if q.filled
+                float risk = math.abs(q.entry - q.stop)
+                bool hitStop = q.dirn == 1 ? low <= q.stop : high >= q.stop
+                bool hitT1   = q.dirn == 1 ? high >= q.t1 : low <= q.t1
+                float r = na
+                bool done = false
+                if hitStop                                   // stop first: one bar can cover both
+                    r := -1.0
+                    done := true
+                else if hitT1
+                    r := math.abs(q.t1 - q.entry) / risk
+                    done := true
+                else if bar_index >= q.entryBar + btHorizon
+                    r := q.dirn * (close - q.entry) / risk
+                    done := true
+                if done
+                    array.set(btN, q.pid, array.get(btN, q.pid) + 1)
+                    if hitT1 and not hitStop
+                        array.set(btW, q.pid, array.get(btW, q.pid) + 1)
+                    array.set(btR, q.pid, array.get(btR, q.pid) + r)
+                    array.remove(pend, i)
 
 // ───────────────────────────────────────────────────────────── entry, stop and targets
 // Drawn for the newest pattern only, and only while it is still live.
@@ -401,7 +518,64 @@ if barstate.islast and showTable
     row2("T2 · 61.8% AD", curArmed ? str.tostring(curT2, format.mintick) : "—", 5, color.new(#089981, 0))
     row2("T3 · point C",  curArmed ? str.tostring(curT3, format.mintick) : "—", 6, color.new(#089981, 30))
     row2("T4 · point A",  curArmed ? str.tostring(curT4, format.mintick) : "—", 7, color.new(#089981, 30))
-    row2("tested", "31.6% hit · median -1R · NOT confirmed", 8, color.gray)
+    row2("tested", "+0.08R vs random · ratios add 0", 8, color.gray)
+
+// ────────────────────────────────────────── the accuracy table for THIS symbol and frame
+// Win rate, its 95% Wilson interval, and average R per pattern. The interval is here because
+// a win rate without one is the single easiest number in trading to fool yourself with: in
+// the study a cell read 68.8% on 32 trades and 57.6% on the next 33.
+wilsonLo(int k, int n) =>
+    float z = 1.96
+    float pp = k / math.max(n, 1)
+    float den = 1 + z * z / n
+    float c = (pp + z * z / (2 * n)) / den
+    float sp = (z / den) * math.sqrt(pp * (1 - pp) / n + z * z / (4 * n * n))
+    math.max(0.0, c - sp)
+wilsonHi(int k, int n) =>
+    float z = 1.96
+    float pp = k / math.max(n, 1)
+    float den = 1 + z * z / n
+    float c = (pp + z * z / (2 * n)) / den
+    float sp = (z / den) * math.sqrt(pp * (1 - pp) / n + z * z / (4 * n * n))
+    math.min(1.0, c + sp)
+
+var table stat = table.new(position.bottom_right, 4, 14, border_width = 1)
+if barstate.islast and btOn and showStats
+    table.clear(stat, 0, 0, 3, 13)
+    table.cell(stat, 0, 0, syminfo.ticker + " · " + timeframe.period, text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 1, 0, "n",       text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 2, 0, "win% (95% CI)", text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 3, 0, "avg R",   text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    int row = 1
+    int totN = 0
+    int totW = 0
+    float totR = 0.0
+    for i = 0 to array.size(PATS) - 1
+        int nn = array.get(btN, i)
+        if nn > 0
+            totN += nn
+            totW += array.get(btW, i)
+            totR += array.get(btR, i)
+            if row <= 12
+                float wr = array.get(btW, i) / nn
+                float ar = array.get(btR, i) / nn
+                // A thin sample is greyed out rather than coloured, so the eye does not read
+                // a 2-of-3 as a finding.
+                color c = nn < minN ? color.gray : wr >= 0.5 ? color.new(#089981, 0) : color.new(#d9a860, 0)
+                table.cell(stat, 0, row, array.get(PATS, i), text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+                table.cell(stat, 1, row, str.tostring(nn), text_color = nn < minN ? color.gray : color.silver, text_size = size.small)
+                table.cell(stat, 2, row, str.tostring(wr * 100, "#.0") + "%  [" + str.tostring(wilsonLo(array.get(btW, i), nn) * 100, "#") + "–" + str.tostring(wilsonHi(array.get(btW, i), nn) * 100, "#") + "]", text_color = c, text_size = size.small)
+                table.cell(stat, 3, row, str.tostring(ar, "#.00"), text_color = nn < minN ? color.gray : ar > 0 ? color.new(#089981, 0) : color.new(#f23645, 0), text_size = size.small)
+                row += 1
+    if totN > 0 and row <= 12
+        table.cell(stat, 0, row, "all", text_color = color.white, text_size = size.small, text_halign = text.align_left)
+        table.cell(stat, 1, row, str.tostring(totN), text_color = color.white, text_size = size.small)
+        table.cell(stat, 2, row, str.tostring(totW / totN * 100, "#.0") + "%", text_color = color.white, text_size = size.small)
+        table.cell(stat, 3, row, str.tostring(totR / totN, "#.00"), text_color = totR > 0 ? color.new(#089981, 0) : color.new(#f23645, 0), text_size = size.small)
+        row += 1
+    if row <= 13
+        table.cell(stat, 0, row, "grey = under " + str.tostring(minN) + " trades, i.e. noise", text_color = color.gray, text_size = size.tiny, text_halign = text.align_left)
+        table.cell(stat, 3, row, "", text_color = color.gray, text_size = size.tiny)
 
 // ────────────────────────────────────────────────────────────────────────────── alerts
 inZone = curArmed and not na(curNear) and not na(curFar) and low <= math.max(curNear, curFar) and high >= math.min(curNear, curFar)

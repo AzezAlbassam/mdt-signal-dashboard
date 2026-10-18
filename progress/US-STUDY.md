@@ -72,18 +72,27 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Study 11: score the frozen projections once 40 bars have passed (~2026-12-11)
 
 - [x] Study 12 (PROTOCOL-harmonic.md): harmonic XABCD, 11 patterns at their published ratios,
-      40 symbols x {1h,4h,1D,1W,1M} = 187 usable cells, 20,200 trades, non-repainting pivots.
-      H1 (vs matched random entry) +0.060R p 0.0225 Holm 0.1125 — NOT CONFIRMED.
-      H2 (vs the same structures with every ratio scaled by a random factor) -0.007R p 0.67 —
+      40 symbols x {1h,4h,1D,1W,1M} = 187 usable cells, 19,886 trades, non-repainting pivots.
+      H1 (vs matched random entry) +0.082R p 0.0046 Holm 0.0276, both halves + — CONFIRMED,
+      but only after post-hoc fix #2 (see the log), and the effect is 0.08R before costs.
+      H2 (vs the same structures with every ratio scaled by a random factor) -0.000R p 0.51 —
       NOT CONFIRMED, and this is the sharpest test: the ratios themselves carry nothing.
-      H4 per timeframe (4h/1D/1W/1M): all NOT CONFIRMED, best Holm 0.064 (weekly).
+      H4 per timeframe (4h/1D/1W/1M): all NOT CONFIRMED, best Holm 0.13.
       Family 2 search->confirm: of 43 cells only Three Drives 4h qualified on the search half
-      (68.8% hit); on the never-looked-at half it hit 57.6% and lost money (-0.045R, p 0.48).
+      (68.8% hit); on the never-looked-at half it hit 57.6% and lost money (-0.045R, p 0.063).
       NOT CONFIRMED. reports/harmonic.txt
 - [x] Study 12: pine/harmonic.pine written, §8 header filled in from the run. NOT compiled on
       TradingView yet — the user runs it; study 6's Pine had a compile error found that way.
 - [x] Study 12: forward-log/harmonic-2026-10-18.json — 126 patterns live at the cutoff, frozen
       with their PRZs, stops and targets before any of them can be known.
+- [x] Study 12: per-pattern toggles + an in-chart backtest in pine/harmonic.pine (win%, 95%
+      Wilson CI and avg R per pattern for whatever symbol/timeframe is open). Verified by
+      re-implementing the Pine loop in JS and diffing it against the engine across all 187
+      cells / 19,886 trades: zero differences.
+- [x] Study 12: reports/harmonic-symbols.json + scripts/harmonic-symbols.js — post-hoc
+      per-symbol table with split halves. Best: LIN 40.8%/+0.42R, KO 38.7%/+0.34R,
+      V 35.5%/+0.29R, all stable across both halves; worst HIMS/TSLA/ENB. But the RANKING
+      barely persists (Spearman 0.287 across 39 symbols), so it is a hint, not a rule.
 - [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
 
 ## Counts
@@ -108,6 +117,16 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   printed R=3003, moving pooled mean R from 0.03 to 0.22. Fixed (a fill outside the zone is
   not an entry); before/after in reports/harmonic-prefix/. Verdict unchanged either way.
   The median trade in this study is exactly -1R, usually stopped on its entry bar.
+- 2026-10-18 — user asked whether patterns can be switched off individually (they already
+  could) and for an in-chart backtest per pattern on the open symbol. Added, and verified by
+  porting the Pine loop to JS and diffing against the engine on all 187 cells — zero
+  differences. That diff is also what found POST-HOC FIX #2: only 5-0 disagreed, because its
+  completion (50% of an overshooting BC) often lands beyond A, inverting the AD leg so the
+  "first target" sits on the wrong side of the entry; the exit loop scored those as instant
+  wins at negative R. 314 of 552 5-0 trades, 207 of them "wins", -152R total; no other
+  pattern produced one. Dropping them MOVED H1 from not confirmed (+0.060R, Holm 0.1125) to
+  CONFIRMED (+0.082R, p 0.0046, Holm 0.0276). H2 unchanged at zero. Before/after in
+  reports/harmonic-prefix/.
 - 2026-10-07 — protocol written.
 - 2026-10-07 — engine/study.js + scripts/us-*.js written. `node scripts/us-backtest.js --study1`
   reproduces study 1's tables line for line (edges, win rates, p-values), so study 2 runs on
