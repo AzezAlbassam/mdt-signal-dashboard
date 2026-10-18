@@ -71,10 +71,43 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Study 11: user runs pine/hcp.pine on TradingView — first compile is still unverified
 - [ ] Study 11: score the frozen projections once 40 bars have passed (~2026-12-11)
 
+- [x] Study 12 (PROTOCOL-harmonic.md): harmonic XABCD, 11 patterns at their published ratios,
+      40 symbols x {1h,4h,1D,1W,1M} = 187 usable cells, 20,200 trades, non-repainting pivots.
+      H1 (vs matched random entry) +0.060R p 0.0225 Holm 0.1125 — NOT CONFIRMED.
+      H2 (vs the same structures with every ratio scaled by a random factor) -0.007R p 0.67 —
+      NOT CONFIRMED, and this is the sharpest test: the ratios themselves carry nothing.
+      H4 per timeframe (4h/1D/1W/1M): all NOT CONFIRMED, best Holm 0.064 (weekly).
+      Family 2 search->confirm: of 43 cells only Three Drives 4h qualified on the search half
+      (68.8% hit); on the never-looked-at half it hit 57.6% and lost money (-0.045R, p 0.48).
+      NOT CONFIRMED. reports/harmonic.txt
+- [x] Study 12: pine/harmonic.pine written, §8 header filled in from the run. NOT compiled on
+      TradingView yet — the user runs it; study 6's Pine had a compile error found that way.
+- [x] Study 12: forward-log/harmonic-2026-10-18.json — 126 patterns live at the cutoff, frozen
+      with their PRZs, stops and targets before any of them can be known.
+- [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
+
 ## Counts
 (updated as work proceeds)
 
 ## Log
+- 2026-10-18 — user asked for a real harmonic indicator for TradingView ("the complete
+  fundamentals, nothing distorted"), working on every timeframe, with targets, plus a table
+  of the most accurate timeframe and the most accurate pattern. Study 12 pre-registered.
+  Ratio table built from search-layer extracts (outbound fetching is blocked in this
+  container — harmonictrader.com and every other host fail at the proxy), then handed to a
+  second researcher told to refute it; four substantive corrections applied, incl. a 1.0
+  placeholder in the Deep Crab's AB=CD that would have coded as an equality test.
+  Prior evidence recorded BEFORE the hypotheses: no peer-reviewed harmonic backtest with a
+  sample and a significance test exists; the best nearby study (Batchelor & Ramyar on
+  Fibonacci ratios in the Dow, 1914-2002, block bootstrap) is negative; no timeframe
+  comparison exists anywhere. Two bugs found by a detection-COUNT check before any statistic
+  (direction keyed off the first pivot instead of the last, which silently inverted AB=CD and
+  Three Drives; the 5-0's "B beyond X" copied the Shark's sense). POST-HOC after the first
+  run: a bar gapping clean through a PRZ filled at the open BELOW the far edge, collapsing
+  risk to a rounding error — 370 of 21,278 trades had a stop under 0.1% from entry and one
+  printed R=3003, moving pooled mean R from 0.03 to 0.22. Fixed (a fill outside the zone is
+  not an entry); before/after in reports/harmonic-prefix/. Verdict unchanged either way.
+  The median trade in this study is exactly -1R, usually stopped on its entry bar.
 - 2026-10-07 — protocol written.
 - 2026-10-07 — engine/study.js + scripts/us-*.js written. `node scripts/us-backtest.js --study1`
   reproduces study 1's tables line for line (edges, win rates, p-values), so study 2 runs on

@@ -344,7 +344,11 @@ if (args.has('--confirm') && fs.existsSync(SHORTLIST)) {
   const list = JSON.parse(fs.readFileSync(SHORTLIST, 'utf8')).shortlist
   const rows = list.map((c) => {
     const ts = confirmTrades.filter((t) => t.pattern === c.pattern && t.tf === c.tf)
-    return { ...c, confirmN: ts.length, ...describe(ts, rng), test: pairedTest(ts, (t) => t.n2, rng), halves: bothHalves(ts, (t) => t.n2) }
+    // Keep the search figures under their own names: spreading describe() over the shortlist
+    // row would overwrite n/hit/r with the confirm values and the report could no longer tell
+    // the two halves apart — which is the entire point of the split.
+    return { pattern: c.pattern, tf: c.tf, searchN: c.n, searchHit: c.hit, searchR: c.r,
+      confirm: describe(ts, rng), test: pairedTest(ts, (t) => t.n2, rng), halves: bothHalves(ts, (t) => t.n2) }
   })
   const cps = rows.map((r) => r.test?.p ?? 1)
   const cadj = holm(cps)
@@ -420,10 +424,12 @@ for (const s of skipped) say(`  ${s.symbol.padEnd(18)} ${s.tf.padEnd(4)} ${Strin
 say('')
 if (confirm) {
   say('=== FAMILY 2 — CONFIRMATION on symbols never looked at (Holm over the shortlist) ===')
-  say('  pattern       tf     search n/hit/R      confirm n   T1 hit    mean R    effect     p      Holm  halves  verdict')
+  say('                        ---- search half ----    ---- confirm half (never looked at) ----')
+  say('  pattern       tf        n   T1 hit   mean R        n   T1 hit   mean R   effect     p     Holm  halves  verdict')
   for (const r of confirm) {
     const h = r.halves ? `${r.halves.I > 0 ? '+' : '-'}${r.halves.II > 0 ? '+' : '-'}` : ' -- '
-    say(`  ${r.pattern.padEnd(13)} ${r.tf.padEnd(4)} ${String(r.n).padStart(5)}/${pct(r.hit)}/${num(r.r)}  ${String(r.confirmN).padStart(9)}  ${pct(r.hit)}  ${num(r.r).padStart(7)}  ${num(r.test?.effect).padStart(8)} ${num(r.test?.p, 4).padStart(7)} ${num(r.holm, 4).padStart(7)}  ${h}  ${r.confirmed ? 'CONFIRMED' : 'not confirmed'}`)
+    const c = r.confirm
+    say(`  ${r.pattern.padEnd(13)} ${r.tf.padEnd(4)} ${String(r.searchN).padStart(6)}  ${pct(r.searchHit)}  ${num(r.searchR).padStart(7)}  ${String(c?.n ?? 0).padStart(7)}  ${pct(c?.hit)}  ${num(c?.r).padStart(7)}  ${num(r.test?.effect).padStart(7)} ${num(r.test?.p, 4).padStart(7)} ${num(r.holm, 4).padStart(7)}  ${h}  ${r.confirmed ? 'CONFIRMED' : 'not confirmed'}`)
   }
 } else {
   say('=== FAMILY 2 — SEARCH HALF (shortlist frozen to reports/harmonic-shortlist.json) ===')
