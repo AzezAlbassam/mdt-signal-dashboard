@@ -93,6 +93,16 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
       per-symbol table with split halves. Best: LIN 40.8%/+0.42R, KO 38.7%/+0.34R,
       V 35.5%/+0.29R, all stable across both halves; worst HIMS/TSLA/ENB. But the RANKING
       barely persists (Spearman 0.287 across 39 symbols), so it is a hint, not a rule.
+- [x] Study 12: chart legibility pass after the user sent screenshots — the zone box now runs
+      from the confirmation bar to its expiry instead of from point C to forever, carries a
+      BUY/SELL label with the zone and a live status (waiting / triggered / void / expired)
+      under the same three tests the backtest applies, every target line is named at its right
+      end, and a key names every mark. Arabic by default with an English switch. Drawing only;
+      the backtest block is untouched, so the engine agreement above still holds.
+- [x] Study 12: reports/harmonic-holding.json + scripts/harmonic-holding.js — post-hoc,
+      descriptive: how long a trade lasts per timeframe, in calendar days. The 60-bar horizon
+      is ~3 months on 1D, ~1.2 years on 1W, 5 years on 1M. Answers "which timeframe for a
+      three-month position" with the study's own numbers rather than a guess.
 - [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
 
 ## Counts
