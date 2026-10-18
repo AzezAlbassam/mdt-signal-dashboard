@@ -1,0 +1,271 @@
+<title>الهارمونيك تحت الاختبار</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one measured column — verdict, then the two tables that were asked for, then the
+   machinery underneath them. Tokens first; every colour below comes from one of these. */
+:root{
+  --paper:#f7f5f1; --ink:#15181c; --muted:#5d6570; --rule:#ddd8d0; --card:#fffdfa;
+  --accent:#9a6a2f; --pos:#1f7a52; --neg:#a8322c; --chip:#efe9e0;
+  --ar:'IBM Plex Sans Arabic',system-ui,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121417; --ink:#e9e6e1; --muted:#9aa3ad; --rule:#2a2f36; --card:#181b20;
+  --accent:#d9a860; --pos:#4cb98a; --neg:#e4685f; --chip:#232830; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121417; --ink:#e9e6e1; --muted:#9aa3ad; --rule:#2a2f36; --card:#181b20;
+  --accent:#d9a860; --pos:#4cb98a; --neg:#e4685f; --chip:#232830; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--ar);line-height:1.75;margin:0}
+.wrap{max-width:880px;margin:0 auto;padding-block:48px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:clamp(28px,6vw,44px);font-weight:700}
+h2{font-size:clamp(20px,3.4vw,26px);font-weight:600;margin-block:56px 8px}
+h3{font-size:17px;font-weight:600;margin-block:28px 6px}
+p{margin:12px 0}
+.lede{font-size:clamp(16px,2.4vw,19px);color:var(--muted);font-weight:300;max-width:62ch}
+/* No letter-spacing anywhere: Arabic letters join, and tracking breaks the joins apart. */
+.eyebrow{font-size:12px;font-weight:500;color:var(--accent)}
+.rule{height:1px;background:var(--rule);border:0;margin:28px 0}
+
+.verdict{background:color-mix(in srgb,var(--neg) 7%,var(--card));
+  border:1px solid color-mix(in srgb,var(--neg) 28%,var(--rule));border-radius:4px;
+  padding:20px 22px;margin-top:28px;font-size:15.5px}
+.verdict strong{font-weight:600}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+.fact{background:var(--card);padding:14px 16px;min-width:0}
+.fact b{display:block;font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;
+  direction:ltr;unicode-bidi:isolate;text-align:right}
+.fact span{font-size:12px;color:var(--muted)}
+
+.scroll{overflow-x:auto;margin-top:14px;border:1px solid var(--rule);border-radius:4px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+thead th{font-size:12px;color:var(--muted);font-weight:500;background:var(--chip)}
+tbody tr:last-child td{border-bottom:0}
+/* Signed figures are LTR runs inside an RTL document: without isolation the bidi algorithm
+   moves the sign to the far end and "+0.060" reads as "0.060+". */
+td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;text-align:right}
+td.k{font-weight:500}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.pill.no{color:var(--neg)}
+.best{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+code{font-family:var(--mono);font-size:.92em;background:var(--chip);padding:1px 5px;border-radius:3px}
+ul{padding-inline-start:20px;margin:10px 0}li{margin:6px 0}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+
+<div class="eyebrow">الدراسة ١٢ · مسجّلة مسبقاً</div>
+<h1>الهارمونيك تحت الاختبار</h1>
+<p class="lede">أحد عشر نموذجاً بنسبها المنشورة، على ٤٠ رمزاً وخمسة فريمات،
+20,200 صفقة. القواعد كُتبت وجُمِّدت قبل تنزيل أول شمعة.</p>
+
+<div class="verdict">
+<strong>النتيجة: لم يثبت أي شيء.</strong> النماذج لم تتفوّق على <strong>دخول عشوائي</strong> بنفس الهدف
+ونفس الوقف بعد تصحيح الاختبارات المتعددة، و<strong>نسب فيبوناتشي نفسها لم تضف شيئاً</strong>: حين ضُربت كل
+نسبة منشورة في معامل عشوائي وأُعيد الاختبار على نفس القيعان والقمم، كان الفرق
+-0.007R باحتمال 0.6722 — أي صفر عملياً.
+</div>
+
+<div class="facts">
+<div class="fact"><b>20,200</b><span>صفقة</span></div>
+<div class="fact"><b>31.6%</b><span>تصل الهدف الأول</span></div>
+<div class="fact"><b>−1.00R</b><span>وسيط الصفقة</span></div>
+<div class="fact"><b>187</b><span>سلسلة سعرية</span></div>
+</div>
+<p class="note">قورِنت هذه الصفقات بـ 264,591 صفقة وهمية من عشرين سحبة نسب عشوائية.
+«وسيط الصفقة −1.00R» يعني أن أكثر من نصف الصفقات ضربت الوقف، غالباً في نفس الشمعة التي دخلت فيها،
+لأن الحافة البعيدة من منطقة الانعكاس قريبة جداً من حافتها القريبة.</p>
+
+<h2>١ · الاختبارات المسجّلة مسبقاً</h2>
+<p>«الأثر» هو متوسط R للصفقة الحقيقية ناقص متوسط R لتوأمها العشوائي. تصحيح Holm على العائلة كاملة (ستة اختبارات).</p>
+<div class="scroll"><table>
+<thead><tr><th>الاختبار</th><th class="num">عدد الصفقات</th><th class="num">الأثر</th><th class="num">p</th><th class="num">Holm</th><th>الحكم</th></tr></thead>
+<tbody>
+<tr>
+  <td class="k">مقابل دخول عشوائي — مجمّع</td>
+  <td class="num">13,592</td>
+  <td class="num pos">+0.060</td>
+  <td class="num">0.0225</td>
+  <td class="num">0.1125</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+<tr>
+  <td class="k">مقابل نسب عشوائية — مجمّع</td>
+  <td class="num">13,592</td>
+  <td class="num neg">-0.007</td>
+  <td class="num">0.6722</td>
+  <td class="num">0.6722</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+<tr>
+  <td class="k">مقابل دخول عشوائي — ٤ ساعات</td>
+  <td class="num">5,542</td>
+  <td class="num pos">+0.024</td>
+  <td class="num">0.2883</td>
+  <td class="num">0.5765</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+<tr>
+  <td class="k">مقابل دخول عشوائي — يومي</td>
+  <td class="num">5,282</td>
+  <td class="num pos">+0.059</td>
+  <td class="num">0.0734</td>
+  <td class="num">0.2516</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+<tr>
+  <td class="k">مقابل دخول عشوائي — أسبوعي</td>
+  <td class="num">2,275</td>
+  <td class="num pos">+0.139</td>
+  <td class="num">0.0107</td>
+  <td class="num">0.0642</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+<tr>
+  <td class="k">مقابل دخول عشوائي — شهري</td>
+  <td class="num">493</td>
+  <td class="num pos">+0.123</td>
+  <td class="num">0.0629</td>
+  <td class="num">0.2516</td>
+  <td><span class="pill no">لم يثبت</span></td></tr>
+</tbody></table></div>
+<p class="note">H1 وحده كان p = 0.0225 قبل التصحيح. ومع ذلك لا يُعتمد: من يختبر ستة فروض ويأخذ أفضلها
+يجد «نتيجة» في بيانات عشوائية أيضاً. هذا بالضبط ما يمنعه تصحيح Holm.</p>
+
+<h2>٢ · أي فريم أدق؟</h2>
+<p>هذا السؤال لا توجد له إجابة منشورة في أي مرجع — لم يقارن أحد الفريمات مقابل بعضها باختبار حقيقي. هذه المقارنة:</p>
+<div class="scroll"><table>
+<thead><tr><th>الفريم</th><th class="num">الصفقات</th><th class="num">تصل الهدف ١</th><th class="num">متوسط R</th><th class="num">وسيط R</th><th class="num">مقابل العشوائي</th></tr></thead>
+<tbody>
+<tr><td class="k">ساعة <span class="pill">خارج العائلة</span></td>
+<td class="num">4,976</td><td class="num">31.3%</td>
+<td class="num pos">+0.121</td><td class="num">-1.000</td>
+<td class="num pos">+0.097</td></tr>
+<tr><td class="k">٤ ساعات</td>
+<td class="num">5,542</td><td class="num">31.7%</td>
+<td class="num pos">+0.115</td><td class="num">-1.000</td>
+<td class="num pos">+0.024</td></tr>
+<tr><td class="k">يومي</td>
+<td class="num">5,282</td><td class="num">31.8%</td>
+<td class="num pos">+0.090</td><td class="num">-1.000</td>
+<td class="num pos">+0.059</td></tr>
+<tr class="best"><td class="k">أسبوعي</td>
+<td class="num">2,275</td><td class="num">31.4%</td>
+<td class="num pos">+0.077</td><td class="num">-1.000</td>
+<td class="num pos">+0.139</td></tr>
+<tr><td class="k">شهري</td>
+<td class="num">493</td><td class="num">29.8%</td>
+<td class="num pos">+0.004</td><td class="num">-1.000</td>
+<td class="num pos">+0.123</td></tr>
+</tbody></table></div>
+<p><strong>الجواب الصادق: الفريمات لا تفترق.</strong> نسبة الوصول للهدف الأول بين 29.8%
+و31.8% على كل الفريمات — فرق لا يُذكر على هذه الأحجام.
+الأسبوعي هو الأعلى في الفرق عن العشوائي (+0.139R) وهو الأقرب للدلالة،
+لكنه بعد التصحيح عند Holm = 0.0642، أي <strong>لم يثبت</strong>.
+الشهري عيّنته صغيرة (493 صفقة) فلا يحسم شيئاً.</p>
+<p class="note">للمضاربة اليومية: فريم الساعة أُدرج للاطلاع فقط وهو خارج العائلة المسجّلة مسبقاً، لأن عمق البيانات اللحظية قصير.</p>
+
+<h2>٣ · أي نموذج أدق؟</h2>
+<p>مجمّع على الفريمات الأربعة المسجّلة. مرتّب بنسبة الوصول للهدف الأول:</p>
+<div class="scroll"><table>
+<thead><tr><th>النموذج</th><th class="num">الصفقات</th><th class="num">تصل الهدف ١</th><th class="num">متوسط R</th><th class="num">مقابل العشوائي</th></tr></thead>
+<tbody>
+<tr><td class="k">الدفعات الثلاث</td><td class="num">151</td>
+<td class="num">74.8%</td><td class="num pos">+0.210</td>
+<td class="num pos">+0.298</td></tr>
+<tr><td class="k">٥-٠</td><td class="num">427</td>
+<td class="num">61.8%</td><td class="num neg">-0.406</td>
+<td class="num neg">-0.066</td></tr>
+<tr><td class="k">سايفر</td><td class="num">425</td>
+<td class="num">45.6%</td><td class="num pos">+0.137</td>
+<td class="num pos">+0.085</td></tr>
+<tr><td class="k">القرش</td><td class="num">963</td>
+<td class="num">41.0%</td><td class="num pos">+0.147</td>
+<td class="num pos">+0.120</td></tr>
+<tr><td class="k">جارتلي</td><td class="num">490</td>
+<td class="num">35.9%</td><td class="num pos">+0.180</td>
+<td class="num pos">+0.020</td></tr>
+<tr><td class="k">الخفاش</td><td class="num">321</td>
+<td class="num">34.3%</td><td class="num pos">+0.234</td>
+<td class="num pos">+0.183</td></tr>
+<tr><td class="k">الفراشة</td><td class="num">524</td>
+<td class="num">31.5%</td><td class="num pos">+0.147</td>
+<td class="num pos">+0.156</td></tr>
+<tr><td class="k">السلطعون العميق</td><td class="num">255</td>
+<td class="num">30.6%</td><td class="num pos">+0.269</td>
+<td class="num pos">+0.236</td></tr>
+<tr><td class="k">AB=CD</td><td class="num">11,097</td>
+<td class="num">28.3%</td><td class="num pos">+0.075</td>
+<td class="num pos">+0.028</td></tr>
+<tr><td class="k">السلطعون</td><td class="num">108</td>
+<td class="num">22.2%</td><td class="num pos">+0.011</td>
+<td class="num neg">-0.024</td></tr>
+<tr><td class="k">الخفاش البديل</td><td class="num">15</td>
+<td class="num">6.7%</td><td class="num neg">-0.763</td>
+<td class="num neg">-1.641</td></tr>
+</tbody></table></div>
+
+<h3>النموذج الذي بدا «واو» — وكيف سقط</h3>
+<p>نموذج <strong>الدفعات الثلاث</strong> تصدّر الجدول بفارق كبير. ولأن اختيار أفضل خانة من ٤٣ خانة هو بالضبط
+الطريقة التي تكذب بها الدراسات، قُسِّمت الرموز نصفين قبل أن نرى أي نتيجة: نصف للبحث، ونصف لم يُفتح إطلاقاً.</p>
+<div class="scroll"><table>
+<thead><tr><th>الدفعات الثلاث · ٤ ساعات</th><th class="num">الصفقات</th><th class="num">تصل الهدف ١</th><th class="num">متوسط R</th></tr></thead>
+<tbody>
+<tr><td class="k">نصف البحث (٢٠ رمزاً)</td><td class="num">32</td><td class="num pos">68.8%</td><td class="num pos">+0.087</td></tr>
+<tr><td class="k">نصف التأكيد — لم يُنظر إليه</td><td class="num">33</td><td class="num">57.6%</td><td class="num neg">-0.045</td></tr>
+</tbody></table></div>
+<p>على الرموز غير المرئية: 57.6% و<strong>خسارة</strong> -0.045R، باحتمال 0.4795.
+هذا هو «لعنة الفائز» في سطر واحد: أفضل خانة في عيّنة هي غالباً أكثر خانة حالفها الحظ، لا أكثرها صدقاً.</p>
+
+<h3>الفخّ: نسبة نجاح عالية تخسر مالاً</h3>
+<p>نموذج <strong>٥-٠</strong> يصل هدفه في 61.8% من الحالات —
+وهي أعلى نسبة بعد الدفعات الثلاث — ومع ذلك متوسطه -0.406R.
+السبب أن أرباحه صغيرة وخسائره كاملة. أي نسبة نجاح بلا هدفها ووقفها ليست معلومة.</p>
+
+<h2>٤ · الرموز التي سألت عنها</h2>
+<div class="scroll"><table>
+<thead><tr><th>المجموعة</th><th class="num">٤ ساعات</th><th class="num">يومي</th><th class="num">أسبوعي</th><th class="num">شهري</th></tr></thead>
+<tbody>
+<tr><td class="k">أكبر ٢٠ شركة</td><td class="num">31.2% <span class="pos">+0.106R</span></td><td class="num">32.3% <span class="pos">+0.109R</span></td><td class="num">32.0% <span class="pos">+0.108R</span></td><td class="num">28.6% <span class="neg">-0.025R</span></td></tr>
+<tr><td class="k">تنويع قطاعي</td><td class="num">33.2% <span class="pos">+0.155R</span></td><td class="num">32.3% <span class="pos">+0.097R</span></td><td class="num">31.2% <span class="pos">+0.058R</span></td><td class="num">32.5% <span class="pos">+0.059R</span></td></tr>
+<tr><td class="k">روكت لاب · بلوم · هيمز</td><td class="num">25.2% <span class="neg">-0.065R</span></td><td class="num">27.2% <span class="neg">-0.055R</span></td><td class="num">23.3% <span class="neg">-0.101R</span></td><td class="num">—</td></tr>
+<tr><td class="k">بيتكوين</td><td class="num">36.5% <span class="pos">+0.172R</span></td><td class="num">28.1% <span class="pos">+0.003R</span></td><td class="num">25.8% <span class="neg">-0.177R</span></td><td class="num">—</td></tr>
+<tr><td class="k">مؤشرات ETF</td><td class="num">31.3% <span class="pos">+0.122R</span></td><td class="num">31.5% <span class="pos">+0.068R</span></td><td class="num">31.4% <span class="pos">+0.043R</span></td><td class="num">24.3% <span class="neg">-0.076R</span></td></tr>
+</tbody></table></div>
+<p class="note">كل خانة: نسبة الوصول للهدف الأول، ثم متوسط R. روكت لاب وبلوم إنرجي وهيمز سالبة على كل فريم —
+أسهم حديثة وعالية التذبذب، وتاريخها أقصر من أن يحسم. الشهري محذوف لأغلبها لقلة الشموع.</p>
+
+<h2>٥ · لماذا نصدّق هذه الأرقام</h2>
+<ul>
+<li><strong>لا إعادة رسم.</strong> القمم والقيعان تُعتمد فقط في الشمعة التي تؤكّدها، والنموذج يُسجَّل لحظة تأكيد النقطة C —
+أي أن منطقة الانعكاس والهدف والوقف كلها معروفة قبل أن تتكوّن D. هذا أهم عيب في اختبارات الهارمونيك المنشورة، ومُعالَج هنا باختبارات برمجية.</li>
+<li><strong>مرجعان للمقارنة لا واحد.</strong> دخول عشوائي بنفس الهندسة، ونسخة من نفس النماذج بنسب مضروبة في معامل عشوائي.</li>
+<li><strong>بحث ثم تأكيد على رموز منفصلة</strong>، والقائمة القصيرة جُمِّدت في الملف قبل تشغيل نصف التأكيد.</li>
+<li><strong>الاحتمالات محسوبة بالتبديل العشوائي</strong> مع تجميع على مستوى الرمز، حتى لا يحمل سهم محظوظ النتيجة كلها.</li>
+</ul>
+
+<h3>ما لا تقوله الدراسة</h3>
+<ul>
+<li>لم تُقرأ كتب كارني الأصلية مباشرة — الشبكة الخارجية محجوبة في بيئة التشغيل، فالنسب مجمّعة من مستخلصات بحث ومن شيفرة خمسة مؤشرات منشورة، ثم روجعت مرة ثانية بباحث مهمّته تفنيدها.</li>
+<li>مقياس واحد للتأرجح (1.5 ATR). تأرجح أصغر يعطي صفقات أكثر ونتيجة مشابهة؛ أكبر يعطي أقل وأسوأ.</li>
+<li>لا عمولة ولا انزلاق سعري في الحساب — وهذا يُجمِّل الحقيقي والعشوائي معاً، ولهذا المقارنة هي النتيجة وليس الرقم المطلق.</li>
+<li>الرموز هي كبار اليوم، أي أن تاريخها تاريخ ناجين. المقارنة تجري على نفس الشموع في الحالتين.</li>
+</ul>
+
+<h2>٦ · المؤشر</h2>
+<p>المؤشر منشور في <code>pine/harmonic.pine</code> ويعمل على أي رمز وأي فريم: يرسم الهيكل الكامل XABCD،
+منطقة الانعكاس، نقطة الدخول، الوقف، وأربعة أهداف (٣٨.٢٪ و٦١.٨٪ من ضلع AD، ثم نقطة C ثم نقطة A)،
+مع تنبيه عند دخول السعر المنطقة. ترويسته تحمل هذه النتيجة نفسها، لأن البروتوكول ألزمها بذلك قبل تشغيل الاختبار.</p>
+<p class="note">لم يُجرَّب تصريفه على TradingView بعد — لا يمكن الوصول للمنصة من بيئة التشغيل. إن ظهر خطأ تصريف، أرسله ويُصلَح.</p>
+
+<footer>
+الدراسة ١٢ · البروتوكول في <code>PROTOCOL-harmonic.md</code> · الأرقام كاملة في <code>reports/harmonic.txt</code><br>
+التاريخ حتى 2026-10-17 · بحث وقياس، وليست نصيحة استثمارية.
+</footer>
+</div>
