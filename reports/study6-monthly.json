@@ -1,0 +1,463 @@
+{
+ "run": "2026-10-14T23:22:47.631Z",
+ "rows": [
+  {
+   "key": "monthly|MODM|H3|F0",
+   "all": {
+    "n": 683,
+    "win": 0.541727672035139,
+    "baseWin": 0.5094668885513597,
+    "mean": 0.1126937163445835,
+    "median": 0.024407749645199095,
+    "edge": 0.04596309438295912,
+    "excessSpy": null,
+    "p": 0.037740564858785304,
+    "pHolm": 0.07548112971757061
+   },
+   "I": {
+    "n": 338,
+    "win": 0.5591715976331361,
+    "baseWin": 0.5198324753932757,
+    "mean": 0.09182518221149227,
+    "median": 0.027227653041102196,
+    "edge": 0.036872378592068725,
+    "excessSpy": null
+   },
+   "II": {
+    "n": 345,
+    "win": 0.5246376811594203,
+    "baseWin": 0.4993116179642065,
+    "mean": 0.13313883094453963,
+    "median": 0.01800552388787713,
+    "edge": 0.054869360867947393,
+    "excessSpy": null
+   },
+   "beats": false
+  },
+  {
+   "key": "monthly|MODM|H6|F0",
+   "all": {
+    "n": 681,
+    "win": 0.5462555066079295,
+    "baseWin": 0.5171184351145488,
+    "mean": 0.2655056640517997,
+    "median": 0.03959839723186587,
+    "edge": 0.11836078447172654,
+    "excessSpy": null,
+    "p": 0.03974006498375406,
+    "pHolm": 0.07548112971757061
+   },
+   "I": {
+    "n": 338,
+    "win": 0.5355029585798816,
+    "baseWin": 0.5252621908757474,
+    "mean": 0.11256138053849232,
+    "median": 0.022348585526233755,
+    "edge": -0.0019431287776613556,
+    "excessSpy": null
+   },
+   "II": {
+    "n": 343,
+    "win": 0.5568513119533528,
+    "baseWin": 0.5090933929941832,
+    "mean": 0.41622043905908196,
+    "median": 0.062389223679546246,
+    "edge": 0.23691099636179347,
+    "excessSpy": null
+   },
+   "beats": false
+  }
+ ],
+ "recent": [
+  {
+   "symbol": "NYSE:LW",
+   "signal": "2026-09",
+   "low1": [
+    "2024-07",
+    52.99
+   ],
+   "low2": [
+    "2026-04",
+    37.62
+   ],
+   "oscillators": 3,
+   "closeNow": 41.69,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:CUE",
+   "signal": "2026-09",
+   "low1": [
+    "2024-09",
+    13.5
+   ],
+   "low2": [
+    "2026-04",
+    4.971
+   ],
+   "oscillators": 4,
+   "closeNow": 25.87,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:BLRX",
+   "signal": "2026-09",
+   "low1": [
+    "2025-04",
+    2.3001
+   ],
+   "low2": [
+    "2026-04",
+    2.15
+   ],
+   "oscillators": 4,
+   "closeNow": 2.35,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:BBGI",
+   "signal": "2026-09",
+   "low1": [
+    "2025-06",
+    3.67
+   ],
+   "low2": [
+    "2026-04",
+    3.14
+   ],
+   "oscillators": 4,
+   "closeNow": 12.85,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:SPCE",
+   "signal": "2026-08",
+   "low1": [
+    "2025-04",
+    2.18
+   ],
+   "low2": [
+    "2026-03",
+    2.13
+   ],
+   "oscillators": 3,
+   "closeNow": 2.99,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:SNAP",
+   "signal": "2026-08",
+   "low1": [
+    "2024-08",
+    8.29
+   ],
+   "low2": [
+    "2026-03",
+    3.81
+   ],
+   "oscillators": 2,
+   "closeNow": 5.4,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:BAX",
+   "signal": "2026-08",
+   "low1": [
+    "2023-10",
+    31.01
+   ],
+   "low2": [
+    "2026-03",
+    15.73
+   ],
+   "oscillators": 4,
+   "closeNow": 24,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:SPGI",
+   "signal": "2026-07",
+   "low1": [
+    "2025-04",
+    404.0146404
+   ],
+   "low2": [
+    "2026-02",
+    360.9449053
+   ],
+   "oscillators": 2,
+   "closeNow": 394.47,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:RXT",
+   "signal": "2026-07",
+   "low1": [
+    "2023-05",
+    1.05
+   ],
+   "low2": [
+    "2026-02",
+    0.393
+   ],
+   "oscillators": 4,
+   "closeNow": 3.725,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:PUBM",
+   "signal": "2026-07",
+   "low1": [
+    "2025-08",
+    7.01
+   ],
+   "low2": [
+    "2026-02",
+    6.15
+   ],
+   "oscillators": 3,
+   "closeNow": 18.73,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:MARA",
+   "signal": "2026-07",
+   "low1": [
+    "2025-04",
+    9.81
+   ],
+   "low2": [
+    "2026-02",
+    6.66
+   ],
+   "oscillators": 2,
+   "closeNow": 11.33,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:IPWR",
+   "signal": "2026-07",
+   "low1": [
+    "2025-04",
+    3.765
+   ],
+   "low2": [
+    "2026-02",
+    2.615
+   ],
+   "oscillators": 2,
+   "closeNow": 3.93,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:DOCU",
+   "signal": "2026-07",
+   "low1": [
+    "2024-06",
+    48.7
+   ],
+   "low2": [
+    "2026-02",
+    40.16
+   ],
+   "oscillators": 2,
+   "closeNow": 67.15,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:MRNA",
+   "signal": "2026-04",
+   "low1": [
+    "2025-04",
+    23.15
+   ],
+   "low2": [
+    "2025-11",
+    22.28
+   ],
+   "oscillators": 3,
+   "closeNow": 192.57,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:HTO",
+   "signal": "2026-04",
+   "low1": [
+    "2025-01",
+    44.91
+   ],
+   "low2": [
+    "2025-11",
+    43.75
+   ],
+   "oscillators": 3,
+   "closeNow": 61.63,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:BYND",
+   "signal": "2026-03",
+   "low1": [
+    "2023-10",
+    167.4
+   ],
+   "low2": [
+    "2025-10",
+    15.003
+   ],
+   "oscillators": 2,
+   "closeNow": 8.26,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:DVLT",
+   "signal": "2026-02",
+   "low1": [
+    "2021-05",
+    35999.76
+   ],
+   "low2": [
+    "2025-09",
+    0.2512
+   ],
+   "oscillators": 3,
+   "closeNow": 0.1558,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:EXPO",
+   "signal": "2026-01",
+   "low1": [
+    "2023-10",
+    64.612
+   ],
+   "low2": [
+    "2025-08",
+    63.81
+   ],
+   "oscillators": 2,
+   "closeNow": 65.42,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:HUM",
+   "signal": "2025-12",
+   "low1": [
+    "2024-10",
+    213.31
+   ],
+   "low2": [
+    "2025-07",
+    206.87
+   ],
+   "oscillators": 2,
+   "closeNow": 381.57,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:RUN",
+   "signal": "2025-11",
+   "low1": [
+    "2023-10",
+    8.4303
+   ],
+   "low2": [
+    "2025-06",
+    5.38
+   ],
+   "oscillators": 4,
+   "closeNow": 7.77,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:OPEN",
+   "signal": "2025-11",
+   "low1": [
+    "2022-12",
+    0.917
+   ],
+   "low2": [
+    "2025-06",
+    0.5084
+   ],
+   "oscillators": 3,
+   "closeNow": 2.37,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:XYZ",
+   "signal": "2025-10",
+   "low1": [
+    "2024-08",
+    55
+   ],
+   "low2": [
+    "2025-05",
+    44.27
+   ],
+   "oscillators": 2,
+   "closeNow": 73.53,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NYSE:SKM",
+   "signal": "2025-10",
+   "low1": [
+    "2024-04",
+    19.88
+   ],
+   "low2": [
+    "2025-05",
+    19.84
+   ],
+   "oscillators": 3,
+   "closeNow": 34.91,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:IOVA",
+   "signal": "2025-10",
+   "low1": [
+    "2023-10",
+    3.21
+   ],
+   "low2": [
+    "2025-05",
+    1.6385
+   ],
+   "oscillators": 2,
+   "closeNow": 14.82,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:FCEL",
+   "signal": "2025-10",
+   "low1": [
+    "2020-10",
+    47.4
+   ],
+   "low2": [
+    "2025-05",
+    3.5768
+   ],
+   "oscillators": 2,
+   "closeNow": 16.42,
+   "lastMonth": "2026-09"
+  },
+  {
+   "symbol": "NASDAQ:ERII",
+   "signal": "2025-10",
+   "low1": [
+    "2024-06",
+    12.26
+   ],
+   "low2": [
+    "2025-05",
+    10.86
+   ],
+   "oscillators": 2,
+   "closeNow": 6.67,
+   "lastMonth": "2026-09"
+  }
+ ]
+}

@@ -50,10 +50,64 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 
 - [x] Study 10 (PROTOCOL-study10.md): RED/GREEN expectation flags → H1, H2 not confirmed (d1 −0.1%, d2 +0.1%; Holm p 0.95). reports/study10.txt
 
+- [x] Study 11 protocol (PROTOCOL-study11.md) + universe snapshot (data/study11/universe.json, 207 symbols) committed before any HCP value and before any download
+- [x] Study 11: probe (data/study11/probe.json) — of the 146 not already on disk, 94 clear the 1250-bar floor, 52 do not and were never downloaded
+- [x] Study 11: fetch the 94 → data/study11/bars/ (61 more reused from data/us/bars/, which end 2026-10-06)
+      FETCH TRICK, reuse it: a get_ohlcv result big enough to overflow the tool-result limit is
+      spilled to <session>/tool-results/mcp-*-get-ohlcv-*.txt instead of entering the agent's
+      context. So ask for count=5000 — the bigger the page, the CHEAPER it is — and read the files
+      with `node scripts/study11-collect.js <session>/tool-results <session>/subagents`.
+      Agents that report such a call as "failed" are wrong: the bars are on disk.
+- [x] Study 11: engine/hcp.js + no-look-ahead tests (8 tests, full suite 350 pass)
+- [x] Study 11: run → H1 and H2 both NOT CONFIRMED. HCP's mean gap over 40 bars is 38.0% vs 9.1% for a
+      no-change line (worse in 89% of 10,309 projections, median -15.9%); cross-sectional rank
+      correlation -0.015 (p 0.91). Both halves agree. reports/study11.txt
+- [x] Study 11: pine/hcp.pine written, §7 "not confirmed" header filled in from the run. NOT compiled on
+      TradingView yet — the user runs it; study 6's Pine had a compile error found that way (shape.star).
+- [x] Study 11: forward-log/hcp-2026-10-17.json — 153 projections frozen (85 up / 68 down).
+      SCORE THESE AROUND 2026-12-11 (40 trading bars on): the file carries its own scoring recipe.
+- [x] Study 11: scripts/study11-verify.js — prints what the Pine table should read for a symbol/date,
+      so Pine-vs-engine agreement can be checked without a CSV export (polylines do not export)
+- [ ] Study 11: user runs pine/hcp.pine on TradingView — first compile is still unverified
+- [ ] Study 11: score the frozen projections once 40 bars have passed (~2026-12-11)
+
+- [x] Study 12 (PROTOCOL-harmonic.md): harmonic XABCD, 11 patterns at their published ratios,
+      40 symbols x {1h,4h,1D,1W,1M} = 187 usable cells, 20,200 trades, non-repainting pivots.
+      H1 (vs matched random entry) +0.060R p 0.0225 Holm 0.1125 — NOT CONFIRMED.
+      H2 (vs the same structures with every ratio scaled by a random factor) -0.007R p 0.67 —
+      NOT CONFIRMED, and this is the sharpest test: the ratios themselves carry nothing.
+      H4 per timeframe (4h/1D/1W/1M): all NOT CONFIRMED, best Holm 0.064 (weekly).
+      Family 2 search->confirm: of 43 cells only Three Drives 4h qualified on the search half
+      (68.8% hit); on the never-looked-at half it hit 57.6% and lost money (-0.045R, p 0.48).
+      NOT CONFIRMED. reports/harmonic.txt
+- [x] Study 12: pine/harmonic.pine written, §8 header filled in from the run. NOT compiled on
+      TradingView yet — the user runs it; study 6's Pine had a compile error found that way.
+- [x] Study 12: forward-log/harmonic-2026-10-18.json — 126 patterns live at the cutoff, frozen
+      with their PRZs, stops and targets before any of them can be known.
+- [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
+
 ## Counts
 (updated as work proceeds)
 
 ## Log
+- 2026-10-18 — user asked for a real harmonic indicator for TradingView ("the complete
+  fundamentals, nothing distorted"), working on every timeframe, with targets, plus a table
+  of the most accurate timeframe and the most accurate pattern. Study 12 pre-registered.
+  Ratio table built from search-layer extracts (outbound fetching is blocked in this
+  container — harmonictrader.com and every other host fail at the proxy), then handed to a
+  second researcher told to refute it; four substantive corrections applied, incl. a 1.0
+  placeholder in the Deep Crab's AB=CD that would have coded as an equality test.
+  Prior evidence recorded BEFORE the hypotheses: no peer-reviewed harmonic backtest with a
+  sample and a significance test exists; the best nearby study (Batchelor & Ramyar on
+  Fibonacci ratios in the Dow, 1914-2002, block bootstrap) is negative; no timeframe
+  comparison exists anywhere. Two bugs found by a detection-COUNT check before any statistic
+  (direction keyed off the first pivot instead of the last, which silently inverted AB=CD and
+  Three Drives; the 5-0's "B beyond X" copied the Shark's sense). POST-HOC after the first
+  run: a bar gapping clean through a PRZ filled at the open BELOW the far edge, collapsing
+  risk to a rounding error — 370 of 21,278 trades had a stop under 0.1% from entry and one
+  printed R=3003, moving pooled mean R from 0.03 to 0.22. Fixed (a fill outside the zone is
+  not an entry); before/after in reports/harmonic-prefix/. Verdict unchanged either way.
+  The median trade in this study is exactly -1R, usually stopped on its entry bar.
 - 2026-10-07 — protocol written.
 - 2026-10-07 — engine/study.js + scripts/us-*.js written. `node scripts/us-backtest.js --study1`
   reproduces study 1's tables line for line (edges, win rates, p-values), so study 2 runs on
@@ -108,3 +162,29 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-14 — 5-year price scenarios (engine/projection.js, untested, shown as scenarios). Saudi main market (271)
   added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
   from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
+- 2026-10-14 — addendum 3 (monthly MOD on 611 watchlist stocks, H3/H6): 0 of 2. H3 close: edge +4.6%, both periods +, p 0.038, Holm 0.0755. List of last-12-month signals shown as chart readings, not recommendations.
+- 2026-10-18 — POST-HOC (reports/study11-posthoc-damping.txt, scripts/study11-posthoc-damping.js):
+  asked whether a repaired HCP deserves a study 12. Anchoring the projection to the last close and
+  damping it toward that anchor gives a MONOTONE curve — no-change 9.81%, damping 0.9 9.89%, 0.75
+  10.21%, 0.5 11.32%, 0.25 12.95%, 0 (anchored only) 14.90%. Every bit of model left in makes it
+  worse, and the curve's best point is full damping, which IS the no-change line. So the repaired
+  family has no best case above doing nothing. STUDY 12 IS NOT PROPOSED — if a future session is
+  tempted by "but what if we anchor/damp it", this is the answer. Sampled, no null, no p-value.
+- 2026-10-18 — what the frozen projections look like, and why the result makes sense. Across the 153
+  symbols HCP's implied 8-week move has a MEDIAN ABSOLUTE SIZE of 44.4%; 101 of 153 imply more than
+  +/-25%; the extremes run from AXTI -97% to OTC:BCHG +977%. For the six indices the user named the
+  median is 5.8% (IWM -7.0, DOW +2.4, SPY +2.8, QQQ +4.6, US500 +7.3, NAS100 +10.7) — sane-looking.
+  That is the whole story of study 11 in one line: extrapolating 3 harmonics is only ever plausible
+  on a low-volatility index, which is exactly where such charts get posted. On anything volatile the
+  fit leaves a large residual and the continuation runs away. Not a new test, just a description of
+  forward-log/hcp-2026-10-17.json; no claim attached.
+- 2026-10-17 — user sent a screenshot of @BeardoTrader's "Long term $QQQ model" (blue line, 2026-10-16)
+  and asked for the same indicator on US500/NAS100/DOW/SPY/QQQ/IWM and both watchlists. Measured the
+  line out of the image (pixel extraction, aligned to real QQQ bars to 0.15%): it is a FORWARD
+  PROJECTION, 39 bars past the last candle; mean 1.77% from the close over the visible 112 bars; not
+  an MA (change corr +0.04), not an FLD, not stepped M2 data; a 20-day MA matched it and a 10-day MA
+  beat it. Vendor method undisclosed (no TradingView script; "subscribers" implies a paid channel), so
+  family is undetermined — open look-alike under a different name (HCP), no match claim, as in study 6.
+  User chose: Pine script + pre-registered test, TradingView only (no live page). Study 11 pre-registered.
+  Scratchpad working files (this session only): .../scratchpad/{align,aligned,chart}.json, scout-*.md.
+- 2026-10-14 — pine/metal-log-regression.pine restyled at the user's request to the ETH look (upper/regression/lower, one fill, lines carried forward, price-scale values; outer bands optional) and opened to stocks/coins (Auto: start at first bar; log time for crypto). Default fit now "All data" (hindsight, stated in the header and table). Fit maths unchanged. Preview: reports/logreg-preview.png (mock). Stock band untested — offered a pre-registered test.
