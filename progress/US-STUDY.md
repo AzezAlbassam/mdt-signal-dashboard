@@ -130,6 +130,14 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   added: lists/sa now 271 (main market, Nomu not included); 216 histories seeded with scripts/seed-cache.js
   from data/sa-all (1140 and 6060 hit rate limits, the page fetches them itself). Page published as v9.
 - 2026-10-14 — addendum 3 (monthly MOD on 611 watchlist stocks, H3/H6): 0 of 2. H3 close: edge +4.6%, both periods +, p 0.038, Holm 0.0755. List of last-12-month signals shown as chart readings, not recommendations.
+- 2026-10-18 — what the frozen projections look like, and why the result makes sense. Across the 153
+  symbols HCP's implied 8-week move has a MEDIAN ABSOLUTE SIZE of 44.4%; 101 of 153 imply more than
+  +/-25%; the extremes run from AXTI -97% to OTC:BCHG +977%. For the six indices the user named the
+  median is 5.8% (IWM -7.0, DOW +2.4, SPY +2.8, QQQ +4.6, US500 +7.3, NAS100 +10.7) — sane-looking.
+  That is the whole story of study 11 in one line: extrapolating 3 harmonics is only ever plausible
+  on a low-volatility index, which is exactly where such charts get posted. On anything volatile the
+  fit leaves a large residual and the continuation runs away. Not a new test, just a description of
+  forward-log/hcp-2026-10-17.json; no claim attached.
 - 2026-10-17 — user sent a screenshot of @BeardoTrader's "Long term $QQQ model" (blue line, 2026-10-16)
   and asked for the same indicator on US500/NAS100/DOW/SPY/QQQ/IWM and both watchlists. Measured the
   line out of the image (pixel extraction, aligned to real QQQ bars to 0.15%): it is a FORWARD
