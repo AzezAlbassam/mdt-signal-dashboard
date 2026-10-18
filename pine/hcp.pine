@@ -57,18 +57,21 @@
 // - A cycle found in one window is routinely absent from the next. Nothing here tests
 //   whether a period is real; the Goertzel search always returns its best K, even on noise.
 //
-// SPEED: the fit runs once, on the last bar. On a slow connection it can take a few seconds.
-// If the script times out, lower "Window" — but note that anything other than the defaults
-// is no longer the configuration that was tested.
+// SPEED: the whole fit runs once, on the last bar, on TradingView's servers. The cost is
+// Window x Trial periods x Cycles, and TradingView aborts any single loop that runs longer
+// than 500 ms, so the three greedy passes are written out separately rather than as a loop
+// to give each its own budget. If you still get "Loop takes too long to execute", lower
+// Trial periods first, then Cycles, then Window — and note that the result below was measured
+// at 1000 / 200 / 3, so anything else is no longer the configuration that was tested.
 
 //@version=6
-indicator("Harmonic Cycle Projection", shorttitle = "HCP", overlay = true, max_polylines_count = 8, max_bars_back = 1200)
+indicator("Harmonic Cycle Projection", shorttitle = "HCP", overlay = true, max_polylines_count = 8, max_bars_back = 1300)
 
-int   W        = input.int(1000, "Window (bars to fit)", minval = 200, maxval = 1200, step = 50, tooltip = "1000 is the tested value. Lowering it speeds the script up and changes the model.")
+int   W        = input.int(1000, "Window (bars to fit)", minval = 200, maxval = 1200, step = 50, tooltip = "1000 is the tested value. The symbol must HAVE this many bars or nothing is drawn, which is what the study required.")
 int   K        = input.int(3, "Cycles", minval = 1, maxval = 5, tooltip = "3 is the tested value.")
 int   Hfwd     = input.int(40, "Project forward (bars)", minval = 0, maxval = 250)
 bool  showPast = input.bool(true, "Draw the fitted line over the past", tooltip = "Hindsight: this part is refitted every update.")
-int   gridN    = input.int(200, "Trial periods searched", minval = 40, maxval = 300, tooltip = "200 is the tested value.")
+int   gridN    = input.int(200, "Trial periods searched", minval = 40, maxval = 300, tooltip = "200 is the tested value. Lower it first if the script times out.")
 bool  showTab  = input.bool(true, "Show the table")
 color cFit     = input.color(#2962FF, "Fitted line", group = "Colours")
 color cProj    = input.color(#AB47BC, "Projection", group = "Colours")
@@ -78,28 +81,47 @@ float PMIN    = 20.0
 float PMAXDIV = 3.0
 
 // ---------------------------------------------------------------- least squares helpers
-// NOTE on the loops below: in Pine `for i = 0 to n - 1` infers its direction, so when n is 0
-// it counts 0, -1 and then indexes out of bounds. Every loop over a .size() here is guarded.
-//
+// Two Pine rules shape the code below.
+// 1. `for i = 0 to n - 1` infers its direction, so with an empty array it counts 0 then -1
+//    and indexes out of bounds. Every loop over a .size() is guarded or provably non-empty.
+// 2. v6 re-evaluates a loop's end expression before EVERY iteration, so `arr.size() - 1` as
+//    a bound costs one method call per pass. In the Goertzel scan that is hundreds of
+//    thousands of wasted calls, so every bound here is hoisted into a variable first.
+
 // Design row at offset x (bars relative to the last bar: 0 on it, negative in the past).
-// u = x / W keeps every column O(1), which is what makes the small solve well behaved.
+// x / float(w) keeps every column O(1). The float() is load-bearing: f_at is called with
+// integer offsets, and under integer division the trend term would collapse to zero and the
+// drawn line would lose its slope while the fit kept it.
 f_fill(X, row, x, periods, w) =>
     X.set(row, 0, 1.0)
-    X.set(row, 1, x / w)
-    if periods.size() > 0
-        for j = 0 to periods.size() - 1
+    X.set(row, 1, x / float(w))
+    int np = periods.size()
+    if np > 0
+        for j = 0 to np - 1
             float p = periods.get(j)
             X.set(row, 2 + 2 * j, math.cos(2.0 * math.pi * x / p))
             X.set(row, 3 + 2 * j, math.sin(2.0 * math.pi * x / p))
     X
 
-// Fit ln(price) over the window with the given periods; the coefficient column comes back na
-// when the normal equations are singular.
+// A solve counts only when every coefficient came back a real number. matrix.inv on an
+// ill-conditioned matrix returns na elements rather than an na matrix, so testing the
+// reference alone would let garbage through and draw it. engine/hcp.js refuses the fit in
+// the same situation; this is the Pine equivalent of that refusal, not an extra rule.
+f_ok(c) =>
+    bool good = not na(c)
+    if good
+        int last = c.rows() - 1
+        for i = 0 to last
+            if na(c.get(i, 0))
+                good := false
+    good
+
 f_fit(y, xs, periods, w) =>
     int m = 2 + 2 * periods.size()
     matrix<float> X = matrix.new<float>(w, m, 0.0)
     matrix<float> Y = matrix.new<float>(w, 1, 0.0)
-    for t = 0 to w - 1
+    int last = w - 1
+    for t = 0 to last
         f_fill(X, t, xs.get(t), periods, w)
         Y.set(t, 0, y.get(t))
     matrix<float> Xt = X.transpose()
@@ -107,25 +129,26 @@ f_fit(y, xs, periods, w) =>
     matrix<float> b  = Xt.mult(Y)
     matrix<float> c  = na
     if matrix.det(A) != 0.0
-        c := A.inv().mult(b)
+        matrix<float> Ai = A.inv()
+        c := Ai.mult(b)
     [X, c]
 
-// y minus the fitted values, as a plain array.
 f_resid(X, c, y, w) =>
     matrix<float> yhat = X.mult(c)
     array<float> r = array.new<float>(w, 0.0)
-    for t = 0 to w - 1
+    int last = w - 1
+    for t = 0 to last
         r.set(t, y.get(t) - yhat.get(t, 0))
     r
 
 // Goertzel power of r at period p. A frequency finder only: the amplitudes and phases that
-// get drawn come from the least-squares solve above, never from here.
-f_power(r, p) =>
+// get drawn come from the least-squares solve, never from here.
+f_power(r, p, last) =>
     float w0 = 2.0 * math.pi / p
     float cf = 2.0 * math.cos(w0)
     float s1 = 0.0
     float s2 = 0.0
-    for i = 0 to r.size() - 1
+    for i = 0 to last
         float s = r.get(i) + cf * s1 - s2
         s2 := s1
         s1 := s
@@ -133,29 +156,67 @@ f_power(r, p) =>
     float im = math.sin(w0) * s2
     re * re + im * im
 
-// The fitted model's price at offset x. Global, because Pine will not take a function
-// declared inside an if-block.
+// One greedy pass: strongest remaining trial period, then refit every coefficient together.
+// `periods` grows only when the refit succeeds, which mirrors the engine keeping its last
+// good fit. Called from separate if-blocks rather than a loop so each pass gets its own
+// 500 ms budget.
+f_step(y, xs, periods, w, grid, gn, X0, c0, r0) =>
+    matrix<float> X = X0
+    matrix<float> c = c0
+    array<float> r  = r0
+    float bestP = na
+    float bestPow = -1.0
+    int rlast = w - 1
+    for g = 0 to gn
+        float pw = f_power(r0, grid.get(g), rlast)
+        if pw > bestPow
+            bestPow := pw
+            bestP := grid.get(g)
+    array<float> trial = periods.copy()
+    trial.push(bestP)
+    [X1, c1] = f_fit(y, xs, trial, w)
+    if f_ok(c1)
+        periods.push(bestP)
+        X := X1
+        c := c1
+        r := f_resid(X1, c1, y, w)
+    [X, c, r]
+
+// The fitted model's price at offset x. Global: Pine will not take a function declared
+// inside an if-block.
 f_at(x, periods, c, w) =>
     int m = 2 + 2 * periods.size()
     matrix<float> row = matrix.new<float>(1, m, 0.0)
     f_fill(row, 0, x, periods, w)
     float s = 0.0
-    for i = 0 to m - 1
+    int last = m - 1
+    for i = 0 to last
         s += row.get(0, i) * c.get(i, 0)
     math.exp(s)
 
 // ---------------------------------------------------------------- the fit, once, on the last bar
-var array<polyline> drawn = array.new<polyline>()
-var table tab = table.new(position.top_right, 2, 7, border_width = 1)
+var polyline plPast = na
+var polyline plFwd  = na
+var table tab = table.new(position.top_right, 2, 8, border_width = 1)
 
 if barstate.islast
-    if drawn.size() > 0
-        for i = 0 to drawn.size() - 1
-            polyline.delete(drawn.get(i))
-        drawn.clear()
+    polyline.delete(plPast)
+    polyline.delete(plFwd)
+    tab.clear(0, 0, 1, 7)
 
-    int w = math.min(W, bar_index + 1)
-    bool ok = w >= 200
+    int w = W
+    // PROTOCOL-study11.md 1.1: a symbol with fewer than W bars is not evaluated. Fitting a
+    // shorter window would be a different model from the one the result below describes, so
+    // the script says so instead of quietly drawing an untested line.
+    bool ok = bar_index + 1 >= w
+    if not ok and showTab
+        tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
+        tab.cell(1, 0, "no fit", bgcolor = cProj, text_color = color.white)
+        tab.cell(0, 1, "needs")
+        tab.cell(1, 1, str.tostring(w) + " bars")
+        tab.cell(0, 2, "has")
+        tab.cell(1, 2, str.tostring(bar_index + 1) + " bars")
+
     array<float> y  = array.new<float>(0)
     array<float> xs = array.new<float>(0)
     if ok
@@ -167,76 +228,100 @@ if barstate.islast
             else
                 y.push(math.log(c0))
                 xs.push(-i)
+
     if ok and y.size() == w
         // trial periods, logarithmic from PMIN to w / PMAXDIV
         float hi = w / PMAXDIV
         float stp = math.log(hi / PMIN) / (gridN - 1)
         array<float> grid = array.new<float>(0)
-        for i = 0 to gridN - 1
+        int glast = gridN - 1
+        for i = 0 to glast
             grid.push(PMIN * math.exp(i * stp))
 
         array<float> periods = array.new<float>(0)
-        [X0, c0m] = f_fit(y, xs, periods, w)
-        matrix<float> X = X0
-        matrix<float> c = c0m
-        if not na(c)
+        [Xa, ca] = f_fit(y, xs, periods, w)
+        matrix<float> X = Xa
+        matrix<float> c = ca
+        if f_ok(c)
             array<float> r = f_resid(X, c, y, w)
-            // greedy: strongest trial period in the residual, then refit everything chosen
-            for j = 1 to K
-                float bestP = na
-                float bestPow = -1.0
-                for g = 0 to grid.size() - 1
-                    float pw = f_power(r, grid.get(g))
-                    if pw > bestPow
-                        bestPow := pw
-                        bestP := grid.get(g)
-                array<float> trial = periods.copy()
-                trial.push(bestP)
-                [X1, c1] = f_fit(y, xs, trial, w)
-                if not na(c1)
-                    periods := trial
-                    X := X1
-                    c := c1
-                    r := f_resid(X, c, y, w)
+            // The greedy passes are unrolled on purpose: inside one `for j = 1 to K` the
+            // outer loop is what TradingView times, and three scans together exceed 500 ms.
+            if K >= 1
+                [X1, c1, r1] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X1
+                c := c1
+                r := r1
+            if K >= 2
+                [X2, c2, r2] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X2
+                c := c2
+                r := r2
+            if K >= 3
+                [X3, c3, r3] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X3
+                c := c3
+                r := r3
+            if K >= 4
+                [X4, c4, r4] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X4
+                c := c4
+                r := r4
+            if K >= 5
+                [X5, c5, r5] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X5
+                c := c5
+                r := r5
 
-            // ---- draw. Future timestamps step by calendar time, stretched by 7/5 on daily
-            // and higher so the line lands roughly on sessions rather than through weekends.
-            int barMs = timeframe.in_seconds() * 1000
-            float stretch = timeframe.isdwm ? 7.0 / 5.0 : 1.0
+            float now = f_at(0, periods, c, w)
+            if not na(now)
+                // Drawn by bar index, not by timestamp: stepping forward in calendar time
+                // would have to guess at weekends, holidays and the session, and gets W and
+                // M charts wrong outright. Hfwd caps at 250, inside the 500-bar future limit.
+                if showPast
+                    array<chart.point> past = array.new<chart.point>()
+                    int stepBack = math.max(1, int(w / 300))
+                    for i = w - 1 to 0 by stepBack
+                        past.push(chart.point.from_index(bar_index - i, f_at(-i, periods, c, w)))
+                    // the loop lands on (w-1) mod stepBack, so close the gap to the last bar
+                    if past.size() > 0 and (w - 1) % stepBack != 0
+                        past.push(chart.point.from_index(bar_index, now))
+                    if past.size() > 1
+                        plPast := polyline.new(past, xloc = xloc.bar_index, line_color = cFit, line_width = wFit)
 
-            if showPast
-                array<chart.point> past = array.new<chart.point>()
-                int stepBack = math.max(1, int(w / 300))
-                for i = w - 1 to 0 by stepBack
-                    past.push(chart.point.from_time(time[i], f_at(-i, periods, c, w)))
-                if past.size() > 1
-                    drawn.push(polyline.new(past, xloc = xloc.bar_time, line_color = cFit, line_width = wFit))
+                if Hfwd > 0
+                    array<chart.point> fwd = array.new<chart.point>()
+                    fwd.push(chart.point.from_index(bar_index, now))
+                    for h = 1 to Hfwd
+                        fwd.push(chart.point.from_index(bar_index + h, f_at(h, periods, c, w)))
+                    plFwd := polyline.new(fwd, xloc = xloc.bar_index, line_color = cProj, line_width = wFit)
 
-            if Hfwd > 0
-                array<chart.point> fwd = array.new<chart.point>()
-                fwd.push(chart.point.from_time(time, f_at(0, periods, c, w)))
-                for h = 1 to Hfwd
-                    fwd.push(chart.point.from_time(time + int(h * barMs * stretch), f_at(h, periods, c, w)))
-                drawn.push(polyline.new(fwd, xloc = xloc.bar_time, line_color = cProj, line_width = wFit))
-
-            if showTab
-                float now = f_at(0, periods, c, w)
-                float end = f_at(Hfwd, periods, c, w)
-                tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
-                tab.cell(1, 0, str.tostring(Hfwd) + " bars ahead", bgcolor = cProj, text_color = color.white)
-                tab.cell(0, 1, "line now")
-                tab.cell(1, 1, str.tostring(now, format.mintick))
-                tab.cell(0, 2, "vs price")
-                tab.cell(1, 2, str.tostring(100.0 * (now / close - 1.0), "#.##") + "%")
-                tab.cell(0, 3, "projected")
-                tab.cell(1, 3, str.tostring(end, format.mintick))
-                tab.cell(1, 4, str.tostring(100.0 * (end / close - 1.0), "#.##") + "% vs price now")
-                tab.cell(0, 4, "implies")
-                tab.cell(0, 5, "cycles (bars)")
-                string ps = ""
-                if periods.size() > 0
-                    for i = 0 to periods.size() - 1
-                        ps := ps + (i > 0 ? ", " : "") + str.tostring(periods.get(i), "#")
-                tab.cell(1, 5, ps)
-                tab.cell(0, 6, "fitted window")
-                tab.cell(1, 6, str.tostring(w) + " bars")
+                if showTab
+                    float end = f_at(Hfwd, periods, c, w)
+                    // Residual of the fit, as a share of price: how far the curve sits from
+                    // the bars it was fitted to. On this model that is the honest column.
+                    float sse = 0.0
+                    int rlast = w - 1
+                    for i = 0 to rlast
+                        sse += math.pow(r.get(i), 2)
+                    float rmse = math.sqrt(sse / w)
+                    string ps = ""
+                    int plast = periods.size() - 1
+                    if plast >= 0
+                        for i = 0 to plast
+                            ps := ps + (i > 0 ? ", " : "") + str.tostring(periods.get(i), "#")
+                    tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
+                    tab.cell(1, 0, str.tostring(Hfwd) + " bars ahead", bgcolor = cProj, text_color = color.white)
+                    tab.cell(0, 1, "line now")
+                    tab.cell(1, 1, str.tostring(now, format.mintick))
+                    tab.cell(0, 2, "line vs price")
+                    tab.cell(1, 2, str.tostring(100.0 * (now / close - 1.0), "#.##") + "%")
+                    tab.cell(0, 3, "projected")
+                    tab.cell(1, 3, str.tostring(end, format.mintick))
+                    tab.cell(0, 4, "line's own move")
+                    tab.cell(1, 4, str.tostring(100.0 * (end / now - 1.0), "#.##") + "%")
+                    tab.cell(0, 5, "fit residual")
+                    tab.cell(1, 5, str.tostring(100.0 * rmse, "#.##") + "% of price")
+                    tab.cell(0, 6, "cycles (bars)")
+                    tab.cell(1, 6, ps)
+                    tab.cell(0, 7, "fitted window")
+                    tab.cell(1, 7, str.tostring(w) + " bars")

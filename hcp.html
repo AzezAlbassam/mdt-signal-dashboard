@@ -1,0 +1,486 @@
+<title>Harmonic Cycle Projection</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  /* One reading column. The verdict comes before the code, because the code is the seductive part. */
+  /* Colours are the indicator's own: the fitted line's blue and the projection's purple. */
+  --bg:#F2F3F0; --surface:#FBFBF9; --raise:#E8EAE5; --ink:#1A1C1A; --body:#434740; --muted:#6B7066; --line:#D8DAD3;
+  --fit:#2962FF; --proj:#8E3AA0; --bad:#B3261E; --badbg:#FBECEA; --ok:#2E7D4F;
+  --sans:"IBM Plex Sans",system-ui,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#242624; --surface:#2E302C; --raise:#383A35; --ink:#EDEEE7; --body:#C9CCC2; --muted:#979B90; --line:#40423C;
+  --fit:#6E93FF; --proj:#C27BD2; --bad:#F2B8B5; --badbg:#3A2422; --ok:#6CC08F; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#242624; --surface:#2E302C; --raise:#383A35; --ink:#EDEEE7; --body:#C9CCC2; --muted:#979B90; --line:#40423C;
+  --fit:#6E93FF; --proj:#C27BD2; --bad:#F2B8B5; --badbg:#3A2422; --ok:#6CC08F; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font:15px/1.65 var(--sans)}
+.wrap{max-width:860px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:30px}
+h1{color:var(--ink);font-size:clamp(1.7rem,4.5vw,2.25rem);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.015em}
+h2{color:var(--ink);font-size:1.1rem;margin:0 0 10px;text-wrap:balance}
+p{margin:0;max-width:66ch}
+.sub{color:var(--muted);margin-top:8px}
+section{display:grid;gap:12px}
+.verdict{border:1px solid var(--bad);background:var(--badbg);border-radius:6px;padding:20px;display:grid;gap:12px}
+.verdict h2{color:var(--bad);margin:0;font-size:1.25rem}
+.verdict strong{color:var(--ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.76rem;letter-spacing:.04em;text-transform:uppercase;background:var(--raise)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:600}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+.code{border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px 9px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.bar span{font:500 .8rem var(--mono);color:var(--muted)}
+button{font:600 .9rem var(--sans);color:#fff;background:var(--fit);border:0;border-radius:5px;padding:9px 18px;cursor:pointer}
+button.done{background:var(--ok)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+pre{margin:0;overflow:auto;max-height:460px;padding:14px;font:12.5px/1.55 var(--mono);color:var(--ink)}
+ol,ul{margin:0;padding-left:1.25em;display:grid;gap:7px;max-width:66ch}
+li::marker{color:var(--muted)}
+code{font:.88em var(--mono);background:var(--raise);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.note{font-size:.88rem;color:var(--muted);max-width:66ch}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Harmonic Cycle Projection</h1>
+    <p class="sub">A model line fitted to the last 1000 bars and carried forward past the last candle.
+    Works on any daily chart: indices, ETFs, US and non-US stocks, crypto. Pine v6, 327 lines.</p>
+  </header>
+
+  <div class="verdict">
+    <h2>It was tested on 153 of your symbols, and it failed</h2>
+    <p>10,309 projections, 101 dates from 2010 to 2026, every fit using only the bars available at the
+    time. Both pre-registered hypotheses failed. <strong>Do not trade off this line.</strong></p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Question</th><th>HCP</th><th>Doing nothing</th></tr></thead>
+        <tbody>
+          <tr><td>Distance from price over 40 bars</td><td class="n">38.0%</td><td class="n">9.1%</td></tr>
+          <tr><td>Beat a flat line at the last close</td><td class="n">in 11% of cases</td><td class="n">&mdash;</td></tr>
+          <tr><td>Does it rank winners above losers</td><td class="n">&minus;0.015 (p 0.91)</td><td class="n">&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>A 10-day moving average also beat it. Both halves of the period agree, so it is not one bad regime.</p>
+  </div>
+
+  <section>
+    <h2>Why it is published anyway</h2>
+    <p>You asked for the indicator, so here it is, with the part that is usually missing attached.
+    The chart that prompted this showed a line running 39 bars past the last candle, captioned
+    &ldquo;continues to track extremely well&rdquo;. Its author has never published the method and it
+    appears to sit behind a paid channel, so this is an open look-alike of the <em>shape</em> of such a
+    line, not a copy of anyone&rsquo;s model.</p>
+    <p>Measured off that chart, the posted line sat an average 1.77% from QQQ over five and a half
+    months &mdash; the same as a 20-day moving average, and worse than a 10-day one.</p>
+  </section>
+
+  <section>
+    <h2>The one thing worth knowing before you look at it</h2>
+    <p>Across your 153 symbols the median move this model implies over the next eight weeks is
+    <strong>44%</strong>. For your six indices it is <strong>5.8%</strong>.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Symbol</th><th>Implied 8-week move</th></tr></thead>
+        <tbody>
+          <tr><td>IWM</td><td class="n">&minus;7.0%</td></tr>
+          <tr><td>DOW</td><td class="n">+2.4%</td></tr>
+          <tr><td>SPY</td><td class="n">+2.8%</td></tr>
+          <tr><td>QQQ</td><td class="n">+4.6%</td></tr>
+          <tr><td>US500</td><td class="n">+7.3%</td></tr>
+          <tr><td>NAS100</td><td class="n">+10.7%</td></tr>
+          <tr><td>EOSE</td><td class="n">+645%</td></tr>
+          <tr><td>BCHG</td><td class="n">+977%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>That is the whole result in one picture. A three-cycle extrapolation only looks credible on a
+    low-volatility index &mdash; which is exactly where charts like this get posted. On anything
+    volatile the fit leaves a large residual and the continuation runs away.</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>The script</h2>
+    <div class="code">
+      <div class="bar"><span>hcp.pine &middot; Pine v6 &middot; 327 lines</span><button type="button" id="copy">Copy code</button></div>
+      <pre id="src">// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// HCP — Harmonic Cycle Projection. A model line fitted to the recent past and carried
+// forward past the last bar. Works on anything with enough daily history: indices, ETFs,
+// US and non-US stocks, crypto.
+//
+//   ln(price) = a + b·t + Σ over K cycles of ( A·cos(2πt/P) + B·sin(2πt/P) )
+//
+// fitted by least squares over the last W bars, with the K periods found by a Goertzel
+// search over 200 trial periods from 20 bars to W/3, then every coefficient refit together.
+// The line is then evaluated past the last bar to give the projection.
+//
+// WHY THIS EXISTS, AND WHAT IT IS NOT
+// A chart was circulating in October 2026 showing a "long term model" line on QQQ that ran
+// about 39 bars past the last candle. Its author has never published the method, there is no
+// script for it, and it appears to sit behind a paid channel. HCP is an OPEN look-alike of
+// the SHAPE of such a line, written from scratch. It is NOT that model, not a reconstruction
+// of it, and nothing here describes anyone else's product.
+//
+// RESULT — READ THIS BEFORE TRADING ANYTHING OFF IT
+// (PROTOCOL-study11.md §7 fixed what this section must say, before the test was run.)
+//
+// HCP was tested on 153 symbols with enough history, out of a 207-symbol universe, over 101
+// evaluation dates from 2010 to 2026 — 10,309 projections, each fitted using only the bars
+// available at the time. Both pre-registered hypotheses FAILED:
+//
+//   - It does NOT track better than assuming no change at all. Over the 40 bars after the
+//     fit, HCP's average distance from the close was 38.0%, against 9.1% for a flat line at
+//     the last close (and 9.9% for a 10-day average). It was worse than that flat line in
+//     89% of all projections. Typical miss, not just the bad ones: 15.9 points worse per bar.
+//   - It has NO directional skill. Ranking symbols by their projected 40-bar return against
+//     what they actually returned gives a rank correlation of -0.015 (p 0.91) — nothing.
+//
+// Both halves of the period agree, so this is not one bad regime. See reports/study11.txt.
+//
+// So this script draws a curve that was fitted to the past and then continued. It is NOT a
+// forecast, and the forward segment is not evidence about anything. It is published because
+// a chart tool was asked for, and with the result attached because the result is the part
+// that is usually missing.
+//
+// The one thing it does do: a symbol's own projection fits that symbol better than another
+// symbol's projection would (p 0.0001). The model picks up something real about each series.
+// That is still a long way from being worth acting on, and far short of doing nothing.
+//
+// Where it looks best is also where it is most seductive: on a big index the fitted line sits
+// within a percent or two of price, so the picture is persuasive. On volatile names the fit
+// leaves a large residual and the extrapolation runs away — on BTCUSDT one fit sat 25% above
+// the close and projected +53% against a realised +2%.
+//
+// HOW TO READ IT
+// - The fitted line is NOT pinned to the last close. The gap between the line and price is
+//   part of the model's output, not an error to correct.
+// - The fit is redone from scratch on the last bar, so the historical part of the line is
+//   drawn with hindsight and is repainted on every update. Only the forward part is a
+//   statement about something not yet known. Judging the model by how well the drawn
+//   history hugs the candles is judging a curve against the points it was fitted to.
+// - A cycle found in one window is routinely absent from the next. Nothing here tests
+//   whether a period is real; the Goertzel search always returns its best K, even on noise.
+//
+// SPEED: the whole fit runs once, on the last bar, on TradingView's servers. The cost is
+// Window x Trial periods x Cycles, and TradingView aborts any single loop that runs longer
+// than 500 ms, so the three greedy passes are written out separately rather than as a loop
+// to give each its own budget. If you still get "Loop takes too long to execute", lower
+// Trial periods first, then Cycles, then Window — and note that the result below was measured
+// at 1000 / 200 / 3, so anything else is no longer the configuration that was tested.
+
+//@version=6
+indicator("Harmonic Cycle Projection", shorttitle = "HCP", overlay = true, max_polylines_count = 8, max_bars_back = 1300)
+
+int   W        = input.int(1000, "Window (bars to fit)", minval = 200, maxval = 1200, step = 50, tooltip = "1000 is the tested value. The symbol must HAVE this many bars or nothing is drawn, which is what the study required.")
+int   K        = input.int(3, "Cycles", minval = 1, maxval = 5, tooltip = "3 is the tested value.")
+int   Hfwd     = input.int(40, "Project forward (bars)", minval = 0, maxval = 250)
+bool  showPast = input.bool(true, "Draw the fitted line over the past", tooltip = "Hindsight: this part is refitted every update.")
+int   gridN    = input.int(200, "Trial periods searched", minval = 40, maxval = 300, tooltip = "200 is the tested value. Lower it first if the script times out.")
+bool  showTab  = input.bool(true, "Show the table")
+color cFit     = input.color(#2962FF, "Fitted line", group = "Colours")
+color cProj    = input.color(#AB47BC, "Projection", group = "Colours")
+int   wFit     = input.int(2, "Line width", minval = 1, maxval = 4, group = "Colours")
+
+float PMIN    = 20.0
+float PMAXDIV = 3.0
+
+// ---------------------------------------------------------------- least squares helpers
+// Two Pine rules shape the code below.
+// 1. `for i = 0 to n - 1` infers its direction, so with an empty array it counts 0 then -1
+//    and indexes out of bounds. Every loop over a .size() is guarded or provably non-empty.
+// 2. v6 re-evaluates a loop's end expression before EVERY iteration, so `arr.size() - 1` as
+//    a bound costs one method call per pass. In the Goertzel scan that is hundreds of
+//    thousands of wasted calls, so every bound here is hoisted into a variable first.
+
+// Design row at offset x (bars relative to the last bar: 0 on it, negative in the past).
+// x / float(w) keeps every column O(1). The float() is load-bearing: f_at is called with
+// integer offsets, and under integer division the trend term would collapse to zero and the
+// drawn line would lose its slope while the fit kept it.
+f_fill(X, row, x, periods, w) =&gt;
+    X.set(row, 0, 1.0)
+    X.set(row, 1, x / float(w))
+    int np = periods.size()
+    if np &gt; 0
+        for j = 0 to np - 1
+            float p = periods.get(j)
+            X.set(row, 2 + 2 * j, math.cos(2.0 * math.pi * x / p))
+            X.set(row, 3 + 2 * j, math.sin(2.0 * math.pi * x / p))
+    X
+
+// A solve counts only when every coefficient came back a real number. matrix.inv on an
+// ill-conditioned matrix returns na elements rather than an na matrix, so testing the
+// reference alone would let garbage through and draw it. engine/hcp.js refuses the fit in
+// the same situation; this is the Pine equivalent of that refusal, not an extra rule.
+f_ok(c) =&gt;
+    bool good = not na(c)
+    if good
+        int last = c.rows() - 1
+        for i = 0 to last
+            if na(c.get(i, 0))
+                good := false
+    good
+
+f_fit(y, xs, periods, w) =&gt;
+    int m = 2 + 2 * periods.size()
+    matrix&lt;float&gt; X = matrix.new&lt;float&gt;(w, m, 0.0)
+    matrix&lt;float&gt; Y = matrix.new&lt;float&gt;(w, 1, 0.0)
+    int last = w - 1
+    for t = 0 to last
+        f_fill(X, t, xs.get(t), periods, w)
+        Y.set(t, 0, y.get(t))
+    matrix&lt;float&gt; Xt = X.transpose()
+    matrix&lt;float&gt; A  = Xt.mult(X)
+    matrix&lt;float&gt; b  = Xt.mult(Y)
+    matrix&lt;float&gt; c  = na
+    if matrix.det(A) != 0.0
+        matrix&lt;float&gt; Ai = A.inv()
+        c := Ai.mult(b)
+    [X, c]
+
+f_resid(X, c, y, w) =&gt;
+    matrix&lt;float&gt; yhat = X.mult(c)
+    array&lt;float&gt; r = array.new&lt;float&gt;(w, 0.0)
+    int last = w - 1
+    for t = 0 to last
+        r.set(t, y.get(t) - yhat.get(t, 0))
+    r
+
+// Goertzel power of r at period p. A frequency finder only: the amplitudes and phases that
+// get drawn come from the least-squares solve, never from here.
+f_power(r, p, last) =&gt;
+    float w0 = 2.0 * math.pi / p
+    float cf = 2.0 * math.cos(w0)
+    float s1 = 0.0
+    float s2 = 0.0
+    for i = 0 to last
+        float s = r.get(i) + cf * s1 - s2
+        s2 := s1
+        s1 := s
+    float re = s1 - math.cos(w0) * s2
+    float im = math.sin(w0) * s2
+    re * re + im * im
+
+// One greedy pass: strongest remaining trial period, then refit every coefficient together.
+// `periods` grows only when the refit succeeds, which mirrors the engine keeping its last
+// good fit. Called from separate if-blocks rather than a loop so each pass gets its own
+// 500 ms budget.
+f_step(y, xs, periods, w, grid, gn, X0, c0, r0) =&gt;
+    matrix&lt;float&gt; X = X0
+    matrix&lt;float&gt; c = c0
+    array&lt;float&gt; r  = r0
+    float bestP = na
+    float bestPow = -1.0
+    int rlast = w - 1
+    for g = 0 to gn
+        float pw = f_power(r0, grid.get(g), rlast)
+        if pw &gt; bestPow
+            bestPow := pw
+            bestP := grid.get(g)
+    array&lt;float&gt; trial = periods.copy()
+    trial.push(bestP)
+    [X1, c1] = f_fit(y, xs, trial, w)
+    if f_ok(c1)
+        periods.push(bestP)
+        X := X1
+        c := c1
+        r := f_resid(X1, c1, y, w)
+    [X, c, r]
+
+// The fitted model's price at offset x. Global: Pine will not take a function declared
+// inside an if-block.
+f_at(x, periods, c, w) =&gt;
+    int m = 2 + 2 * periods.size()
+    matrix&lt;float&gt; row = matrix.new&lt;float&gt;(1, m, 0.0)
+    f_fill(row, 0, x, periods, w)
+    float s = 0.0
+    int last = m - 1
+    for i = 0 to last
+        s += row.get(0, i) * c.get(i, 0)
+    math.exp(s)
+
+// ---------------------------------------------------------------- the fit, once, on the last bar
+var polyline plPast = na
+var polyline plFwd  = na
+var table tab = table.new(position.top_right, 2, 8, border_width = 1)
+
+if barstate.islast
+    polyline.delete(plPast)
+    polyline.delete(plFwd)
+    tab.clear(0, 0, 1, 7)
+
+    int w = W
+    // PROTOCOL-study11.md 1.1: a symbol with fewer than W bars is not evaluated. Fitting a
+    // shorter window would be a different model from the one the result below describes, so
+    // the script says so instead of quietly drawing an untested line.
+    bool ok = bar_index + 1 &gt;= w
+    if not ok and showTab
+        tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
+        tab.cell(1, 0, "no fit", bgcolor = cProj, text_color = color.white)
+        tab.cell(0, 1, "needs")
+        tab.cell(1, 1, str.tostring(w) + " bars")
+        tab.cell(0, 2, "has")
+        tab.cell(1, 2, str.tostring(bar_index + 1) + " bars")
+
+    array&lt;float&gt; y  = array.new&lt;float&gt;(0)
+    array&lt;float&gt; xs = array.new&lt;float&gt;(0)
+    if ok
+        // oldest first; x = 0 on the last bar
+        for i = w - 1 to 0
+            float c0 = close[i]
+            if na(c0) or c0 &lt;= 0.0
+                ok := false
+            else
+                y.push(math.log(c0))
+                xs.push(-i)
+
+    if ok and y.size() == w
+        // trial periods, logarithmic from PMIN to w / PMAXDIV
+        float hi = w / PMAXDIV
+        float stp = math.log(hi / PMIN) / (gridN - 1)
+        array&lt;float&gt; grid = array.new&lt;float&gt;(0)
+        int glast = gridN - 1
+        for i = 0 to glast
+            grid.push(PMIN * math.exp(i * stp))
+
+        array&lt;float&gt; periods = array.new&lt;float&gt;(0)
+        [Xa, ca] = f_fit(y, xs, periods, w)
+        matrix&lt;float&gt; X = Xa
+        matrix&lt;float&gt; c = ca
+        if f_ok(c)
+            array&lt;float&gt; r = f_resid(X, c, y, w)
+            // The greedy passes are unrolled on purpose: inside one `for j = 1 to K` the
+            // outer loop is what TradingView times, and three scans together exceed 500 ms.
+            if K &gt;= 1
+                [X1, c1, r1] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X1
+                c := c1
+                r := r1
+            if K &gt;= 2
+                [X2, c2, r2] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X2
+                c := c2
+                r := r2
+            if K &gt;= 3
+                [X3, c3, r3] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X3
+                c := c3
+                r := r3
+            if K &gt;= 4
+                [X4, c4, r4] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X4
+                c := c4
+                r := r4
+            if K &gt;= 5
+                [X5, c5, r5] = f_step(y, xs, periods, w, grid, glast, X, c, r)
+                X := X5
+                c := c5
+                r := r5
+
+            float now = f_at(0, periods, c, w)
+            if not na(now)
+                // Drawn by bar index, not by timestamp: stepping forward in calendar time
+                // would have to guess at weekends, holidays and the session, and gets W and
+                // M charts wrong outright. Hfwd caps at 250, inside the 500-bar future limit.
+                if showPast
+                    array&lt;chart.point&gt; past = array.new&lt;chart.point&gt;()
+                    int stepBack = math.max(1, int(w / 300))
+                    for i = w - 1 to 0 by stepBack
+                        past.push(chart.point.from_index(bar_index - i, f_at(-i, periods, c, w)))
+                    // the loop lands on (w-1) mod stepBack, so close the gap to the last bar
+                    if past.size() &gt; 0 and (w - 1) % stepBack != 0
+                        past.push(chart.point.from_index(bar_index, now))
+                    if past.size() &gt; 1
+                        plPast := polyline.new(past, xloc = xloc.bar_index, line_color = cFit, line_width = wFit)
+
+                if Hfwd &gt; 0
+                    array&lt;chart.point&gt; fwd = array.new&lt;chart.point&gt;()
+                    fwd.push(chart.point.from_index(bar_index, now))
+                    for h = 1 to Hfwd
+                        fwd.push(chart.point.from_index(bar_index + h, f_at(h, periods, c, w)))
+                    plFwd := polyline.new(fwd, xloc = xloc.bar_index, line_color = cProj, line_width = wFit)
+
+                if showTab
+                    float end = f_at(Hfwd, periods, c, w)
+                    // Residual of the fit, as a share of price: how far the curve sits from
+                    // the bars it was fitted to. On this model that is the honest column.
+                    float sse = 0.0
+                    int rlast = w - 1
+                    for i = 0 to rlast
+                        sse += math.pow(r.get(i), 2)
+                    float rmse = math.sqrt(sse / w)
+                    string ps = ""
+                    int plast = periods.size() - 1
+                    if plast &gt;= 0
+                        for i = 0 to plast
+                            ps := ps + (i &gt; 0 ? ", " : "") + str.tostring(periods.get(i), "#")
+                    tab.cell(0, 0, "HCP", bgcolor = cProj, text_color = color.white)
+                    tab.cell(1, 0, str.tostring(Hfwd) + " bars ahead", bgcolor = cProj, text_color = color.white)
+                    tab.cell(0, 1, "line now")
+                    tab.cell(1, 1, str.tostring(now, format.mintick))
+                    tab.cell(0, 2, "line vs price")
+                    tab.cell(1, 2, str.tostring(100.0 * (now / close - 1.0), "#.##") + "%")
+                    tab.cell(0, 3, "projected")
+                    tab.cell(1, 3, str.tostring(end, format.mintick))
+                    tab.cell(0, 4, "line's own move")
+                    tab.cell(1, 4, str.tostring(100.0 * (end / now - 1.0), "#.##") + "%")
+                    tab.cell(0, 5, "fit residual")
+                    tab.cell(1, 5, str.tostring(100.0 * rmse, "#.##") + "% of price")
+                    tab.cell(0, 6, "cycles (bars)")
+                    tab.cell(1, 6, ps)
+                    tab.cell(0, 7, "fitted window")
+                    tab.cell(1, 7, str.tostring(w) + " bars")</pre>
+    </div>
+    <ol>
+      <li>TradingView &rarr; Pine Editor (bottom of the chart).</li>
+      <li>Paste over whatever is there, press <strong>Save</strong>, then <strong>Add to chart</strong>.</li>
+      <li>Open a daily chart. The fit runs once, on the last bar, and can take a few seconds.</li>
+    </ol>
+    <p class="note">Not yet compiled on TradingView from this end. If it throws an error, send me the
+    message and I will fix it.</p>
+  </section>
+
+  <section>
+    <h2>Reading it honestly</h2>
+    <ul>
+      <li>The fitted line is <strong>not</strong> pinned to the last close. The gap between line and
+      price is part of the model&rsquo;s output, not an error.</li>
+      <li>The historical part is refitted every update, so it is drawn with hindsight and repaints.
+      Only the forward segment is a statement about something not yet known. Judging the model by how
+      well the drawn history hugs the candles is judging a curve against the points it was fitted to.</li>
+      <li>A cycle found in one window is routinely gone from the next. Nothing tests whether a period
+      is real; the search always returns its best three, even on noise.</li>
+      <li>Lowering <code>Window</code> or <code>Trial periods</code> speeds the script up and makes it
+      a different model from the one that was tested.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The honest test is still running</h2>
+    <p>Today&rsquo;s projections for all 153 symbols are frozen in the repository, written down before
+    the bars existed. Around <strong>11 December</strong> they get scored against what actually
+    happened. That is the one test a posted screenshot can never offer, and it is the number worth
+    waiting for.</p>
+  </section>
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const b = e.currentTarget, pre = document.getElementById('src')
+  try { await navigator.clipboard.writeText(pre.textContent); b.textContent = 'Copied'; b.classList.add('done') }
+  catch { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected, press Ctrl+C' }
+  setTimeout(() => { b.textContent = 'Copy code'; b.classList.remove('done') }, 2500)
+})
+</script>
