@@ -119,3 +119,30 @@ test('a fiscal year with no revenue, EPS or profit is left out', async () => {
   const resp = { labels: ['2023', '2024', '2025'], series: { revenue: [{ value: 10 }, { value: 12 }, { value: null }], eps: [{ value: 1 }, { value: 1.2 }, { value: null }], net_income: [{ value: 5 }, { value: 6 }, { value: null }] } }
   assert.deepEqual(parseFundamentals(resp).map((x) => x.year), [2023, 2024])
 })
+
+test('quarters → last twelve months: sums four consecutive quarters, skips gaps and empty quarters', async () => {
+  const { ttmFromQuarters } = await import('../engine/fairvalue.js')
+  const labels = ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026']
+  const val = (f) => labels.map((_, i) => ({ value: f(i) }))
+  const resp = { labels, series: { revenue: val((i) => (i === 9 ? null : 10 + i)), eps: val((i) => (i === 9 ? null : 1)), net_income: val((i) => (i === 9 ? null : 2)), fcf: val(() => 1), total_debt: val((i) => i) } }
+  const t = ttmFromQuarters(resp)
+  // Q4 2024 and Q1 2025 close full years; Q2 2025 is missing, so the next full year is Q2 2026.
+  assert.deepEqual(t.map((x) => x.label), ['Q4 2024', 'Q1 2025', 'Q2 2026'])
+  assert.equal(t[0].rev, 10 + 11 + 12 + 13)
+  assert.equal(t[0].eps, 4)
+  assert.equal(t[2].debt, 8)
+  assert.equal(t[2].prev, null) // Q2 2025 is not there
+})
+
+test('live context: today reads the last twelve months, months before the quarterly data read fiscal years', async () => {
+  const { liveContext } = await import('../engine/fairvalue.js')
+  const f = funds() // fiscal years 2010–2021, EPS 1.0 … 2.1
+  const ttm = [{ label: 'Q2 2021', n: 0, rev: 500, ni: 50, eps: 5, fcf: 40, ebitda: 90, gp: 200, debt: 7, prev: null, revYoY: 0.3 },
+    { label: 'Q3 2021', n: 1, rev: 600, ni: 60, eps: 6, fcf: 48, ebitda: 100, gp: 240, debt: 8, prev: null, revYoY: 0.4 }]
+  const live = liveContext(f, ttm, '2021-10')
+  assert.equal(live.state('2021-10').eps, 6) // newest quarter: out now
+  assert.equal(live.state('2021-07').eps, 5) // the one before: out three months earlier
+  assert.equal(live.state('2021-06').eps, f.find((x) => x.year === 2021).eps) // before that: fiscal year, shifted like today
+  assert.equal(live.yoy, 0.4)
+  assert.equal(live.state('2021-10').fcfPS, 48 / 10)
+})

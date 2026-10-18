@@ -39,7 +39,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -110,23 +110,25 @@
     if (firstError && !Object.keys(state.quotes).length) throw firstError
   }
 
-  // All saved histories in pages of 150, so a long list is not 700 separate reads.
-  async function loadCacheFromDb() {
+  // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters) in
+  // pages of 150, so a long list is not 700 separate reads.
+  async function loadCollection(name, into) {
     if (!db) return
     let last = ''
     for (let guard = 0; guard < 40; guard += 1) {
-      let q = db.collection('cache').orderBy('sym').limit(150)
+      let q = db.collection(name).orderBy('sym').limit(150)
       if (last) q = q.where('sym', '>', last)
       const snap = await q.get()
       for (const d of snap.docs) {
         const v = d.data()
         const sym = v.sym ?? d.id
-        state.cache[sym] = v
+        into[sym] = v
         if (v.sym) last = v.sym
       }
       if (snap.size < 150) break
     }
   }
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters)])
 
   // Fresh = fetched in the last 14 days AND holding monthly prices (or the page already tried
   // to get them). Stored histories without prices are fetched again, once.
@@ -142,6 +144,15 @@
       : { sym, missing: true, fetchedAt: Date.now() }
     state.cache[sym] = doc
     if (db) await db.doc(`cache/${sym}`).set(doc).catch(() => {})
+  }
+
+  // The last 16 quarters, for the last-twelve-months view (see liveContext in the engine).
+  const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_DAYS * 864e5
+  async function loadQuarters(sym) {
+    const fq = await call(T.fin, { symbol: sym, period: 'fq', date_from: '2010-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e)))
+    const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
+    state.quarters[sym] = doc
+    if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
 
   function liveFairValues(fv, q, funds) {
@@ -184,13 +195,15 @@
     if (Number.isFinite(q.close)) closes.set(month, q.close)
     // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
-    const s = scoreAt(funds, closes, q.sector, month, true)
-    state.scores[sym] = { ...s, f0: last, known: funds }
-    const fv = fairValuesAt(funds, closes, q.sector, month, true)
+    // Today and the recent history from the last twelve months when quarterly results are saved.
+    const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares)
+    const s = scoreAt(funds, closes, q.sector, month, live)
+    state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
+    const fv = fairValuesAt(funds, closes, q.sector, month, live)
     state.fair[sym] = fv ? liveFairValues(fv, q, funds) : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
-    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, true)
-    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm })
+    state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
+    state.proj[sym] = projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
   }
 
   let busy = false
@@ -218,12 +231,14 @@
       render()
       return
     }
-    const todo = syms.filter((s) => !fresh(state.cache[s]))
+    const todo = [...syms.filter((s) => !fresh(state.cache[s])), ...syms.filter((s) => !freshQ(state.quarters[s])).map((s) => `q:${s}`)]
     let done = 0
     let authError = null
     await pool(todo, async (s) => {
       if (authError) return
-      try { await loadHistory(s) } catch (e) {
+      const isQ = s.startsWith('q:')
+      if (isQ) s = s.slice(2)
+      try { await (isQ ? loadQuarters(s) : loadHistory(s)) } catch (e) {
         if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'not_granted'].includes(e?.code)) authError = e
         else state.errors[s] = explainError(e)
       }
@@ -266,6 +281,7 @@
     try {
       await loadQuotes([sym])
       if (!fresh(state.cache[sym])) await loadHistory(sym)
+      if (!freshQ(state.quarters[sym])) await loadQuarters(sym).catch(() => {})
       compute(sym)
     } catch (e) { state.errors[sym] = explainError(e) }
     render()
@@ -630,7 +646,7 @@
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'لا يُحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
       ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
-    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.</p>
+    <p class="ctx-t">مقاييس للمعلومة، ما تدخل في الدرجة. وقّف الماوس على أي واحد يطلع لك ضعفه. ${s.period ? `الأرقام من آخر 12 شهر (حتى ربع <span class="n">${esc(s.period)}</span>)، ونمو 3 سنوات من السنوات المالية حتى <span class="n">${esc(s.fiscalYear ?? '—')}</span>.` : `السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.`}</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<div title="${esc(tip)}"><span>${k}</span><b>${v}</b></div>`).join('')}</div>`
   }
 
