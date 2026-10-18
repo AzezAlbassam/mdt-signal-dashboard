@@ -103,6 +103,13 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
       descriptive: how long a trade lasts per timeframe, in calendar days. The 60-bar horizon
       is ~3 months on 1D, ~1.2 years on 1W, 5 years on 1M. Answers "which timeframe for a
       three-month position" with the study's own numbers rather than a guess.
+- [x] Study 12: scripts/harmonic-pending.js + harmonic-watch.html — post-hoc monthly screen.
+      325 monthly series (327 US dailies from data/us/bars resampled, plus the study's own 40),
+      207 setups registered and not yet reached. Complete months only for the scan; the days of
+      the unclosed month are replayed daily on top, which caught 3 already reached and 4 void.
+      A first version dropped a COMPLETE month from the study's own monthly files (their partial
+      month was already removed by the collector); fixed to drop a trailing month only when it
+      shares a month with the last daily bar. Top 10 unchanged by the fix.
 - [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
 
 ## Counts
