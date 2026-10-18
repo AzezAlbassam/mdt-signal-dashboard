@@ -384,6 +384,13 @@ export function runPattern(p, bars, atr, {
 
   const legTop = targetLeg === 'CD' ? p.vC : p.vA
   const span = legTop - entryV // positive: the leg's origin is above the completion
+  // POST-HOC FIX #2 (see reports/harmonic-prefix/). The AD leg can invert: the 5-0 completes
+  // at 50% of a BC leg that overshot, so D often lands ABOVE A. The targets are then
+  // retracements of a negative leg, i.e. a "first target" BELOW where a long just bought —
+  // which the exit loop scores as an instant win at negative R. 314 of 552 5-0 trades were
+  // like this and 207 of them "won"; no other pattern produced a single one. A target on the
+  // wrong side of the entry is not a target, so the setup is not tradeable.
+  if (!(span > 0)) return { filled: false, reason: 'inverted-target' }
   const t1V = entryV + TARGETS[0] * span
   const t2V = entryV + TARGETS[1] * span
   const levels = { t1: t1V, t2: t2V, t3: p.vC, t4: p.vA }
