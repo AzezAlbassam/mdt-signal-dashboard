@@ -169,7 +169,9 @@ export const PATTERNS = [
       { ref: 3, b: [2, 3], min: pt(0.5)[0], max: pt(0.5)[1] }, // the 50% of BC
       { ref: 3, b: [1, 2], min: pt(1.0)[0], max: pt(1.0)[1] }, // reciprocal AB=CD
     ],
-    breach: [[2, 'gt', 0]], // B breaks beyond X
+    // B breaks BEYOND X. In the bullish 5-0 the sequence is X low, A high, B low, C high, so
+    // "beyond X" means below it — the opposite sense from the Shark, where X is a high.
+    breach: [[2, 'lt', 0]],
   },
   {
     name: 'ABCD',
@@ -261,7 +263,12 @@ export function patternsAt(pivots, specs = PATTERNS) {
     const n = spec.pivots
     if (pivots.length < n) continue
     const run = pivots.slice(-n)
-    const s = run[0].kind === 'low' ? 1 : -1
+    // Direction is fixed by the LAST confirmed pivot, not the first. The completion point is
+    // always a low in the bullish form, so the pivot before it must be a high. Keying off the
+    // first pivot gives the same answer only when the run has an even length — it silently
+    // inverts the three-pivot AB=CD and the five-pivot Three Drives, which is why those two
+    // found nothing at all until a detection count was checked.
+    const s = run[run.length - 1].kind === 'high' ? 1 : -1
     const v = run.map((p) => s * p.price)
     if (!structureOk(spec, v)) continue
     const prz = przOf(spec, v)
