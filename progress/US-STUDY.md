@@ -234,3 +234,15 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   collection. Fetching them exhausted TradingView's daily tool-call quota (shared with the page, resets
   00:00 UTC); the page now refreshes at most 40 stale symbols per visit and stops with a notice on a quota
   error. ~309 symbols still lack quarters (fill in from the page over later visits).
+- 2026-10-19 — PEG column (P/E ÷ analysts' EPS growth; 3-year past EPS growth marked "تاريخي" when no
+  forecast). SVR (Nanalyze's simple valuation ratio = market value ÷ (latest quarter revenue × 4)) added as a
+  column and a per-stock history chart (engine/svr.js, POST-HOC, descriptive, untested as a signal). Method
+  pinned by reproducing Nanalyze's "Rocket Lab's SVR" chart from TradingView data: quarter-end close × that
+  quarter's share count ÷ (that quarter × 4) fits within 0.9 on average (prior-quarter or report-day
+  conventions miss by 4.6–9.4); their red line = the last four quarters' mean (54.75 vs ~55 on the chart),
+  green ≈ their ceiling, 3 × catalog average (8.3 in Oct 2026); the US list's mean SVR is 9.0, so the page
+  draws 3 × the list mean. Data: TradingView screener columns total_revenue_fq_h / net_income_fq_h /
+  earnings_per_share_diluted_fq_h (32 quarters) and *_fy_h (20 years), fetched per stock when opened (page db
+  collection `h`); fiscal-year points (plain P/S) before the quarters. FMP quarterly statements are denied on
+  the user's plan. Share counts = net income ÷ EPS, dropped when off their neighbours (MCHP preferred
+  dividends, RKLB SPAC year). Page price fetch raised 72 → 240 monthly bars (all engine windows ≤ 60 months).

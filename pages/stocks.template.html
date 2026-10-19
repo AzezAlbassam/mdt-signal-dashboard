@@ -162,6 +162,12 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
 .sc .pe-line { fill: none; stroke: var(--chart-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .sc .pe-dot { fill: var(--chart-line); stroke: var(--panel); stroke-width: 2; }
 .sc .cross { stroke: var(--muted); stroke-width: 1; }
+.sc .grid { stroke: var(--line); opacity: .6; }
+.sc .ref.red { stroke: var(--bad); stroke-dasharray: 6 4; stroke-width: 1.5; }
+.sc .ref.green { stroke: var(--good); stroke-dasharray: 6 4; stroke-width: 1.5; }
+.sc .axis.red { fill: var(--bad); }
+.sc .axis.green { fill: var(--good); }
+.sc .pe-line.fy { stroke-dasharray: 4 3; opacity: .55; }
 .ctip { position: absolute; top: 0; background: var(--fg); color: var(--bg); font-size: 12px; padding: 3px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; }
 .ctip[hidden] { display: none; }
 
@@ -238,6 +244,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
       <option value="price:-1">ترتيب: السعر</option>
       <option value="mcap:-1">ترتيب: الأكبر قيمة سوقية</option>
       <option value="peg:1">ترتيب: الأقل PEG</option>
+      <option value="svr:1">ترتيب: الأقل SVR</option>
     </select>
     <span class="shown" id="shown"></span>
   </div>
@@ -255,6 +262,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
       <dt><span class="chip amber">المحللين متوقعين نزول</span></dt><dd>المحللين متوقعين إن إيرادات الشركة تنزل، أو أرباحها تنزل أكثر من 10%، السنة المالية الجاية.</dd>
     </dl>
     <p><b>PEG</b> = مكرر الربح ÷ نمو الأرباح المتوقع (من توقعات المحللين، وإذا ما فيه توقعات من نمو آخر 3 سنين ويطلع جنبه "تاريخي"). الشائع: تحت 1 يعني السهم رخيص مقارنة بنموه، فوق 2 غالي. هذي قاعدة متداولة عند المستثمرين، ما اختبرناها على التاريخ. إذا الشركة تخسر أو أرباحها متوقع تنزل ما يطلع له رقم.</p>
+    <p><b>SVR</b> (من موقع Nanalyze) = القيمة السوقية ÷ (مبيعات آخر ربع × 4). كل ما كان أقل كان السهم أرخص مقارنة بمبيعاته. تفتح أي سهم يطلع لك تاريخه رسمة مع خطين: الأحمر متوسط آخر 4 أرباع، والأخضر سقف Nanalyze (3 أضعاف متوسط قائمتك). ما اختبرناه على التاريخ.</p>
     <p><b>هل الأحمر يعني بيع والأخضر يعني شراء؟ لا.</b> جربناها على 819 سهم من 2012 لين 2025: الأسهم الحمراء ما نزلت أكثر من غيرها، والخضراء ما طلعت أكثر من غيرها، في المتوسط. فهي تنبيه يخليك تسأل السؤال الصح عن السهم، والقرار يكون من باقي الأرقام.</p>
   </details>
   <div class="tbl">
@@ -271,10 +279,11 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
         <th><button data-sort="pe">P/E</button></th>
         <th><button data-sort="fpe">Fwd P/E</button></th>
         <th><button data-sort="peg" title="مكرر الربح ÷ نمو الأرباح المتوقع">PEG</button></th>
+        <th><button data-sort="svr" title="SVR حق Nanalyze: القيمة السوقية ÷ (مبيعات آخر ربع × 4)">SVR</button></th>
         <th><button data-sort="z" title="خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر">Altman Z</button></th>
         <th></th>
       </tr></thead>
-      <tbody id="rows"><tr><td colspan="13" class="dim">جاري التحميل…</td></tr></tbody>
+      <tbody id="rows"><tr><td colspan="14" class="dim">جاري التحميل…</td></tr></tbody>
     </table>
   </div>
 

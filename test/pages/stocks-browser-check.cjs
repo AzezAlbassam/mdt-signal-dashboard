@@ -17,8 +17,10 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   const dir = sym.startsWith('TADAWUL') ? 'fv-sa' : 'fv'
   const fin = load(dir, 'fin/' + f)
   const px = load(dir, 'px/' + f)
-  fixtures[sym] = { fin: { ...fin, success: true }, px: { bars: { t: px.bars.t.slice(-72), c: px.bars.c.slice(-72) }, success: true } }
+  fixtures[sym] = { fin: { ...fin, success: true }, px: { bars: { t: px.bars.t.slice(-240), c: px.bars.c.slice(-240) }, success: true } }
 }
+// TradingView's AAPL revenue, net income and EPS histories (get-symbol-data-batch, 2026-10-19).
+fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 'utf8'))
 
 ;(async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' }).catch(() => chromium.launch())
@@ -54,10 +56,11 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
     }
     const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: 26.5,
-      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10 })
+      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600 })
     const mcp = {
       callTool: async (server, tool, input) => {
         window.__calls.push(`${tool} ${input.symbol ?? (input.symbols ?? []).length}`)
+        if (tool.endsWith('batch') && input.columns.includes('total_revenue_fq_h')) return { payload: { data: input.symbols[0] === 'NASDAQ:AAPL' ? { 'NASDAQ:AAPL': fx.hist } : {}, missing: [], success: true } }
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
@@ -90,6 +93,19 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   await page.waitForTimeout(200)
   console.log('FORECAST JPM:', (await page.$eval('#rows details.proj', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-forecast.png'), fullPage: true })
+  await page.fill('#filter', 'aapl')
+  await page.click('#rows tr.row')
+  await page.waitForTimeout(500)
+  console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
+  const svrBox = await page.$('#rows .part.svr svg.sc')
+  await svrBox.scrollIntoViewIfNeeded()
+  const sb = await svrBox.boundingBox()
+  await page.mouse.move(sb.x + sb.width * 0.5, sb.y + sb.height / 2)
+  console.log('SVR TIP mid:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
+  await page.mouse.move(sb.x + sb.width - 70, sb.y + sb.height / 2)
+  console.log('SVR TIP end:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
+  console.log('SVR CELL:', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText), 'h saved:', await page.evaluate(() => window.__calls.filter((c) => c.startsWith('mcp-tv-get-symbol-data-batch 1')).length))
+  await (await page.$('#rows .part.svr')).screenshot({ path: path.join(os.tmpdir(), 'stocks-svr.png') })
   console.log('LATEST IDEAS:', (await page.$eval('#latestIdeas', (t) => t.innerText)).replace(/\s+/g, ' '))
   await page.fill('#filter', '')
   await page.click('#tab-sa')

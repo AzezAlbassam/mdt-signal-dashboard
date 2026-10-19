@@ -9,7 +9,11 @@
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
-    'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq', 'industry']
+    'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq', 'industry',
+    'total_revenue_fq', 'fiscal_period_end_fq']
+  // Revenue, net income and EPS histories for the SVR chart (newest first; 32 quarters, 20 years).
+  const H_COLS = ['total_revenue_fq_h', 'net_income_fq_h', 'earnings_per_share_diluted_fq_h', 'total_revenue_fy_h', 'net_income_fy_h',
+    'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq']
   const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'PEG', dcf: 'DCF (التدفق النقدي)', graham: 'رقم Graham', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'الكاش الصافي للسهم', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
@@ -43,7 +47,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -115,7 +119,8 @@
     if (firstError && !Object.keys(state.quotes).length) throw firstError
   }
 
-  // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters) in
+  // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters; `h`:
+  // the SVR chart's revenue histories) in
   // pages of 150, so a long list is not 700 separate reads.
   async function loadCollection(name, into) {
     if (!db) return
@@ -133,7 +138,7 @@
       if (snap.size < 150) break
     }
   }
-  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters)])
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters), loadCollection('h', state.hist)])
 
   // Fresh = fetched in the last 14 days AND holding monthly prices (or the page already tried
   // to get them). Stored histories without prices are fetched again, once.
@@ -142,7 +147,7 @@
   async function loadHistory(sym) {
     const [fin, px] = await Promise.all([
       call(T.fin, { symbol: sym, period: 'fy', date_from: '2000-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e))),
-      call(T.px, { symbol: sym, interval: 'M', count: 72, format: 'columns' }).catch(() => null),
+      call(T.px, { symbol: sym, interval: 'M', count: 240, format: 'columns' }).catch(() => null),
     ])
     const doc = fin?.labels
       ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, pxTried: true, fetchedAt: Date.now() }
@@ -158,6 +163,22 @@
     const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
     state.quarters[sym] = doc
     if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
+  }
+
+  // Fetched when a stock is opened, and again once its quote shows a newer quarter.
+  async function loadHist(sym) {
+    const doc = state.hist[sym]
+    const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity)
+    if (!mcp || doc?.loading || !stale) return
+    state.hist[sym] = { ...doc, loading: true }
+    try {
+      const p = await call(T.batch, { symbols: [sym], columns: H_COLS })
+      state.hist[sym] = { sym, h: p?.data?.[sym] ?? null, fetchedAt: Date.now() }
+      if (db && state.hist[sym].h) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
+    } catch (e) {
+      state.hist[sym] = doc?.h ? doc : { sym, error: explainError(e) }
+    }
+    if (state.open === sym) render()
   }
 
   function liveFairValues(fv, q, funds) {
@@ -183,6 +204,15 @@
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
+  // Monthly closes from the saved history, this month at the quote's price.
+  function closesOf(sym) {
+    const d = state.cache[sym]
+    const closes = new Map()
+    ;(d?.px?.t ?? []).forEach((t, i) => { if (Number.isFinite(d.px.c[i])) closes.set(monthKey(t), d.px.c[i]) })
+    if (Number.isFinite(state.quotes[sym]?.close)) closes.set(monthKey(Math.floor(Date.now() / 1000)), state.quotes[sym].close)
+    return closes
+  }
+
   function compute(sym) {
     const d = state.cache[sym]
     const q = state.quotes[sym]
@@ -194,10 +224,8 @@
     const qShares = q.market_cap_basic > 0 && q.close > 0 ? q.market_cap_basic / q.close : null
     const last = funds[funds.length - 1]
     if (qShares && last && !(last.shares > qShares / 1.5 && last.shares < qShares * 1.5)) last.shares = qShares
-    const closes = new Map()
-    ;(d.px?.t ?? []).forEach((t, i) => { if (Number.isFinite(d.px.c[i])) closes.set(monthKey(t), d.px.c[i]) })
+    const closes = closesOf(sym)
     const month = monthKey(Math.floor(Date.now() / 1000))
-    if (Number.isFinite(q.close)) closes.set(month, q.close)
     // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
     // Today and the recent history from the last twelve months when quarterly results are saved.
@@ -355,6 +383,7 @@
       case 'pe': return q.price_earnings_ttm
       case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
       case 'peg': return peg(sym)?.v
+      case 'svr': return svrNow(q)
       case 'z': return q.altman_z_score_ttm
       case 'gap': return state.exp[sym]?.gap
     }
@@ -445,11 +474,11 @@
     const syms = visible()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
     if (!state.lists[state.market].length) {
-      body.innerHTML = '<tr><td colspan="13" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
+      body.innerHTML = '<tr><td colspan="14" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
       return
     }
     if (!syms.length) {
-      body.innerHTML = '<tr><td colspan="13" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
+      body.innerHTML = '<tr><td colspan="14" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
     let lastSector = null
@@ -459,7 +488,7 @@
       if (state.market === 'big' && (q?.sector ?? '') !== lastSector) {
         lastSector = q?.sector ?? ''
         const n = syms.filter((x) => (state.quotes[x]?.sector ?? '') === lastSector).length
-        head = `<tr class="grp"><td colspan="13">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
+        head = `<tr class="grp"><td colspan="14">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
       }
       const s = state.scores[sym]
       const f = state.fair[sym]
@@ -476,10 +505,11 @@
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
+        <td class="n" data-label="SVR">${fmt(svrNow(q), 1)}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
-      return head + main + (state.open === sym ? `<tr class="detail"><td colspan="13">${detail(sym)}</td></tr>` : '')
+      return head + main + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
     }).join('')
   }
 
@@ -501,6 +531,15 @@
     const fwd = analysts(q).eps
     const g = fwd ?? state.scores[sym]?.detail?.epsG
     return g > 0 ? { v: q.price_earnings_ttm / (100 * g), past: fwd == null } : null
+  }
+
+  // SVR today (Nanalyze): market value ÷ (latest quarter's revenue × 4); none under 10 million a
+  // year, which they leave out too.
+  const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
+  // Their "catalog average" here: the mean SVR of the stock's market list. They do not buy above three times it.
+  function listSvr(sym) {
+    const vs = state.lists[marketOf(sym)].map((s) => svrNow(state.quotes[s])).filter((v) => v != null)
+    return vs.length >= 20 ? { mean: vs.reduce((a, b) => a + b, 0) / vs.length, n: vs.length } : null
   }
 
   const pegCell = (sym) => {
@@ -635,7 +674,7 @@
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -662,6 +701,7 @@
     ]
     return `<div class="dgrid">
       ${fairBlock(sym)}
+      ${svrBlock(sym)}
       ${projBlock(sym)}
       ${expBlock(sym)}
       ${ideasBlock(sym)}
@@ -702,31 +742,96 @@
   const monthAr = (m) => `${MONTHS_AR[Number(m.slice(5)) - 1]} ${m.slice(0, 4)}`
   const CH = { h: 190, l: 8, r: 64, t: 10, b: 22 }
 
-  // One sector's P/E history: the line, the historically cheap (bottom 10%) and expensive
-  // (top 10%) zones, and the median. Drawn at the card's real width so text stays readable.
-  function sectorChart(g, w) {
-    const months = SECTOR_PE.months
-    const ys = g.pe.filter((v) => v != null)
-    const lo = Math.max(0, Math.min(...ys, g.p10) * 0.9)
-    const hi = Math.max(...ys, g.p90) * 1.06
-    const X = (i) => CH.l + (i / (months.length - 1)) * (w - CH.l - CH.r)
+  // A line chart over months: `lines` of points { i (index into months), v }, dashed or plain
+  // reference lines, optional cheap/expensive zones. Drawn at the box's real width so text stays
+  // readable; values above `hi` leave the frame (the readout still shows them). The pointer
+  // readout reads CHARTS[key]: the nearest point, labelled by `tip`.
+  const CHARTS = new Map()
+  let clipN = 0
+  function lineChart(key, { months, lines, refs = [], zones = null, w, aria, tip, lo = null, hi = null, grid = false }) {
+    const pts = lines.flat()
+    const vs = [...pts.map((p) => p.v), ...refs.map((r) => r.v)]
+    lo ??= Math.max(0, Math.min(...vs) * 0.9)
+    hi ??= Math.max(...vs) * 1.06
+    const X = (i) => CH.l + (i / Math.max(1, months.length - 1)) * (w - CH.l - CH.r)
     const Y = (v) => CH.t + (1 - (v - lo) / (hi - lo)) * (CH.h - CH.t - CH.b)
-    let d = ''
-    let pen = false
-    g.pe.forEach((v, i) => { if (v == null) { pen = false; return } d += `${pen ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`; pen = true })
-    const ticks = months.map((m, i) => [m, i]).filter(([m]) => m.endsWith('-01') && Number(m.slice(0, 4)) % 3 === 0)
-    const ref = (v, label) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(v)}" y2="${Y(v)}" class="ref"/><text x="${w - CH.r + 6}" y="${Y(v) + 4}" class="axis">${label} ${v}</text>`
-    const last = g.pe.length - 1
-    return `<svg class="sc" width="${w}" height="${CH.h}" viewBox="0 0 ${w} ${CH.h}" data-w="${w}" role="img" aria-label="مكرر الربح لـ ${esc(nameAr(g.key))} من ${SECTOR_PE.first.slice(0, 4)} لين اليوم">
-      <rect x="${CH.l}" y="${CH.t}" width="${w - CH.l - CH.r}" height="${Y(g.p90) - CH.t}" class="zone-hi"/>
-      <rect x="${CH.l}" y="${Y(g.p10)}" width="${w - CH.l - CH.r}" height="${CH.h - CH.b - Y(g.p10)}" class="zone-lo"/>
-      ${ref(g.p90, 'قمة')}${ref(g.p50, 'وسط')}${ref(g.p10, 'قاع')}
+    const path = (l) => l.map((p, j) => `${j ? 'L' : 'M'}${X(p.i).toFixed(1)},${Y(p.v).toFixed(1)}`).join('')
+    const step = months.length > 144 ? 3 : months.length > 72 ? 2 : 1
+    const ticks = months.map((m, i) => [m, i]).filter(([m]) => m.endsWith('-01') && Number(m.slice(0, 4)) % step === 0)
+    const ref = (r) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(r.v)}" y2="${Y(r.v)}" class="ref ${r.cls ?? ''}"/><text x="${w - CH.r + 6}" y="${Y(r.v) + 4}" class="axis ${r.cls ?? ''}">${r.label} ${fmt(r.v, 1)}</text>`
+    // Value gridlines at a round step (1, 2, 2.5 or 5 × a power of ten), about four of them.
+    const raw = (hi - lo) / 4
+    const mag = 10 ** Math.floor(Math.log10(raw))
+    const gs = [1, 2, 2.5, 5, 10].find((k) => k * mag >= raw) * mag
+    const gv = []
+    for (let v = Math.ceil(lo / gs) * gs; grid && v <= hi; v += gs) gv.push(v)
+    const last = lines.at(-1).at(-1)
+    const clip = `clip${(clipN += 1)}`
+    CHARTS.set(key, { months, pts, tip })
+    return `<svg class="sc" width="${w}" height="${CH.h}" viewBox="0 0 ${w} ${CH.h}" data-w="${w}" data-k="${esc(key)}" role="img" aria-label="${esc(aria)}">
+      <clipPath id="${clip}"><rect x="0" y="${CH.t}" width="${w}" height="${CH.h - CH.t - CH.b}"/></clipPath>
+      ${zones ? `<rect x="${CH.l}" y="${CH.t}" width="${w - CH.l - CH.r}" height="${Y(zones.hi) - CH.t}" class="zone-hi"/>
+      <rect x="${CH.l}" y="${Y(zones.lo)}" width="${w - CH.l - CH.r}" height="${CH.h - CH.b - Y(zones.lo)}" class="zone-lo"/>` : ''}
+      ${gv.map((v) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/><text x="${CH.l + 2}" y="${Y(v) - 3}" class="axis">${+v.toFixed(2)}</text>`).join('')}
+      ${refs.map(ref).join('')}
       ${ticks.map(([m, i]) => `<text x="${X(i)}" y="${CH.h - 6}" class="axis" text-anchor="middle">${m.slice(0, 4)}</text>`).join('')}
-      <path d="${d}" class="pe-line"/>
-      <circle cx="${X(last)}" cy="${Y(g.pe[last])}" r="4" class="pe-dot"/>
+      <g clip-path="url(#${clip})">${lines.map((l, j) => `<path d="${path(l)}" class="pe-line ${l.cls ?? ''}"/>`).join('')}
+      <circle cx="${X(last.i)}" cy="${Y(Math.min(last.v, hi))}" r="4" class="pe-dot"/></g>
       <line class="cross" x1="0" x2="0" y1="${CH.t}" y2="${CH.h - CH.b}" visibility="hidden"/>
       <rect x="${CH.l}" y="0" width="${w - CH.l - CH.r}" height="${CH.h}" fill="transparent" class="hit"/>
     </svg>`
+  }
+
+  // One sector's P/E history: the line, the historically cheap (bottom 10%) and expensive
+  // (top 10%) zones, and the median.
+  function sectorChart(g, w) {
+    const runs = []
+    g.pe.forEach((v, i) => { if (v == null) runs.push([]); else (runs.at(-1) ?? runs[runs.push([]) - 1]).push({ i, v, m: SECTOR_PE.months[i] }) })
+    return lineChart(`sec:${g.kind}:${g.key}`, {
+      months: SECTOR_PE.months, lines: runs.filter((r) => r.length), zones: { hi: g.p90, lo: g.p10 },
+      refs: [{ v: g.p90, label: 'قمة' }, { v: g.p50, label: 'وسط' }, { v: g.p10, label: 'قاع' }],
+      w, aria: `مكرر الربح لـ ${nameAr(g.key)} من ${SECTOR_PE.first.slice(0, 4)} لين اليوم`, tip: (p) => `${monthAr(p.m)} · P/E ${p.v}`,
+    })
+  }
+
+  // SVR history (engine/svr.js) with Nanalyze's two lines: the stock's last-four-quarter average
+  // (red) and their ceiling, three times the list's mean (green).
+  function svrBlock(sym) {
+    const q = state.quotes[sym] || {}
+    const now = svrNow(q)
+    const hd = state.hist[sym]
+    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmt(now, 1)}</span></h3>${body}</div>`
+    if (!hd || hd.loading) return box('<p class="dim">جاري تحميل تاريخ المبيعات…</p>')
+    if (hd.error) return box(`<p class="dim">${esc(hd.error)}</p>`)
+    const r = svrHistory(hd.h, closesOf(sym))
+    if (!r?.points.length) return box('<p class="dim">ما فيه تاريخ مبيعات ربعية لهذا السهم في TradingView.</p>')
+    const month = monthKey(Math.floor(Date.now() / 1000))
+    const months = []
+    for (let m = r.points[0].m; m <= month; m = addMonths(m, 1)) months.push(m)
+    const at = (p) => ({ ...p, i: months.indexOf(p.m) })
+    const fy = r.points.filter((p) => p.fy).map(at)
+    const qs = r.points.filter((p) => !p.fy).map(at)
+    if (now != null && months.at(-1) !== qs.at(-1)?.m) qs.push({ m: month, v: now, i: months.length - 1, now: true })
+    const L = listSvr(sym)
+    const cap = L && 3 * L.mean
+    const refs = [r.avg4 != null && { v: r.avg4, label: 'متوسط', cls: 'red' }, cap && { v: cap, label: 'سقف', cls: 'green' }].filter(Boolean)
+    const lines = []
+    if (fy.length) lines.push(Object.assign(qs.length ? [...fy, qs[0]] : fy, { cls: 'fy' }))
+    if (qs.length) lines.push(qs)
+    // Frame: up to 1.4× the higher of the lines, today and the top tenth, so one wild quarter does not flatten the rest.
+    const vs = r.points.map((p) => p.v).sort((x, y) => x - y)
+    const hi = Math.min(Math.max(...vs, ...refs.map((x) => x.v), now ?? 0) * 1.06, 1.4 * Math.max(vs[Math.floor(0.9 * (vs.length - 1))], ...refs.map((x) => x.v), now ?? 0))
+    const w = Math.min(1100, Math.max(260, ($('rows')?.clientWidth ?? 600) - 60))
+    const chart = lineChart(`svr:${sym}`, {
+      months, lines, refs, w, lo: 0, hi, grid: true, aria: `SVR لـ ${sym.split(':')[1]} من ${months[0].slice(0, 4)} لين اليوم`,
+      tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmt(p.v, 1)}${p.fy ? ' (سنوي)' : ''}`,
+    })
+    const vsAvg = now != null && r.avg4 ? now / r.avg4 - 1 : null
+    const fyTo = fy.length ? qs[0]?.m.slice(0, 4) : null
+    return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
+      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن TradingView يعطي 8 سنين أرباع بس. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
+      <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
+      <p class="dim">Nanalyze يستخدمه للشركات اللي ما تربح بعد؛ للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
 
   function renderSectors() {
@@ -764,33 +869,37 @@
     const b = e.target.closest('button[data-show]')
     if (b) { setMarket('us'); state.group = b.dataset.show; renderGroups(); render(); window.scrollTo({ top: 0 }) }
   })
-  // Crosshair and readout: the pointer picks the nearest month.
-  $('sectorsView').addEventListener('pointermove', (e) => {
-    const svg = e.target.closest('svg.sc')
-    if (!svg) return
-    const card = svg.closest('.sec')
-    const [kind, key] = card.dataset.key.split(/:(.*)/)
-    const g = SECTOR_PE.groups.find((x) => x.kind === kind && x.key === key)
+  // Crosshair and readout on any chart: the pointer picks the nearest point.
+  let shown = null
+  const hideTip = () => {
+    if (!shown) return
+    shown.querySelector('.cross')?.setAttribute('visibility', 'hidden')
+    const t = shown.closest('.chart')?.querySelector('.ctip')
+    if (t) t.hidden = true
+    shown = null
+  }
+  document.addEventListener('pointermove', (e) => {
+    const svg = e.target.closest?.('svg.sc')
+    const c = svg && CHARTS.get(svg.dataset.k)
+    if (!c) return hideTip()
+    if (shown !== svg) hideTip()
+    shown = svg
     const w = Number(svg.dataset.w)
-    const x = e.clientX - svg.getBoundingClientRect().left
-    const n = SECTOR_PE.months.length
-    const i = Math.max(0, Math.min(n - 1, Math.round(((x - CH.l) / (w - CH.l - CH.r)) * (n - 1))))
-    const cx = CH.l + (i / (n - 1)) * (w - CH.l - CH.r)
+    const n = Math.max(1, c.months.length - 1)
+    const fi = ((e.clientX - svg.getBoundingClientRect().left - CH.l) / (w - CH.l - CH.r)) * n
+    const p = c.pts.reduce((b, x) => (Math.abs(x.i - fi) < Math.abs(b.i - fi) ? x : b))
+    const cx = CH.l + (p.i / n) * (w - CH.l - CH.r)
     const line = svg.querySelector('.cross')
     line.setAttribute('x1', cx)
     line.setAttribute('x2', cx)
     line.setAttribute('visibility', 'visible')
-    const tip = card.querySelector('.ctip')
+    const tip = svg.closest('.chart').querySelector('.ctip')
     tip.hidden = false
-    tip.textContent = `${monthAr(SECTOR_PE.months[i])} · P/E ${g.pe[i] ?? '—'}`
+    tip.textContent = c.tip(p)
     tip.style.left = `${Math.min(Math.max(0, cx - tip.offsetWidth / 2), w - tip.offsetWidth)}px`
   })
-  $('sectorsView').addEventListener('pointerleave', (e) => {
-    for (const l of $('sectorsView').querySelectorAll('.cross')) l.setAttribute('visibility', 'hidden')
-    for (const t of $('sectorsView').querySelectorAll('.ctip')) t.hidden = true
-  }, true)
   let resizeT = 0
-  addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors() }, 150) })
+  addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors(); else if (state.open) render() }, 150) })
 
   // ---------------------------------------------------------------- events
 
@@ -825,7 +934,7 @@
   addEventListener('scroll', () => { tip.hidden = true }, { passive: true })
   // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
   $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
-  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) loadNews(sym) }
+  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); loadHist(sym) } }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')
     if (del) { e.stopPropagation(); if (state.market !== 'big') removeSymbol(del.dataset.del); return }
