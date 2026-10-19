@@ -89,6 +89,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(200)
   await page.waitForTimeout(300)
   console.log('DETAIL JPM:', (await page.$eval('#rows tr.detail', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 1600))
+  console.log('SVR JPM:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' '))
   await page.click('#rows details.proj summary')
   await page.waitForTimeout(200)
   console.log('FORECAST JPM:', (await page.$eval('#rows details.proj', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))

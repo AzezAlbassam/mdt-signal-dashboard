@@ -262,7 +262,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
       <dt><span class="chip amber">المحللين متوقعين نزول</span></dt><dd>المحللين متوقعين إن إيرادات الشركة تنزل، أو أرباحها تنزل أكثر من 10%، السنة المالية الجاية.</dd>
     </dl>
     <p><b>PEG</b> = مكرر الربح ÷ نمو الأرباح المتوقع (من توقعات المحللين، وإذا ما فيه توقعات من نمو آخر 3 سنين ويطلع جنبه "تاريخي"). الشائع: تحت 1 يعني السهم رخيص مقارنة بنموه، فوق 2 غالي. هذي قاعدة متداولة عند المستثمرين، ما اختبرناها على التاريخ. إذا الشركة تخسر أو أرباحها متوقع تنزل ما يطلع له رقم.</p>
-    <p><b>SVR</b> (من موقع Nanalyze) = القيمة السوقية ÷ (مبيعات آخر ربع × 4). كل ما كان أقل كان السهم أرخص مقارنة بمبيعاته. تفتح أي سهم يطلع لك تاريخه رسمة مع خطين: الأحمر متوسط آخر 4 أرباع، والأخضر سقف Nanalyze (3 أضعاف متوسط قائمتك). ما اختبرناه على التاريخ.</p>
+    <p><b>SVR</b> (من موقع Nanalyze) = القيمة السوقية ÷ (مبيعات آخر ربع × 4). كل ما كان أقل كان السهم أرخص مقارنة بمبيعاته. تفتح أي سهم يطلع لك تاريخه رسمة مع خطين: الأحمر متوسط آخر 4 أرباع، والأخضر سقف Nanalyze (3 أضعاف متوسط قائمتك، يطلع إذا قائمتك فيها 20 سهم أو أكثر). ما اختبرناه على التاريخ.</p>
     <p><b>هل الأحمر يعني بيع والأخضر يعني شراء؟ لا.</b> جربناها على 819 سهم من 2012 لين 2025: الأسهم الحمراء ما نزلت أكثر من غيرها، والخضراء ما طلعت أكثر من غيرها، في المتوسط. فهي تنبيه يخليك تسأل السؤال الصح عن السهم، والقرار يكون من باقي الأرقام.</p>
   </details>
   <div class="tbl">
@@ -1076,20 +1076,34 @@ const { steady, svrHistory } = (() => {
 // buy or sell signal.
 
 const pos = (x) => Number.isFinite(x) && x > 0
-const near = (a, b) => pos(a) && pos(b) && a > b / 1.5 && a < b * 1.5
-// The lower middle value: with two neighbours, one of them a spike, it is still the good one.
-const median = (a) => a.filter(pos).sort((x, y) => x - y)[(a.filter(pos).length - 1) >> 1] ?? null
-const sharesOf = (ni, eps) => (ni && eps && Math.sign(ni) === Math.sign(eps) ? ni / eps : null)
+const near = (a, b, x = 1.5) => pos(a) && pos(b) && a > b / x && a < b * x
+// TradingView rounds EPS to 4 decimals, more than 1% off under half a cent (NVDA 2009: -0.0012 →
+// 25.0B shares, ~22B real); such a count is left out.
+const sharesOf = (ni, eps) => (ni && Math.abs(eps) >= 0.005 && Math.sign(ni) === Math.sign(eps) ? ni / eps : null)
 
-// Share counts derived as net income ÷ EPS are kept when within 1.5× of the median of up to two
-// neighbours either side: real dilution moves smoothly (IREN 53M → 380M over 16 quarters), a
-// distorted one jumps and comes back (MCHP's preferred dividends: 531M, 216M, 1635M, 980M; the
-// year of an IPO or SPAC merger averages in the old count: RKLB 2021 207M, 2022 470M). A real
-// jump of 1.5× in one quarter (IREN 73M → 112M) also gets dropped: a gap, not a wrong number.
-const steady = (counts) => counts.map((c, i) => {
-  const ref = median([...counts.slice(Math.max(0, i - 2), i), ...counts.slice(i + 1, i + 3)])
-  return ref == null || near(c, ref) ? c : null
-})
+/**
+ * Share counts derived as net income ÷ EPS, newest first, cleaned in two passes (a dropped count
+ * leaves a gap, not a wrong number). 1) A count is kept when it is within 1.5× of at least half of
+ * its neighbours (up to two either side): real dilution moves smoothly (IREN 53M → 380M over 16
+ * quarters), a distorted count jumps and comes back (MCHP's preferred dividends: 531M, 216M,
+ * 1635M, 980M; Al Rajhi's EPS not adjusted for a bonus issue: 6.0B, 9.6B). 2) Everything older
+ * than a jump of 2.5× between kept counts is dropped: before a SPAC merger the count is the
+ * legacy holders' (RKLB 79M, then 450M), which at the shell's $10 price gives SVRs 6× too low.
+ */
+const steady = (counts) => {
+  const kept = counts.map((c, i) => {
+    const nb = [...counts.slice(Math.max(0, i - 2), i), ...counts.slice(i + 1, i + 3)].filter(pos)
+    return !nb.length || nb.filter((x) => near(c, x)).length >= Math.ceil(nb.length / 2) ? c : null
+  })
+  let prev = null
+  let cut = false
+  return kept.map((c) => {
+    if (cut || c == null) return null
+    if (prev != null && !near(c, prev, 2.5)) cut = true
+    else prev = c
+    return cut ? null : c
+  })
+}
 
 /**
  * SVR history the way Nanalyze draws it (their Rocket Lab chart reproduced within 0.9 on
@@ -1098,18 +1112,20 @@ const steady = (counts) => counts.map((c, i) => {
  * this is a valuation history, not what an investor saw that day. Before the quarters, one point
  * per fiscal year end, `fy: true`: market value ÷ that year's revenue (plain price-to-sales; a
  * grower's year trails its run rate, so it reads higher). A month whose share count fails
- * `steady` or has no close gets no point.
+ * `steady`, with no close, or with revenue under 10 million a year (Nanalyze leaves those out)
+ * gets no point.
  * `h`: TradingView's *_h columns, newest first (32 quarters and 20 years at most), and
  * fiscal_period_end_fq, the newest quarter's end (unix seconds); quarter i ends 3·i months before
  * it. The fiscal year ends with the quarter whose four-quarter sum is the last year's revenue.
- * Returns { points: [{ m, v, fy? }] oldest first, avg4: the last four quarters' mean (Nanalyze's
- * red line) } or null without quarters.
+ * Returns { points: [{ m, v, fy? }] oldest first, avg4: the mean of the last four quarters
+ * (Nanalyze's red line; null with fewer than two of them), quarters: how many there are } or null
+ * without quarters.
  */
 function svrHistory(h, closes) {
   const rq = h?.total_revenue_fq_h ?? []
   if (!Number.isFinite(h?.fiscal_period_end_fq) || !rq.length) return null
   const end = monthKey(h.fiscal_period_end_fq)
-  const value = (m, shares, rev) => (pos(closes.get(m)) && pos(shares) && pos(rev) ? (closes.get(m) * shares) / rev : null)
+  const value = (m, shares, rev) => (pos(closes.get(m)) && pos(shares) && rev >= 1e7 ? (closes.get(m) * shares) / rev : null)
   const points = []
   const qs = steady(rq.map((_, i) => sharesOf(h.net_income_fq_h?.[i], h.earnings_per_share_diluted_fq_h?.[i])))
   rq.forEach((rev, i) => {
@@ -1117,7 +1133,8 @@ function svrHistory(h, closes) {
     const v = value(m, qs[i], 4 * rev)
     if (v != null) points.push({ m, v })
   })
-  const avg4 = points.length >= 4 ? points.slice(0, 4).reduce((a, p) => a + p.v, 0) / 4 : null
+  const last4 = points.filter((p) => p.m > addMonths(end, -12))
+  const avg4 = last4.length >= 2 ? last4.reduce((a, p) => a + p.v, 0) / last4.length : null
   const ry = h.total_revenue_fy_h ?? []
   const miss = (k) => (rq.length >= k + 4 && pos(ry[0]) ? Math.abs(rq.slice(k, k + 4).reduce((a, x) => a + x, 0) / ry[0] - 1) : Infinity)
   const k = [0, 1, 2, 3].reduce((b, j) => (miss(j) < miss(b) ? j : b), 0)
@@ -1130,7 +1147,7 @@ function svrHistory(h, closes) {
       if (v != null) points.push({ m, v, fy: true })
     })
   }
-  return { points: points.sort((a, b) => (a.m < b.m ? -1 : 1)), avg4 }
+  return { points: points.sort((a, b) => (a.m < b.m ? -1 : 1)), avg4, quarters: rq.length }
 }
 
 return { steady, svrHistory }
@@ -1286,7 +1303,7 @@ return { steady, svrHistory }
   async function loadHistory(sym) {
     const [fin, px] = await Promise.all([
       call(T.fin, { symbol: sym, period: 'fy', date_from: '2000-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e))),
-      call(T.px, { symbol: sym, interval: 'M', count: 240, format: 'columns' }).catch(() => null),
+      call(T.px, { symbol: sym, interval: 'M', count: 252, format: 'columns' }).catch(() => null),
     ])
     const doc = fin?.labels
       ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, pxTried: true, fetchedAt: Date.now() }
@@ -1304,18 +1321,28 @@ return { steady, svrHistory }
     if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
 
-  // Fetched when a stock is opened, and again once its quote shows a newer quarter.
+  // Fetched when a stock is opened, and again once its quote shows a newer quarter; after a failed
+  // or empty answer, not before 10 minutes (the batch tool reports 429/5xx as success: false rather
+  // than throwing). Monthly prices come along when the saved ones are shorter than 20 years (saved
+  // before the page asked for 252 months, or never saved for a stock without annual figures).
   async function loadHist(sym) {
     const doc = state.hist[sym]
     const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity)
-    if (!mcp || doc?.loading || !stale) return
+    if (!mcp || doc?.loading || !stale || Date.now() - (doc?.at ?? 0) < 6e5) return
     state.hist[sym] = { ...doc, loading: true }
+    const short = (state.cache[sym]?.px?.t?.length ?? 0) < 240
     try {
-      const p = await call(T.batch, { symbols: [sym], columns: H_COLS })
-      state.hist[sym] = { sym, h: p?.data?.[sym] ?? null, fetchedAt: Date.now() }
-      if (db && state.hist[sym].h) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
+      const [p, px] = await Promise.all([
+        call(T.batch, { symbols: [sym], columns: H_COLS }),
+        short ? call(T.px, { symbol: sym, interval: 'M', count: 252, format: 'columns' }).catch(() => null) : null,
+      ])
+      const h = p?.data?.[sym]
+      if (!h?.total_revenue_fq_h) throw { code: p?.success === false ? 'server_unavailable' : 'no_history' }
+      state.hist[sym] = { sym, h, px: px?.bars?.t?.length ? { t: px.bars.t, c: px.bars.c } : doc?.px ?? null, fetchedAt: Date.now() }
+      if (db) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
     } catch (e) {
-      state.hist[sym] = doc?.h ? doc : { sym, error: explainError(e) }
+      state.hist[sym] = doc?.h ? { ...doc, at: Date.now() }
+        : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.' : explainError(e) }
     }
     if (state.open === sym) render()
   }
@@ -1644,7 +1671,7 @@ return { steady, svrHistory }
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${fmt(svrNow(q), 1)}</td>
+        <td class="n" data-label="SVR">${fmtSvr(svrNow(q))}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -1674,6 +1701,7 @@ return { steady, svrHistory }
 
   // SVR today (Nanalyze): market value ÷ (latest quarter's revenue × 4); none under 10 million a
   // year, which they leave out too.
+  const fmtSvr = (v) => fmt(v, v < 1 ? 2 : 1)
   const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
   // Their "catalog average" here: the mean SVR of the stock's market list. They do not buy above three times it.
   function listSvr(sym) {
@@ -1939,11 +1967,15 @@ return { steady, svrHistory }
     const q = state.quotes[sym] || {}
     const now = svrNow(q)
     const hd = state.hist[sym]
-    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmt(now, 1)}</span></h3>${body}</div>`
+    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
     if (!hd || hd.loading) return box('<p class="dim">جاري تحميل تاريخ المبيعات…</p>')
     if (hd.error) return box(`<p class="dim">${esc(hd.error)}</p>`)
-    const r = svrHistory(hd.h, closesOf(sym))
-    if (!r?.points.length) return box('<p class="dim">ما فيه تاريخ مبيعات ربعية لهذا السهم في TradingView.</p>')
+    // The saved closes (the score's), and older months from the prices fetched with the history.
+    const closes = closesOf(sym)
+    ;(hd.px?.t ?? []).forEach((t, i) => { if (!closes.has(monthKey(t)) && Number.isFinite(hd.px.c[i])) closes.set(monthKey(t), hd.px.c[i]) })
+    const r = svrHistory(hd.h, closes)
+    if (!r) return box('<p class="dim">TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.</p>')
+    if (!r.points.length) return box('<p class="dim">ما فيه أسعار شهرية محفوظة لهذا السهم للحين، أو مبيعاته أقل من 10 مليون بالسنة (Nanalyze ما يحسبونه تحتها).</p>')
     const month = monthKey(Math.floor(Date.now() / 1000))
     const months = []
     for (let m = r.points[0].m; m <= month; m = addMonths(m, 1)) months.push(m)
@@ -1963,12 +1995,12 @@ return { steady, svrHistory }
     const w = Math.min(1100, Math.max(260, ($('rows')?.clientWidth ?? 600) - 60))
     const chart = lineChart(`svr:${sym}`, {
       months, lines, refs, w, lo: 0, hi, grid: true, aria: `SVR لـ ${sym.split(':')[1]} من ${months[0].slice(0, 4)} لين اليوم`,
-      tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmt(p.v, 1)}${p.fy ? ' (سنوي)' : ''}`,
+      tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmtSvr(p.v)}${p.fy ? ' (سنوي)' : ''}`,
     })
     const vsAvg = now != null && r.avg4 ? now / r.avg4 - 1 : null
     const fyTo = fy.length ? qs[0]?.m.slice(0, 4) : null
     return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
-      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن TradingView يعطي 8 سنين أرباع بس. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
+      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
       <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
       <p class="dim">Nanalyze يستخدمه للشركات اللي ما تربح بعد؛ للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
@@ -2037,6 +2069,7 @@ return { steady, svrHistory }
     tip.textContent = c.tip(p)
     tip.style.left = `${Math.min(Math.max(0, cx - tip.offsetWidth / 2), w - tip.offsetWidth)}px`
   })
+  document.addEventListener('pointerout', (e) => { if (!e.relatedTarget) hideTip() }) // left the page
   let resizeT = 0
   addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors(); else if (state.open) render() }, 150) })
 

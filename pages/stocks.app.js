@@ -147,7 +147,7 @@
   async function loadHistory(sym) {
     const [fin, px] = await Promise.all([
       call(T.fin, { symbol: sym, period: 'fy', date_from: '2000-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e))),
-      call(T.px, { symbol: sym, interval: 'M', count: 240, format: 'columns' }).catch(() => null),
+      call(T.px, { symbol: sym, interval: 'M', count: 252, format: 'columns' }).catch(() => null),
     ])
     const doc = fin?.labels
       ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, pxTried: true, fetchedAt: Date.now() }
@@ -165,18 +165,28 @@
     if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
 
-  // Fetched when a stock is opened, and again once its quote shows a newer quarter.
+  // Fetched when a stock is opened, and again once its quote shows a newer quarter; after a failed
+  // or empty answer, not before 10 minutes (the batch tool reports 429/5xx as success: false rather
+  // than throwing). Monthly prices come along when the saved ones are shorter than 20 years (saved
+  // before the page asked for 252 months, or never saved for a stock without annual figures).
   async function loadHist(sym) {
     const doc = state.hist[sym]
     const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity)
-    if (!mcp || doc?.loading || !stale) return
+    if (!mcp || doc?.loading || !stale || Date.now() - (doc?.at ?? 0) < 6e5) return
     state.hist[sym] = { ...doc, loading: true }
+    const short = (state.cache[sym]?.px?.t?.length ?? 0) < 240
     try {
-      const p = await call(T.batch, { symbols: [sym], columns: H_COLS })
-      state.hist[sym] = { sym, h: p?.data?.[sym] ?? null, fetchedAt: Date.now() }
-      if (db && state.hist[sym].h) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
+      const [p, px] = await Promise.all([
+        call(T.batch, { symbols: [sym], columns: H_COLS }),
+        short ? call(T.px, { symbol: sym, interval: 'M', count: 252, format: 'columns' }).catch(() => null) : null,
+      ])
+      const h = p?.data?.[sym]
+      if (!h?.total_revenue_fq_h) throw { code: p?.success === false ? 'server_unavailable' : 'no_history' }
+      state.hist[sym] = { sym, h, px: px?.bars?.t?.length ? { t: px.bars.t, c: px.bars.c } : doc?.px ?? null, fetchedAt: Date.now() }
+      if (db) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
     } catch (e) {
-      state.hist[sym] = doc?.h ? doc : { sym, error: explainError(e) }
+      state.hist[sym] = doc?.h ? { ...doc, at: Date.now() }
+        : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.' : explainError(e) }
     }
     if (state.open === sym) render()
   }
@@ -505,7 +515,7 @@
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${fmt(svrNow(q), 1)}</td>
+        <td class="n" data-label="SVR">${fmtSvr(svrNow(q))}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -535,6 +545,7 @@
 
   // SVR today (Nanalyze): market value ÷ (latest quarter's revenue × 4); none under 10 million a
   // year, which they leave out too.
+  const fmtSvr = (v) => fmt(v, v < 1 ? 2 : 1)
   const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
   // Their "catalog average" here: the mean SVR of the stock's market list. They do not buy above three times it.
   function listSvr(sym) {
@@ -800,11 +811,15 @@
     const q = state.quotes[sym] || {}
     const now = svrNow(q)
     const hd = state.hist[sym]
-    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmt(now, 1)}</span></h3>${body}</div>`
+    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
     if (!hd || hd.loading) return box('<p class="dim">جاري تحميل تاريخ المبيعات…</p>')
     if (hd.error) return box(`<p class="dim">${esc(hd.error)}</p>`)
-    const r = svrHistory(hd.h, closesOf(sym))
-    if (!r?.points.length) return box('<p class="dim">ما فيه تاريخ مبيعات ربعية لهذا السهم في TradingView.</p>')
+    // The saved closes (the score's), and older months from the prices fetched with the history.
+    const closes = closesOf(sym)
+    ;(hd.px?.t ?? []).forEach((t, i) => { if (!closes.has(monthKey(t)) && Number.isFinite(hd.px.c[i])) closes.set(monthKey(t), hd.px.c[i]) })
+    const r = svrHistory(hd.h, closes)
+    if (!r) return box('<p class="dim">TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.</p>')
+    if (!r.points.length) return box('<p class="dim">ما فيه أسعار شهرية محفوظة لهذا السهم للحين، أو مبيعاته أقل من 10 مليون بالسنة (Nanalyze ما يحسبونه تحتها).</p>')
     const month = monthKey(Math.floor(Date.now() / 1000))
     const months = []
     for (let m = r.points[0].m; m <= month; m = addMonths(m, 1)) months.push(m)
@@ -824,12 +839,12 @@
     const w = Math.min(1100, Math.max(260, ($('rows')?.clientWidth ?? 600) - 60))
     const chart = lineChart(`svr:${sym}`, {
       months, lines, refs, w, lo: 0, hi, grid: true, aria: `SVR لـ ${sym.split(':')[1]} من ${months[0].slice(0, 4)} لين اليوم`,
-      tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmt(p.v, 1)}${p.fy ? ' (سنوي)' : ''}`,
+      tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmtSvr(p.v)}${p.fy ? ' (سنوي)' : ''}`,
     })
     const vsAvg = now != null && r.avg4 ? now / r.avg4 - 1 : null
     const fyTo = fy.length ? qs[0]?.m.slice(0, 4) : null
     return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
-      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن TradingView يعطي 8 سنين أرباع بس. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
+      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
       <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
       <p class="dim">Nanalyze يستخدمه للشركات اللي ما تربح بعد؛ للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
@@ -898,6 +913,7 @@
     tip.textContent = c.tip(p)
     tip.style.left = `${Math.min(Math.max(0, cx - tip.offsetWidth / 2), w - tip.offsetWidth)}px`
   })
+  document.addEventListener('pointerout', (e) => { if (!e.relatedTarget) hideTip() }) // left the page
   let resizeT = 0
   addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors(); else if (state.open) render() }, 150) })
 
