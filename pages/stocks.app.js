@@ -393,7 +393,7 @@
       case 'pe': return q.price_earnings_ttm
       case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
       case 'peg': return peg(sym)?.v
-      case 'svr': return svrNow(q)
+      case 'svr': return svrShown(q)
       case 'z': return q.altman_z_score_ttm
       case 'gap': return state.exp[sym]?.gap
     }
@@ -515,7 +515,7 @@
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${fmtSvr(svrNow(q))}</td>
+        <td class="n" data-label="SVR">${fmtSvr(svrShown(q))}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -547,6 +547,11 @@
   // year, which they leave out too.
   const fmtSvr = (v) => fmt(v, v < 1 ? 2 : 1)
   const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
+  // Shown only for a company losing money over the last 12 months, as Nanalyze uses it: for a
+  // profitable one the P/E says more. The list mean (the ceiling) still counts every stock, as
+  // their catalog average does.
+  const losing = (q) => Number.isFinite(q?.earnings_per_share_diluted_ttm) && q.earnings_per_share_diluted_ttm <= 0
+  const svrShown = (q) => (losing(q) ? svrNow(q) : null)
   // Their "catalog average" here: the mean SVR of the stock's market list. They do not buy above three times it.
   function listSvr(sym) {
     const vs = state.lists[marketOf(sym)].map((s) => svrNow(state.quotes[s])).filter((v) => v != null)
@@ -809,6 +814,7 @@
   // (red) and their ceiling, three times the list's mean (green).
   function svrBlock(sym) {
     const q = state.quotes[sym] || {}
+    if (!losing(q)) return ''
     const now = svrNow(q)
     const hd = state.hist[sym]
     const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
@@ -846,7 +852,7 @@
     return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
       <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
       <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
-      <p class="dim">Nanalyze يستخدمه للشركات اللي ما تربح بعد؛ للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
+      <p class="dim">يطلع بس للشركات اللي ما تربح (خسرانة في آخر 12 شهر)، مثل ما يستخدمه Nanalyze: للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
 
   function renderSectors() {
@@ -950,7 +956,7 @@
   addEventListener('scroll', () => { tip.hidden = true }, { passive: true })
   // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
   $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
-  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); loadHist(sym) } }
+  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); if (losing(state.quotes[sym])) loadHist(sym) } }
   $('rows').addEventListener('click', (e) => {
     const del = e.target.closest('button[data-del]')
     if (del) { e.stopPropagation(); if (state.market !== 'big') removeSymbol(del.dataset.del); return }
