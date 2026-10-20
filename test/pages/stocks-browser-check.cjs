@@ -113,6 +113,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.click('#rows details.proj summary')
   await page.waitForTimeout(200)
   console.log('FORECAST AAPL:', (await page.$eval('#rows details.proj', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 600))
+  console.log('T3 AAPL:', (await page.$eval('#rows .part.iss', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 300))
   console.log('CTX AAPL:', (await page.$eval('#rows .ctx', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   await page.fill('#filter', '')
   await page.click('#rows tr.row[data-sym="NASDAQ:AAPL"] button[data-star]')

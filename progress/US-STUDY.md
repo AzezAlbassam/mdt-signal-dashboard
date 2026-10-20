@@ -132,7 +132,7 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   momentum −1.3%, value composite +4.8%, value + momentum −2.4%.
 - [x] Study 14: clean-room re-implementation (protocol text + named helpers only): all 147 yearly D values, every p
   and Holm p identical (T3 p 0.010986 = 180/16384, Holm 0.043945).
-- [ ] Study 14: page line per §7 for T3 (confirmed), others labelled
+- [x] Study 14: page line per §7 for T3 (confirmed): detail block "شراء الشركة لأسهمها" with the change between the last two fiscal years, the sector rank among loaded stocks of the same market (≥5) and the test result incl. the large-cap +1.9%; the unconfirmed ones are not shown
 - [x] Study 13 POST-HOC on the user's favourites (scripts/study13-favorites.js → reports/study13-favorites-posthoc.txt;
   75 favourites saved in data/favorites/2026-10-20.json, 57 with enough history, ADRs ASML/TSM/NVO/SE/ARM added,
   GOOGL read through GOOG). Descriptive only (358 stock-years, picked today, so selection bias): buy − sell

@@ -690,6 +690,36 @@
 
   const dateOf = (sec) => (Number.isFinite(sec) ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
 
+  // Study 14's confirmed rank, T3 (PROTOCOL-study14.md §3, §7): −ln(diluted shares of the last fiscal
+  // year ÷ the year before), shares = net income ÷ EPS, both years with |EPS| ≥ 0.25 of the same
+  // sign; ranked within its sector among the loaded stocks of the same market (at least 5).
+  function issuance(sym) {
+    const [f1, f0] = (state.scores[sym]?.known ?? []).slice(-2)
+    const ok = (f) => Math.abs(f?.eps) >= 0.25 && f.ni / f.eps > 0
+    if (!ok(f0) || !ok(f1) || f0.year !== f1.year + 1 || Math.sign(f0.eps) !== Math.sign(f1.eps)) return null
+    return { x: -Math.log((f0.ni / f0.eps) / (f1.ni / f1.eps)), y0: f0.year, y1: f1.year }
+  }
+  function issuanceRank(sym) {
+    const mk = (s) => (s.startsWith('TADAWUL:') ? 'sa' : 'us')
+    const sector = state.quotes[sym]?.sector
+    const rows = Object.keys(state.scores).filter((s) => mk(s) === mk(sym) && state.quotes[s]?.sector === sector)
+      .map((s) => ({ key: s, sector, x: issuance(s)?.x }))
+    const p = sectorPercentiles(rows).get(sym)
+    return p == null ? null : { p, n: rows.filter((r) => Number.isFinite(r.x)).length }
+  }
+  function issuanceBlock(sym) {
+    const t = issuance(sym)
+    const head = '<h3><span>شراء الشركة لأسهمها</span><span class="n hi">مؤشر نجح في الاختبار</span></h3>'
+    const test = '<p class="dim">في اختبارنا (دراسة 14، 815 سهم أمريكي، كل مايو من 2012 لين 2025، داخل كل قطاع): الخُمس اللي نزّل عدد أسهمه أكثر تفوق على الخُمس اللي زوّده أكثر بمتوسط <b class="n">+6.0%</b> بالسنة، في 12 من 14 سنة، والنتيجة ما تجي بالصدفة. بين أكبر 300 شركة الفرق أصغر بكثير (<span class="n">+1.9%</span>). هذا متوسط مجموعات، مو ضمان لسهم واحد، وعلى السعر بدون التوزيعات.</p>'
+    if (!t) return `<div class="part iss" style="grid-column:1/-1">${head}<p class="dim">ما ينحسب لهذا السهم: يحتاج ربح أو خسارة للسهم 0.25 أو أكثر بآخر سنتين ماليتين، وبنفس الاتجاه.</p>${test}</div>`
+    const ch = Math.exp(-t.x) - 1
+    const what = Math.abs(ch) < 0.005 ? 'ما تغيّر تقريباً' : ch < 0 ? `نزل <b class="n hi">${pct(-ch, 1).replace('+', '')}</b> (الشركة اشترت أسهمها أكثر من اللي أصدرت)` : `زاد <b class="n lo">${pct(ch, 1)}</b> (أصدرت أسهم جديدة: تعويضات موظفين أو استحواذ أو زيادة رأس مال)`
+    const r = issuanceRank(sym)
+    const side = r && r.p >= 0.8 ? ' — <b class="hi">من أعلى خُمس بقطاعها</b>' : r && r.p <= 0.2 ? ' — <b class="lo">من أدنى خُمس بقطاعها</b>' : ''
+    const rank = r ? `<p>بين <span class="n">${r.n}</span> سهم من قطاعها في القائمة: نزّلت عدد أسهمها أكثر من <b class="n">${Math.round(100 * r.p)}%</b> منها${side}.</p>` : '<p class="dim">ما فيه 5 أسهم من قطاعها بالقائمة عشان نرتبها.</p>'
+    return `<div class="part iss" style="grid-column:1/-1">${head}<p>عدد أسهمها المخففة ${what} بين سنتها المالية <span class="n">${t.y1}</span> و<span class="n">${t.y0}</span>.</p>${rank}${test}</div>`
+  }
+
   function expBlock(sym) {
     const e = state.exp[sym]
     const q = state.quotes[sym] || {}
@@ -849,6 +879,7 @@
       ${svrBlock(sym)}
       ${projBlock(sym)}
       ${expBlock(sym)}
+      ${issuanceBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من <b class="n">${cheaper == null ? '—' : pct(cheaper).replace('+', '')}</b> من شهوره في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
         <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً آخر 3 سنوات.`}</p>`)}
