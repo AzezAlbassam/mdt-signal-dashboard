@@ -130,7 +130,9 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   side (diluters) carries more of it (56% below the median vs buy side 52% above). T1 52-week high +1.5% (p 0.40),
   T2 GP/A +2.6% (p 0.29), T4 profitable value +1.6% (p 0.39): not confirmed. Reported: momentum −0.7%, residual
   momentum −1.3%, value composite +4.8%, value + momentum −2.4%.
-- [ ] Study 14: clean-room cross-check; page line per §7 for T3 (confirmed), others labelled
+- [x] Study 14: clean-room re-implementation (protocol text + named helpers only): all 147 yearly D values, every p
+  and Holm p identical (T3 p 0.010986 = 180/16384, Holm 0.043945).
+- [ ] Study 14: page line per §7 for T3 (confirmed), others labelled
 - [x] Study 13 POST-HOC on the user's favourites (scripts/study13-favorites.js → reports/study13-favorites-posthoc.txt;
   75 favourites saved in data/favorites/2026-10-20.json, 57 with enough history, ADRs ASML/TSM/NVO/SE/ARM added,
   GOOGL read through GOOG). Descriptive only (358 stock-years, picked today, so selection bias): buy − sell
