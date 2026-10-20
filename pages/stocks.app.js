@@ -393,7 +393,7 @@
       case 'pe': return q.price_earnings_ttm
       case 'fpe': return q.non_gaap_price_to_earnings_per_share_forecast_next_fy
       case 'peg': return peg(sym)?.v
-      case 'svr': return svrShown(q)
+      case 'svr': return svrShown(sym)
       case 'z': return q.altman_z_score_ttm
       case 'gap': return state.exp[sym]?.gap
     }
@@ -416,7 +416,7 @@
     if (state.underCap) {
       const cap = { us: listSvr('us'), sa: listSvr('sa') }
       syms = syms.filter((s) => {
-        const v = svrShown(state.quotes[s])
+        const v = svrShown(s)
         return v != null && v < 3 * cap[marketOf(s)]?.mean
       })
     }
@@ -526,7 +526,7 @@
         <td class="n" data-label="مكرر الربح P/E">${fmt(q?.price_earnings_ttm)}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${fmtSvr(svrShown(q))}</td>
+        <td class="n" data-label="SVR">${fmtSvr(svrShown(sym))}</td>
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -558,11 +558,16 @@
   // year, which they leave out too.
   const fmtSvr = (v) => fmt(v, v < 1 ? 2 : 1)
   const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
-  // Shown only for a company losing money over the last 12 months, as Nanalyze uses it: for a
-  // profitable one the P/E says more. The list mean (the ceiling) still counts every stock, as
-  // their catalog average does.
-  const losing = (q) => Number.isFinite(q?.earnings_per_share_diluted_ttm) && q.earnings_per_share_diluted_ttm <= 0
-  const svrShown = (q) => (losing(q) ? svrNow(q) : null)
+  // Shown only for a company that has not turned profitable yet, as Nanalyze uses it: a loss over
+  // the last 12 months and in each of the last three fiscal years (Ford or American Airlines in a
+  // bad year are not that kind of company; for them the P/E history says more). The list mean
+  // (the ceiling) still counts every stock, as their catalog average does.
+  function preProfit(sym) {
+    const eps = state.quotes[sym]?.earnings_per_share_diluted_ttm
+    const fy = (state.scores[sym]?.known ?? []).slice(-3)
+    return Number.isFinite(eps) && eps <= 0 && fy.length > 0 && fy.every((f) => !(f.ni > 0))
+  }
+  const svrShown = (sym) => (preProfit(sym) ? svrNow(state.quotes[sym]) : null)
   // Their "catalog average" here: the mean SVR of a market's list. They do not buy above three times
   // it. Computed once nine in ten of the list's quotes are in, and saved (meta/svr), so another tab
   // (favourites) has it before that market's quotes are loaded.
@@ -797,7 +802,7 @@
   // readout reads CHARTS[key]: the nearest point, labelled by `tip`.
   const CHARTS = new Map()
   let clipN = 0
-  function lineChart(key, { months, lines, refs = [], zones = null, w, aria, tip, lo = null, hi = null, grid = false }) {
+  function lineChart(key, { months, lines, refs = [], zones = null, w, aria, tip, lo = null, hi = null, grid = false, above = null }) {
     const pts = lines.flat()
     const vs = [...pts.map((p) => p.v), ...refs.map((r) => r.v)]
     lo ??= Math.max(0, Math.min(...vs) * 0.9)
@@ -823,7 +828,8 @@
       <rect x="${CH.l}" y="${Y(zones.lo)}" width="${w - CH.l - CH.r}" height="${CH.h - CH.b - Y(zones.lo)}" class="zone-lo"/>` : ''}
       ${gv.map((v) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/><text x="${CH.l + 2}" y="${Y(v) - 3}" class="axis">${+v.toFixed(2)}</text>`).join('')}
       ${refs.map(ref).join('')}
-      ${ticks.map(([m, i]) => `<text x="${X(i)}" y="${CH.h - 6}" class="axis" text-anchor="middle">${m.slice(0, 4)}</text>`).join('')}
+      ${above ? `<text x="${w - CH.r + 6}" y="${CH.t + 10}" class="axis ${above.cls}">${above.label}</text>` : ''}
+      ${ticks.map(([m, i]) => `<text x="${Math.max(CH.l + 14, X(i))}" y="${CH.h - 6}" class="axis" text-anchor="middle">${m.slice(0, 4)}</text>`).join('')}
       <g clip-path="url(#${clip})">${lines.map((l, j) => `<path d="${path(l)}" class="pe-line ${l.cls ?? ''}"/>`).join('')}
       <circle cx="${X(last.i)}" cy="${Y(Math.min(last.v, hi))}" r="4" class="pe-dot"/></g>
       <line class="cross" x1="0" x2="0" y1="${CH.t}" y2="${CH.h - CH.b}" visibility="hidden"/>
@@ -847,7 +853,7 @@
   // (red) and their ceiling, three times the list's mean (green).
   function svrBlock(sym) {
     const q = state.quotes[sym] || {}
-    if (!losing(q)) return ''
+    if (!preProfit(sym)) return ''
     const now = svrNow(q)
     const hd = state.hist[sym]
     const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
@@ -868,7 +874,11 @@
     if (now != null && months.at(-1) !== qs.at(-1)?.m) qs.push({ m: month, v: now, i: months.length - 1, now: true })
     const L = listSvr(marketOf(sym))
     const cap = L && 3 * L.mean
-    const refs = [r.avg4 != null && { v: r.avg4, label: 'متوسط', cls: 'red' }, cap && { v: cap, label: 'سقف', cls: 'green' }].filter(Boolean)
+    // A ceiling far above the line would flatten it (Ford at 0.25 under a ceiling of 29): then it is
+    // written at the top instead of drawn.
+    const top = Math.max(...r.points.map((p) => p.v), now ?? 0, r.avg4 ?? 0)
+    const capIn = cap && cap <= 1.6 * top
+    const refs = [r.avg4 != null && { v: r.avg4, label: 'متوسط', cls: 'red' }, capIn && { v: cap, label: 'سقف', cls: 'green' }].filter(Boolean)
     const lines = []
     if (fy.length) lines.push(Object.assign(qs.length ? [...fy, qs[0]] : fy, { cls: 'fy' }))
     if (qs.length) lines.push(qs)
@@ -877,15 +887,15 @@
     const hi = Math.min(Math.max(...vs, ...refs.map((x) => x.v), now ?? 0) * 1.06, 1.4 * Math.max(vs[Math.floor(0.9 * (vs.length - 1))], ...refs.map((x) => x.v), now ?? 0))
     const w = Math.min(1100, Math.max(260, ($('rows')?.clientWidth ?? 600) - 60))
     const chart = lineChart(`svr:${sym}`, {
-      months, lines, refs, w, lo: 0, hi, grid: true, aria: `SVR لـ ${sym.split(':')[1]} من ${months[0].slice(0, 4)} لين اليوم`,
+      months, lines, refs, w, lo: 0, hi, grid: true, above: cap && !capIn ? { label: `سقف ${fmt(cap, 1)} ↑`, cls: 'green' } : null, aria: `SVR لـ ${sym.split(':')[1]} من ${months[0].slice(0, 4)} لين اليوم`,
       tip: (p) => `${p.now ? 'اليوم' : monthAr(p.m)} · SVR ${fmtSvr(p.v)}${p.fy ? ' (سنوي)' : ''}`,
     })
     const vsAvg = now != null && r.avg4 ? now / r.avg4 - 1 : null
     const fyTo = fy.length ? qs[0]?.m.slice(0, 4) : null
     return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
       <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
-      <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
-      <p class="dim">يطلع بس للشركات اللي ما تربح (خسرانة في آخر 12 شهر)، مثل ما يستخدمه Nanalyze: للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
+      <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `${capIn ? '<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze' : '<b class="hi">سقف Nanalyze</b> (مكتوب فوق الرسمة، لأنه بعيد كثير فوق خط السهم)'}: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
+      <p class="dim">يطلع بس للشركات اللي ما صارت تربح للحين (خسرانة في آخر 12 شهر وفي آخر 3 سنين مالية)، مثل ما يستخدمه Nanalyze: للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
 
   function renderSectors() {
@@ -990,7 +1000,7 @@
   addEventListener('scroll', () => { tip.hidden = true }, { passive: true })
   // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
   $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
-  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); if (losing(state.quotes[sym])) loadHist(sym) } }
+  const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); if (preProfit(sym)) loadHist(sym) } }
   $('rows').addEventListener('click', (e) => {
     const star = e.target.closest('button[data-star]')
     if (star) { e.stopPropagation(); toggleFav(star.dataset.star); return }

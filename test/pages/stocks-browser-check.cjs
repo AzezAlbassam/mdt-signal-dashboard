@@ -19,6 +19,8 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
   const px = load(dir, 'px/' + f)
   fixtures[sym] = { fin: { ...fin, success: true }, px: { bars: { t: px.bars.t.slice(-240), c: px.bars.c.slice(-240) }, success: true } }
 }
+// AAPL plays a company not yet profitable (SVR shown): losses in its last three fiscal years.
+for (const k of ['net_income', 'eps']) fixtures['NASDAQ:AAPL'].fin.series[k] = fixtures['NASDAQ:AAPL'].fin.series[k].map((x, i, a) => (i >= a.length - 3 ? { value: -Math.abs(x.value) } : x))
 // TradingView's AAPL revenue, net income and EPS histories (get-symbol-data-batch, 2026-10-19).
 fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 'utf8'))
 
