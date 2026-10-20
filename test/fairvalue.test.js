@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, WEIGHTS, variantFair } from '../engine/fairvalue.js'
+import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, WEIGHTS, variantFair, quoteShares } from '../engine/fairvalue.js'
 
 const funds = (n = 12) =>
   Array.from({ length: n }, (_, i) => {
@@ -164,4 +164,17 @@ test('live context: today\'s share count replaces a weighted average more than 1
   const st = liveContext(f, ttm, '2021-10', 12).state('2021-10') // 20% more shares today (an offering)
   assert.equal(st.shares, 12)
   assert.equal(st.eps, 60 / 12)
+})
+
+test('quoteShares: ADR market value from the home listing (TSM) uses the share count; NVO, Aramco and RIVN keep market ÷ price', () => {
+  // TradingView quotes of 2026-10-20.
+  const tsm = { close: 425.08, market_cap_basic: 1929255198933, total_shares_outstanding: 5186480000, net_income_ttm: 80579754536, earnings_per_share_diluted_ttm: 15.5375 }
+  const nvo = { close: 39.35, market_cap_basic: 170099131862, total_shares_outstanding: 3345880520, net_income_ttm: 18192950078, earnings_per_share_diluted_ttm: 4.0918 }
+  const aramco = { close: 25.48, market_cap_basic: 6240962974822, total_shares_outstanding: 241823600000, net_income_ttm: 408371000000, earnings_per_share_diluted_ttm: 1.9587 }
+  const rivn = { close: 12.43, market_cap_basic: 17996907730, total_shares_outstanding: 1443948100, net_income_ttm: -3233000000, earnings_per_share_diluted_ttm: -2.581 }
+  assert.equal(quoteShares(tsm), 5186480000)
+  assert.ok(Math.abs(quoteShares(nvo) / (170099131862 / 39.35) - 1) < 1e-12)
+  assert.ok(Math.abs(quoteShares(aramco) / (6240962974822 / 25.48) - 1) < 1e-12)
+  assert.ok(Math.abs(quoteShares(rivn) / (17996907730 / 12.43) - 1) < 1e-12)
+  assert.equal(quoteShares({ close: 10 }), null)
 })

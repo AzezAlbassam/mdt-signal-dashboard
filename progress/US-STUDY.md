@@ -291,3 +291,6 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   ttmFromQuarters, POST-HOC), DCF with analysts' year-1 growth and a CAPM rate (page only), Graham weight 0, Lynch rule
   only at ≥10% EPS growth, banks without P/S and projection, ROIC/Piotroski on fiscal years, ADRs in search, weak-
   estimate flag, wording. RIVN "$13 DCF": not found; $13 = lowest analyst target / Mizuho / Simply Wall St analysts' FV.
+  Then: quoteShares (engine) — TSM's market value is on the Taipei price (14% under the ADR), so the
+  10% band had switched it to the wrong count; NI ÷ EPS and total_shares_outstanding agreeing now
+  win. PEG over >50% one-year growth flagged (GOOGL +90% from stake gains, 0.18).

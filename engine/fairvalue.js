@@ -126,6 +126,21 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
   return { state, f0: rec(last), f1: rec(last.prev), yoy: last.revYoY, period: last.label }
 }
 
+/**
+ * Today's share count from a TradingView quote: market value ÷ price, except when its
+ * total_shares_outstanding and net income ÷ EPS (last 12 months) agree within 10% and the market
+ * value's count does not. An ADR's market value can come from its home listing at the home price
+ * (TSM: Taipei, 14% under the ADR's), so P/S and per-share values would not match the price
+ * shown. NVO (its count is B shares only) and Aramco (EPS on the pre-bonus count) keep market ÷ price.
+ */
+export function quoteShares(q) {
+  const near = (a, b) => pos(a) && pos(b) && Math.abs(a / b - 1) <= 0.1
+  const m = pos(q?.market_cap_basic) && pos(q?.close) ? q.market_cap_basic / q.close : null
+  const t = q?.total_shares_outstanding
+  const e = q?.net_income_ttm && q?.earnings_per_share_diluted_ttm ? q.net_income_ttm / q.earnings_per_share_diluted_ttm : null
+  return near(t, e) && !near(m, t) ? t : m
+}
+
 /** The state per month a calculation reads: backtest rule, live fiscal years, or a liveContext. */
 export function stateFn(funds, month, live) {
   if (live?.state) return live.state

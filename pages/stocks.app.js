@@ -11,7 +11,7 @@
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
     'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq', 'industry',
     'total_revenue_fq', 'fiscal_period_end_fq', 'earnings_per_share_fy', 'total_revenue_fy', 'fiscal_period_fy', 'free_cash_flow_ttm',
-    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta']
+    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta', 'total_shares_outstanding', 'net_income_ttm']
   // Revenue, net income and EPS histories for the SVR chart (newest first; 32 quarters, 20 years).
   const H_COLS = ['total_revenue_fq_h', 'net_income_fq_h', 'earnings_per_share_diluted_fq_h', 'total_revenue_fy_h', 'net_income_fy_h',
     'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq']
@@ -192,6 +192,9 @@
     if (state.open === sym) render()
   }
 
+  // Market value at the price shown (quoteShares: an ADR's quote can carry its home listing's).
+  const mv = (q) => (quoteShares(q) ? q.close * quoteShares(q) : null)
+
   // The live page's own valuation choices (POST-HOC, 2026-10-21, from an audit of the page; study 7's
   // tested blend is unchanged in the engine): Graham's number is the most a defensive investor
   // should pay (The Intelligent Investor, ch. 14), so it is shown as a check with no weight; Lynch's
@@ -207,7 +210,7 @@
     const bvps = q.price_book_fq > 0 ? close / q.price_book_fq : null
     const eps = q.earnings_per_share_diluted_ttm
     const roe = Number.isFinite(q.return_on_equity) ? q.return_on_equity / 100 : null
-    const shares = q.market_cap_basic > 0 && close > 0 ? q.market_cap_basic / close : null
+    const shares = quoteShares(q)
     if (eps > 0 && bvps > 0) v.graham = Math.sqrt(22.5 * eps * bvps)
     if (bvps > 0 && roe != null) {
       const x = bvps * Math.min(4, (roe - PARAMS.termGrowth) / (PARAMS.discount - PARAMS.termGrowth))
@@ -229,7 +232,7 @@
   // from min(year 1, 25%) to 2.5% by year 10; discount = CAPM, 4.5% + beta × 4.2% (Damodaran's
   // equity risk premium, July 2026), held within 7%–13%, 9% without a beta; terminal growth 2.5%.
   function liveDcf(q, fallback) {
-    const shares = q.market_cap_basic > 0 && q.close > 0 ? q.market_cap_basic / q.close : null
+    const shares = quoteShares(q)
     const fcf0 = shares && Number.isFinite(q.free_cash_flow_ttm) ? q.free_cash_flow_ttm / shares : null
     if (!(fcf0 > 0)) return null
     const a = analysts(q).rev
@@ -265,7 +268,7 @@
     const funds = parseFundamentals(d.fin)
     // Net income ÷ EPS misses the share count when preferred dividends or a near-zero EPS
     // distort it (MCHP showed twice its shares); then the quote's count is used for the last year.
-    const qShares = q.market_cap_basic > 0 && q.close > 0 ? q.market_cap_basic / q.close : null
+    const qShares = quoteShares(q)
     const last = funds[funds.length - 1]
     if (qShares && last && !(last.shares > qShares / 1.5 && last.shares < qShares * 1.5)) last.shares = qShares
     const closes = closesOf(sym)
@@ -603,7 +606,7 @@
   function peNow(sym) {
     const q = state.quotes[sym]
     const ni = state.scores[sym]?.f0?.ni
-    const own = q?.market_cap_basic > 0 && ni > 0 ? q.market_cap_basic / ni : null
+    const own = mv(q) > 0 && ni > 0 ? mv(q) / ni : null
     const tv = q?.price_earnings_ttm > 0 ? q.price_earnings_ttm : null
     return own && (!tv || Math.abs(own / tv - 1) > 0.1) ? own : tv
   }
@@ -612,12 +615,14 @@
   // over the last reported one, in %, both on adjusted EPS (LLY 37.45 ÷ 41.6 = 0.90; finviz,
   // on 5-year growth, about 0.89). Only without a forecast: P/E ÷ the last 3 fiscal years' EPS
   // growth, marked historical. A forecast of falling EPS gives no PEG rather than past growth.
+  // Growth over 50% in one year is flagged: it rarely lasts, and it is often a one-off (GOOGL 2026:
+  // +90% from gains on its stakes, PEG 0.18).
   function peg(sym) {
     const q = state.quotes[sym]
     if (!q) return null
     const g = analysts(q).eps
     const fpe = q.non_gaap_price_to_earnings_per_share_forecast_next_fy
-    if (g != null) return g > 0 && fpe > 0 ? { v: fpe / (100 * g), past: false } : null
+    if (g != null) return g > 0 && fpe > 0 ? { v: fpe / (100 * g), past: false, jump: g > 0.5 ? g : null } : null
     const h = state.scores[sym]?.detail?.epsG
     const pe = peNow(sym)
     return pe > 0 && h > 0 ? { v: pe / (100 * h), past: true } : null
@@ -626,7 +631,7 @@
   // SVR today (Nanalyze): market value ÷ (latest quarter's revenue × 4); none under 10 million a
   // year, which they leave out too.
   const fmtSvr = (v) => fmt(v, v < 1 ? 2 : 1)
-  const svrNow = (q) => (q?.market_cap_basic > 0 && 4 * q.total_revenue_fq >= 1e7 ? q.market_cap_basic / (4 * q.total_revenue_fq) : null)
+  const svrNow = (q) => (mv(q) > 0 && 4 * q.total_revenue_fq >= 1e7 ? mv(q) / (4 * q.total_revenue_fq) : null)
   // Shown only for a company that has not turned profitable yet, as Nanalyze uses it: a loss over
   // the last 12 months and in each of the last three fiscal years (Ford or American Airlines in a
   // bad year are not that kind of company; for them the P/E history says more). The list mean
@@ -667,7 +672,10 @@
 
   const pegCell = (sym) => {
     const p = peg(sym)
-    return p ? `${fmt(p.v, 2)}${p.past ? ' <small class="dim" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>' : ''}` : '—'
+    if (!p) return '—'
+    const note = p.past ? ' <small class="dim" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>'
+      : p.jump ? ` <small class="dim" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
+    return `${fmt(p.v, 2)}${note}`
   }
 
   function expCell(sym) {
@@ -825,8 +833,8 @@
       [`Fwd P/E${fyNext(q) ? ` (${fyNext(q)})` : ''}`, fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy), `السعر ÷ توقع المحللين لربح السهم المعدّل (non-GAAP) لسنة ${fyNext(q) ?? 'التوقع'} المالية، أول سنة ما انعلنت نتايجها. الـ P/E العادي على الربح المحاسبي (GAAP)، فالفرق بينهم مو كله نمو. ضعفه: توقعات، والمحللين غالباً متفائلين.`],
       ['PEG', pegCell(sym), `المكرر المتوقع ÷ نمو ربح السهم المتوقع لسنة ${fyNext(q) ?? 'التوقع'} المالية مقارنة بآخر سنة معلنة (توقع سنة وحدة، مو 5 سنين مثل Yahoo وfinviz). الشائع: تحت 1 رخيص مقارنة بنموه، فوق 2 غالي. ضعفه: كله على رقم النمو.`],
       ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
-      ['FCF yield', q.market_cap_basic > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / q.market_cap_basic, 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير.'],
-      ['P/S', q.sector !== 'Finance' && q.market_cap_basic > 0 && q.total_revenue_ttm > 0 ? fmt(q.market_cap_basic / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ مبيعات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "مبيعاتها" إجمالي دخل العمولات.'],
+      ['FCF yield', mv(q) > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / mv(q), 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير.'],
+      ['P/S', q.sector !== 'Finance' && mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ مبيعات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "مبيعاتها" إجمالي دخل العمولات.'],
       ['P/B · ROE', `${fmt(q.price_book_fq)} · ${fmt(q.return_on_equity, 0)}%`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
       ['ROIC (آخر سنة مالية)', q.sector !== 'Finance' && Number.isFinite(q.return_on_invested_capital_fy) ? `${fmt(q.return_on_invested_capital_fy, 1)}%` : '—', 'العائد على رأس المال المستثمر لآخر سنة مالية: هل النمو مربح فعلاً؟ ما يطلع للبنوك.'],
       ['Altman Z', q.sector !== 'Finance' ? fmt(q.altman_z_score_ttm) : '—', 'خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر. ما يصلح للبنوك.'],
