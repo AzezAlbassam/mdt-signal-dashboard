@@ -95,7 +95,8 @@ for (const { id, text } of results) {
   }
 
   if (name.endsWith('get-symbol-data-batch') && j.data) {
-    for (const [sym, row] of Object.entries(j.data)) if (keep(sym)) sectors[sym] = row
+    // Only screener rows (with a type); other batch calls (study 14's total assets) are not sector rows.
+    for (const [sym, row] of Object.entries(j.data)) if (keep(sym) && row?.type) sectors[sym] = row
     for (const m of j.missing ?? []) log.sectorMissing.push(m)
   }
 }

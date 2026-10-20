@@ -49,11 +49,13 @@ test('residual momentum: a steady rise beyond the market ranks high, a steady fa
   assert.equal(residualMomentum(up, mkt, addMonths(end, 1)), null) // a month without a close
 })
 
-test('total assets: a fiscal year takes the unique index whose revenue matches within 0.1%', () => {
-  const funds = [{ year: 2023, rev: 100 }, { year: 2024, rev: 110 }, { year: 2025, rev: 120 }]
-  const m = assetsByYear(funds, [900, 800, 700], [120.05, 110, 100.5])
-  assert.equal(m.get(2025), 900)
-  assert.equal(m.get(2024), 800)
-  assert.equal(m.has(2023), false) // 100.5 is 0.5% off
-  assert.equal(assetsByYear([{ year: 2025, rev: 100 }], [1, 2], [100, 100]).size, 0) // two matches
+test('total assets: one offset from one-to-one revenue matches; flat-revenue years still placed by it', () => {
+  // Stored 2021–2025; TradingView newest first from 2025. 2022 and 2023 have the same revenue (a flat firm).
+  const funds = [{ year: 2021, rev: 90 }, { year: 2022, rev: 100 }, { year: 2023, rev: 100.05 }, { year: 2024, rev: 110 }, { year: 2025, rev: 120 }]
+  const m = assetsByYear(funds, [925, 924, 923, 922, 921, 920], [120, 110, 100.05, 100, 90, 80])
+  assert.deepEqual([...m].sort(), [[2021, 921], [2022, 922], [2023, 923], [2024, 924], [2025, 925]])
+  // A converted reporter whose revenues match nothing: no offset, no assets.
+  assert.equal(assetsByYear(funds, [1, 2, 3], [130, 119, 108]).size, 0)
+  // Two offsets with one match each: a tie, no assets.
+  assert.equal(assetsByYear([{ year: 2024, rev: 50 }, { year: 2025, rev: 70 }], [1, 2, 3], [70, 60, 50]).size, 0)
 })

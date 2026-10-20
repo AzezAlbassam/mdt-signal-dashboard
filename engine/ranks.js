@@ -79,16 +79,28 @@ export function residualMomentum(closes, market, m) {
 }
 
 /**
- * Total assets per stored fiscal year from TradingView's unlabelled newest-first arrays: year Y
- * takes assets[i] where revenue[i] is within 0.1% of the stored revenue of Y and no other index is.
+ * Total assets per stored fiscal year from TradingView's unlabelled newest-first arrays
+ * (PROTOCOL-study14.md §1): index i matches year Y when both revenues are > 0 and within 0.1%;
+ * the offset o is the most common Y + i over one-to-one matches (none on a tie); year Y takes
+ * assets[o − Y] when that index matches Y and the assets are > 0.
  */
 export function assetsByYear(funds, assets, revenue) {
   const out = new Map()
   if (!Array.isArray(assets) || !Array.isArray(revenue)) return out
-  for (const f of funds) {
-    if (!pos(f.rev)) continue
-    const hits = revenue.map((r, i) => (pos(r) && Math.abs(r / f.rev - 1) <= 0.001 ? i : -1)).filter((i) => i >= 0)
-    if (hits.length === 1 && pos(assets[hits[0]])) out.set(f.year, assets[hits[0]])
+  const years = funds.filter((f) => pos(f.rev))
+  const match = (i, f) => pos(revenue[i]) && Math.abs(revenue[i] / f.rev - 1) <= 0.001
+  const count = new Map()
+  for (const f of years) {
+    const is = revenue.map((_, i) => i).filter((i) => match(i, f))
+    if (is.length !== 1 || years.filter((g) => match(is[0], g)).length !== 1) continue
+    count.set(f.year + is[0], (count.get(f.year + is[0]) ?? 0) + 1)
+  }
+  const best = [...count].sort((a, b) => b[1] - a[1])
+  if (!best.length || (best.length > 1 && best[1][1] === best[0][1])) return out
+  const o = best[0][0]
+  for (const f of years) {
+    const i = o - f.year
+    if (i >= 0 && i < revenue.length && match(i, f) && pos(assets[i])) out.set(f.year, assets[i])
   }
   return out
 }
