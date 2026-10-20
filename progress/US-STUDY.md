@@ -119,7 +119,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   zone, 12 months): Z1 P/E +1.8%, Z2 P/S +0.8%, Z3 EV/EBITDA +2.5%, Z4 P/FCF −0.4%, Z5 combined +4.1% (p 0.23),
   Z6 PEG +1.4%, Z7 price stretch −3.5%, Z8 P/E vs sector +1.1%; hit rates 48–54%. Descriptive, post-hoc: the
   means come from May 2020 (the COVID rebound); without 2020 every candidate is between −6.6% and +0.2%.
-- [ ] Study 13: independent clean-room re-implementation cross-check (from the protocol text only)
+- [x] Study 13: independent clean-room re-implementation (protocol text + named helpers only, never saw
+  engine/zones.js or the run script): all 96 yearly D values, every p-value and mean IC identical.
 - [ ] Study 13: page per §5 (none confirmed → at most a descriptive P/E history, labelled) — ask the user first
 
 ## Counts
