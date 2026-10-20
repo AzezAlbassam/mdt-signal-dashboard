@@ -1,0 +1,226 @@
+Study 14 — ranks from the research literature (PROTOCOL-study14.md)
+US: 815 stocks. Total assets: files for 815, an offset found for 804 stocks, 11334 stock-years with total assets.
+Sides: top fifth (final percentile ≥ 0.80) buy, bottom fifth (≤ 0.20) sell. D = median 12-month return of the buy side − the sell side; a year counts with a pool of ≥ 100.
+
+T1 Near 52-week high (2001–2025)
+year   pool  buy  sell        D       IC
+2001    435   87    87   +39.3%    0.245
+2002    449   90    90    +6.9%    0.071
+2003    457   91    91   -17.3%   -0.180
+2004    467   93    93   +18.9%    0.152
+2005    476   95    95   -13.7%   -0.133
+2006    484   97    97    -2.0%   -0.005
+2007    501  100   100   +10.6%    0.132
+2008    519  104   104   +11.6%    0.076
+2009    531  107   106   -47.9%   -0.303
+2010    533  107   107    +8.2%    0.066
+2011    545  109   109   +33.5%    0.353
+2012    558  112   112    +4.5%   -0.064
+2013    569  114   112    +7.3%    0.130
+2014    585  117   117   +14.6%    0.046
+2015    605  121   121   +16.0%    0.108
+2016    619  124   124    +2.0%    0.001
+2017    637  127   127    -1.4%   -0.062
+2018    653  131   131   +16.1%    0.215
+2019    673  135   135    +9.7%    0.058
+2020    702  140   140   -69.9%   -0.471
+2021    729  146   146   +35.0%    0.272
+2022    800  160   160    +0.4%    0.002
+2023    814  163   163   +18.1%    0.167
+2024    814  163   163   +24.2%    0.151
+2025    814  163   163   -86.5%   -0.327
+mean D +1.5% over 25 years (positive 18); mean IC 0.028; halves 2001–2012 +4.4%, 2013–2025 -1.1%; without 2009 and 2020 +6.8%; 2011–2025 +1.6%
+watchlist +3.6%, S&P 500 -3.6%; hit rate: buy side above the pool median 50%, sell side below it 53%
+
+T2 Gross profit ÷ assets (2011–2025)
+year   pool  buy  sell        D       IC
+2011    410   82    82    +7.9%    0.075
+2012    456   91    91    -7.0%   -0.135
+2013    474   95    94    -2.3%   -0.095
+2014    491   98    98    +3.7%    0.077
+2015    505  101   101   +10.4%    0.082
+2016    518  104   104    +7.2%    0.128
+2017    532  107   106    +7.0%    0.126
+2018    542  108   108    +4.7%    0.063
+2019    565  113   113   +19.4%    0.165
+2020    583  117   117   -18.5%   -0.072
+2021    629  126   126   +13.4%    0.112
+2022    658  132   132   +13.7%    0.144
+2023    669  134   134   +17.4%    0.143
+2024    674  135   135    +5.9%    0.084
+2025    678  136   136   -44.0%   -0.161
+mean D +2.6% over 15 years (positive 11); mean IC 0.049; halves 2011–2017 +3.8%, 2018–2025 +1.5%; without 2009 and 2020 +4.1%
+watchlist +2.4%, S&P 500 +4.2%; hit rate: buy side above the pool median 53%, sell side below it 54%
+
+T3 Net share issuance (2012–2025)
+year   pool  buy  sell        D       IC
+2012    419   84    84    +3.2%    0.063
+2013    461   92    91    +7.5%    0.103
+2014    462   92    92    +1.4%    0.015
+2015    497   99    99    +7.4%    0.095
+2016    498  100   100    +9.4%    0.118
+2017    512  102   102    +5.8%    0.049
+2018    524  105   105   -10.2%   -0.057
+2019    540  107   108    -6.4%   -0.032
+2020    556  111   111    +0.3%   -0.017
+2021    555  111   110   +19.6%    0.182
+2022    611  122   122   +14.4%    0.182
+2023    673  135   135   +20.7%    0.187
+2024    655  131   131    +6.8%    0.056
+2025    668  134   134    +4.4%   -0.031
+mean D +6.0% over 14 years (positive 12); mean IC 0.065; halves 2012–2018 +3.5%, 2019–2025 +8.5%; without 2009 and 2020 +6.5%
+watchlist +7.1%, S&P 500 +3.5%; hit rate: buy side above the pool median 52%, sell side below it 56%
+
+T4 Profitable value (2011–2025)
+year   pool  buy  sell        D       IC
+2011    409   82    82    +1.9%    0.056
+2012    456   91    91    -0.8%   -0.028
+2013    471   94    93   -11.2%   -0.084
+2014    491   98    98    +2.5%    0.036
+2015    504  101   101    +6.7%    0.093
+2016    516  103   103   +10.6%    0.081
+2017    527  106   105    +9.7%    0.055
+2018    539  108   108    +3.8%    0.012
+2019    560  112   112    +9.1%    0.076
+2020    581  116   116   -26.7%   -0.118
+2021    629  126   126   +31.8%    0.251
+2022    655  131   131   +11.0%    0.091
+2023    665  133   133   +24.2%    0.196
+2024    673  135   135    +6.8%    0.050
+2025    678  136   136   -54.9%   -0.124
+mean D +1.6% over 15 years (positive 11); mean IC 0.043; halves 2011–2017 +2.8%, 2018–2025 +0.6%; without 2009 and 2020 +3.7%
+watchlist +1.6%, S&P 500 +3.4%; hit rate: buy side above the pool median 52%, sell side below it 54%
+
+R1 12-1 momentum (2001–2025)
+year   pool  buy  sell        D       IC
+2001    432   86    86   +21.6%    0.155
+2002    445   89    89    +6.1%    0.080
+2003    457   91    91   -10.0%   -0.080
+2004    465   93    93    -4.6%    0.049
+2005    474   95    95    -1.9%    0.016
+2006    485   97    97    -1.0%   -0.039
+2007    502  100   100    +4.8%    0.098
+2008    519  104   104    +0.9%    0.030
+2009    532  107   105   -32.1%   -0.261
+2010    533  107   107   +17.1%    0.115
+2011    543  109   109    -0.1%   -0.026
+2012    558  112   112    -0.5%   -0.002
+2013    569  114   112   +13.8%    0.148
+2014    584  117   116    +2.3%    0.089
+2015    602  120   120    +9.9%    0.073
+2016    620  124   124    -1.5%   -0.061
+2017    637  127   128   +14.6%    0.128
+2018    656  131   131    +2.7%    0.004
+2019    674  135   135   +21.4%    0.140
+2020    702  140   140   -53.0%   -0.331
+2021    725  145   145   -20.5%   -0.235
+2022    793  159   159    +2.2%    0.005
+2023    814  163   163   +30.1%    0.177
+2024    814  163   163   +20.0%    0.132
+2025    814  163   163   -60.6%   -0.225
+mean D -0.7% over 25 years (positive 14); mean IC 0.007; halves 2001–2012 +0.0%, 2013–2025 -1.4%; without 2009 and 2020 +2.9%; 2011–2025 -1.3%
+watchlist -0.3%, S&P 500 -0.4%; hit rate: buy side above the pool median 50%, sell side below it 51%
+
+R2 Residual momentum (2003–2025)
+year   pool  buy  sell        D       IC
+2003    432   86    86    +2.5%    0.051
+2004    445   89    89    -5.0%   -0.007
+2005    457   91    91    -1.4%   -0.000
+2006    465   93    93    -6.6%   -0.118
+2007    473   95    95    -5.9%   -0.055
+2008    483   97    97    -6.3%   -0.065
+2009    499  100   100   +14.6%    0.144
+2010    516  103   103    +2.5%   -0.041
+2011    531  106   106    +9.3%    0.069
+2012    531  106   106    +6.8%    0.135
+2013    540  108   107    +0.8%    0.024
+2014    555  111   111    -8.7%   -0.082
+2015    568  114   114   +12.3%    0.173
+2016    581  116   116    -3.1%   -0.105
+2017    601  120   120    +6.1%    0.080
+2018    616  123   123    -8.5%   -0.093
+2019    632  126   126    +1.7%   -0.001
+2020    651  130   130   -13.2%   -0.106
+2021    670  134   134   -10.0%   -0.107
+2022    700  140   140    -2.5%   -0.013
+2023    724  145   145   +10.4%    0.083
+2024    793  159   159   +16.7%    0.139
+2025    814  163   163   -41.9%   -0.205
+mean D -1.3% over 23 years (positive 11); mean IC -0.004; halves 2003–2013 +1.0%, 2014–2025 -3.4%; without 2009 and 2020 -1.5%; 2011–2025 -1.6%
+watchlist -1.6%, S&P 500 +0.5%; hit rate: buy side above the pool median 49%, sell side below it 51%
+
+R3 Value composite (2011–2025)
+year   pool  buy  sell        D       IC
+2011    516  104   103    +6.2%    0.016
+2012    565  113   113   +10.8%    0.145
+2013    578  116   114    -0.1%   -0.019
+2014    599  120   120    +3.9%   -0.012
+2015    616  123   123    +4.6%    0.044
+2016    632  126   126    +0.8%    0.059
+2017    649  131   130    +0.9%   -0.028
+2018    669  134   134    -5.3%   -0.032
+2019    692  139   139    -5.5%   -0.068
+2020    723  145   144    -8.3%   -0.041
+2021    790  158   158   +41.5%    0.327
+2022    810  163   162    +8.2%    0.062
+2023    809  162   162   +22.3%    0.178
+2024    812  162   162    +3.3%    0.007
+2025    814  162   163   -10.8%   -0.050
+mean D +4.8% over 15 years (positive 10); mean IC 0.039; halves 2011–2017 +3.9%, 2018–2025 +5.7%; without 2009 and 2020 +5.8%
+watchlist +4.3%, S&P 500 +3.9%; hit rate: buy side above the pool median 51%, sell side below it 55%
+
+R4 Value + momentum (2011–2025)
+year   pool  buy  sell        D       IC
+2011    502  101   101    -1.4%   -0.057
+2012    553  111   111    +3.9%    0.097
+2013    564  113   112    +4.0%    0.115
+2014    580  116   116    +3.4%    0.038
+2015    598  120   120   +12.2%    0.078
+2016    615  123   123    -0.6%   -0.018
+2017    633  127   127   +12.8%    0.078
+2018    653  131   131   -11.6%   -0.029
+2019    668  134   134    +7.4%    0.063
+2020    699  140   140   -44.8%   -0.242
+2021    724  145   145    -7.1%   -0.007
+2022    789  158   158    +2.6%    0.039
+2023    809  162   162   +30.5%    0.226
+2024    812  162   162   +12.8%    0.092
+2025    813  163   163   -59.4%   -0.180
+mean D -2.4% over 15 years (positive 9); mean IC 0.020; halves 2011–2017 +4.9%, 2018–2025 -8.7%; without 2009 and 2020 +0.7%
+watchlist -1.3%, S&P 500 +2.0%; hit rate: buy side above the pool median 50%, sell side below it 52%
+
+HYPOTHESES (mean D > 0; exact sign-flip over years, one-sided; Holm over the testable candidates)
+  H_T1 Near 52-week high      mean D  +1.5% over 25 years  p 0.4030  Holm 0.8576 → NOT CONFIRMED
+  H_T2 Gross profit ÷ assets  mean D  +2.6% over 15 years  p 0.2859  Holm 0.8576 → NOT CONFIRMED
+  H_T3 Net share issuance     mean D  +6.0% over 14 years  p 0.0110  Holm 0.0439 → CONFIRMED
+  H_T4 Profitable value       mean D  +1.6% over 15 years  p 0.3893  Holm 0.8576 → NOT CONFIRMED
+Most useful: T3 Net share issuance
+
+REPORTED — price ranks: 6-month D (May → November) and the mean over 12 monthly formation dates
+  T1 Near 52-week high    6-month D +3.3% (25 years); 12 formation dates +0.3% (25 years)
+  R1 12-1 momentum        6-month D +2.2% (25 years); 12 formation dates -0.0% (25 years)
+  R2 Residual momentum    6-month D +0.5% (23 years); 12 formation dates +0.7% (23 years)
+
+REPORTED — large caps (each year the 300 largest ranked stocks by c × shares of F0, re-ranked within them), mean D 2011–2025
+  T1 Near 52-week high      -0.8% (15 years)
+  T2 Gross profit ÷ assets  +1.4% (15 years)
+  T3 Net share issuance     +1.9% (14 years)
+  T4 Profitable value       +0.3% (15 years)
+  R1 12-1 momentum          -2.1% (15 years)
+  R2 Residual momentum      -0.3% (15 years)
+  R3 Value composite        -0.8% (15 years)
+  R4 Value + momentum       -1.4% (15 years)
+
+REPORTED — mean yearly Spearman correlation of final percentiles (years both count)
+          T1    T2    T3    T4    R1    R2    R3    R4    S9
+T1      1.00  0.12  0.19  0.12  0.50  0.31  0.11  0.42  0.14
+T2      0.12  1.00  0.20  0.75  0.10 -0.02  0.15  0.14  0.32
+T3      0.19  0.20  1.00  0.38  0.08  0.06  0.40  0.35  0.19
+T4      0.12  0.75  0.38  1.00 -0.00 -0.06  0.74  0.50  0.52
+R1      0.50  0.10  0.08 -0.00  1.00  0.68 -0.05  0.67  0.05
+R2      0.31 -0.02  0.06 -0.06  0.68  1.00 -0.05  0.50 -0.11
+R3      0.11  0.15  0.40  0.74 -0.05 -0.05  1.00  0.66  0.44
+R4      0.42  0.14  0.35  0.50  0.67  0.50  0.66  1.00  0.32
+S9      0.14  0.32  0.19  0.52  0.05 -0.11  0.44  0.32  1.00
+
+Limits: survivorship (today's listed stocks; dead losers missing, which flatters the sell side of price-trend ranks and the cheap side of value); price return without dividends (high-yield value stocks lose 2–4 points a year here); TradingView's current, restated fundamentals; today's sectors; one date a year; EV without cash; share counts from net income ÷ EPS are distorted by preferred dividends, minority interests and SPAC years; the 52-week high from intraday highs.
