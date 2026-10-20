@@ -253,3 +253,6 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   collection `h`); fiscal-year points (plain P/S) before the quarters. FMP quarterly statements are denied on
   the user's plan. Share counts = net income ÷ EPS, dropped when off their neighbours (MCHP preferred
   dividends, RKLB SPAC year). Page price fetch raised 72 → 240 monthly bars (all engine windows ≤ 60 months).
+- 2026-10-20 — page: SVR shown only for companies losing money over the last 12 months (EPS TTM ≤ 0), at the
+  user's request; filter "SVR تحت السقف" (loss-makers under 3 × the list's mean SVR; the means are saved in
+  meta/svr so other tabs have them); favourites (star on every row, tab "المفضلة", saved in meta/favorites).

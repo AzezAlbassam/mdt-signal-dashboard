@@ -47,7 +47,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG }, groups: { us: [], sa: [], big: [] }, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, projOpen: false, news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -413,6 +413,13 @@
       const set = new Set(g?.symbols ?? [])
       syms = syms.filter((s) => set.has(s))
     }
+    if (state.underCap) {
+      const cap = { us: listSvr('us'), sa: listSvr('sa') }
+      syms = syms.filter((s) => {
+        const v = svrShown(state.quotes[s])
+        return v != null && v < 3 * cap[marketOf(s)]?.mean
+      })
+    }
     const f = state.filter.trim().toLowerCase()
     if (f) syms = syms.filter((s) => s.toLowerCase().includes(f) || String(state.quotes[s]?.description ?? '').toLowerCase().includes(f))
     const { key, dir } = state.sort
@@ -473,8 +480,8 @@
   }
 
   function render() {
-    for (const m of ['us', 'sa']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
-    for (const m of ['us', 'sa', 'big', 'sectors']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
+    for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
+    for (const m of ['us', 'sa', 'big', 'sectors', 'fav']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
     document.querySelector('.wrap').dataset.view = state.market
     $('sectorsView').hidden = state.market !== 'sectors'
     if (state.market === 'sectors') { renderSectors(); return }
@@ -483,6 +490,10 @@
     const body = $('rows')
     const syms = visible()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
+    if (!state.lists[state.market].length && state.market === 'fav') {
+      body.innerHTML = '<tr><td colspan="14" class="dim">ما عندك أسهم في المفضلة. اضغط ☆ جنب أي سهم في باقي التبويبات يجي هنا.</td></tr>'
+      return
+    }
     if (!state.lists[state.market].length) {
       body.innerHTML = '<tr><td colspan="14" class="dim">القائمة فاضية. اكتب رمز سهم أو اسمه فوق واضغط بحث.</td></tr>'
       return
@@ -504,7 +515,7 @@
       const f = state.fair[sym]
       const up = upside(sym)
       const main = `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag" title="من السبعة العظماء">★ السبعة العظماء</em>' : ''}</b><span>${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag" title="من السبعة العظماء">★ السبعة العظماء</em>' : ''}</b><span>${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? fmt(q.close, 2) : '<span class="skel"></span>'}</td>
         <td class="n" data-label="القيمة العادلة">${f?.fair ? fmt(f.fair, 2) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null ? '' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق">${pct(up)}</td>
@@ -552,10 +563,32 @@
   // their catalog average does.
   const losing = (q) => Number.isFinite(q?.earnings_per_share_diluted_ttm) && q.earnings_per_share_diluted_ttm <= 0
   const svrShown = (q) => (losing(q) ? svrNow(q) : null)
-  // Their "catalog average" here: the mean SVR of the stock's market list. They do not buy above three times it.
-  function listSvr(sym) {
-    const vs = state.lists[marketOf(sym)].map((s) => svrNow(state.quotes[s])).filter((v) => v != null)
-    return vs.length >= 20 ? { mean: vs.reduce((a, b) => a + b, 0) / vs.length, n: vs.length } : null
+  // Their "catalog average" here: the mean SVR of a market's list. They do not buy above three times
+  // it. Computed once nine in ten of the list's quotes are in, and saved (meta/svr), so another tab
+  // (favourites) has it before that market's quotes are loaded.
+  function listSvr(market) {
+    const list = state.lists[market]
+    const vs = list.map((s) => svrNow(state.quotes[s])).filter((v) => v != null)
+    if (list.filter((s) => state.quotes[s]).length < 0.9 * list.length || vs.length < 20) return state.svrMean[market] ?? null
+    const m = { mean: vs.reduce((a, b) => a + b, 0) / vs.length, n: vs.length }
+    const old = state.svrMean[market]
+    if (!(old && Math.abs(old.mean / m.mean - 1) < 0.02)) {
+      state.svrMean = { ...state.svrMean, [market]: m }
+      if (db) db.doc('meta/svr').set(state.svrMean).catch(() => {})
+    }
+    return m
+  }
+
+  // Favourites (meta/favorites): a star on every row, their own tab.
+  const starBtn = (sym) => {
+    const on = state.lists.fav.includes(sym)
+    return `<button class="star" type="button" data-star="${esc(sym)}" aria-pressed="${on}" aria-label="${on ? 'شيل من المفضلة' : 'أضف للمفضلة'} ${esc(sym)}" title="${on ? 'شيل من المفضلة' : 'أضف للمفضلة'}">${on ? '★' : '☆'}</button>`
+  }
+  function toggleFav(sym) {
+    const favs = state.lists.fav
+    state.lists.fav = favs.includes(sym) ? favs.filter((s) => s !== sym) : [...favs, sym]
+    if (db) db.doc('meta/favorites').set({ symbols: state.lists.fav }).catch(() => notice('ما قدرت أحفظ المفضلة.', true))
+    render()
   }
 
   const pegCell = (sym) => {
@@ -833,7 +866,7 @@
     const fy = r.points.filter((p) => p.fy).map(at)
     const qs = r.points.filter((p) => !p.fy).map(at)
     if (now != null && months.at(-1) !== qs.at(-1)?.m) qs.push({ m: month, v: now, i: months.length - 1, now: true })
-    const L = listSvr(sym)
+    const L = listSvr(marketOf(sym))
     const cap = L && 3 * L.mean
     const refs = [r.avg4 != null && { v: r.avg4, label: 'متوسط', cls: 'red' }, cap && { v: cap, label: 'سقف', cls: 'green' }].filter(Boolean)
     const lines = []
@@ -937,6 +970,7 @@
   document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
   $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
+  $('underCap').addEventListener('change', (e) => { state.underCap = e.target.checked; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
@@ -958,8 +992,10 @@
   $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
   const toggle = (sym) => { state.open = state.open === sym ? null : sym; render(); if (state.open) { loadNews(sym); if (losing(state.quotes[sym])) loadHist(sym) } }
   $('rows').addEventListener('click', (e) => {
+    const star = e.target.closest('button[data-star]')
+    if (star) { e.stopPropagation(); toggleFav(star.dataset.star); return }
     const del = e.target.closest('button[data-del]')
-    if (del) { e.stopPropagation(); if (state.market !== 'big') removeSymbol(del.dataset.del); return }
+    if (del) { e.stopPropagation(); if (state.market !== 'big' && state.market !== 'fav') removeSymbol(del.dataset.del); return }
     const row = e.target.closest('tr.row')
     if (row) toggle(row.dataset.sym)
   })
@@ -999,6 +1035,14 @@
         render()
       }, () => renderLatestIdeas([]))
     } catch { renderLatestIdeas([]) }
+    db.doc('meta/favorites').onSnapshot((snap) => {
+      const syms = snap.exists ? snap.data().symbols ?? [] : []
+      const changed = JSON.stringify(syms) !== JSON.stringify(state.lists.fav)
+      state.lists.fav = [...syms]
+      if (changed && state.market === 'fav') refresh()
+      else render()
+    }, () => {})
+    db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; render() } }).catch(() => {})
     db.doc('meta/watchlists').onSnapshot((snap) => {
       const d = snap.exists ? snap.data() : {}
       state.groups = { us: d.us ?? [], sa: d.sa ?? [] }

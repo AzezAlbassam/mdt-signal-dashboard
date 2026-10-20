@@ -34,10 +34,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       'lists/us': { symbols: ['NASDAQ:META', 'NASDAQ:AAPL', 'NYSE:JPM', 'NASDAQ:NOPE'] },
       'lists/sa': { symbols: ['TADAWUL:1120'] },
       'ideas/x1': { sym: 'NYSE:JPM', source: 'VIC', title: 'JPMorgan long thesis', url: 'https://valueinvestorsclub.com/idea/x', date: '2024-10-04', priceThen: 200, side: 'long', summary: 'Test summary' },
+      'meta/svr': { us: { mean: 2, n: 300 } }, // a saved list mean: ceiling 6
       'meta/watchlists': { us: [{ name: 'Investments', symbols: ['NASDAQ:META'] }, { name: 'Stocks', symbols: ['NASDAQ:AAPL', 'NYSE:JPM'] }], sa: [] },
       'cache/NASDAQ:META': { sym: 'NASDAQ:META', fin: fx['NASDAQ:META'].fin, px: { t: fx['NASDAQ:META'].px.bars.t, c: fx['NASDAQ:META'].px.bars.c }, fetchedAt: Date.now() },
     }
     window.__calls = []
+    window.__store = store
     const snapOf = (p) => ({ id: p.split('/').pop(), exists: !!store[p], data: () => store[p] })
     const query = (coll, filt = null, lim = 1000) => ({
       onSnapshot: (next) => { setTimeout(async () => next(await query(coll, filt, lim).get()), 10); return () => {} },
@@ -107,6 +109,22 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('SVR TIP end:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
   console.log('SVR CELL:', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText), 'h saved:', await page.evaluate(() => window.__calls.filter((c) => c.startsWith('mcp-tv-get-symbol-data-batch 1')).length))
   await (await page.$('#rows .part.svr')).screenshot({ path: path.join(os.tmpdir(), 'stocks-svr.png') })
+  await page.fill('#filter', '')
+  await page.click('#rows tr.row[data-sym="NASDAQ:AAPL"] button[data-star]')
+  await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')
+  await page.waitForTimeout(200)
+  console.log('FAV saved:', await page.evaluate(() => window.__store['meta/favorites']), 'tab:', await page.textContent('#tab-fav'), 'star:', await page.$eval('#rows tr.row[data-sym="NASDAQ:AAPL"] button[data-star]', (b) => b.textContent + b.getAttribute('aria-pressed')))
+  await page.click('#tab-fav')
+  await page.waitForTimeout(800)
+  console.log('FAV ROWS:', await rows())
+  await page.check('#underCap')
+  console.log('UNDER CAP (fav):', await rows())
+  await page.click('#tab-us')
+  await page.waitForTimeout(500)
+  console.log('UNDER CAP (us):', await rows(), await page.textContent('#shown'))
+  await page.uncheck('#underCap')
+  await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')
+  console.log('FAV after unstar:', await page.evaluate(() => window.__store['meta/favorites']))
   console.log('LATEST IDEAS:', (await page.$eval('#latestIdeas', (t) => t.innerText)).replace(/\s+/g, ' '))
   await page.fill('#filter', '')
   await page.click('#tab-sa')

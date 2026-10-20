@@ -138,7 +138,12 @@ details.key dd { margin: 0; color: var(--muted); }
 .tip-row > b { white-space: nowrap; }
 
 .wrap[data-view="sectors"] .bar, .wrap[data-view="sectors"] .filters, .wrap[data-view="sectors"] details.key, .wrap[data-view="sectors"] .tbl { display: none; }
-.wrap[data-view="big"] .add, .wrap[data-view="big"] .x { display: none; }
+.wrap[data-view="big"] .add, .wrap[data-view="big"] .x, .wrap[data-view="fav"] .add, .wrap[data-view="fav"] .x { display: none; }
+.star { background: none; border: 0; color: var(--muted); font-size: 17px; line-height: 1; padding: 2px 4px; margin-inline-end: 4px; border-radius: 6px; cursor: pointer; }
+.star:hover { background: var(--soft); }
+.star[aria-pressed="true"] { color: var(--mid); }
+.filters .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; white-space: nowrap; cursor: pointer; }
+.filters .chk input { flex: none; width: 16px; height: 16px; padding: 0; margin: 0; accent-color: var(--accent); }
 tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-size: 14px; }
 .mag { font-style: normal; font-family: var(--body); font-size: 11px; font-weight: 600; color: var(--mid); margin-inline-start: 6px; white-space: nowrap; }
 .sectors { display: grid; gap: 16px; }
@@ -179,6 +184,8 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
   h1 { font-size: 26px; }
   .lead { font-size: 14px; }
   .tabs { display: grid; grid-template-columns: 1fr 1fr; }
+  #tab-fav { grid-column: 1 / -1; }
+  .star { font-size: 22px; padding: 4px 8px; }
   .tabs button { padding: 10px 6px; white-space: nowrap; }
   .add { flex-basis: 100%; }
   .add input, .filters input, .filters select { font-size: 16px; }
@@ -221,6 +228,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
     <button role="tab" id="tab-sa" data-m="sa" aria-selected="false">السوق السعودي<span class="cnt" id="cnt-sa"></span></button>
     <button role="tab" id="tab-big" data-m="big" aria-selected="false">أكبر 25 شركة</button>
     <button role="tab" id="tab-sectors" data-m="sectors" aria-selected="false">القطاعات</button>
+    <button role="tab" id="tab-fav" data-m="fav" aria-selected="false">★ المفضلة<span class="cnt" id="cnt-fav"></span></button>
   </nav>
 
   <div class="bar">
@@ -236,6 +244,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
   <div class="filters">
     <input id="filter" type="search" placeholder="فلترة القائمة: رمز أو اسم" aria-label="فلترة القائمة">
     <select id="group" aria-label="قائمة TradingView"><option value="">كل الأسهم</option></select>
+    <label class="chk" title="يخلي بس الأسهم الخسرانة اللي الـ SVR حقها تحت سقف Nanalyze (3 أضعاف متوسط قائمتك)"><input type="checkbox" id="underCap"> SVR تحت السقف</label>
     <select id="sortSel" class="only-mobile" aria-label="ترتيب">
       <option value="sym:1">ترتيب: اسم السهم</option>
       <option value="score:-1">ترتيب: الأعلى درجة</option>
