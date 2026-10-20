@@ -9,7 +9,7 @@ import { loadUniverse } from './lib/universe.js'
 const LAST = '2026-09'
 const YEARS = Array.from({ length: 12 }, (_, i) => 2014 + i)
 const MIN_ZONE = 10
-const MIN_YEARS = 8
+const MIN_YEARS = 10
 const MIN_SECTOR = 5
 const C = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8']
 const NAME = { Z1: 'P/E history', Z2: 'P/S history', Z3: 'EV/EBITDA history', Z4: 'P/FCF history', Z5: 'Combined Z1–Z4', Z6: 'PEG rule (<1 / >2)', Z7: 'Price stretch (48 months)', Z8: 'P/E against its sector' }
@@ -24,7 +24,18 @@ const pct = (x, w = 7) => (x == null || !Number.isFinite(x) ? '–'.padStart(w) 
 
 const wl = loadUniverse('data/fv', LAST)
 const sp = loadUniverse('data/fv8', LAST)
-const stocks = [...wl.stocks.map((s) => ({ ...s, u: 'wl' })), ...sp.stocks.map((s) => ({ ...s, u: 'sp' }))]
+// One symbol per set of identical accounts (GOOG/GOOGL, BRK.A/BRK.B, …): the first in load order
+// (watchlist folder first) among stocks whose latest fiscal year has the same revenue and net income,
+// as scripts/sector-pe.js does.
+const seen = new Set()
+const dupes = []
+const stocks = [...wl.stocks.map((s) => ({ ...s, u: 'wl' })), ...sp.stocks.map((s) => ({ ...s, u: 'sp' }))].filter((s) => {
+  const f = s.funds.at(-1)
+  const key = `${f.year}|${f.rev}|${f.ni}`
+  if (seen.has(key)) { dupes.push(s.sym); return false }
+  seen.add(key)
+  return true
+})
 
 // Profitable at m: the fiscal year known then has net income > 0 and EPS > 0.
 const profitable = (s, m) => {
@@ -86,7 +97,7 @@ function spread(rs, k, f = (r) => r.fwd, lo, hi) {
 const byYear = new Map(YEARS.map((R) => [R, rows(R)]))
 const out = [
   'Study 13 — buy and sell zones for profitable companies (PROTOCOL-study13.md)',
-  `US: ${stocks.length} stocks (watchlist ${wl.stocks.length} + S&P 500 outside watchlists ${sp.stocks.length}). End of May ${YEARS[0]}–${YEARS.at(-1)}; outcome: next 12-month price return.`,
+  `US: ${stocks.length} stocks (watchlist ${wl.stocks.length} + S&P 500 outside watchlists ${sp.stocks.length}, less ${dupes.length} second share classes: ${dupes.join(' ')}). End of May ${YEARS[0]}–${YEARS.at(-1)}; outcome: next 12-month price return.`,
   `Zones: own-history percentile ≤ ${ZONE.buy} buy, ≥ ${ZONE.sell} sell (≥ ${ZONE.minMonths} earlier months); Z6 PEG < 1 buy, > 2 sell. D = median buy − median sell; a year counts with ≥ ${MIN_ZONE} stocks per zone.`,
   '',
 ]
@@ -116,7 +127,7 @@ for (const k of C) {
   }
   const d = Ds.map(([, x]) => x)
   const half = (a, b) => { const x = Ds.filter(([R]) => R >= a && R <= b).map(([, v]) => v); return x.length ? mean(x) : null }
-  res[k] = { years: d.length, meanD: d.length ? mean(d) : null, pos: d.filter((x) => x > 0).length, p: d.length >= MIN_YEARS ? signFlipGreater(d) : null, D3: D3.length ? mean(D3) : null, ic: ics.length ? mean(ics) : null, h1: half(2014, 2019), h2: half(2020, 2025), hits }
+  res[k] = { byYear: Object.fromEntries(Ds), years: d.length, meanD: d.length ? mean(d) : null, pos: d.filter((x) => x > 0).length, p: d.length >= MIN_YEARS ? signFlipGreater(d) : null, D3: D3.length ? mean(D3) : null, ic: ics.length ? mean(ics) : null, h1: half(2014, 2019), h2: half(2020, 2025), hits }
   const r = res[k]
   out.push(`mean D ${pct(r.meanD).trim()} over ${r.years} years (positive ${r.pos}); 36-month D ${pct(r.D3).trim()}; mean IC ${r.ic == null ? '–' : r.ic.toFixed(3)}; halves 2014–19 ${pct(r.h1).trim()}, 2020–25 ${pct(r.h2).trim()}`)
   out.push(`hit rate: buy zone beat the year's median ${hits.buy[1] ? ((100 * hits.buy[0]) / hits.buy[1]).toFixed(0) : '–'}% of ${hits.buy[1]}; sell zone below it ${hits.sell[1] ? ((100 * hits.sell[0]) / hits.sell[1]).toFixed(0) : '–'}% of ${hits.sell[1]}`, '')
@@ -133,8 +144,12 @@ for (const k of C) {
   r.ok = r.meanD > 0 && r.adj < 0.05
   out.push(`  H_${k} ${NAME[k].padEnd(26)} mean D ${pct(r.meanD)}  p ${r.p.toFixed(4)}  Holm ${r.adj.toFixed(4)} → ${r.ok ? 'CONFIRMED' : 'NOT CONFIRMED'}`)
 }
-const ok = C.filter((k) => res[k].ok).sort((a, b) => res[b].meanD - res[a].meanD)
-out.push(ok.length ? `Most accurate (confirmed, largest mean D): ${ok[0]} ${NAME[ok[0]]}` : 'No candidate confirmed: no zone rule beat chance in this test.', '')
+// Most accurate: the largest mean D over the years in which every confirmed candidate counts; tie → lower k.
+const ok = C.filter((k) => res[k].ok)
+const both = YEARS.filter((R) => ok.every((k) => res[k].byYear[R] != null))
+const onBoth = (k) => mean(both.map((R) => res[k].byYear[R]))
+const best = ok.length ? ok.reduce((b, k) => (onBoth(k) > onBoth(b) ? k : b)) : null
+out.push(best ? `Most accurate (confirmed; mean D over the ${both.length} years all ${ok.length} confirmed count): ${best} ${NAME[best]}${ok.length > 1 ? ` — ${ok.map((k) => `${k} ${pct(onBoth(k)).trim()}`).join(', ')}` : ''}` : 'No candidate confirmed: no zone rule beat chance in this test.', '')
 
 // Reported, not tested.
 out.push('REPORTED — mean D by universe, on the common set (Z1–Z4 all present), and with 10% / 90% zones')

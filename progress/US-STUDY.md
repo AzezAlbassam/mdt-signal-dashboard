@@ -112,6 +112,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
       shares a month with the last daily bar. Top 10 unchanged by the fix.
 - [ ] Study 12: user runs pine/harmonic.pine on TradingView — first compile unverified
 
+- [x] Study 13 protocol (PROTOCOL-study13.md): own-history buy/sell zones for profitable companies, 8 candidates,
+  committed with engine/zones.js + scripts/study13-run.js before the first run (draft reviewed independently; the
+  review counted coverage only)
+- [ ] Study 13: run → reports/study13.txt; independent re-implementation cross-check; page per §5
+
 ## Counts
 (updated as work proceeds)
 
