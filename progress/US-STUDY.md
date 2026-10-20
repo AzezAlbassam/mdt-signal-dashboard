@@ -283,3 +283,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-20 — page: SVR shown only for companies losing money over the last 12 months (EPS TTM ≤ 0), at the
   user's request; filter "SVR تحت السقف" (loss-makers under 3 × the list's mean SVR; the means are saved in
   meta/svr so other tabs have them); favourites (star on every row, tab "المفضلة", saved in meta/favorites).
+- 2026-10-21 — page audit (4 agents + synthesis; numbers vs stockanalysis/finviz/Yahoo, definitions vs Zacks, CFA,
+  Damodaran). Fixed: forward PEG (Zacks F1: forward P/E ÷ FY-over-FY adjusted EPS growth; LLY 2.65 → 0.90), analysts'
+  growth FY over FY (false amber chips on 2222, GEV, TE, MBLY, UNH), P/S and FCF yield from market value, P/E falls
+  back to market value ÷ TTM net income when TradingView's is >10% off (2222), share count 10% band with EPS restated
+  (engine liveContext, POST-HOC; RIVN 13.9 → 12.2), repeated TradingView quarter labels renumbered (engine
+  ttmFromQuarters, POST-HOC), DCF with analysts' year-1 growth and a CAPM rate (page only), Graham weight 0, Lynch rule
+  only at ≥10% EPS growth, banks without P/S and projection, ROIC/Piotroski on fiscal years, ADRs in search, weak-
+  estimate flag, wording. RIVN "$13 DCF": not found; $13 = lowest analyst target / Mizuho / Simply Wall St analysts' FV.

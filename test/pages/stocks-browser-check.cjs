@@ -60,7 +60,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
     }
     const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: s === 'NASDAQ:AAPL' ? -1.2 : 26.5, // AAPL plays a loss-making stock (SVR shown)
-      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600 })
+      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
+      earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8 })
     const mcp = {
       callTool: async (server, tool, input) => {
         window.__calls.push(`${tool} ${input.symbol ?? (input.symbols ?? []).length}`)
@@ -94,9 +95,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(300)
   console.log('DETAIL JPM:', (await page.$eval('#rows tr.detail', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 1600))
   console.log('SVR JPM (profitable, none expected):', await page.$$eval('#rows .part.svr', (t) => t.length), 'cell', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText))
-  await page.click('#rows details.proj summary')
-  await page.waitForTimeout(200)
-  console.log('FORECAST JPM:', (await page.$eval('#rows details.proj', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
+  console.log('FORECAST JPM (bank, none expected):', await page.$$eval('#rows details.proj', (t) => t.length))
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-forecast.png'), fullPage: true })
   await page.fill('#filter', 'aapl')
   await page.click('#rows tr.row')
@@ -111,6 +110,10 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('SVR TIP end:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
   console.log('SVR CELL:', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText), 'h saved:', await page.evaluate(() => window.__calls.filter((c) => c.startsWith('mcp-tv-get-symbol-data-batch 1')).length))
   await (await page.$('#rows .part.svr')).screenshot({ path: path.join(os.tmpdir(), 'stocks-svr.png') })
+  await page.click('#rows details.proj summary')
+  await page.waitForTimeout(200)
+  console.log('FORECAST AAPL:', (await page.$eval('#rows details.proj', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 600))
+  console.log('CTX AAPL:', (await page.$eval('#rows .ctx', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   await page.fill('#filter', '')
   await page.click('#rows tr.row[data-sym="NASDAQ:AAPL"] button[data-star]')
   await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')

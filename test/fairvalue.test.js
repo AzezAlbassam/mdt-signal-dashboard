@@ -146,3 +146,22 @@ test('live context: today reads the last twelve months, months before the quarte
   assert.equal(live.yoy, 0.4)
   assert.equal(live.state('2021-10').fcfPS, 48 / 10)
 })
+
+test('quarters with a repeated label are numbered by position back from the last one (POST-HOC)', async () => {
+  const { ttmFromQuarters } = await import('../engine/fairvalue.js')
+  const labels = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q3 2025', 'Q1 2026', 'Q3 2026', 'Q3 2026'] // as TradingView sent UNH's
+  const val = (f) => labels.map((_, i) => ({ value: f(i) }))
+  const t = ttmFromQuarters({ labels, series: { revenue: val((i) => 10 + i), eps: val(() => 1), net_income: val(() => 2) } })
+  assert.deepEqual(t.map((x) => x.label), ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026']) // 7 quarters Q1 2025 … Q3 2026 → 4 windows
+  assert.equal(t.at(-1).rev, 13 + 14 + 15 + 16)
+})
+
+test('live context: today\'s share count replaces a weighted average more than 10% off, and EPS follows it (POST-HOC)', async () => {
+  const { liveContext } = await import('../engine/fairvalue.js')
+  const f = funds()
+  const ttm = [{ label: 'Q3 2021', n: 0, rev: 600, ni: 60, eps: 6, fcf: 48, ebitda: 100, gp: 240, debt: 8, prev: null, revYoY: 0.4 }] // 10 shares
+  assert.equal(liveContext(f, ttm, '2021-10', 10.5).state('2021-10').shares, 10) // 5% off: kept
+  const st = liveContext(f, ttm, '2021-10', 12).state('2021-10') // 20% more shares today (an offering)
+  assert.equal(st.shares, 12)
+  assert.equal(st.eps, 60 / 12)
+})

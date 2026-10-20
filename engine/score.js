@@ -150,5 +150,6 @@ export function scoreAt(funds, closes, sector, month, live = false) {
 
   const parts = { A, B, C, D, E }
   if (Object.values(parts).some((x) => x == null)) return { total: null, reason: 'part missing', parts, detail }
-  return { total: A + B + C + D + E, parts, detail, fiscalYear: f0.year }
+  // f0 from the last twelve months has no year (live page); the fiscal year behind the 3-year growth then.
+  return { total: A + B + C + D + E, parts, detail, fiscalYear: f0.year ?? known[known.length - 1]?.year }
 }

@@ -62,6 +62,16 @@ export function ttmFromQuarters(resp) {
     const v = (k) => (Number.isFinite(s[k]?.[i]?.value) ? s[k][i].value : null)
     qs.push({ label, n: Number(m[2]) * 4 + Number(m[1]), rev: v('revenue'), ni: v('net_income'), eps: v('eps'), fcf: v('fcf'), ebitda: v('ebitda'), gp: v('gross_profit'), debt: v('total_debt') })
   })
+  // POST-HOC (2026-10-21): TradingView sometimes repeats a label (UNH: … Q1 2026, Q3 2026, Q3 2026;
+  // 12 of 665 saved files). Quarters come oldest first, so then they are numbered by position back
+  // from the last label.
+  if (new Set(qs.map((q) => q.n)).size !== qs.length) {
+    const last = qs[qs.length - 1].n
+    qs.forEach((q, i) => {
+      q.n = last - (qs.length - 1 - i)
+      q.label = `Q${q.n - 4 * Math.floor((q.n - 1) / 4)} ${Math.floor((q.n - 1) / 4)}`
+    })
+  }
   qs.sort((a, b) => a.n - b.n)
   const sum = (w, k) => (w.every((q) => q[k] != null) ? w.reduce((a, q) => a + q[k], 0) : null)
   const out = []
@@ -85,7 +95,9 @@ export function ttmFromQuarters(resp) {
  * so a quarter can sit up to ~2 months off; harmless in a 60-month history) — and months before
  * the quarterly data starts use fiscal years on the same offset as today (liveShift). Growth
  * over 3 years and the 5-year average EPS still come from fiscal years. `sharesNow` (market
- * value ÷ price) replaces a net income ÷ EPS share count that is more than 1.5× off today.
+ * value ÷ price) replaces the twelve months' net income ÷ EPS count this month when the two differ
+ * by more than 10%, and EPS is restated on it (POST-HOC 2026-10-21; it was 1.5×: RIVN's July 2026
+ * offering left 1.25B shares against 1.45B today, Aramco's bonus shares 208B against 245B).
  * Returns { state(month), f0, f1, yoy, period } for scoreAt / fairValuesAt / expectationsAt.
  */
 export function liveContext(funds, ttm, month, sharesNow = null) {
@@ -101,8 +113,12 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
     if (i < 0 || !base) return base
     const t = ttm[i]
     let shares = sharesOf(t) ?? base.shares
-    if (mk === month && pos(sharesNow) && !(shares > sharesNow / 1.5 && shares < sharesNow * 1.5)) shares = sharesNow
-    return { ...base, period: t.label, eps: t.eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
+    let eps = t.eps
+    if (mk === month && pos(sharesNow) && !(pos(shares) && Math.abs(shares / sharesNow - 1) <= 0.1)) {
+      shares = sharesNow
+      if (t.ni != null) eps = t.ni / sharesNow
+    }
+    return { ...base, period: t.label, eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
       shares, revPS: pos(shares) && t.rev != null ? t.rev / shares : null, fcfPS: pos(shares) && t.fcf != null ? t.fcf / shares : null }
   }
   const rec = (t) => t && { year: null, period: t.label, rev: t.rev, ni: t.ni, eps: t.eps, fcf: t.fcf, ebitda: t.ebitda, debt: t.debt, gp: t.gp, shares: sharesOf(t) }
