@@ -158,7 +158,9 @@ const common = new Map(YEARS.map((R) => [R, byYear.get(R).filter((r) => ['Z1', '
 const meanSpread = (by, k, lo, hi) => { const d = [...by.values()].map((rs) => spread(rs, k, (r) => r.fwd, lo, hi).D).filter((x) => x != null); return d.length ? `${pct(mean(d)).trim()} (${d.length}y)` : '–' }
 out.push('cand  watchlist        S&P 500          common set       10/90 zones')
 for (const k of C) out.push(`${k}    ${meanSpread(sub('wl'), k).padEnd(16)} ${meanSpread(sub('sp'), k).padEnd(16)} ${k <= 'Z5' ? meanSpread(common, k).padEnd(16) : '–'.padEnd(16)} ${k === 'Z6' ? '–' : meanSpread(byYear, k, 0.1, 0.9)}`)
-out.push('', 'Limits: survivorship (today\'s listed stocks only); price return without dividends; annual fundamentals only (the live page reads the last twelve months from quarters); one date a year.')
+out.push('', 'Limits: survivorship (today\'s listed stocks only); price return without dividends; annual fundamentals only (the live page reads the last twelve months from quarters); one date a year; fundamentals are TradingView\'s current, restated values; sectors are today\'s classification for every year.')
+// POST-HOC (2026-10-20, after the first run): the two last limits above were added to this line to
+// match PROTOCOL-study13.md §4; text only, every number unchanged.
 
 fs.writeFileSync(process.env.OUT ?? 'reports/study13.txt', out.join('\n') + '\n')
 fs.writeFileSync(process.env.OUT_JSON ?? 'reports/study13.json', JSON.stringify(res, null, 1))
