@@ -294,3 +294,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   Then: quoteShares (engine) — TSM's market value is on the Taipei price (14% under the ADR), so the
   10% band had switched it to the wrong count; NI ÷ EPS and total_shares_outstanding agreeing now
   win. PEG over >50% one-year growth flagged (GOOGL +90% from stake gains, 0.18).
+- 2026-10-21 — audit UX batch (display only): currency and day change on price, "الفرق عن العادلة",
+  SVR ×, earnings chip ≤14 days, industry/sector P/E tile (SECTOR_PE, US only), cash-runway tile for
+  cash burners, ctx tiles as <details> (tap on phone), wording (D11 subset), Mag7 badge text, phone tabs
+  in one scrolling row, changelog in <details>, projection warns that new shares are not counted for
+  cash burners. Not done: call-budget rewrite (Q9), revenue DCF for loss-makers (Q3), heavy profile (Q6).
