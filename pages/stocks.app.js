@@ -347,14 +347,42 @@
 
   // ---------------------------------------------------------------- lists
 
-  async function saveList(m) {
-    if (!db) return
-    try { await db.doc(`lists/${m}`).set({ symbols: state.lists[m] }) }
-    catch (e) { notice('ما قدرت أحفظ القائمة. الحفظ متاح لصاحب الصفحة بس.', true) }
+  // Saved lists change only through editSaved: it reads the saved copy, changes that one symbol and
+  // writes it back, one edit at a time, so a page that has not loaded the list yet (or holds an old
+  // copy from another tab) can never save a shorter list over it. That is how lists/us went from
+  // 703 stocks to 2 (TEM, LLY): stocks added while the saved lists were still loading. Edits also
+  // wait for the list's first snapshot (loaded).
+  const loaded = { us: false, sa: false, fav: false }
+  let edits = Promise.resolve()
+  function editSaved(m, sym, add) {
+    const run = async () => {
+      if (!db) return
+      const path = m === 'fav' ? 'meta/favorites' : `lists/${m}`
+      const snap = await db.doc(path).get()
+      const cur = snap.exists ? snap.data().symbols ?? [] : []
+      const next = add ? (cur.includes(sym) ? cur : [...cur, sym]) : cur.filter((s) => s !== sym)
+      if (next.length !== cur.length) await db.doc(path).set({ symbols: next })
+      state.lists[m] = next
+    }
+    edits = edits.then(run, run)
+    return edits.catch(() => notice(m === 'fav' ? 'ما قدرت أحفظ المفضلة.' : 'ما قدرت أحفظ القائمة. الحفظ متاح لصاحب الصفحة بس.', true))
+  }
+  const notLoaded = (m) => {
+    if (!db || loaded[m]) return false
+    notice('لحظة، قاعد أقرأ قائمتك المحفوظة. جرّب بعد ثواني.')
+    return true
+  }
+  // After a delete or an un-star: one tap brings it back.
+  function undoNotice(kind, sym) {
+    const n = $('notice')
+    n.hidden = false
+    n.className = 'notice'
+    n.innerHTML = `${kind === 'fav' ? 'شلت' : 'حذفت'} <b class="n">${esc(sym.split(':')[1])}</b> ${kind === 'fav' ? 'من المفضلة' : 'من القائمة'}. <button class="btn" type="button" data-undo="${kind}|${esc(sym)}">تراجع</button>`
   }
 
   async function addSymbol(sym) {
     const m = marketOf(sym)
+    if (notLoaded(m)) return
     $('results').hidden = true
     $('q').value = ''
     if (state.lists[m].includes(sym)) {
@@ -368,7 +396,7 @@
     state.lists[m] = [...state.lists[m], sym]
     if (m !== state.market) setMarket(m)
     render()
-    await saveList(m)
+    await editSaved(m, sym, true)
     try {
       await loadQuotes([sym])
       if (!fresh(state.cache[sym])) await loadHistory(sym)
@@ -380,10 +408,12 @@
 
   async function removeSymbol(sym) {
     const m = marketOf(sym)
+    if (notLoaded(m)) return
     state.lists[m] = state.lists[m].filter((s) => s !== sym)
     if (state.open === sym) state.open = null
     render()
-    await saveList(m)
+    undoNotice('list', sym)
+    await editSaved(m, sym, false)
   }
 
   async function search(q) {
@@ -668,9 +698,11 @@
     return `<button class="star" type="button" data-star="${esc(sym)}" aria-pressed="${on}" aria-label="${on ? 'شيل من المفضلة' : 'أضف للمفضلة'} ${esc(sym)}" title="${on ? 'شيل من المفضلة' : 'أضف للمفضلة'}">${on ? '★' : '☆'}</button>`
   }
   function toggleFav(sym) {
-    const favs = state.lists.fav
-    state.lists.fav = favs.includes(sym) ? favs.filter((s) => s !== sym) : [...favs, sym]
-    if (db) db.doc('meta/favorites').set({ symbols: state.lists.fav }).catch(() => notice('ما قدرت أحفظ المفضلة.', true))
+    if (notLoaded('fav')) return
+    const on = !state.lists.fav.includes(sym)
+    state.lists.fav = on ? [...state.lists.fav, sym] : state.lists.fav.filter((s) => s !== sym)
+    if (!on) undoNotice('fav', sym)
+    editSaved('fav', sym, on).then(render)
     render()
   }
 
@@ -1127,6 +1159,14 @@
     const b = e.target.closest('button[data-add]')
     if (b) addSymbol(b.dataset.add)
   })
+  $('notice').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-undo]')
+    if (!b) return
+    const [kind, sym] = b.dataset.undo.split('|')
+    notice('')
+    if (kind === 'fav') toggleFav(sym)
+    else addSymbol(sym)
+  })
   document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
   $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
@@ -1173,6 +1213,7 @@
 
   // ---------------------------------------------------------------- boot
 
+  let cacheRead = false
   async function boot() {
     render()
     ;[db, mcp] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('mcp') ?? null])
@@ -1185,7 +1226,29 @@
       return
     }
     $('status').textContent = 'جاري قراءة البيانات المحفوظة…'
+    // The lists first: edits wait for them (see editSaved), and the cache load below can take a while.
+    db.doc('meta/favorites').onSnapshot((snap) => {
+      const syms = snap.exists ? snap.data().symbols ?? [] : []
+      const changed = JSON.stringify(syms) !== JSON.stringify(state.lists.fav)
+      state.lists.fav = [...syms]
+      loaded.fav = true
+      if (changed && state.market === 'fav' && cacheRead) refresh()
+      else render()
+    }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
+    for (const m of ['us', 'sa']) {
+      db.doc(`lists/${m}`).onSnapshot((snap) => {
+        const syms = snap.exists ? snap.data().symbols ?? [] : []
+        const changed = JSON.stringify(syms) !== JSON.stringify(state.lists[m])
+        state.lists[m] = [...syms]
+        loaded[m] = true
+        if (changed && m === state.market && cacheRead) refresh()
+        else render()
+      }, () => notice('ما قدرت أقرأ القائمة المحفوظة، فالإضافة والحذف موقفة لين تفتح الصفحة من جديد.', true))
+    }
     await loadCacheFromDb().catch(() => {})
+    cacheRead = true
+    // Lists that arrived during the cache load were only drawn; fetch for the open tab now.
+    if (state.lists[state.market]?.length) refresh()
     try {
       db.collection('ideas').limit(1000).onSnapshot((snap) => {
         const by = {}
@@ -1195,13 +1258,6 @@
         render()
       }, () => renderLatestIdeas([]))
     } catch { renderLatestIdeas([]) }
-    db.doc('meta/favorites').onSnapshot((snap) => {
-      const syms = snap.exists ? snap.data().symbols ?? [] : []
-      const changed = JSON.stringify(syms) !== JSON.stringify(state.lists.fav)
-      state.lists.fav = [...syms]
-      if (changed && state.market === 'fav') refresh()
-      else render()
-    }, () => {})
     db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; render() } }).catch(() => {})
     db.doc('meta/watchlists').onSnapshot((snap) => {
       const d = snap.exists ? snap.data() : {}
@@ -1209,15 +1265,6 @@
       renderGroups()
       render()
     }, () => {})
-    for (const m of ['us', 'sa']) {
-      db.doc(`lists/${m}`).onSnapshot((snap) => {
-        const syms = snap.exists ? snap.data().symbols ?? [] : []
-        const changed = JSON.stringify(syms) !== JSON.stringify(state.lists[m])
-        state.lists[m] = [...syms]
-        if (changed && m === state.market) refresh()
-        else render()
-      }, () => notice('ما قدرت أقرأ القائمة المحفوظة.', true))
-    }
   }
   boot()
 })()

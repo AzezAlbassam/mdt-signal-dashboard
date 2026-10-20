@@ -299,3 +299,10 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   cash burners, ctx tiles as <details> (tap on phone), wording (D11 subset), Mag7 badge text, phone tabs
   in one scrolling row, changelog in <details>, projection warns that new shares are not counted for
   cash burners. Not done: call-budget rewrite (Q9), revenue DCF for loss-makers (Q3), heavy profile (Q6).
+- 2026-10-21 — BUG: lists/us had gone from 703 stocks to 2 (TEM, LLY). Cause: boot() subscribed to the
+  saved lists only after loading every cache doc, and add/remove/star saved the page's local copy, so a
+  stock added during that load saved a one-stock list over the saved one (reproduced in the harness:
+  lists/sa ['1120'] became ['1212']). Fix: lists and favourites subscribed first; edits wait for the
+  first snapshot; every edit reads the saved list and changes one symbol, serialized; undo after delete
+  and un-star; regression "WIPE CHECK" in test/pages/stocks-browser-check.cjs. lists/us restored from the
+  703-stock watchlist union (the seed of 2026-10-13).

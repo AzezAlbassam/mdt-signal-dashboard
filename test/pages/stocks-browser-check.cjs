@@ -55,7 +55,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       },
     })
     const db = {
-      doc: (p) => ({ get: async () => snapOf(p), set: async (d) => { store[p] = d }, onSnapshot: (next) => { setTimeout(() => next(snapOf(p)), 10); return () => {} } }),
+      doc: (p) => ({ get: async () => snapOf(p), set: async (d) => { store[p] = d }, onSnapshot: (next) => { setTimeout(() => next(snapOf(p)), p.startsWith('lists/') && location.search.includes('slow') ? 3000 : 10); return () => {} } }),
       collection: (c) => query(c),
     }
     const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
@@ -161,6 +161,35 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(800)
   console.log('SECTOR FILTER:', await page.$eval('#group', (s) => s.value), await rows())
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-test.png'), fullPage: false })
+  // Regression (lists/us went from 703 stocks to 2): a page holding an old copy of a list, or one
+  // that has not read it yet, must never save a shorter list over the saved one.
+  await page.click('#tab-us')
+  await page.waitForTimeout(800)
+  await page.selectOption('#group', '').catch(() => {})
+  await page.fill('#filter', '')
+  await page.waitForTimeout(200)
+  await page.evaluate(() => { window.__store['lists/us'] = { symbols: [...window.__store['lists/us'].symbols, 'NYSE:XYZ'] } }) // another tab adds XYZ; no snapshot reaches this page
+  await page.click('#rows tr.row[data-sym="NYSE:JPM"] button[data-del]')
+  await page.waitForTimeout(300)
+  const afterDel = await page.evaluate(() => window.__store['lists/us'].symbols)
+  const undo = await page.$('#notice button[data-undo]')
+  if (undo) await undo.click()
+  await page.waitForTimeout(900)
+  const afterUndo = await page.evaluate(() => window.__store['lists/us'].symbols)
+  await page.goto('file://' + file + '?slow')
+  await page.waitForTimeout(300)
+  await page.fill('#q', 'استرا')
+  await page.click('#addBtn')
+  await page.waitForTimeout(300)
+  await page.click('#results button[data-add]')
+  await page.waitForTimeout(200)
+  const early = { notice: await page.textContent('#notice'), sa: await page.evaluate(() => window.__store['lists/sa'].symbols) }
+  await page.waitForTimeout(3500)
+  const wipe = { afterDel, afterUndo, early }
+  const ok = afterDel.includes('NYSE:XYZ') && !afterDel.includes('NYSE:JPM') && afterDel.length === 4 && afterUndo.includes('NYSE:JPM') && afterUndo.includes('NYSE:XYZ') && afterUndo.length === 5
+    && early.sa.length === 1 && early.sa[0] === 'TADAWUL:1120' && /لحظة/.test(early.notice) && (await page.evaluate(() => window.__store['lists/sa'].symbols.length)) === 1
+  console.log('WIPE CHECK:', ok ? 'ok' : 'FAILED', JSON.stringify(wipe))
+  if (!ok) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()
