@@ -122,6 +122,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 13: independent clean-room re-implementation (protocol text + named helpers only, never saw
   engine/zones.js or the run script): all 96 yearly D values, every p-value and mean IC identical.
 - [ ] Study 13: page per §5 (none confirmed → at most a descriptive P/E history, labelled) — ask the user first
+- [x] Study 13 POST-HOC on the user's favourites (scripts/study13-favorites.js → reports/study13-favorites-posthoc.txt;
+  75 favourites saved in data/favorites/2026-10-20.json, 57 with enough history, ADRs ASML/TSM/NVO/SE/ARM added,
+  GOOGL read through GOOG). Descriptive only (358 stock-years, picked today, so selection bias): buy − sell
+  P/S +9.5%, P/FCF +8.8%, combined +2.1%, EV/EBITDA −3.1%, P/E −6.9%, P/E vs sector −8.7%, PEG −14.7%,
+  price stretch −3.3%. Plus where each favourite sits now per rule.
 
 ## Counts
 (updated as work proceeds)
