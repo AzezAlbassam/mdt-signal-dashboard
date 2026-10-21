@@ -154,8 +154,10 @@
       call(T.fin, { symbol: sym, period: 'fy', date_from: '2000-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e))),
       call(T.px, { symbol: sym, interval: 'M', count: 252, format: 'columns' }).catch(() => null),
     ])
+    const old = state.cache[sym]
     const doc = fin?.labels
-      ? { sym, fin: { labels: fin.labels, series: fin.series }, px: { t: px?.bars?.t ?? [], c: px?.bars?.c ?? [] }, pxTried: true, fetchedAt: Date.now() }
+      ? { sym, fin: { labels: fin.labels, series: fin.series }, px: px?.bars?.t?.length ? { t: px.bars.t, c: px.bars.c } : old?.px ?? { t: [], c: [] }, pxTried: true, fetchedAt: Date.now() }
+      : old?.fin ? { ...old, fetchedAt: Date.now() } // a failed refetch keeps the saved years
       : { sym, missing: true, fetchedAt: Date.now() }
     state.cache[sym] = doc
     if (db) await db.doc(`cache/${sym}`).set(doc).catch(() => {})
@@ -165,7 +167,7 @@
   const freshQ = (d) => d && Date.now() - d.fetchedAt < STALE_Q_DAYS * 864e5
   async function loadQuarters(sym) {
     const fq = await call(T.fin, { symbol: sym, period: 'fq', date_from: '2010-01-01' }).catch((e) => (e?.code === 'tool_error' ? null : Promise.reject(e)))
-    const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : null, fetchedAt: Date.now() }
+    const doc = { sym, fq: fq?.labels ? { labels: fq.labels, series: fq.series } : state.quarters[sym]?.fq ?? null, fetchedAt: Date.now() }
     state.quarters[sym] = doc
     if (db) await db.doc(`q/${sym}`).set(doc).catch(() => {})
   }
@@ -305,7 +307,7 @@
     if (!syms.length) { render(); return }
     $('refresh').disabled = true
     $('status').textContent = `جاري تحميل الأسعار (${syms.length} سهم)…`
-    notice('')
+    if (!$('notice').querySelector('[data-undo]')) notice('') // an undo offer stays until used or replaced
     try {
       await loadQuotes(syms, freshQuotes)
     } catch (e) {
@@ -351,8 +353,9 @@
   // writes it back, one edit at a time, so a page that has not loaded the list yet (or holds an old
   // copy from another tab) can never save a shorter list over it. That is how lists/us went from
   // 703 stocks to 2 (TEM, LLY): stocks added while the saved lists were still loading. Edits also
-  // wait for the list's first snapshot (loaded).
-  const loaded = { us: false, sa: false, fav: false }
+  // wait for the list's first server-definitive snapshot (saved).
+  // saved: each list as its last server-definitive snapshot had it (null until one arrives).
+  const saved = { us: null, sa: null, fav: null }
   let edits = Promise.resolve()
   function editSaved(m, sym, add) {
     const run = async () => {
@@ -360,15 +363,24 @@
       const path = m === 'fav' ? 'meta/favorites' : `lists/${m}`
       const snap = await db.doc(path).get()
       const cur = snap.exists ? snap.data().symbols ?? [] : []
+      // Never build on a read that is not the server's or is shorter than the last snapshot: an
+      // empty read, then + TEM, + LLY, is exactly the 703 → 2 wipe. So a save drops at most one.
+      if (snap.metadata?.fromCache || cur.length < saved[m].length) throw { code: 'short_read' }
       const next = add ? (cur.includes(sym) ? cur : [...cur, sym]) : cur.filter((s) => s !== sym)
       if (next.length !== cur.length) await db.doc(path).set({ symbols: next })
       state.lists[m] = next
+      saved[m] = next
     }
     edits = edits.then(run, run)
-    return edits.catch(() => notice(m === 'fav' ? 'ما قدرت أحفظ المفضلة.' : 'ما قدرت أحفظ القائمة. الحفظ متاح لصاحب الصفحة بس.', true))
+    return edits.catch((e) => {
+      state.lists[m] = [...saved[m]]
+      render()
+      notice(e?.code === 'short_read' ? 'ما وصلتني قائمتك المحفوظة كاملة، فما غيّرت فيها شي. جرّب بعد ثواني.'
+        : m === 'fav' ? 'ما قدرت أحفظ المفضلة.' : 'ما قدرت أحفظ القائمة. الحفظ متاح لصاحب الصفحة بس.', true)
+    })
   }
   const notLoaded = (m) => {
-    if (!db || loaded[m]) return false
+    if (!db || saved[m]) return false
     notice('لحظة، قاعد أقرأ قائمتك المحفوظة. جرّب بعد ثواني.')
     return true
   }
@@ -577,6 +589,10 @@
     const body = $('rows')
     const syms = visible()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
+    if (!state.lists[state.market].length && saved[state.market] === null) {
+      body.innerHTML = '<tr><td colspan="14" class="dim">جاري قراءة قائمتك المحفوظة…</td></tr>'
+      return
+    }
     if (!state.lists[state.market].length && state.market === 'fav') {
       body.innerHTML = '<tr><td colspan="14" class="dim">ما عندك أسهم في المفضلة. اضغط ☆ جنب أي سهم في باقي التبويبات يجي هنا.</td></tr>'
       return
@@ -687,7 +703,8 @@
     const old = state.svrMean[market]
     if (!(old && Math.abs(old.mean / m.mean - 1) < 0.02)) {
       state.svrMean = { ...state.svrMean, [market]: m }
-      if (db) db.doc('meta/svr').set(state.svrMean).catch(() => {})
+      // update, not set: a full write here could drop the other market's mean (its read may not be back yet).
+      if (db) { const d = db.doc('meta/svr'); (d.update ? d.update({ [market]: m }) : d.set(state.svrMean)).catch(() => d.set(state.svrMean).catch(() => {})) }
     }
     return m
   }
@@ -1222,6 +1239,8 @@
       notice('الصفحة تحتاج ربط TradingView من claude.ai عشان تجيب الأرقام. افتحها من claude.ai وهي مسجّلة دخول.', true)
     }
     if (!db) {
+      saved.us = saved.sa = saved.fav = []
+      render()
       notice('الحفظ غير متاح في هذا العرض، فالقائمة ما بتنحفظ.', true)
       return
     }
@@ -1231,7 +1250,7 @@
       const syms = snap.exists ? snap.data().symbols ?? [] : []
       const changed = JSON.stringify(syms) !== JSON.stringify(state.lists.fav)
       state.lists.fav = [...syms]
-      loaded.fav = true
+      if (!snap.metadata?.fromCache) saved.fav = [...syms]
       if (changed && state.market === 'fav' && cacheRead) refresh()
       else render()
     }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
@@ -1240,7 +1259,7 @@
         const syms = snap.exists ? snap.data().symbols ?? [] : []
         const changed = JSON.stringify(syms) !== JSON.stringify(state.lists[m])
         state.lists[m] = [...syms]
-        loaded[m] = true
+        if (!snap.metadata?.fromCache) saved[m] = [...syms]
         if (changed && m === state.market && cacheRead) refresh()
         else render()
       }, () => notice('ما قدرت أقرأ القائمة المحفوظة، فالإضافة والحذف موقفة لين تفتح الصفحة من جديد.', true))

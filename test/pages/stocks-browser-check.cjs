@@ -55,7 +55,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       },
     })
     const db = {
-      doc: (p) => ({ get: async () => snapOf(p), set: async (d) => { store[p] = d }, onSnapshot: (next) => { setTimeout(() => next(snapOf(p)), p.startsWith('lists/') && location.search.includes('slow') ? 3000 : 10); return () => {} } }),
+      doc: (p) => ({ get: async () => (window.__shortRead === p ? ((window.__shortRead = null), { id: p.split('/').pop(), exists: false, data: () => undefined }) : snapOf(p)), set: async (d) => { store[p] = d }, update: async (d) => { store[p] = { ...(store[p] ?? {}), ...d } }, onSnapshot: (next) => { setTimeout(() => next(snapOf(p)), p.startsWith('lists/') && location.search.includes('slow') ? 3000 : 10); return () => {} } }),
       collection: (c) => query(c),
     }
     const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
@@ -185,9 +185,17 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(200)
   const early = { notice: await page.textContent('#notice'), sa: await page.evaluate(() => window.__store['lists/sa'].symbols) }
   await page.waitForTimeout(3500)
-  const wipe = { afterDel, afterUndo, early }
+  await page.evaluate(() => { window.__shortRead = 'lists/sa' }) // one wrong (empty) read of the saved list
+  await page.fill('#q', 'استرا')
+  await page.click('#addBtn')
+  await page.waitForTimeout(300)
+  await page.click('#results button[data-add]')
+  await page.waitForTimeout(300)
+  const short = { notice: await page.textContent('#notice'), sa: await page.evaluate(() => window.__store['lists/sa'].symbols) }
+  const wipe = { afterDel, afterUndo, early, short }
   const ok = afterDel.includes('NYSE:XYZ') && !afterDel.includes('NYSE:JPM') && afterDel.length === 4 && afterUndo.includes('NYSE:JPM') && afterUndo.includes('NYSE:XYZ') && afterUndo.length === 5
     && early.sa.length === 1 && early.sa[0] === 'TADAWUL:1120' && /لحظة/.test(early.notice) && (await page.evaluate(() => window.__store['lists/sa'].symbols.length)) === 1
+    && short.sa.length === 1 && short.sa[0] === 'TADAWUL:1120' && /ما وصلتني/.test(short.notice)
   console.log('WIPE CHECK:', ok ? 'ok' : 'FAILED', JSON.stringify(wipe))
   if (!ok) process.exitCode = 1
   console.log('LOGS:', logs)
