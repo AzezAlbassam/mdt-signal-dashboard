@@ -481,3 +481,31 @@ export function holm(ps) {
   })
   return out
 }
+
+// One get-symbol-data-batch row → the { labels, series } shape get-financial-history returns
+// (oldest first, values as { value }), for parseFundamentals (fy) and ttmFromQuarters (fq).
+// POST-HOC (2026-10-21), page data path only; parity with get-financial-history checked on 50 stocks.
+export const HIST_SERIES = { revenue: 'total_revenue', net_income: 'net_income', eps: 'earnings_per_share_diluted', fcf: 'free_cash_flow',
+  ebitda: 'ebitda', total_debt: 'total_debt', gross_profit: 'gross_profit' }
+export const HIST_COLS = [...['fy', 'fq'].flatMap((p) => Object.values(HIST_SERIES).map((c) => `${c}_${p}_h`)), 'fiscal_period_fy', 'fiscal_period_end_fq', 'fiscal_period_end_fy']
+
+// ponytail: max 16 points = what get-financial-history gives; Infinity for all 20 years / 32 quarters.
+export function histFromBatch(row, period, max = 16) {
+  const cols = Object.entries(HIST_SERIES).map(([k, c]) => [k, row?.[`${c}_${period}_h`]])
+  const n = Math.min(max, Math.max(0, ...cols.map(([, a]) => (Array.isArray(a) ? a.length : 0))))
+  const fy = Number(row?.fiscal_period_fy)
+  const end = new Date((row?.fiscal_period_end_fq ?? NaN) * 1000)
+  if (!n || (period === 'fy' ? !Number.isInteger(fy) : isNaN(end))) return null
+  // Index i is i years / i quarters before the newest; quarters are labelled by the calendar quarter
+  // their (month-end) close falls in, as get-financial-history does.
+  const label = (i) => {
+    if (period === 'fy') return String(fy - i)
+    const m = end.getUTCFullYear() * 12 + end.getUTCMonth() - 3 * i
+    return `Q${Math.floor((m % 12) / 3) + 1} ${Math.floor(m / 12)}`
+  }
+  const idx = [...Array(n).keys()].reverse()
+  return {
+    labels: idx.map(label),
+    series: Object.fromEntries(cols.map(([k, a]) => [k, idx.map((i) => ({ value: Number.isFinite(a?.[i]) ? a[i] : null }))])),
+  }
+}

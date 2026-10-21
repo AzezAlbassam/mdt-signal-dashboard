@@ -61,10 +61,21 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
     const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: s === 'NASDAQ:AAPL' ? -1.2 : 26.5, // AAPL plays a loss-making stock (SVR shown)
       altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
-      earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8 })
+      earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8,
+      ...(s === 'NASDAQ:AAPL' ? { oper_income_ttm: -3e9, net_income_ttm: -4e9, cash_n_short_term_invest_fq: 5e10, fiscal_period_end_fy: 1767139200, beta_5_year: 1.4 } : {}) })
     const mcp = {
       callTool: async (server, tool, input) => {
         window.__calls.push(`${tool} ${input.symbol ?? (input.symbols ?? []).length}`)
+        // Fundamentals batch (HIST_COLS): rows built from the fixtures' fiscal years and the mock's 4 quarters, newest first.
+        if (tool.endsWith('batch') && input.columns.includes('free_cash_flow_fy_h')) {
+          const C = { revenue: 'total_revenue', net_income: 'net_income', eps: 'earnings_per_share_diluted', fcf: 'free_cash_flow', ebitda: 'ebitda', total_debt: 'total_debt', gross_profit: 'gross_profit' }
+          const fqv = { revenue: [1, 2, 3, 4].map((v) => v * 1e10), net_income: [2e9, 2e9, 2e9, 2e9], eps: [0.5, 0.5, 0.5, 0.5], fcf: [2e9, 2e9, 2e9, 2e9] }
+          const row = (s) => { const f = fx[s].fin; const r = { fiscal_period_fy: f.labels.at(-1), fiscal_period_end_fy: Date.UTC(Number(f.labels.at(-1)), 11, 31) / 1000, fiscal_period_end_fq: 1790726400 }
+            for (const [k, c] of Object.entries(C)) { r[c + '_fy_h'] = f.series[k] ? f.series[k].map((x) => x?.value ?? null).reverse() : null; r[c + '_fq_h'] = fqv[k] ? [...fqv[k]].reverse() : null }
+            return r }
+          if (window.__failBatch) return { payload: { success: false, data: {} } }
+          return { payload: { data: Object.fromEntries(input.symbols.filter((s) => fx[s]).map((s) => [s, row(s)])), missing: [], success: true } }
+        }
         if (tool.endsWith('batch') && input.columns.includes('total_revenue_fq_h')) return { payload: { data: input.symbols[0] === 'NASDAQ:AAPL' ? { 'NASDAQ:AAPL': fx.hist } : {}, missing: [], success: true } }
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
@@ -108,6 +119,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('SVR TIP mid:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
   await page.mouse.move(sb.x + sb.width - 70, sb.y + sb.height / 2)
   console.log('SVR TIP end:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
+  console.log('RDCF AAPL:', await page.$eval('#rows .rdcf', (t) => t.innerText.replace(/\s+/g, ' ').slice(0, 700)).catch(() => 'NONE'))
   console.log('SVR CELL:', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText), 'h saved:', await page.evaluate(() => window.__calls.filter((c) => c.startsWith('mcp-tv-get-symbol-data-batch 1')).length))
   await (await page.$('#rows .part.svr')).screenshot({ path: path.join(os.tmpdir(), 'stocks-svr.png') })
   await page.click('#rows details.proj summary')
@@ -161,6 +173,15 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(800)
   console.log('SECTOR FILTER:', await page.$eval('#group', (s) => s.value), await rows())
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-test.png'), fullPage: false })
+  // Budget and once-a-day checks (design wf1/fetch-design).
+  const n0 = await page.evaluate(() => window.__calls.length)
+  await page.click('#tab-sa'); await page.waitForTimeout(600); await page.click('#tab-us'); await page.waitForTimeout(600); await page.click('#tab-fav'); await page.waitForTimeout(600)
+  const extra = await page.evaluate((n) => window.__calls.slice(n).filter((c) => !/symbol-data-batch \d+$/.test(c) || /batch (?!4$|1$)/.test(c)), n0)
+  console.log('TAB SWITCH per-stock calls (want none but quotes):', JSON.stringify(await page.evaluate((n) => window.__calls.slice(n), n0)))
+  console.log('META/CALLS:', JSON.stringify(await page.evaluate(() => window.__store['meta/calls'])))
+  console.log('STATUS END:', await page.textContent('#status'))
+  console.log('SAVED q/NASDAQ:AAPL fqEnd:', await page.evaluate(() => window.__store['q/NASDAQ:AAPL']?.fqEnd), 'cache fyEnd:', await page.evaluate(() => window.__store['cache/NASDAQ:AAPL']?.fyEnd), 'px:', await page.evaluate(() => window.__store['cache/NASDAQ:AAPL']?.px?.t?.length))
+  console.log('ALL CALLS:', JSON.stringify(await page.evaluate(() => window.__calls)))
   // Regression (lists/us went from 703 stocks to 2): a page holding an old copy of a list, or one
   // that has not read it yet, must never save a shorter list over the saved one.
   await page.click('#tab-us')
