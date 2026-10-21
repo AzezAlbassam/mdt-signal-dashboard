@@ -44,3 +44,14 @@ test('nolFrom and targetMargin', () => {
   assert.equal(targetMargin({ industry: 'Recreational Products', sector: 'Consumer Durables' }, peers).from, 'sector')
   assert.equal(targetMargin({ industry: 'X', sector: 'Y' }, peers).m, 0.1)
 })
+
+test('rdcf: unknown cash is not read as zero cash; growth source is reported', () => {
+  const noCash = { ...RIVN, cash_n_short_term_invest_fq: null, total_debt_fq: null }
+  const d = rdcf(noCash, O(noCash, { m: 0.069 }))
+  assert.equal(d.runway, null)
+  assert.equal(d.pFail, 0.175)
+  const fromDebt = rdcf({ ...RIVN, cash_n_short_term_invest_fq: null, total_debt_fq: 1e10, net_debt_fq: 4e9 }, O(RIVN))
+  assert.ok(Math.abs(fromDebt.runway * Math.max(0, -RIVN.free_cash_flow_ttm) - 6e9) < 1)
+  assert.equal(rdcf(RIVN, O(RIVN)).growthFrom, 'analysts')
+  assert.equal(rdcf({ ...RIVN, revenue_forecast_next_fy: null }, O(RIVN)).growthFrom, 'history')
+})

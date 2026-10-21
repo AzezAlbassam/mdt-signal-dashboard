@@ -306,3 +306,18 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   first snapshot; every edit reads the saved list and changes one symbol, serialized; undo after delete
   and un-star; regression "WIPE CHECK" in test/pages/stocks-browser-check.cjs. lists/us restored from the
   703-stock watchlist union (the seed of 2026-10-13).
+- 2026-10-21 — revenue DCF for loss-makers (engine/rdcf.js, POST-HOC display beside P/S, not blended,
+  US only): two independent designs (Damodaran FCFF; practitioner exit-multiple) + a judge →
+  10-year FCFF with analysts' revenue, target operating margin = median of profitable US companies
+  with ≥$1B revenue in the TradingView industry (pages/peer-margins.json, 1,856 companies, 96
+  industries, from a 2,339-row screener pull saved in data/peer/2026-10-21.json), sales-to-capital
+  1.5, NOL from fiscal-year losses, CAPM 9–13% → 8.7%, runway-based failure 5–30%, funding gap.
+  Page shows the value, the margin the price implies (RIVN ~17.1% vs autos 6.65%) and a margin ×
+  growth grid. Clean-room re-implementation from the spec matched the engine exactly on 6 live stocks.
+- 2026-10-21 — fetching: fundamentals from batch *_fy_h/*_fq_h (parity with financial-history exact on
+  50 stocks), only when the quote shows a newer fiscal period; favourites' monthly prices monthly,
+  others every 3 months (10 per visit) or when opened; saved docs record fundsAt/pxAt and are
+  merged with update(), never rebuilt from memory; refresh waits for the saved histories; failures
+  are reported and retried (10 min, or the refresh button). A 30-agent review confirmed 21 defects in
+  the first version (daily counter, shared 'tried' flag, cache overwrite race, young favourites
+  re-fetched daily, DCF wording/phone grid); all fixed, with WIPE CHECK and FETCH CHECK in the harness.

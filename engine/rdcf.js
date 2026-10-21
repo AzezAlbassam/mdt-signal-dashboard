@@ -66,20 +66,22 @@ export function rdcf(q, o = {}) {
   const fyEnd = fin(q.fiscal_period_end_fy) ? q.fiscal_period_end_fy + YR : null
   const stub = fyEnd && fin(q.fiscal_period_end_fq) ? clamp((fyEnd - q.fiscal_period_end_fq) / YR, 0, 1) : 1
   const t1 = fyEnd ? Math.max(0, (fyEnd - now) / YR) : 1
-  const cash0 = q.cash_n_short_term_invest_fq ?? 0
+  // Cash: the reported figure, else total debt − net debt; unknown (runway null) without either.
+  const cash0 = fin(q.cash_n_short_term_invest_fq) ? q.cash_n_short_term_invest_fq
+    : fin(q.total_debt_fq) && fin(q.net_debt_fq) ? Math.max(0, q.total_debt_fq - q.net_debt_fq) : null
   const burn = Math.max(0, -(q.free_cash_flow_ttm ?? ebit0))
-  const runway = burn > 0 ? cash0 / burn : Infinity
-  // ponytail: failure probability from the cash runway alone (30% with no cash, 5% from 5 years);
-  // it cannot see committed outside funding or credit lines.
-  const pFail = o.pFail ?? clamp(0.3 - 0.05 * runway, 0.05, 0.3)
+  const runway = cash0 == null ? null : burn > 0 ? cash0 / burn : Infinity
+  // ponytail: failure probability from the cash runway alone (30% with no cash, 5% from 5 years,
+  // 17.5% when the cash is unknown); it cannot see committed outside funding or credit lines.
+  const pFail = o.pFail ?? (runway == null ? 0.175 : clamp(0.3 - 0.05 * runway, 0.05, 0.3))
   const gap0 = ebit0 - R0 * m
   let nol = o.nol ?? nolFrom(q.net_income_fy_h)
   let rev = FY
   let pv = 0
   let df = 1
   let tau = 0
-  let cash = cash0
-  let low = cash0
+  let cash = cash0 ?? 0
+  let low = cash
   for (let t = 1; t <= N; t += 1) {
     const prev = rev
     rev = t === 1 ? F : rev * (1 + (t <= 5 ? G : G + ((GT - G) * (t - 5)) / 5))
@@ -100,7 +102,7 @@ export function rdcf(q, o = {}) {
   const op = pv + (tv + nol * TAX) * df
   const raw = ((1 - pFail) * (op - nd)) / shares // a failure leaves the shareholders nothing
   const gap = Math.max(0, -low)
-  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, s2c, r0, pFail, runway, rev10: rev, gap, dilution: mcap > 0 ? gap / mcap : null }
+  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: mcap > 0 ? gap / mcap : null }
 }
 
 /** The input o[key] (m: target margin, G: growth in years 2–5) at which the value equals the price; null when lo…hi cannot reach it. */

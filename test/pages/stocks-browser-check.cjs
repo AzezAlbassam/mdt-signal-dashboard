@@ -49,6 +49,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       limit: (n) => query(coll, filt, n),
       where: (f, op, v) => query(coll, v, lim),
       get: async () => {
+        if (location.search.includes('slowcache')) await new Promise((ok) => setTimeout(ok, 2500))
         const docs = Object.keys(store).filter((k) => k.startsWith(coll + '/')).map(snapOf).filter((d) => !filt || d.data().sym > filt).sort((a, b) => (a.data().sym < b.data().sym ? -1 : 1)).slice(0, lim)
         docs.forEach((d) => { d.data = ((v) => () => v)(d.data()) })
         return { docs, size: docs.length }
@@ -73,7 +74,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
           const row = (s) => { const f = fx[s].fin; const r = { fiscal_period_fy: f.labels.at(-1), fiscal_period_end_fy: Date.UTC(Number(f.labels.at(-1)), 11, 31) / 1000, fiscal_period_end_fq: 1790726400 }
             for (const [k, c] of Object.entries(C)) { r[c + '_fy_h'] = f.series[k] ? f.series[k].map((x) => x?.value ?? null).reverse() : null; r[c + '_fq_h'] = fqv[k] ? [...fqv[k]].reverse() : null }
             return r }
-          if (window.__failBatch) return { payload: { success: false, data: {} } }
+          if (window.__failBatch ?? location.search.includes('failbatch')) return { payload: { success: false, data: {} } }
           return { payload: { data: Object.fromEntries(input.symbols.filter((s) => fx[s]).map((s) => [s, row(s)])), missing: [], success: true } }
         }
         if (tool.endsWith('batch') && input.columns.includes('total_revenue_fq_h')) return { payload: { data: input.symbols[0] === 'NASDAQ:AAPL' ? { 'NASDAQ:AAPL': fx.hist } : {}, missing: [], success: true } }
@@ -120,6 +121,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.mouse.move(sb.x + sb.width - 70, sb.y + sb.height / 2)
   console.log('SVR TIP end:', await page.$eval('#rows .part.svr .ctip', (t) => (t.hidden ? 'HIDDEN' : t.textContent)))
   console.log('RDCF AAPL:', await page.$eval('#rows .rdcf', (t) => t.innerText.replace(/\s+/g, ' ').slice(0, 700)).catch(() => 'NONE'))
+  const rd = await page.$('#rows .rdcf')
+  if (rd) { await rd.scrollIntoViewIfNeeded(); await rd.screenshot({ path: path.join(os.tmpdir(), 'stocks-rdcf.png') }); console.log('RDCF GRID fits:', await page.$eval('#rows .rdcf .gridwrap', (g) => `${g.scrollWidth}/${g.clientWidth}`)) }
   console.log('SVR CELL:', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText), 'h saved:', await page.evaluate(() => window.__calls.filter((c) => c.startsWith('mcp-tv-get-symbol-data-batch 1')).length))
   await (await page.$('#rows .part.svr')).screenshot({ path: path.join(os.tmpdir(), 'stocks-svr.png') })
   await page.click('#rows details.proj summary')
@@ -173,12 +176,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(800)
   console.log('SECTOR FILTER:', await page.$eval('#group', (s) => s.value), await rows())
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-test.png'), fullPage: false })
-  // Budget and once-a-day checks (design wf1/fetch-design).
+  // Tab switches within 20 minutes cost only quotes; saved docs keep every field.
   const n0 = await page.evaluate(() => window.__calls.length)
   await page.click('#tab-sa'); await page.waitForTimeout(600); await page.click('#tab-us'); await page.waitForTimeout(600); await page.click('#tab-fav'); await page.waitForTimeout(600)
   const extra = await page.evaluate((n) => window.__calls.slice(n).filter((c) => !/symbol-data-batch \d+$/.test(c) || /batch (?!4$|1$)/.test(c)), n0)
   console.log('TAB SWITCH per-stock calls (want none but quotes):', JSON.stringify(await page.evaluate((n) => window.__calls.slice(n), n0)))
-  console.log('META/CALLS:', JSON.stringify(await page.evaluate(() => window.__store['meta/calls'])))
+  console.log('SAVED cache/NASDAQ:AAPL keys:', Object.keys(await page.evaluate(() => window.__store['cache/NASDAQ:AAPL'] ?? {})).join(','))
   console.log('STATUS END:', await page.textContent('#status'))
   console.log('SAVED q/NASDAQ:AAPL fqEnd:', await page.evaluate(() => window.__store['q/NASDAQ:AAPL']?.fqEnd), 'cache fyEnd:', await page.evaluate(() => window.__store['cache/NASDAQ:AAPL']?.fyEnd), 'px:', await page.evaluate(() => window.__store['cache/NASDAQ:AAPL']?.px?.t?.length))
   console.log('ALL CALLS:', JSON.stringify(await page.evaluate(() => window.__calls)))
@@ -219,6 +222,38 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
     && short.sa.length === 1 && short.sa[0] === 'TADAWUL:1120' && /ما وصلتني/.test(short.notice)
   console.log('WIPE CHECK:', ok ? 'ok' : 'FAILED', JSON.stringify(wipe))
   if (!ok) process.exitCode = 1
+  // Regressions from the review of 2026-10-21. (1) Taps before the saved histories are read start
+  // no fetch, so nothing can replace them (META's saved prices stay). (2) A failed fundamentals
+  // batch is reported, and the refresh button retries it at once. (3) Undo of an un-star after the
+  // stock was starred again keeps it starred.
+  await page.goto('file://' + file + '?slowcache')
+  await page.waitForTimeout(400)
+  await page.click('#refresh').catch(() => {})
+  await page.click('#tab-sa')
+  await page.click('#tab-us')
+  const early2 = await page.evaluate(() => window.__calls.length)
+  await page.waitForTimeout(4500)
+  const metaPx = await page.evaluate(() => window.__store['cache/NASDAQ:META']?.px?.t?.length ?? 0)
+  await page.goto('file://' + file + '?failbatch')
+  await page.waitForTimeout(2500)
+  const failNotice = await page.textContent('#notice')
+  const before = await page.evaluate(() => window.__store['cache/NASDAQ:AAPL']?.fin ? 'fin' : 'none')
+  await page.evaluate(() => { window.__failBatch = false })
+  await page.click('#refresh')
+  await page.waitForTimeout(2500)
+  const after = await page.evaluate(() => (window.__store['cache/NASDAQ:AAPL']?.fin ? 'fin' : 'none') + ' fundsAt ' + !!window.__store['cache/NASDAQ:AAPL']?.fundsAt)
+  await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]') // star
+  await page.waitForTimeout(200)
+  await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]') // un-star → undo offer
+  await page.waitForTimeout(200)
+  await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]') // star again
+  await page.waitForTimeout(200)
+  await page.click('#notice button[data-undo]').catch(() => {})
+  await page.waitForTimeout(300)
+  const favAfter = await page.evaluate(() => window.__store['meta/favorites']?.symbols ?? [])
+  const ok2 = early2 === 0 && metaPx === 174 && /ما قدرت أحدّث/.test(failNotice) && before === 'none' && after === 'fin fundsAt true' && favAfter.includes('NASDAQ:META')
+  console.log('FETCH CHECK:', ok2 ? 'ok' : 'FAILED', JSON.stringify({ early2, metaPx, failNotice: failNotice.slice(0, 60), before, after, favAfter }))
+  if (!ok2) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

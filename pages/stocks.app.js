@@ -1,18 +1,21 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
   const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
-  // TradingView caps tool calls per day (shared with Claude sessions; resets 00:00 UTC). The page
-  // counts its own calls in meta/calls and stops background updates DAY_RESERVE short of DAY_CAP,
-  // so prices and opening a stock keep working. ponytail: DAY_CAP is a guess (a session's 665 calls
-  // plus the page's used the quota up on 18 Oct); a quota error sets today's count to it.
-  const DAY_CAP = 300
-  const DAY_RESERVE = 40
+  // TradingView caps tool calls per day (shared with Claude sessions; resets 00:00 UTC), so the
+  // background work is event-driven: fundamentals only when a stock's quote shows a newer fiscal
+  // period (50 stocks per call); monthly prices for favourites once a month, other stocks every
+  // three months (at most PX_OTHERS per visit) or when opened. Each saved doc records when it was
+  // last answered (fundsAt, pxAt), so other tabs and devices skip it too.
+  const PX_OTHERS = 10
+  const RETRY_MS = 20 * 3600e3 // a stock TradingView answered is not asked again for 20 hours
+  const FAIL_MS = 10 * 60e3 // after a failed call, not before 10 minutes
+  const BG_MS = 20 * 60e3 // background updates at most every 20 minutes per list (quotes always)
   const COLS = ['description', 'close', 'currency', 'type', 'sector', 'market_cap_basic', 'price_earnings_ttm', 'non_gaap_price_to_earnings_per_share_forecast_next_fy',
     'earnings_per_share_forecast_next_fy', 'earnings_per_share_diluted_ttm', 'enterprise_value_ebitda_ttm', 'price_free_cash_flow_ttm', 'price_sales_current',
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
     'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq', 'industry',
     'total_revenue_fq', 'fiscal_period_end_fq', 'fiscal_period_end_fy', 'earnings_per_share_fy', 'total_revenue_fy', 'fiscal_period_fy', 'free_cash_flow_ttm',
-    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta', 'total_shares_outstanding', 'net_income_ttm', 'cash_n_short_term_invest_fq', 'oper_income_ttm', 'beta_5_year']
+    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta', 'total_shares_outstanding', 'net_income_ttm', 'cash_n_short_term_invest_fq', 'oper_income_ttm', 'beta_5_year', 'total_debt_fq']
   // Revenue, net income and EPS histories for the SVR chart (newest first; 32 quarters, 20 years).
   const H_COLS = ['total_revenue_fq_h', 'net_income_fq_h', 'earnings_per_share_diluted_fq_h', 'total_revenue_fy_h', 'net_income_fy_h',
     'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq']
@@ -48,7 +51,27 @@
     'Major Banks': 'البنوك الكبرى', 'Electric Utilities': 'الكهرباء', 'Investment Managers': 'إدارة الاستثمار', 'Property/Casualty Insurance': 'تأمين الممتلكات',
     'Multi-Line Insurance': 'التأمين المتعدد',
   }
-  const nameAr = (key) => SECTOR_AR[key] ?? key
+  // The rest of the industries in pages/peer-margins.json (the revenue DCF names its industry).
+  const INDUSTRY_AR = {
+    'Advertising/Marketing Services': 'الإعلان والتسويق', 'Agricultural Commodities/Milling': 'السلع الزراعية والمطاحن', 'Air Freight/Couriers': 'الشحن الجوي والبريد السريع', 'Airlines': 'الطيران',
+    'Apparel/Footwear Retail': 'متاجر الملابس والأحذية', 'Apparel/Footwear': 'الملابس والأحذية', 'Auto Parts: OEM': 'قطع غيار السيارات', 'Beverages: Alcoholic': 'المشروبات الكحولية',
+    'Beverages: Non-Alcoholic': 'المشروبات', 'Broadcasting': 'البث الإذاعي والتلفزيوني', 'Building Products': 'مواد ومنتجات البناء', 'Cable/Satellite TV': 'تلفزيون الكيبل والأقمار',
+    'Casinos/Gaming': 'الكازينوهات والألعاب', 'Chemicals: Agricultural': 'الكيماويات الزراعية', 'Chemicals: Major Diversified': 'شركات الكيماويات الكبرى', 'Chemicals: Specialty': 'الكيماويات المتخصصة',
+    'Commercial Printing/Forms': 'الطباعة التجارية', 'Computer Peripherals': 'ملحقات الكمبيوتر', 'Computer Processing Hardware': 'أجهزة الكمبيوتر والخوادم', 'Construction Materials': 'مواد البناء',
+    'Containers/Packaging': 'التغليف والعبوات', 'Contract Drilling': 'الحفر بالعقود', 'Department Stores': 'المتاجر الكبرى', 'Electronic Components': 'المكونات الإلكترونية',
+    'Electronic Production Equipment': 'معدات تصنيع الإلكترونيات', 'Electronics Distributors': 'موزعو الإلكترونيات', 'Environmental Services': 'الخدمات البيئية', 'Financial Publishing/Services': 'البيانات والخدمات المالية',
+    'Food Distributors': 'موزعو الأغذية', 'Food Retail': 'متاجر الأغذية', 'Food: Major Diversified': 'شركات الأغذية الكبرى', 'Food: Meat/Fish/Dairy': 'اللحوم والأسماك والألبان',
+    'Gas Distributors': 'توزيع الغاز', 'Home Furnishings': 'الأثاث المنزلي', 'Homebuilding': 'بناء المنازل', 'Hospital/Nursing Management': 'إدارة المستشفيات ودور الرعاية',
+    'Hotels/Resorts/Cruise lines': 'الفنادق والمنتجعات والرحلات البحرية', 'Household/Personal Care': 'المنتجات المنزلية والعناية الشخصية', 'Industrial Specialties': 'المواد الصناعية المتخصصة', 'Insurance Brokers/Services': 'وسطاء وخدمات التأمين',
+    'Internet Retail': 'التجارة الإلكترونية', 'Life/Health Insurance': 'تأمين الحياة والصحة', 'Major Telecommunications': 'شركات الاتصالات الكبرى', 'Managed Health Care': 'التأمين الصحي',
+    'Marine Shipping': 'الشحن البحري', 'Medical/Nursing Services': 'الخدمات الطبية والتمريضية', 'Metal Fabrication': 'تصنيع المعادن', 'Miscellaneous Manufacturing': 'تصنيع متنوع',
+    'Motor Vehicles': 'السيارات', 'Movies/Entertainment': 'الأفلام والترفيه', 'Oil & Gas Pipelines': 'أنابيب النفط والغاز', 'Oil & Gas Production': 'إنتاج النفط والغاز',
+    'Oil Refining/Marketing': 'تكرير وتسويق النفط', 'Oilfield Services/Equipment': 'خدمات ومعدات حقول النفط', 'Other Consumer Services': 'خدمات استهلاكية أخرى', 'Other Transportation': 'نقل آخر',
+    'Personnel Services': 'خدمات التوظيف', 'Railroads': 'السكك الحديدية', 'Real Estate Development': 'التطوير العقاري', 'Recreational Products': 'المنتجات الترفيهية',
+    'Regional Banks': 'البنوك الإقليمية', 'Specialty Insurance': 'التأمين المتخصص', 'Steel': 'الحديد والصلب', 'Trucking': 'النقل بالشاحنات',
+    'Trucks/Construction/Farm Machinery': 'الشاحنات ومعدات البناء والزراعة', 'Wholesale Distributors': 'تجارة الجملة', 'Wireless Telecommunications': 'الاتصالات اللاسلكية',
+  }
+  const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
   const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, projOpen: false, news: {}, ideas: {}, errors: {},
@@ -88,42 +111,25 @@
     }
   }
 
-  // Today's TradingView calls, one count for every tab and device (meta/calls: { day (UTC), n,
-  // tried: stocks the background loop already updated today, each at most once a day }).
-  let used = { day: '', n: 0, tried: [] }
-  let usedTimer = 0
-  const utcDay = () => new Date().toISOString().slice(0, 10)
-  function spend(n) {
-    if (used.day !== utcDay()) used = { day: utcDay(), n: 0, tried: [] }
-    if (!n) return
-    used.n = Math.min(DAY_CAP, used.n + n)
-    clearTimeout(usedTimer)
-    usedTimer = setTimeout(() => db?.doc('meta/calls').set(used).catch(() => {}), 2000)
-  }
-  const callsLeft = () => (used.day === utcDay() ? DAY_CAP - used.n : DAY_CAP)
-
-  // Every TradingView call goes through here and is counted; a result served from the call cache
-  // carries `cache` and costs nothing. A quota error spends the rest of the day.
   async function call(tool, input, cache) {
     const opts = cache ? { cache } : undefined
-    const run = async () => {
-      try {
-        const r = await mcp.callTool(SERVER, tool, input, opts)
-        if (!r.cache) spend(1)
-        return r.payload
-      } catch (e) {
-        spend(/quota/i.test(`${e?.code} ${e?.message}`) ? DAY_CAP : 1)
-        throw e
-      }
-    }
     try {
-      return await run()
+      return (await mcp.callTool(SERVER, tool, input, opts)).payload
     } catch (e) {
       if (!e?.retryable) throw e
       await new Promise((ok) => setTimeout(ok, Math.min(60000, e.retryAfterMs ?? 800 + Math.random() * 1200)))
-      return run()
+      return (await mcp.callTool(SERVER, tool, input, opts)).payload
     }
   }
+
+  // A fetch saves only the fields it fetched (update merges; a missing doc is created), so it can
+  // never drop the rest of a saved doc, nor rebuild one from a page that has not read it yet.
+  async function save(path, fields) {
+    if (!db) return
+    await db.doc(path).update(fields).catch((e) => (e?.code === 'invalid_argument' ? db.doc(path).set(fields) : Promise.reject(e))).catch(() => {})
+  }
+  const recent = (at, ms) => Date.now() - (at ?? 0) < ms
+  const failedAt = {} // symbol (fundamentals) or 'px:'+symbol → time of the last failed call
 
   async function pool(items, worker, limit) {
     let i = 0
@@ -192,53 +198,75 @@
     const d = state.quarters[s]
     return !!q && (d?.fqEnd != null ? q.fiscal_period_end_fq > d.fqEnd : Number.isFinite(q.fiscal_period_end_fq) && qNum(q.fiscal_period_end_fq) > qNum(d?.fq?.labels?.at(-1)))
   }
-  const fundsDue = (s) => fyDue(s) || fqDue(s)
+  const fundsDue = (s) => !recent(state.cache[s]?.fundsAt, RETRY_MS) && !recent(failedAt[s], FAIL_MS) && (fyDue(s) || fqDue(s))
 
   // Both periods for up to 50 stocks in one call: TradingView's *_fy_h / *_fq_h screener columns in
   // the financial-history shape the engine reads (histFromBatch, 16 points as before). An empty or
   // failed answer never replaces saved figures (PG's and V's quarters were saved as null on 19 Oct).
+  // A failed call throws with the stocks it covered (e.syms).
   async function loadFunds(syms) {
-    used.tried.push(...syms)
     for (let i = 0; i < syms.length; i += 50) {
-      const p = await call(T.batch, { symbols: syms.slice(i, i + 50), columns: HIST_COLS })
-      if (p?.success === false) throw { code: 'server_unavailable' }
-      for (const [sym, row] of Object.entries(p?.data ?? {})) {
-        const now = Date.now()
-        const fin = histFromBatch(row, 'fy')
-        const fq = histFromBatch(row, 'fq')
-        const { missing, ...old } = state.cache[sym] ?? {}
-        if (fin && parseFundamentals(fin).length) state.cache[sym] = { ...old, sym, fin, fyEnd: row.fiscal_period_end_fy, fetchedAt: now }
-        else if (!old.fin) state.cache[sym] = { ...old, sym, missing: true, fyEnd: row.fiscal_period_end_fy, fetchedAt: now }
-        if (fq) state.quarters[sym] = { sym, fq, fqEnd: row.fiscal_period_end_fq, fetchedAt: now }
-        if (db) await Promise.all([db.doc(`cache/${sym}`).set(state.cache[sym]), fq && db.doc(`q/${sym}`).set(state.quarters[sym])]).catch(() => {})
+      const chunk = syms.slice(i, i + 50)
+      let p
+      try {
+        p = await call(T.batch, { symbols: chunk, columns: HIST_COLS })
+        if (p?.success === false) throw { code: 'server_unavailable' }
+      } catch (e) {
+        chunk.forEach((x) => { failedAt[x] = Date.now() })
+        throw { code: e?.code, message: e?.message, syms: chunk }
+      }
+      const now = Date.now()
+      const unknown = new Set((p?.missing ?? []).map((m) => m.symbol))
+      for (const sym of chunk) {
+        const row = p?.data?.[sym]
+        if (!row && !unknown.has(sym)) { failedAt[sym] = now; continue } // a market that did not answer (partial)
+        const fin = row && histFromBatch(row, 'fy')
+        const fq = row && histFromBatch(row, 'fq')
+        const old = state.cache[sym] ?? {}
+        const c = fin && parseFundamentals(fin).length ? { sym, fin, fyEnd: row.fiscal_period_end_fy, missing: false, fundsAt: now, fetchedAt: now }
+          : { sym, fundsAt: now, ...(cacheOk && !old.fin ? { missing: true } : {}) }
+        state.cache[sym] = { ...old, ...c }
+        await save(`cache/${sym}`, c)
+        if (fq) {
+          state.quarters[sym] = { sym, fq, fqEnd: row.fiscal_period_end_fq, fetchedAt: now }
+          await save(`q/${sym}`, state.quarters[sym])
+        }
         compute(sym)
       }
     }
   }
 
-  // Monthly prices (cache/<sym>.px): favourites once a calendar month, other stocks when opened or
-  // never saved. A saved 240+ month series takes the last 6 bars, kept when the first (a finished
-  // month) matches the saved close within 1%; otherwise (bars are split-adjusted only, so a split,
-  // or a gap over 5 months) all 252 again. ponytail: 6 bars and 252 cost the same one call; the
-  // merge only saves bytes.
+  // Monthly prices (cache/<sym>.px): favourites once a calendar month, other stocks every three
+  // months or when opened, never-saved ones once. A saved 240+ month series takes the last 6 bars,
+  // kept when the first (a finished month) matches the saved close within 1%; otherwise (bars are
+  // split-adjusted only, so a split, or a gap over 5 months) all 252 again. A shorter series is a
+  // young listing and gets all 252 (same one call).
   function pxDue(s, opened = false) {
-    const px = state.cache[s]?.px
-    if (!state.quotes[s]) return false
-    if (!px?.t?.length) return opened || !state.cache[s]?.pxTried
-    return (opened || state.lists.fav.includes(s)) && (px.t.length < 240 || monthKey(px.t.at(-1)) < monthKey(Date.now() / 1000))
+    const d = state.cache[s]
+    if (!state.quotes[s] || recent(d?.pxAt, opened ? FAIL_MS : RETRY_MS) || recent(failedAt[`px:${s}`], FAIL_MS)) return false
+    const px = d?.px
+    if (!px?.t?.length) return opened || !d?.pxTried
+    const cur = monthKey(Date.now() / 1000)
+    return monthKey(px.t.at(-1)) < (opened || state.lists.fav.includes(s) ? cur : addMonths(cur, -2))
   }
   async function loadPx(s) {
-    used.tried.push(s)
     const old = state.cache[s]?.px?.t?.length >= 240 ? state.cache[s].px : null
     const get = async (count) => (await call(T.px, { symbol: s, interval: 'M', count, format: 'columns' }))?.bars
-    let b = await get(old ? 6 : 252)
-    if (old && b?.t?.length) {
-      const k = old.t.findIndex((t) => monthKey(t) === monthKey(b.t[0]))
-      if (k >= 0 && Math.abs(b.c[0] / old.c[k] - 1) < 0.01) b = { t: [...old.t.slice(0, k), ...b.t].slice(-252), c: [...old.c.slice(0, k), ...b.c].slice(-252) }
-      else b = await get(252)
+    let b
+    try {
+      b = await get(old ? 6 : 252)
+      if (old && b?.t?.length) {
+        const k = old.t.findIndex((t) => monthKey(t) === monthKey(b.t[0]))
+        if (k >= 0 && Math.abs(b.c[0] / old.c[k] - 1) < 0.01) b = { t: [...old.t.slice(0, k), ...b.t].slice(-252), c: [...old.c.slice(0, k), ...b.c].slice(-252) }
+        else b = await get(252)
+      }
+    } catch (e) {
+      failedAt[`px:${s}`] = Date.now()
+      throw { code: e?.code, message: e?.message, syms: [s] }
     }
-    state.cache[s] = { ...state.cache[s], sym: s, pxTried: true, ...(b?.t?.length ? { px: { t: b.t, c: b.c } } : {}) }
-    if (db) await db.doc(`cache/${s}`).set(state.cache[s]).catch(() => {})
+    const f = { sym: s, pxTried: true, pxAt: Date.now(), ...(b?.t?.length ? { px: { t: b.t, c: b.c } } : {}) }
+    state.cache[s] = { ...(state.cache[s] ?? {}), ...f }
+    await save(`cache/${s}`, f)
     compute(s)
   }
 
@@ -360,8 +388,9 @@
 
   let busy = false
   let again = false
+  const bgAt = {} // list → time of its last background update in this tab
   async function refresh(opts = {}) {
-    if (!mcp || state.market === 'sectors') return
+    if (!mcp || !cacheRead || state.market === 'sectors') return
     if (busy) { again = true; return }
     busy = true
     try { await doRefresh(opts) } finally { busy = false }
@@ -383,36 +412,45 @@
       render()
       return
     }
-    // Background updates for this list, favourites first: fundamentals in batches of 50, then
-    // monthly prices; each stock at most once a day, and only while today's budget lasts. A tab
-    // switch with nothing new costs no call.
-    spend(0)
+    // Background updates for this list, favourites first: fundamentals of stocks with a newer
+    // fiscal period (50 per call), then monthly prices (favourites, plus at most PX_OTHERS others,
+    // oldest first). At most every BG_MS per list unless the refresh button was pressed.
+    const m = state.market
+    if (freshQuotes) for (const k in failedAt) delete failedAt[k] // the button retries failures now
+    const bg = freshQuotes || !recent(bgAt[m], BG_MS)
     const fav = new Set(state.lists.fav)
-    const todo = syms.filter((s) => !used.tried.includes(s)).sort((a, b) => fav.has(b) - fav.has(a))
-    const funds = todo.filter(fundsDue)
-    const px = todo.filter((s) => pxDue(s))
+    const order = [...syms].sort((a, b) => fav.has(b) - fav.has(a))
+    const funds = bg ? order.filter(fundsDue) : []
+    const lastBar = (s) => state.cache[s]?.px?.t?.at(-1) ?? 0
+    const others = bg ? order.filter((s) => !fav.has(s) && pxDue(s)).sort((a, b) => lastBar(a) - lastBar(b)) : []
+    const px = [...(bg ? order.filter((s) => fav.has(s) && pxDue(s)) : []), ...others.slice(0, PX_OTHERS)]
+    if (bg) bgAt[m] = Date.now()
     const jobs = []
     for (let i = 0; i < funds.length; i += 50) jobs.push(() => loadFunds(funds.slice(i, i + 50)))
     for (const s of px) jobs.push(() => loadPx(s))
     let done = 0
     let authError = null
     let quota = false
+    const failed = new Set()
     await pool(jobs, async (job) => {
-      if (authError || quota || callsLeft() <= DAY_RESERVE) return
+      if (authError || quota) return
       try { await job() } catch (e) {
         if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'not_granted'].includes(e?.code)) authError = e
         else if (/quota/i.test(`${e?.code} ${e?.message}`)) quota = true
+        else (e?.syms ?? []).forEach((s) => failed.add(s))
       }
       done += 1
       $('status').textContent = `جاري تحديث البيانات: ${done} من ${jobs.length}`
       scheduleRender()
     }, 3)
+    for (const s of failed) if (!state.cache[s]?.fin) state.errors[s] = 'TradingView ما رد على طلب بياناتها. بنحاول مرة ثانية بعد 10 دقايق، أو اضغط تحديث الأسعار.'
     if (authError) notice(explainError(authError), true)
     else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
+    else if (failed.size) notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد). بنحاول مرة ثانية بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
     syms.forEach(compute)
     $('refresh').disabled = false
-    const pending = new Set([...funds, ...px].filter((s) => !used.tried.includes(s))).size
-    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}${pending ? ` · ${pending} سهم تتحدث بياناتها بكرة` : ''} · باقي ${Math.max(0, callsLeft())} من ${DAY_CAP} طلب TradingView اليوم`
+    const later = others.length - Math.min(PX_OTHERS, others.length)
+    $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}${later ? ` · أسعار ${later} سهم ثاني الشهرية تتحدث في الزيارات الجاية (${PX_OTHERS} كل مرة)` : ''}`
     render()
   }
 
@@ -916,7 +954,7 @@
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
     const notes = [
-      f.profile === 'Unprofitable growth' ? 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل. تحت: DCF على إيراداتها للمقارنة.' : '',
+      f.profile === 'Unprofitable growth' ? `DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
@@ -954,25 +992,30 @@
     if (!d) return ''
     const q = state.quotes[sym] || {}
     if (d.why) return `<div class="rdcf"><h4>DCF على الإيرادات</h4><p class="dim">ما ينحسب: ${esc(d.why)}</p></div>`
-    const peer = d.mFrom.from === 'industry' ? `وسط الشركات الرابحة اللي إيرادها فوق مليار في صناعتها (${esc(nameAr(d.mFrom.key))}، <span class="n">${d.mFrom.n}</span> شركة)`
+    const peer = d.mFrom.from === 'industry' ? `وسط الشركات الرابحة اللي إيرادها فوق مليار في صناعتها (${esc(nameAr(d.mFrom.key))}، <span class="n">${d.mFrom.n}</span> ${d.mFrom.n <= 10 ? 'شركات' : 'شركة'})`
       : d.mFrom.from === 'sector' ? `وسط الشركات الرابحة الكبيرة في قطاعها (${esc(nameAr(d.mFrom.key))})` : 'افتراضي'
-    const head = d.raw < 0 ? `<b class="lo">أقل من صفر</b>: بهذا الهامش أرباحها ما تغطي الحرق والديون` : `<b class="n">${money(q, d.value)}</b> <span class="${d.value >= q.close ? 'hi' : 'lo'}">${pct(d.value / q.close - 1)}</span>`
-    const implied = d.implied != null ? `السعر اليوم <b class="n">${money(q, q.close)}</b> يفترض إنها توصل لهامش تشغيلي <b class="n">${pct(d.implied, 1).replace('+', '')}</b> (${d.mFrom.from === 'industry' ? 'صناعتها' : d.mFrom.from === 'sector' ? 'قطاعها' : 'الافتراضي'}: <span class="n">${pct(d.m, 1).replace('+', '')}</span>).`
-      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `: السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
+    const mWord = d.mFrom.from === 'industry' ? 'صناعتها' : d.mFrom.from === 'sector' ? 'قطاعها' : 'الافتراضي'
+    const fromAn = d.growthFrom === 'analysts'
+    const head = d.raw < 0 ? `<b class="lo">أقل من صفر</b>: بهذا الهامش أرباحها ما تغطي الحرق والديون` : `<span class="n"><b>${money(q, d.value)}</b> <span class="${d.value >= q.close ? 'hi' : 'lo'}">${pct(d.value / q.close - 1)}</span></span>`
+    const implied = d.implied != null ? `السعر اليوم <b class="n">${money(q, q.close)}</b> يفترض إنها توصل لهامش تشغيلي <b class="n">${pct(d.implied, 1).replace('+', '')}</b> (${mWord}: <span class="n">${pct(d.m, 1).replace('+', '')}</span>).`
+      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. وبالهامش ${mWord} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
     const cell = (v) => `<td class="n ${v > q.close ? 'hi' : ''}">${v > 0 ? fmt(v, 2) : '<span class="dim">0</span>'}</td>`
-    const grid = `<table class="ptable"><thead><tr><th>الهامش ↓ · النمو →</th>${d.gs.map((g) => `<th class="n">${pct(g, 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
-      ${d.ms.map((m, i) => `<tr><th class="n">${pct(m, 1).replace('+', '')}${Math.abs(m - d.m) < 1e-9 ? '*' : ''}</th>${d.grid[i].map(cell).join('')}</tr>`).join('')}</tbody></table>`
+    const grid = `<div class="gridwrap"><table class="ptable"><thead><tr><th>الهامش ↓ · النمو ←</th>${d.gs.map((g) => `<th class="n">${pct(g, 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
+      ${d.ms.map((m, i) => `<tr><th class="n">${pct(m, 1).replace('+', '')}${Math.abs(m - d.m) < 1e-9 ? '*' : ''}</th>${d.grid[i].map(cell).join('')}</tr>`).join('')}</tbody></table></div>`
+    const share = d.dilution < 0.01 ? 'أقل من 1%' : `<b class="n">${pct(d.dilution, 0).replace('+', '')}</b>`
     const flags = [
-      d.gap > 0 ? `قبل ما يصير تدفقها النقدي موجب تحتاج تجمع حوالي <b class="n">${big(d.gap)}</b> (<b class="n">${pct(d.dilution, 0).replace('+', '')}</b> من قيمتها السوقية) من أسهم جديدة أو ديون${d.dilution > 0.5 ? '، فالقيمة هنا حد أعلى' : ''}.` : '',
-      `احتمال تفلس قبل ما تربح: <b class="n">${pct(d.pFail, 0).replace('+', '')}</b> (الكاش يكفيها ${Number.isFinite(d.runway) ? `<span class="n">${fmt(d.runway, 1)}</span> سنة` : 'بدون حرق'}).`,
+      // A real burner must raise the money; a company with positive free cash flow only dips in the model.
+      d.gap > 0 && d.runway != null && Number.isFinite(d.runway) ? `قبل ما يصير تدفقها النقدي موجب تحتاج تجمع حوالي <b class="n">${big(d.gap)}</b> (${share} من قيمتها السوقية) من أسهم جديدة أو ديون${d.dilution > 0.5 ? '، فالقيمة هنا حد أعلى' : ''}.`
+        : d.gap > 0 && d.runway != null ? `بهذي الافتراضات (الربح التشغيلي المحاسبي واستثمار النمو) الكاش ينزل حوالي <b class="n">${big(d.gap)}</b> قبل ما يرجع يرتفع.` : '',
+      `احتمال تفلس قبل ما تربح: <b class="n">${pct(d.pFail, 0).replace('+', '')}</b> (${d.runway == null ? 'رصيد الكاش غير معروف' : Number.isFinite(d.runway) ? `الكاش يكفيها <span class="n">${fmt(d.runway, 1)}</span> سنة` : 'ما تحرق كاش'}).`,
     ].filter(Boolean)
     return `<div class="rdcf"><h4>DCF على الإيرادات <span class="dim">(للمقارنة، ما يدخل في القيمة العادلة)</span></h4>
       <p>بهامش تشغيلي <b class="n">${pct(d.m, 1).replace('+', '')}</b>، ${peer}: ${head}.</p>
       <p>${implied}</p>
       ${grid}
-      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من توقع المحللين، بحد أقصى 30%). الأخضر فوق سعر اليوم.</p>
+      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : 'نمو مبيعاتها آخر 3 سنين، ما فيه توقع للمحللين'}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
       <p class="dim">${flags.join(' ')}</p>
-      <details><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: السنة الحالية من توقعات المحللين، بعدها نموهم (بحد أقصى 30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
+      <details><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو مبيعاتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
     </div>`
   }
 
@@ -1294,7 +1337,7 @@
     if (!b) return
     const [kind, sym] = b.dataset.undo.split('|')
     notice('')
-    if (kind === 'fav') toggleFav(sym)
+    if (kind === 'fav') { if (!state.lists.fav.includes(sym)) toggleFav(sym) } // undo = bring back, never a toggle
     else addSymbol(sym)
   })
   document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
@@ -1326,7 +1369,8 @@
     if (!state.open) return
     loadNews(sym)
     if (preProfit(sym)) loadHist(sym)
-    if (mcp && !used.tried.includes(sym) && pxDue(sym, true)) loadPx(sym).then(render, () => {})
+    if (mcp && cacheRead && fundsDue(sym)) loadFunds([sym]).then(render, () => {})
+    if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(render, () => {})
   }
   $('rows').addEventListener('click', (e) => {
     const star = e.target.closest('button[data-star]')
@@ -1351,6 +1395,7 @@
   // ---------------------------------------------------------------- boot
 
   let cacheRead = false
+  let cacheOk = false
   async function boot() {
     render()
     ;[db, mcp] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('mcp') ?? null])
@@ -1384,11 +1429,8 @@
         else render()
       }, () => notice('ما قدرت أقرأ القائمة المحفوظة، فالإضافة والحذف موقفة لين تفتح الصفحة من جديد.', true))
     }
-    db.doc('meta/calls').onSnapshot((snap) => {
-      const d = snap.exists ? snap.data() : null
-      if (d?.day === utcDay() && (used.day !== d.day || d.n > used.n)) used = { ...d, tried: [...new Set([...(d.tried ?? []), ...(used.day === d.day ? used.tried : [])])] }
-    }, () => {})
-    await loadCacheFromDb().catch(() => {})
+    // One retry: a failed page of the saved histories would make every stock look unsaved.
+    cacheOk = await loadCacheFromDb().then(() => true, () => loadCacheFromDb().then(() => true, () => false))
     cacheRead = true
     // Lists that arrived during the cache load were only drawn; fetch for the open tab now.
     if (state.lists[state.market]?.length) refresh()
