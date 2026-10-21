@@ -75,7 +75,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
             for (const [k, c] of Object.entries(C)) { r[c + '_fy_h'] = f.series[k] ? f.series[k].map((x) => x?.value ?? null).reverse() : null; r[c + '_fq_h'] = fqv[k] ? [...fqv[k]].reverse() : null }
             return r }
           if (window.__failBatch ?? location.search.includes('failbatch')) return { payload: { success: false, data: {} } }
-          return { payload: { data: Object.fromEntries(input.symbols.filter((s) => fx[s]).map((s) => [s, row(s)])), missing: [], success: true } }
+          return { payload: { data: Object.fromEntries(input.symbols.filter((s) => fx[s]).map((s) => [s, row(s)])), missing: input.symbols.filter((s) => !fx[s]).map((symbol) => ({ symbol })), success: true } }
         }
         if (tool.endsWith('batch') && input.columns.includes('total_revenue_fq_h')) return { payload: { data: input.symbols[0] === 'NASDAQ:AAPL' ? { 'NASDAQ:AAPL': fx.hist } : {}, missing: [], success: true } }
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
@@ -86,7 +86,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
         if (tool.endsWith('search-symbols')) return { payload: { data: { symbols: [{ symbol: 'TADAWUL:1212', description: 'Astra Industrial Group', type: 'stock' }] } } }
       },
     }
-    window.claude = { use: async (n) => (n === 'db' ? db : n === 'mcp' ? mcp : null) }
+    window.claude = { use: async (n) => (n === 'db' ? (location.search.includes('nodb') ? null : db) : n === 'mcp' ? mcp : null) }
   }, fixtures)
 
   const rows = () => page.$$eval('#rows tr.row', (trs) => trs.map((tr) => tr.innerText.replace(/\s+/g, ' ').trim()))
@@ -254,6 +254,14 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const ok2 = early2 === 0 && metaPx === 174 && /ما قدرت أحدّث/.test(failNotice) && before === 'none' && after === 'fin fundsAt true' && favAfter.includes('NASDAQ:META')
   console.log('FETCH CHECK:', ok2 ? 'ok' : 'FAILED', JSON.stringify({ early2, metaPx, failNotice: failNotice.slice(0, 60), before, after, favAfter }))
   if (!ok2) process.exitCode = 1
+  // (4) A view without the db still fetches (prices of the Big tab).
+  await page.goto('file://' + file + '?nodb')
+  await page.waitForTimeout(500)
+  await page.click('#tab-big')
+  await page.waitForTimeout(1500)
+  const nodb = { calls: await page.evaluate(() => window.__calls.length), status: await page.textContent('#status') }
+  console.log('NODB CHECK:', nodb.calls > 0 && /آخر تحديث/.test(nodb.status) ? 'ok' : 'FAILED', JSON.stringify(nodb))
+  if (!(nodb.calls > 0)) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

@@ -102,7 +102,7 @@ export function rdcf(q, o = {}) {
   const op = pv + (tv + nol * TAX) * df
   const raw = ((1 - pFail) * (op - nd)) / shares // a failure leaves the shareholders nothing
   const gap = Math.max(0, -low)
-  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: mcap > 0 ? gap / mcap : null }
+  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: gap / (shares * q.close) } // market value at the price shown (shares > 0 above)
 }
 
 /** The input o[key] (m: target margin, G: growth in years 2–5) at which the value equals the price; null when lo…hi cannot reach it. */

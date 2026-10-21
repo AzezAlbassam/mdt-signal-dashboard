@@ -321,3 +321,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   are reported and retried (10 min, or the refresh button). A 30-agent review confirmed 21 defects in
   the first version (daily counter, shared 'tried' flag, cache overwrite race, young favourites
   re-fetched daily, DCF wording/phone grid); all fixed, with WIPE CHECK and FETCH CHECK in the harness.
+- 2026-10-21 — second review (19 agents) of the fetch rewrite: 12 confirmed, all fixed (no-db view never
+  fetched; a doc without fin is not 'no data'; partial batch answers reported; failure retried on the
+  next refresh after 10 min and the warning kept until then; writes serialized per doc; stocks with no
+  fiscal year / suspended stocks not re-asked daily; DCF wording, dilution from the price shown,
+  Arabic grammar, number/unit order, 2.5% header). NODB CHECK added to the harness. Published v22.

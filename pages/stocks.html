@@ -1457,7 +1457,7 @@ function rdcf(q, o = {}) {
   const op = pv + (tv + nol * TAX) * df
   const raw = ((1 - pFail) * (op - nd)) / shares // a failure leaves the shareholders nothing
   const gap = Math.max(0, -low)
-  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: mcap > 0 ? gap / mcap : null }
+  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: gap / (shares * q.close) } // market value at the price shown (shares > 0 above)
 }
 
 /** The input o[key] (m: target margin, G: growth in years 2–5) at which the value equals the price; null when lo…hi cannot reach it. */
@@ -1602,9 +1602,12 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
 
   // A fetch saves only the fields it fetched (update merges; a missing doc is created), so it can
   // never drop the rest of a saved doc, nor rebuild one from a page that has not read it yet.
-  async function save(path, fields) {
-    if (!db) return
-    await db.doc(path).update(fields).catch((e) => (e?.code === 'invalid_argument' ? db.doc(path).set(fields) : Promise.reject(e))).catch(() => {})
+  // One write at a time per doc (db.d.ts), so a first update that creates the doc is seen by the next.
+  const saving = {}
+  function save(path, fields) {
+    if (!db) return Promise.resolve()
+    return (saving[path] = (saving[path] ?? Promise.resolve()).then(() => db.doc(path).update(fields)
+      .catch((e) => (e?.code === 'invalid_argument' ? db.doc(path).set(fields) : Promise.reject(e))).catch(() => {})))
   }
   const recent = (at, ms) => Date.now() - (at ?? 0) < ms
   const failedAt = {} // symbol (fundamentals) or 'px:'+symbol → time of the last failed call
@@ -1683,6 +1686,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
   // failed answer never replaces saved figures (PG's and V's quarters were saved as null on 19 Oct).
   // A failed call throws with the stocks it covered (e.syms).
   async function loadFunds(syms) {
+    const lost = []
     for (let i = 0; i < syms.length; i += 50) {
       const chunk = syms.slice(i, i + 50)
       let p
@@ -1697,21 +1701,27 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       const unknown = new Set((p?.missing ?? []).map((m) => m.symbol))
       for (const sym of chunk) {
         const row = p?.data?.[sym]
-        if (!row && !unknown.has(sym)) { failedAt[sym] = now; continue } // a market that did not answer (partial)
+        if (!row && !unknown.has(sym)) { failedAt[sym] = now; lost.push(sym); continue } // a market that did not answer (partial)
         const fin = row && histFromBatch(row, 'fy')
         const fq = row && histFromBatch(row, 'fq')
         const old = state.cache[sym] ?? {}
         const c = fin && parseFundamentals(fin).length ? { sym, fin, fyEnd: row.fiscal_period_end_fy, missing: false, fundsAt: now, fetchedAt: now }
-          : { sym, fundsAt: now, ...(cacheOk && !old.fin ? { missing: true } : {}) }
+          // Nothing saved and nothing returned: remember the quote's period, so it is asked again
+          // only once the quote shows a newer one (a recent IPO with no full fiscal year yet).
+          : { sym, fundsAt: now, ...(cacheOk && !old.fin ? { missing: true, fyEnd: state.quotes[sym]?.fiscal_period_end_fy ?? null } : {}) }
         state.cache[sym] = { ...old, ...c }
         await save(`cache/${sym}`, c)
         if (fq) {
           state.quarters[sym] = { sym, fq, fqEnd: row.fiscal_period_end_fq, fetchedAt: now }
           await save(`q/${sym}`, state.quarters[sym])
+        } else if (cacheOk && !state.quarters[sym]?.fq && Number.isFinite(state.quotes[sym]?.fiscal_period_end_fq)) {
+          state.quarters[sym] = { sym, fqEnd: state.quotes[sym].fiscal_period_end_fq, fetchedAt: now }
+          await save(`q/${sym}`, state.quarters[sym])
         }
         compute(sym)
       }
     }
+    if (lost.length) throw { code: 'server_unavailable', syms: lost }
   }
 
   // Monthly prices (cache/<sym>.px): favourites once a calendar month, other stocks every three
@@ -1725,7 +1735,9 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     const px = d?.px
     if (!px?.t?.length) return opened || !d?.pxTried
     const cur = monthKey(Date.now() / 1000)
-    return monthKey(px.t.at(-1)) < (opened || state.lists.fav.includes(s) ? cur : addMonths(cur, -2))
+    // when TradingView was last asked counts too: a suspended stock gets no new bars
+    const seen = Math.max(px.t.at(-1), (d.pxAt ?? 0) / 1000)
+    return monthKey(seen) < (opened || state.lists.fav.includes(s) ? cur : addMonths(cur, -2))
   }
   async function loadPx(s) {
     const old = state.cache[s]?.px?.t?.length >= 240 ? state.cache[s].px : null
@@ -1841,7 +1853,8 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     const d = state.cache[sym]
     const q = state.quotes[sym]
     if (!d || !q) return
-    if (d.missing || !d.fin) { state.errors[sym] = NO_FIN; return }
+    if (d.missing) { state.errors[sym] = NO_FIN; return }
+    if (!d.fin) return // not fetched yet, or the fetch failed (its message stays)
     const funds = parseFundamentals(d.fin)
     // Net income ÷ EPS misses the share count when preferred dividends or a near-zero EPS
     // distort it (MCHP showed twice its shares); then the quote's count is used for the last year.
@@ -1880,7 +1893,10 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     if (!syms.length) { render(); return }
     $('refresh').disabled = true
     $('status').textContent = `جاري تحميل الأسعار (${syms.length} سهم)…`
-    if (!$('notice').querySelector('[data-undo]')) notice('') // an undo offer stays until used or replaced
+    const m = state.market
+    if (freshQuotes) for (const k in failedAt) delete failedAt[k] // the button retries failures now
+    const bg = freshQuotes || !recent(bgAt[m], BG_MS)
+    if (bg && !$('notice').querySelector('[data-undo]')) notice('') // a warning stays until a run retries; an undo offer until used
     try {
       await loadQuotes(syms, freshQuotes)
     } catch (e) {
@@ -1893,9 +1909,6 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     // Background updates for this list, favourites first: fundamentals of stocks with a newer
     // fiscal period (50 per call), then monthly prices (favourites, plus at most PX_OTHERS others,
     // oldest first). At most every BG_MS per list unless the refresh button was pressed.
-    const m = state.market
-    if (freshQuotes) for (const k in failedAt) delete failedAt[k] // the button retries failures now
-    const bg = freshQuotes || !recent(bgAt[m], BG_MS)
     const fav = new Set(state.lists.fav)
     const order = [...syms].sort((a, b) => fav.has(b) - fav.has(a))
     const funds = bg ? order.filter(fundsDue) : []
@@ -1921,10 +1934,13 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       $('status').textContent = `جاري تحديث البيانات: ${done} من ${jobs.length}`
       scheduleRender()
     }, 3)
-    for (const s of failed) if (!state.cache[s]?.fin) state.errors[s] = 'TradingView ما رد على طلب بياناتها. بنحاول مرة ثانية بعد 10 دقايق، أو اضغط تحديث الأسعار.'
+    for (const s of failed) if (!state.cache[s]?.fin) state.errors[s] = 'TradingView ما رد على طلب بياناتها. بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.'
     if (authError) notice(explainError(authError), true)
     else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
-    else if (failed.size) notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد). بنحاول مرة ثانية بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
+    else if (failed.size) {
+      bgAt[m] = Date.now() - BG_MS + FAIL_MS // the next refresh after 10 minutes retries them
+      notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد). بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
+    }
     syms.forEach(compute)
     $('refresh').disabled = false
     const later = others.length - Math.min(PX_OTHERS, others.length)
@@ -2432,7 +2448,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
     const notes = [
-      f.profile === 'Unprofitable growth' ? `DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
+      f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
@@ -2447,7 +2463,8 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     </div>`
   }
 
-  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e9 ? `${fmt(x / 1e9, 1)} مليار` : `${fmt(x / 1e6, 0)} مليون`)
+  // The digits isolated as LTR, the unit word left in the RTL sentence.
+  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e9 ? `<span class="n">${fmt(x / 1e9, 1)}</span> مليار` : `<span class="n">${fmt(x / 1e6, 0)}</span> مليون`)
 
   // Revenue DCF for a loss-maker (engine/rdcf.js), US listings only (US rates): the default value,
   // the margin and growth the price implies, and a margin × growth grid. Histories come from the
@@ -2473,18 +2490,19 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     const peer = d.mFrom.from === 'industry' ? `وسط الشركات الرابحة اللي إيرادها فوق مليار في صناعتها (${esc(nameAr(d.mFrom.key))}، <span class="n">${d.mFrom.n}</span> ${d.mFrom.n <= 10 ? 'شركات' : 'شركة'})`
       : d.mFrom.from === 'sector' ? `وسط الشركات الرابحة الكبيرة في قطاعها (${esc(nameAr(d.mFrom.key))})` : 'افتراضي'
     const mWord = d.mFrom.from === 'industry' ? 'صناعتها' : d.mFrom.from === 'sector' ? 'قطاعها' : 'الافتراضي'
+    const mAt = d.mFrom.from === 'industry' ? 'وبهامش صناعتها' : d.mFrom.from === 'sector' ? 'وبهامش قطاعها' : 'وبالهامش الافتراضي'
     const fromAn = d.growthFrom === 'analysts'
     const head = d.raw < 0 ? `<b class="lo">أقل من صفر</b>: بهذا الهامش أرباحها ما تغطي الحرق والديون` : `<span class="n"><b>${money(q, d.value)}</b> <span class="${d.value >= q.close ? 'hi' : 'lo'}">${pct(d.value / q.close - 1)}</span></span>`
     const implied = d.implied != null ? `السعر اليوم <b class="n">${money(q, q.close)}</b> يفترض إنها توصل لهامش تشغيلي <b class="n">${pct(d.implied, 1).replace('+', '')}</b> (${mWord}: <span class="n">${pct(d.m, 1).replace('+', '')}</span>).`
-      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. وبالهامش ${mWord} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
+      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. ${mAt} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
     const cell = (v) => `<td class="n ${v > q.close ? 'hi' : ''}">${v > 0 ? fmt(v, 2) : '<span class="dim">0</span>'}</td>`
-    const grid = `<div class="gridwrap"><table class="ptable"><thead><tr><th>الهامش ↓ · النمو ←</th>${d.gs.map((g) => `<th class="n">${pct(g, 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
+    const grid = `<div class="gridwrap"><table class="ptable"><thead><tr><th>الهامش ↓ · النمو ←</th>${d.gs.map((g) => `<th class="n">${pct(g, Math.abs(g * 100 - Math.round(g * 100)) > 1e-6 ? 1 : 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
       ${d.ms.map((m, i) => `<tr><th class="n">${pct(m, 1).replace('+', '')}${Math.abs(m - d.m) < 1e-9 ? '*' : ''}</th>${d.grid[i].map(cell).join('')}</tr>`).join('')}</tbody></table></div>`
-    const share = d.dilution < 0.01 ? 'أقل من 1%' : `<b class="n">${pct(d.dilution, 0).replace('+', '')}</b>`
+    const share = d.dilution == null ? '' : d.dilution < 0.01 ? ' (أقل من 1% من قيمتها السوقية)' : ` (<b class="n">${pct(d.dilution, 0).replace('+', '')}</b> من قيمتها السوقية)`
     const flags = [
       // A real burner must raise the money; a company with positive free cash flow only dips in the model.
-      d.gap > 0 && d.runway != null && Number.isFinite(d.runway) ? `قبل ما يصير تدفقها النقدي موجب تحتاج تجمع حوالي <b class="n">${big(d.gap)}</b> (${share} من قيمتها السوقية) من أسهم جديدة أو ديون${d.dilution > 0.5 ? '، فالقيمة هنا حد أعلى' : ''}.`
-        : d.gap > 0 && d.runway != null ? `بهذي الافتراضات (الربح التشغيلي المحاسبي واستثمار النمو) الكاش ينزل حوالي <b class="n">${big(d.gap)}</b> قبل ما يرجع يرتفع.` : '',
+      d.gap > 0 && d.runway != null && Number.isFinite(d.runway) ? `قبل ما يصير تدفقها النقدي موجب تحتاج تجمع حوالي <b>${big(d.gap)}</b>${share} من أسهم جديدة أو ديون${d.dilution > 0.5 ? '، فالقيمة هنا حد أعلى' : ''}.`
+        : d.gap > 0 && d.runway != null ? `بهذي الافتراضات (الربح التشغيلي المحاسبي واستثمار النمو) الكاش يخلص وينقصها حوالي <b>${big(d.gap)}</b> قبل ما يرجع يرتفع.` : '',
       `احتمال تفلس قبل ما تربح: <b class="n">${pct(d.pFail, 0).replace('+', '')}</b> (${d.runway == null ? 'رصيد الكاش غير معروف' : Number.isFinite(d.runway) ? `الكاش يكفيها <span class="n">${fmt(d.runway, 1)}</span> سنة` : 'ما تحرق كاش'}).`,
     ].filter(Boolean)
     return `<div class="rdcf"><h4>DCF على الإيرادات <span class="dim">(للمقارنة، ما يدخل في القيمة العادلة)</span></h4>
@@ -2506,7 +2524,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     let body
     if (p.kind === 'pre') {
       const cash = state.fair[sym]?.values?.cash
-      body = `<p>الشركة بدون إيرادات كافية نرسم لها مسار سعر (إيراداتها <b class="n">${big(p.rev)}</b> ${cur}). بدل التخمين: عشان سعرها اليوم يكون منطقي، تحتاج إيرادات سنوية حوالي <b class="n">${big(p.revNeeded)}</b> ${cur} بعد 5 سنوات${p.rev > 0 ? ` (<b class="n">${fmt(p.revNeeded / p.rev, 0)}×</b> إيرادات اليوم)` : ''}.</p>
+      body = `<p>الشركة بدون إيرادات كافية نرسم لها مسار سعر (إيراداتها <b>${big(p.rev)}</b> ${cur}). بدل التخمين: عشان سعرها اليوم يكون منطقي، تحتاج إيرادات سنوية حوالي <b>${big(p.revNeeded)}</b> ${cur} بعد 5 سنوات${p.rev > 0 ? ` (<b class="n">${fmt(p.revNeeded / p.rev, 0)}×</b> إيرادات اليوم)` : ''}.</p>
         <p class="dim">الحسبة: القيمة السوقية اليوم تكبر 9% سنوياً (العائد اللي تطلبه) لـ 5 سنوات، وتقسم على 3 (شركة ناضجة: مكرر ربح 20 × هامش ربح 15%).${cash ? ` الكاش الصافي للسهم اليوم: <b class="n">${fmt(cash, 2)}</b>.` : ''}</p>`
     } else {
       const cell = (x, cls = '') => `<td class="n ${cls}">${x}</td>`
@@ -2549,7 +2567,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
   function runwayTile(q) {
     if (!(q.free_cash_flow_ttm < 0) || !(q.cash_n_short_term_invest_fq > 0) || q.sector === 'Finance') return []
     const m = q.cash_n_short_term_invest_fq / (-q.free_cash_flow_ttm / 12)
-    return [['الكاش يكفي', m >= 120 ? 'أكثر من 10 سنين' : `${fmt(m, 0)} شهر`, `الكاش والاستثمارات القصيرة (${big(q.cash_n_short_term_invest_fq)}) ÷ الكاش اللي تحرقه بالشهر على آخر 12 شهر. لو قليل، الشركة غالباً بتصدر أسهم أو تقترض قريب. ضعفه: الحرق يتغير، وما يحسب خطوط الائتمان.`]]
+    return [['الكاش يكفي', m >= 120 ? 'أكثر من 10 سنين' : `${fmt(m, 0)} شهر`, `الكاش والاستثمارات القصيرة (${big(q.cash_n_short_term_invest_fq).replace(/<[^>]+>/g, '')}) ÷ الكاش اللي تحرقه بالشهر على آخر 12 شهر. لو قليل، الشركة غالباً بتصدر أسهم أو تقترض قريب. ضعفه: الحرق يتغير، وما يحسب خطوط الائتمان.`]]
   }
 
   function detail(sym) {
@@ -2883,6 +2901,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     }
     if (!db) {
       saved.us = saved.sa = saved.fav = []
+      cacheRead = true // nothing saved to wait for, and nothing a fetch could overwrite
       render()
       notice('الحفظ غير متاح في هذا العرض، فالقائمة ما بتنحفظ.', true)
       return
