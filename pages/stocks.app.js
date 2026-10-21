@@ -19,7 +19,7 @@
   // Revenue, net income and EPS histories for the SVR chart (newest first; 32 quarters, 20 years).
   const H_COLS = ['total_revenue_fq_h', 'net_income_fq_h', 'earnings_per_share_diluted_fq_h', 'total_revenue_fy_h', 'net_income_fy_h',
     'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq']
-  const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح 3 سنين بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
+  const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'أرضية الكاش (الكاش الصافي للسهم)', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
     'Unprofitable growth': 'تنمو وتخسر', 'Pre-revenue': 'بدون إيرادات' }
@@ -309,12 +309,14 @@
   // The live page's own valuation choices (POST-HOC, 2026-10-21, from an audit of the page; study 7's
   // tested blend is unchanged in the engine): Graham's number is the most a defensive investor
   // should pay (The Intelligent Investor, ch. 14), so it is shown as a check with no weight; Lynch's
-  // "P/E = growth" rule is for growth companies, so it counts only when 3-year EPS growth is at
-  // least 10% (AAPL at 6.9% gave $60); the DCF starts from analysts' growth for the forecast year
+  // "P/E = growth" rule is for growth companies, so it counts only when the growth the rule uses is
+  // at least 10% (AAPL at 6.9% gave $60): 3-year EPS growth, or revenue growth when EPS growth has
+  // no value, as the engine's own rule (fixed 2026-10-21: MU, a loss in FY2023, had lost the method
+  // while growing revenue 105% a year); the DCF starts from analysts' growth for the forecast year
   // and discounts at a CAPM rate (see liveDcf).
-  function liveFairValues(fv, q, funds, epsG = null) {
+  function liveFairValues(fv, q, funds, g = null) {
     const v = { ...fv.values }
-    if (!(epsG >= 0.1)) v.peg = null
+    if (!(g >= 0.1)) v.peg = null
     const d = liveDcf(q, fv.values.dcf)
     if (d) v.dcf = d.value
     const close = q.close
@@ -342,6 +344,9 @@
   // for the forecast year (−20%…60%; else the engine's 3-year rate), then fades in a straight line
   // from min(year 1, 25%) to 2.5% by year 10; discount = CAPM, 4.5% + beta × 4.2% (Damodaran's
   // equity risk premium, July 2026), held within 7%–13%, 9% without a beta; terminal growth 2.5%.
+  // The 5-year beta, as Yahoo and Damodaran use (TradingView's plain 'beta' is the 1-year one: KO
+  // −0.11, MU 3.01 against 2.23 over 5 years; fixed 2026-10-21).
+  const beta5 = (q) => (Number.isFinite(q?.beta_5_year) ? q.beta_5_year : Number.isFinite(q?.beta) ? q.beta : null)
   function liveDcf(q, fallback) {
     const shares = quoteShares(q)
     const fcf0 = shares && Number.isFinite(q.free_cash_flow_ttm) ? q.free_cash_flow_ttm / shares : null
@@ -349,7 +354,7 @@
     const a = analysts(q).rev
     const g1 = a != null ? Math.min(0.6, Math.max(-0.2, a)) : null
     if (g1 == null) return fallback > 0 ? { value: fallback, g1: null, r: PARAMS.discount, beta: null } : null
-    const r = Number.isFinite(q.beta) ? Math.min(0.13, Math.max(0.07, 0.045 + q.beta * 0.042)) : PARAMS.discount
+    const r = beta5(q) != null ? Math.min(0.13, Math.max(0.07, 0.045 + beta5(q) * 0.042)) : PARAMS.discount
     const gT = PARAMS.termGrowth
     const G = Math.min(g1, 0.25)
     let cf = fcf0 * (1 + g1)
@@ -359,7 +364,7 @@
       pv += cf / (1 + r) ** t
     }
     pv += (cf * (1 + gT)) / (r - gT) / (1 + r) ** 10
-    return { value: pv, g1, r, beta: Number.isFinite(q.beta) ? q.beta : null }
+    return { value: pv, g1, r, beta: beta5(q) }
   }
 
   // Monthly closes from the saved history, this month at the quote's price.
@@ -392,7 +397,7 @@
     const s = scoreAt(funds, closes, q.sector, month, live)
     state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
     const fv = fairValuesAt(funds, closes, q.sector, month, live)
-    state.fair[sym] = fv ? liveFairValues(fv, q, funds, s.detail?.epsG) : null
+    state.fair[sym] = fv ? liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG) : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
     state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
     state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
@@ -1121,7 +1126,7 @@
       ['هدف المحللين', Number.isFinite(q.price_target_1y) ? `${fmt(q.price_target_1y, 2)} (${pct(q.price_target_1y / q.close - 1)})` : '—', 'متوسط السعر المستهدف خلال سنة. مرجع فقط.'],
       ['توزيعات', q.dividends_yield > 0 ? `${fmt(q.dividends_yield, 2)}%` : 'ما يوزع', 'التوزيعات السنوية ÷ السعر.'],
       ['مدى 52 أسبوع', q.price_52_week_low > 0 && q.price_52_week_high > 0 ? `${fmt(q.price_52_week_low, 2)} – ${fmt(q.price_52_week_high, 2)}` : '—', q.price_52_week_high > 0 ? `السعر اليوم ${pct(q.close / q.price_52_week_high - 1)} عن أعلى سعر في سنة.` : ''],
-      ['بيتا', fmt(q.beta, 2), 'كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.'],
+      ['بيتا (5 سنين)', fmt(beta5(q), 2), `كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.${Number.isFinite(q.beta) ? ` على آخر سنة بس: ${fmt(q.beta, 2)}.` : ''}`],
       ...industryTile(sym),
       ...runwayTile(q),
     ]

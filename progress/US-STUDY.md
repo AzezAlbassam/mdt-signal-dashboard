@@ -326,3 +326,10 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   next refresh after 10 min and the warning kept until then; writes serialized per doc; stocks with no
   fiscal year / suspended stocks not re-asked daily; DCF wording, dilution from the price shown,
   Arabic grammar, number/unit order, 2.5% header). NODB CHECK added to the harness. Published v22.
+- 2026-10-21 — user: MU fair value 1500–1600 two days ago, 1200 now. Reproduced with MU's saved docs and
+  today's quote in each build: abacbec (v18) 1539.23, de734bb..f32dcfa 1245.68. Cause 1 (bug, from the
+  audit's POST-HOC Lynch gate): the gate read the score's 3-year EPS growth only, null for MU (FY2023
+  loss), while the engine's Lynch value uses epsG ?? revG (MU revenue +105%/yr) → method dropped (30%).
+  Fixed: gate on epsG ?? revG. Cause 2 (intended): liveDcf at CAPM 13% (cap) instead of 9% → DCF 1997 →
+  1628. Also fixed: liveDcf used TradingView's 'beta' = 1-year beta (KO −0.11); now beta_5_year.
+  MU now 1428.56. All 75 favourites run through v18 / live / fixed builds (scratchpad favs/).
