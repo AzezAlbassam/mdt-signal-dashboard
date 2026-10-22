@@ -26,7 +26,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
 
 ;(async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' }).catch(() => chromium.launch())
-  const page = await browser.newPage({ viewport: process.env.PHONE ? { width: 390, height: 844 } : { width: 1280, height: 900 }, deviceScaleFactor: process.env.PHONE ? 2 : 1 })
+  const page = await browser.newPage({ viewport: process.env.PHONE ? { width: 390, height: 844 } : { width: 1280, height: 900 }, deviceScaleFactor: process.env.PHONE ? 2 : 1, timezoneId: 'Asia/Riyadh' })
   const logs = []
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') logs.push(`${m.type()}: ${m.text()}`) })
   page.on('pageerror', (e) => logs.push(`PAGEERROR: ${e.message}`))
@@ -64,11 +64,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       doc: (p) => ({ get: async () => (window.__shortRead === p ? ((window.__shortRead = null), { id: p.split('/').pop(), exists: false, data: () => undefined }) : snapOf(p)), set: async (d) => { store[p] = d }, update: async (d) => { store[p] = { ...(store[p] ?? {}), ...d } }, onSnapshot: (next) => { setTimeout(() => next(snapOf(p)), p.startsWith('lists/') && location.search.includes('slow') ? 3000 : 10); return () => {} } }),
       collection: (c) => query(c),
     }
-    const quote = (s) => ({ description: s, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
+    const quote = (s) => ({ description: `${s.split(':')[1]} Inc.`, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: s === 'NASDAQ:AAPL' ? -1.2 : 26.5, // AAPL plays a loss-making stock (SVR shown)
       altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
       earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8,
       ...(s === 'NASDAQ:META' ? { fiscal_period_end_fq: recentEnd } : {}),
+      earnings_release_next_date: { 'NASDAQ:META': Date.UTC(2026, 9, 22, 20), 'NYSE:JPM': Date.UTC(2026, 9, 22, 22, 30), 'NASDAQ:AAPL': Date.UTC(2026, 10, 5, 12) }[s] / 1000,
       ...(s === 'NASDAQ:AAPL' ? { oper_income_ttm: -3e9, net_income_ttm: -4e9, cash_n_short_term_invest_fq: 5e10, fiscal_period_end_fy: 1767139200, beta_5_year: 1.4 } : {}) })
     const mcp = {
       callTool: async (server, tool, input) => {
@@ -326,6 +327,42 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const okF = news1 && news2 && newsCalls === 2 && found === 'TADAWUL:1212' && nopeSkel === 0 && /ما رد الحين/.test(qFail) && /61\.95/.test(qBack)
   console.log('FAIL CHECK:', okF ? 'ok' : 'FAILED', JSON.stringify({ news1, news2, newsCalls, found, nopeSkel, qFail: qFail.slice(0, 60), qBack }))
   if (!okF) process.exitCode = 1
+  // Batch 4 (2026-10-22). KEY: Enter on a row's star stars it (no panel opens, focus stays on the star),
+  // Escape closes a panel (focus on its row). FILTER: the ticker, not the exchange ('nas' matched every
+  // NASDAQ stock). FIT: with a panel open the table, its delete buttons and every fair-value number
+  // are inside the box (1280, and 768 as cards); on a phone all five tabs are on screen.
+  await page.click('#tab-us')
+  await page.waitForTimeout(800)
+  const starOf = () => page.$eval('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]', (b) => b.getAttribute('aria-pressed'))
+  const star0 = await starOf()
+  await page.focus('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(300)
+  const key = { starred: (await starOf()) !== star0, focus: await page.evaluate(() => document.activeElement?.dataset?.star), panels: await page.$$eval('#rows tr.detail', (t) => t.length) }
+  await page.focus('#rows tr.row[data-sym="NASDAQ:META"]')
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(400)
+  const fit = () => page.evaluate(() => {
+    const t = document.querySelector('.tbl')
+    const r = t.getBoundingClientRect()
+    const out = [...document.querySelectorAll('#rows tr.detail .fair-list b, #rows tr.detail .part h3 > .n, #rows button[data-del]')].filter((b) => { const x = b.getBoundingClientRect(); return x.left < r.left - 1 || x.right > r.right + 1 })
+    const tabs = [...document.querySelectorAll('.tabs button')].every((b) => { const x = b.getBoundingClientRect(); return x.left >= 0 && x.right <= innerWidth })
+    return { w: `${t.scrollWidth}/${t.clientWidth}`, out: out.length, n: document.querySelectorAll('#rows tr.detail .fair-list b').length, tabs }
+  })
+  const fits = [await fit()]
+  if (!process.env.PHONE) { await page.setViewportSize({ width: 768, height: 900 }); await page.waitForTimeout(400); fits.push(await fit()); await page.setViewportSize({ width: 1280, height: 900 }); await page.waitForTimeout(300) }
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(200)
+  key.closed = await page.evaluate(() => !document.querySelector('#rows tr.detail') && document.activeElement?.dataset?.sym)
+  await page.fill('#filter', 'nas')
+  const fNas = (await rows()).length
+  await page.fill('#filter', 'nasdaq:')
+  const fColon = (await rows()).length
+  await page.fill('#filter', '')
+  const okU = key.starred && key.focus === 'NASDAQ:META' && key.panels === 0 && key.closed === 'NASDAQ:META' && fNas === 0 && fColon === 3
+    && fits.every((f) => f.out === 0 && f.n > 0 && f.tabs && f.w.split('/')[0] <= Number(f.w.split('/')[1]))
+  console.log('UI CHECK:', okU ? 'ok' : 'FAILED', JSON.stringify({ key, fNas, fColon, fits }))
+  if (!okU) process.exitCode = 1
   // (4) A view without the db still fetches (prices of the Big tab).
   await page.goto('file://' + file + '?nodb')
   await page.waitForTimeout(500)
@@ -334,6 +371,16 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const nodb = { calls: await page.evaluate(() => window.__calls.length), status: await page.textContent('#status') }
   console.log('NODB CHECK:', nodb.calls > 0 && /آخر تحديث/.test(nodb.status) ? 'ok' : 'FAILED', JSON.stringify(nodb))
   if (!(nodb.calls > 0)) process.exitCode = 1
+  // (5) The earnings chip counts calendar days where the viewer is (Riyadh, 09:00): META reports at 20:00
+  // UTC (23:00 there, 'tomorrow' by whole 24 hours), JPM at 22:30 UTC (tomorrow there, 2026-10-23),
+  // AAPL in 14 days at 12:00 UTC (was 15 by whole days, so no chip).
+  await page.clock.setFixedTime(new Date('2026-10-22T06:00:00Z'))
+  await page.goto('file://' + file)
+  await page.waitForTimeout(2500)
+  const chips = await page.$$eval('#rows tr.row', (trs) => Object.fromEntries(trs.map((tr) => [tr.dataset.sym, [...tr.querySelectorAll('.chip')].map((c) => c.textContent + (/2026-10-23/.test(c.title) ? ' 10-23' : '')).join()])))
+  const okC = /تقريره اليوم/.test(chips['NASDAQ:META']) && /تقريره بكرة 10-23/.test(chips['NYSE:JPM']) && /تقريره بعد 14 يوم/.test(chips['NASDAQ:AAPL'])
+  console.log('CLOCK CHECK:', okC ? 'ok' : 'FAILED', JSON.stringify(chips))
+  if (!okC) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

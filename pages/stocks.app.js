@@ -1,6 +1,6 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
-  const T = { batch: 'mcp-tv-get-symbol-data-batch', fin: 'mcp-tv-get-financial-history', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
+  const T = { batch: 'mcp-tv-get-symbol-data-batch', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
   // TradingView caps tool calls per day (shared with Claude sessions; resets 00:00 UTC), so the
   // background work is event-driven: fundamentals only when a stock's quote shows a newer fiscal
   // period (50 stocks per call); monthly prices for favourites once a month, other stocks every
@@ -91,6 +91,8 @@
   // A sign only when the rounded value is not zero, so it never contradicts the colour taken from the raw value.
   const pct = (x, d = 0) => { if (!Number.isFinite(x)) return '—'; const v = +(100 * x).toFixed(d) || 0; return `${v > 0 ? '+' : ''}${v.toFixed(d)}%` }
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+  // A signed number inside plain Arabic text (the tiles' tips), isolated LTR so '-66%' does not show as '66%-'.
+  const ltr = (s) => `\u2066${s}\u2069`
   const NO_FIN = 'ما فيه بيانات مالية سنوية لهذا السهم'
 
   function notice(text, bad = false) {
@@ -603,7 +605,7 @@
       if (n !== searchN) return
       const list = (p?.data?.symbols ?? []).filter((s) => /^(NASDAQ|NYSE|AMEX|TADAWUL|CBOE):/.test(s.symbol) && (s.type === 'stock' || s.type === 'dr'))
       ul.innerHTML = list.length
-        ? list.slice(0, 12).map((s) => `<li><button type="button" data-add="${esc(s.symbol)}"><span>${esc(s.description)}</span><span class="sym">${esc(s.symbol)}</span></button></li>`).join('')
+        ? list.slice(0, 12).map((s) => `<li><button type="button" data-add="${esc(s.symbol)}"><span dir="auto">${esc(s.description)}</span><span class="sym">${esc(s.symbol)}</span></button></li>`).join('')
         : '<li class="dim" style="padding:8px 10px">ما لقيت أسهم أمريكية أو سعودية بهذا الاسم.</li>'
     } catch (e) {
       if (n === searchN) ul.innerHTML = `<li class="dim" style="padding:8px 10px">${esc(explainError(e))}</li>`
@@ -684,7 +686,7 @@
       })
     }
     const f = state.filter.trim().toLowerCase()
-    if (f) syms = syms.filter((s) => s.toLowerCase().includes(f) || String(state.quotes[s]?.description ?? '').toLowerCase().includes(f))
+    if (f) syms = syms.filter((s) => (f.includes(':') ? s : s.split(':')[1]).toLowerCase().includes(f) || String(state.quotes[s]?.description ?? '').toLowerCase().includes(f))
     const { key, dir } = state.sort
     // The big-companies tab is grouped by sector (largest sector first); the sort applies inside.
     const sectorCap = {}
@@ -764,7 +766,7 @@
     if ([...$('sortSel').options].some((o) => o.value === sortVal)) $('sortSel').value = sortVal
     const body = $('rows')
     const syms = visible()
-    $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.lists[state.market].length}` : ''
+    $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.market === 'big' ? Math.min(25, BIG.length) : state.lists[state.market].length}` : ''
     if (!state.lists[state.market].length && saved[state.market] === null) {
       body.innerHTML = '<tr><td colspan="14" class="dim">جاري قراءة قائمتك المحفوظة…</td></tr>'
       return
@@ -781,11 +783,16 @@
       body.innerHTML = '<tr><td colspan="14" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
+    // Keyboard focus stays on the row or button it was on (the star's render rebuilt it, and focus fell to the page).
+    const a = document.activeElement
+    const fk = body.contains(a) && ['sym', 'star', 'del'].find((k) => a.dataset[k])
+    const refocus = () => fk && body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true })
     const rows = body.querySelectorAll('tr.row')
     if (only && state.market !== 'big' && rows.length === syms.length && syms.every((s, i) => rows[i].dataset.sym === s)) {
       if (state.open) only.add(state.open)
       for (const sym of only) { const i = syms.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
       only.clear()
+      refocus()
       return
     }
     dirty.clear()
@@ -800,6 +807,7 @@
       }
       return head + rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
     }).join('')
+    refocus()
 
     // Once a stock has an error (TradingView does not know it, or its fetch failed), the cells it
     // can never fill show '—', not a loading skeleton.
@@ -809,7 +817,7 @@
       const f = state.fair[sym]
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span>${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
@@ -936,8 +944,8 @@
   const pegCell = (sym) => {
     const p = peg(sym)
     if (!p) return '—'
-    const note = p.past ? ' <small class="dim" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>'
-      : p.jump ? ` <small class="dim" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
+    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>'
+      : p.jump ? ` <small class="dim" dir="rtl" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
     return `${fmt(p.v, 2)}${note}`
   }
 
@@ -947,13 +955,16 @@
     const chips = []
     if (e?.flag === 'red') chips.push('<span class="chip red" title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
     if (e?.flag === 'green') chips.push('<span class="chip green" title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
-    const days = Number.isFinite(q?.earnings_release_next_date) ? Math.ceil((q.earnings_release_next_date * 1000 - Date.now()) / 864e5) : null
-    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : `تقريره بعد ${days} أيام`}</span>`)
+    // Calendar days in the viewer's time zone, the date dateOf prints (whole 24 hours said 'tomorrow' on the day itself).
+    const days = Number.isFinite(q?.earnings_release_next_date) ? dayNo(q.earnings_release_next_date * 1000) - dayNo(Date.now()) : null
+    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
     if (q && analysts(q).falling) chips.push('<span class="chip amber" title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
     return chips.join(' ') || '<span class="dim">—</span>'
   }
 
-  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
+  // The viewer's calendar day (local time zone): a day number, and as YYYY-MM-DD.
+  const dayNo = (ms) => { const d = new Date(ms); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 }
+  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(dayNo(sec * 1000) * 864e5).toISOString().slice(0, 10) : '—')
 
   // Study 14's confirmed rank, T3 (PROTOCOL-study14.md §3, §7): −ln(diluted shares of the last fiscal
   // year ÷ the year before), shares = net income ÷ EPS, both years with |EPS| ≥ 0.25 of the same
@@ -965,23 +976,22 @@
     return { x: -Math.log((f0.ni / f0.eps) / (f1.ni / f1.eps)), y0: f0.year, y1: f1.year }
   }
   function issuanceRank(sym) {
-    const mk = (s) => (s.startsWith('TADAWUL:') ? 'sa' : 'us')
     const sector = state.quotes[sym]?.sector
-    const rows = Object.keys(state.scores).filter((s) => mk(s) === mk(sym) && state.quotes[s]?.sector === sector)
+    const rows = Object.keys(state.scores).filter((s) => marketOf(s) === marketOf(sym) && state.quotes[s]?.sector === sector)
       .map((s) => ({ key: s, sector, x: issuance(s)?.x }))
     const p = sectorPercentiles(rows).get(sym)
     return p == null ? null : { p, n: rows.filter((r) => Number.isFinite(r.x)).length }
   }
   function issuanceBlock(sym) {
     const t = issuance(sym)
-    const head = '<h3><span>شراء الشركة لأسهمها</span><span class="n hi">مؤشر نجح في الاختبار</span></h3>'
+    const head = '<h3><span>شراء الشركة لأسهمها</span><span class="hi">مؤشر نجح في الاختبار</span></h3>'
     const test = '<p class="dim">في اختبارنا (دراسة 14، 815 سهم أمريكي، كل مايو من 2012 لين 2025، داخل كل قطاع): الخُمس اللي نزّل عدد أسهمه أكثر تفوق على الخُمس اللي زوّده أكثر بمتوسط <b class="n">+6.0%</b> بالسنة، في 12 من 14 سنة، والنتيجة ما تجي بالصدفة. بين أكبر 300 شركة الفرق أصغر بكثير (<span class="n">+1.9%</span>). هذا متوسط مجموعات، مو ضمان لسهم واحد، وعلى السعر بدون التوزيعات.</p>'
     if (!t) return `<div class="part iss" style="grid-column:1/-1">${head}<p class="dim">ما ينحسب لهذا السهم: يحتاج ربح أو خسارة للسهم 0.25 أو أكثر بآخر سنتين ماليتين، وبنفس الاتجاه.</p>${test}</div>`
     const ch = Math.exp(-t.x) - 1
-    const what = Math.abs(ch) < 0.005 ? 'ما تغيّر تقريباً' : ch < 0 ? `نزل <b class="n hi">${pct(-ch, 1).replace('+', '')}</b> (الشركة اشترت أسهمها أكثر من اللي أصدرت)` : `زاد <b class="n lo">${pct(ch, 1)}</b> (أصدرت أسهم جديدة: تعويضات موظفين أو استحواذ أو زيادة رأس مال)`
+    const what = Math.abs(ch) < 0.005 ? 'ما تغيّر تقريباً' : ch < 0 ? `نزل <b class="n hi">${pct(-ch, 1).replace('+', '')}</b> (الشركة اشترت أسهمها أكثر من اللي أصدرت)` : `زاد <b class="n lo">${pct(ch, 1).replace('+', '')}</b> (أصدرت أسهم جديدة: تعويضات موظفين أو استحواذ أو زيادة رأس مال)`
     const r = issuanceRank(sym)
     const side = r && r.p >= 0.8 ? ' — <b class="hi">من أعلى خُمس بقطاعها</b>' : r && r.p <= 0.2 ? ' — <b class="lo">من أدنى خُمس بقطاعها</b>' : ''
-    const rank = r ? `<p>بين <span class="n">${r.n}</span> سهم من قطاعها في القائمة: نزّلت عدد أسهمها أكثر من <b class="n">${Math.round(100 * r.p)}%</b> منها${side}.</p>` : '<p class="dim">ما فيه 5 أسهم من قطاعها بالقائمة عشان نرتبها.</p>'
+    const rank = r ? `<p>بين <span class="n">${r.n}</span> ${r.n <= 10 ? 'أسهم' : 'سهم'} من قطاعها في القائمة: نزّلت عدد أسهمها أكثر من <b class="n">${Math.round(100 * r.p)}%</b> منها${side}.</p>` : '<p class="dim">ما فيه 5 أسهم من قطاعها بالقائمة عشان نرتبها.</p>'
     return `<div class="part iss" style="grid-column:1/-1">${head}<p>عدد أسهمها المخففة ${what} بين سنتها المالية <span class="n">${t.y1}</span> و<span class="n">${t.y0}</span>.</p>${rank}${test}</div>`
   }
 
@@ -1004,7 +1014,7 @@
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>وش ينتظره السوق</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
-      ${fin ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.revG)}</b> (${gYears(sym)}) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
+      ${fin || !e ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.revG)}</b> (${gYears(sym)}) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
       <p>توقع المحللين لسنة ${fyNext(q) ?? 'التوقع'} المالية: ${fin ? '' : `الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · `}ربح السهم المعدّل <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بسنة ${fyNext(q) ? fyNext(q) - 1 : 'آخر سنة'} المعلنة. آخر تقرير: الربح جا ${Number.isFinite(q.eps_surprise_percent_fq) ? `${q.eps_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} من توقع المحللين بـ <b class="n">${pct(Math.abs(q.eps_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}، والإيرادات ${Number.isFinite(q.revenue_surprise_percent_fq) ? `${q.revenue_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} بـ <b class="n">${pct(Math.abs(q.revenue_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}.</p>
       <p class="dim">جربنا الأحمر والأخضر على 819 سهم من 2012 لين 2025: الأحمر ما نزل أكثر من غيره، والأخضر ما طلع أكثر من غيره، في المتوسط. فخذها كتنبيه تسأل عنه، مو قرار شراء أو بيع.</p>
       <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
@@ -1012,9 +1022,9 @@
   }
 
   function ideasBlock(sym) {
-    const list = (state.ideas[sym] ?? []).slice().sort((x, y) => (x.date < y.date ? 1 : -1))
+    const list = (state.ideas[sym] ?? []).slice().sort((x, y) => String(y.date ?? '').localeCompare(String(x.date ?? '')))
     const q = state.quotes[sym] || {}
-    if (!list.length) return '<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span></h3><p class="dim">ما فيه أفكار مسجلة لهذا السهم للحين. يتم البحث في Value Investors Club يوم 1 و15 من كل شهر.</p></div>'
+    if (!list.length) return '<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span></h3><p class="dim">ما فيه أفكار مسجلة لهذا السهم للحين. ندوّر عليها في Value Investors Club يوم 1 و15 من كل شهر.</p></div>'
     return `<div class="part" style="grid-column:1/-1"><h3><span>أفكار منشورة</span><span class="n dim">${list.length}</span></h3>
       <ul class="ideas">${list.map((i) => {
         // Split-adjusted close of the idea's month from TradingView when we have it; the
@@ -1027,7 +1037,7 @@
         }
         const base = adj ?? i.priceThen
         const since = base > 0 && q.close > 0 ? q.close / base - 1 : null
-        return `<li><div><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
+        return `<li><div><a dir="auto" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
           ${i.summary ? `<p>${esc(i.summary)}</p>` : ''}
           ${base ? `<p class="dim">السعر وقتها <span class="n">${fmt(base, dp(q))}</span>${adj ? ' (معدّل للتقسيمات، إغلاق ذاك الشهر)' : ' (كما ذكره المصدر)'} · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
       }).join('')}</ul></div>`
@@ -1176,7 +1186,7 @@
     const pe = peNow(sym)
     if (!(now > 0)) return []
     const d = pe > 0 ? pe / now - 1 : null
-    return [[`P/E مقارنة بـ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'}`, `${fmt(pe)} · ${fmt(now)}`,
+    return [[`P/E مقارنة ب${g.kind === 'industry' ? 'صناعته' : 'قطاعه'}`, `${fmt(pe)} · ${fmt(now)}`,
       `مكرر السهم ${fmt(pe)} ومكرر ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} (${nameAr(g.key)}) اليوم ${fmt(now)}: قيمة شركاتها الأمريكية السوقية كلها ÷ أرباحها. ${d == null ? 'السهم ما يربح.' : `السهم ${d >= 0 ? 'أغلى' : 'أرخص'} من ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} بـ ${pct(Math.abs(d)).replace('+', '')}.`} وسط تاريخ ${g.kind === 'industry' ? 'الصناعة' : 'القطاع'} من ${SECTOR_PE.first.slice(0, 4)}: ${fmt(g.p50)}. ضعفه: الشركات داخل الصناعة تختلف بنموها.`]]
   }
   // Months of cash left for a company burning it: cash and short-term investments ÷ the last 12
@@ -1184,7 +1194,8 @@
   function runwayTile(q) {
     if (!(q.free_cash_flow_ttm < 0) || !(q.cash_n_short_term_invest_fq > 0) || q.sector === 'Finance') return []
     const m = q.cash_n_short_term_invest_fq / (-q.free_cash_flow_ttm / 12)
-    return [['الكاش يكفي', m >= 120 ? 'أكثر من 10 سنين' : `${fmt(m, 0)} شهر`, `الكاش والاستثمارات القصيرة (${big(q.cash_n_short_term_invest_fq).replace(/<[^>]+>/g, '')}) ÷ الكاش اللي تحرقه بالشهر على آخر 12 شهر. لو قليل، الشركة غالباً بتصدر أسهم أو تقترض قريب. ضعفه: الحرق يتغير، وما يحسب خطوط الائتمان.`]]
+    const n = Math.round(m)
+    return [['الكاش يكفي', m >= 120 ? 'أكثر من 10 سنين' : n < 1 ? 'أقل من شهر' : n === 1 ? 'شهر' : n === 2 ? 'شهرين' : `${n} ${n <= 10 ? 'أشهر' : 'شهر'}`, `الكاش والاستثمارات القصيرة (${big(q.cash_n_short_term_invest_fq).replace(/<[^>]+>/g, '')}) ÷ الكاش اللي تحرقه بالشهر على آخر 12 شهر. لو قليل، الشركة غالباً بتصدر أسهم أو تقترض قريب. ضعفه: الحرق يتغير، وما يحسب خطوط الائتمان.`]]
   }
 
   function detail(sym) {
@@ -1215,8 +1226,8 @@
       ['Piotroski (آخر سنة مالية)', Number.isFinite(q.piotroski_f_score_fy) ? `${q.piotroski_f_score_fy}/9` : '—', `9 فحوصات لتحسن الأساسيات بين آخر سنتين ماليتين، مثل ما عرّفه Piotroski.${Number.isFinite(q.piotroski_f_score_ttm) ? ` على آخر 12 شهر: ${q.piotroski_f_score_ttm}/9.` : ''} الاستثمار الضخم ينزّله.`],
       ['هدف المحللين', Number.isFinite(q.price_target_1y) ? `${fmt(q.price_target_1y, dp(q))} (${pct(q.price_target_1y / q.close - 1)})` : '—', 'متوسط السعر المستهدف خلال سنة. مرجع فقط.'],
       ['توزيعات', q.dividends_yield > 0 ? `${fmt(q.dividends_yield, 2)}%` : 'ما يوزع', 'التوزيعات السنوية ÷ السعر.'],
-      ['مدى 52 أسبوع', q.price_52_week_low > 0 && q.price_52_week_high > 0 ? `${fmt(q.price_52_week_low, dp(q))} – ${fmt(q.price_52_week_high, dp(q))}` : '—', q.price_52_week_high > 0 ? `السعر اليوم ${pct(q.close / q.price_52_week_high - 1)} عن أعلى سعر في سنة.` : ''],
-      [Number.isFinite(q.beta_5_year) ? 'بيتا (5 سنين)' : 'بيتا (سنة)', fmt(beta5(q), 2), `كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.${Number.isFinite(q.beta_5_year) && Number.isFinite(q.beta) ? ` على آخر سنة بس: ${fmt(q.beta, 2)}.` : ''}`],
+      ['مدى 52 أسبوع', q.price_52_week_low > 0 && q.price_52_week_high > 0 ? `${fmt(q.price_52_week_low, dp(q))} – ${fmt(q.price_52_week_high, dp(q))}` : '—', q.price_52_week_high > 0 ? `السعر اليوم ${ltr(pct(q.close / q.price_52_week_high - 1))} عن أعلى سعر في سنة.` : ''],
+      [Number.isFinite(q.beta_5_year) ? 'بيتا (5 سنين)' : 'بيتا (سنة)', fmt(beta5(q), 2), `كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.${Number.isFinite(q.beta_5_year) && Number.isFinite(q.beta) ? ` على آخر سنة بس: ${ltr(fmt(q.beta, 2))}.` : ''}`],
       ...industryTile(sym),
       ...runwayTile(q),
     ]
@@ -1228,11 +1239,12 @@
       ${issuanceBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من ${cheaper == null ? '<b class="n">—</b> من شهوره' : cheaper <= 0 ? '<b>أغلى من كل شهوره</b>' : cheaper >= 1 ? '<b>أرخص من كل شهوره</b>' : `<b class="n">${pct(cheaper).replace('+', '')}</b> من شهوره`} في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
-        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`}</p>`)}
+        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : Number.isFinite(d.gStar) ? `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`
+          : `${Number.isFinite(d.revG) ? `الشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}. ` : ''}النمو اللي يفترضه السعر ما ينحسب: ${f0.fcf < 0 ? 'التدفق النقدي الحر سالب' : 'بيانات التدفق النقدي ناقصة'}.`}</p>`)}
       ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'ما ينحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
-      ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
+      ${part('الاتجاه', p.E, `<p>نجح في <b><span class="n">${d.passed ?? '—'}</span> من <span class="n">${d.checks ?? '—'}</span></b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
     <p class="ctx-t">مقاييس إضافية ما تدخل في الدرجة. اضغط على أي مقياس يطلع لك شرحه وضعفه. ${s.period ? `الأرقام من آخر 12 شهر (حتى ${esc(qAr(s.period))})، ونمو 3 سنوات من السنوات المالية حتى <span class="n">${esc(s.fiscalYear ?? '—')}</span>.` : `السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.`}</p>
     <div class="ctx">${ctx.map(([k, v, tip]) => `<details data-k="${esc(k)}"${state.ctxOpen.has(k) ? ' open' : ''}><summary><span>${k}</span><b>${v}</b></summary><p>${esc(tip)}</p></details>`).join('')}</div>`
@@ -1241,9 +1253,9 @@
   function renderLatestIdeas(all) {
     const box = $('latestIdeas')
     if (!box) return
-    const list = all.filter((i) => i.date).sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 25)
+    const list = all.filter((i) => i.date).sort((x, y) => String(y.date).localeCompare(String(x.date))).slice(0, 25)
     box.innerHTML = list.length
-      ? `<ul class="ideas">${list.map((i) => `<li><div><b class="n">${esc((i.sym || '').split(':')[1] || i.sym)}</b> · <a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date)}</span></span></div>${i.summary ? `<p>${esc(i.summary)}</p>` : ''}</li>`).join('')}</ul>`
+      ? `<ul class="ideas">${list.map((i) => `<li><div><b class="n">${esc((i.sym || '').split(':')[1] || i.sym)}</b> · <a dir="auto" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date)}</span></span></div>${i.summary ? `<p>${esc(i.summary)}</p>` : ''}</li>`).join('')}</ul>`
       : '<p class="dim">ما فيه أفكار مسجلة للحين.</p>'
   }
 
@@ -1294,12 +1306,12 @@
       <clipPath id="${clip}"><rect x="0" y="${CH.t}" width="${w}" height="${CH.h - CH.t - CH.b}"/></clipPath>
       ${zones ? `<rect x="${CH.l}" y="${CH.t}" width="${w - CH.l - CH.r}" height="${Y(zones.hi) - CH.t}" class="zone-hi"/>
       <rect x="${CH.l}" y="${Y(zones.lo)}" width="${w - CH.l - CH.r}" height="${CH.h - CH.b - Y(zones.lo)}" class="zone-lo"/>` : ''}
-      ${gv.map((v) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/><text x="${CH.l + 2}" y="${Y(v) - 3}" class="axis">${+v.toFixed(2)}</text>`).join('')}
+      ${gv.map((v) => `<line x1="${CH.l}" x2="${w - CH.r}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/>`).join('')}
       ${refs.map(ref).join('')}
       ${above ? `<text x="${w - CH.r + 6}" y="${CH.t + 10}" class="axis ${above.cls}">${above.label}</text>` : ''}
       ${ticks.map(([m, i]) => `<text x="${Math.max(CH.l + 14, X(i))}" y="${CH.h - 6}" class="axis" text-anchor="middle">${m.slice(0, 4)}</text>`).join('')}
       <g clip-path="url(#${clip})">${lines.map((l, j) => `<path d="${path(l)}" class="pe-line ${l.cls ?? ''}"/>`).join('')}
-      <circle cx="${X(last.i)}" cy="${Y(Math.min(last.v, hi))}" r="4" class="pe-dot"/></g>
+      <circle cx="${X(last.i)}" cy="${Y(Math.min(last.v, hi))}" r="4" class="pe-dot"/></g>${gv.map((v) => `<text x="${CH.l + 2}" y="${Y(v) - 3}" class="axis gl">${+v.toFixed(2)}</text>`).join('')}
       <line class="cross" x1="0" x2="0" y1="${CH.t}" y2="${CH.h - CH.b}" visibility="hidden"/>
       <rect x="${CH.l}" y="0" width="${w - CH.l - CH.r}" height="${CH.h}" fill="transparent" class="hit"/>
     </svg>`
@@ -1390,7 +1402,7 @@
         <p>${verdict(g)} ${where(g)} منذ ${SECTOR_PE.first.slice(0, 4)}</p>
         <div class="chart" dir="ltr">${sectorChart(g, width)}<div class="ctip" dir="rtl" hidden></div></div>
         <p class="dim">القاع (أرخص 10%): <b class="n">${g.p10}</b> · الوسط: <b class="n">${g.p50}</b> · القمة (أغلى 10%): <b class="n">${g.p90}</b></p>
-        <p class="dim">${g.n} شركة · أكبرها: <span class="n">${g.top.map((x) => esc(x.split(':')[1])).join('، ')}</span></p>
+        <p class="dim">${g.n} شركة · أكبرها: ${g.top.map((x) => `<span class="n">${esc(x.split(':')[1])}</span>`).join('، ')}</p>
         <button class="btn" type="button" data-show="${esc(g.kind)}:${esc(g.key)}">شوف أسهمه في قائمتك</button>
       </article>`).join('')}</div>`
   }
@@ -1501,8 +1513,8 @@
     if (row) toggle(row.dataset.sym)
   })
   $('rows').addEventListener('keydown', (e) => {
-    const row = e.target.closest('tr.row')
-    if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(row.dataset.sym) }
+    if (e.key === 'Escape' && state.open) { e.target.closest('tr.detail')?.previousElementSibling?.focus(); toggle(state.open); return }
+    if (e.target.matches('tr.row') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(e.target.dataset.sym) }
   })
   document.querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-sort]')
