@@ -32,13 +32,18 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   page.on('pageerror', (e) => logs.push(`PAGEERROR: ${e.message}`))
   await page.addInitScript((fx) => {
     // META's history is pre-saved in the store (as the seeded cache will be); the rest is fetched.
+    const recentEnd = Math.floor(Date.now() / 1000) - 30 * 86400 // a quarter that ended a month ago
     const store = {
       'lists/us': { symbols: ['NASDAQ:META', 'NASDAQ:AAPL', 'NYSE:JPM', 'NASDAQ:NOPE'] },
       'lists/sa': { symbols: ['TADAWUL:1120'] },
       'ideas/x1': { sym: 'NYSE:JPM', source: 'VIC', title: 'JPMorgan long thesis', url: 'https://valueinvestorsclub.com/idea/x', date: '2024-10-04', priceThen: 200, side: 'long', summary: 'Test summary' },
       'meta/svr': { us: { mean: 2, n: 300 } }, // a saved list mean: ceiling 6
       'meta/watchlists': { us: [{ name: 'Investments', symbols: ['NASDAQ:META'] }, { name: 'Stocks', symbols: ['NASDAQ:AAPL', 'NYSE:JPM'] }], sa: [] },
-      'cache/NASDAQ:META': { sym: 'NASDAQ:META', fin: fx['NASDAQ:META'].fin, px: { t: fx['NASDAQ:META'].px.bars.t, c: fx['NASDAQ:META'].px.bars.c }, fetchedAt: Date.now() },
+      // Prices asked 8 days ago, but closes far above the quote's 52-week high (a split since); the
+      // newest saved quarter lacks its FCF (JNJ); JPM was asked once with no bars back (CRCL).
+      'cache/NASDAQ:META': { sym: 'NASDAQ:META', fin: fx['NASDAQ:META'].fin, px: { t: fx['NASDAQ:META'].px.bars.t, c: fx['NASDAQ:META'].px.bars.c }, pxTried: true, pxAt: Date.now() - 8 * 864e5, fetchedAt: Date.now() },
+      'q/NASDAQ:META': { sym: 'NASDAQ:META', fq: { labels: ['Q1 2026', 'Q2 2026'], series: { fcf: [{ value: 1 }, { value: null }] } }, fqEnd: recentEnd },
+      'cache/NYSE:JPM': { sym: 'NYSE:JPM', px: { t: [], c: [] }, pxTried: true },
     }
     window.__calls = []
     window.__store = store
@@ -63,6 +68,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: s === 'NASDAQ:AAPL' ? -1.2 : 26.5, // AAPL plays a loss-making stock (SVR shown)
       altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
       earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8,
+      ...(s === 'NASDAQ:META' ? { fiscal_period_end_fq: recentEnd } : {}),
       ...(s === 'NASDAQ:AAPL' ? { oper_income_ttm: -3e9, net_income_ttm: -4e9, cash_n_short_term_invest_fq: 5e10, fiscal_period_end_fy: 1767139200, beta_5_year: 1.4 } : {}) })
     const mcp = {
       callTool: async (server, tool, input) => {
@@ -98,6 +104,11 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('PEG:', await page.$$eval('#rows td[data-label="PEG"]', (t) => t.slice(0, 4).map((x) => x.innerText)))
   const pe = await page.$$eval('#rows tr.row', (trs) => Object.fromEntries(trs.map((tr) => [tr.dataset.sym, tr.querySelector('td[data-label="مكرر الربح P/E"]').innerText])))
   console.log('CALLS:', await page.evaluate(() => window.__calls)); console.log('EARLY:', logs)
+  // Asked again in the background (2026-10-22): META's prices and quarters, JPM's empty prices.
+  const due = await page.evaluate(() => ({ metaPx: window.__calls.includes('mcp-tv-get-ohlcv NASDAQ:META'), metaQ: window.__store['q/NASDAQ:META']?.fq?.labels?.length, jpmPx: window.__calls.includes('mcp-tv-get-ohlcv NYSE:JPM') }))
+  const okD = due.metaPx && due.metaQ === 4 && due.jpmPx
+  console.log('DUE CHECK:', okD ? 'ok' : 'FAILED', JSON.stringify(due))
+  if (!okD) process.exitCode = 1
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
   await page.selectOption('#group', '')

@@ -147,6 +147,24 @@ test('live context: today reads the last twelve months, months before the quarte
   assert.equal(live.state('2021-10').fcfPS, 48 / 10)
 })
 
+test('quarters: a newest quarter without its cash-flow statement keeps the previous FCF, EBITDA and debt (POST-HOC 2026-10-22)', async () => {
+  const { ttmFromQuarters } = await import('../engine/fairvalue.js')
+  const labels = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026']
+  const val = (f) => labels.map((_, i) => ({ value: f(i) }))
+  const late = (x) => val((i) => (i === 4 ? null : x + i)) // as JNJ's Q3 2026
+  const t = ttmFromQuarters({ labels, series: { revenue: val(() => 10), eps: val(() => 1), net_income: val(() => 2), fcf: late(1), ebitda: late(3), total_debt: late(5) } })
+  assert.equal(t.at(-1).rev, 40)
+  assert.deepEqual([t.at(-1).fcf, t.at(-1).ebitda, t.at(-1).debt], [1 + 2 + 3 + 4, 3 + 4 + 5 + 6, 8])
+})
+
+test('live context: twelve months ending before the last fiscal year are not today (POST-HOC 2026-10-22)', async () => {
+  const { liveContext } = await import('../engine/fairvalue.js')
+  const ttm = [{ label: 'Q2 2019', n: 0, rev: 0, ni: -5, eps: -1, fcf: null, ebitda: null, gp: null, debt: 1, prev: null, revYoY: null }] // RZLV: Q2 2024 vs FY2025
+  const live = liveContext(funds(), ttm, '2021-10') // fiscal years to 2021
+  assert.equal(live.period, null)
+  assert.equal(live.f0, null)
+})
+
 test('quarters with a repeated label are numbered by position back from the last one (POST-HOC)', async () => {
   const { ttmFromQuarters } = await import('../engine/fairvalue.js')
   const labels = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q3 2025', 'Q1 2026', 'Q3 2026', 'Q3 2026'] // as TradingView sent UNH's

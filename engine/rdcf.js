@@ -50,7 +50,11 @@ export function rdcf(q, o = {}) {
   if (!(R0 > 0) || (mcap > 0 && R0 < 0.01 * mcap)) return { why: 'إيراداتها أقل من 1% من قيمتها السوقية، فما فيه مبيعات ننطلق منها.' }
   const h = q.total_revenue_fy_h
   const cagr = h?.[3] > 0 && h[0] > 0 ? (h[0] / h[3]) ** (1 / 3) - 1 : null
-  const F = q.revenue_forecast_next_fy > 0 ? q.revenue_forecast_next_fy : FY > 0 && cagr != null ? FY * (1 + cagr) : null
+  // POST-HOC (2026-10-22): an analysts' forecast over 10× the last year's sales is not a base (ISPC:
+  // 19.6× while its last 12 months fell to a quarter of the year; IREN's 3.8× stays), and year 1 from
+  // history gets the 30% cap of years 2–5, as the page says (LHAI's 223% made a flat $21M business $68M).
+  const useF = q.revenue_forecast_next_fy > 0 && q.revenue_forecast_next_fy <= 10 * Math.max(R0, FY)
+  const F = useF ? q.revenue_forecast_next_fy : FY > 0 && cagr != null ? FY * (1 + Math.min(cagr, G_CAP)) : null
   const ebit0 = fin(q.oper_income_ttm) ? q.oper_income_ttm : q.net_income_ttm
   const nd = fin(q.net_debt_fq) ? q.net_debt_fq : fin(q.total_debt_fq) || fin(q.cash_n_short_term_invest_fq) ? (q.total_debt_fq ?? 0) - (q.cash_n_short_term_invest_fq ?? 0) : null
   if (F == null || !(FY > 0) || !fin(ebit0) || nd == null || !(shares > 0)) return { why: 'ناقص: توقع الإيراد أو الربح التشغيلي أو الميزانية أو عدد الأسهم.' }
@@ -102,7 +106,7 @@ export function rdcf(q, o = {}) {
   const op = pv + (tv + nol * TAX) * df
   const raw = ((1 - pFail) * (op - nd)) / shares // a failure leaves the shareholders nothing
   const gap = Math.max(0, -low)
-  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: q.revenue_forecast_next_fy > 0 ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: gap / (shares * q.close) } // market value at the price shown (shares > 0 above)
+  return { value: Math.max(0, raw), raw, m, mFrom: tm, G, growthFrom: useF ? 'analysts' : 'history', s2c, r0, pFail, runway, rev10: rev, gap, dilution: gap / (shares * q.close) } // market value at the price shown (shares > 0 above)
 }
 
 /** The input o[key] (m: target margin, G: growth in years 2–5) at which the value equals the price; null when lo…hi cannot reach it. */

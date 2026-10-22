@@ -55,3 +55,13 @@ test('rdcf: unknown cash is not read as zero cash; growth source is reported', (
   assert.equal(rdcf(RIVN, O(RIVN)).growthFrom, 'analysts')
   assert.equal(rdcf({ ...RIVN, revenue_forecast_next_fy: null }, O(RIVN)).growthFrom, 'history')
 })
+
+test('rdcf (POST-HOC 2026-10-22): year 1 from history is capped at 30%; a forecast over 10× sales is not used', () => {
+  const hist = { ...RIVN, revenue_forecast_next_fy: null } // 3-year CAGR 48%
+  const capped = rdcf({ ...RIVN, revenue_forecast_next_fy: 1.3 * RIVN.total_revenue_fy }, O(RIVN))
+  assert.ok(Math.abs(rdcf(hist, O(RIVN)).raw - capped.raw) < 1e-9)
+  const odd = rdcf({ ...RIVN, revenue_forecast_next_fy: 11 * RIVN.total_revenue_ttm }, O(RIVN)) // ISPC: 19.6×
+  assert.equal(odd.growthFrom, 'history')
+  assert.equal(odd.raw, rdcf(hist, O(RIVN)).raw)
+  assert.equal(rdcf({ ...RIVN, revenue_forecast_next_fy: 4 * RIVN.total_revenue_ttm }, O(RIVN)).growthFrom, 'analysts') // IREN: 3.8×
+})

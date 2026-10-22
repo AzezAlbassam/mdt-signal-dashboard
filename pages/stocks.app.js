@@ -187,21 +187,28 @@
 
   // Fundamentals (fiscal years → cache/<sym>, quarters → q/<sym>) are fetched again only when the
   // quote shows a fiscal year or quarter newer than the saved one: docs saved from now on keep the
-  // period ends they hold (fyEnd, fqEnd), older docs are compared by their last label.
+  // period ends they hold (fyEnd, fqEnd), older docs are compared by their last label. Also while the
+  // newest saved period lacks a figure the one before it has and ended recently: TradingView adds
+  // the cash flow and balance sheet days to weeks after the results (JNJ's Q3 2026 sat without them
+  // until January). fundsDue still waits 20 hours between asks.
   const qNum = (x) => {
     if (typeof x === 'number') { const d = new Date(x * 1000); return d.getUTCFullYear() * 4 + Math.floor(d.getUTCMonth() / 3) + 1 }
     const m = /^Q([1-4]) (\d{4})$/.exec(x ?? '')
     return m ? Number(m[2]) * 4 + Number(m[1]) : -1
   }
+  const partial = (h, end, days) => {
+    const n = h?.labels?.length ?? 0
+    return n > 1 && Date.now() - end * 1000 < days * 864e5 && Object.values(h.series).some((a) => a?.[n - 1]?.value == null && a?.[n - 2]?.value != null)
+  }
   function fyDue(s) {
     const q = state.quotes[s]
     const d = state.cache[s]
-    return !!q && (d?.fyEnd != null ? q.fiscal_period_end_fy > d.fyEnd : !d || Number(q.fiscal_period_fy) > Number(d.fin?.labels?.at(-1) ?? 0))
+    return !!q && (partial(d?.fin, q.fiscal_period_end_fy, 200) || (d?.fyEnd != null ? q.fiscal_period_end_fy > d.fyEnd : !d || Number(q.fiscal_period_fy) > Number(d.fin?.labels?.at(-1) ?? 0)))
   }
   function fqDue(s) {
     const q = state.quotes[s]
     const d = state.quarters[s]
-    return !!q && (d?.fqEnd != null ? q.fiscal_period_end_fq > d.fqEnd : Number.isFinite(q.fiscal_period_end_fq) && qNum(q.fiscal_period_end_fq) > qNum(d?.fq?.labels?.at(-1)))
+    return !!q && (partial(d?.fq, q.fiscal_period_end_fq, 120) || (d?.fqEnd != null ? q.fiscal_period_end_fq > d.fqEnd : Number.isFinite(q.fiscal_period_end_fq) && qNum(q.fiscal_period_end_fq) > qNum(d?.fq?.labels?.at(-1))))
   }
   const fundsDue = (s) => !recent(state.cache[s]?.fundsAt, RETRY_MS) && !recent(failedAt[s], FAIL_MS) && (fyDue(s) || fqDue(s))
 
@@ -249,15 +256,20 @@
   }
 
   // Monthly prices (cache/<sym>.px): favourites once a calendar month, other stocks every three
-  // months or when opened, never-saved ones once. A saved 240+ month series takes the last 6 bars,
-  // kept when the first (a finished month) matches the saved close within 1%; otherwise (bars are
-  // split-adjusted only, so a split, or a gap over 5 months) all 252 again. A shorter series is a
-  // young listing and gets all 252 (same one call).
+  // months or when opened, ones with no bars every three months (older code saved a failed call so:
+  // CRCL), and at most weekly while a saved close of the last 52 weeks is outside today's 52-week
+  // range (TradingView has adjusted a split since: DKI, Oct 2026). A saved 240+ month series takes
+  // the last 6 bars, kept when the first (a finished month) matches the saved close within 1%;
+  // otherwise (bars are split-adjusted only, so a split, or a gap over 5 months) all 252 again. A
+  // shorter series is a young listing and gets all 252 (same one call).
   function pxDue(s, opened = false) {
     const d = state.cache[s]
     if (!state.quotes[s] || recent(d?.pxAt, opened ? FAIL_MS : RETRY_MS) || recent(failedAt[`px:${s}`], FAIL_MS)) return false
     const px = d?.px
-    if (!px?.t?.length) return opened || !d?.pxTried
+    if (!px?.t?.length) return opened || !recent(d?.pxAt, 90 * 864e5)
+    const q = state.quotes[s]
+    const yr = px.c.filter((c, i) => c > 0 && px.t[i] > Date.now() / 1000 - 335 * 86400)
+    if ((Math.min(...yr) < q.price_52_week_low * 0.97 || Math.max(...yr) > q.price_52_week_high * 1.03) && !recent(d.pxAt, 7 * 864e5)) return true
     const cur = monthKey(Date.now() / 1000)
     // when TradingView was last asked counts too: a suspended stock gets no new bars
     const seen = Math.max(px.t.at(-1), (d.pxAt ?? 0) / 1000)
@@ -783,9 +795,11 @@
   // adjusted, as earnings_per_share_fy is; the last 12 months are GAAP and already hold part of the
   // forecast year (LLY: six months of it), so they are not the base. Banks: TradingView's revenue is
   // gross interest income while analysts forecast net revenue, so the two are not compared. A
-  // revenue dip under 2% does not count as falling (UNH −0.35%).
+  // revenue dip under 2% does not count as falling (UNH −0.35%). POST-HOC (2026-10-22): nor when a
+  // gross loss comes with a net profit, TradingView's revenue then being net of funding costs (STNE:
+  // net income 111% of it; analysts' gross revenue made +387% and a +60% DCF year 1, fair +642%).
   function analysts(q) {
-    const rev = q.sector !== 'Finance' && q.revenue_forecast_next_fy > 0 && q.total_revenue_fy > 0 ? q.revenue_forecast_next_fy / q.total_revenue_fy - 1 : null
+    const rev = q.sector !== 'Finance' && !(q.gross_margin < 0 && q.net_income_ttm > 0) && q.revenue_forecast_next_fy > 0 && q.total_revenue_fy > 0 ? q.revenue_forecast_next_fy / q.total_revenue_fy - 1 : null
     const eps = Number.isFinite(q.earnings_per_share_forecast_next_fy) && q.earnings_per_share_fy > 0 ? q.earnings_per_share_forecast_next_fy / q.earnings_per_share_fy - 1 : null
     return { rev, eps, falling: (rev != null && rev < -0.02) || (eps != null && eps < -0.1) }
   }
@@ -989,6 +1003,7 @@
       const w = f.weights[i]
       const v = f.values[m]
       if (!(w > 0) && !(v > 0)) return ''
+      if (m === 'dcf' && q.sector === 'Finance' && !(w > 0)) return '' // a bank's FCF moves with deposits (GS: $13,117 against $891)
       if (m === 'pb' && !(v > 0)) return `<div class="off"><span>${METHOD_NAMES[m]}</span><b>ما فيه تاريخ للقيمة الدفترية</b></div>`
       const used = w > 0 && v > 0
       return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
@@ -1029,7 +1044,8 @@
     const ms = [d.m, 0.1, 0.15, 0.2].filter((x, i, a) => a.findIndex((y) => Math.abs(y - x) < 0.01) === i).sort((a, b) => a - b)
     const gs = [d.G, 0.15, 0.3, 0.45].filter((x, i, a) => a.findIndex((y) => Math.abs(y - x) < 0.01) === i).sort((a, b) => a - b)
     return { ...d, implied: m, tooHigh, impliedG: tooHigh ? impliedInput(qq, 'G', 0.025, 1.5, o) : null, ms, gs,
-      grid: ms.map((mm) => gs.map((G) => rdcf(qq, { ...o, m: mm, G }).raw)) }
+      grid: ms.map((mm) => gs.map((G) => rdcf(qq, { ...o, m: mm, G }).raw)),
+      gm5: Math.max(...funds.slice(-5).map((f) => (f.gp != null && f.rev > 0 ? f.gp / f.rev : -Infinity))) } // best gross margin, 5 years
   }
   function rdcfBlock(sym) {
     const d = state.rdcf[sym]
@@ -1055,10 +1071,10 @@
       `احتمال تفلس قبل ما تربح: <b class="n">${pct(d.pFail, 0).replace('+', '')}</b> (${d.runway == null ? 'رصيد الكاش غير معروف' : Number.isFinite(d.runway) ? `الكاش يكفيها <span class="n">${fmt(d.runway, 1)}</span> سنة` : 'ما تحرق كاش'}).`,
     ].filter(Boolean)
     return `<div class="rdcf"><h4>DCF على الإيرادات <span class="dim">(للمقارنة، ما يدخل في القيمة العادلة)</span></h4>
-      <p>بهامش تشغيلي <b class="n">${pct(d.m, 1).replace('+', '')}</b>، ${peer}: ${head}.</p>
+      <p>بهامش تشغيلي <b class="n">${pct(d.m, 1).replace('+', '')}</b>، ${peer}${Number.isFinite(d.gm5) && d.m > d.gm5 ? `، وهذا أعلى من أعلى هامش ربح إجمالي حققته آخر 5 سنين (<span class="n">${pct(d.gm5, 0).replace('+', '')}</span>)، فالقيمة متفائلة` : ''}: ${head}.</p>
       <p>${implied}</p>
       ${grid}
-      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : 'نمو مبيعاتها آخر 3 سنين، ما فيه توقع للمحللين'}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
+      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : `نمو مبيعاتها آخر 3 سنين، ${q.revenue_forecast_next_fy > 0 ? 'توقع المحللين فوق 10 أضعاف مبيعاتها فما اعتمدناه' : 'ما فيه توقع للمحللين'}`}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
       <p class="dim">${flags.join(' ')}</p>
       <details><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو مبيعاتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
     </div>`

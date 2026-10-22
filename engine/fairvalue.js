@@ -81,6 +81,12 @@ export function ttmFromQuarters(resp) {
     if (w[3].n - w[0].n !== 3 || (w[3].rev == null && w[3].eps == null && w[3].ni == null)) continue
     out.push({ label: w[3].label, n: w[3].n, rev: sum(w, 'rev'), ni: sum(w, 'ni'), eps: sum(w, 'eps'), fcf: sum(w, 'fcf'), ebitda: sum(w, 'ebitda'), gp: sum(w, 'gp'), debt: w[3].debt })
   }
+  // POST-HOC (2026-10-22): the cash-flow statement and balance sheet can come out weeks after the
+  // income statement (JNJ Q3 2026: revenue and EPS in, FCF, EBITDA and debt null). Until then the
+  // newest twelve months keep the FCF and EBITDA of the twelve months a quarter earlier, and that
+  // quarter's debt; JNJ had no score, and 4292 read as debt-free.
+  const [a, b] = [out.at(-1), out.at(-2)]
+  if (a && b && b.n === a.n - 1) for (const k of ['fcf', 'ebitda', 'debt']) a[k] ??= b[k]
   for (const t of out) {
     t.prev = out.find((x) => x.n === t.n - 4) ?? null
     t.revYoY = t.prev && pos(t.prev.rev) && t.rev != null ? t.rev / t.prev.rev - 1 : null
@@ -106,7 +112,9 @@ export function ttmFromQuarters(resp) {
 export function liveContext(funds, ttm, month, sharesNow = null) {
   const shift = liveShift(funds, month)
   const fyState = (mk) => stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
-  if (!ttm?.length) return { state: fyState, f0: null, f1: null, yoy: null, period: null }
+  // POST-HOC (2026-10-22): twelve months that end before the last fiscal year are not "now"; TradingView
+  // left the recent quarters empty (RZLV: Q2 2024 against FY2025, SHMD Q4 2023, LU Q4 2024).
+  if (!ttm?.length || Number(ttm.at(-1).label.slice(-4)) < (funds.at(-1)?.year ?? 0)) return { state: fyState, f0: null, f1: null, yoy: null, period: null }
   const avail = ttm.map((_, i) => addMonths(month, -3 * (ttm.length - 1 - i)))
   const sharesOf = (t) => (t.eps && t.ni && Math.sign(t.eps) === Math.sign(t.ni) ? t.ni / t.eps : null)
   const state = (mk) => {
