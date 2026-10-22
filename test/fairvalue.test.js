@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, WEIGHTS, variantFair, quoteShares } from '../engine/fairvalue.js'
+import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, WEIGHTS, variantFair, quoteShares, allShares } from '../engine/fairvalue.js'
 
 const funds = (n = 12) =>
   Array.from({ length: n }, (_, i) => {
@@ -164,6 +164,12 @@ test('live context: today\'s share count replaces a weighted average more than 1
   const st = liveContext(f, ttm, '2021-10', 12).state('2021-10') // 20% more shares today (an offering)
   assert.equal(st.shares, 12)
   assert.equal(st.eps, 60 / 12)
+  // POST-HOC (2026-10-22): only dilution restates EPS. A larger net income ÷ EPS count (preferred
+  // dividends, convertibles: CELH) or opposite signs (ALB) keep the reported EPS; shares are today's.
+  const pref = liveContext(f, [{ ...ttm[0], eps: 4 }], '2021-10', 12).state('2021-10') // count 15
+  assert.equal(pref.shares, 12)
+  assert.equal(pref.eps, 4)
+  assert.equal(liveContext(f, [{ ...ttm[0], eps: -1 }], '2021-10', 12).state('2021-10').eps, -1)
 })
 
 test('quoteShares: ADR market value from the home listing (TSM) uses the share count; NVO, Aramco and RIVN keep market ÷ price', () => {
@@ -177,4 +183,18 @@ test('quoteShares: ADR market value from the home listing (TSM) uses the share c
   assert.ok(Math.abs(quoteShares(aramco) / (6240962974822 / 25.48) - 1) < 1e-12)
   assert.ok(Math.abs(quoteShares(rivn) / (17996907730 / 12.43) - 1) < 1e-12)
   assert.equal(quoteShares({ close: 10 }), null)
+  // 2026-10-22: the ADR fell 4.3% and Taipei's market value came within 10% (9.6%); the two counts agree within 2% (POST-HOC).
+  const tsm22 = { close: 413.145, market_cap_basic: 1936095639264.9456, total_shares_outstanding: 5186480000, net_income_ttm: 80579754536.5383, earnings_per_share_diluted_ttm: 15.5375 }
+  assert.equal(quoteShares(tsm22), 5186480000)
+})
+
+test('allShares: every class for a US Up-C (TKO); UROY, a Tadawul "Class A" and a DR keep quoteShares (POST-HOC)', () => {
+  // TradingView quotes of 2026-10-22.
+  const tko = { description: 'TKO Group Holdings, Inc. Class A', type: 'stock', currency: 'USD', close: 176.775, market_cap_basic: 33458154194.878193, total_shares_outstanding: 73111100, net_income_ttm: 229556000, earnings_per_share_diluted_ttm: 2.8908 }
+  const uroy = { description: 'Uranium Royalty Corporation', type: 'stock', currency: 'USD', close: 3.385, market_cap_basic: 1289912932.2412283, total_shares_outstanding: 146483000, net_income_ttm: 3191153.35507368, earnings_per_share_diluted_ttm: 0.0231 }
+  const rabigh = { description: 'Rabigh Refining & Petrochemical Co. Class A', type: 'stock', currency: 'SAR', close: 16.05, market_cap_basic: 44805360417, total_shares_outstanding: 2197036000, net_income_ttm: 2284915000, earnings_per_share_diluted_ttm: 1.3677 }
+  const nvo = { description: 'Novo Nordisk A/S Sponsored ADR Class B', type: 'dr', currency: 'USD', close: 39.35, market_cap_basic: 170099131862, total_shares_outstanding: 3345880520, net_income_ttm: 18192950078, earnings_per_share_diluted_ttm: 4.0918 }
+  assert.equal(quoteShares(tko), 73111100) // Class A: what EPS and P/E are on
+  assert.ok(Math.abs(allShares(tko) / (33458154194.878193 / 176.775) - 1) < 1e-12) // 189M with the units
+  for (const q of [uroy, rabigh, nvo]) assert.equal(allShares(q), quoteShares(q))
 })

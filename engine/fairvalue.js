@@ -98,6 +98,9 @@ export function ttmFromQuarters(resp) {
  * value ÷ price) replaces the twelve months' net income ÷ EPS count this month when the two differ
  * by more than 10%, and EPS is restated on it (POST-HOC 2026-10-21; it was 1.5×: RIVN's July 2026
  * offering left 1.25B shares against 1.45B today, Aramco's bonus shares 208B against 245B).
+ * POST-HOC (2026-10-22): EPS is restated only when today's count is the larger one (dilution). A
+ * larger net income ÷ EPS count is preferred dividends or convertibles in diluted EPS (CELH 532M
+ * against 253M), and opposite signs are a loss for common holders (ALB): the reported EPS stays.
  * Returns { state(month), f0, f1, yoy, period } for scoreAt / fairValuesAt / expectationsAt.
  */
 export function liveContext(funds, ttm, month, sharesNow = null) {
@@ -116,7 +119,7 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
     let eps = t.eps
     if (mk === month && pos(sharesNow) && !(pos(shares) && Math.abs(shares / sharesNow - 1) <= 0.1)) {
       shares = sharesNow
-      if (t.ni != null) eps = t.ni / sharesNow
+      if (sharesOf(t) && sharesNow > sharesOf(t)) eps = t.ni / sharesNow
     }
     return { ...base, period: t.label, eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
       shares, revPS: pos(shares) && t.rev != null ? t.rev / shares : null, fcfPS: pos(shares) && t.fcf != null ? t.fcf / shares : null }
@@ -129,16 +132,30 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
 /**
  * Today's share count from a TradingView quote: market value ÷ price, except when its
  * total_shares_outstanding and net income ÷ EPS (last 12 months) agree within 10% and the market
- * value's count does not. An ADR's market value can come from its home listing at the home price
- * (TSM: Taipei, 14% under the ADR's), so P/S and per-share values would not match the price
- * shown. NVO (its count is B shares only) and Aramco (EPS on the pre-bonus count) keep market ÷ price.
+ * value's count does not, or (POST-HOC 2026-10-22) agree within 2%. An ADR's market value can come
+ * from its home listing at the home price (TSM: Taipei, 14% under the ADR's on 10-20 and 9.6% on
+ * 10-22), and 238 of 974 quotes had it at the previous close, so P/S and per-share values would not
+ * match the price shown. NVO (its count is B shares only) and Aramco (EPS on the pre-bonus count)
+ * keep market ÷ price.
  */
 export function quoteShares(q) {
   const near = (a, b) => pos(a) && pos(b) && Math.abs(a / b - 1) <= 0.1
   const m = pos(q?.market_cap_basic) && pos(q?.close) ? q.market_cap_basic / q.close : null
   const t = q?.total_shares_outstanding
   const e = q?.net_income_ttm && q?.earnings_per_share_diluted_ttm ? q.net_income_ttm / q.earnings_per_share_diluted_ttm : null
-  return near(t, e) && !near(m, t) ? t : m
+  return pos(t) && pos(e) && Math.abs(t / e - 1) <= 0.02 ? t : near(t, e) && !near(m, t) ? t : m
+}
+
+/**
+ * POST-HOC (2026-10-22): every share class, for market value and per-share cash flow. A US Up-C or
+ * multi-class listing's total_shares_outstanding and EPS are one class's (TKO: 73M Class A), while
+ * TradingView's market value counts every class and exchangeable unit (189M), whose owners share the
+ * whole company's revenue, free cash flow and net cash. Not for DRs, not on Tadawul (a market value at
+ * the previous close looks the same), and only with a share class in the name (UROY's is just off).
+ */
+export function allShares(q) {
+  const m = pos(q?.market_cap_basic) && pos(q?.close) ? q.market_cap_basic / q.close : null
+  return q?.type !== 'dr' && q?.currency === 'USD' && /\bClass [A-Z]\b/.test(q.description ?? '') && m > 1.1 * q.total_shares_outstanding ? m : quoteShares(q)
 }
 
 /** The state per month a calculation reads: backtest rule, live fiscal years, or a liveContext. */

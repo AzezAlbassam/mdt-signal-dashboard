@@ -96,6 +96,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('NOTICE:', await page.$eval('#notice', (n) => (n.hidden ? '(hidden)' : n.textContent)))
   console.log('ROWS:', await rows())
   console.log('PEG:', await page.$$eval('#rows td[data-label="PEG"]', (t) => t.slice(0, 4).map((x) => x.innerText)))
+  const pe = await page.$$eval('#rows tr.row', (trs) => Object.fromEntries(trs.map((tr) => [tr.dataset.sym, tr.querySelector('td[data-label="مكرر الربح P/E"]').innerText])))
   console.log('CALLS:', await page.evaluate(() => window.__calls)); console.log('EARLY:', logs)
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
@@ -108,6 +109,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('DETAIL JPM:', (await page.$eval('#rows tr.detail', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 1600))
   console.log('SVR JPM (profitable, none expected):', await page.$$eval('#rows .part.svr', (t) => t.length), 'cell', await page.$eval('#rows td[data-label="SVR"]', (t) => t.innerText))
   console.log('FORECAST JPM (bank, none expected):', await page.$$eval('#rows details.proj', (t) => t.length))
+  // POST-HOC (2026-10-22): TradingView's P/E (META), none for a loss to common holders (AAPL: EPS −1.2 beside
+  // the quote's P/E of 27); no FCF yield for a bank.
+  const fcfJpm = await page.$$eval('#rows .ctx summary', (ss) => ss.find((x) => x.querySelector('span').textContent === 'FCF yield')?.querySelector('b').textContent)
+  const okV = pe['NASDAQ:META'] === '27.0' && pe['NASDAQ:AAPL'] === '—' && fcfJpm === '—'
+  console.log('VALUE CHECK:', okV ? 'ok' : 'FAILED', JSON.stringify({ pe, fcfJpm }))
+  if (!okV) process.exitCode = 1
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-forecast.png'), fullPage: true })
   await page.fill('#filter', 'aapl')
   await page.click('#rows tr.row')

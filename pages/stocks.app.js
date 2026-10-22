@@ -81,8 +81,10 @@
 
   const marketOf = (sym) => (sym.startsWith('TADAWUL:') ? 'sa' : 'us')
   const fmt = (x, d = 1) => (Number.isFinite(x) ? x.toFixed(d) : '—')
+  // Decimals for the stock's price-level numbers: 4 under $1, as brokers quote (DVLT 0.1338 showed 0.13).
+  const dp = (q) => (q?.close > 0 && q.close < 1 ? 4 : 2)
   // A price with its currency: $ before dollars, a small ر.س after riyals (outside the number font).
-  const money = (q, x) => (!Number.isFinite(x) ? '—' : q?.currency === 'USD' ? `$${x.toFixed(2)}` : `${x.toFixed(2)}${q?.currency ? `<span class="cur">${q.currency === 'SAR' ? 'ر.س' : esc(q.currency)}</span>` : ''}`)
+  const money = (q, x) => (!Number.isFinite(x) ? '—' : q?.currency === 'USD' ? `$${x.toFixed(dp(q))}` : `${x.toFixed(dp(q))}${q?.currency ? `<span class="cur">${q.currency === 'SAR' ? 'ر.س' : esc(q.currency)}</span>` : ''}`)
   // TradingView's quarter label in Arabic: "Q2 2026" → "الربع الثاني 2026".
   const qAr = (l) => String(l ?? '').replace(/^Q([1-4]) (\d{4})$/, (_, n, y) => `الربع ${['الأول', 'الثاني', 'الثالث', 'الرابع'][n - 1]} ${y}`)
   const pct = (x, d = 0) => (Number.isFinite(x) ? `${x >= 0 ? '+' : ''}${(100 * x).toFixed(d)}%` : '—')
@@ -303,8 +305,9 @@
     if (state.open === sym) render()
   }
 
-  // Market value at the price shown (quoteShares: an ADR's quote can carry its home listing's).
-  const mv = (q) => (quoteShares(q) ? q.close * quoteShares(q) : null)
+  // Market value at the price shown, on every share class (allShares: an Up-C's units; quoteShares: an
+  // ADR's quote can carry its home listing's).
+  const mv = (q) => (allShares(q) ? q.close * allShares(q) : null)
 
   // The live page's own valuation choices (POST-HOC, 2026-10-21, from an audit of the page; study 7's
   // tested blend is unchanged in the engine): Graham's number is the most a defensive investor
@@ -323,20 +326,23 @@
     const bvps = q.price_book_fq > 0 ? close / q.price_book_fq : null
     const eps = q.earnings_per_share_diluted_ttm
     const roe = Number.isFinite(q.return_on_equity) ? q.return_on_equity / 100 : null
-    const shares = quoteShares(q)
+    const shares = allShares(q)
     if (eps > 0 && bvps > 0) v.graham = Math.sqrt(22.5 * eps * bvps)
     if (bvps > 0 && roe != null) {
       const x = bvps * Math.min(4, (roe - PARAMS.termGrowth) / (PARAMS.discount - PARAMS.termGrowth))
       v.pbj = x > 0 ? x : null
     }
-    if (Number.isFinite(q.net_debt_fq) && shares) {
+    // a bank's or insurer's cash is its clients' and policyholders' (IBKR showed 176.27 at $82.74)
+    if (fv.profile !== 'Financial' && Number.isFinite(q.net_debt_fq) && shares) {
       const x = -q.net_debt_fq / shares
       v.cash = x > 0 ? x : null
     }
-    const weights = WEIGHTS[fv.profile].map((w, i) => (METHODS[i] === 'graham' ? 0 : w))
+    // POST-HOC (2026-10-22, display only; the blend is the same): PEG outside Lynch's rule gets no weight,
+    // like Graham, and coverage is over the weights left (KO showed 85% with every method there).
+    const weights = WEIGHTS[fv.profile].map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
     const b = blend(v, weights)
     const used = METHODS.filter((m, i) => weights[i] > 0 && v[m] > 0).map((m) => v[m])
-    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, coverage: b?.coverage ?? 0, dcf: d,
+    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
@@ -348,7 +354,7 @@
   // −0.11, MU 3.01 against 2.23 over 5 years; fixed 2026-10-21).
   const beta5 = (q) => (Number.isFinite(q?.beta_5_year) ? q.beta_5_year : Number.isFinite(q?.beta) ? q.beta : null)
   function liveDcf(q, fallback) {
-    const shares = quoteShares(q)
+    const shares = allShares(q) // free cash flow is the whole company's (TKO: on Class A only, DCF 1207 vs 466)
     const fcf0 = shares && Number.isFinite(q.free_cash_flow_ttm) ? q.free_cash_flow_ttm / shares : null
     if (!(fcf0 > 0)) return null
     const a = analysts(q).rev
@@ -397,7 +403,12 @@
     const s = scoreAt(funds, closes, q.sector, month, live)
     state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
     const fv = fairValuesAt(funds, closes, q.sector, month, live)
-    state.fair[sym] = fv ? liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG) : null
+    // POST-HOC (2026-10-22): a method whose multiple today is above MULT_MAX (earnings or EBITDA near
+    // zero) gets no value, the engine's rule for history months (LYFT: $1.06 on EV/EBITDA 247).
+    const now = multiplesAt(live.state(month), q.close)
+    const capped = fv ? ['pe', 'pen', 'ev'].filter((k) => fv.values[k] > 0 && !(now[k] <= MULT_MAX)) : []
+    for (const k of capped) fv.values[k] = null
+    state.fair[sym] = fv ? { ...liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG), capped } : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
     state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
     state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
@@ -589,6 +600,8 @@
     const q = state.quotes[sym]
     return f?.fair && q?.close && f.profile !== 'Pre-revenue' ? f.fair / q.close - 1 : null
   }
+  // cagr() (engine/fairvalue.js) spans min(3, years with revenue − 1): a young listing's is 1 or 2 years.
+  const gYears = (sym) => { const n = Math.min(3, (state.scores[sym]?.known ?? []).filter((f) => f.rev != null).length - 1); return n === 1 ? 'آخر سنة' : n === 2 ? 'آخر سنتين' : 'آخر 3 سنوات' }
   // A weak estimate: more than ±60% from the price, methods more than 3× apart, or a P/E above 100
   // (earnings near zero): shown dim, with the reason.
   function weakFair(sym) {
@@ -680,7 +693,7 @@
     const s = state.scores[sym]
     if (!s?.parts) return ''
     return `<b>الدرجة <span class="n ${tone(s.total)}">${fmt(s.total, 1)}</span> من 10 = مجموع 5 أجزاء، كل جزء من 0 إلى 2</b>
-      ${PARTS.map(([k, name, c, what]) => `<div class="tip-row"><i style="background:var(${c})"></i><span><b>${name}</b> ${what}</span><b class="n">${fmt(s.parts[k], 1)} / 2</b></div>`).join('')}
+      ${PARTS.map(([k, name, c, what]) => `<div class="tip-row"><i style="background:var(${c})"></i><span><b>${name}</b> ${what}</span><b class="n">${fmt(s.parts[k], 2)} / 2</b></div>`).join('')}
       <span class="dim">اضغط على السهم تشوف أرقام كل جزء.</span>`
   }
 
@@ -749,11 +762,11 @@
         <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span>${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
-        <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${pct(up)}</td>
+        <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
         <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
         <td class="c-wide c-exp">${expCell(sym)}</td>
         <td class="n c-more">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
-        <td class="n c-more">${s?.detail ? pct(s.detail.revG) : '—'}</td>
+        <td class="n c-more" title="نمو الإيراد السنوي، ${gYears(sym)}">${s?.detail ? pct(s.detail.revG) : '—'}${s?.detail?.revG != null && gYears(sym) !== 'آخر 3 سنوات' ? ` <small class="dim">(${gYears(sym)})</small>` : ''}</td>
         <td class="n" data-label="مكرر الربح P/E">${fmt(peNow(sym))}</td>
         <td class="n" data-label="المكرر المتوقع Fwd P/E" title="${fyNext(q) ? `على توقع ربح سنة ${fyNext(q)} المالية` : ''}">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
         <td class="n" data-label="PEG">${pegCell(sym)}</td>
@@ -779,19 +792,25 @@
   // The forecast fiscal year (TradingView's next_fy is the year after the last reported one).
   const fyNext = (q) => (Number.isFinite(Number(q?.fiscal_period_fy)) ? Number(q.fiscal_period_fy) + 1 : null)
 
-  // P/E over the last 12 months: TradingView's, unless market value ÷ the twelve months' net income
-  // differs by more than 10% (its share count lags a buyback or a bonus issue: Aramco 13.0 vs 15.3).
+  // P/E over the last 12 months (POST-HOC 2026-10-22): TradingView's, price ÷ diluted EPS; none when
+  // diluted EPS is not positive (a loss for common holders: ALB, BYND). Market value ÷ the quote's
+  // twelve months' net income (the saved quarters' when it has none) only when TradingView has no
+  // P/E, or on Tadawul when that is over 10% higher (Aramco's bonus shares: 13.0 vs 15.2). It took the
+  // saved net income, of another year without saved quarters (3007: 166.8 vs 12.4) and before preferred
+  // dividends (CELH: 59.2 vs 124.6). On quoteShares, not every class: net income is Class A's.
   function peNow(sym) {
     const q = state.quotes[sym]
-    const ni = state.scores[sym]?.f0?.ni
-    const own = mv(q) > 0 && ni > 0 ? mv(q) / ni : null
-    const tv = q?.price_earnings_ttm > 0 ? q.price_earnings_ttm : null
-    return own && (!tv || Math.abs(own / tv - 1) > 0.1) ? own : tv
+    if (!q || (Number.isFinite(q.earnings_per_share_diluted_ttm) && q.earnings_per_share_diluted_ttm <= 0)) return null
+    const tv = q.price_earnings_ttm > 0 ? q.price_earnings_ttm : null
+    const s = state.scores[sym]
+    const ni = Number.isFinite(q.net_income_ttm) ? q.net_income_ttm : s?.period ? s.f0?.ni : null
+    const own = quoteShares(q) > 0 && ni > 0 ? (q.close * quoteShares(q)) / ni : null
+    return own && (!tv || (sym.startsWith('TADAWUL:') && own > 1.1 * tv)) ? own : tv
   }
 
-  // Forward PEG (Zacks' F1 PEG): forward P/E ÷ analysts' EPS growth for the forecast fiscal year
-  // over the last reported one, in %, both on adjusted EPS (LLY 37.45 ÷ 41.6 = 0.90; finviz,
-  // on 5-year growth, about 0.89). Only without a forecast: P/E ÷ the last 3 fiscal years' EPS
+  // Forward PEG on one year's growth: forward P/E ÷ analysts' EPS growth for the forecast fiscal year
+  // over the last reported one, in %, both on adjusted EPS (LLY 37.45 ÷ 41.6 = 0.90; Zacks, finviz and
+  // Yahoo divide by 3–5-year growth instead). Only without a forecast: P/E ÷ the last 3 fiscal years' EPS
   // growth, marked historical. A forecast of falling EPS gives no PEG rather than past growth.
   // Growth over 50% in one year is flagged: it rarely lasts, and it is often a one-off (GOOGL 2026:
   // +90% from gains on its stakes, PEG 0.18).
@@ -908,7 +927,9 @@
     const q = state.quotes[sym] || {}
     const a = analysts(q)
     const fin = q.sector === 'Finance'
-    const flagTxt = !e ? (fin ? 'ما ينحسب للبنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فما يدل على شي.' : 'ما ينحسب (التدفق النقدي الحر سالب).')
+    const f0 = state.scores[sym]?.f0 // the record the engine read: the saved 12 months, or the last fiscal year
+    const flagTxt = !e ? (fin ? 'ما ينحسب للبنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فما يدل على شي.'
+      : f0?.fcf < 0 ? `ما ينحسب (التدفق النقدي الحر سالب ${f0.period ? 'لآخر 12 شهر' : `بسنة ${f0.year} المالية`}).` : 'ما ينحسب (بيانات التدفق النقدي الحر ناقصة).')
       : e.flag === 'red' ? '<b class="lo">سعره أعلى من أدائه:</b> السعر الحالي يفترض إن الشركة بتنمو أسرع بكثير من اللي تسويه فعلاً، ونموها قاعد يبطّي. لو طلعت نتايجها أقل من المتوقع ممكن ينزل بقوة. انتبه وراجع قبل تشتري، بس مو إشارة بيع.'
       : e.flag === 'green' ? '<b class="hi">سعره أقل من أدائه:</b> السوق مسعّره كأن الشركة بتنمو أبطأ بكثير من اللي تسويه فعلاً، ونموها مستمر. ممكن تكون فرصة تستاهل تدرسها، بس مو إشارة شراء.'
       : 'ما فيه تنبيه: السعر ماشي مع أداء الشركة تقريباً.'
@@ -920,7 +941,7 @@
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>وش ينتظره السوق</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
-      ${fin ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.revG)}</b> (3 سنوات) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
+      ${fin ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.revG)}</b> (${gYears(sym)}) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
       <p>توقع المحللين لسنة ${fyNext(q) ?? 'التوقع'} المالية: ${fin ? '' : `الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · `}ربح السهم المعدّل <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بسنة ${fyNext(q) ? fyNext(q) - 1 : 'آخر سنة'} المعلنة. آخر تقرير: الربح جا ${Number.isFinite(q.eps_surprise_percent_fq) ? `${q.eps_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} من توقع المحللين بـ <b class="n">${pct(Math.abs(q.eps_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}، والإيرادات ${Number.isFinite(q.revenue_surprise_percent_fq) ? `${q.revenue_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} بـ <b class="n">${pct(Math.abs(q.revenue_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}.</p>
       <p class="dim">جربنا الأحمر والأخضر على 819 سهم من 2012 لين 2025: الأحمر ما نزل أكثر من غيره، والأخضر ما طلع أكثر من غيره، في المتوسط. فخذها كتنبيه تسأل عنه، مو قرار شراء أو بيع.</p>
       <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
@@ -945,7 +966,7 @@
         const since = base > 0 && q.close > 0 ? q.close / base - 1 : null
         return `<li><div><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
           ${i.summary ? `<p>${esc(i.summary)}</p>` : ''}
-          ${base ? `<p class="dim">السعر وقتها <span class="n">${fmt(base, 2)}</span>${adj ? ' (معدّل للتقسيمات، إغلاق ذاك الشهر)' : ' (كما ذكره المصدر)'} · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
+          ${base ? `<p class="dim">السعر وقتها <span class="n">${fmt(base, dp(q))}</span>${adj ? ' (معدّل للتقسيمات، إغلاق ذاك الشهر)' : ' (كما ذكره المصدر)'} · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
       }).join('')}</ul></div>`
   }
 
@@ -970,7 +991,7 @@
       if (!(w > 0) && !(v > 0)) return ''
       if (m === 'pb' && !(v > 0)) return `<div class="off"><span>${METHOD_NAMES[m]}</span><b>ما فيه تاريخ للقيمة الدفترية</b></div>`
       const used = w > 0 && v > 0
-      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}</span><b class="n">${v > 0 ? fmt(v, 2) : '—'}</b></div>`
+      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
     }).join('')
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
@@ -978,12 +999,13 @@
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
+      f.capped?.length ? `${f.capped.map((m) => METHOD_NAMES[m]).join('، ')}: المكرر اليوم فوق 100 (ربح أو EBITDA شبه صفر)، فما انحسبت.` : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
-      Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, 2)}</b>.` : '',
+      Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
     return `<div class="part" style="grid-column:1/-1">
-      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, 2) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
-      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, 2)} – ${fmt(f.high, 2)}</b>، والسعر <b class="n">${fmt(q.close, 2)}</b>.`}</p>
+      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
+      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
       <div class="fair-list">${rows}</div>
       ${rdcfBlock(sym)}
@@ -999,7 +1021,7 @@
   function rdcfFor(sym, funds) {
     const q = state.quotes[sym]
     const qq = { ...q, total_revenue_fy_h: funds.map((f) => f.rev).reverse(), net_income_fy_h: funds.map((f) => f.ni).reverse() }
-    const o = { shares: quoteShares(q), peers: PEERS }
+    const o = { shares: allShares(q), peers: PEERS }
     const d = rdcf(qq, o)
     if (d.why) return d
     const m = impliedInput(qq, 'm', -0.1, 0.6, o)
@@ -1022,7 +1044,7 @@
     const head = d.raw < 0 ? `<b class="lo">أقل من صفر</b>: بهذا الهامش أرباحها ما تغطي الحرق والديون` : `<span class="n"><b>${money(q, d.value)}</b> <span class="${d.value >= q.close ? 'hi' : 'lo'}">${pct(d.value / q.close - 1)}</span></span>`
     const implied = d.implied != null ? `السعر اليوم <b class="n">${money(q, q.close)}</b> يفترض إنها توصل لهامش تشغيلي <b class="n">${pct(d.implied, 1).replace('+', '')}</b> (${mWord}: <span class="n">${pct(d.m, 1).replace('+', '')}</span>).`
       : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. ${mAt} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
-    const cell = (v) => `<td class="n ${v > q.close ? 'hi' : ''}">${v > 0 ? fmt(v, 2) : '<span class="dim">0</span>'}</td>`
+    const cell = (v) => `<td class="n ${v > q.close ? 'hi' : ''}">${v > 0 ? fmt(v, dp(q)) : '<span class="dim">0</span>'}</td>`
     const grid = `<div class="gridwrap"><table class="ptable"><thead><tr><th>الهامش ↓ · النمو ←</th>${d.gs.map((g) => `<th class="n">${pct(g, Math.abs(g * 100 - Math.round(g * 100)) > 1e-6 ? 1 : 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
       ${d.ms.map((m, i) => `<tr><th class="n">${pct(m, 1).replace('+', '')}${Math.abs(m - d.m) < 1e-9 ? '*' : ''}</th>${d.grid[i].map(cell).join('')}</tr>`).join('')}</tbody></table></div>`
     const share = d.dilution == null ? '' : d.dilution < 0.01 ? ' (أقل من 1% من قيمتها السوقية)' : ` (<b class="n">${pct(d.dilution, 0).replace('+', '')}</b> من قيمتها السوقية)`
@@ -1052,14 +1074,14 @@
     if (p.kind === 'pre') {
       const cash = state.fair[sym]?.values?.cash
       body = `<p>الشركة بدون إيرادات كافية نرسم لها مسار سعر (إيراداتها <b>${big(p.rev)}</b> ${cur}). بدل التخمين: عشان سعرها اليوم يكون منطقي، تحتاج إيرادات سنوية حوالي <b>${big(p.revNeeded)}</b> ${cur} بعد 5 سنوات${p.rev > 0 ? ` (<b class="n">${fmt(p.revNeeded / p.rev, 0)}×</b> إيرادات اليوم)` : ''}.</p>
-        <p class="dim">الحسبة: القيمة السوقية اليوم تكبر 9% سنوياً (العائد اللي تطلبه) لـ 5 سنوات، وتقسم على 3 (شركة ناضجة: مكرر ربح 20 × هامش ربح 15%).${cash ? ` الكاش الصافي للسهم اليوم: <b class="n">${fmt(cash, 2)}</b>.` : ''}</p>`
+        <p class="dim">الحسبة: القيمة السوقية اليوم تكبر 9% سنوياً (العائد اللي تطلبه) لـ 5 سنوات، وتقسم على 3 (شركة ناضجة: مكرر ربح 20 × هامش ربح 15%).${cash ? ` الكاش الصافي للسهم اليوم: <b class="n">${fmt(cash, dp(q))}</b>.` : ''}</p>`
     } else {
       const cell = (x, cls = '') => `<td class="n ${cls}">${x}</td>`
-      const row = (label, xs, f = (x) => fmt(x, 2), cls = () => '') => `<tr><th>${label}</th>${xs.map((x) => cell(f(x), cls(x))).join('')}</tr>`
-      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fmt(r.bear, 2))}${cell(fmt(r.base, 2))}${cell(fmt(r.bull, 2))}</tr>`).join('')
+      const row = (label, xs, f = (x) => fmt(x, dp(q)), cls = () => '') => `<tr><th>${label}</th>${xs.map((x) => cell(f(x), cls(x))).join('')}</tr>`
+      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fmt(r.bear, dp(q)))}${cell(fmt(r.base, dp(q)))}${cell(fmt(r.bull, dp(q)))}</tr>`).join('')
       const multName = (b) => (b === 'pe' ? 'P/E' : 'P/S')
       body = `<table class="ptable"><thead><tr><th></th><th>متشائم</th><th>أساسي</th><th>متفائل</th></tr></thead><tbody>
-          <tr class="now"><th>اليوم</th>${cell(fmt(p.price, 2)).repeat(3)}</tr>${years}
+          <tr class="now"><th>اليوم</th>${cell(fmt(p.price, dp(q))).repeat(3)}</tr>${years}
           <tr class="sum"><th>العائد سنوياً</th>${p.yearly.map((x) => cell(pct(x, 1), x >= 0 ? 'hi' : 'lo')).join('')}</tr>
           ${row('كم يسوى سعر ' + (y0 + 5) + ' بفلوس اليوم', p.today)}
           <tr class="grp"><th colspan="4">الافتراضات</th></tr>
@@ -1068,7 +1090,7 @@
           ${p.margin ? row('هامش صافي الربح', p.margin, (x) => pct(x, 1)) : ''}
           ${row('المكرر بالسنة الخامسة', p.exitMult.map((x, i) => [x, p.basis[i]]), ([x, b]) => `${multName(b)} ${fmt(x, 1)}`)}
         </tbody></table>
-        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : 'نمو الإيرادات آخر 3 سنوات'}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = المبيعات للسهم × مكرر المبيعات.'} المكرر يتحرك من مكرر اليوم إلى ${p.own == null ? `مكرر عام (<b class="n">${fmt(p.normal, 1)}</b>) لأن تاريخ السهم ما يكفي` : p.own > p.normal ? `متوسط السهم آخر 5 سنوات (<b class="n">${fmt(p.own, 1)}</b>، حدّيناه بـ <b class="n">${fmt(p.normal, 1)}</b> لأن النمو يهدأ مع الوقت)` : p.own < p.normal ? `<b class="n">${fmt(p.normal, 1)}</b> (متوسط السهم <b class="n">${fmt(p.own, 1)}</b> أقل من الحد الأدنى)` : `متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>)`} × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على المبيعات.' : ''}</p>
+        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : `نمو الإيرادات ${gYears(sym)}`}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = المبيعات للسهم × مكرر المبيعات.'} المكرر يتحرك من مكرر اليوم إلى ${p.own == null ? `مكرر عام (<b class="n">${fmt(p.normal, 1)}</b>) لأن تاريخ السهم ما يكفي` : p.own > p.normal ? `متوسط السهم آخر 5 سنوات (<b class="n">${fmt(p.own, 1)}</b>، حدّيناه بـ <b class="n">${fmt(p.normal, 1)}</b> لأن النمو يهدأ مع الوقت)` : p.own < p.normal ? `<b class="n">${fmt(p.normal, 1)}</b> (متوسط السهم <b class="n">${fmt(p.own, 1)}</b> أقل من الحد الأدنى)` : `متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>)`} × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على المبيعات.' : ''}</p>
         <p class="dim">"قيمتها اليوم" = سعر ${y0 + 5} مخصوم 9% سنوياً: لو أعلى من سعر اليوم، السيناريو يعطي أكثر من 9% بالسنة. عدد الأسهم ثابت (ما حسبنا إعادة الشراء ولا الإصدار)، والتوزيعات مو داخلة.${p.kind === 'sales' && q.free_cash_flow_ttm < 0 ? ' <b>انتبه:</b> الشركة تحرق كاش، والسيناريو ما يحسب الأسهم الجديدة اللي غالباً بتصدرها لتمويل الحرق، فممكن يطلع أعلى من الواقع.' : ''}</p>`
     }
     return `<details class="part proj" style="grid-column:1/-1"${state.projOpen ? ' open' : ''}><summary><span>توقع السعر لـ 5 سنوات</span><span class="dim">اضغط للعرض</span></summary>
@@ -1112,21 +1134,21 @@
     const pcts = ['pe', 'ps', 'ev', 'pfcf'].map((k) => d[`pct_${k}`]).filter(Number.isFinite)
     const cheaper = pcts.length ? 1 - pcts.reduce((a, b) => a + b, 0) / pcts.length : null
     const p = s.parts || {}
-    const part = (title, val, html) => `<div class="part"><h3><span><i class="sw" style="background:var(${PARTS.find((x) => x[1] === title)[2]})"></i>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 1) + ' / 2'}</span></h3>${html}</div>`
+    const part = (title, val, html) => `<div class="part"><h3><span><i class="sw" style="background:var(${PARTS.find((x) => x[1] === title)[2]})"></i>${title}</span><span class="n ${val == null ? 'dim' : ''}">${val == null ? '—' : fmt(val, 2) + ' / 2'}</span></h3>${html}</div>`
     const ctx = [
       [`Fwd P/E${fyNext(q) ? ` (${fyNext(q)})` : ''}`, fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy), `السعر ÷ توقع المحللين لربح السهم المعدّل (non-GAAP) لسنة ${fyNext(q) ?? 'التوقع'} المالية، أول سنة ما انعلنت نتايجها. الـ P/E العادي على الربح المحاسبي (GAAP)، فالفرق بينهم مو كله نمو. ضعفه: توقعات، والمحللين غالباً متفائلين.`],
       ['PEG', pegCell(sym), `المكرر المتوقع ÷ نمو ربح السهم المتوقع لسنة ${fyNext(q) ?? 'التوقع'} المالية مقارنة بآخر سنة معلنة (توقع سنة وحدة، مو 5 سنين مثل Yahoo وfinviz). الشائع: تحت 1 رخيص مقارنة بنموه، فوق 2 غالي. ضعفه: كله على رقم النمو.`],
       ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
-      ['FCF yield', mv(q) > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / mv(q), 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير.'],
+      ['FCF yield', q.sector !== 'Finance' && mv(q) > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / mv(q), 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير. ما يطلع للبنوك والمالية لأن تدفقها يتحرك مع الودائع والقروض.'],
       ['P/S', q.sector !== 'Finance' && mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ مبيعات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "مبيعاتها" إجمالي دخل العمولات.'],
       ['P/B · ROE', `${fmt(q.price_book_fq)} · ${fmt(q.return_on_equity, 0)}%`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
       ['ROIC (آخر سنة مالية)', q.sector !== 'Finance' && Number.isFinite(q.return_on_invested_capital_fy) ? `${fmt(q.return_on_invested_capital_fy, 1)}%` : '—', 'العائد على رأس المال المستثمر لآخر سنة مالية: هل النمو مربح فعلاً؟ ما يطلع للبنوك.'],
       ['Altman Z', q.sector !== 'Finance' ? fmt(q.altman_z_score_ttm) : '—', 'خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر. ما يصلح للبنوك.'],
       ['Piotroski (آخر سنة مالية)', Number.isFinite(q.piotroski_f_score_fy) ? `${q.piotroski_f_score_fy}/9` : '—', `9 فحوصات لتحسن الأساسيات بين آخر سنتين ماليتين، مثل ما عرّفه Piotroski.${Number.isFinite(q.piotroski_f_score_ttm) ? ` على آخر 12 شهر: ${q.piotroski_f_score_ttm}/9.` : ''} الاستثمار الضخم ينزّله.`],
-      ['هدف المحللين', Number.isFinite(q.price_target_1y) ? `${fmt(q.price_target_1y, 2)} (${pct(q.price_target_1y / q.close - 1)})` : '—', 'متوسط السعر المستهدف خلال سنة. مرجع فقط.'],
+      ['هدف المحللين', Number.isFinite(q.price_target_1y) ? `${fmt(q.price_target_1y, dp(q))} (${pct(q.price_target_1y / q.close - 1)})` : '—', 'متوسط السعر المستهدف خلال سنة. مرجع فقط.'],
       ['توزيعات', q.dividends_yield > 0 ? `${fmt(q.dividends_yield, 2)}%` : 'ما يوزع', 'التوزيعات السنوية ÷ السعر.'],
-      ['مدى 52 أسبوع', q.price_52_week_low > 0 && q.price_52_week_high > 0 ? `${fmt(q.price_52_week_low, 2)} – ${fmt(q.price_52_week_high, 2)}` : '—', q.price_52_week_high > 0 ? `السعر اليوم ${pct(q.close / q.price_52_week_high - 1)} عن أعلى سعر في سنة.` : ''],
-      ['بيتا (5 سنين)', fmt(beta5(q), 2), `كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.${Number.isFinite(q.beta) ? ` على آخر سنة بس: ${fmt(q.beta, 2)}.` : ''}`],
+      ['مدى 52 أسبوع', q.price_52_week_low > 0 && q.price_52_week_high > 0 ? `${fmt(q.price_52_week_low, dp(q))} – ${fmt(q.price_52_week_high, dp(q))}` : '—', q.price_52_week_high > 0 ? `السعر اليوم ${pct(q.close / q.price_52_week_high - 1)} عن أعلى سعر في سنة.` : ''],
+      [Number.isFinite(q.beta_5_year) ? 'بيتا (5 سنين)' : 'بيتا (سنة)', fmt(beta5(q), 2), `كم يتحرك السهم مع السوق: 1 مثل السوق، 2 ضعفه. يدخل في معدل الخصم حق DCF.${Number.isFinite(q.beta_5_year) && Number.isFinite(q.beta) ? ` على آخر سنة بس: ${fmt(q.beta, 2)}.` : ''}`],
       ...industryTile(sym),
       ...runwayTile(q),
     ]
@@ -1138,7 +1160,7 @@
       ${issuanceBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من ${cheaper == null ? '<b class="n">—</b> من شهوره' : cheaper <= 0 ? '<b>أغلى من كل شهوره</b>' : cheaper >= 1 ? '<b>أرخص من كل شهوره</b>' : `<b class="n">${pct(cheaper).replace('+', '')}</b> من شهوره`} في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
-        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً آخر 3 سنوات.`}</p>`)}
+        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`}</p>`)}
       ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'ما ينحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
