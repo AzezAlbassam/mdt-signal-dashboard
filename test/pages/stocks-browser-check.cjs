@@ -84,11 +84,14 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
           return { payload: { data: Object.fromEntries(input.symbols.filter((s) => fx[s]).map((s) => [s, row(s)])), missing: input.symbols.filter((s) => !fx[s]).map((symbol) => ({ symbol })), success: true } }
         }
         if (tool.endsWith('batch') && input.columns.includes('total_revenue_fq_h')) return { payload: { data: input.symbols[0] === 'NASDAQ:AAPL' ? { 'NASDAQ:AAPL': fx.hist } : {}, missing: [], success: true } }
+        if (tool.endsWith('batch') && window.__failQuotes) return { payload: { success: false, data: {} } } // a 429/5xx answer
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
+        if (tool.endsWith('get-news') && window.__newsFail) { window.__newsFail -= 1; throw { code: 'server_unavailable' } }
         if (tool.endsWith('get-news')) return { payload: { data: { headlines: [{ title: 'Example headline for ' + input.symbol, link: 'https://example.com', published: 1790913837, provider: { name: 'Test' } }] } } }
+        if (tool.endsWith('search-symbols') && input.query === 'old') { await new Promise((ok) => setTimeout(ok, 500)); return { payload: { data: { symbols: [{ symbol: 'TADAWUL:2222', description: 'Saudi Aramco', type: 'stock' }] } } } }
         if (tool.endsWith('search-symbols')) return { payload: { data: { symbols: [{ symbol: 'TADAWUL:1212', description: 'Astra Industrial Group', type: 'stock' }] } } }
       },
     }
@@ -272,6 +275,57 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const ok2 = early2 === 0 && metaPx === 174 && /ما قدرت أحدّث/.test(failNotice) && before === 'none' && after === 'fin fundsAt true' && favAfter.includes('NASDAQ:META')
   console.log('FETCH CHECK:', ok2 ? 'ok' : 'FAILED', JSON.stringify({ early2, metaPx, failNotice: failNotice.slice(0, 60), before, after, favAfter }))
   if (!ok2) process.exitCode = 1
+  // Batch 3 (2026-10-22). REDRAW: a stock opens in place (no table rebuild, focus stays, one panel);
+  // an opened tile stays open over a full render (a star) and a height-only resize redraws nothing.
+  // FAIL: a failed news answer is asked again on the next open; a late search reply is dropped; a
+  // tab whose quotes all fail says so (other tabs' quotes no longer hide it) and the button retries;
+  // a symbol TradingView does not know shows '—', not a skeleton.
+  await page.goto('file://' + file)
+  await page.waitForTimeout(2500)
+  await page.evaluate(() => { window.__full = 0; new MutationObserver((ms) => { for (const m of ms) if (m.removedNodes.length > 1) window.__full += 1 }).observe(document.getElementById('rows'), { childList: true }) })
+  await page.focus('#rows tr.row[data-sym="NASDAQ:META"]')
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(400)
+  const open1 = await page.evaluate(() => ({ full: window.__full, focus: document.activeElement?.dataset?.sym, panels: document.querySelectorAll('#rows tr.detail').length }))
+  await page.click('#rows .ctx details:nth-child(3) summary')
+  await page.click('#rows tr.row[data-sym="NYSE:JPM"] button[data-star]')
+  await page.waitForTimeout(300)
+  const full0 = await page.evaluate(() => window.__full)
+  const vp = page.viewportSize()
+  await page.setViewportSize({ width: vp.width, height: vp.height + 60 })
+  await page.waitForTimeout(400)
+  const tile = await page.evaluate((f) => ({ open: document.querySelector('#rows .ctx details:nth-child(3)')?.open, starFull: f, resizeFull: window.__full - f }), full0)
+  await page.setViewportSize(vp)
+  const okR = open1.full === 0 && open1.focus === 'NASDAQ:META' && open1.panels === 1 && tile.open === true && tile.starFull > 0 && tile.resizeFull === 0
+  console.log('REDRAW CHECK:', okR ? 'ok' : 'FAILED', JSON.stringify({ open1, tile }))
+  if (!okR) process.exitCode = 1
+  await page.evaluate(() => { window.__newsFail = 1 })
+  await page.click('#rows tr.row[data-sym="NYSE:JPM"]')
+  await page.waitForTimeout(300)
+  const news1 = await page.$eval('#rows tr.detail', (t) => /ما رد الحين/.test(t.innerText))
+  await page.click('#rows tr.row[data-sym="NYSE:JPM"]')
+  await page.click('#rows tr.row[data-sym="NYSE:JPM"]')
+  await page.waitForTimeout(300)
+  const news2 = await page.$eval('#rows tr.detail', (t) => /Example headline/.test(t.innerText))
+  const newsCalls = await page.evaluate(() => window.__calls.filter((c) => c === 'mcp-tv-get-news NYSE:JPM').length)
+  await page.fill('#q', 'old')
+  await page.click('#addBtn')
+  await page.fill('#q', 'استرا')
+  await page.click('#addBtn')
+  await page.waitForTimeout(800)
+  const found = await page.$$eval('#results button[data-add]', (b) => b.map((x) => x.dataset.add).join())
+  const nopeSkel = await page.$$eval('#rows tr.row[data-sym="NASDAQ:NOPE"] .skel', (x) => x.length)
+  await page.evaluate(() => { window.__failQuotes = true })
+  await page.click('#tab-sa')
+  await page.waitForTimeout(600)
+  const qFail = await page.textContent('#notice')
+  await page.evaluate(() => { window.__failQuotes = false })
+  await page.click('#refresh')
+  await page.waitForTimeout(800)
+  const qBack = await page.$eval('#rows tr.row td[data-label="السعر"]', (t) => t.innerText)
+  const okF = news1 && news2 && newsCalls === 2 && found === 'TADAWUL:1212' && nopeSkel === 0 && /ما رد الحين/.test(qFail) && /61\.95/.test(qBack)
+  console.log('FAIL CHECK:', okF ? 'ok' : 'FAILED', JSON.stringify({ news1, news2, newsCalls, found, nopeSkel, qFail: qFail.slice(0, 60), qBack }))
+  if (!okF) process.exitCode = 1
   // (4) A view without the db still fetches (prices of the Big tab).
   await page.goto('file://' + file + '?nodb')
   await page.waitForTimeout(500)

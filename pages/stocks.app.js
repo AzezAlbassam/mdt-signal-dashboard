@@ -74,20 +74,22 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, projOpen: false, news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
 
   const marketOf = (sym) => (sym.startsWith('TADAWUL:') ? 'sa' : 'us')
-  const fmt = (x, d = 1) => (Number.isFinite(x) ? x.toFixed(d) : '—')
+  // Rounded first, so a tiny negative prints 0, not -0 (ZETA's ROE −0.27 showed "-0%", RTX's change "-0.0%").
+  const fmt = (x, d = 1) => (Number.isFinite(x) ? (+x.toFixed(d) || 0).toFixed(d) : '—')
   // Decimals for the stock's price-level numbers: 4 under $1, as brokers quote (DVLT 0.1338 showed 0.13).
   const dp = (q) => (q?.close > 0 && q.close < 1 ? 4 : 2)
   // A price with its currency: $ before dollars, a small ر.س after riyals (outside the number font).
   const money = (q, x) => (!Number.isFinite(x) ? '—' : q?.currency === 'USD' ? `$${x.toFixed(dp(q))}` : `${x.toFixed(dp(q))}${q?.currency ? `<span class="cur">${q.currency === 'SAR' ? 'ر.س' : esc(q.currency)}</span>` : ''}`)
   // TradingView's quarter label in Arabic: "Q2 2026" → "الربع الثاني 2026".
   const qAr = (l) => String(l ?? '').replace(/^Q([1-4]) (\d{4})$/, (_, n, y) => `الربع ${['الأول', 'الثاني', 'الثالث', 'الرابع'][n - 1]} ${y}`)
-  const pct = (x, d = 0) => (Number.isFinite(x) ? `${x >= 0 ? '+' : ''}${(100 * x).toFixed(d)}%` : '—')
+  // A sign only when the rounded value is not zero, so it never contradicts the colour taken from the raw value.
+  const pct = (x, d = 0) => { if (!Number.isFinite(x)) return '—'; const v = +(100 * x).toFixed(d) || 0; return `${v > 0 ? '+' : ''}${v.toFixed(d)}%` }
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
   const NO_FIN = 'ما فيه بيانات مالية سنوية لهذا السهم'
 
@@ -146,22 +148,31 @@
 
   // ---------------------------------------------------------------- data
 
+  // Returns the stocks whose batch failed; throws when every batch of this call did. A stock another
+  // tab quoted in the last 5 minutes (the host cache's staleTime) is not asked again: the Big and
+  // favourites tabs' batches never match the US list's, so the cache could not answer them.
+  const quotedAt = {}
   async function loadQuotes(symbols, fresh = false) {
+    if (!fresh) symbols = symbols.filter((s) => !recent(quotedAt[s], 300000))
     const chunks = []
     for (let i = 0; i < symbols.length; i += 50) chunks.push(symbols.slice(i, i + 50))
     let firstError = null
+    const lost = []
     await pool(chunks, async (chunk) => {
       try {
         const p = await call(T.batch, { symbols: chunk, columns: COLS }, fresh ? { staleTime: 0, refresh: true } : { staleTime: 300000, gcTime: 3600000 })
-        for (const [sym, row] of Object.entries(p?.data ?? {})) state.quotes[sym] = row
+        if (p?.success === false) throw { code: 'server_unavailable' } // 429/5xx come back this way (see loadHist)
+        for (const [sym, row] of Object.entries(p?.data ?? {})) { state.quotes[sym] = row; quotedAt[sym] = Date.now() }
         for (const m of p?.missing ?? []) state.errors[m.symbol] = 'TradingView ما لقى السهم'
         chunk.forEach(compute)
         scheduleRender()
       } catch (e) {
         firstError ??= e
+        lost.push(...chunk)
       }
     }, 3)
-    if (firstError && !Object.keys(state.quotes).length) throw firstError
+    if (firstError && lost.length === symbols.length) throw firstError // was: no quote in any tab yet
+    return lost
   }
 
   // All saved histories (`cache`: fiscal years and monthly prices; `q`: the last 16 quarters; `h`:
@@ -314,7 +325,7 @@
       state.hist[sym] = doc?.h ? { ...doc, at: Date.now() }
         : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.' : explainError(e) }
     }
-    if (state.open === sym) render()
+    if (state.open === sym) redraw(sym)
   }
 
   // Market value at the price shown, on every share class (allShares: an Up-C's units; quoteShares: an
@@ -395,6 +406,7 @@
   }
 
   function compute(sym) {
+    dirty.add(sym)
     const d = state.cache[sym]
     const q = state.quotes[sym]
     if (!d || !q) return
@@ -447,8 +459,9 @@
     if (freshQuotes) for (const k in failedAt) delete failedAt[k] // the button retries failures now
     const bg = freshQuotes || !recent(bgAt[m], BG_MS)
     if (bg && !$('notice').querySelector('[data-undo]')) notice('') // a warning stays until a run retries; an undo offer until used
+    let lost = []
     try {
-      await loadQuotes(syms, freshQuotes)
+      lost = await loadQuotes(syms, freshQuotes)
     } catch (e) {
       notice(explainError(e), true)
       $('status').textContent = ''
@@ -472,7 +485,7 @@
     let done = 0
     let authError = null
     let quota = false
-    const failed = new Set()
+    const failed = new Set(lost) // a failed quote batch too: reported below, asked again by the next refresh
     await pool(jobs, async (job) => {
       if (authError || quota) return
       try { await job() } catch (e) {
@@ -484,18 +497,17 @@
       $('status').textContent = `جاري تحديث البيانات: ${done} من ${jobs.length}`
       scheduleRender()
     }, 3)
-    for (const s of failed) if (!state.cache[s]?.fin) state.errors[s] = 'TradingView ما رد على طلب بياناتها. بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.'
+    for (const s of failed) if (!state.cache[s]?.fin || !state.quotes[s]) { state.errors[s] = 'TradingView ما رد على طلب بياناتها. بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.'; dirty.add(s) }
     if (authError) notice(explainError(authError), true)
     else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
     else if (failed.size) {
       bgAt[m] = Date.now() - BG_MS + FAIL_MS // the next refresh after 10 minutes retries them
       notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد). بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
     }
-    syms.forEach(compute)
     $('refresh').disabled = false
     const later = others.length - Math.min(PX_OTHERS, others.length)
     $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}${later ? ` · أسعار ${later} سهم ثاني الشهرية تتحدث في الزيارات الجاية (${PX_OTHERS} كل مرة)` : ''}`
-    render()
+    scheduleRender() // every stock was computed when its data came in
   }
 
   // ---------------------------------------------------------------- lists
@@ -579,19 +591,22 @@
     await editSaved(m, sym, false)
   }
 
+  let searchN = 0
   async function search(q) {
+    const n = ++searchN // a reply to an older search is dropped (AAPL's late answer showed under MSFT)
     if (!mcp || !q.trim()) return
     const ul = $('results')
     ul.hidden = false
     ul.innerHTML = '<li class="dim" style="padding:8px 10px">جاري البحث…</li>'
     try {
       const p = await call(T.search, { query: q.trim(), type_filter: 'stock' }, { staleTime: 300000 })
+      if (n !== searchN) return
       const list = (p?.data?.symbols ?? []).filter((s) => /^(NASDAQ|NYSE|AMEX|TADAWUL|CBOE):/.test(s.symbol) && (s.type === 'stock' || s.type === 'dr'))
       ul.innerHTML = list.length
         ? list.slice(0, 12).map((s) => `<li><button type="button" data-add="${esc(s.symbol)}"><span>${esc(s.description)}</span><span class="sym">${esc(s.symbol)}</span></button></li>`).join('')
         : '<li class="dim" style="padding:8px 10px">ما لقيت أسهم أمريكية أو سعودية بهذا الاسم.</li>'
     } catch (e) {
-      ul.innerHTML = `<li class="dim" style="padding:8px 10px">${esc(explainError(e))}</li>`
+      if (n === searchN) ul.innerHTML = `<li class="dim" style="padding:8px 10px">${esc(explainError(e))}</li>`
     }
   }
 
@@ -709,11 +724,16 @@
       <span class="dim">اضغط على السهم تشوف أرقام كل جزء.</span>`
   }
 
+  // Renders asked for within one frame are drawn once; all = the whole table (the saved lists,
+  // favourites, ideas and watchlists arriving at boot drew it 5 times).
   let pending = false
-  function scheduleRender() {
+  let whole = false
+  const dirty = new Set() // stocks computed since the last render (compute adds them)
+  function scheduleRender(all = false) {
+    whole ||= all
     if (pending) return
     pending = true
-    requestAnimationFrame(() => { pending = false; render() })
+    requestAnimationFrame(() => { pending = false; const w = whole; whole = false; render(w ? undefined : dirty) })
   }
 
   function renderGroups() {
@@ -727,7 +747,10 @@
     sel.hidden = !groups.length && !secs.length
   }
 
-  function render() {
+  // render(dirty) redraws only those stocks' rows (and the open panel) while the drawn order still
+  // holds: a whole table of 703 rows costs ~300 ms (2 s on a phone), and a refresh drew it once per
+  // quote batch. Anything else draws the whole table.
+  function render(only) {
     for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
     for (const m of ['us', 'sa', 'big', 'sectors', 'fav']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
     document.querySelector('.wrap').dataset.view = state.market
@@ -758,6 +781,14 @@
       body.innerHTML = '<tr><td colspan="14" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
+    const rows = body.querySelectorAll('tr.row')
+    if (only && state.market !== 'big' && rows.length === syms.length && syms.every((s, i) => rows[i].dataset.sym === s)) {
+      if (state.open) only.add(state.open)
+      for (const sym of only) { const i = syms.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
+      only.clear()
+      return
+    }
+    dirty.clear()
     let lastSector = null
     body.innerHTML = syms.map((sym) => {
       const q = state.quotes[sym]
@@ -767,13 +798,20 @@
         const n = syms.filter((x) => (state.quotes[x]?.sector ?? '') === lastSector).length
         head = `<tr class="grp"><td colspan="14">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
       }
+      return head + rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
+    }).join('')
+
+    // Once a stock has an error (TradingView does not know it, or its fetch failed), the cells it
+    // can never fill show '—', not a loading skeleton.
+    function rowHtml(sym) {
+      const q = state.quotes[sym]
       const s = state.scores[sym]
       const f = state.fair[sym]
       const up = upside(sym)
-      const main = `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
+      return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
         <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span>${esc(q?.description ?? '')}</span></td>
-        <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : '<span class="skel"></span>'}</td>
-        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : q && state.cache[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
         <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
         <td class="c-wide c-exp">${expCell(sym)}</td>
@@ -786,8 +824,19 @@
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
-      return head + main + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
-    }).join('')
+    }
+  }
+
+  // One stock's panel opened, closed or refreshed in place.
+  function redraw(sym) {
+    const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
+    if (!tr) return // not drawn (filtered out)
+    const d = tr.nextElementSibling?.matches('tr.detail') ? tr.nextElementSibling : null
+    tr.setAttribute('aria-expanded', String(state.open === sym))
+    if (state.open !== sym) return d?.remove()
+    const html = `<td colspan="14">${detail(sym)}</td>`
+    if (d) d.innerHTML = html
+    else tr.insertAdjacentHTML('afterend', `<tr class="detail">${html}</tr>`)
   }
 
   // Analysts' forecast for the first fiscal year not reported yet, against the last reported fiscal
@@ -984,15 +1033,18 @@
       }).join('')}</ul></div>`
   }
 
+  // A failed answer is asked again when the stock is opened again ("جرّب بعد شوي"), unless the daily quota ran out.
   async function loadNews(sym) {
-    if (!mcp || state.news[sym] !== undefined) return
+    const n = state.news[sym]
+    if (!mcp || (n !== undefined && !(n?.error && !n.quota))) return
+    if (n) { delete state.news[sym]; if (state.open === sym) redraw(sym) }
     try {
       const p = await call(T.news, { symbol: sym, limit: 6 }, { staleTime: 300000, gcTime: 3600000 })
       state.news[sym] = (p?.data?.headlines ?? []).slice(0, 6)
     } catch (e) {
-      state.news[sym] = { error: explainError(e) }
+      state.news[sym] = { error: explainError(e), quota: /quota/i.test(`${e?.code} ${e?.message}`) }
     }
-    if (state.open === sym) render()
+    if (state.open === sym) redraw(sym)
   }
 
   function fairBlock(sym) {
@@ -1076,7 +1128,7 @@
       ${grid}
       <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : `نمو مبيعاتها آخر 3 سنين، ${q.revenue_forecast_next_fy > 0 ? 'توقع المحللين فوق 10 أضعاف مبيعاتها فما اعتمدناه' : 'ما فيه توقع للمحللين'}`}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
       <p class="dim">${flags.join(' ')}</p>
-      <details><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو مبيعاتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
+      <details data-k="rdcf"${state.ctxOpen.has('rdcf') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو مبيعاتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
     </div>`
   }
 
@@ -1157,7 +1209,7 @@
       ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
       ['FCF yield', q.sector !== 'Finance' && mv(q) > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / mv(q), 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير. ما يطلع للبنوك والمالية لأن تدفقها يتحرك مع الودائع والقروض.'],
       ['P/S', q.sector !== 'Finance' && mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ مبيعات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "مبيعاتها" إجمالي دخل العمولات.'],
-      ['P/B · ROE', `${fmt(q.price_book_fq)} · ${fmt(q.return_on_equity, 0)}%`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
+      ['P/B · ROE', `${fmt(q.price_book_fq)} · ${Number.isFinite(q.return_on_equity) ? `${fmt(q.return_on_equity, 0)}%` : '—'}`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
       ['ROIC (آخر سنة مالية)', q.sector !== 'Finance' && Number.isFinite(q.return_on_invested_capital_fy) ? `${fmt(q.return_on_invested_capital_fy, 1)}%` : '—', 'العائد على رأس المال المستثمر لآخر سنة مالية: هل النمو مربح فعلاً؟ ما يطلع للبنوك.'],
       ['Altman Z', q.sector !== 'Finance' ? fmt(q.altman_z_score_ttm) : '—', 'خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر. ما يصلح للبنوك.'],
       ['Piotroski (آخر سنة مالية)', Number.isFinite(q.piotroski_f_score_fy) ? `${q.piotroski_f_score_fy}/9` : '—', `9 فحوصات لتحسن الأساسيات بين آخر سنتين ماليتين، مثل ما عرّفه Piotroski.${Number.isFinite(q.piotroski_f_score_ttm) ? ` على آخر 12 شهر: ${q.piotroski_f_score_ttm}/9.` : ''} الاستثمار الضخم ينزّله.`],
@@ -1183,7 +1235,7 @@
       ${part('الاتجاه', p.E, `<p>نجح في <b class="n">${d.passed ?? '—'} من ${d.checks ?? '—'}</b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
     </div>
     <p class="ctx-t">مقاييس إضافية ما تدخل في الدرجة. اضغط على أي مقياس يطلع لك شرحه وضعفه. ${s.period ? `الأرقام من آخر 12 شهر (حتى ${esc(qAr(s.period))})، ونمو 3 سنوات من السنوات المالية حتى <span class="n">${esc(s.fiscalYear ?? '—')}</span>.` : `السنة المالية المعتمدة: <span class="n">${esc(s.fiscalYear ?? '—')}</span>.`}</p>
-    <div class="ctx">${ctx.map(([k, v, tip]) => `<details><summary><span>${k}</span><b>${v}</b></summary><p>${esc(tip)}</p></details>`).join('')}</div>`
+    <div class="ctx">${ctx.map(([k, v, tip]) => `<details data-k="${esc(k)}"${state.ctxOpen.has(k) ? ' open' : ''}><summary><span>${k}</span><b>${v}</b></summary><p>${esc(tip)}</p></details>`).join('')}</div>`
   }
 
   function renderLatestIdeas(all) {
@@ -1380,7 +1432,8 @@
   })
   document.addEventListener('pointerout', (e) => { if (!e.relatedTarget) hideTip() }) // left the page
   let resizeT = 0
-  addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors(); else if (state.open) render() }, 150) })
+  let lastW = innerWidth // the charts follow the width only (a phone's toolbar changes the height)
+  addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; clearTimeout(resizeT); resizeT = setTimeout(() => { if (state.market === 'sectors') renderSectors(); else if (state.open) redraw(state.open) }, 150) })
 
   // ---------------------------------------------------------------- events
 
@@ -1422,16 +1475,22 @@
   })
   $('rows').addEventListener('mouseleave', () => { tip.hidden = true })
   addEventListener('scroll', () => { tip.hidden = true }, { passive: true })
-  // Re-renders rebuild the panel, so the forecast keeps whatever open/closed state was chosen.
-  $('rows').addEventListener('toggle', (e) => { if (e.target.matches('details.proj')) state.projOpen = e.target.open }, true)
+  // Re-renders rebuild the panel, so the forecast and the tiles keep whatever open/closed state was chosen.
+  $('rows').addEventListener('toggle', (e) => {
+    const d = e.target
+    if (d.matches('details.proj')) state.projOpen = d.open
+    else if (d.dataset.k) state.ctxOpen[d.open ? 'add' : 'delete'](d.dataset.k)
+  }, true)
   const toggle = (sym) => {
+    const was = state.open
     state.open = state.open === sym ? null : sym
-    render()
+    if (was && was !== sym) redraw(was)
+    redraw(sym)
     if (!state.open) return
     loadNews(sym)
     if (preProfit(sym)) loadHist(sym)
-    if (mcp && cacheRead && fundsDue(sym)) loadFunds([sym]).then(render, () => {})
-    if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(render, () => {})
+    if (mcp && cacheRead && fundsDue(sym)) loadFunds([sym]).then(scheduleRender, () => {})
+    if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
   $('rows').addEventListener('click', (e) => {
     const star = e.target.closest('button[data-star]')
@@ -1479,7 +1538,7 @@
       state.lists.fav = [...syms]
       if (!snap.metadata?.fromCache) saved.fav = [...syms]
       if (changed && state.market === 'fav' && cacheRead) refresh()
-      else render()
+      else scheduleRender(true)
     }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
     for (const m of ['us', 'sa']) {
       db.doc(`lists/${m}`).onSnapshot((snap) => {
@@ -1488,7 +1547,7 @@
         state.lists[m] = [...syms]
         if (!snap.metadata?.fromCache) saved[m] = [...syms]
         if (changed && m === state.market && cacheRead) refresh()
-        else render()
+        else scheduleRender(true)
       }, () => notice('ما قدرت أقرأ القائمة المحفوظة، فالإضافة والحذف موقفة لين تفتح الصفحة من جديد.', true))
     }
     // One retry: a failed page of the saved histories would make every stock look unsaved.
@@ -1502,15 +1561,15 @@
         for (const d of snap.docs) { const v = d.data(); (by[v.sym] ??= []).push(v) }
         state.ideas = by
         renderLatestIdeas(snap.docs.map((d) => d.data()))
-        render()
+        scheduleRender(true)
       }, () => renderLatestIdeas([]))
     } catch { renderLatestIdeas([]) }
-    db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; render() } }).catch(() => {})
+    db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; scheduleRender(true) } }).catch(() => {})
     db.doc('meta/watchlists').onSnapshot((snap) => {
       const d = snap.exists ? snap.data() : {}
       state.groups = { us: d.us ?? [], sa: d.sa ?? [] }
       renderGroups()
-      render()
+      scheduleRender(true)
     }, () => {})
   }
   boot()
