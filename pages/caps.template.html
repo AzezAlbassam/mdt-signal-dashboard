@@ -42,6 +42,7 @@ nav.tabs button { font: inherit; font-weight: 600; background: none; border: 0; 
 nav.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent) }
 button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 section.block { display: grid; gap: 14px; margin-block: 0 40px }
+section.block > * { min-width: 0 } /* tables scroll inside .tablewrap instead of widening the page */
 .sub { color: var(--muted); font-size: .92rem; max-width: 70ch }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px }
 .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px }
@@ -109,7 +110,7 @@ footer { color: var(--muted); font-size: .84rem; border-top: 1px solid var(--lin
 @media (max-width: 560px) { .row .lab .v { display: none } .frame { font-size: 1.3rem } }
 </style>
 
-<div class="wrap">
+<div class="wrap" dir="rtl">
 <header class="top">
   <h1>سباق القمة</h1>
   <p class="lede">أكبر الشركات الأمريكية بالقيمة السوقية من نهاية 2015 إلى اليوم: من صعد، من نزل، من اختفى، وهل كان ممكن تعرف قبلها.</p>
@@ -150,7 +151,7 @@ footer { color: var(--muted); font-size: .84rem; border-top: 1px solid var(--lin
       <label>ترتيب <select id="sort"><option value="rank">الترتيب الحالي</option><option value="change">أكبر صعود</option><option value="mult">مضاعف القيمة</option></select></label>
     </div>
     <div class="tablewrap"><table id="moves"></table></div>
-    <p class="note">مضاعف القيمة = القيمة السوقية في نهاية الفترة ÷ بدايتها. عائد السعر من أسعار TradingView المعدلة للتجزئة فقط، بدون توزيعات، ولا يظهر للشركات المختفية.</p>
+    <p class="note">مضاعف القيمة = القيمة السوقية في نهاية الفترة ÷ بدايتها. عائد السعر من أسعار TradingView، وهي معدلة للتجزئة وللشركات المنفصلة (قريب من عائد من احتفظ بالشركة الأم مع الشركة المنفصلة)، بدون التوزيعات النقدية، ولا يظهر للشركات المختفية. ‎*‎ أصغر من 59 مليار دولار اليوم: لقطة 23 أكتوبر فيها أكبر 450 شركة مدرجة بأمريكا فقط.</p>
   </section>
 
   <section class="block">
@@ -160,7 +161,7 @@ footer { color: var(--muted); font-size: .84rem; border-top: 1px solid var(--lin
 
   <section class="block">
     <h2>الاحتمالات</h2>
-    <p class="sub">لو كانت الشركة في مجموعة معيّنة في نهاية سنة، وين كانت بعد عدد من السنوات؟ محسوبة من كل نهايات السنوات 2015–2025، ومعها الشركات اللي انشرت أو اختفت.</p>
+    <p class="sub">لو كانت الشركة في مجموعة معيّنة في نهاية سنة، وين كانت بعد عدد من السنوات؟ محسوبة من كل نهايات السنوات 2015–2025، ومعها الشركات اللي اشتُريت أو اختفت.</p>
     <div class="controls"><label>بعد <select id="hz"><option value="1">سنة</option><option value="3">3 سنوات</option><option value="5" selected>5 سنوات</option><option value="10">10 سنوات</option></select></label>
       <label><input type="checkbox" id="surv"> لو تجاهلنا الشركات المختفية</label></div>
     <div id="odds"></div>
@@ -178,6 +179,17 @@ footer { color: var(--muted); font-size: .84rem; border-top: 1px solid var(--lin
     <h2>ماذا تقول الأبحاث</h2>
     <div id="lit"></div>
   </section>
+<section class="block limits">
+  <h2>حدود البيانات وكيف تحققنا منها</h2>
+  <ul class="facts">
+    <li><b>التحقق المستقل:</b> برنامجان كُتبا من نص البروتوكول فقط، بدون رؤية الكود ولا النتائج، أعادا كل الأرقام: 233 قيمة، صفر فروق.</li>
+    <li><b>مقارنة بمصادر خارجية:</b> قيم أكبر 100 في 2015 و2021 تختلف عن قيم منشورة بشكل مستقل بوسيط 2.3% و1.7%. وأكبر 10 تطابق القوائم المنشورة في 9 أو 10 من 10 في كل سنة وجدنا لها قائمة (ما لقينا قائمة لـ2023).</li>
+    <li><b>أسعار TradingView معدّلة للشركات المنفصلة</b> (مثل انفصال GE HealthCare عن GE)، فالقيمة السوقية المحسوبة منها تطلع أقل من الحقيقية. صححناها بعوامل مقاسة من أسعار الإغلاق الفعلية في 24 فترة (3M وAT&amp;T وGE وHoneywell وغيرها). بقيت حالتان بتصحيح تقريبي: GE في 2023 أعلى من الحقيقة بنحو 30%، وDanaher في 2015 أقل بنحو 22%.</li>
+    <li><b>البنوك وشركات العقار:</b> عدد الأسهم المحسوب من الأرباح يرفع قيمتها 6–25% في 2015 (أرباح الأسهم الممتازة ومتوسط السنة). أبقيناه كما سُجّل مسبقاً وذكرناه هنا.</li>
+    <li><b>الشركات المختفية</b> (اشتُريت أو اندمجت): 85 قيمة لـ24 شركة من مصادر منشورة. أكّد باحث ثانٍ 29 منها، و9 أخذناها من الباحث الثاني وحده، و47 ما لقى لها رقماً مستقلاً. Dow Chemical القديمة ناقصة في 2015 و2016 لأننا ما لقينا سعر إغلاق موثّق.</li>
+    <li><b>تصحيح بعد النتائج:</b> أربع شركات مختفية لم تكن في S&amp;P 500 (VMware وLinkedIn وSprint وAltaba) ما كانت معلّمة كشركات أمريكية. أضفناها، ولم يتغير أي حكم.</li>
+  </ul>
+</section>
 </div>
 
 <div id="p-tech" role="tabpanel" aria-labelledby="t-tech" hidden>
@@ -220,13 +232,15 @@ show(h === 'tech' ? 't-tech' : h === 'race' ? 't-race' : store.get('caps-tab') |
   const sum = (p, n) => D.ranks[p].slice(0, n).reduce((s, i) => s + C[i].cap[p], 0);
   let best = null;
   for (const i of D.ranks[last].slice(0, 20)) { const a = rankAt(i, first); if (a && (!best || a - rankAt(i, last) > best.d)) best = { i, d: a - rankAt(i, last), a } }
+  const outside = D.ranks[last].slice(0, 20).filter((i) => !rankAt(i, first));
   const deadTop = D.ranks.slice(0, last).flat().filter((i) => C[i].dead != null);
   const deadN = new Set(deadTop).size;
   $('#chips').innerHTML = [
     [`${kept} من 10`, `من أكبر 10 في ${PL[first]} ما زالوا في أكبر 10 في ${PL[last]}`, false],
     [money(sum(last, 10)), `قيمة أكبر 10 اليوم، مقابل <span class="ltr">${money(sum(first, 10))}</span> في ${PL[first]}`, true],
-    best ? [`من ${best.a} إلى ${rankAt(best.i, last)}`, `أكبر صعود في الترتيب بين أكبر 20 اليوم: ${esc(nameOf(best.i))}`, false] : null,
-    [`${deadN}`, 'شركة كانت في أكبر 100 ثم انشرت أو اندمجت أو خرجت من السوق (محسوبة هنا)', false],
+    best ? [`من ${best.a} إلى ${rankAt(best.i, last)}`, `أكبر صعود بين أكبر 20 اليوم ممن كانوا في أكبر 100 في ${PL[first]}: ${esc(nameOf(best.i))}`, false] : null,
+    outside.length ? [`${outside.length} من 20`, `من أكبر 20 اليوم ما كانوا حتى في أكبر 100 في ${PL[first]}: ${outside.map((i) => esc(nameOf(i))).join('، ')}`, false] : null,
+    [`${deadN}`, 'شركة كانت في أكبر 100 ثم اشتُريت أو اندمجت أو خرجت من السوق (محسوبة هنا)', false],
   ].filter(Boolean).map(([b, s, l]) => `<div class="chip"><b${l ? ' class="ltr"' : ''}>${b}</b><span>${s}</span></div>`).join('');
 })();
 
@@ -330,7 +344,7 @@ const tipOff = () => { tip.hidden = true };
     if (k === 'change') rs.sort((x, y) => (y.ch ?? -1e9) - (x.ch ?? -1e9));
     if (k === 'mult') rs.sort((x, y) => (y.mult ?? -1) - (x.mult ?? -1));
     const cell = (r) => `<tr><td><span class="dot g${C[r.i].g}"></span>${esc(nameOf(r.i))}<span class="tk">${esc(C[r.i].t)}</span>${C[r.i].dead != null ? '<span class="deadtag">لم تعد موجودة</span>' : ''}</td>
-      <td class="n">${r.ra ?? (C[r.i].cap[a] ? '>100' : '—')}</td><td class="n">${r.rb ?? (C[r.i].cap[b] ? '>100' : '—')}</td>
+      <td class="n">${r.ra ?? (C[r.i].cap[a] ? '>100' : C[r.i].dead == null && a === P.length - 1 ? '>100*' : '—')}</td><td class="n">${r.rb ?? (C[r.i].cap[b] ? '>100' : C[r.i].dead == null && b === P.length - 1 ? '>100*' : '—')}</td>
       <td class="n ${r.ch > 0 ? 'up' : r.ch < 0 ? 'down' : ''}">${r.ch == null ? (r.ra ? '' : 'جديد') : (r.ch > 0 ? '▲' : r.ch < 0 ? '▼' : '') + Math.abs(r.ch)}</td>
       <td class="n">${r.mult == null ? '—' : r.mult.toFixed(1) + '×'}</td><td class="n">${C[r.i].dead != null ? '—' : pct(r.ret)}</td></tr>`;
     $('#moves').innerHTML = `<thead><tr><th>الشركة</th><th>الترتيب ${esc(PL[a])}</th><th>الترتيب ${esc(PL[b])}</th><th>التغير</th><th>مضاعف القيمة</th><th>عائد السعر</th></tr></thead><tbody>
@@ -373,7 +387,7 @@ const pend = (t) => `<div class="pending">${t}</div>`;
 
 (function rules() {
   if (!S) { $('#rules').innerHTML = pend('النتيجة تُحسب بعد اكتمال البيانات، بالقواعد المثبتة مسبقاً كما هي.'); return }
-  const NAMES = { M: ['اللي صعد يكمل', 'تغيّر القيمة السوقية في السنة الماضية'], G: ['النمو السريع يصنع العمالقة', 'نمو الإيرادات السنوي على سنتين'], S: ['الأصغر يصعد أسرع', 'الأصغر قيمة بين أكبر 100'], V: ['الرخيص يلحق', 'المبيعات ÷ القيمة السوقية (بدون البنوك)'] };
+  const NAMES = { M: ['اللي صعد يكمل', 'تغيّر القيمة السوقية في السنة الماضية'], G: ['النمو السريع يصنع العمالقة', 'نمو الإيرادات السنوي على سنتين'], S: ['الأصغر يصعد أسرع', 'الأصغر قيمة بين أكبر 100'], V: ['الرخيص يلحق', 'المبيعات ÷ القيمة السوقية (بدون القطاع المالي)'] };
   $('#rules').innerHTML = `<div class="cards">${Object.entries(S.tests).map(([k, r]) => {
     const ys = r.yearly.filter((x) => x.counts), pos = ys.filter((x) => x.ic > 0).length;
     const mx = Math.max(0.3, ...ys.map((x) => Math.abs(x.ic)));
@@ -413,5 +427,5 @@ const pend = (t) => `<div class="pending">${t}</div>`;
 })();
 
 $('#foot').innerHTML = `<p>البيانات: أسعار شهرية وأرقام مالية من TradingView؛ عضوية S&amp;P 500 التاريخية من fja05680/sp500؛ قيم الشركات المختفية مأخوذة يدوياً من مصادر منشورة ومراجَعة من باحث ثانٍ. القيمة السوقية = إغلاق ديسمبر × عدد الأسهم المخفف للسنة المالية، مع تصحيحات موثقة للحالات الشاذة. "شركة أمريكية" = عضو في S&amp;P 500 وقتها، أو شركة مقرها أمريكا ومدرجة في بورصة أمريكية.</p>
-  <p>دراسة 17 مسجلة مسبقاً: PROTOCOL-study17.md والملحقان 1 و2. ليست توصية شراء أو بيع.</p><p>بُنيت في ${esc(D.asOf)}.</p>`;
+  <p>دراسة 17 مسجلة مسبقاً: PROTOCOL-study17.md والملاحق 1–4 (كلها قبل أي نتيجة). ليست توصية شراء أو بيع.</p><p>بُنيت في ${esc(D.asOf)}.</p>`;
 </script>

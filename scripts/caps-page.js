@@ -16,7 +16,13 @@ const ranks = POINTS.map((y) => D.companies.filter((c) => c.us?.[y] && c.cap?.[y
 const keep = [...new Set(ranks.flatMap((r) => r.slice(0, 100)).map((c) => c.key))]
 const index = new Map(keep.map((k, i) => [k, i]))
 const byKey = new Map(D.companies.map((c) => [c.key, c]))
-const ALIAS = { 'NASDAQ:SPCX': 'SpaceX', 'NYSE:JPM': 'JPMorgan Chase', 'NYSE:LLY': 'Eli Lilly', 'NYSE:BRK.A': 'Berkshire Hathaway', 'NASDAQ:GOOG': 'Alphabet', 'NYSE:PG': 'Procter & Gamble', 'NYSE:JNJ': 'Johnson & Johnson', 'NYSE:AXP': 'American Express', 'NASDAQ:AMZN': 'Amazon' }
+const ALIAS = {
+  'NASDAQ:SPCX': 'SpaceX', 'NYSE:JPM': 'JPMorgan Chase', 'NYSE:LLY': 'Eli Lilly', 'NYSE:BRK.A': 'Berkshire Hathaway', 'NASDAQ:GOOG': 'Alphabet', 'NYSE:PG': 'Procter & Gamble', 'NYSE:JNJ': 'Johnson & Johnson', 'NYSE:AXP': 'American Express', 'NASDAQ:AMZN': 'Amazon',
+  'NYSE:PM': 'Philip Morris', 'NYSE:IBM': 'IBM', 'dead:AGN': 'Allergan', 'NYSE:NKE': 'Nike', 'NASDAQ:KHC': 'Kraft Heinz', 'NYSE:KHC': 'Kraft Heinz', 'NYSE:SLB': 'Schlumberger (SLB)', 'NYSE:RTX': 'RTX (United Technologies)', 'NYSE:AIG': 'AIG', 'NASDAQ:BIIB': 'Biogen',
+  'dead:DD-old': 'DuPont (old)', 'NYSE:F': 'Ford', 'NYSE:PSA': 'Public Storage', 'dead:FOXA-old': '21st Century Fox', 'dead:EMC': 'EMC', 'NYSE:DUK': 'Duke Energy', 'NYSE:BNY': 'BNY Mellon', 'NASDAQ:KMB': 'Kimberly-Clark', 'NYSE:KMB': 'Kimberly-Clark',
+  'dead:DWDP': 'DowDuPont', 'NASDAQ:PYPL': 'PayPal', 'NASDAQ:CME': 'CME Group', 'dead:VMW': 'VMware', 'NYSE:CCI': 'Crown Castle', 'NASDAQ:CSX': 'CSX', 'NYSE:FIS': 'Fidelity National Info. (FIS)', 'NYSE:EL': 'Estée Lauder', 'NYSE:ZTS': 'Zoetis', 'NYSE:KKR': 'KKR',
+  'NASDAQ:BKNG': 'Booking Holdings', 'NYSE:CI': 'Cigna', 'NYSE:AMT': 'American Tower', 'NYSE:HON': 'Honeywell', 'NASDAQ:HON': 'Honeywell', 'NYSE:XOM': 'ExxonMobil', 'dead:AABA': 'Yahoo / Altaba',
+}
 const short = (name) => String(name)
   .replace(/\s*\((The|New)\)\s*/g, ' ')
   .replace(/,?\s+(Inc\.?|Incorporated|Corporation|Corp\.?|Company|Co\.?|plc\.?|Ltd\.?|Limited|Holdings?|Group|N\.V\.|S\.A\.|L\.P\.|Class [A-C])(?=$|[\s,])/gi, '')
