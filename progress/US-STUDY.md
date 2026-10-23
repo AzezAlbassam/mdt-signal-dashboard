@@ -161,6 +161,16 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
   20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 
+- [x] Study 16 protocol (PROTOCOL-study16.md): the page's untested valuation choices, each decided by test —
+  D1 P/B-from-ROE cap (Visa/MA), D2 blend rule, D3 cyclical rule, D4 loss-makers' revenue DCF, D5 the 100×
+  rule, D6 Lynch's 10%, D7 Graham's weight, D8 CAPM vs 9%, D9 own-history P/B for Heavy. Error = median
+  |ln(V ÷ market-adjusted price a year later)|, sign-flip over years, Holm within a decision, IC guard,
+  price-closeness control (A moved as close to the price as X). Two review rounds (3 reviewers + skeptics).
+- [ ] Study 16: fetch total_equity_fy_h, cash_n_short_term_invest_fy_h, oper_income_fy_h, total_revenue_fy_h
+  for the 815 stocks (17 batch calls), scripts/study16-collect.js, then node scripts/study16-run.js
+- [ ] Study 16: clean-room cross-check; scripts/study16-today.js (page impact, committed before it runs);
+  apply what is adopted to the page (POST-HOC, citing the study); notes; publish
+
 ## Counts
 (updated as work proceeds)
 
@@ -372,3 +382,5 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   761–1239 px, sort menu at every width with growth and Altman Z, phone forecast table fits 360 px,
   keyboard delete lands on undo. All checks pass (402 tests; DUE/VALUE/WIPE/FETCH/REDRAW/FAIL/UI/NODB/
   CLOCK/MU).
+- 2026-10-23 — Study 16 pre-registered (PROTOCOL-study16.md, with scripts/study16-run.js and
+  study16-collect.js as they stand at that commit). Numbered 16: 15 is the Flow VWAP study.

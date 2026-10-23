@@ -331,7 +331,8 @@ for (const d of Object.keys(OPTIONS)) {
   report.decisions[d] = res
 
   L.push(`${d} ${NAME[d]} — options ${opts.join(' ')}; comparison set ${U.length} stock-years on ${res.stocks} stocks; ${counted.length} counted years; test by ${res.by}${res.undecidable ? ' (fewer than 8 stocks: not decidable)' : ''}`)
-  L.push(`   year     n  ${opts.map((X) => `  M_${X}`).join('')}   naive  ${ch.map((X) => `  δ_${X}`).join('')}  ${ch.map((X) => ` δ*_${X}`).join('')}  ${opts.map((X) => ` IC_${X}`).join('')}`)
+  // the yearly δ* uses each year's own k; a test by stocks adopts on the single k printed below (§4)
+  L.push(`   year     n  ${opts.map((X) => `  M_${X}`).join('')}   naive  ${ch.map((X) => `  δ_${X}`).join('')}  ${ch.map((X) => ` δ*_${X}`).join('')}  ${opts.map((X) => ` IC_${X}`).join('')}${res.by === 'stocks' ? '   (δ* with k per year)' : ''}`)
   for (const c of counted) L.push(`   ${c.y}  ${String(c.n).padStart(4)}  ${opts.map((X) => f3(c.M[X]).padStart(6)).join('')}  ${f3(c.naive).padStart(6)}  ${ch.map((X) => f3(c.M.A - c.M[X]).padStart(6)).join('')}  ${ch.map((X) => f3(c.Mshrunk[X] - c.M[X]).padStart(7)).join('')}  ${opts.map((X) => f3(c.IC[X]).padStart(6)).join('')}`)
   for (const X of ch) {
     const c = res.challengers[X]

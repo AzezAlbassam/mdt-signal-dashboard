@@ -23,10 +23,11 @@ for (const f of files) for (const line of fs.readFileSync(f, 'utf8').split('\n')
   }
 }
 const folderOf = (sym) => ['data/fv', 'data/fv8'].find((d) => fs.existsSync(path.join(d, 'raw/fin', `${sym.replace(':', '_')}.json`)))
-const filled = (r) => COLS.filter((c) => Array.isArray(r?.[c]) && r[c].length).length
+const filled = (r) => COLS.filter((c) => Array.isArray(r?.[c]) && r[c].some(Number.isFinite)).length
 const best = new Map()
 const requested = new Set()
 const missing = new Set()
+const failedFor = new Map() // symbol → failed calls; after 3, later answers are ignored (§1)
 let failed = 0
 for (const { id, text } of results) {
   const call = calls.get(id)
@@ -34,9 +35,13 @@ for (const { id, text } of results) {
   const saved = text.match(/Output has been saved to (\S+\.txt)/)?.[1]
   let j
   try { j = JSON.parse(saved && fs.existsSync(saved) ? fs.readFileSync(saved, 'utf8') : text) } catch { j = null }
-  if (!j?.success) { failed += 1; continue }
-  for (const s of call.input.symbols ?? []) requested.add(s)
-  for (const [sym, row] of Object.entries(j.data ?? {})) if (!best.has(sym) || filled(row) >= filled(best.get(sym))) best.set(sym, row)
+  if (j == null || j.success === false) { // the page's test (stocks.app.js)
+    failed += 1
+    for (const s of call.input.symbols ?? []) failedFor.set(s, (failedFor.get(s) ?? 0) + 1)
+    continue
+  }
+  for (const s of call.input.symbols ?? []) if ((failedFor.get(s) ?? 0) < 3) requested.add(s)
+  for (const [sym, row] of Object.entries(j.data ?? {})) if ((failedFor.get(sym) ?? 0) < 3 && (!best.has(sym) || filled(row) >= filled(best.get(sym)))) best.set(sym, row)
   for (const m of j.missing ?? []) missing.add(m.symbol ?? m)
 }
 let n = 0
@@ -53,8 +58,10 @@ const universe = [...loadUniverse('data/fv', '2026-09').stocks, ...loadUniverse(
   const key = `${f.year}|${f.rev}|${f.ni}`
   return seen.has(key) ? false : (seen.add(key), true)
 }).map((s) => s.sym)
-const never = universe.filter((s) => !requested.has(s))
+const dead = universe.filter((s) => (failedFor.get(s) ?? 0) >= 3)
+const never = universe.filter((s) => !requested.has(s) && !dead.includes(s))
 const noRow = universe.filter((s) => requested.has(s) && !best.has(s) && !missing.has(s))
 console.log(`bal written for ${n} distinct symbols; ${requested.size} requested in successful calls; ${failed} failed or unreadable calls`)
 console.log(`reported missing: ${missing.size ? [...missing].join(' ') : 'none'}`)
+console.log(`failed 3 times, counted as no row: ${dead.length ? dead.join(' ') : 'none'}; failing now (fewer than 3): ${[...failedFor].filter(([s, k]) => k < 3 && !requested.has(s)).map(([s, k]) => `${s}×${k}`).join(' ') || 'none'}`)
 console.log(`universe ${universe.length}: never requested in a successful call ${never.length}${never.length ? ` (${never.join(' ')})` : ''}; requested but no row and not reported missing ${noRow.length}${noRow.length ? ` (${noRow.join(' ')})` : ''}`)
