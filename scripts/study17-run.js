@@ -116,13 +116,16 @@ for (const [name, br] of [['ALL companies (dead ones included)', BR], ['SURVIVOR
   out()
 }
 
+const PAGE = { entrants: [], multi: [], still: {}, topdog: [], hindsight: {} } // the same tables, for the page
 out('§5 top 10 at each date')
 for (const y of POINTS) out(`  ${y === 2026 ? '2026-10-23' : `Dec ${y}`}: ${R.top(y, 10).sort((a, b) => R.ranks[y].get(a.key) - R.ranks[y].get(b.key)).map((c) => c.name ?? c.key).join(', ')}`)
 for (const h of [5, 10]) {
   const rows = YEARS.filter((y) => y + h <= 2025).map((y) => {
     const t0 = new Set(R.top(y, 10).map((c) => c.key))
     const t1 = new Set(R.top(y + h, 10).map((c) => c.key))
-    return `${y}→${y + h}: ${[...t0].filter((k) => t1.has(k)).length}/10`
+    const kept = [...t0].filter((k) => t1.has(k)).length
+    ;(PAGE.still[h] ??= []).push({ from: y, kept })
+    return `${y}→${y + h}: ${kept}/10`
   })
   out(`  still in the top 10 after ${h} years: ${rows.join(', ')}`)
 }
@@ -140,6 +143,7 @@ for (const n of [10, 20]) {
         const yy = (y === 2026 ? 2025 : y) - k
         return R.ranks[yy]?.get(c.key) ?? (c.cap?.[yy] ? 'not a US company then' : 'not listed / no value')
       }
+      PAGE.entrants.push({ n, y, key: c.key, rank: R.ranks[y].get(c.key), back1: back(1), back3: back(3), back5: back(5) })
       out(`  top ${n} from ${y === 2026 ? '2026-10' : y}: ${c.name ?? c.key} (rank ${R.ranks[y].get(c.key)}) — 1y before ${back(1)}, 3y ${back(3)}, 5y ${back(5)}`)
     }
   }
@@ -153,6 +157,7 @@ for (let y = 2015; y <= 2020; y += 1) {
   const x3 = U.filter((c) => c.cap?.[y + 5] / c.cap[y] >= 3)
   const x5 = x3.filter((c) => c.cap[y + 5] / c.cap[y] >= 5)
   for (const c of x3) climbers.push({ c, y })
+  PAGE.multi.push({ y, n: U.length, x3: x3.length, x5: x5.length, list: x3.map((c) => ({ key: c.key, mult: c.cap[y + 5] / c.cap[y], from: R.ranks[y].get(c.key), to: R.ranks[y + 5].get(c.key) ?? null })) })
   out(`  ${y}→${y + 5}: ≥3× ${x3.length} of ${U.length}, ≥5× ${x5.length}; ${x3.sort((a, b) => b.cap[y + 5] / b.cap[y] - a.cap[y + 5] / a.cap[y]).map((c) => `${c.name ?? c.key} ${(c.cap[y + 5] / c.cap[y]).toFixed(1)}× (rank ${R.ranks[y].get(c.key)}→${R.ranks[y + 5].get(c.key) ?? '—'})`).join(', ')}`)
 }
 out()
@@ -162,6 +167,7 @@ for (let y = 2015; y <= 2024; y += 1) {
   const g = (c) => (c.cap?.[y + 1] > 0 ? Math.log(c.cap[y + 1] / c.cap[y]) : null)
   const sorted = R.top(y, 100).sort((a, b) => R.ranks[y].get(a.key) - R.ranks[y].get(b.key))
   const first = sorted[0]
+  PAGE.topdog.push({ y, key: first.key, g1: g(first), rest: median(sorted.slice(1).map(g)), top10: median(sorted.slice(0, 10).map(g)), others: median(sorted.slice(10).map(g)) })
   out(`  ${y}: #1 ${first.name ?? first.key} ${f3(g(first))} vs ranks 2–100 median ${f3(median(sorted.slice(1).map(g)))}; top-10 median ${f3(median(sorted.slice(0, 10).map(g)))} vs 11–100 ${f3(median(sorted.slice(10).map(g)))}`)
 }
 out()
@@ -178,6 +184,7 @@ for (const k of RULES) {
     ok.forEach(([c], i) => (c.cap?.[y + 5] / c.cap[y] >= 3 ? tri : rest).push(p[i]))
   }
   const share = (xs) => (xs.length ? xs.filter((p) => p >= 0.8).length / xs.length : null)
+  PAGE.hindsight[k] = { tripled: tri.length, tripledMedian: median(tri), tripledTopFifth: share(tri), rest: rest.length, restMedian: median(rest), topFifthHitRate: tri.filter((p) => p >= 0.8).length / Math.max(1, [...tri, ...rest].filter((p) => p >= 0.8).length) }
   out(`  ${k}: tripled (n ${tri.length}) median percentile ${tri.length ? median(tri).toFixed(2) : '—'}, in the rule's top fifth ${pct(share(tri), 0)}; the rest (n ${rest.length}) median ${rest.length ? median(rest).toFixed(2) : '—'}; of all companies in the rule's top fifth, ${pct(tri.filter((p) => p >= 0.8).length / Math.max(1, [...tri, ...rest].filter((p) => p >= 0.8).length), 0)} tripled`)
 }
 out()
@@ -191,5 +198,5 @@ if (D.v3) for (const l of D.v3) out(`  V3: ${l}`)
 
 fs.mkdirSync('reports', { recursive: true })
 fs.writeFileSync('reports/study17.txt', lines.join('\n') + '\n')
-fs.writeFileSync('reports/study17.json', JSON.stringify({ tests: T1, threeYear: T3, baseRates: BR, baseRatesSurvivors: BRS }, (k, v) => (typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v), 1))
+fs.writeFileSync('reports/study17.json', JSON.stringify({ tests: T1, threeYear: T3, baseRates: BR, baseRatesSurvivors: BRS, page: PAGE }, (k, v) => (typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v), 1))
 console.log(lines.join('\n'))
