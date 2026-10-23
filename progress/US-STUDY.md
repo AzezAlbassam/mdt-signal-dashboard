@@ -160,7 +160,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   Bubble description fix (POST-HOC, description only): the line was read as 7810 bubbles from x 317 (now 891).
 - [x] Study 15: ofv.html (scripts/build-ofv-page.js, Arabic, Pine with a copy button + best timeframe = 3m on SP:SPX) →
   https://claude.ai/artifact/JWrGWTdESc1xBgTM2AdZ7N
-- [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
+- [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json. 20:21 UTC check-in found the TradingView daily quota
+  exhausted (nothing fetched); retry trig_01MoGJ8ZDHBqKhcK59AKGzK2 at 00:10 UTC 10-24. First check-in was trig_01NR9gPRLpesV1tuZUDTgCvA,
   20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 
 - [x] Study 16 protocol (PROTOCOL-study16.md): the page's untested valuation choices, each decided by test —
