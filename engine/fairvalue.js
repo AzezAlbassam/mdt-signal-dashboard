@@ -23,8 +23,8 @@ export const WEIGHTS = {
   [PRE]: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
 }
 
-const HEAVY_SECTORS = ['Energy Minerals', 'Non-Energy Minerals', 'Process Industries', 'Producer Manufacturing', 'Industrial Services', 'Transportation', 'Consumer Durables']
-const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
+export const HEAVY_SECTORS = ['Energy Minerals', 'Non-Energy Minerals', 'Process Industries', 'Producer Manufacturing', 'Industrial Services', 'Transportation', 'Consumer Durables']
+export const TECH_SECTORS = ['Electronic Technology', 'Technology Services']
 
 export const PARAMS = { discount: 0.09, termGrowth: 0.025, maxGrowth: 0.25, pegTarget: 1, windowMonths: 60, minSamples: 12, normYears: 5 }
 
