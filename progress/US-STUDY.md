@@ -142,12 +142,24 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [x] Study 15 protocol (PROTOCOL-study15.md): @t38p_flow "Flow VWAP x Gamma" chart of 2026-10-12 — open look-alike
   (OFV/OGL), chart measured from the screenshot, VWAP/band candidates and MATCH thresholds fixed before any value;
   gamma for 10-12 untestable (0DTE contracts no longer served), OGL frozen for forward checks
-- [ ] Study 15: measure the chart, engine/vwap.js + engine/gamma.js + tests, run → reports/study15.txt
+- [x] Study 15: chart measured (scripts/study15-measure.py → data/study15/chart-measure.json, b7007d8, before any VWAP):
+  3-minute SPX bars from 10:06 ET, 27 clean candles match SP:SPX to 0.026 points; engine/vwap.js, engine/gamma.js (+7 tests)
+- [x] Study 15 run (reports/study15.txt): H1 NOT CONFIRMED — the yellow line is NOT a standard VWAP (V1 off by median 1.10,
+  always below); the equal-weight control V0 MATCHES (median 0.21, p90 0.32). H2 NOT CONFIRMED on V4 (E3/E4 CLOSE).
+  H3 not testable. POST-HOC: V0 ± σ_eq fits k = +2.11/+1.06/−1.04/−2.10 (E3 MATCH, others CLOSE); 10-22 0DTE option
+  volume is near-flat through the day, so an options-flow-weighted price sits ~0.66 from the equal-weight line (one day)
+- [ ] Study 15: addendum for the next vendor chart (flow-weighted candidates, OGL), 10-23 chain capture, Pine
 
 ## Counts
 (updated as work proceeds)
 
 ## Log
+- 2026-10-23 — user sent @t38p_flow's "Flow VWAP x Gamma too easy for the bot" chart (2026-10-12) and his later
+  "here is the formula" post (a quantum-mechanics ladder-operator identity for a free particle in 2D with Bessel
+  functions: a joke, no market variable in it). Asked whether he is joking and for a replica tested against the
+  chart's levels without cheating. Study 15 pre-registered (67220c2) before any measurement. The chart carries a
+  skylit.ai watermark. 10-12 0DTE options are no longer served (only the previous session's expiry is), so the
+  gamma bubbles cannot be rebuilt; the 10-22 chain was saved before it disappears.
 - 2026-10-18 — user asked for a real harmonic indicator for TradingView ("the complete
   fundamentals, nothing distorted"), working on every timeframe, with targets, plus a table
   of the most accurate timeframe and the most accurate pattern. Study 12 pre-registered.
