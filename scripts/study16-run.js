@@ -123,7 +123,10 @@ function rdcfAt(s, st, c0, beta) {
 
 // ---------------------------------------------------------------- B0 and the options (§2, §3)
 
+// §1 outcome: the price later with SPY's move over the same span taken out.
+const adj = (s, R, h) => { const c = s.closes.get(`${R + h}-05`); const a = spy.get(`${R}-05`); const b = spy.get(`${R + h}-05`); return pos(c) && pos(a) && pos(b) ? (c * a) / b : null }
 const rows = []
+const syWith = { equity: 0, cash: 0, oi: 0 } // B0 stock-years whose F0 has the column
 for (const s of stocks) for (const R of YEARS) {
   const month = `${R}-05`
   const fv = fairValuesAt(s.funds, s.closes, s.sector, month)
@@ -152,8 +155,9 @@ for (const s of stocks) for (const R of YEARS) {
   v.pbj = pbj(4)
   v.graham = pos(st.eps) && pos(bv) ? Math.sqrt(22.5 * st.eps * bv) : null
   const big = pos(r0?.shares) ? c0 * r0.shares : null
+  for (const k of Object.keys(syWith)) if (s[k].has(st.fiscalYear)) syWith[k] += 1
   rows.push({
-    sym: s.sym, R, sector: s.sector, c0, c1: s.closes.get(`${R + 1}-05`) ?? null, c2: s.closes.get(`${R + 2}-05`) ?? null, big,
+    sym: s.sym, R, sector: s.sector, c0, c1: adj(s, R, 1), c2: adj(s, R, 2), big,
     profile: fv.profile, st, v, raw, capped, roe, pbj8: pbj(8), pbjInf: pbj(Infinity),
     cyc: cyclical(s, st.fiscalYear),
     pb: ownPb(s, month, bv), rd: fv.profile === UNPROF ? rdcfAt(s, st, c0, beta) : null,
@@ -179,7 +183,7 @@ function fair(r, opt = {}) {
     v.pbj = null
     if (o('D1') === 'E') profile = profileOf(r.st, r.c0, 'Not Finance')
   }
-  if (o('D3') !== 'A' && r.cyc != null && (profile === HEAVY || profile === GROWTH || profile === MATURE)) {
+  if (o('D3') !== 'A' && r.cyc != null && r.sector !== 'Finance' && (profile === HEAVY || profile === GROWTH || profile === MATURE)) {
     const heavy = o('D3') === 'B' ? r.cyc : HEAVY_SECTORS.includes(r.sector) && r.cyc
     profile = heavy ? HEAVY : TECH_SECTORS.includes(r.sector) || r.st.revG > 0.15 ? GROWTH : MATURE
   }
@@ -192,6 +196,7 @@ function fair(r, opt = {}) {
   let V
   const valued = METHODS.map((m, i) => [v[m], w[i]]).filter(([x, wi]) => wi > 0 && pos(x))
   if (o('D2') === 'B' && valued.length >= 2) V = wmedian(valued)
+  else if (o('D2') === 'D' && valued.length >= 2) V = Math.exp(valued.reduce((a, [x, wi]) => a + wi * Math.log(x), 0) / valued.reduce((a, [, wi]) => a + wi, 0))
   else if (o('D2') === 'C' && valued.length >= 3) {
     const med = wmedian(valued)
     const kept = valued.filter(([x]) => x <= 3 * med && x >= med / 3)
@@ -208,18 +213,37 @@ function fair(r, opt = {}) {
 // ---------------------------------------------------------------- scoring (§4)
 
 const err = (V, c) => Math.abs(Math.log(V / c))
-const OPTIONS = { D1: 'ABCDE', D2: 'ABC', D3: 'ABC', D4: 'ABC', D5: 'AB', D6: 'ABC', D7: 'AB', D8: 'AB', D9: 'AB' }
+const OPTIONS = { D1: 'ABCDE', D2: 'ABCD', D3: 'ABC', D4: 'ABC', D5: 'AB', D6: 'ABC', D7: 'AB', D8: 'AB', D9: 'AB' }
 const NAME = { D1: 'P/B from ROE, very profitable financials', D2: 'How methods are combined', D3: 'Which companies count as cyclical', D4: "Loss-makers' fair value", D5: 'Methods on a multiple above 100', D6: "Lynch's rule for PEG", D7: "Graham's number", D8: 'DCF discount rate', D9: 'Own-history P/B for Heavy' }
 
-function compare(opts, set, cKey = 'c1') {
-  // set: [{ r, V: { A, B, … } }] restricted already; years by r.R
+// Price-closeness control (§4): A moved toward (or away from) c0 by as much as X is, over the rows xs.
+const kOf = (xs, X) => {
+  const den = median(xs.map((x) => Math.abs(Math.log(x.V.A / x.r.c0))))
+  return den > 0 ? median(xs.map((x) => Math.abs(Math.log(x.V[X] / x.r.c0)))) / den : 1
+}
+const shrunk = (x, k) => x.r.c0 * (x.V.A / x.r.c0) ** k
+
+/** Yearly M (and M of A↓X), IC and naive baseline over years with ≥ MIN_ROWS rows of set; cKey c1 or c2. */
+function byYears(opts, set, cKey = 'c1') {
   const byY = new Map()
   for (const x of set) (byY.get(x.r.R) ?? byY.set(x.r.R, []).get(x.r.R)).push(x)
   const counted = [...byY].filter(([, xs]) => xs.length >= MIN_ROWS).sort((a, b) => a[0] - b[0])
   const M = (xs, X) => median(xs.map((x) => err(x.V[X], x.r[cKey])))
   const IC = (xs, X) => spearman(xs.map((x) => Math.log(x.V[X] / x.r.c0)), xs.map((x) => x.r[cKey] / x.r.c0 - 1))
-  const yearly = counted.map(([y, xs]) => ({ y, n: xs.length, M: Object.fromEntries(opts.map((X) => [X, M(xs, X)])), IC: Object.fromEntries(opts.map((X) => [X, IC(xs, X)])), naive: median(xs.map((x) => Math.abs(Math.log(x.r.c0 / x.r[cKey])))) }))
-  return { counted: yearly }
+  return counted.map(([y, xs]) => ({
+    y, n: xs.length,
+    M: Object.fromEntries(opts.map((X) => [X, M(xs, X)])),
+    Mshrunk: Object.fromEntries(opts.slice(1).map((X) => { const k = kOf(xs, X); return [X, median(xs.map((x) => err(shrunk(x, k), x.r[cKey])))] })),
+    IC: Object.fromEntries(opts.map((X) => [X, IC(xs, X)])),
+    naive: median(xs.map((x) => Math.abs(Math.log(x.r.c0 / x.r[cKey])))),
+  }))
+}
+
+/** Per-stock means of f(x) over set, stocks in first-appearance order. */
+function perStock(set, f) {
+  const per = new Map()
+  for (const x of set) (per.get(x.r.sym) ?? per.set(x.r.sym, []).get(x.r.sym)).push(f(x))
+  return [...per.values()].map(mean)
 }
 
 function signFlipMC(xs, draws, rng) {
@@ -233,46 +257,58 @@ function signFlipMC(xs, draws, rng) {
   return (1 + ge) / (draws + 1)
 }
 
-const report = { decisions: {}, coverage: { stocks: stocks.length, balFiles, stocksWith: cover, stockYearsWith: coverYears, rows: rows.length, rdcfZero } }
+const notTestable = new Set([...(cover.equity ? [] : ['D1', 'D7', 'D9']), ...(cover.cash || cover.oi ? [] : ['D4'])])
+const report = { decisions: {}, coverage: { stocks: stocks.length, balFiles, stocksWith: cover, fiscalYearsWith: coverYears, b0StockYearsWith: syWith, rows: rows.length, rdcfZero, notTestable: [...notTestable] } }
 const L = []
-L.push('Study 16 — the stock page\'s untested valuation choices (PROTOCOL-study16.md)')
-L.push(`Universe ${stocks.length} stocks; balance-sheet files ${balFiles}; stocks (stored fiscal years) with equity ${cover.equity} (${coverYears.equity}), cash ${cover.cash} (${coverYears.cash}), operating income ${cover.oi} (${coverYears.oi}).`)
-L.push(`Stock-years with a B0 row (May 2012–2025, pre-revenue left out): ${rows.length}.`)
-L.push('Error e = |ln(V ÷ price 12 months later)|; M = the year\'s median e; δ = M_A − M_X (positive: X closer).')
+L.push("Study 16 — the stock page's untested valuation choices (PROTOCOL-study16.md)")
+L.push(`Universe ${stocks.length} stocks; balance-sheet files ${balFiles}.`)
+L.push(`With a value — stocks / stored fiscal years / B0 stock-years whose F0 has it: equity ${cover.equity} / ${coverYears.equity} / ${syWith.equity}, cash ${cover.cash} / ${coverYears.cash} / ${syWith.cash}, operating income ${cover.oi} / ${coverYears.oi} / ${syWith.oi}.`)
+L.push(`B0 stock-years (May 2012–2025, pre-revenue left out): ${rows.length}; with an outcome: ${rows.filter((r) => pos(r.c1)).length}.`)
+L.push("Error e = |ln(V ÷ c1)|, c1 = the price 12 months later × SPY then ÷ SPY at the end; M = the year's median e; δ = M_A − M_X (positive: X closer);")
+L.push('δ* = M of A moved as close to the price as X − M_X (positive: X carries information beyond closeness to the price).')
 L.push('')
 
 const rng = seededRng(16)
 const adopted = {}
+const top = new Map(YEARS.map((R) => [R, new Set(rows.filter((r) => r.R === R && pos(r.big)).sort((a, b) => b.big - a.big).slice(0, 300).map((r) => r.sym))]))
 for (const d of Object.keys(OPTIONS)) {
   const opts = [...OPTIONS[d]]
+  const ch = opts.slice(1)
+  if (notTestable.has(d)) {
+    report.decisions[d] = { name: NAME[d], notTestable: true, adopted: 'A' }
+    L.push(`${d} ${NAME[d]}: not testable — a column it needs is empty for every symbol (§1); A stays.`, '')
+    continue
+  }
   const all = rows.map((r) => ({ r, V: Object.fromEntries(opts.map((X) => [X, fair(r, { [d]: X })])) }))
   const differ = (x) => opts.some((X) => x.V[X] != null && x.V.A != null && Math.abs(x.V[X] / x.V.A - 1) > 0.005)
   const someNone = all.filter((x) => opts.some((X) => x.V[X] == null) && opts.some((X) => x.V[X] != null))
   const U = all.filter((x) => opts.every((X) => x.V[X] != null) && pos(x.r.c1) && differ(x))
-  const { counted } = compare(opts, U)
-  const ch = opts.slice(1)
+  const counted = byYears(opts, U)
   const res = { name: NAME[d], U: U.length, stocks: new Set(U.map((x) => x.r.sym)).size, coverageDisagree: someNone.length, countedYears: counted.length, yearly: counted, by: counted.length >= MIN_YEARS ? 'years' : 'stocks', challengers: {} }
   if (res.by === 'years') {
     const ps = ch.map((X) => signFlipGreater(counted.map((c) => c.M.A - c.M[X])))
-    const adj = holm(ps)
+    const adjP = holm(ps)
     ch.forEach((X, i) => {
       const dl = counted.map((c) => c.M.A - c.M[X])
       const icA = mean(counted.map((c) => c.IC.A))
       const icX = mean(counted.map((c) => c.IC[X]))
-      res.challengers[X] = { meanDelta: mean(dl), wins: dl.filter((x) => x > 0).length, p: ps[i], pHolm: adj[i], icA, icX, guard: icX >= icA - GUARD }
+      res.challengers[X] = { meanDelta: mean(dl), meanDeltaStar: mean(counted.map((c) => c.Mshrunk[X] - c.M[X])), wins: dl.filter((x) => x > 0).length, p: ps[i], pHolm: adjP[i], icA, icX, guard: icX >= icA - GUARD }
     })
   } else {
-    const per = new Map()
-    for (const x of U) (per.get(x.r.sym) ?? per.set(x.r.sym, []).get(x.r.sym)).push(x)
-    res.byStocks = per.size
-    if (per.size >= MIN_STOCKS) {
-      const diffs = Object.fromEntries(ch.map((X) => [X, [...per.values()].map((xs) => mean(xs.map((x) => err(x.V.A, x.r.c1) - err(x.V[X], x.r.c1))))]))
+    res.byStocks = new Set(U.map((x) => x.r.sym)).size
+    res.guardSkipped = true
+    if (res.byStocks >= MIN_STOCKS) {
+      const diffs = Object.fromEntries(ch.map((X) => [X, perStock(U, (x) => err(x.V.A, x.r.c1) - err(x.V[X], x.r.c1))]))
       const ps = ch.map((X) => (diffs[X].length <= 24 ? signFlipGreater(diffs[X]) : signFlipMC(diffs[X], 200000, rng)))
-      const adj = holm(ps)
-      ch.forEach((X, i) => { res.challengers[X] = { meanDelta: mean(diffs[X]), wins: diffs[X].filter((x) => x > 0).length, p: ps[i], pHolm: adj[i], guard: true } })
+      const adjP = holm(ps)
+      ch.forEach((X, i) => {
+        const k = kOf(U, X)
+        const star = perStock(U, (x) => err(shrunk(x, k), x.r.c1) - err(x.V[X], x.r.c1))
+        res.challengers[X] = { meanDelta: mean(diffs[X]), meanDeltaStar: mean(star), k, wins: diffs[X].filter((x) => x > 0).length, p: ps[i], pHolm: adjP[i], guard: true }
+      })
     } else res.undecidable = true
   }
-  const ok = ch.filter((X) => res.challengers[X] && res.challengers[X].meanDelta > 0 && res.challengers[X].pHolm < 0.05 && res.challengers[X].guard)
+  const ok = ch.filter((X) => { const c = res.challengers[X]; return c && c.meanDelta > 0 && c.pHolm < 0.05 && c.meanDeltaStar > 0 && c.guard })
   ok.sort((a, b) => res.challengers[b].meanDelta - res.challengers[a].meanDelta || a.localeCompare(b))
   res.adopted = ok[0] ?? 'A'
   if (res.adopted !== 'A') adopted[d] = res.adopted
@@ -280,17 +316,14 @@ for (const d of Object.keys(OPTIONS)) {
   // §6 reported
   res.pooled = Object.fromEntries(opts.map((X) => {
     const es = U.map((x) => err(x.V[X], x.r.c1))
-    return [X, { medianE: median(es), within25: es.filter((e) => e < Math.log(1.25)).length / (es.length || 1), signed: median(U.map((x) => Math.log(x.V[X] / x.r.c1))) }]
+    return [X, { medianE: median(es), within25: es.length ? es.filter((e) => e < Math.log(1.25)).length / es.length : null, signed: median(U.map((x) => Math.log(x.V[X] / x.r.c1))) }]
   }))
   res.pooled.naive = { medianE: median(U.map((x) => Math.abs(Math.log(x.r.c0 / x.r.c1)))) }
   const U2 = all.filter((x) => x.r.R <= 2024 && opts.every((X) => x.V[X] != null) && pos(x.r.c2) && differ(x))
-  const h2 = compare(opts, U2, 'c2').counted
-  res.horizon24 = { U: U2.length, countedYears: h2.length, meanDelta: Object.fromEntries(ch.map((X) => [X, mean(h2.map((c) => c.M.A - c.M[X]))])), p: Object.fromEntries(ch.map((X) => [X, h2.length ? signFlipGreater(h2.map((c) => c.M.A - c.M[X])) : null])) }
-  const top = new Map()
-  for (const R of YEARS) {
-    const ys = rows.filter((r) => r.R === R && pos(r.big)).sort((a, b) => b.big - a.big).slice(0, 300)
-    top.set(R, new Set(ys.map((r) => r.sym)))
-  }
+  const h2 = byYears(opts, U2, 'c2')
+  res.horizon24 = res.by === 'years'
+    ? { by: 'years', U: U2.length, countedYears: h2.length, meanDelta: Object.fromEntries(ch.map((X) => [X, mean(h2.map((c) => c.M.A - c.M[X]))])), p: Object.fromEntries(ch.map((X) => [X, h2.length ? signFlipGreater(h2.map((c) => c.M.A - c.M[X])) : null])) }
+    : { by: 'stocks', U: U2.length, ...Object.fromEntries(['meanDelta', 'better'].map((key) => [key, Object.fromEntries(ch.map((X) => { const dd = perStock(U2, (x) => err(x.V.A, x.r.c2) - err(x.V[X], x.r.c2)); return [X, key === 'meanDelta' ? mean(dd) : dd.filter((v) => v > 0).length] }))])) }
   const UL = U.filter((x) => top.get(x.r.R).has(x.r.sym))
   res.largeCaps = { U: UL.length, medianE: Object.fromEntries(opts.map((X) => [X, median(UL.map((x) => err(x.V[X], x.r.c1)))])) }
   res.largeCapFlag = res.adopted !== 'A' && UL.length > 0 && res.largeCaps.medianE[res.adopted] > res.largeCaps.medianE.A
@@ -298,17 +331,20 @@ for (const d of Object.keys(OPTIONS)) {
   report.decisions[d] = res
 
   L.push(`${d} ${NAME[d]} — options ${opts.join(' ')}; comparison set ${U.length} stock-years on ${res.stocks} stocks; ${counted.length} counted years; test by ${res.by}${res.undecidable ? ' (fewer than 8 stocks: not decidable)' : ''}`)
-  L.push(`   year     n  ${opts.map((X) => `  M_${X}`).join('')}   naive  ${opts.map((X) => ` IC_${X}`).join('')}`)
-  for (const c of counted) L.push(`   ${c.y}  ${String(c.n).padStart(4)}  ${opts.map((X) => f3(c.M[X]).padStart(6)).join('')}  ${f3(c.naive).padStart(6)}  ${opts.map((X) => f3(c.IC[X]).padStart(6)).join('')}`)
+  L.push(`   year     n  ${opts.map((X) => `  M_${X}`).join('')}   naive  ${ch.map((X) => `  δ_${X}`).join('')}  ${ch.map((X) => ` δ*_${X}`).join('')}  ${opts.map((X) => ` IC_${X}`).join('')}`)
+  for (const c of counted) L.push(`   ${c.y}  ${String(c.n).padStart(4)}  ${opts.map((X) => f3(c.M[X]).padStart(6)).join('')}  ${f3(c.naive).padStart(6)}  ${ch.map((X) => f3(c.M.A - c.M[X]).padStart(6)).join('')}  ${ch.map((X) => f3(c.Mshrunk[X] - c.M[X]).padStart(7)).join('')}  ${opts.map((X) => f3(c.IC[X]).padStart(6)).join('')}`)
   for (const X of ch) {
     const c = res.challengers[X]
     if (!c) continue
-    L.push(`   ${X} vs A: mean δ ${f4(c.meanDelta)}, better in ${c.wins} of ${res.by === 'years' ? counted.length : res.byStocks} ${res.by}, p ${f4(c.p)}, Holm ${f4(c.pHolm)}${res.by === 'years' ? `, mean IC ${f3(c.icX)} vs A ${f3(c.icA)}${c.guard ? '' : ' (fails the ranking guard)'}` : ''}`)
+    L.push(`   ${X} vs A: mean δ ${f4(c.meanDelta)}, mean δ* ${f4(c.meanDeltaStar)}, better in ${c.wins} of ${res.by === 'years' ? counted.length : res.byStocks} ${res.by}, p ${f4(c.p)}, Holm ${f4(c.pHolm)}${res.by === 'years' ? `, mean IC ${f3(c.icX)} vs A ${f3(c.icA)}${c.guard ? '' : ' (fails the ranking guard)'}` : `, k ${f3(c.k)}`}`)
   }
+  if (res.guardSkipped && !res.undecidable) L.push('   Ranking guard skipped: test by stocks, too few stocks per year for an IC (§4).')
   L.push(`   Pooled median e: ${opts.map((X) => `${X} ${f3(res.pooled[X].medianE)}`).join(', ')}, naive ${f3(res.pooled.naive.medianE)}; within 25%: ${opts.map((X) => `${X} ${pct(res.pooled[X].within25)}`).join(', ')}; median signed: ${opts.map((X) => `${X} ${f3(res.pooled[X].signed)}`).join(', ')}`)
-  L.push(`   24 months: ${U2.length} stock-years, ${h2.length} counted years; mean δ ${ch.map((X) => `${X} ${f4(res.horizon24.meanDelta[X])} (p ${f4(res.horizon24.p[X])})`).join(', ')}`)
+  const h = res.horizon24
+  L.push(`   24 months (reported only, by ${h.by}): ${h.U} stock-years${h.by === 'years' ? `, ${h.countedYears} counted years; mean δ ${ch.map((X) => `${X} ${f4(h.meanDelta[X])} (p ${f4(h.p[X])})`).join(', ')}` : `; per-stock mean δ ${ch.map((X) => `${X} ${f4(h.meanDelta[X])} (better on ${h.better[X]} stocks)`).join(', ')}`}`)
   L.push(`   Large caps (top 300 a year): ${UL.length} stock-years; median e ${opts.map((X) => `${X} ${f3(res.largeCaps.medianE[X])}`).join(', ')}${res.largeCapFlag ? ' — FLAG: the adopted option is worse than A on large caps' : ''}`)
   L.push(`   Stock-years where options disagree on whether a value exists: ${someNone.length}${d === 'D4' ? `; Unprofitable stock-years whose revenue DCF is 0 (counted as none): ${rdcfZero}` : ''}`)
+  if (d === 'D1') for (const n of res.named) L.push(`   ${n.sym} ${n.R} ${n.profile} ROE ${f3(n.roe)} c0 ${f3(n.c0)} c1 ${f3(n.c1)}  ${opts.map((X) => `${X} ${f3(n.V[X])}`).join('  ')}`)
   L.push(`   → adopted: ${res.adopted}`)
   L.push('')
 }
@@ -323,26 +359,25 @@ const pooledE = (opt) => {
   return { n: xs.length, A: median(xs.map((x) => err(x.a, x.r.c1))), B: median(xs.map((x) => err(x.b, x.r.c1))), naive: median(xs.map((x) => Math.abs(Math.log(x.r.c0 / x.r.c1)))), xs }
 }
 let pc = pooledE(combo)
-const removed = []
+const steps = [{ applied: { ...combo }, n: pc.n, B0: pc.A, Bstar: pc.B }]
 while (Object.keys(combo).length && pc.B > pc.A) {
-  const d = order.find((k) => combo[k])
-  delete combo[d]
-  removed.push(d)
+  delete combo[order.find((k) => combo[k])]
   pc = pooledE(combo)
+  steps.push({ applied: { ...combo }, n: pc.n, B0: pc.A, Bstar: pc.B })
 }
-const yearsOf = (xs) => YEARS.map((y) => xs.filter((x) => x.r.R === y)).filter((g) => g.length >= MIN_ROWS)
-const yr = yearsOf(pc.xs)
+const yr = YEARS.map((y) => pc.xs.filter((x) => x.r.R === y)).filter((g) => g.length >= MIN_ROWS)
 report.combination = {
-  adopted, applied: combo, removed, n: pc.n, pooledB0: pc.A, pooledBstar: pc.B, naive: pc.naive,
+  adopted, applied: combo, steps, n: pc.n, pooledB0: pc.A, pooledBstar: pc.B, naive: pc.naive,
   yearly: yr.map((g) => ({ y: g[0].r.R, n: g.length, B0: median(g.map((x) => err(x.a, x.r.c1))), Bstar: median(g.map((x) => err(x.b, x.r.c1))), naive: median(g.map((x) => Math.abs(Math.log(x.r.c0 / x.r.c1)))) })),
   icB0: mean(yr.map((g) => spearman(g.map((x) => Math.log(x.a / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
   icBstar: mean(yr.map((g) => spearman(g.map((x) => Math.log(x.b / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
 }
-L.push(`Combination: adopted ${JSON.stringify(adopted)}; applied ${JSON.stringify(combo)}${removed.length ? `; removed ${removed.join(', ')}` : ''}`)
+L.push(`Combination: adopted ${JSON.stringify(adopted)}; applied ${JSON.stringify(combo)}`)
+for (const st of steps) L.push(`   step ${JSON.stringify(st.applied)}: ${st.n} stock-years, pooled median e B0 ${f3(st.B0)}, B* ${f3(st.Bstar)}`)
 L.push(`   ${pc.n} stock-years; pooled median e B0 ${f3(pc.A)}, B* ${f3(pc.B)}, naive (today's price) ${f3(pc.naive)}; mean IC B0 ${f3(report.combination.icB0)}, B* ${f3(report.combination.icBstar)}`)
 for (const y of report.combination.yearly) L.push(`   ${y.y}  n ${String(y.n).padStart(4)}  B0 ${f3(y.B0)}  B* ${f3(y.Bstar)}  naive ${f3(y.naive)}`)
 L.push('')
-L.push('Known limits (§7): survivorship, price return without dividends, today\'s restated fundamentals, sectors and peer margins, no analysts\' forecast history, annual figures only, total equity vs common equity, the error rewards closeness to the price, Holm within decisions only.')
+L.push("Known limits (§7): survivorship; price returns without dividends; today's restated fundamentals, sectors and peer margins; no analysts' forecast history; annual figures only; one date a year; total equity vs common equity; buybacks; US stocks only; the same stocks every year; closeness to the price; Holm within decisions only.")
 
 fs.mkdirSync('reports', { recursive: true })
 fs.writeFileSync('reports/study16.txt', L.join('\n') + '\n')
