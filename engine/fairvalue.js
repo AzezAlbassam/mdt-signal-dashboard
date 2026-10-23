@@ -148,7 +148,10 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
  */
 export function quoteShares(q) {
   const near = (a, b) => pos(a) && pos(b) && Math.abs(a / b - 1) <= 0.1
-  const m = pos(q?.market_cap_basic) && pos(q?.close) ? q.market_cap_basic / q.close : null
+  // POST-HOC (2026-10-22): Tadawul's market value is at the previous close (221 of 271 quotes), so its
+  // count divides by that close, not today's (4292 at −7.5% today showed P/E 14.5 for 13.4).
+  const px = q?.currency === 'SAR' && Number.isFinite(q.change) ? q?.close / (1 + q.change / 100) : q?.close
+  const m = pos(q?.market_cap_basic) && pos(px) ? q.market_cap_basic / px : null
   const t = q?.total_shares_outstanding
   const e = q?.net_income_ttm && q?.earnings_per_share_diluted_ttm ? q.net_income_ttm / q.earnings_per_share_diluted_ttm : null
   return pos(t) && pos(e) && Math.abs(t / e - 1) <= 0.02 ? t : near(t, e) && !near(m, t) ? t : m

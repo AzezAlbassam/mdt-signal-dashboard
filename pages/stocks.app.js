@@ -590,6 +590,7 @@
     if (state.open === sym) state.open = null
     render()
     undoNotice('list', sym)
+    $('notice').querySelector('[data-undo]')?.focus({ preventScroll: true }) // a keyboard user lands on the undo
     await editSaved(m, sym, false)
   }
 
@@ -786,7 +787,8 @@
     // Keyboard focus stays on the row or button it was on (the star's render rebuilt it, and focus fell to the page).
     const a = document.activeElement
     const fk = body.contains(a) && ['sym', 'star', 'del'].find((k) => a.dataset[k])
-    const refocus = () => fk && body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true })
+    const backP = panelFocus()
+    const refocus = () => { if (fk) body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true }); else backP() }
     const rows = body.querySelectorAll('tr.row')
     if (only && state.market !== 'big' && rows.length === syms.length && syms.every((s, i) => rows[i].dataset.sym === s)) {
       if (state.open) only.add(state.open)
@@ -835,6 +837,13 @@
     }
   }
 
+  // Keyboard focus inside the open panel survives its rebuild: the same tile, link or button by position.
+  const PF = 'summary, a, button'
+  function panelFocus() {
+    const k = [...($('rows').querySelector('tr.detail')?.querySelectorAll(PF) ?? [])].indexOf(document.activeElement)
+    return () => k >= 0 && $('rows').querySelector('tr.detail')?.querySelectorAll(PF)[k]?.focus({ preventScroll: true })
+  }
+
   // One stock's panel opened, closed or refreshed in place.
   function redraw(sym) {
     const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
@@ -843,8 +852,10 @@
     tr.setAttribute('aria-expanded', String(state.open === sym))
     if (state.open !== sym) return d?.remove()
     const html = `<td colspan="14">${detail(sym)}</td>`
+    const back = panelFocus()
     if (d) d.innerHTML = html
     else tr.insertAdjacentHTML('afterend', `<tr class="detail">${html}</tr>`)
+    back()
   }
 
   // Analysts' forecast for the first fiscal year not reported yet, against the last reported fiscal
@@ -956,7 +967,7 @@
     if (e?.flag === 'red') chips.push('<span class="chip red" title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
     if (e?.flag === 'green') chips.push('<span class="chip green" title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
     // Calendar days in the viewer's time zone, the date dateOf prints (whole 24 hours said 'tomorrow' on the day itself).
-    const days = Number.isFinite(q?.earnings_release_next_date) ? dayNo(q.earnings_release_next_date * 1000) - dayNo(Date.now()) : null
+    const days = Number.isFinite(q?.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - dayNo(Date.now()) : null
     if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
     if (q && analysts(q).falling) chips.push('<span class="chip amber" title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
     return chips.join(' ') || '<span class="dim">—</span>'
@@ -964,7 +975,9 @@
 
   // The viewer's calendar day (local time zone): a day number, and as YYYY-MM-DD.
   const dayNo = (ms) => { const d = new Date(ms); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 }
-  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(dayNo(sec * 1000) * 864e5).toISOString().slice(0, 10) : '—')
+  // A report's day is its UTC date, the exchange's own (every TradingView report time falls 06:00–23:59
+  // UTC), so a US after-close report stays on its US date for a viewer in Riyadh; today is the viewer's.
+  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
 
   // Study 14's confirmed rank, T3 (PROTOCOL-study14.md §3, §7): −ln(diluted shares of the last fiscal
   // year ÷ the year before), shares = net income ÷ EPS, both years with |EPS| ≥ 0.25 of the same
@@ -1072,11 +1085,14 @@
     }).join('')
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
+    const capped = (f.capped ?? []).filter((m) => f.weights[METHODS.indexOf(m)] > 0) // only methods this profile weights
+    const noQ = !state.scores[sym]?.period && state.scores[sym]?.f0?.year
     const notes = [
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
-      f.capped?.length ? `${f.capped.map((m) => METHOD_NAMES[m]).join('، ')}: المكرر اليوم فوق 100 (ربح أو EBITDA شبه صفر)، فما انحسبت.` : '',
+      capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
+      noQ ? `الأرقام من سنة <span class="n">${noQ}</span> المالية: ما عندنا أرباع محفوظة لهالسهم للحين، وتنجاب بالتحديث الجاي.` : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
@@ -1513,14 +1529,21 @@
     if (row) toggle(row.dataset.sym)
   })
   $('rows').addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.open) { e.target.closest('tr.detail')?.previousElementSibling?.focus(); toggle(state.open); return }
     if (e.target.matches('tr.row') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(e.target.dataset.sym) }
+  })
+  // Escape closes the open panel from anywhere (focus may sit on the page after a rebuild), not while typing.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !state.open || e.target.closest?.('input, select, textarea')) return
+    const sym = state.open
+    toggle(sym)
+    $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)?.focus({ preventScroll: true })
   })
   document.querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-sort]')
     if (!b) return
     const k = b.dataset.sort
     state.sort = state.sort.key === k ? { key: k, dir: -state.sort.dir } : { key: k, dir: k === 'sym' ? 1 : -1 }
+    $('sortSel').value = `${state.sort.key}:${state.sort.dir}` // '' when the menu has no such order
     render()
   })
 

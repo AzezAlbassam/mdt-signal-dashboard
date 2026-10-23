@@ -342,6 +342,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.focus('#rows tr.row[data-sym="NASDAQ:META"]')
   await page.keyboard.press('Enter')
   await page.waitForTimeout(400)
+  // Focus on a tile inside the panel survives a refresh that rebuilds the panel (a script click keeps focus).
+  await page.focus('#rows tr.detail .ctx summary')
+  const sum0 = await page.evaluate(() => document.activeElement.textContent.slice(0, 24))
+  await page.$eval('#refresh', (b) => b.click())
+  await page.waitForTimeout(1500)
+  key.panelFocus = await page.evaluate((t) => !!document.activeElement?.closest('tr.detail') && document.activeElement.textContent.slice(0, 24) === t, sum0)
   const fit = () => page.evaluate(() => {
     const t = document.querySelector('.tbl')
     const r = t.getBoundingClientRect()
@@ -359,7 +365,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.fill('#filter', 'nasdaq:')
   const fColon = (await rows()).length
   await page.fill('#filter', '')
-  const okU = key.starred && key.focus === 'NASDAQ:META' && key.panels === 0 && key.closed === 'NASDAQ:META' && fNas === 0 && fColon === 3
+  const okU = key.starred && key.focus === 'NASDAQ:META' && key.panels === 0 && key.panelFocus && key.closed === 'NASDAQ:META' && fNas === 0 && fColon === 3
     && fits.every((f) => f.out === 0 && f.n > 0 && f.tabs && f.w.split('/')[0] <= Number(f.w.split('/')[1]))
   console.log('UI CHECK:', okU ? 'ok' : 'FAILED', JSON.stringify({ key, fNas, fColon, fits }))
   if (!okU) process.exitCode = 1
@@ -371,14 +377,14 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const nodb = { calls: await page.evaluate(() => window.__calls.length), status: await page.textContent('#status') }
   console.log('NODB CHECK:', nodb.calls > 0 && /آخر تحديث/.test(nodb.status) ? 'ok' : 'FAILED', JSON.stringify(nodb))
   if (!(nodb.calls > 0)) process.exitCode = 1
-  // (5) The earnings chip counts calendar days where the viewer is (Riyadh, 09:00): META reports at 20:00
-  // UTC (23:00 there, 'tomorrow' by whole 24 hours), JPM at 22:30 UTC (tomorrow there, 2026-10-23),
-  // AAPL in 14 days at 12:00 UTC (was 15 by whole days, so no chip).
+  // (5) The earnings chip counts calendar days from the viewer's today (Riyadh, 09:00) to the report's
+  // own (UTC, the exchange's) date: META at 20:00 UTC and JPM at 22:30 UTC (after midnight in Riyadh)
+  // both report today, 2026-10-22; AAPL in 14 days at 12:00 UTC (was 15 by whole days, so no chip).
   await page.clock.setFixedTime(new Date('2026-10-22T06:00:00Z'))
   await page.goto('file://' + file)
   await page.waitForTimeout(2500)
   const chips = await page.$$eval('#rows tr.row', (trs) => Object.fromEntries(trs.map((tr) => [tr.dataset.sym, [...tr.querySelectorAll('.chip')].map((c) => c.textContent + (/2026-10-23/.test(c.title) ? ' 10-23' : '')).join()])))
-  const okC = /تقريره اليوم/.test(chips['NASDAQ:META']) && /تقريره بكرة 10-23/.test(chips['NYSE:JPM']) && /تقريره بعد 14 يوم/.test(chips['NASDAQ:AAPL'])
+  const okC = /تقريره اليوم/.test(chips['NASDAQ:META']) && /تقريره اليوم/.test(chips['NYSE:JPM']) && !/10-23/.test(chips['NYSE:JPM']) && /تقريره بعد 14 يوم/.test(chips['NASDAQ:AAPL'])
   console.log('CLOCK CHECK:', okC ? 'ok' : 'FAILED', JSON.stringify(chips))
   if (!okC) process.exitCode = 1
   console.log('LOGS:', logs)

@@ -216,3 +216,9 @@ test('allShares: every class for a US Up-C (TKO); UROY, a Tadawul "Class A" and 
   assert.ok(Math.abs(allShares(tko) / (33458154194.878193 / 176.775) - 1) < 1e-12) // 189M with the units
   for (const q of [uroy, rabigh, nvo]) assert.equal(allShares(q), quoteShares(q))
 })
+
+test('quoteShares: a Tadawul market value is at the previous close (4292, −7.5% today, no diluted EPS)', () => {
+  const q = { close: 30.68, change: -7.53465943339361, market_cap_basic: 1396453821, total_shares_outstanding: 42087200, net_income_ttm: 96524465, earnings_per_share_diluted_ttm: null, currency: 'SAR' }
+  assert.ok(Math.abs((q.close * quoteShares(q)) / q.net_income_ttm - 13.38) < 0.01)
+  assert.ok(Math.abs(quoteShares({ ...q, currency: 'USD' }) - q.market_cap_basic / q.close) < 1) // elsewhere, today's close
+})
