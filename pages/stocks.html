@@ -369,7 +369,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
 
 <script>
 // ---- engine/fairvalue.js
-const { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch } = (() => {
+const { METHODS, WEIGHTS, HEAVY_SECTORS, TECH_SECTORS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, blendTrimmed, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch } = (() => {
 // Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
 // annual fundamentals and monthly closes, so it can be scored against later returns.
 //
@@ -727,6 +727,25 @@ function blend(values, weights) {
   return sw > 0 ? { fair: sv / sw, coverage: sw } : null
 }
 
+/**
+ * POST-HOC (2026-10-23, PROTOCOL-study16.md D2 option C, adopted; reports/study16.txt): with 3 or more
+ * valued methods, each one above 3× or below ⅓ of their weighted median is dropped before the weighted
+ * mean (closer to the price a year later in 12 of 14 years, Holm p 0.034). Weighted median: in
+ * ascending value order, the first value whose cumulative weight reaches half the total. `coverage`
+ * still counts every valued method; `dropped` lists the methods left out. The studies keep `blend`.
+ */
+function blendTrimmed(values, weights) {
+  const b = blend(values, weights)
+  const valued = METHODS.map((m, i) => [m, values[m], weights[i]]).filter(([, x, w]) => w > 0 && pos(x))
+  if (!b || valued.length < 3) return b && { ...b, dropped: [] }
+  const s = [...valued].sort((a, c) => a[1] - c[1])
+  const half = s.reduce((a, p) => a + p[2], 0) / 2
+  let c = 0
+  const med = s.find((p) => (c += p[2]) >= half - 1e-12)[1]
+  const kept = valued.filter(([, x]) => x <= 3 * med && x >= med / 3)
+  return { fair: kept.reduce((a, [, x, w]) => a + x * w, 0) / kept.reduce((a, [, , w]) => a + w, 0), coverage: b.coverage, dropped: valued.filter((p) => !kept.includes(p)).map(([m]) => m) }
+}
+
 const one = (m) => METHODS.map((k) => (k === m ? 1 : 0))
 const equal = (ms) => METHODS.map((k) => (ms.includes(k) ? 1 : 0))
 
@@ -910,7 +929,7 @@ function histFromBatch(row, period, max = 16) {
   }
 }
 
-return { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch }
+return { METHODS, WEIGHTS, HEAVY_SECTORS, TECH_SECTORS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, blendTrimmed, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch }
 })();
 
 // ---- engine/score.js
@@ -1372,9 +1391,10 @@ function residualMomentum(closes, market, m) {
  * Total assets per stored fiscal year from TradingView's unlabelled newest-first arrays
  * (PROTOCOL-study14.md §1): index i matches year Y when both revenues are > 0 and within 0.1%;
  * the offset o is the most common Y + i over one-to-one matches (none on a tie); year Y takes
- * assets[o − Y] when that index matches Y and the assets are > 0.
+ * assets[o − Y] when that index matches Y and the assets are > 0. `ok` replaces that last test for
+ * columns that can be zero or negative (study 16's cash and operating income: Number.isFinite).
  */
-function assetsByYear(funds, assets, revenue) {
+function assetsByYear(funds, assets, revenue, ok = pos) {
   const out = new Map()
   if (!Array.isArray(assets) || !Array.isArray(revenue)) return out
   const years = funds.filter((f) => pos(f.rev))
@@ -1390,7 +1410,7 @@ function assetsByYear(funds, assets, revenue) {
   const o = best[0][0]
   for (const f of years) {
     const i = o - f.year
-    if (i >= 0 && i < revenue.length && match(i, f) && pos(assets[i])) out.set(f.year, assets[i])
+    if (i >= 0 && i < revenue.length && match(i, f) && ok(assets[i])) out.set(f.year, assets[i])
   }
   return out
 }
@@ -1894,9 +1914,10 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     // POST-HOC (2026-10-22, display only; the blend is the same): PEG outside Lynch's rule gets no weight,
     // like Graham, and coverage is over the weights left (KO showed 85% with every method there).
     const weights = WEIGHTS[fv.profile].map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
-    const b = blend(v, weights)
+    // POST-HOC (2026-10-23, study 16 D2 C): a method above 3× or below ⅓ of the methods' weighted median is left out.
+    const b = blendTrimmed(v, weights)
     const used = METHODS.filter((m, i) => weights[i] > 0 && v[m] > 0).map((m) => v[m])
-    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
+    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, dropped: b?.dropped ?? [], coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
@@ -2609,7 +2630,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       if (!(w > 0) && !(v > 0)) return ''
       if (m === 'dcf' && q.sector === 'Finance' && !(w > 0)) return '' // a bank's FCF moves with deposits (GS: $13,117 against $891)
       if (m === 'pb' && !(v > 0)) return `<div class="off"><span>${METHOD_NAMES[m]}</span><b>ما فيه تاريخ للقيمة الدفترية</b></div>`
-      const used = w > 0 && v > 0
+      const used = w > 0 && v > 0 && !f.dropped?.includes(m)
       return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
     }).join('')
     const pre = f.profile === 'Pre-revenue'
@@ -2621,6 +2642,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
+      f.dropped?.length ? `${f.dropped.map((m) => METHOD_NAMES[m]).join('، ')}: ${f.dropped.length > 1 ? 'تقييماتها' : 'تقييمها'} أكثر من 3 أضعاف وسيط الطرق أو أقل من ثلثه، ${f.dropped.length > 1 ? 'فانشالت' : 'فانشال'} من المتوسط (دراسة 16: كذا صارت القيمة أقرب للسعر بعد سنة في 12 من 14 سنة).` : '',
       noQ ? `الأرقام من سنة <span class="n">${noQ}</span> المالية: ما عندنا أرباع محفوظة لهالسهم للحين، وتنجاب بالتحديث الجاي.` : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
