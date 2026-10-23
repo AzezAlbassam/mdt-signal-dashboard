@@ -58,7 +58,7 @@ fs.writeFileSync(tmp, html)
   await page.click('#rows tr.row')
   await page.waitForTimeout(800)
   const box = await page.$eval('#rows tr.detail .part', (t) => t.innerText.replace(/\s+/g, ' ')).catch((e) => 'ERR ' + e.message)
-  const ok = /1650\.71/.test(cell) && /1855\.28/.test(box) && /P\/S[^:]*: تقييمها أكثر من 3 أضعاف/.test(box) && !logs.length
+  const ok = /1650\.71/.test(cell) && /1855\.28/.test(box) && /P\/S مقارنة بتاريخه \(أقل من ثلثه\): بعيدة عن الوسيط الموزون/.test(box) && !logs.length
   console.log('MU CHECK:', ok ? 'ok' : 'FAILED', cell, logs)
   if (!ok) process.exitCode = 1
   await browser.close()

@@ -166,10 +166,17 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   rule, D6 Lynch's 10%, D7 Graham's weight, D8 CAPM vs 9%, D9 own-history P/B for Heavy. Error = median
   |ln(V ÷ market-adjusted price a year later)|, sign-flip over years, Holm within a decision, IC guard,
   price-closeness control (A moved as close to the price as X). Two review rounds (3 reviewers + skeptics).
-- [ ] Study 16: fetch total_equity_fy_h, cash_n_short_term_invest_fy_h, oper_income_fy_h, total_revenue_fy_h
-  for the 815 stocks (17 batch calls), scripts/study16-collect.js, then node scripts/study16-run.js
-- [ ] Study 16: clean-room cross-check; scripts/study16-today.js (page impact, committed before it runs);
-  apply what is adopted to the page (POST-HOC, citing the study); notes; publish
+- [x] Study 16 data: 17 batch calls, all succeeded, but TradingView serves no history of equity, cash or
+  operating income (null for all 815; 30 other *_h names probed: only total_assets/total_debt and the
+  income/cash-flow lines have history) → D1, D7, D9, D4 not testable per §1 (A stays).
+- [x] Study 16 run (reports/study16.txt): D2 C ADOPTED (drop a method above 3x / below 1/3 of the weighted
+  median, ≥3 methods): 12 of 14 years, Holm 0.034, δ* +0.0024, guard ok, large caps too. D5: keeping
+  methods above 100x is much worse (0.695 vs 0.588) → A. D6 C (no PEG) 12/14 years but δ* < 0 → A.
+  D3, D8: not significant → A. Today's price beats every option (0.178 vs 0.329).
+- [x] Study 16 clean-room x2 (reports/study16-crosscheck.txt): 813 values each, 0 mismatches.
+- [x] Study 16 on the page (POST-HOC, engine blendTrimmed): dropped methods greyed with side and median,
+  result box per decision with the naive baseline, change log 47 with all 55 movers
+  (reports/study16-today.txt; MU 1428.56 → 1650.71, P/S just under 1/3). Published v25.
 
 ## Counts
 (updated as work proceeds)
@@ -384,3 +391,4 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   CLOCK/MU).
 - 2026-10-23 — Study 16 pre-registered (PROTOCOL-study16.md, with scripts/study16-run.js and
   study16-collect.js as they stand at that commit). Numbered 16: 15 is the Flow VWAP study.
+- 2026-10-23 — Study 16 run, cross-checked twice (0 mismatches), D2 C applied to the page, v25.
