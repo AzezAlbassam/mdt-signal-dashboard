@@ -213,6 +213,11 @@
   }
  },
  "NYSE:GE": {
+  "2019": {
+   "shares": 1092529000,
+   "src": "GE FY2019 Form 10-K cover page, https://www.sec.gov/Archives/edgar/data/0000040545/000004054520000009/ge10-k2019.htm (8,740,232,000 voting common shares, $0.06 par, as of January 31, 2020)",
+   "note": "Single class of common stock. The count is before the reverse split. After the 1-for-8 reverse split it is 8,740.232M x 0.125 = 1,092.5M, close to the 2018 (1,065M) and 2020 (1,096M) stored counts, so"
+  },
   "2020": {
    "shares": 1095992750,
    "src": "GE FY2020 10-K cover (dei EntityCommonStockSharesOutstanding) https://www.sec.gov/Archives/edgar/data/40545/000004054521000011/ge-20201231.htm",
@@ -473,6 +478,13 @@
    "shares": 748528000,
    "src": "https://www.sec.gov/Archives/edgar/data/106535/000010653517000007/wy-123116x10k.htm",
    "note": "FY2016 10-K equity note: 748,528 thousand outstanding at Dec 31, 2016. The change from 2015 is +278,887K shares issued in the Plum Creek merger (Feb 19, 2016), plus the preference-share conversion, le"
+  }
+ },
+ "NASDAQ:FISV": {
+  "2019": {
+   "shares": 679098783,
+   "src": "Fiserv FY2019 Form 10-K cover page, https://www.sec.gov/Archives/edgar/data/798354/000079835420000006/fisv1231201910-k.htm (679,098,783 shares of common stock, $0.01 par, outstanding at February 21, 2020)",
+   "note": "Single class of common stock. The count includes the shares issued for First Data, which closed in July 2019. The stored 522M is a full-year weighted average and counts those shares for only part of t"
   }
  }
 }

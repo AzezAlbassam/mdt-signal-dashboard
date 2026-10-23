@@ -94,6 +94,8 @@
   "NYSE:WFC 2019: override (stored 259.5B → 222.4B)",
   "NYSE:WFC 2020: override (stored 235.9B → 124.8B)",
   "NYSE:WY 2015: override (stored 17.0B → 15.3B)",
-  "NYSE:WY 2016: override (stored 48.6B → 22.5B)"
+  "NYSE:WY 2016: override (stored 48.6B → 22.5B)",
+  "NYSE:GE 2019: override (stored 178.7B → 60.7B)",
+  "NASDAQ:FISV 2019: override (stored 60.4B → 78.5B)"
  ]
 }

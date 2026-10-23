@@ -27,7 +27,7 @@
     "cap": 71330000000,
     "close": 91.47,
     "shares": 779850000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "averageannualreturn.com TWX 2017 page (end price/share $91.47, 12/29/2017); corroborated by Investing.com scoreboard mirrors",
     "sharesSource": "Time Warner FY2017 10-K cover / DEI data (SEC EDGAR accession 0001193125-18-053619, Financial_Report.xlsx), approx 779.85M; balance sheet Dec-31-2017 approx 780M",
     "checkSource": "stock-analysis-on.net TWX valuation (779,851,623 shares) + 1stock1 TWX yearly returns (2017 close 91.47) (https://www.1stock1.com/1stock1_376.htm, https://www.stock-analysis-on.net/NYSE/Company/Time-Warner-Inc/Valuation/Ratios)"
@@ -45,7 +45,7 @@
     "cap": 65870000000.00001,
     "close": 46.15,
     "shares": 1427341341,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com (1stock1_348) RAI table, 2016 beginning price = 2015-12-31 close; post-split actual",
     "sharesSource": "Reynolds American FY2015 10-K cover page (SEC EDGAR, accession 0001564590-16-012630)",
     "checkSource": "Digrin RAI price/dividend history (https://www.digrin.com/stocks/detail/RAI/price); Reuters via StreetInsider (https://www.streetinsider.com/Reuters/Reynolds+American+rejects+BATs+%2447+billion+takeover+offer%3A+source/12244668.html)"
@@ -54,7 +54,7 @@
     "cap": 79910000000,
     "close": 56.04,
     "shares": 1425934305,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com (1stock1_348) RAI table, 2016 ending price; actual close 2016-12-30",
     "sharesSource": "Reynolds American FY2016 10-K cover page (SEC EDGAR, accession 0001564590-17-001245)",
     "checkSource": "Digrin RAI monthly price (Dec 2016 real price 56.04) (https://www.digrin.com/stocks/detail/RAI/price) x shares implied by Reuters Nov 2016 ($76B mcap at $53.05 close = ~1.4326B shares) (https://www.streetinsider.com/Reuters/Reynolds+American+rejects+BATs+%2447+billion+takeover+offer%3A+source/12244668.html)"
@@ -72,7 +72,7 @@
     "cap": 58390000000,
     "close": 87.41,
     "shares": 668046000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1 ESRX yearly stock returns (2015 close 87.41) https://www.1stock1.com/1stock1_264.htm",
     "sharesSource": "ESRX FY2015 10-K cover: 668,046,000 shares as of January 31, 2016 https://www.sec.gov/Archives/edgar/data/1532063/000153206316000017/esrx-12312015x10k.htm",
     "checkSource": "Shares: 676.9M at Dec 31, 2015, from the FY2016 10-K balance sheet (https://www.sec.gov/Archives/edgar/data/0001532063/000153206317000004/esrx-12312016x10k.htm). Close: 87.41, from their 1stock1 source; I did not re-check it independently. 87.41 x 676.9M = $59.17B."
@@ -90,7 +90,7 @@
     "cap": 42120000000,
     "close": 74.64,
     "shares": 564347000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 ESRX yearly stock returns (2017 close 74.64) https://www.1stock1.com/1stock1_264.htm",
     "sharesSource": "ESRX FY2017 10-K cover: 564,347,000 shares as of January 31, 2018 https://www.sec.gov/Archives/edgar/data/1532063/000153206318000004/esrx-12312017x10k.htm",
     "checkSource": "Confirms the same source only: the FY2017 10-K cover gives 564,347,000 shares as of Jan 31, 2018 (https://www.sec.gov/Archives/edgar/data/1532063/000153206318000004/esrx-12312017x10k.htm)."
@@ -108,7 +108,7 @@
     "cap": 93610000000,
     "close": 119.76,
     "shares": 781664535,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "Provided by orchestrator (1stock1; HSBC filing confirms); actual close 2015-12-31",
     "sharesSource": "Celgene FY2015 10-K cover page (SEC EDGAR, accession 0001628280-16-011012)",
     "checkSource": "1stock1.com CELG yearly returns (https://1stock1.com/1stock1_158.htm)"
@@ -117,7 +117,7 @@
     "cap": 90050000000,
     "close": 115.75,
     "shares": 777966471,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "Provided by orchestrator (1stock1); actual close 2016-12-30",
     "sharesSource": "Celgene FY2016 10-K cover page (SEC EDGAR, accession 0000816284-17-000003); balance-sheet Dec-31-2016 derived 778.6M is consistent",
     "checkSource": "1stock1.com CELG yearly returns (https://1stock1.com/1stock1_158.htm)"
@@ -126,7 +126,7 @@
     "cap": 78500000000,
     "close": 104.36,
     "shares": 752175608,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "Provided by orchestrator (1stock1); actual close 2017-12-29",
     "sharesSource": "Celgene FY2017 10-K cover page (SEC EDGAR, accession 0000816284-18-000005). Alternative: Dec-31-2017 balance sheet 971.7M issued - 212.4M treasury = 759.3M, giving about $79.24B",
     "checkSource": "Marketscreener CELGENE-8736 valuation table (https://www.marketscreener.com/quote/stock/CELGENE-8736/); close confirmed by 1stock1 and Investing Daily (https://investingdaily.com/44575/our-celgene-stock-prediction-in-2019-buy-or-sell-2)"
@@ -135,7 +135,7 @@
     "cap": 45000000000,
     "close": 64.09,
     "shares": 702164345,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table (1stock1_158.htm)",
     "sharesSource": "Celgene FY2018 10-K cover page (sec.gov/Archives/edgar/data/816284/000081628419000014/a2018123110-k.htm)",
     "checkSource": "Celgene FY2018 10-K cover (sec.gov/Archives/edgar/data/816284/000081628419000014/a2018123110-k.htm): 702,164,345 shares as of 2019-02-21; Wikipedia: market cap over $51.8B in Nov 2018 with shares above $74"
@@ -153,7 +153,7 @@
     "cap": 123340000000,
     "close": 312.5,
     "shares": 394687384,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table (1stock1_878.htm); confirmed by Benzinga",
     "sharesSource": "Allergan plc FY2015 10-K cover page",
     "checkSource": "none found"
@@ -162,7 +162,7 @@
     "cap": 70400000000,
     "close": 210.01,
     "shares": 335224713,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table (1stock1_878.htm)",
     "sharesSource": "Allergan plc FY2016 10-K cover page",
     "checkSource": "none found"
@@ -171,7 +171,7 @@
     "cap": 54030000000,
     "close": 163.58,
     "shares": 330320420,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table (1stock1_878.htm)",
     "sharesSource": "Allergan plc FY2017 10-K cover page",
     "checkSource": "none found"
@@ -180,7 +180,7 @@
     "cap": 44460000000,
     "close": 133.66,
     "shares": 332614474,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table (1stock1_878.htm)",
     "sharesSource": "Allergan plc FY2018 10-K cover page",
     "checkSource": "none found"
@@ -189,7 +189,7 @@
     "cap": 63040000000,
     "close": 191.17,
     "shares": 329765537,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table; confirmed by stock-analysis-on.net (Dec 31 2019 price $191.17)",
     "sharesSource": "Allergan plc FY2019 10-K/A cover (sec.gov 0001193125-20-126525); the Feb-2020 figure of 332,614,474 was rejected as a likely copy of the FY2018 count",
     "checkSource": "none found"
@@ -243,7 +243,7 @@
     "cap": 51720000000,
     "close": 58.96,
     "shares": 877220195,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "averageannualreturn.com/wba/2020.html (2020 start price = 2019 close)",
     "sharesSource": "WBA 10-Q for quarter ended 2020-02-29, cover page (sec.gov/Archives/edgar/data/1618921/000161892120000025/wba-20200229.htm); nearest found, 3 months after Dec-31",
     "checkSource": "companiesmarketcap.com/walgreens-boots-alliance/marketcap/"
@@ -252,7 +252,7 @@
     "cap": 34980000000,
     "close": 39.88,
     "shares": 877220195,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "averageannualreturn.com/wba/2020.html (end price)",
     "sharesSource": "WBA 10-Q for quarter ended 2020-02-29, cover page; nearest found, 9 months before Dec-31. Using the 2021-12-31 count (863,272,027) gives $34.43B",
     "checkSource": "companiesmarketcap.com/walgreens-boots-alliance/marketcap/"
@@ -270,7 +270,7 @@
     "cap": 37800000000,
     "close": 108.12,
     "shares": 349600000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly table (ending price 2015 = 108.12); Fintel 13F implied ~$108.1 as of 2015-12-31",
     "sharesSource": "Aetna FY2015 10-K cover: 349.6M voting common shares outstanding at Jan 31, 2016 (sec.gov/Archives/edgar/data/0001122304/000112230416000201/form10-k.htm)",
     "checkSource": "WebSearch: 1stock1.com/1stock1_879.htm (2015 ending price 108.12; this is the same source they used, so it does not count as independent); marketrealist.com 2015-04 ($35.1B, March 2015, not year-end)"
@@ -279,7 +279,7 @@
     "cap": 43610000000,
     "close": 124.01,
     "shares": 351700000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "Aetna 2018 proxy via Becker's Hospital Review: $124.01 on Dec 30, 2016 (last trading day); Fintel 13F 2016-12-31 value consistent ($1,343,896 / 10,837 sh = $124.01)",
     "sharesSource": "Aetna FY2016 10-K cover: 351.7M voting common shares outstanding at Jan 31, 2017 (sec.gov/Archives/edgar/data/1122304/000112230417000014/form10-k.htm)",
     "checkSource": "WebSearch: 1stock1.com/1stock1_879.htm (2016 ending price 124.01; same source as theirs)"
@@ -288,7 +288,7 @@
     "cap": 58950000000,
     "close": 180.39,
     "shares": 326800000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "Aetna 2018 proxy via Becker's Hospital Review: $180.39 on Dec 29, 2017 (last trading day)",
     "sharesSource": "Aetna FY2017 10-K cover: 326.8M voting common shares outstanding at Jan 31, 2018 (sec.gov/Archives/edgar/data/1122304/000112230418000027/form10-k.htm)",
     "checkSource": "WebSearch: 1stock1.com/1stock1_879.htm (2017 ending price 180.39; same source as theirs); pymnts.com/?p=1558626 (market cap US$59.27B on 2017-11-30)"
@@ -306,7 +306,7 @@
     "cap": 43330000000,
     "close": 98.52,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly table (1stock1_741): 2015 ending price 98.52",
     "sharesSource": "not found within budget (companiesmarketcap cap implies ~439.8M)",
     "checkSource": "WebSearch: companiesmarketcap.com/monsanto/marketcap/ (43.33B, the same source they used); Monsanto FY2015 10-K sec.gov/Archives/edgar/data/0001110783/000111078315000230 (467.9M shares at Aug 31, 2015); FY2016 10-K (437.8M at Aug 31, 2016)"
@@ -315,7 +315,7 @@
     "cap": 46060000000,
     "close": 105.21,
     "shares": 437800000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com yearly table: 2016 ending price 105.21",
     "sharesSource": "Monsanto FY2017 10-K: 437.8M common shares as of Aug 31, 2016 (fiscal year-end, not the Dec cover count; cross-check only)",
     "checkSource": "Shares: Monsanto 10-Ks via WebSearch (437.8M at Aug 31, 2016; 439.6M at Aug 31, 2017). Close: 105.21 (their 1stock1 figure; not re-verified by me). Their cap is companiesmarketcap's 46.06B (confirmed in my search)."
@@ -324,7 +324,7 @@
     "cap": 51400000000,
     "close": 116.78,
     "shares": 439600000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com yearly table: 2017 ending price 116.78",
     "sharesSource": "Monsanto FY2017 10-K: 439.6M common shares as of Aug 31, 2017 (fiscal year-end, not the Dec cover count; cross-check only)",
     "checkSource": "Shares: Monsanto FY2017 10-K sec.gov/Archives/edgar/data/0001110783/000111078317000187 (439.6M at Aug 31, 2017). Close: 116.78 (their 1stock1 figure; not re-verified). Their cap is companiesmarketcap's 51.40B (confirmed)."
@@ -342,7 +342,7 @@
     "cap": 37230000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not found within budget",
     "sharesSource": "not found within budget",
     "checkSource": "WebSearch: companiesmarketcap.com/raytheon/marketcap/ (37.23B; this is evidently their unnamed source, so not independent)"
@@ -351,7 +351,7 @@
     "cap": 41690000000,
     "close": 142,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "digrin.com/stocks/detail/RTN/ dividend table row dated 2016-12-30 (unadjusted 142.00, adjusted 134.17; columns unlabeled)",
     "sharesSource": "not found within budget",
     "checkSource": "WebSearch: companiesmarketcap.com/raytheon/marketcap/ (41.69B, same as theirs)"
@@ -360,7 +360,7 @@
     "cap": 54300000000,
     "close": 187.85,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "digrin.com/stocks/detail/RTN/price monthly table, Dec 2017 close",
     "sharesSource": "not found within budget",
     "checkSource": "WebSearch: companiesmarketcap.com/raytheon/marketcap/ (54.30B, same as theirs); FY2017 10-K found but the snippet was cut off before the share count"
@@ -369,7 +369,7 @@
     "cap": 43240000000,
     "close": 153.35,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com/stocks/detail/RTN/ 2018-12-31 close 153.35 (adjusted 150.36)",
     "sharesSource": "not found within budget",
     "checkSource": "Raytheon FY2018 10-K cover (sec.gov/Archives/edgar/data/1047122/000104712219000007/rtn-12312018x10k.htm): 282,239,000 shares at Feb 11, 2019. Close 153.35 (their digrin figure; not re-verified by me)."
@@ -378,7 +378,7 @@
     "cap": 61170000000,
     "close": 219.74,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "stock-analysis-on.net Raytheon CAPM page: price Dec 31, 2019 = $219.74",
     "sharesSource": "not found within budget",
     "checkSource": "Raytheon FY2019 10-K cover (sec.gov/Archives/edgar/data/0001047122/000104712220000009/rtn-12312019x10k.htm): 278,441,000 shares at Feb 10, 2020. Close 219.74 (their stock-analysis-on.net figure; not re-verified)."
@@ -396,7 +396,7 @@
     "cap": 28304000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "not found within search budget",
     "sharesSource": "not found within search budget",
     "checkSource": "companiesmarketcap.com/activision-blizzard/marketcap/ end-of-year table: 2015 $28.43B"
@@ -405,7 +405,7 @@
     "cap": 26837000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "not found within search budget",
     "sharesSource": "not found within search budget",
     "checkSource": "companiesmarketcap.com/activision-blizzard/marketcap/: back-computed from 2017 $47.87B 'up 78.39%' -> 47.87/1.7839 = 26.83"
@@ -414,7 +414,7 @@
     "cap": 47876000000,
     "close": 63.32,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com/stocks/detail/ATVI/price monthly table, Dec 2017 real (unadjusted) price",
     "sharesSource": "FY2017 10-K cover count not found within search budget",
     "checkSource": "companiesmarketcap.com/activision-blizzard/marketcap/ end-of-year table: 2017 $47.87B"
@@ -423,7 +423,7 @@
     "cap": 35572000000,
     "close": 46.57,
     "shares": 763833873,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com/stocks/detail/ATVI/price monthly table, Dec 2018 real (unadjusted) price",
     "sharesSource": "FY2018 10-K cover (sec.gov/Archives/edgar/data/718877/000104746919000788/a2237840z10-k.htm)",
     "checkSource": "companiesmarketcap.com/activision-blizzard/marketcap/ end-of-year table: 2018 $35.55B"
@@ -432,7 +432,7 @@
     "cap": 45707000000,
     "close": 59.42,
     "shares": 769221524,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com monthly table, Dec 2019 real (unadjusted) price",
     "sharesSource": "FY2019 10-K XBRL cover (sec.gov/Archives/edgar/data/718877/000071887720000003/R1.htm). Exact as-of date not shown in the snippet (Feb 2020).",
     "checkSource": "companiesmarketcap.com/activision-blizzard/marketcap/: back-computed from 2020 $71.75B 'up 57.09%' -> 71.75/1.5709 = 45.67"
@@ -441,7 +441,7 @@
     "cap": 71887000000,
     "close": 92.85,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com monthly table, Dec 2020 real (unadjusted) price",
     "sharesSource": "FY2020 10-K cover count not found within search budget",
     "checkSource": "companiesmarketcap.com end-of-year 2020 $71.75B; stockanalysis.com/stocks/atvi/market-cap/ $71.76B; gurufocus.com/term/mktcap/ATVI Dec 2020 $71,887M"
@@ -450,7 +450,7 @@
     "cap": 51842000000,
     "close": 66.53,
     "shares": 779234888,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com monthly table, Dec 2021 real (unadjusted) price",
     "sharesSource": "FY2021 10-K XBRL cover (sec.gov/Archives/edgar/data/718877/000162828022003992/R1.htm)",
     "checkSource": "companiesmarketcap.com end-of-year 2021 $51.81B; stockanalysis.com $51.82B; gurufocus Dec 2021 $51,830M"
@@ -459,7 +459,7 @@
     "cap": 60036000000,
     "close": 76.55,
     "shares": 784274126,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "digrin.com monthly table, Dec 2022 real (unadjusted) price",
     "sharesSource": "FY2022 10-K XBRL cover (sec.gov/Archives/edgar/data/718877/000162828023004842/R1.htm)",
     "checkSource": "companiesmarketcap.com end-of-year 2022 $59.90B; gurufocus Dec 2022 $60,032M"
@@ -495,7 +495,7 @@
     "cap": 50000000000,
     "close": 25.68,
     "shares": 1947047380,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com (1stock1_176) EMC table, 2015 ending price",
     "sharesSource": "EMC FY2015 10-K cover / XBRL DEI R1.htm (SEC EDGAR, accession 0000790070-16-000229)",
     "checkSource": "stock-analysis-on.net EMC valuation (price 25.93 x 1,947,047,380 shares = 50,487M) (https://www.stock-analysis-on.net/NYSE/Company/EMC-Corp/Valuation/Ratios); 10-K FY2015 Q4 range 23.71-28.77 (https://www.sec.gov/Archives/edgar/data/0000790070/000079007016000229/emc-2015123110xk.htm)"
@@ -513,7 +513,7 @@
     "cap": 35210000000,
     "close": 57.82,
     "shares": 609000000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 BRCM yearly returns table (2015 ending price 57.82, also the 2016 starting price); single source, unverified against Nasdaq/Yahoo",
     "sharesSource": "Broadcom Corp 10-Q for quarter ended 2015-09-30 cover (sec.gov/Archives/edgar/data/1054374/000105437415000124/a20150930-10q.htm): 561M Class A + 48M Class B outstanding as of 2015-09-30",
     "checkSource": "Broadcom Corp DEFM14A (sec.gov/Archives/edgar/data/0001054374/000119312515329911/d74348ddefm14a.htm): 552,968,480 Class A + 48,979,051 Class B = 601,947,531 shares as of 2015-05-26"
@@ -531,7 +531,7 @@
     "cap": 31920000000,
     "close": 232.01,
     "shares": 137588238,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 PCP yearly stock returns (1stock1.com/1stock1_955.htm): 2015 start 240.88 -> end 232.01; consistent with Barchart-implied ~232.09 on 2015-12-29",
     "sharesSource": "PCP 10-Q for quarter ended 2015-09-27 cover (sec.gov/Archives/edgar/data/79958/000007995815000066/pcp2015092710-q.htm): 137,588,238 common shares as of 2015-10-29",
     "checkSource": "AP/Bangor Daily News 2015-08-10 (FactSet market value $26.7B at $193.88 close on 2015-08-07, which works out to about 137.7M shares); deal terms $235 cash per share, closed 2016-01-29 (PCC 8-K ex99-5; financierworldwide '$32bn' equity value)"
@@ -549,7 +549,7 @@
     "cap": 43040000000,
     "close": 190.75,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends PE-ratio page Dec close",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "none found within budget"
@@ -558,7 +558,7 @@
     "cap": 27390000000,
     "close": 122.35,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "none found within budget"
@@ -567,7 +567,7 @@
     "cap": 26710000000,
     "close": 119.59,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "none found within budget"
@@ -576,7 +576,7 @@
     "cap": 21750000000,
     "close": 97.36,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "Alexion FY2018 10-K cover: 223,469,381 shares as of 2019-01-31, x Dec-2018 close 97.36 (1stock1, the same price source they used)"
@@ -585,7 +585,7 @@
     "cap": 23930000000,
     "close": 108.15,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "none found within budget"
@@ -594,7 +594,7 @@
     "cap": 34170000000,
     "close": 156.24,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1 ALXN yearly returns; corroborated by Macrotrends",
     "sharesSource": "not retrieved; direct year-end cap used",
     "checkSource": "Value Investors Club ALXN post, Sep 2020 (mcap $24.76B at $112.97, about 219.2M shares) x Coinranking Dec-31-2020 close 154.64"
@@ -612,7 +612,7 @@
     "cap": 24700000000,
     "close": 48.58,
     "shares": 508438647,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com yearly returns table for APC (ending price 2015), matches digrin.com Dec-2015 close",
     "sharesSource": "Anadarko FY2015 10-K cover page (sec.gov .../000077391016000073/apc201510k-10k.htm)",
     "checkSource": "dataroma.com holding history for APC (Q4-2015 price $48.58) | valueinvestorsclub.com Anadarko write-up, Sep 2014 (506M shares outstanding)"
@@ -621,7 +621,7 @@
     "cap": 38980000000,
     "close": 69.73,
     "shares": 558979551,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for APC (ending price 2016), matches digrin.com Dec-2016 close",
     "sharesSource": "Anadarko FY2016 10-K cover page (sec.gov .../000077391017000020/apc201610k-10k.htm)",
     "checkSource": "dataroma.com holding history for APC (Q4-2016 price $69.73)"
@@ -630,7 +630,7 @@
     "cap": 28480000000,
     "close": 53.64,
     "shares": 531000000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for APC (ending price 2017), matches digrin.com Dec-2017 close",
     "sharesSource": "Anadarko FY2017 10-K equity rollforward (574M issued less 43M treasury) and FY2018 10-K table 'Shares of common stock outstanding at December 31' = 531M (rounded to millions)",
     "checkSource": "Anadarko FY2017 10-K cover: 532,487,194 shares as of 2018-02-08 (sec.gov/Archives/edgar/data/773910, banktrack.org copy of the 2018-02-15 10-K)"
@@ -639,7 +639,7 @@
     "cap": 21480000000,
     "close": 43.84,
     "shares": 490000000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for APC (ending price 2018), matches digrin.com Dec-2018 close",
     "sharesSource": "Anadarko FY2018 10-K equity footnote 'Shares of common stock outstanding at December 31' = 490M (rounded to millions; sec.gov .../000077391019000009/apc201810k-10k.htm)",
     "checkSource": "Anadarko FY2018 10-K cover: 499,575,992 shares as of 2019-02-01 (sec.gov/Archives/edgar/data/773910/000077391019000009/apc201810k-10k.htm)"
@@ -657,7 +657,7 @@
     "cap": 29170000000,
     "close": 102.4,
     "shares": 284836117,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for PX (ending price 2015)",
     "sharesSource": "Praxair FY2015 10-K cover page (sec.gov .../000088490516000108/px201510-k.htm)",
     "checkSource": "Praxair FY2015 10-K selected financial data: shares outstanding 284,879 thousand at year-end 2015"
@@ -666,7 +666,7 @@
     "cap": 33439999999.999996,
     "close": 117.19,
     "shares": 285353938,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for PX (ending price 2016)",
     "sharesSource": "Linde plc S-4 (sec.gov .../000119312517193608/d283276ds4.htm), Praxair shares outstanding as of March 31, 2017; FY2016 10-K cover count not retrieved",
     "checkSource": "Praxair FY2017 10-K balance sheet: 284,900,776 shares outstanding at 2016-12-31"
@@ -675,7 +675,7 @@
     "cap": 44250000000,
     "close": 154.68,
     "shares": 286065119,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "1stock1.com yearly returns table for PX (ending price 2017)",
     "sharesSource": "Praxair DEFM14A merger proxy record date count (sec.gov .../000119312517259883/d405553ddefm14a.htm); FY2017 10-K cover count (Jan 2018) not retrieved",
     "checkSource": "Praxair 10-K/A filed 2018-04-30 (getfilings.com): NYSE closing price $154.68 at year-end 2017 | Praxair FY2017 10-K cover: 287,136,596 shares at 2018-01-31 (balance sheet 286,776,991 at 2017-12-31)"
@@ -693,7 +693,7 @@
     "cap": 31460000000,
     "close": 33.26,
     "shares": 945854000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "averageannualreturn.com/aaba/2015.html (YHOO end price 2015), consistent with 1stock1 start price 2016",
     "sharesSource": "Yahoo FY2016 10-K balance sheet, shares outstanding Dec 31, 2015 = 945,854 thousand (sec.gov .../000119312517065791/d293630d10k.htm)",
     "checkSource": "none found within budget"
@@ -702,7 +702,7 @@
     "cap": 36940000000,
     "close": 38.67,
     "shares": 955308000,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "averageannualreturn.com/aaba/2016.html (YHOO end price 2016)",
     "sharesSource": "Yahoo FY2016 10-K balance sheet, shares outstanding Dec 31, 2016 = 955,308 thousand; cover 956,487,217 at 2017-02-10",
     "checkSource": "none found within budget"
@@ -711,7 +711,7 @@
     "cap": 57620000000,
     "close": 69.85,
     "shares": 824921315,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for AABA (ending price 2017); Motley Fool reports +80.6% for 2017",
     "sharesSource": "Altaba 8-K exhibit (Mar 2018) and N-CSR shares rollforward, shares outstanding at Dec 31, 2017 (sec.gov .../000119312518126807/d469815dex991.htm)",
     "checkSource": "Altaba SC TO-I (sec.gov, 2018): 800,508,196 shares at 2018-06-06 | Altaba FY2018 N-CSR: about 62.5M shares bought back in 2018, plus the 195M-share tender in Aug-2018"
@@ -720,7 +720,7 @@
     "cap": 32880000000.000004,
     "close": 57.94,
     "shares": 567464270,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "1stock1.com yearly returns table for AABA (ending price 2018)",
     "sharesSource": "Altaba FY2018 N-CSR shares rollforward, shares outstanding at Dec 31, 2018 (sec.gov .../000119312519052960/d689719dncsr.htm)",
     "checkSource": "Altaba FY2018 N-CSR (sec.gov/Archives/edgar/data/1011006/000119312519052960/d689719dncsr.htm), plus the tender-offer filings"
@@ -738,7 +738,7 @@
     "cap": 57500000000,
     "close": null,
     "shares": 871681000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "not found (search did not return an unadjusted 2015-12-31 close)",
     "sharesSource": "FY2015 10-K cover: 871,681,000 shares (excludes 87,041,000 treasury) - https://www.sec.gov/Archives/edgar/data/30554/000003055416000106/dd-12312015x10k.htm",
     "checkSource": "DuPont FY2015 and FY2016 10-K, selected financial data, closing stock price 2015 = $66.60 (sec.gov/Archives/edgar/data/30554/000003055416000106/dd-12312015x10k.htm)"
@@ -747,7 +747,7 @@
     "cap": 64160000000,
     "close": null,
     "shares": 864574000,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "not found (search did not return an unadjusted 2016-12-30 close)",
     "sharesSource": "FY2016 10-K cover: 864,574,000 shares (excludes 87,041,000 treasury) - https://www.sec.gov/Archives/edgar/data/0000030554/000003055417000004/dd-12312016x10k.htm",
     "checkSource": "DuPont FY2016 10-K, selected financial data, closing stock price 2016 = $73.40 (sec.gov/Archives/edgar/data/30554/000003055417000004/dd-12312016x10k.htm)"
@@ -765,7 +765,7 @@
     "cap": 165870000000,
     "close": 71.22,
     "shares": 2329023478,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "digrin.com DWDP price history, December 2017 value (unadjusted, pre-2019 basis)",
     "sharesSource": "DowDuPont FY2017 10-K cover, total common stock outstanding (accession 0001666700-18-000009)",
     "checkSource": "partial only: fool.com/investing/2019/01/11/why-dowdupont-stock-fell-almost-25-in-2018.aspx (S&P Global data: DWDP -24.9% in 2018). No independent Dec-29-2017 close or year-end market cap found."
@@ -774,7 +774,7 @@
     "cap": 120580000000,
     "close": 53.48,
     "shares": 2254762058,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "digrin.com DWDP price history, December 2018 value (unadjusted, pre-2019 basis)",
     "sharesSource": "DowDuPont FY2018 10-K cover, total common stock outstanding (accession 0001666700-19-000006)",
     "checkSource": "partial only: same Fool/S&P Global -24.9% 2018 figure; Statista (citing Harris Williams) DowDuPont market cap $126.83B as of January 2019 (data point dated 2019-01-11), not year-end"
@@ -792,7 +792,7 @@
     "cap": 14370000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "n/a - used direct year-end market cap",
     "sharesSource": "n/a - used direct year-end market cap",
     "checkSource": "Close $3.62 from 1stock1.com yearly returns (1stock1_837.htm, opening price of the 2016 row). Shares 3,974,592,358 from Sprint 10-K cover (May 2016)"
@@ -801,7 +801,7 @@
     "cap": 33520000000.000004,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "n/a - used direct year-end market cap",
     "sharesSource": "n/a - used direct year-end market cap",
     "checkSource": "Close $8.42 from 1stock1.com yearly returns. Shares 3,974,592,358 (May 2016 10-K cover)"
@@ -819,7 +819,7 @@
     "cap": 23730000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "n/a - used direct year-end market cap",
     "sharesSource": "n/a - used direct year-end market cap",
     "checkSource": "Close $5.82 from 1stock1.com yearly returns. Shares about 4.1B as of 2019-03-31 (Sprint FY2018 10-K)"
@@ -828,7 +828,7 @@
     "cap": 21250000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, confirmed by the check",
     "priceSource": "n/a - used direct year-end market cap",
     "sharesSource": "n/a - used direct year-end market cap",
     "checkSource": "Close $5.21 from 1stock1.com yearly returns. Shares about 4.1B (2019-03-31, Sprint FY2018 10-K)"
@@ -846,7 +846,7 @@
     "cap": 52148000000,
     "close": 27.16,
     "shares": 1917967923,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "FOXA 27.16 (1stock1 yearly table, unadjusted); FOX Class B 27.23 (tradersunion.com FOX price history)",
     "sharesSource": "21CF 10-Q for qtr ended 2015-12-31, cover: 1,119,446,970 Class A + 798,520,953 Class B",
     "checkSource": "No independent year-end cap or close found. Checked: tradersunion.com FOX price-history page; 1stock1.com/1stock1_819.htm; Wikipedia 21st Century Fox"
@@ -855,7 +855,7 @@
     "cap": 51267000000,
     "close": 28.04,
     "shares": 1850834737,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "FOXA 28.04 (1stock1 yearly table, unadjusted); FOX Class B 27.25 (tradersunion.com)",
     "sharesSource": "21CF 10-Q for qtr ended 2016-12-31, cover: 1,052,313,784 Class A + 798,520,953 Class B",
     "checkSource": "No independent year-end cap or close found (same searches as 2015)"
@@ -864,7 +864,7 @@
     "cap": 63640000000,
     "close": 34.53,
     "shares": 1852529790,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "FOXA 34.53 (1stock1 yearly table, unadjusted); FOX Class B 34.12 (tradersunion.com)",
     "sharesSource": "21CF 10-Q for qtr ended 2017-12-31, cover and XBRL dei: 1,054,008,837 Class A + 798,520,953 Class B",
     "checkSource": "No independent year-end cap. Context found: Fortune 2017-12-13 (Disney deal value); exchange4media/Reuters (~75bn deal valuation, not a market cap)"
@@ -873,7 +873,7 @@
     "cap": 89084000000,
     "close": 48.12,
     "shares": 1856929453,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "FOXA 48.12 (1stock1 yearly table, unadjusted); FOX Class B 47.78 (tradersunion.com)",
     "sharesSource": "21CF 10-Q for qtr ended 2018-12-31, cover: 1,058,408,500 Class A + 798,520,953 Class B",
     "checkSource": "No independent year-end cap. Indirect support: suredividend.com FOXA notes of 2018-05-25 (~72bn at ~$39) and 2018-08-09 (~83bn)"
@@ -891,7 +891,7 @@
     "cap": 23860000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap.com/vmware/marketcap (end-of-year table) shows 23.86bn, identical to theirs, so it is very likely their source and not independent"
@@ -900,7 +900,7 @@
     "cap": 32400000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap end-of-year table: 32.40bn (identical, not independent)"
@@ -909,7 +909,7 @@
     "cap": 50520000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap end-of-year table: 50.52bn (identical, not independent)"
@@ -918,7 +918,7 @@
     "cap": 56200000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap: 56.20bn (identical). Independent close: digrin.com VMW price history, 2018-12-31 close 137.13 (the ex-date of the $26.81 special dividend)"
@@ -927,7 +927,7 @@
     "cap": 63310000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap: 63.31bn (identical). Independent Dec-2019 price: digrin monthly table, 151.79 (real price)"
@@ -936,7 +936,7 @@
     "cap": 58870000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap: 58.87bn (identical). Independent Dec-2020 price: digrin monthly table, 140.26 (real price)"
@@ -945,7 +945,7 @@
     "cap": 48710000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap: 48.71bn (identical, not independent)"
@@ -954,7 +954,7 @@
     "cap": 52220000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not fetched; direct cap used",
     "sharesSource": "not fetched; direct cap used",
     "checkSource": "companiesmarketcap: 52.22bn (identical). Independent Dec-2022 price: digrin monthly table, 122.76. Shares in issue 431,789,488 (stockopedia/marketbeat, 2023-era figure)"
@@ -972,7 +972,7 @@
     "cap": 29500000000,
     "close": null,
     "shares": null,
-    "how": "research, checked",
+    "how": "research, check found no independent number",
     "priceSource": "not found in 3 searches; direct cap used",
     "sharesSource": "FY2015 10-K cover counts not visible in search snippets; direct cap used",
     "checkSource": "No year-end close or 10-K cover count found. Indirect: Benzinga (Dec-1-2015 high 249.82; Jan-20-2016 low 184.07); fin24 / CFO.com (Feb-2016: shares fell 43.6% to 108.38, wiping out ~$11bn)"

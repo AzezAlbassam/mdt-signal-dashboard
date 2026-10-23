@@ -198,8 +198,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   node scripts/caps-build.js; node scripts/study17-run.js; clean-room check; page.
   2026-10-23 state: addenda 2 (top 100), 3 (spin-off price basis) and 4 (basis segments/leftovers, V4
   after basis) committed before results. Journals (subagents/workflows/<id>/journal.jsonl of this
-  session): import = wf_09e37179-bef wf_884b0a24-c67 wf_98aff467-db4 (+ wf_0bc58a29-bb6: GE/FISV 2019
-  counts, DOW-old); basis = wf_5adfb09d-050 wf_3fb51fb8-792 (+ wf_0bc58a29-bb6 for V2) →
+  session): import = RAW=1 node scripts/caps-build.js, then caps-import.js wf_07b17b7c-a36 wf_805a89fd-428
+  wf_0bc58a29-bb6 (GE/FISV 2019 counts; DOW-old: no close found, still missing); basis = wf_5adfb09d-050 wf_3fb51fb8-792 (+ wf_0bc58a29-bb6 for V2) →
   node scripts/caps-basis.js <journals> → data/caps/basis.json, basis-log.json, v4.json, v2.json.
   The 58 S&P tickers still without TradingView data all peaked at ≤ $39.6B (map.json), below the 100th
   value of every year (smallest $41B, 2015), so they cannot enter the top 100: no further fetch needed.

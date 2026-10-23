@@ -3,7 +3,8 @@
 //                               the independent check (PROTOCOL-study17.md §1, V3)
 //   data/caps/overrides.json  — addendum 1 resolutions of flagged company-years
 // The numbers here are the study's only hand-copied ones (by the agents, from cited sources).
-//   node scripts/caps-import.js <journal.jsonl> [...]
+//   RAW=1 node scripts/caps-build.js && node scripts/caps-import.js <journal.jsonl> [...]
+// (overrides are decided against the raw build: a build that already applies them would drop them)
 import fs from 'node:fs'
 
 const files = process.argv.slice(2)

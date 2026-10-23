@@ -28,8 +28,10 @@ const SP = Object.fromEntries(Object.entries(spDates).map(([y, d]) => [y, spAt(d
 
 const tickers = readJson('data/caps/tickers.json', {}) // S&P ticker → [{ from?, until?, symbol? | dead? }]
 const dead = readJson('data/caps/dead.json', {}) // id → { name, sector, lastYear, yearEnds: { Y: { close, shares, cap, src } } }
-const overrides = readJson('data/caps/overrides.json', {}) // symbol → { Y: { shares?, close?, src } }
-const basis = readJson('data/caps/basis.json', {}) // addendum 3: symbol → { Y: { s, src } }, TradingView close ÷ actual close
+// RAW=1: the stored net income ÷ EPS values without overrides and basis, for scripts/caps-import.js to compare against
+const RAW = !!process.env.RAW
+const overrides = RAW ? {} : readJson('data/caps/overrides.json', {}) // symbol → { Y: { shares?, close?, src } }
+const basis = RAW ? {} : readJson('data/caps/basis.json', {}) // addendum 3: symbol → { Y: { s, src } }, TradingView close ÷ actual close
 const snap = readJson('data/caps/screener-2026-10-23.json').data.rows
 const quotes = { ...readJson('data/caps/quotes.json', {}) }
 for (const r of snap) quotes[r.symbol] = { ...(quotes[r.symbol] ?? {}), ...r }
@@ -174,6 +176,10 @@ const missingCountry = companies.filter((c) => !c.country && !c.dead && Object.k
 // addendum 4 rule 4: V4, independent year-end values for the top 100 of 2015 and 2021, after the basis
 const V4MAP = { BRK: 'NYSE:BRK.A', FB: 'NASDAQ:META', PCLN: 'NASDAQ:BKNG', 'PCLN/BKNG': 'NASDAQ:BKNG', ANTM: 'NYSE:ELV', UTX: 'NYSE:RTX', BK: 'NYSE:BNY' }
 const V4OLD = { DD: 'dead:DD-old', FOXA: 'dead:FOXA-old', DOW: 'dead:DOW-old' } // the 2015 holders of these tickers
+const V4WHY = { // causes of the gaps above 15% (written after reading the lines; addendum 4 rule 4)
+  BAC: 'net income ÷ diluted EPS: preferred dividends and an average count (rule 5, kept)', GS: 'as BAC', PSA: 'as BAC (large preferreds)',
+  DHR: 'Fortive spin-off segment 2015 unmeasured; rule 3 used the later segment (partial correction)',
+}
 const v4 = []
 for (const [y, { rows, missing }] of Object.entries(readJson('data/caps/v4.json', {}))) {
   const ranked = companies.filter((c) => c.us[y] && c.cap[y] > 0).sort((a, b) => b.cap[y] - a.cap[y])
@@ -185,23 +191,33 @@ for (const [y, { rows, missing }] of Object.entries(readJson('data/caps/v4.json'
   const all = [...rows, ...missing].filter((x) => x.yearEndMcapBn > 0).map((x) => ({ x, c: find(x.ticker) }))
   const m = all.filter((a) => a.c?.cap[y] > 0).map((a) => ({ ...a, gap: a.c.cap[y] / 1e9 / a.x.yearEndMcapBn - 1, r: rank.get(a.c.key) }))
   const gaps = m.map((a) => Math.abs(a.gap)).sort((a, b) => a - b)
-  const fmt = (a) => `${a.x.ticker} ${a.gap > 0 ? '+' : ''}${Math.round(a.gap * 100)}% (ours $${(a.c.cap[y] / 1e9).toFixed(1)}B, V4 $${a.x.yearEndMcapBn}B, rank ${a.r ?? '—'})`
+  const fmt = (a) => `${a.x.ticker} ${a.gap > 0 ? '+' : ''}${Math.round(a.gap * 100)}% (ours $${(a.c.cap[y] / 1e9).toFixed(1)}B, V4 $${a.x.yearEndMcapBn}B, rank ${a.r ?? '—'}${Math.abs(a.gap) > 0.15 && V4WHY[a.x.ticker] ? `; ${V4WHY[a.x.ticker]}` : ''})`
   v4.push(`${y}: ${m.length} of ${rows.length + missing.length} matched; median |gap| ${(gaps[Math.floor(gaps.length / 2)] * 100).toFixed(1)}%; above 15%: ${m.filter((a) => Math.abs(a.gap) > 0.15).map(fmt).join(', ') || 'none'}`)
   const cut = ranked[99]?.cap[y] / 1e9
-  v4.push(`${y}: in V4's top 100 but below our 100th ($${cut?.toFixed(1)}B): ${m.filter((a) => !(a.r <= 100)).map(fmt).join(', ') || 'none'}; no value or no match: ${[...rows, ...missing].filter((x) => !m.some((a) => a.x === x)).map((x) => x.ticker).join(', ') || 'none'}`)
+  v4.push(`${y}: in V4's top 100 but below our 100th ($${cut?.toFixed(1)}B): ${m.filter((a) => !(a.r <= 100)).map(fmt).join(', ') || 'none'}; no value or no match: ${[...rows, ...missing].filter((x) => !m.some((a) => a.x === x)).map((x) => `${x.ticker}${x.yearEndMcapBn > 0 ? ` ($${x.yearEndMcapBn}B, not in our file)` : ' (V4 found no value)'}`).join(', ') || 'none'}`)
 }
 
 // V2 (§5): each year's top 10 against a published year-end top-10 list; differences listed for the report
+const V2WHY = { // why each difference arises (written after reading the lines)
+  2015: "the list's GE value ($174.7B) is 0.598 × V4's $292.2B, i.e. on TradingView's spin-adjusted prices (addendum 3); on actual prices GE is in the top 10",
+  2016: "GE as in 2015 (the list's value is spin-adjusted)",
+  2020: 'JPMorgan vs Walmart at #10: net income ÷ diluted EPS puts JPMorgan ~7% high (preferred dividends and an average count; V4: JPMorgan +9% in 2015, +6% in 2021)',
+  2022: 'Tesla vs JPMorgan at #10: the diluted count puts Tesla ~10% high (options and convertibles; V4 2021: Tesla +12.5%) and the two are within 10% of each other',
+}
 const v2 = []
 for (const [y, { top, source }] of Object.entries(readJson('data/caps/v2.json', {}))) {
   const ours = companies.filter((c) => c.us[y] && c.cap[y] > 0).sort((a, b) => b.cap[y] - a.cap[y])
-  const find = (t) => (t ? companies.find((c) => c.key === V4MAP[t]) ?? companies.find((c) => [c.key, ...c.aliases].some((k) => k.split(':').pop() === t.replace('-', '.'))) : null)
-  const theirs = top.slice(0, 10).map((x) => ({ x, c: find(x.ticker) }))
+  // tickers come as "GOOGL/GOOG", "BRK.A/BRK.B", "FB (now META)": try each part
+  const find1 = (t) => companies.find((c) => c.key === V4MAP[t]) ?? companies.find((c) => [c.key, ...c.aliases].some((k) => k.split(':').pop() === t.replace('-', '.')))
+  const find = (t) => String(t ?? '').replace(/[()]/g, ' ').split(/[\s/,]+/).filter((p) => /^[A-Z][A-Z.\-]*$/.test(p)).map(find1).find(Boolean) ?? null
+  const n = Math.min(10, top.length)
+  const theirs = top.slice(0, n).map((x) => ({ x, c: find(x.ticker) }))
   const at = (c) => ours.findIndex((o) => o.key === c?.key) + 1
-  const out = theirs.filter((t) => !(at(t.c) >= 1 && at(t.c) <= 10)).map((t) => `${t.x.company} (theirs #${t.x.rank}, ours #${at(t.c) || '—'})`)
-  const extra = ours.slice(0, 10).filter((o) => !theirs.some((t) => t.c?.key === o.key)).map((o) => `${o.name} (ours #${at(o)}, $${(o.cap[y] / 1e9).toFixed(0)}B)`)
-  v2.push(`${y}: ${10 - extra.length} of 10 in both (${String(source).slice(0, 80)}); theirs only: ${out.join(', ') || 'none'}; ours only: ${extra.join(', ') || 'none'}`)
+  const out = theirs.filter((t) => !(at(t.c) >= 1 && at(t.c) <= n)).map((t) => `${t.x.company} (theirs #${t.x.rank}, ours #${at(t.c) || '—'})`)
+  const extra = ours.slice(0, n).filter((o) => !theirs.some((t) => t.c?.key === o.key)).map((o) => `${o.name} (ours #${at(o)}, $${(o.cap[y] / 1e9).toFixed(0)}B)`)
+  v2.push(`${y}: ${n - extra.length} of ${n} in both (${String(source).slice(0, 80)}); theirs only: ${out.join(', ') || 'none'}; ours only: ${extra.join(', ') || 'none'}${V2WHY[y] ? ` — ${V2WHY[y]}` : ''}`)
 }
+for (const y of YEARS) if (!readJson('data/caps/v2.json', {})[y]) v2.push(`${y}: no published year-end top-10 list found within the search budget (unchecked)`)
 // V3 (§5): every dead company's values, how each was settled, and the disagreements
 const hows = Object.values(dead).flatMap((d) => Object.values(d.yearEnds ?? {}).map((v) => v.how?.replace(/ \(.*/, '') ?? '?'))
 const v3 = [`${Object.keys(dead).length} dead companies, ${hows.length} year-ends: ${Object.entries(hows.reduce((m, h) => ({ ...m, [h]: (m[h] ?? 0) + 1 }), {})).map(([h, n]) => `${h} ${n}`).join(', ')}`,
