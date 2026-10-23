@@ -49,7 +49,7 @@ export function normalQuantile(p) {
 }
 
 /** Complementary error function — Numerical Recipes' erfcc, ~1.2e-7 relative. */
-function erfc(x) {
+export function erfc(x) {
   const z = Math.abs(x)
   const t = 2 / (2 + z)
   const ty = 4 * t - 2
