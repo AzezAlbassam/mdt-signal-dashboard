@@ -1,0 +1,6388 @@
+{
+ "HKEX:2577": {
+  "Perf.5Y": 2.06451612903226,
+  "Perf.Y": -53.50477590007347,
+  "Perf.YTD": -59.64285714285715,
+  "close": 31.64,
+  "description": "InnoScience (Suzhou) Technology Holding Co Ltd Class H",
+  "industry": "Semiconductors",
+  "market_cap_basic": 28203401516,
+  "name": "2577",
+  "price_earnings_ttm": null,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 17.06873181130479,
+  "price_52_week_high": 89.8,
+  "price_52_week_low": 29.14,
+  "total_revenue_ttm": 1672760461.57303,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": 55.66700816443285
+ },
+ "MIL:PRY": {
+  "Perf.5Y": 205.15527002623386,
+  "Perf.Y": 13.228854574786823,
+  "Perf.YTD": 13.464203233256365,
+  "close": 98.26,
+  "description": "Prysmian S.p.A.",
+  "industry": "Electrical Products",
+  "market_cap_basic": 29953559044,
+  "name": "PRY",
+  "price_earnings_ttm": 20.323908412104167,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 1.6162259968919237,
+  "price_52_week_high": 157.25,
+  "price_52_week_low": 79.16,
+  "total_revenue_ttm": 21235000000,
+  "total_revenue_yoy_growth_fq": 23.305345074749127,
+  "total_revenue_yoy_growth_ttm": 12.586819362706114
+ },
+ "NASDAQ:AAON": {
+  "Perf.5Y": 49.16433095025147,
+  "Perf.Y": -31.151107594936708,
+  "Perf.YTD": -10.525639377971979,
+  "close": 69.62,
+  "description": "AAON, Inc.",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 5740422907.999999,
+  "name": "AAON",
+  "price_earnings_ttm": 36.41784798870116,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 3.2129745063955237,
+  "price_52_week_high": 150.4599,
+  "price_52_week_low": 68.41,
+  "total_revenue_ttm": 1932367000,
+  "total_revenue_yoy_growth_fq": 101.23312160787246,
+  "total_revenue_yoy_growth_ttm": 53.534150490508836
+ },
+ "NASDAQ:AEIS": {
+  "Perf.5Y": 152.70033827131687,
+  "Perf.Y": 10.870010235414524,
+  "Perf.YTD": 0.4590772084395922,
+  "close": 216.64,
+  "description": "Advanced Energy Industries, Inc.",
+  "industry": "Electronic Production Equipment",
+  "market_cap_basic": 8676527675,
+  "name": "AEIS",
+  "price_earnings_ttm": 40.39605437356654,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.247142837864364,
+  "price_52_week_high": 397.44,
+  "price_52_week_low": 187.7101,
+  "total_revenue_ttm": 2037800000,
+  "total_revenue_yoy_growth_fq": 30.033975084937715,
+  "total_revenue_yoy_growth_ttm": 24.58122417039591
+ },
+ "NASDAQ:ALGM": {
+  "Perf.5Y": -5.5158020274299275,
+  "Perf.Y": 5.387429331559698,
+  "Perf.YTD": 17.370370370370374,
+  "close": 31.69,
+  "description": "Allegro MicroSystems, Inc.",
+  "industry": "Semiconductors",
+  "market_cap_basic": 5907081186,
+  "name": "ALGM",
+  "price_earnings_ttm": 421.9707057256991,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 6.387656206458379,
+  "price_52_week_high": 71.77,
+  "price_52_week_low": 22.4101,
+  "total_revenue_ttm": 945934000,
+  "total_revenue_yoy_growth_fq": 27.451635898822545,
+  "total_revenue_yoy_growth_ttm": 24.22113429950676
+ },
+ "NASDAQ:AMSC": {
+  "Perf.5Y": 46.42857142857145,
+  "Perf.Y": -57.48767635560087,
+  "Perf.YTD": -15.932773109243692,
+  "close": 25.01,
+  "description": "American Superconductor Corporation",
+  "industry": "Electrical Products",
+  "market_cap_basic": 1211538090,
+  "name": "AMSC",
+  "price_earnings_ttm": 8.261760042283298,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 3.3282734129086546,
+  "price_52_week_high": 64.72,
+  "price_52_week_low": 24.08,
+  "total_revenue_ttm": 320870000,
+  "total_revenue_yoy_growth_fq": 30.010503330661432,
+  "total_revenue_yoy_growth_ttm": 25.8871578385716
+ },
+ "NASDAQ:AOSL": {
+  "Perf.5Y": -31.616068690585703,
+  "Perf.Y": -26.13448161642928,
+  "Perf.YTD": 9.367336929867582,
+  "close": 22.3,
+  "description": "Alpha and Omega Semiconductor Limited",
+  "industry": "Semiconductors",
+  "market_cap_basic": 675803057,
+  "name": "AOSL",
+  "price_earnings_ttm": null,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 0.7693906075316367,
+  "price_52_week_high": 54.34,
+  "price_52_week_low": 17.01,
+  "total_revenue_ttm": 678927000.000479,
+  "total_revenue_yoy_growth_fq": -3.4637700867777377,
+  "total_revenue_yoy_growth_ttm": -2.475716858980035
+ },
+ "NASDAQ:ARRY": {
+  "Perf.5Y": -82.63157894736842,
+  "Perf.Y": -63.85542168674699,
+  "Perf.YTD": -64.8562300319489,
+  "close": 3.3,
+  "description": "Array Technologies Inc",
+  "industry": "Electrical Products",
+  "market_cap_basic": 508225371,
+  "name": "ARRY",
+  "price_earnings_ttm": null,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:IESC": {
+  "Perf.5Y": 805.8268362741074,
+  "Perf.Y": 11.48989898989899,
+  "Perf.YTD": 11.052419760539289,
+  "close": 220.75,
+  "description": "IES Holdings, Inc.",
+  "industry": "Engineering & Construction",
+  "market_cap_basic": 8891740679,
+  "name": "IESC",
+  "price_earnings_ttm": 19.617514018857694,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.1542023239336614,
+  "price_52_week_high": 408.255,
+  "price_52_week_low": 170.0658,
+  "total_revenue_ttm": 3985742000,
+  "total_revenue_yoy_growth_fq": 39.604092756566814,
+  "total_revenue_yoy_growth_ttm": 22.659690265772685
+ },
+ "NASDAQ:ITRI": {
+  "Perf.5Y": 13.343617431546464,
+  "Perf.Y": -34.043985637342914,
+  "Perf.YTD": -5.730781567411525,
+  "close": 88.17,
+  "description": "Itron, Inc.",
+  "industry": "Electronic Equipment/Instruments",
+  "market_cap_basic": 3860678074,
+  "name": "ITRI",
+  "price_earnings_ttm": 14.740203290089609,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.057477000789348,
+  "price_52_week_high": 142,
+  "price_52_week_low": 77.77,
+  "total_revenue_ttm": 2303166000,
+  "total_revenue_yoy_growth_fq": -7.228381520895377,
+  "total_revenue_yoy_growth_ttm": -5.694449107744618
+ },
+ "NASDAQ:LMB": {
+  "Perf.5Y": 575.4261363636364,
+  "Perf.Y": -49.815303430079155,
+  "Perf.YTD": -39.58068614993647,
+  "close": 47.55,
+  "description": "Limbach Holdings, Inc.",
+  "industry": "Engineering & Construction",
+  "market_cap_basic": 567033433,
+  "name": "LMB",
+  "price_earnings_ttm": 19.009354761333654,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 0.8906862575335894,
+  "price_52_week_high": 114.95,
+  "price_52_week_low": 40.74,
+  "total_revenue_ttm": 683771000,
+  "total_revenue_yoy_growth_fq": 21.94585246166717,
+  "total_revenue_yoy_growth_ttm": 23.66567254878201
+ },
+ "NASDAQ:MPWR": {
+  "Perf.5Y": 124.83107782932603,
+  "Perf.Y": 15.23161166198018,
+  "Perf.YTD": 25.908118218422715,
+  "close": 1167.93,
+  "description": "Monolithic Power Systems, Inc.",
+  "industry": "Semiconductors",
+  "market_cap_basic": 57395588447.00001,
+  "name": "MPWR",
+  "price_earnings_ttm": 71.57135503480734,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 17.109092028860204,
+  "price_52_week_high": 1714.0899,
+  "price_52_week_low": 833.1801,
+  "total_revenue_ttm": 3273158000,
+  "total_revenue_yoy_growth_fq": 47.55948923671405,
+  "total_revenue_yoy_growth_ttm": 28.666321791005352,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:MYRG": {
+  "Perf.5Y": 140.35633484162895,
+  "Perf.Y": 21.96020281258969,
+  "Perf.YTD": 15.454627784821588,
+  "close": 254.97,
+  "description": "MYR Group Inc.",
+  "industry": "Engineering & Construction",
+  "market_cap_basic": 3969691719,
+  "name": "MYRG",
+  "price_earnings_ttm": 24.186112692088788,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 0.9732586327533025,
+  "price_52_week_high": 503.565,
+  "price_52_week_low": 199.305,
+  "total_revenue_ttm": 4006051000,
+  "total_revenue_yoy_growth_fq": 20.14850192985866,
+  "total_revenue_yoy_growth_ttm": 16.057440459032332
+ },
+ "NASDAQ:NVTS": {
+  "Perf.5Y": -32.964863797868134,
+  "Perf.Y": -41.041666666666664,
+  "Perf.YTD": 13.200000000000005,
+  "close": 8.49,
+  "description": "Navitas Semiconductor Corporation",
+  "industry": "Semiconductors",
+  "market_cap_basic": 2216683546.0000005,
+  "name": "NVTS",
+  "price_earnings_ttm": null,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 45.53298333105243,
+  "revenue_forecast_next_fy": 47692976,
+  "total_revenue_YoYAnnual": null,
+  "total_revenue_fq": 10529000,
+  "total_revenue_ttm": 36535000,
+  "total_revenue_yoy_growth_fq": -27.33609385783299,
+  "total_revenue_yoy_growth_ttm": -46.40368506755468,
+  "price_52_week_high": 34.17,
+  "price_52_week_low": 6.85
+ },
+ "NASDAQ:ON": {
+  "Perf.5Y": 57.99352750809062,
+  "Perf.Y": 37.676254935138196,
+  "Perf.YTD": 32.54298642533937,
+  "close": 73.23,
+  "description": "ON Semiconductor Corporation",
+  "industry": "Semiconductors",
+  "market_cap_basic": 28509297577.000004,
+  "name": "ON",
+  "price_earnings_ttm": 47.153895685769484,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.739132849882217,
+  "price_52_week_high": 134.92,
+  "price_52_week_low": 44.56,
+  "total_revenue_ttm": 6197800000,
+  "total_revenue_yoy_growth_fq": 9.178184789269423,
+  "total_revenue_yoy_growth_ttm": -3.141213977620804,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:PLPC": {
+  "Perf.5Y": 387.7518012057051,
+  "Perf.Y": 43.48992127346657,
+  "Perf.YTD": 58.32378770523101,
+  "close": 331.72,
+  "description": "Preformed Line Products Company",
+  "industry": "Building Products",
+  "market_cap_basic": 1621679889,
+  "name": "PLPC",
+  "price_earnings_ttm": 37.394598006944136,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.1576492613033755,
+  "price_52_week_high": 504.69,
+  "price_52_week_low": 184.02,
+  "total_revenue_ttm": 740155000,
+  "total_revenue_yoy_growth_fq": 25.400793627396062,
+  "total_revenue_yoy_growth_ttm": 17.07015779017829
+ },
+ "NASDAQ:POWI": {
+  "Perf.5Y": -53.713163064833005,
+  "Perf.Y": 9.37790157845868,
+  "Perf.YTD": 29.59295929592959,
+  "close": 47.12,
+  "description": "Power Integrations, Inc.",
+  "industry": "Semiconductors",
+  "market_cap_basic": 2632749772,
+  "name": "POWI",
+  "price_earnings_ttm": 105.4610564010743,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 5.274354701025881,
+  "price_52_week_high": 91.1786,
+  "price_52_week_low": 30.86,
+  "total_revenue_ttm": 449370000,
+  "total_revenue_yoy_growth_fq": 2.6646065669992747,
+  "total_revenue_yoy_growth_ttm": 1.559886816673748
+ },
+ "NASDAQ:POWL": {
+  "Perf.5Y": 1643.657740572511,
+  "Perf.Y": 29.180129180129185,
+  "Perf.YTD": 39.546435842732144,
+  "close": 150.71,
+  "description": "Powell Industries, Inc.",
+  "industry": "Electrical Products",
+  "market_cap_basic": 5490751932,
+  "name": "POWL",
+  "price_earnings_ttm": 28.864459042767127,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.1983780282361804,
+  "price_52_week_high": 328,
+  "price_52_week_low": 92.58990741,
+  "total_revenue_ttm": 1157522000,
+  "total_revenue_yoy_growth_fq": 8.896053766858907,
+  "total_revenue_yoy_growth_ttm": 7.039406398014422
+ },
+ "NASDAQ:VICR": {
+  "Perf.5Y": 27.63437810239682,
+  "Perf.Y": 125.74940423930765,
+  "Perf.YTD": 61.48394042705905,
+  "close": 179.99,
+  "description": "Vicor Corporation",
+  "industry": "Electronic Components",
+  "market_cap_basic": 8298751162.000001,
+  "name": "VICR",
+  "price_earnings_ttm": 47.170899179704904,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 13.89884619376885,
+  "revenue_forecast_next_fy": 633480000,
+  "total_revenue_YoYAnnual": null,
+  "total_revenue_fq": 197114000,
+  "total_revenue_ttm": 560699000,
+  "total_revenue_yoy_growth_fq": 78.50810066743341,
+  "total_revenue_yoy_growth_ttm": 41.37538041820158,
+  "price_52_week_high": 382.65,
+  "price_52_week_low": 80.29
+ },
+ "NYSE:AZZ": {
+  "Perf.5Y": 153.35232668566,
+  "Perf.Y": 34.07377625892049,
+  "Perf.YTD": 23.772849587083595,
+  "close": 133.39,
+  "description": "AZZ Inc.",
+  "industry": "Industrial Specialties",
+  "market_cap_basic": 3991399484,
+  "name": "AZZ",
+  "price_earnings_ttm": 24.01865456640737,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.6054645108273946,
+  "price_52_week_high": 162.2,
+  "price_52_week_low": 94.61,
+  "total_revenue_ttm": 1746265000,
+  "total_revenue_yoy_growth_fq": 16.683721766221314,
+  "total_revenue_yoy_growth_ttm": 9.499763601682004
+ },
+ "NYSE:CMI": {
+  "Perf.5Y": 115.57261410788381,
+  "Perf.Y": 24.170650095602294,
+  "Perf.YTD": 1.7788226075031803,
+  "close": 519.53,
+  "description": "Cummins Inc.",
+  "industry": "Auto Parts: OEM",
+  "market_cap_basic": 71520836391.00002,
+  "name": "CMI",
+  "price_earnings_ttm": 26.54875848923547,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.2168329028177944,
+  "price_52_week_high": 737.76,
+  "price_52_week_low": 413.98,
+  "total_revenue_ttm": 34708000000,
+  "total_revenue_yoy_growth_fq": 9.418026148328126,
+  "total_revenue_yoy_growth_ttm": 2.930011862396204
+ },
+ "NYSE:ENS": {
+  "Perf.5Y": 117.80733471074379,
+  "Perf.Y": 37.46536267318662,
+  "Perf.YTD": 14.936967632027248,
+  "close": 168.67,
+  "description": "EnerSys",
+  "industry": "Electrical Products",
+  "market_cap_basic": 6083121214.000001,
+  "name": "ENS",
+  "price_earnings_ttm": 18.043238733004564,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 1.7382839699493386,
+  "price_52_week_high": 244.3,
+  "price_52_week_low": 120.05,
+  "total_revenue_ttm": 3793993000,
+  "total_revenue_yoy_growth_fq": 4.772212168989859,
+  "total_revenue_yoy_growth_ttm": 3.7265627157271797
+ },
+ "NYSE:ESE": {
+  "Perf.5Y": 173.84814292430656,
+  "Perf.Y": 5.439652441507901,
+  "Perf.YTD": 19.549489455590347,
+  "close": 232.99,
+  "description": "ESCO Technologies Inc.",
+  "industry": "Electronic Equipment/Instruments",
+  "market_cap_basic": 7224453077.999999,
+  "name": "ESE",
+  "price_earnings_ttm": 42.49936157017256,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 5.657292492994117,
+  "price_52_week_high": 362.15,
+  "price_52_week_low": 193.68,
+  "total_revenue_ttm": 1290701000,
+  "total_revenue_yoy_growth_fq": 14.40319358583268,
+  "total_revenue_yoy_growth_ttm": 16.550059507577057
+ },
+ "NYSE:ETN": {
+  "Perf.5Y": 126.73589775101388,
+  "Perf.Y": -2.406834351609396,
+  "Perf.YTD": 14.164165712694542,
+  "close": 368.99,
+  "description": "Eaton Corp. Plc",
+  "industry": "Electrical Products",
+  "market_cap_basic": 143315709955,
+  "name": "ETN",
+  "price_earnings_ttm": 37.54362402450067,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 5.461838799500416,
+  "price_52_week_high": 478,
+  "price_52_week_low": 311.915,
+  "total_revenue_ttm": 30025000000,
+  "total_revenue_yoy_growth_fq": 21.38588503130336,
+  "total_revenue_yoy_growth_ttm": 15.525202000769529
+ },
+ "NYSE:GEV": {
+  "Perf.5Y": 619.4956521739131,
+  "Perf.Y": 36.313014827018115,
+  "Perf.YTD": 25.141033590949633,
+  "close": 827.42,
+  "description": "GE Vernova Inc.",
+  "industry": "Electrical Products",
+  "market_cap_basic": 220369732538.99997,
+  "name": "GEV",
+  "price_earnings_ttm": 23.68469262740877,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 5.110967545821841,
+  "price_52_week_high": 1195.94,
+  "price_52_week_low": 530.16,
+  "total_revenue_ttm": 41334000000,
+  "total_revenue_yoy_growth_fq": 21.778703805241804,
+  "total_revenue_yoy_growth_ttm": 12.851175362437548,
+  "country": "United States",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 266333600
+ },
+ "NYSE:GNRC": {
+  "Perf.5Y": -60.2318153937266,
+  "Perf.Y": -2.58031088082901,
+  "Perf.YTD": 36.26612552543848,
+  "close": 188.02,
+  "description": "Generac Holdings Inc.",
+  "industry": "Electrical Products",
+  "market_cap_basic": 11105201183.999998,
+  "name": "GNRC",
+  "price_earnings_ttm": 43.34155505866624,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.7443216179755834,
+  "price_52_week_high": 296.44,
+  "price_52_week_low": 134.8,
+  "total_revenue_ttm": 4438732000,
+  "total_revenue_yoy_growth_fq": 10.586532399646039,
+  "total_revenue_yoy_growth_ttm": 0.6137834018714977,
+  "country": "United States",
+  "exchange": "NYSE"
+ },
+ "NYSE:HUBB": {
+  "Perf.5Y": 132.6722338204593,
+  "Perf.Y": 1.831970396089369,
+  "Perf.YTD": -0.43106336408103246,
+  "close": 445.8,
+  "description": "Hubbell Incorporated",
+  "industry": "Electrical Products",
+  "market_cap_basic": 23552758669.999996,
+  "name": "HUBB",
+  "price_earnings_ttm": 26.395722685045385,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.6156177566038945,
+  "price_52_week_high": 565.4999,
+  "price_52_week_low": 403.82,
+  "total_revenue_ttm": 6223600000,
+  "total_revenue_yoy_growth_fq": 15.327090210873811,
+  "total_revenue_yoy_growth_ttm": 10.614247120716621,
+  "country": "United States",
+  "exchange": "NYSE"
+ },
+ "NYSE:MOD": {
+  "Perf.5Y": 1128.5620489684636,
+  "Perf.Y": -8.930485173542959,
+  "Perf.YTD": 7.768600786707327,
+  "close": 135.17,
+  "description": "Modine Manufacturing Company",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 7190627375,
+  "name": "MOD",
+  "price_earnings_ttm": 50.94026757113246,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.304983802336615,
+  "price_52_week_high": 297.6143355,
+  "price_52_week_low": 102.36275892,
+  "total_revenue_ttm": 3372400000,
+  "total_revenue_yoy_growth_fq": 28.01698886936145,
+  "total_revenue_yoy_growth_ttm": 29.46867321867322
+ },
+ "NYSE:NVT": {
+  "Perf.5Y": 289.8320610687023,
+  "Perf.Y": 26.984284861746563,
+  "Perf.YTD": 24.144301828082458,
+  "close": 127.67,
+  "description": "nVent Electric plc",
+  "industry": "Electronic Components",
+  "market_cap_basic": 20664402989,
+  "name": "NVT",
+  "price_earnings_ttm": 35.268930080941466,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.559640667976831,
+  "price_52_week_high": 184.64,
+  "price_52_week_low": 93.22,
+  "total_revenue_ttm": 4834000000,
+  "total_revenue_yoy_growth_fq": 52.76710621949954,
+  "total_revenue_yoy_growth_ttm": 46.19246355773302,
+  "country": "United Kingdom",
+  "exchange": "NYSE"
+ },
+ "NYSE:PRIM": {
+  "Perf.5Y": 144.03937294932555,
+  "Perf.Y": -51.93509011273067,
+  "Perf.YTD": -46.12474849094568,
+  "close": 66.94,
+  "description": "Primoris Services Corporation",
+  "industry": "Engineering & Construction",
+  "market_cap_basic": 3603536221,
+  "name": "PRIM",
+  "price_earnings_ttm": 26.3429223564598,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 0.6395653813132,
+  "price_52_week_high": 205.5,
+  "price_52_week_low": 65,
+  "total_revenue_ttm": 7284222000,
+  "total_revenue_yoy_growth_fq": -10.712444036609908,
+  "total_revenue_yoy_growth_ttm": 5.122456569397684
+ },
+ "NYSE:SPXC": {
+  "Perf.5Y": 160.2211741746625,
+  "Perf.Y": -16.308384329724362,
+  "Perf.YTD": -20.645705217218808,
+  "close": 160.01,
+  "description": "SPX Technologies, Inc.",
+  "industry": "Building Products",
+  "market_cap_basic": 8014238375.999999,
+  "name": "SPXC",
+  "price_earnings_ttm": 28.04388593862278,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 3.417964528454299,
+  "price_52_week_high": 251.08,
+  "price_52_week_low": 156.12,
+  "total_revenue_ttm": 2475900000,
+  "total_revenue_yoy_growth_fq": 22.91817523533671,
+  "total_revenue_yoy_growth_ttm": 20.6343792633015
+ },
+ "NYSE:STM": {
+  "Perf.5Y": 0.06808896958692949,
+  "Perf.Y": 48.45117845117847,
+  "Perf.YTD": 60.210755813953504,
+  "close": 44.09,
+  "description": "STMicroelectronics NV Sponsored ADR RegS",
+  "industry": "Semiconductors",
+  "market_cap_basic": 39971571448.63491,
+  "name": "STM",
+  "price_earnings_ttm": 87.74129353233832,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.9318978636237816,
+  "price_52_week_high": 81.42,
+  "price_52_week_low": 21.11,
+  "total_revenue_ttm": 13085460075.6382,
+  "total_revenue_yoy_growth_fq": 23.948665489808818,
+  "total_revenue_yoy_growth_ttm": 10.059497929540589,
+  "country": "Switzerland",
+  "exchange": "NYSE"
+ },
+ "NYSE:TT": {
+  "Perf.5Y": 146.5934065934066,
+  "Perf.Y": 4.7472342809130454,
+  "Perf.YTD": 14.817846909537458,
+  "close": 448.8,
+  "description": "Trane Technologies plc",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 98746399646.00002,
+  "name": "TT",
+  "price_earnings_ttm": 33.996136802636066,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.595567726340365,
+  "price_52_week_high": 505.87,
+  "price_52_week_low": 348.06,
+  "total_revenue_ttm": 22209900000.1687,
+  "total_revenue_yoy_growth_fq": 10.564875400821993,
+  "total_revenue_yoy_growth_ttm": 7.035146819018374
+ },
+ "NYSE:VRT": {
+  "Perf.5Y": 717.3422482239866,
+  "Perf.Y": 7.113910186199348,
+  "Perf.YTD": 15.41616262945151,
+  "close": 195.59,
+  "description": "Vertiv Holdings Co. Class A",
+  "industry": "Electronic Production Equipment",
+  "market_cap_basic": 75299838613,
+  "name": "VRT",
+  "price_earnings_ttm": 44.257138978141825,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 6.573612200163769,
+  "price_52_week_high": 379.935,
+  "price_52_week_low": 147.82,
+  "total_revenue_ttm": 11479600000,
+  "total_revenue_yoy_growth_fq": 24.115840946135474,
+  "total_revenue_yoy_growth_ttm": 26.23268088849791
+ },
+ "NYSE:VSH": {
+  "Perf.5Y": 38.049029622063344,
+  "Perf.Y": 59.18727915194347,
+  "Perf.YTD": 82.2656776803776,
+  "close": 27.03,
+  "description": "Vishay Intertechnology, Inc.",
+  "industry": "Electronic Production Equipment",
+  "market_cap_basic": 4145845879.9999995,
+  "name": "VSH",
+  "price_earnings_ttm": 141.22257053291537,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 1.1870849577586648,
+  "price_52_week_high": 69.47,
+  "price_52_week_low": 11.77,
+  "total_revenue_ttm": 3319379000,
+  "total_revenue_yoy_growth_fq": 16.572646769432602,
+  "total_revenue_yoy_growth_ttm": 13.384001325338039
+ },
+ "NYSE:WCC": {
+  "Perf.5Y": 152.59872014983617,
+  "Perf.Y": 46.58092564079342,
+  "Perf.YTD": 31.65751474476307,
+  "close": 323.68,
+  "description": "WESCO International, Inc.",
+  "industry": "Wholesale Distributors",
+  "market_cap_basic": 15773850716,
+  "name": "WCC",
+  "price_earnings_ttm": 22.369348574271932,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 0.8661031194303739,
+  "price_52_week_high": 388.64,
+  "price_52_week_low": 219.62,
+  "total_revenue_ttm": 25012900000,
+  "total_revenue_yoy_growth_fq": 12.975455963116145,
+  "total_revenue_yoy_growth_ttm": 12.506522012918083
+ },
+ "NYSE:WOLF": {
+  "Perf.5Y": -74.9390919158361,
+  "Perf.Y": -25.803278688524593,
+  "Perf.YTD": 26.07242339832869,
+  "close": 22.63,
+  "description": "Wolfspeed Inc",
+  "industry": "Semiconductors",
+  "market_cap_basic": 1197818725,
+  "name": "WOLF",
+  "price_earnings_ttm": null,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.86486050969779,
+  "price_52_week_high": 80.82,
+  "price_52_week_low": 13.485,
+  "total_revenue_ttm": 665100000,
+  "total_revenue_yoy_growth_fq": -24.060913705583754,
+  "total_revenue_yoy_growth_ttm": -12.209609292502641
+ },
+ "OTC:HTHIY": {
+  "Perf.5Y": 212.38337574215439,
+  "Perf.Y": 22.76666666666666,
+  "Perf.YTD": 17.555059048834984,
+  "close": 36.83,
+  "description": "Hitachi, Ltd. Sponsored ADR",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 167694070859.875,
+  "name": "HTHIY",
+  "price_earnings_ttm": 31.95384348429637,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.325123453494753,
+  "price_52_week_high": 39,
+  "price_52_week_low": 27.22,
+  "total_revenue_ttm": 71438676930.6005,
+  "total_revenue_yoy_growth_fq": 8.850084821719987,
+  "total_revenue_yoy_growth_ttm": 8.847206286189223
+ },
+ "OTC:IFNNY": {
+  "Perf.5Y": 23.2977303070761,
+  "Perf.Y": 39.71255673222391,
+  "Perf.YTD": 23.24288256227757,
+  "close": 55.41,
+  "description": "Infineon Technologies AG Sponsored ADR",
+  "industry": "Semiconductors",
+  "market_cap_basic": 72819121037.62282,
+  "name": "IFNNY",
+  "price_earnings_ttm": 52.081962590469026,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 4.393967629006716,
+  "price_52_week_high": 103.28,
+  "price_52_week_low": 36.1,
+  "total_revenue_ttm": 18180802655.4992,
+  "total_revenue_yoy_growth_fq": 15.542383736171622,
+  "total_revenue_yoy_growth_ttm": 14.09169128715379
+ },
+ "OTC:SMNEY": {
+  "Perf.5Y": 527.2857142857142,
+  "Perf.Y": 51.27034708466109,
+  "Perf.YTD": 23.464079853788835,
+  "close": 175.64,
+  "description": "Siemens Energy AG Sponsored ADR",
+  "industry": "Electrical Products",
+  "market_cap_basic": 115251221130.85847,
+  "name": "SMNEY",
+  "price_earnings_ttm": 77.28252739032868,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.1823271273978957,
+  "price_52_week_high": 176.73,
+  "price_52_week_low": 112.76,
+  "total_revenue_ttm": 48800253176.452896,
+  "total_revenue_yoy_growth_fq": 20.497445679543727,
+  "total_revenue_yoy_growth_ttm": 16.832483256129503
+ },
+ "TSX:HPS.A": {
+  "Perf.5Y": 1743.5510887772195,
+  "Perf.Y": 60.589479827825215,
+  "Perf.YTD": 37.53202124336144,
+  "close": 220.12,
+  "description": "Hammond Power Solutions Inc. Class A",
+  "industry": "Electrical Products",
+  "market_cap_basic": 2620511836,
+  "name": "HPS.A",
+  "price_earnings_ttm": 42.53937578510001,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "enterprise_value_to_revenue_ttm": 2.5248968632158744,
+  "price_52_week_high": 365.12,
+  "price_52_week_low": 145.73,
+  "total_revenue_ttm": 1062075000,
+  "total_revenue_yoy_growth_fq": 44.73016990540017,
+  "total_revenue_yoy_growth_ttm": 28.538492260399146
+ },
+ "NASDAQ:AAOI": {
+  "Perf.Y": 110.3522867737948,
+  "close": 68.07,
+  "enterprise_value_to_revenue_ttm": 9.347707112774133,
+  "market_cap_basic": 5779571008,
+  "name": "AAOI",
+  "price_52_week_high": 233.67,
+  "price_52_week_low": 18.5,
+  "total_revenue_ttm": 595970000,
+  "total_revenue_yoy_growth_fq": 86.41891366850571,
+  "total_revenue_yoy_growth_ttm": 61.845896484019626,
+  "High.6M": 233.67,
+  "High.All": 233.67,
+  "Perf.5Y": 807.5999999999999,
+  "Perf.All": 580.6999999999999,
+  "industry": "Semiconductors",
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "High.5Y": null,
+  "Low.All": 1.48,
+  "revenue_forecast_next_fq": 268109339.99999997,
+  "total_revenue_FiveYCAGR": null,
+  "total_revenue_fq": 191922000,
+  "total_revenue_fy": 455715000,
+  "total_revenue_qoq_growth_fq": 26.9795691525962,
+  "total_revenue_yoy_growth_fy": 82.75018547109659,
+  "Perf.YTD": 87.28848534874122,
+  "description": "Applied Optoelectronics, Inc.",
+  "Perf.1M": -36.341531843261954,
+  "Perf.3M": -37.536132140399175,
+  "Perf.W": -15.86948461253245
+ },
+ "NASDAQ:ACMR": {
+  "Perf.Y": 28.384736016727654,
+  "close": 49.12,
+  "enterprise_value_to_revenue_ttm": 2.750819421799779,
+  "market_cap_basic": 3421168373,
+  "name": "ACMR",
+  "price_52_week_high": 127.19,
+  "price_52_week_low": 28.46,
+  "total_revenue_ttm": 1037771999.9999999,
+  "total_revenue_yoy_growth_fq": 36.00607321285961,
+  "total_revenue_yoy_growth_ttm": 27.30805749994478
+ },
+ "NASDAQ:AEHR": {
+  "Perf.Y": 122.15568862275448,
+  "close": 55.65,
+  "enterprise_value_to_revenue_ttm": 34.21987118257635,
+  "market_cap_basic": 1817503779,
+  "name": "AEHR",
+  "price_52_week_high": 147.4,
+  "price_52_week_low": 18.7,
+  "total_revenue_ttm": 50001000,
+  "total_revenue_yoy_growth_fq": 33.685854212506214,
+  "total_revenue_yoy_growth_ttm": -15.206552706552706
+ },
+ "NASDAQ:ALAB": {
+  "Perf.Y": 67.56791888730012,
+  "close": 257.82,
+  "enterprise_value_to_revenue_ttm": 36.20825252450456,
+  "market_cap_basic": 44727931665.99999,
+  "name": "ALAB",
+  "price_52_week_high": 499.4762,
+  "price_52_week_low": 97.89,
+  "total_revenue_ttm": 1201919000,
+  "total_revenue_yoy_growth_fq": 104.45486518171161,
+  "total_revenue_yoy_growth_ttm": 98.48418542512663
+ },
+ "NASDAQ:AMKR": {
+  "Perf.Y": 23.302810230502036,
+  "close": 39.05,
+  "enterprise_value_to_revenue_ttm": 1.3273272277705668,
+  "market_cap_basic": 9702068720,
+  "name": "AMKR",
+  "price_52_week_high": 96.68,
+  "price_52_week_low": 29.5,
+  "total_revenue_ttm": 7457680000,
+  "total_revenue_yoy_growth_fq": 25.577282399271667,
+  "total_revenue_yoy_growth_ttm": 17.93270810607884,
+  "Perf.6M": -49.77814931515658,
+  "description": "Amkor Technology, Inc.",
+  "industry": "Semiconductors"
+ },
+ "NASDAQ:AXTI": {
+  "Perf.Y": 920.9900990099012,
+  "close": 51.56,
+  "enterprise_value_to_revenue_ttm": 24.70215589320288,
+  "market_cap_basic": 3380954884.0000005,
+  "name": "AXTI",
+  "price_52_week_high": 143.16,
+  "price_52_week_low": 5.4,
+  "total_revenue_ttm": 125509000,
+  "total_revenue_yoy_growth_fq": 164.76577278290864,
+  "total_revenue_yoy_growth_ttm": 45.805065055762086,
+  "High.6M": 143.16,
+  "High.All": 143.16,
+  "Perf.5Y": 499.5348837209303,
+  "Perf.All": 391.04761904761904,
+  "industry": "Electronic Production Equipment",
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_YoYTTM": null,
+  "High.5Y": null,
+  "Low.All": 0.66,
+  "revenue_forecast_next_fq": 66004840,
+  "total_revenue_FiveYCAGR": null,
+  "total_revenue_fq": 47589000,
+  "total_revenue_fy": 88326000,
+  "total_revenue_qoq_growth_fq": 76.75308275144852,
+  "total_revenue_yoy_growth_fy": -11.105967129960447,
+  "Perf.YTD": 199.7674418604651,
+  "description": "AXT, Inc.",
+  "revenue_forecast_next_fy": 221198550,
+  "Perf.1M": -32.720036536830435,
+  "Perf.3M": 1.098039215686279,
+  "Perf.W": -10.338231458134075
+ },
+ "NASDAQ:BELFB": {
+  "Perf.Y": 34.19974477802406,
+  "close": 199.81,
+  "enterprise_value_to_revenue_ttm": 3.541581462825934,
+  "market_cap_basic": 2804512517.0000005,
+  "name": "BELFB",
+  "price_52_week_high": 335.285,
+  "price_52_week_low": 129.9359,
+  "total_revenue_ttm": 744094000,
+  "total_revenue_yoy_growth_fq": 25.1849387102716,
+  "total_revenue_yoy_growth_ttm": 25.261180336479054
+ },
+ "NASDAQ:CAMT": {
+  "Perf.Y": 0.35276331261548943,
+  "close": 119.48,
+  "enterprise_value_to_revenue_ttm": 10.67552817280974,
+  "market_cap_basic": 5575913674.999999,
+  "name": "CAMT",
+  "price_52_week_high": 215.99,
+  "price_52_week_low": 91.91,
+  "total_revenue_ttm": 509019000.000427,
+  "total_revenue_yoy_growth_fq": 8.049174079644965,
+  "total_revenue_yoy_growth_ttm": 7.937224865755644
+ },
+ "NASDAQ:COHU": {
+  "Perf.Y": 108.28455650607832,
+  "close": 46.26,
+  "enterprise_value_to_revenue_ttm": 3.8709410619977036,
+  "market_cap_basic": 2189875799,
+  "name": "COHU",
+  "price_52_week_high": 75.72,
+  "price_52_week_low": 21.1,
+  "total_revenue_ttm": 522600000,
+  "total_revenue_yoy_growth_fq": 38.37481426448737,
+  "total_revenue_yoy_growth_ttm": 32.65945915758959
+ },
+ "NASDAQ:CRDO": {
+  "Perf.Y": 13.066129480411226,
+  "close": 162.77,
+  "enterprise_value_to_revenue_ttm": 18.7643226615212,
+  "market_cap_basic": 30592934748.999996,
+  "name": "CRDO",
+  "price_52_week_high": 308.6699,
+  "price_52_week_low": 86.485,
+  "total_revenue_ttm": 1591045000,
+  "total_revenue_yoy_growth_fq": 114.72829643974644,
+  "total_revenue_yoy_growth_ttm": 165.11451590058903,
+  "country": "Cayman Islands",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:ENTG": {
+  "Perf.Y": 40.814310798946444,
+  "close": 128.31,
+  "enterprise_value_to_revenue_ttm": 6.858533423228406,
+  "market_cap_basic": 19605768019,
+  "name": "ENTG",
+  "price_52_week_high": 186.94,
+  "price_52_week_low": 67.97,
+  "total_revenue_ttm": 3326100000,
+  "total_revenue_yoy_growth_fq": 11.458859162039374,
+  "total_revenue_yoy_growth_ttm": 3.194688642813463,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:FORM": {
+  "Perf.Y": 117.95871559633026,
+  "close": 95.03,
+  "enterprise_value_to_revenue_ttm": 7.877546779351047,
+  "market_cap_basic": 7423812642.999999,
+  "name": "FORM",
+  "price_52_week_high": 160.27,
+  "price_52_week_low": 41.84,
+  "total_revenue_ttm": 902225000,
+  "total_revenue_yoy_growth_fq": 31.892052012788707,
+  "total_revenue_yoy_growth_ttm": 18.006707178302644
+ },
+ "NASDAQ:GFS": {
+  "Perf.Y": 23.631698973774228,
+  "close": 43.37,
+  "enterprise_value_to_revenue_ttm": 3.340491771980397,
+  "market_cap_basic": 23799331913.999996,
+  "name": "GFS",
+  "price_52_week_high": 92.55,
+  "price_52_week_low": 32.02,
+  "total_revenue_ttm": 6938000000,
+  "total_revenue_yoy_growth_fq": 5.80568720379147,
+  "total_revenue_yoy_growth_ttm": 1.4030985092078339,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:ICHR": {
+  "Perf.Y": 71.0799819249887,
+  "close": 37.86,
+  "enterprise_value_to_revenue_ttm": 1.29785255397266,
+  "market_cap_basic": 1418017218,
+  "name": "ICHR",
+  "price_52_week_high": 113.58,
+  "price_52_week_low": 14.06,
+  "total_revenue_ttm": 1013754000,
+  "total_revenue_yoy_growth_fq": 22.68098299935493,
+  "total_revenue_yoy_growth_ttm": 9.102003917432574
+ },
+ "NASDAQ:INTC": {
+  "Perf.Y": 125.9548037531386,
+  "close": 85.49,
+  "enterprise_value_to_revenue_ttm": 8.55923245250035,
+  "market_cap_basic": 451909145231,
+  "name": "INTC",
+  "price_52_week_high": 142.35,
+  "price_52_week_low": 32.89,
+  "total_revenue_ttm": 57032000000,
+  "total_revenue_yoy_growth_fq": 25.421883505715844,
+  "total_revenue_yoy_growth_ttm": 7.465611456566798
+ },
+ "NASDAQ:IPGP": {
+  "Perf.Y": -20.144960883571105,
+  "close": 69.41,
+  "enterprise_value_to_revenue_ttm": 1.961263449417398,
+  "market_cap_basic": 2952322457,
+  "name": "IPGP",
+  "price_52_week_high": 155.82,
+  "price_52_week_low": 68.63,
+  "total_revenue_ttm": 1069339999.9999999,
+  "total_revenue_yoy_growth_fq": 11.111554277463794,
+  "total_revenue_yoy_growth_ttm": 13.038771916100936,
+  "country": "United States",
+  "description": "IPG Photonics Corporation"
+ },
+ "NASDAQ:KLIC": {
+  "Perf.Y": 85.02646836400304,
+  "close": 73.4,
+  "enterprise_value_to_revenue_ttm": 3.538682353324991,
+  "market_cap_basic": 3840956975,
+  "name": "KLIC",
+  "price_52_week_high": 135.8,
+  "price_52_week_low": 35.02,
+  "total_revenue_ttm": 950213000,
+  "total_revenue_yoy_growth_fq": 122.6280716648811,
+  "total_revenue_yoy_growth_ttm": 44.44395462740293
+ },
+ "NASDAQ:LITE": {
+  "Perf.Y": 357.3877104479426,
+  "close": 752.54,
+  "enterprise_value_to_revenue_ttm": 22.26278222362309,
+  "market_cap_basic": 68167225621.99999,
+  "name": "LITE",
+  "price_52_week_high": 1143,
+  "price_52_week_low": 173.73,
+  "total_revenue_ttm": 3014000000,
+  "total_revenue_yoy_growth_fq": 109.34054503848554,
+  "total_revenue_yoy_growth_ttm": 83.22188449848025,
+  "Perf.5Y": 787.952802359882,
+  "Perf.YTD": 98.36048289314144,
+  "description": "Lumentum Holdings, Inc.",
+  "High.All": 1143,
+  "Low.All": 13.97,
+  "Perf.1M": -19.700801348741425,
+  "Perf.3M": -7.151141270820486,
+  "Perf.W": -10.942011834319532,
+  "float_shares_outstanding": 89087104.5723,
+  "total_shares_outstanding_fundamental": 90582900
+ },
+ "NASDAQ:LSCC": {
+  "Perf.Y": 40.279394644935984,
+  "close": 96.4,
+  "enterprise_value_to_revenue_ttm": 20.820365779114965,
+  "market_cap_basic": 13691717104.999998,
+  "name": "LSCC",
+  "price_52_week_high": 157.01,
+  "price_52_week_low": 60.5,
+  "total_revenue_ttm": 651117000,
+  "total_revenue_yoy_growth_fq": 62.198417371804695,
+  "total_revenue_yoy_growth_ttm": 33.25331385032877
+ },
+ "NASDAQ:LWLG": {
+  "Perf.Y": -12.12765957446809,
+  "close": 4.13,
+  "enterprise_value_to_revenue_ttm": 2171.0346572041676,
+  "market_cap_basic": 636710767.0000001,
+  "name": "LWLG",
+  "price_52_week_high": 18.709,
+  "price_52_week_low": 2.84,
+  "total_revenue_ttm": 250251,
+  "total_revenue_yoy_growth_fq": 27.90861159929703,
+  "total_revenue_yoy_growth_ttm": 165.22282867892534,
+  "Perf.5Y": -55.108695652173914,
+  "Perf.YTD": 27.076923076923073,
+  "description": "Lightwave Logic, Inc."
+ },
+ "NASDAQ:MRVL": {
+  "Perf.Y": 175.1077188230949,
+  "close": 223.47,
+  "enterprise_value_to_revenue_ttm": 20.902421037004117,
+  "market_cap_basic": 195960849526,
+  "name": "MRVL",
+  "price_52_week_high": 329.88,
+  "price_52_week_low": 70.685,
+  "total_revenue_ttm": 9450300000,
+  "total_revenue_yoy_growth_fq": 36.54852699267235,
+  "total_revenue_yoy_growth_ttm": 30.621017567623603,
+  "country": "United States",
+  "description": "Marvell Technology, Inc.",
+  "Perf.5Y": 231.05685757459042,
+  "Perf.YTD": 157.6320036891861
+ },
+ "NASDAQ:MTSI": {
+  "Perf.Y": 66.06187653607054,
+  "close": 229.73,
+  "enterprise_value_to_revenue_ttm": 14.859192285222862,
+  "market_cap_basic": 17544692480.999996,
+  "name": "MTSI",
+  "price_52_week_high": 418.9,
+  "price_52_week_low": 140.18,
+  "total_revenue_ttm": 1163974000,
+  "total_revenue_yoy_growth_fq": 35.76577184136719,
+  "total_revenue_yoy_growth_ttm": 28.360891841402385
+ },
+ "NASDAQ:MU": {
+  "Perf.Y": 323.48084054388136,
+  "close": 856.49,
+  "enterprise_value_to_revenue_ttm": 6.988397308631408,
+  "market_cap_basic": 969052660742,
+  "name": "MU",
+  "price_52_week_high": 1255,
+  "price_52_week_low": 192.59,
+  "total_revenue_ttm": 133188000000,
+  "total_revenue_yoy_growth_fq": 379.26646045072914,
+  "total_revenue_yoy_growth_ttm": 256.3272513243084,
+  "Perf.5Y": 1150.1678587067581,
+  "Perf.All": 60536.460176991146,
+  "float_shares_outstanding": 1127648977.1399999,
+  "total_shares_outstanding_fundamental": 1131420000
+ },
+ "NASDAQ:NVMI": {
+  "Perf.Y": -6.522590951562826,
+  "close": 310.13,
+  "enterprise_value_to_revenue_ttm": 10.289668402484097,
+  "market_cap_basic": 9864044548,
+  "name": "NVMI",
+  "price_52_week_high": 615.99,
+  "price_52_week_low": 266.4301,
+  "total_revenue_ttm": 937498000.000774,
+  "total_revenue_yoy_growth_fq": 15.895794789562409,
+  "total_revenue_yoy_growth_ttm": 16.158521097507744
+ },
+ "NASDAQ:PLAB": {
+  "Perf.Y": 15.815691158156907,
+  "close": 27.9,
+  "enterprise_value_to_revenue_ttm": 1.6613668603624963,
+  "market_cap_basic": 1646021006,
+  "name": "PLAB",
+  "price_52_week_high": 56,
+  "price_52_week_low": 20.05,
+  "total_revenue_ttm": 866823000,
+  "total_revenue_yoy_growth_fq": 2.6868636938315733,
+  "total_revenue_yoy_growth_ttm": 1.2463908277969333
+ },
+ "NASDAQ:POET": {
+  "Perf.Y": -31.136950904392766,
+  "close": 5.33,
+  "enterprise_value_to_revenue_ttm": 78.14329898670861,
+  "market_cap_basic": 922399607.9999999,
+  "name": "POET",
+  "price_52_week_high": 20.81,
+  "price_52_week_low": 3.87,
+  "total_revenue_ttm": 1712950.00000918,
+  "total_revenue_yoy_growth_fq": 112.28707970065568,
+  "total_revenue_yoy_growth_ttm": 266.0571946344769,
+  "Perf.5Y": -41.87568157033806,
+  "Perf.YTD": -19.96996996996997,
+  "description": "POET Technologies Inc."
+ },
+ "NASDAQ:SANM": {
+  "Perf.Y": 18.93286110255621,
+  "close": 154.47,
+  "enterprise_value_to_revenue_ttm": 0.7104093240407002,
+  "market_cap_basic": 8279183475,
+  "name": "SANM",
+  "price_52_week_high": 288.68,
+  "price_52_week_low": 118.1,
+  "total_revenue_ttm": 12763372000,
+  "total_revenue_yoy_growth_fq": 69.67478822587803,
+  "total_revenue_yoy_growth_ttm": 58.561151972887735
+ },
+ "NASDAQ:SITM": {
+  "Perf.Y": 63.28604700402288,
+  "close": 462.72,
+  "enterprise_value_to_revenue_ttm": 28.47053656086353,
+  "market_cap_basic": 13914469530.000002,
+  "name": "SITM",
+  "price_52_week_high": 901.81,
+  "price_52_week_low": 243.6765,
+  "total_revenue_ttm": 467850000,
+  "total_revenue_yoy_growth_fq": 126.5404207557487,
+  "total_revenue_yoy_growth_ttm": 83.02773289726426
+ },
+ "NASDAQ:SMTC": {
+  "Perf.Y": 88.88888888888891,
+  "close": 125.12,
+  "enterprise_value_to_revenue_ttm": 10.217365958986939,
+  "market_cap_basic": 11676902151.000002,
+  "name": "SMTC",
+  "price_52_week_high": 201.99,
+  "price_52_week_low": 60.28,
+  "total_revenue_ttm": 1174260000,
+  "total_revenue_yoy_growth_fq": 32.719564888252215,
+  "total_revenue_yoy_growth_ttm": 17.841509161302753
+ },
+ "NASDAQ:SNDK": {
+  "Perf.Y": 745.6941649899397,
+  "close": 1260.93,
+  "enterprise_value_to_revenue_ttm": 8.775095845564994,
+  "market_cap_basic": 182239140681,
+  "name": "SNDK",
+  "price_52_week_high": 2354.3899,
+  "price_52_week_low": 164.56,
+  "total_revenue_ttm": 20248000000,
+  "total_revenue_yoy_growth_fq": 371.5938979484482,
+  "total_revenue_yoy_growth_ttm": 175.29571719918422,
+  "country": "United States",
+  "description": "Sandisk Corporation"
+ },
+ "NASDAQ:TER": {
+  "Perf.Y": 118.15162862997245,
+  "close": 308.75,
+  "enterprise_value_to_revenue_ttm": 10.76719475627652,
+  "market_cap_basic": 48270204716,
+  "name": "TER",
+  "price_52_week_high": 487.91,
+  "price_52_week_low": 144.07,
+  "total_revenue_ttm": 4462783000,
+  "total_revenue_yoy_growth_fq": 103.98956867163265,
+  "total_revenue_yoy_growth_ttm": 57.91251652889784,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:TSEM": {
+  "Perf.Y": 125.6896783743776,
+  "close": 167.71,
+  "enterprise_value_to_revenue_ttm": 10.343791359638518,
+  "market_cap_basic": 19038047864,
+  "name": "TSEM",
+  "price_52_week_high": 319.94,
+  "price_52_week_low": 75.68,
+  "total_revenue_ttm": 1709583000.00146,
+  "total_revenue_yoy_growth_fq": 23.656873469483926,
+  "total_revenue_yoy_growth_ttm": 14.896426857628281
+ },
+ "NASDAQ:TTMI": {
+  "Perf.Y": 24.814189189189186,
+  "close": 73.89,
+  "enterprise_value_to_revenue_ttm": 2.2338806020053785,
+  "market_cap_basic": 7784227890,
+  "name": "TTMI",
+  "price_52_week_high": 223.83,
+  "price_52_week_low": 55.44,
+  "total_revenue_ttm": 3828205000,
+  "total_revenue_yoy_growth_fq": 59.930573268715726,
+  "total_revenue_yoy_growth_ttm": 37.55726754318197
+ },
+ "NASDAQ:UCTT": {
+  "Perf.Y": 53.257497414684586,
+  "close": 44.46,
+  "enterprise_value_to_revenue_ttm": 1.1890477770691932,
+  "market_cap_basic": 2013016585.0000002,
+  "name": "UCTT",
+  "price_52_week_high": 144.22,
+  "price_52_week_low": 21.485,
+  "total_revenue_ttm": 2195300000,
+  "total_revenue_yoy_growth_fq": 24.30609097918274,
+  "total_revenue_yoy_growth_ttm": 2.531409088786138
+ },
+ "NASDAQ:VECO": {
+  "Perf.Y": 40.39576936199249,
+  "close": 41.15,
+  "enterprise_value_to_revenue_ttm": 3.4381208723927825,
+  "market_cap_basic": 2515484882.0000005,
+  "name": "VECO",
+  "price_52_week_high": 86.63,
+  "price_52_week_low": 26,
+  "total_revenue_ttm": 682720000,
+  "total_revenue_yoy_growth_fq": 16.481842700958435,
+  "total_revenue_yoy_growth_ttm": -2.5150856591283586
+ },
+ "NYSE:APH": {
+  "Perf.Y": 7.971924639822675,
+  "close": 73.07,
+  "enterprise_value_to_revenue_ttm": 6.677015777619986,
+  "market_cap_basic": 180188210934,
+  "name": "APH",
+  "price_52_week_high": 89.93,
+  "price_52_week_low": 59.005,
+  "total_revenue_ttm": 29011600000,
+  "total_revenue_yoy_growth_fq": 55.00238925366795,
+  "total_revenue_yoy_growth_ttm": 54.1694122648528
+ },
+ "NYSE:ATI": {
+  "Perf.Y": 91.70812603648424,
+  "close": 161.84,
+  "enterprise_value_to_revenue_ttm": 4.998370421615203,
+  "market_cap_basic": 22037816212.000004,
+  "name": "ATI",
+  "price_52_week_high": 243.5694,
+  "price_52_week_low": 89.2,
+  "total_revenue_ttm": 4715200000,
+  "total_revenue_yoy_growth_fq": 10.584005612065942,
+  "total_revenue_yoy_growth_ttm": 4.580034156186928,
+  "country": "United States",
+  "exchange": "NYSE",
+  "Perf.5Y": 889.2420537897312,
+  "Perf.YTD": 40.31558869429512,
+  "description": "ATI Inc"
+ },
+ "NYSE:BW": {
+  "Perf.Y": 25.970149253731336,
+  "close": 4.22,
+  "enterprise_value_to_revenue_ttm": 0.7077946824049538,
+  "market_cap_basic": 628632511.0000001,
+  "name": "BW",
+  "price_52_week_high": 22.03,
+  "price_52_week_low": 3.12,
+  "total_revenue_ttm": 844141000,
+  "total_revenue_yoy_growth_fq": 130.25004321023218,
+  "total_revenue_yoy_growth_ttm": 40.366621603869746
+ },
+ "NYSE:CLS": {
+  "Perf.Y": -1.6452780519907866,
+  "close": 269.01,
+  "enterprise_value_to_revenue_ttm": 2.265405755981752,
+  "market_cap_basic": 33925151132.31118,
+  "name": "CLS",
+  "price_52_week_high": 474.025,
+  "price_52_week_low": 244.5101,
+  "total_revenue_ttm": 15171726496.040575,
+  "total_revenue_yoy_growth_fq": 55.605302965159765,
+  "total_revenue_yoy_growth_ttm": 39.79123699223913,
+  "country": "Canada",
+  "exchange": "NYSE"
+ },
+ "NYSE:CRS": {
+  "Perf.Y": 16.978866474543704,
+  "close": 292.26,
+  "enterprise_value_to_revenue_ttm": 4.7089683222002705,
+  "market_cap_basic": 14483987289.000002,
+  "name": "CRS",
+  "price_52_week_high": 625.985,
+  "price_52_week_low": 284.155,
+  "total_revenue_ttm": 3188700000,
+  "total_revenue_yoy_growth_fq": 8.791059015946571,
+  "total_revenue_yoy_growth_ttm": 10.213604313562836,
+  "Perf.5Y": 786.173438447544,
+  "Perf.YTD": -7.685018478157865,
+  "description": "Carpenter Technology Corporation"
+ },
+ "NYSE:FN": {
+  "Perf.Y": -21.906190078174927,
+  "close": 317.67,
+  "enterprise_value_to_revenue_ttm": 2.2650469772283452,
+  "market_cap_basic": 11383344731,
+  "name": "FN",
+  "price_52_week_high": 748.89,
+  "price_52_week_low": 311.81,
+  "total_revenue_ttm": 4641097000.05583,
+  "total_revenue_yoy_growth_fq": 44.64104334219282,
+  "total_revenue_yoy_growth_ttm": 35.73130034070658,
+  "country": "Cayman Islands",
+  "exchange": "NYSE"
+ },
+ "NYSE:GHM": {
+  "Perf.Y": 7.153551821660285,
+  "close": 64.41,
+  "enterprise_value_to_revenue_ttm": 2.817641073261139,
+  "market_cap_basic": 755982331,
+  "name": "GHM",
+  "price_52_week_high": 125.82,
+  "price_52_week_low": 52.57,
+  "total_revenue_ttm": 261148000.00000003,
+  "total_revenue_yoy_growth_fq": 28.574260637626832,
+  "total_revenue_yoy_growth_ttm": 21.22061717850646
+ },
+ "NYSE:GLW": {
+  "Perf.Y": 44.05716277448589,
+  "close": 123.99,
+  "enterprise_value_to_revenue_ttm": 6.734174379804291,
+  "market_cap_basic": 106803534178.99998,
+  "name": "GLW",
+  "price_52_week_high": 271.78,
+  "price_52_week_low": 77.39,
+  "total_revenue_ttm": 16964000000,
+  "total_revenue_yoy_growth_fq": 16.649404453650956,
+  "total_revenue_yoy_growth_ttm": 19.414331972406025,
+  "Perf.5Y": 222.55463059313217,
+  "Perf.YTD": 39.45562928804409,
+  "description": "Corning Inc"
+ },
+ "NYSE:HWM": {
+  "Perf.Y": -2.2751403003185198,
+  "close": 193.29,
+  "enterprise_value_to_revenue_ttm": 8.904718471536688,
+  "market_cap_basic": 77084318304.99998,
+  "name": "HWM",
+  "price_52_week_high": 310,
+  "price_52_week_low": 188.83,
+  "total_revenue_ttm": 9117000000,
+  "total_revenue_yoy_growth_fq": 24.062347783731123,
+  "total_revenue_yoy_growth_ttm": 18.080559513016446,
+  "country": "United States",
+  "description": "Howmet Aerospace Inc."
+ },
+ "NYSE:KN": {
+  "Perf.Y": 41.500635862653674,
+  "close": 33.38,
+  "enterprise_value_to_revenue_ttm": 4.64818419527559,
+  "market_cap_basic": 2850996963.9999995,
+  "name": "KN",
+  "price_52_week_high": 42.93,
+  "price_52_week_low": 20.57,
+  "total_revenue_ttm": 635000000,
+  "total_revenue_yoy_growth_fq": 14.324880054832075,
+  "total_revenue_yoy_growth_ttm": 12.768602379683895
+ },
+ "NYSE:MEI": {
+  "Perf.Y": 78.56135401974612,
+  "close": 12.66,
+  "enterprise_value_to_revenue_ttm": 0.6400405861507519,
+  "market_cap_basic": 451266375.99999994,
+  "name": "MEI",
+  "price_52_week_high": 20.38,
+  "price_52_week_low": 4.88,
+  "total_revenue_ttm": 1044099999.9999999,
+  "total_revenue_yoy_growth_fq": 10.353430353430342,
+  "total_revenue_yoy_growth_ttm": 1.3590913503543347
+ },
+ "NYSE:ONTO": {
+  "Perf.Y": 50.43919430561864,
+  "close": 198.67,
+  "enterprise_value_to_revenue_ttm": 8.337516976941213,
+  "market_cap_basic": 9749580254,
+  "name": "ONTO",
+  "price_52_week_high": 386.46,
+  "price_52_week_low": 118.97,
+  "total_revenue_ttm": 1120137000,
+  "total_revenue_yoy_growth_fq": 35.304834047721386,
+  "total_revenue_yoy_growth_ttm": 8.084504025172876
+ },
+ "NYSE:ROG": {
+  "Perf.Y": 51.47490891996707,
+  "close": 128.89,
+  "enterprise_value_to_revenue_ttm": 2.5397098478677527,
+  "market_cap_basic": 2303049781,
+  "name": "ROG",
+  "price_52_week_high": 169,
+  "price_52_week_low": 75.14,
+  "total_revenue_ttm": 834800000,
+  "total_revenue_yoy_growth_fq": 6.903353057199212,
+  "total_revenue_yoy_growth_ttm": 4.900728826338276
+ },
+ "OTC:BESIY": {
+  "Perf.Y": 9.722483242498283,
+  "close": 175.15,
+  "enterprise_value_to_revenue_ttm": 16.440725337034316,
+  "market_cap_basic": 14238665586.642252,
+  "name": "BESIY",
+  "price_52_week_high": 374.33,
+  "price_52_week_low": 140.07,
+  "total_revenue_ttm": 855554386.500052,
+  "total_revenue_yoy_growth_fq": 73.06815938085725,
+  "total_revenue_yoy_growth_ttm": 30.575848119395754
+ },
+ "NASDAQ:ARQ": {
+  "Perf.Y": -74.64183381088826,
+  "close": 1.77,
+  "enterprise_value_to_revenue_ttm": 0.9271653259451884,
+  "market_cap_basic": 77293215,
+  "name": "ARQ",
+  "price_52_week_high": 7.07,
+  "price_52_week_low": 1.54,
+  "total_revenue_ttm": 123441000,
+  "total_revenue_yoy_growth_fq": 4.544500419815281,
+  "total_revenue_yoy_growth_ttm": 4.926686217008798
+ },
+ "NASDAQ:ASPI": {
+  "Perf.Y": -77.96520822351081,
+  "close": 2.09,
+  "enterprise_value_to_revenue_ttm": 11.054097669360704,
+  "market_cap_basic": 320416574,
+  "name": "ASPI",
+  "price_52_week_high": 11.22,
+  "price_52_week_low": 1.89,
+  "total_revenue_ttm": 30852050,
+  "total_revenue_yoy_growth_fq": 327.506269062749,
+  "total_revenue_yoy_growth_ttm": 573.4016177589854,
+  "Perf.5Y": -35.09316770186336,
+  "Perf.YTD": -61.861313868613145,
+  "description": "ASP Isotopes, Inc.",
+  "industry": "Engineering & Construction",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -34.48275862068966
+ },
+ "NASDAQ:CRML": {
+  "Perf.Y": -57.55913609873157,
+  "close": 6.19,
+  "enterprise_value_to_revenue_ttm": null,
+  "market_cap_basic": 909891283,
+  "name": "CRML",
+  "price_52_week_high": 21.86,
+  "price_52_week_low": 5.115,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.5Y": -36.512820512820504,
+  "Perf.YTD": -12.816901408450695,
+  "description": "Critical Metals Corp.",
+  "industry": "Precious Metals",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -32.052689352360034
+ },
+ "NASDAQ:ELVA": {
+  "Perf.Y": -19.75308641975309,
+  "close": 5.2,
+  "enterprise_value_to_revenue_ttm": 4.082727987675228,
+  "market_cap_basic": 259994265.73388207,
+  "name": "ELVA",
+  "price_52_week_high": 12.78,
+  "price_52_week_low": 4.1,
+  "total_revenue_ttm": 69842528.27880655,
+  "total_revenue_yoy_growth_fq": -0.9231619418503589,
+  "total_revenue_yoy_growth_ttm": 24.050231596074497
+ },
+ "NASDAQ:ENVX": {
+  "Perf.Y": -78.01724137931036,
+  "close": 2.55,
+  "enterprise_value_to_revenue_ttm": 17.373303213578975,
+  "market_cap_basic": 559593746,
+  "name": "ENVX",
+  "price_52_week_high": 12.65,
+  "price_52_week_low": 2.2,
+  "total_revenue_ttm": 35879000,
+  "total_revenue_yoy_growth_fq": 20.835565077664704,
+  "total_revenue_yoy_growth_ttm": 34.88345864661654,
+  "Perf.5Y": -89.375,
+  "Perf.YTD": -66.13545816733068,
+  "description": "Enovix Corporation"
+ },
+ "NASDAQ:EOSE": {
+  "Perf.Y": -89.03846153846155,
+  "close": 1.71,
+  "enterprise_value_to_revenue_ttm": 7.59728853944961,
+  "market_cap_basic": 622726875,
+  "name": "EOSE",
+  "price_52_week_high": 19.86,
+  "price_52_week_low": 1.59,
+  "total_revenue_ttm": 214248000,
+  "total_revenue_yoy_growth_fq": 351.3980047256498,
+  "total_revenue_yoy_growth_ttm": 533.8698224852071,
+  "Perf.5Y": -84.45454545454544,
+  "Perf.YTD": -85.3721129170231,
+  "description": "Eos Energy Enterprises, Inc. Class A"
+ },
+ "NASDAQ:FCEL": {
+  "Perf.Y": 43.49442379182156,
+  "close": 11.58,
+  "enterprise_value_to_revenue_ttm": 3.093011736312501,
+  "market_cap_basic": 925869550,
+  "name": "FCEL",
+  "price_52_week_high": 37.88,
+  "price_52_week_low": 5.71,
+  "total_revenue_ttm": 154137000,
+  "total_revenue_yoy_growth_fq": -29.399054403867968,
+  "total_revenue_yoy_growth_ttm": 1.0920037777427987
+ },
+ "NASDAQ:FLNC": {
+  "Perf.Y": -64.46384039900249,
+  "close": 5.7,
+  "enterprise_value_to_revenue_ttm": 0.4401520279923279,
+  "market_cap_basic": 1052199277,
+  "name": "FLNC",
+  "price_52_week_high": 33.51,
+  "price_52_week_low": 5.619,
+  "total_revenue_ttm": 2631864000,
+  "total_revenue_yoy_growth_fq": 7.852681927794826,
+  "total_revenue_yoy_growth_ttm": 7.4630668489931145
+ },
+ "NASDAQ:LTBR": {
+  "Perf.Y": -77.33748886910062,
+  "close": 5.09,
+  "enterprise_value_to_revenue_ttm": null,
+  "market_cap_basic": 190661693,
+  "name": "LTBR",
+  "price_52_week_high": 28.4431,
+  "price_52_week_low": 4.87,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:NB": {
+  "Perf.Y": -63.01369863013698,
+  "close": 2.97,
+  "enterprise_value_to_revenue_ttm": null,
+  "market_cap_basic": 433173389,
+  "name": "NB",
+  "price_52_week_high": 8.97,
+  "price_52_week_low": 2.9312,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.5Y": -66.05714285714285,
+  "Perf.YTD": -45.10166358595194,
+  "description": "NioCorp Developments Ltd.",
+  "industry": "Other Metals/Minerals",
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:NNE": {
+  "Perf.Y": -69.77809937288953,
+  "close": 12.53,
+  "enterprise_value_to_revenue_ttm": 444.2430737892563,
+  "market_cap_basic": 672837718,
+  "name": "NNE",
+  "price_52_week_high": 49.5,
+  "price_52_week_low": 12.01,
+  "total_revenue_ttm": 214042,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.5Y": 248.05555555555554,
+  "Perf.YTD": -50.17892644135189,
+  "description": "Nano Nuclear Energy Inc."
+ },
+ "NASDAQ:PLUG": {
+  "Perf.Y": -54.60526315789473,
+  "close": 1.38,
+  "enterprise_value_to_revenue_ttm": 3.565712552430025,
+  "market_cap_basic": 1928129356,
+  "name": "PLUG",
+  "price_52_week_high": 4.33,
+  "price_52_week_low": 1.34,
+  "total_revenue_ttm": 744087000,
+  "total_revenue_yoy_growth_fq": 2.488360062079669,
+  "total_revenue_yoy_growth_ttm": 10.588338455867929,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:TLN": {
+  "Perf.Y": -12.770437437490125,
+  "close": 331.42,
+  "enterprise_value_to_revenue_ttm": 5.340978532536804,
+  "market_cap_basic": 15676166381.999998,
+  "name": "TLN",
+  "price_52_week_high": 449.8409,
+  "price_52_week_low": 279.77,
+  "total_revenue_ttm": 4687000000,
+  "total_revenue_yoy_growth_fq": 3.233256351039261,
+  "total_revenue_yoy_growth_ttm": 27.468044601577375,
+  "country": "United States",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:USAR": {
+  "Perf.Y": -61.921708185053376,
+  "close": 9.63,
+  "enterprise_value_to_revenue_ttm": 154.2398874791065,
+  "market_cap_basic": 3611987398.9999995,
+  "name": "USAR",
+  "price_52_week_high": 32.8,
+  "price_52_week_low": 9.41,
+  "total_revenue_ttm": 13162000,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.5Y": -4.841897233201566,
+  "Perf.YTD": -21.579804560260577,
+  "description": "USA Rare Earth, Inc. Class A",
+  "industry": "Metal Fabrication",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -43.00088783663805
+ },
+ "NYSE:ALB": {
+  "Perf.Y": 1.9162995594713756,
+  "close": 92.54,
+  "enterprise_value_to_revenue_ttm": 2.332676394538571,
+  "market_cap_basic": 10920188202,
+  "name": "ALB",
+  "price_52_week_high": 221,
+  "price_52_week_low": 88.01,
+  "total_revenue_ttm": 5907904000,
+  "total_revenue_yoy_growth_fq": 31.076953846338924,
+  "total_revenue_yoy_growth_ttm": 18.317145570504987,
+  "country": "United States",
+  "exchange": "NYSE",
+  "float_shares_outstanding": 117693820.815,
+  "total_shares_outstanding": 118005000,
+  "total_shares_outstanding_fundamental": 118005000
+ },
+ "NYSE:AMPX": {
+  "Perf.Y": -33.80753138075313,
+  "close": 7.91,
+  "enterprise_value_to_revenue_ttm": 9.953104890687369,
+  "market_cap_basic": 1155497741,
+  "name": "AMPX",
+  "price_52_week_high": 24.225,
+  "price_52_week_low": 7.26,
+  "total_revenue_ttm": 109228000,
+  "total_revenue_yoy_growth_fq": 125.87110904626005,
+  "total_revenue_yoy_growth_ttm": 143.61130316479694,
+  "Perf.5Y": -12.208657047724747,
+  "Perf.YTD": -6.390532544378688,
+  "description": "Amprius Technologies Inc"
+ },
+ "NYSE:BE": {
+  "Perf.Y": 116.29916567342073,
+  "close": 217.77,
+  "enterprise_value_to_revenue_ttm": 20.658312290445366,
+  "market_cap_basic": 64139220906.99999,
+  "name": "BE",
+  "price_52_week_high": 351.28,
+  "price_52_week_low": 75.7,
+  "total_revenue_ttm": 3113150000,
+  "total_revenue_yoy_growth_fq": 165.51682027305216,
+  "total_revenue_yoy_growth_ttm": 90.98435328869272,
+  "Perf.5Y": 937,
+  "Perf.YTD": 140.44385558131836,
+  "description": "Bloom Energy Corporation Class A"
+ },
+ "NYSE:BWXT": {
+  "Perf.Y": -37.90243902439025,
+  "close": 127.3,
+  "enterprise_value_to_revenue_ttm": 3.7189158425644164,
+  "market_cap_basic": 11663478176,
+  "name": "BWXT",
+  "price_52_week_high": 241.82,
+  "price_52_week_low": 124.79,
+  "total_revenue_ttm": 3514936000,
+  "total_revenue_yoy_growth_fq": 18.04052382217905,
+  "total_revenue_yoy_growth_ttm": 22.70284913174372,
+  "country": "United States",
+  "exchange": "NYSE",
+  "Perf.5Y": 117.94213319637049,
+  "Perf.YTD": -27.061250214862774,
+  "description": "BWX Technologies, Inc.",
+  "industry": "Aerospace & Defense",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -13.864266865146488
+ },
+ "NYSE:CAT": {
+  "Perf.Y": 33.91855134764992,
+  "close": 704.05,
+  "enterprise_value_to_revenue_ttm": 4.845054578557186,
+  "market_cap_basic": 323634083601,
+  "name": "CAT",
+  "price_52_week_high": 1073.46,
+  "price_52_week_low": 521.0201,
+  "total_revenue_ttm": 74729000000,
+  "total_revenue_yoy_growth_fq": 23.984549459834632,
+  "total_revenue_yoy_growth_ttm": 18.35632493387605
+ },
+ "NYSE:CCJ": {
+  "Perf.Y": -4.083120670798395,
+  "close": 78.93,
+  "enterprise_value_to_revenue_ttm": 14.023584276392757,
+  "market_cap_basic": 34376617401.70828,
+  "name": "CCJ",
+  "price_52_week_high": 135.24,
+  "price_52_week_low": 77.7,
+  "total_revenue_ttm": 2446133888,
+  "total_revenue_yoy_growth_fq": -11.06430870796779,
+  "total_revenue_yoy_growth_ttm": -6.718867406604867,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "Perf.5Y": 203.810623556582,
+  "Perf.YTD": -15.129032258064509,
+  "description": "Cameco Corporation"
+ },
+ "NYSE:ERO": {
+  "Perf.Y": 48.79012345679012,
+  "close": 30.13,
+  "enterprise_value_to_revenue_ttm": 3.5571665496085445,
+  "market_cap_basic": 3142638341.6210403,
+  "name": "ERO",
+  "price_52_week_high": 40.83,
+  "price_52_week_low": 19.0946,
+  "total_revenue_ttm": 1017194100.0679955,
+  "total_revenue_yoy_growth_fq": 66.61603515573003,
+  "total_revenue_yoy_growth_ttm": 85.25830266258644
+ },
+ "NYSE:ESS": {
+  "Perf.Y": 7.616398689324091,
+  "close": 282.45,
+  "enterprise_value_to_revenue_ttm": 12.98796135429177,
+  "market_cap_basic": 18152621732,
+  "name": "ESS",
+  "price_52_week_high": 303.345,
+  "price_52_week_low": 238.46,
+  "total_revenue_ttm": 1926734000,
+  "total_revenue_yoy_growth_fq": 4.089963880783172,
+  "total_revenue_yoy_growth_ttm": 4.737541062295096
+ },
+ "NYSE:FCX": {
+  "Perf.Y": 58.89298892988931,
+  "close": 64.59,
+  "enterprise_value_to_revenue_ttm": 4.407153849101606,
+  "market_cap_basic": 92752362228,
+  "name": "FCX",
+  "price_52_week_high": 80.24,
+  "price_52_week_low": 38.54,
+  "total_revenue_ttm": 25156000000,
+  "total_revenue_yoy_growth_fq": -8.475252794039383,
+  "total_revenue_yoy_growth_ttm": -1.8493952399531797
+ },
+ "NYSE:HBM": {
+  "Perf.Y": 46.03068712474983,
+  "close": 21.89,
+  "enterprise_value_to_revenue_ttm": 4.195184750295739,
+  "market_cap_basic": 9722513533.725464,
+  "name": "HBM",
+  "price_52_week_high": 32.15,
+  "price_52_week_low": 14.335,
+  "total_revenue_ttm": 2421249937.326218,
+  "total_revenue_yoy_growth_fq": 18.86531650428002,
+  "total_revenue_yoy_growth_ttm": 8.71658795284507
+ },
+ "NYSE:LEU": {
+  "Perf.Y": -70.34706602511174,
+  "close": 104.15,
+  "enterprise_value_to_revenue_ttm": 3.0364870183583035,
+  "market_cap_basic": 2130191198,
+  "name": "LEU",
+  "price_52_week_high": 401.995,
+  "price_52_week_low": 102.16,
+  "total_revenue_ttm": 473900000,
+  "total_revenue_yoy_growth_fq": 13.980582524271846,
+  "total_revenue_yoy_growth_ttm": 8.468757152666514,
+  "Perf.5Y": 98.41874642789102,
+  "Perf.YTD": -57.978616098446636,
+  "description": "Centrus Energy Corp. Class A"
+ },
+ "NYSE:MP": {
+  "Perf.Y": -46.496461773275975,
+  "close": 38.56,
+  "enterprise_value_to_revenue_ttm": 16.28975574780298,
+  "market_cap_basic": 6867597671,
+  "name": "MP",
+  "price_52_week_high": 76.8,
+  "price_52_week_low": 37.57,
+  "total_revenue_ttm": 416246000,
+  "total_revenue_yoy_growth_fq": 119.66093426027564,
+  "total_revenue_yoy_growth_ttm": 71.9200713707479,
+  "Perf.5Y": 8.957332579824813,
+  "Perf.YTD": -25.09712509712509,
+  "description": "MP Materials Corp Class A",
+  "industry": "Other Metals/Minerals",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -23.91475927387529
+ },
+ "NYSE:OKLO": {
+  "Perf.Y": -79.662676003313,
+  "close": 27.01,
+  "enterprise_value_to_revenue_ttm": 2111.5081719008263,
+  "market_cap_basic": 5024336888,
+  "name": "OKLO",
+  "price_52_week_high": 152.06,
+  "price_52_week_low": 26.31,
+  "total_revenue_ttm": 1210000,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.5Y": 175.33129459734965,
+  "Perf.YTD": -63.49506690093255,
+  "description": "Oklo Inc. Class A"
+ },
+ "NYSE:PWR": {
+  "Perf.Y": 25.040175641112707,
+  "close": 552.44,
+  "enterprise_value_to_revenue_ttm": 2.712422992486888,
+  "market_cap_basic": 83055699307,
+  "name": "PWR",
+  "price_52_week_high": 788.75,
+  "price_52_week_low": 408.36,
+  "total_revenue_ttm": 32905140000,
+  "total_revenue_yoy_growth_fq": 41.10419493143887,
+  "total_revenue_yoy_growth_ttm": 26.30111085394234
+ },
+ "NYSE:SCCO": {
+  "Perf.Y": 49.74857277030503,
+  "close": 183.59,
+  "enterprise_value_to_revenue_ttm": 9.092136154336288,
+  "market_cap_basic": 155013054765,
+  "name": "SCCO",
+  "price_52_week_high": 220.78,
+  "price_52_week_low": 115.68595157,
+  "total_revenue_ttm": 17106800000,
+  "total_revenue_yoy_growth_fq": 39.06374914872827,
+  "total_revenue_yoy_growth_ttm": 38.690664396611126,
+  "country": "United States",
+  "description": "Southern Copper Corporation"
+ },
+ "NYSE:SMR": {
+  "Perf.Y": -86.10537190082644,
+  "close": 5.38,
+  "enterprise_value_to_revenue_ttm": 111.66541403180543,
+  "market_cap_basic": 2311911276,
+  "name": "SMR",
+  "price_52_week_high": 45.54,
+  "price_52_week_low": 5.23,
+  "total_revenue_ttm": 10690000,
+  "total_revenue_yoy_growth_fq": -99.0687856965483,
+  "total_revenue_yoy_growth_ttm": -80.95424743443557,
+  "Perf.5Y": -45.766129032258064,
+  "Perf.YTD": -63.04945054945055,
+  "description": "NuScale Power Corporation Class A"
+ },
+ "NYSE:SQM": {
+  "Perf.Y": 32.916764913935395,
+  "close": 56.37,
+  "enterprise_value_to_revenue_ttm": 2.8520635853915017,
+  "market_cap_basic": 15826791568.237211,
+  "name": "SQM",
+  "price_52_week_high": 98,
+  "price_52_week_low": 43.35,
+  "total_revenue_ttm": 6710912008.879519,
+  "total_revenue_yoy_growth_fq": 135.9172525296335,
+  "total_revenue_yoy_growth_ttm": 58.56238751019303
+ },
+ "NYSE:TE": {
+  "Perf.Y": -49.0066225165563,
+  "close": 2.31,
+  "enterprise_value_to_revenue_ttm": 1.3989275979893498,
+  "market_cap_basic": 691842374.9999999,
+  "name": "TE",
+  "price_52_week_high": 12.49,
+  "price_52_week_low": 2.25,
+  "total_revenue_ttm": 996851000.011951,
+  "total_revenue_yoy_growth_fq": 88.39621291441878,
+  "total_revenue_yoy_growth_ttm": 426.9854779791535,
+  "Perf.5Y": -76.61943319838056,
+  "Perf.YTD": -66.97641172265905,
+  "description": "T1 Energy Inc."
+ },
+ "NYSE:TECK": {
+  "Perf.Y": 36.97674418604651,
+  "close": 58.9,
+  "enterprise_value_to_revenue_ttm": 3.272412646124174,
+  "market_cap_basic": 28898021033.674015,
+  "name": "TECK",
+  "price_52_week_high": 72.56,
+  "price_52_week_low": 38,
+  "total_revenue_ttm": 9849664000,
+  "total_revenue_yoy_growth_fq": 70.8009355986819,
+  "total_revenue_yoy_growth_ttm": 34.6793800134315
+ },
+ "NYSE:VST": {
+  "Perf.Y": -24.910690482537987,
+  "close": 140.83,
+  "enterprise_value_to_revenue_ttm": 3.9312630613207546,
+  "market_cap_basic": 47267504827,
+  "name": "VST",
+  "price_52_week_high": 203.66,
+  "price_52_week_low": 132.66,
+  "total_revenue_ttm": 17596000000,
+  "total_revenue_yoy_growth_fq": 27.958833619210978,
+  "total_revenue_yoy_growth_ttm": -20.552645837095902,
+  "country": "United States",
+  "exchange": "NYSE"
+ },
+ "NYSE:WOR": {
+  "Perf.Y": 12.598287611392628,
+  "close": 64.44,
+  "enterprise_value_to_revenue_ttm": 2.4388671847684544,
+  "market_cap_basic": 3174295976,
+  "name": "WOR",
+  "price_52_week_high": 67.535,
+  "price_52_week_low": 45.01,
+  "total_revenue_ttm": 1421471000,
+  "total_revenue_yoy_growth_fq": 13.229527142937107,
+  "total_revenue_yoy_growth_ttm": 18.440025963183274
+ },
+ "NYSE:XYL": {
+  "Perf.Y": -25.930445393532633,
+  "close": 109.26,
+  "enterprise_value_to_revenue_ttm": 3.0208195347229836,
+  "market_cap_basic": 25510770058.999996,
+  "name": "XYL",
+  "price_52_week_high": 154.27,
+  "price_52_week_low": 98.58,
+  "total_revenue_ttm": 9115000000,
+  "total_revenue_yoy_growth_fq": 1.4763352149370386,
+  "total_revenue_yoy_growth_ttm": 4.41008018327606,
+  "Perf.5Y": -14.840218238503512,
+  "Perf.YTD": -19.83270966321813,
+  "description": "Xylem Inc."
+ },
+ "NASDAQ:AAPL": {
+  "Perf.5Y": 132.6274300220456,
+  "Perf.All": 271209.252968492,
+  "close": 348.22,
+  "market_cap_basic": 5081985268596,
+  "name": "AAPL"
+ },
+ "NASDAQ:AMZN": {
+  "Perf.5Y": 46.37825197310727,
+  "Perf.All": 205341.68567536966,
+  "close": 250.38,
+  "market_cap_basic": 2700677465441,
+  "name": "AMZN"
+ },
+ "NASDAQ:AVGO": {
+  "Perf.5Y": 527.9647116625155,
+  "Perf.All": 19490.303030303032,
+  "close": 323.24,
+  "market_cap_basic": 1543028076703,
+  "name": "AVGO",
+  "country": "United States",
+  "description": "Broadcom Inc."
+ },
+ "NASDAQ:GOOGL": {
+  "Perf.5Y": 133.00035932447003,
+  "Perf.All": 12854.938216108765,
+  "close": 324.22,
+  "market_cap_basic": 3946087242156.9995,
+  "name": "GOOGL"
+ },
+ "NASDAQ:META": {
+  "Perf.5Y": 98.82333113729335,
+  "Perf.All": 1443.0439952437578,
+  "close": 648.85,
+  "market_cap_basic": 1652554253500,
+  "name": "META",
+  "country": "United States",
+  "description": "Meta Platforms Inc Class A"
+ },
+ "NASDAQ:MSFT": {
+  "Perf.5Y": 67.87371134020621,
+  "Perf.All": 535863.7122903017,
+  "close": 521.08,
+  "market_cap_basic": 3869762327444,
+  "name": "MSFT"
+ },
+ "NASDAQ:NFLX": {
+  "Perf.5Y": 2.867400009205136,
+  "Perf.All": 57880.31350011717,
+  "close": 67.05,
+  "market_cap_basic": 275329182356,
+  "name": "NFLX"
+ },
+ "NASDAQ:NVDA": {
+  "Perf.5Y": 829.8076501774526,
+  "Perf.All": 484949.2112036059,
+  "close": 212.21,
+  "market_cap_basic": 5114261161804,
+  "name": "NVDA",
+  "total_shares_outstanding": 24100000000
+ },
+ "NASDAQ:TSLA": {
+  "Perf.5Y": 25.487562492722777,
+  "Perf.All": 29472.144173873916,
+  "close": 374.58,
+  "market_cap_basic": 1480613634458.0002,
+  "name": "TSLA",
+  "country": "United States",
+  "description": "Tesla, Inc.",
+  "Perf.6M": 0.2891566265060198,
+  "Perf.Y": -15.530499492614727,
+  "enterprise_value_to_revenue_ttm": 14.016825668224392,
+  "industry": "Motor Vehicles",
+  "price_52_week_high": 498.83,
+  "price_52_week_low": 297.38,
+  "total_revenue_ttm": 103570000000,
+  "total_revenue_yoy_growth_fq": -0.17440825769709914,
+  "total_revenue_yoy_growth_ttm": 8.299436387021217
+ },
+ "NASDAQ:WMT": {
+  "Perf.5Y": 147.015884149224,
+  "Perf.All": 688943.1220844238,
+  "close": 121.12,
+  "market_cap_basic": 960935348666,
+  "name": "WMT"
+ },
+ "NYSE:BABA": {
+  "Perf.5Y": -43.142729506365875,
+  "Perf.All": 9.838187702265362,
+  "close": 101.82,
+  "market_cap_basic": 247141870381.50888,
+  "name": "BABA",
+  "country": "China",
+  "exchange": "NYSE"
+ },
+ "NYSE:BAC": {
+  "Perf.5Y": 8.703979570121295,
+  "Perf.All": 1542.7738693467336,
+  "close": 51.08,
+  "market_cap_basic": 353611289238,
+  "name": "BAC"
+ },
+ "NYSE:BRK.B": {
+  "Perf.5Y": 90.14461517068762,
+  "Perf.All": 2257.6293103448274,
+  "close": 546.97,
+  "market_cap_basic": 1170926190026,
+  "name": "BRK.B"
+ },
+ "NYSE:JNJ": {
+  "Perf.5Y": 64.11750275972035,
+  "Perf.All": 120324.62042462044,
+  "close": 267.61,
+  "market_cap_basic": 644220274851.0001,
+  "name": "JNJ"
+ },
+ "NYSE:JPM": {
+  "Perf.5Y": 97.92977709815916,
+  "Perf.All": 3421.8773634456256,
+  "close": 336.54,
+  "market_cap_basic": 894586033149,
+  "name": "JPM"
+ },
+ "NYSE:LLY": {
+  "Perf.5Y": 442.28502656042497,
+  "Perf.All": 46424.70239557587,
+  "close": 1306.69,
+  "market_cap_basic": 1230061795908.0002,
+  "name": "LLY"
+ },
+ "NYSE:ORCL": {
+  "Perf.5Y": 30.376986187558416,
+  "Perf.All": 198310.0643244354,
+  "close": 125.54,
+  "market_cap_basic": 379599830751.99994,
+  "name": "ORCL"
+ },
+ "NYSE:PG": {
+  "Perf.5Y": 18.796183370399614,
+  "Perf.All": 11545.89010989011,
+  "close": 165.59,
+  "market_cap_basic": 384611308129.99994,
+  "name": "PG"
+ },
+ "NYSE:TSM": {
+  "Perf.5Y": 254.7401927047488,
+  "Perf.All": 7802.804417521056,
+  "close": 412.35,
+  "market_cap_basic": 1896033759474.3865,
+  "name": "TSM",
+  "country": "Taiwan",
+  "exchange": "NYSE"
+ },
+ "NYSE:UBER": {
+  "Perf.5Y": 50.152173913043455,
+  "Perf.All": 64.45238095238093,
+  "close": 69.07,
+  "market_cap_basic": 141079631055,
+  "name": "UBER",
+  "country": "United States",
+  "description": "Uber Technologies, Inc."
+ },
+ "NYSE:V": {
+  "Perf.5Y": 79.92096921273178,
+  "Perf.All": 2685.4789915966385,
+  "close": 414.34,
+  "market_cap_basic": 773592395683,
+  "name": "V"
+ },
+ "NYSE:WFC": {
+  "Perf.5Y": 64.24614166996439,
+  "Perf.All": 7849.047952840055,
+  "close": 83.01,
+  "market_cap_basic": 249166052831,
+  "name": "WFC"
+ },
+ "NYSE:XOM": {
+  "Perf.5Y": 183.94137326748444,
+  "Perf.All": 11193.782178217822,
+  "close": 178.23,
+  "market_cap_basic": 732866077686,
+  "name": "XOM",
+  "country": "United States",
+  "description": "Exxonmobil Holdings Corporation"
+ },
+ "OTC:TCEHY": {
+  "Perf.5Y": -24.049662783568362,
+  "Perf.All": 3247.972972972973,
+  "close": 49.55,
+  "market_cap_basic": 439493657763.4692,
+  "name": "TCEHY"
+ },
+ "NASDAQ:BHF": {
+  "close": 46.35,
+  "country": "United States",
+  "description": "Brighthouse Financial, Inc.",
+  "market_cap_basic": 2665660827.0000005,
+  "name": "BHF"
+ },
+ "NASDAQ:BKR": {
+  "close": 53.62,
+  "country": "United States",
+  "description": "Baker Hughes Company Class A",
+  "market_cap_basic": 53227182695.00001,
+  "name": "BKR",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:CCEP": {
+  "close": 114.23,
+  "country": "United Kingdom",
+  "description": "Coca-Cola Europacific Partners plc",
+  "market_cap_basic": 50628750318,
+  "name": "CCEP"
+ },
+ "NASDAQ:EXE": {
+  "close": 92.96,
+  "country": "United States",
+  "description": "Expand Energy Corporation",
+  "market_cap_basic": 21520591564.999996,
+  "name": "EXE",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:PARA": {
+  "close": 0.4702,
+  "country": "United States",
+  "description": "Banzai International, Inc. Class A",
+  "market_cap_basic": 2120116,
+  "name": "PARA"
+ },
+ "NYSE:AAP": {
+  "close": 46.69,
+  "country": "United States",
+  "description": "Advance Auto Parts, Inc.",
+  "market_cap_basic": 2820075988.0000005,
+  "name": "AAP"
+ },
+ "NYSE:ADT": {
+  "close": 6.99,
+  "country": "United States",
+  "description": "ADT, Inc.",
+  "market_cap_basic": 4723945006,
+  "name": "ADT"
+ },
+ "NYSE:AIV": {
+  "close": 1.64,
+  "country": "United States",
+  "description": "Apartment Investment and Management Company Class A",
+  "market_cap_basic": 238188502,
+  "name": "AIV"
+ },
+ "NYSE:ALK": {
+  "close": 35.38,
+  "country": "United States",
+  "description": "Alaska Air Group, Inc.",
+  "market_cap_basic": 3948518466,
+  "name": "ALK"
+ },
+ "NYSE:AMG": {
+  "close": 395.53,
+  "country": "United States",
+  "description": "Affiliated Managers Group, Inc.",
+  "market_cap_basic": 10228379605,
+  "name": "AMG"
+ },
+ "NYSE:AN": {
+  "close": 161.84,
+  "country": "United States",
+  "description": "AutoNation, Inc.",
+  "market_cap_basic": 5350560766,
+  "name": "AN"
+ },
+ "NYSE:AYI": {
+  "close": 317.23,
+  "country": "United States",
+  "description": "Acuity Inc.",
+  "market_cap_basic": 9496453864,
+  "name": "AYI"
+ },
+ "NYSE:AZN": {
+  "close": 172.57,
+  "country": "United Kingdom",
+  "description": "AstraZeneca PLC",
+  "market_cap_basic": 267639813592.23633,
+  "name": "AZN"
+ },
+ "NYSE:BALL": {
+  "close": 65.81,
+  "country": "United States",
+  "description": "Ball Corporation",
+  "market_cap_basic": 17420126069.000004,
+  "name": "BALL",
+  "exchange": "NYSE"
+ },
+ "NYSE:BBWI": {
+  "close": 21.6,
+  "country": "United States",
+  "description": "Bath & Body Works, Inc.",
+  "market_cap_basic": 4355538761,
+  "name": "BBWI"
+ },
+ "NYSE:BFH": {
+  "close": 102.45,
+  "country": "United States",
+  "description": "Bread Financial Holdings, Inc.",
+  "market_cap_basic": 3936054049,
+  "name": "BFH",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1790726400,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "total_shares_outstanding": 38419300
+ },
+ "NYSE:BIO": {
+  "close": 363.5,
+  "country": "United States",
+  "description": "Bio-Rad Laboratories, Inc. Class A",
+  "market_cap_basic": 9769329835.000002,
+  "name": "BIO",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "total_shares_outstanding": 21677100
+ },
+ "NYSE:BLDR": {
+  "close": 57.54,
+  "country": "United States",
+  "description": "Builders FirstSource, Inc.",
+  "market_cap_basic": 6191099878.000001,
+  "name": "BLDR",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Home Improvement Chains",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 107596000
+ },
+ "NYSE:BWA": {
+  "close": 55.46,
+  "country": "United States",
+  "description": "BorgWarner Inc.",
+  "market_cap_basic": 11295336504.000002,
+  "name": "BWA",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Trucks/Construction/Farm Machinery",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 203666000
+ },
+ "NYSE:CAG": {
+  "close": 15.07,
+  "country": "United States",
+  "description": "Conagra Brands, Inc.",
+  "market_cap_basic": 7194591604,
+  "name": "CAG",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1780185600,
+  "fiscal_period_fy": "2025",
+  "industry": "Food: Major Diversified",
+  "sector": "Consumer Non-Durables",
+  "total_shares_outstanding": 477412000
+ },
+ "NYSE:CE": {
+  "close": 47.22,
+  "country": "United States",
+  "description": "Celanese Corporation",
+  "market_cap_basic": 5182344697.999999,
+  "name": "CE",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 109749000
+ },
+ "NYSE:CNX": {
+  "close": 35.73,
+  "country": "United States",
+  "description": "CNX Resources Corporation",
+  "market_cap_basic": 5286025976,
+  "name": "CNX",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "total_shares_outstanding": 147944000
+ },
+ "NYSE:COR": {
+  "close": 338.48,
+  "country": "United States",
+  "description": "Cencora, Inc.",
+  "market_cap_basic": 64591185629.00001,
+  "name": "COR"
+ },
+ "NYSE:COTY": {
+  "close": 3.21,
+  "country": "United States",
+  "description": "Coty Inc. Class A",
+  "market_cap_basic": 2827003578,
+  "name": "COTY",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1782777600,
+  "fiscal_period_fy": "2026",
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "total_shares_outstanding": 880686000
+ },
+ "NYSE:CPRI": {
+  "close": 16.36,
+  "country": "United Kingdom",
+  "description": "Capri Holdings Limited",
+  "market_cap_basic": 1859340556.0000002,
+  "name": "CPRI",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1774915200,
+  "fiscal_period_fy": "2025",
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 113652000
+ },
+ "NYSE:CTVA": {
+  "close": 12.86,
+  "country": "United States",
+  "description": "Corteva Inc",
+  "market_cap_basic": 8581477614,
+  "name": "CTVA",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Agricultural Commodities/Milling",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 667300000
+ },
+ "NYSE:DVN": {
+  "close": 49.18,
+  "country": "United States",
+  "description": "Devon Energy Corporation",
+  "market_cap_basic": 54098000336,
+  "name": "DVN"
+ },
+ "NYSE:ELV": {
+  "close": 445.28,
+  "country": "United States",
+  "description": "Elevance Health, Inc.",
+  "market_cap_basic": 96205367747,
+  "name": "ELV"
+ },
+ "NYSE:TAK": {
+  "close": 20.36,
+  "country": "Japan",
+  "description": "Takeda Pharmaceutical Co. Ltd. Sponsored ADR",
+  "market_cap_basic": 64606350604.2545,
+  "name": "TAK"
+ },
+ "NYSE:TFC": {
+  "close": 48.42,
+  "country": "United States",
+  "description": "Truist Financial Corporation",
+  "market_cap_basic": 59151139369.99999,
+  "name": "TFC",
+  "exchange": "NYSE"
+ },
+ "NASDAQ:LUMN": {
+  "close": 4.46,
+  "country": "United States",
+  "description": "Lumen Technologies, Inc.",
+  "market_cap_basic": 4600246678,
+  "name": "LUMN"
+ },
+ "NASDAQ:SNPS": {
+  "close": 422.48,
+  "country": "United States",
+  "description": "Synopsys, Inc.",
+  "market_cap_basic": 80962650810,
+  "name": "SNPS"
+ },
+ "NYSE:ABBV": {
+  "close": 285.19,
+  "country": "United States",
+  "description": "AbbVie, Inc.",
+  "market_cap_basic": 503964189831,
+  "name": "ABBV"
+ },
+ "NYSE:BDX": {
+  "close": 200.42,
+  "country": "United States",
+  "description": "Becton, Dickinson and Company",
+  "market_cap_basic": 54591764022,
+  "name": "BDX"
+ },
+ "NYSE:BMY": {
+  "close": 63,
+  "country": "United States",
+  "description": "Bristol-Myers Squibb Company",
+  "market_cap_basic": 128691019774.99998,
+  "name": "BMY"
+ },
+ "NYSE:BNY": {
+  "close": 145.32,
+  "country": "United States",
+  "description": "Bank of New York Mellon Corp",
+  "market_cap_basic": 98600228103.99998,
+  "name": "BNY"
+ },
+ "NYSE:COP": {
+  "close": 145.63,
+  "country": "United States",
+  "description": "ConocoPhillips",
+  "market_cap_basic": 174950789546,
+  "name": "COP"
+ },
+ "NYSE:CVS": {
+  "close": 94.48,
+  "country": "United States",
+  "description": "CVS Health Corporation",
+  "market_cap_basic": 120837121725.00002,
+  "name": "CVS"
+ },
+ "NYSE:MPC": {
+  "close": 459.28,
+  "country": "United States",
+  "description": "Marathon Petroleum Corporation",
+  "market_cap_basic": 128977185119,
+  "name": "MPC"
+ },
+ "NYSE:OXY": {
+  "close": 62.5,
+  "country": "United States",
+  "description": "Occidental Petroleum Corporation",
+  "market_cap_basic": 62477336883.99999,
+  "name": "OXY"
+ },
+ "NYSE:RTX": {
+  "close": 194.71,
+  "country": "United States",
+  "description": "RTX Corporation",
+  "market_cap_basic": 262749578893,
+  "name": "RTX"
+ },
+ "NYSE:SKYD": {
+  "close": 7.79,
+  "country": "United States",
+  "description": "Skydance Corporation Class B",
+  "market_cap_basic": 8760017293,
+  "name": "SKYD",
+  "exchange": "NYSE"
+ },
+ "NYSE:SLB": {
+  "close": 49.55,
+  "country": "United States",
+  "description": "SLB Limited",
+  "market_cap_basic": 73539299905,
+  "name": "SLB"
+ },
+ "NYSE:WY": {
+  "close": 19.82,
+  "country": "United States",
+  "description": "Weyerhaeuser Company",
+  "market_cap_basic": 14284987755.000002,
+  "name": "WY"
+ },
+ "NYSE:FITB": {
+  "close": 53.23,
+  "country": "United States",
+  "description": "Fifth Third Bancorp",
+  "market_cap_basic": 48273891517.99999,
+  "name": "FITB"
+ },
+ "NYSE:VMRK": {
+  "close": 63.57,
+  "country": "United States",
+  "description": "Vivmark Residential",
+  "market_cap_basic": 49189138026,
+  "name": "VMRK",
+  "exchange": "NYSE"
+ },
+ "NASDAQ:ABNB": {
+  "close": 175.76,
+  "country": "United States",
+  "description": "Airbnb, Inc. Class A",
+  "market_cap_basic": 105242570909,
+  "name": "ABNB"
+ },
+ "NASDAQ:APP": {
+  "close": 264.28,
+  "country": "United States",
+  "description": "AppLovin Corp. Class A",
+  "market_cap_basic": 88441564065,
+  "name": "APP"
+ },
+ "NASDAQ:COIN": {
+  "close": 169.09,
+  "country": "United States",
+  "description": "Coinbase Global, Inc. Class A",
+  "market_cap_basic": 44612198330,
+  "name": "COIN",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:CRWV": {
+  "close": 55.6,
+  "country": "United States",
+  "description": "CoreWeave, Inc. Class A",
+  "market_cap_basic": 30665433317,
+  "name": "CRWV",
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "total_shares_outstanding": 458871700
+ },
+ "NASDAQ:DASH": {
+  "close": 185.94,
+  "country": "United States",
+  "description": "DoorDash, Inc. Class A",
+  "market_cap_basic": 80572250728,
+  "name": "DASH"
+ },
+ "NASDAQ:IBKR": {
+  "close": 82.28,
+  "country": "United States",
+  "description": "Interactive Brokers Group, Inc. Class A",
+  "market_cap_basic": 139983720893.71997,
+  "name": "IBKR"
+ },
+ "NASDAQ:KDP": {
+  "close": 35.19,
+  "country": "United States",
+  "description": "Keurig Dr Pepper Inc.",
+  "market_cap_basic": 47887466824.00001,
+  "name": "KDP",
+  "exchange": "NASDAQ",
+  "float_shares_outstanding": 1297028846.28,
+  "total_shares_outstanding_fundamental": 1360830000
+ },
+ "NASDAQ:LCID": {
+  "close": 3.46,
+  "country": "United States",
+  "description": "Lucid Group, Inc.",
+  "market_cap_basic": 1363482874,
+  "name": "LCID",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:MDLN": {
+  "close": 34.88,
+  "country": "United States",
+  "description": "Medline, Inc. Class A",
+  "market_cap_basic": 45856997968,
+  "name": "MDLN"
+ },
+ "NASDAQ:MELI": {
+  "close": 1824.955,
+  "country": "Uruguay",
+  "description": "MercadoLibre, Inc.",
+  "market_cap_basic": 92519376839,
+  "name": "MELI"
+ },
+ "NASDAQ:MSTR": {
+  "close": 145.8,
+  "country": "United States",
+  "description": "Strategy Inc Class A",
+  "market_cap_basic": 61537890760,
+  "name": "MSTR",
+  "float_shares_outstanding": 401328339.06,
+  "total_shares_outstanding_fundamental": 402431000
+ },
+ "NASDAQ:PLTR": {
+  "close": 196.19,
+  "country": "United States",
+  "description": "Palantir Technologies Inc. Class A",
+  "market_cap_basic": 471456010951,
+  "name": "PLTR",
+  "float_shares_outstanding": 2209792842.93,
+  "total_shares_outstanding_fundamental": 2300710000
+ },
+ "NASDAQ:RIVN": {
+  "close": 12.06,
+  "country": "United States",
+  "description": "Rivian Automotive, Inc. Class A",
+  "market_cap_basic": 17461199686,
+  "name": "RIVN",
+  "exchange": "NASDAQ",
+  "float_shares_outstanding": 942870674.2861,
+  "total_shares_outstanding": 1443948100,
+  "total_shares_outstanding_fundamental": 1443948100
+ },
+ "NASDAQ:SIRI": {
+  "close": 27.54,
+  "country": "United States",
+  "description": "SiriusXM Holdings Inc.",
+  "market_cap_basic": 9282822584,
+  "name": "SIRI"
+ },
+ "NASDAQ:SPCX": {
+  "close": 144.75,
+  "country": "United States",
+  "description": "Space Exploration Technologies Corp",
+  "market_cap_basic": 1943208390381,
+  "name": "SPCX",
+  "Perf.Y": -3.5,
+  "Perf.YTD": -3.5,
+  "total_revenue_yoy_growth_ttm": null,
+  "industry": "Specialty Telecommunications",
+  "sector": "Communications",
+  "total_shares_outstanding": 8085583000
+ },
+ "NASDAQ:TEAM": {
+  "close": 223.16,
+  "country": "United States",
+  "description": "Atlassian Corp Class A",
+  "market_cap_basic": 56203283203,
+  "name": "TEAM",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:WDAY": {
+  "close": 209.99,
+  "country": "United States",
+  "description": "Workday, Inc. Class A",
+  "market_cap_basic": 50607591323.99999,
+  "name": "WDAY",
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:ZM": {
+  "close": 96.2,
+  "country": "United States",
+  "description": "Zoom Communications, Inc. Class A",
+  "market_cap_basic": 28069593387,
+  "name": "ZM",
+  "exchange": "NASDAQ"
+ },
+ "NYSE:APO": {
+  "close": 114.83,
+  "country": "United States",
+  "description": "Apollo Global Management Inc",
+  "market_cap_basic": 67812078217.999985,
+  "name": "APO"
+ },
+ "NYSE:ARES": {
+  "close": 123.7,
+  "country": "United States",
+  "description": "Ares Management Corporation Class A",
+  "market_cap_basic": 27703570908.000004,
+  "name": "ARES",
+  "exchange": "NYSE"
+ },
+ "NYSE:BAM": {
+  "close": 47.64,
+  "country": "United States",
+  "description": "Brookfield Asset Management Ltd. Class A",
+  "market_cap_basic": 78045381314.05402,
+  "name": "BAM",
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "total_shares_outstanding": 1638210800
+ },
+ "NYSE:BN": {
+  "close": 38.28,
+  "country": "Canada",
+  "description": "Brookfield Corporation",
+  "market_cap_basic": 93866241356.72441,
+  "name": "BN"
+ },
+ "NYSE:BX": {
+  "close": 118.75,
+  "country": "United States",
+  "description": "Blackstone Inc.",
+  "market_cap_basic": 146523639865,
+  "name": "BX"
+ },
+ "NYSE:CPNG": {
+  "close": 13.99,
+  "country": "United States",
+  "description": "Coupang, Inc. Class A",
+  "market_cap_basic": 25147188695.000004,
+  "name": "CPNG",
+  "exchange": "NYSE"
+ },
+ "NYSE:CRH": {
+  "close": 86.43,
+  "country": "United States",
+  "description": "CRH public limited company",
+  "market_cap_basic": 57500538230,
+  "name": "CRH",
+  "exchange": "NYSE"
+ },
+ "NYSE:DELL": {
+  "close": 452.95,
+  "country": "United States",
+  "description": "Dell Technologies, Inc. Class C",
+  "market_cap_basic": 287991396959.99994,
+  "name": "DELL"
+ },
+ "NYSE:EPD": {
+  "close": 36.52,
+  "country": "United States",
+  "description": "Enterprise Products Partners L.P.",
+  "market_cap_basic": 78864111799,
+  "name": "EPD",
+  "industry": "Oil & Gas Pipelines",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 2159480000,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025"
+ },
+ "NYSE:FERG": {
+  "close": 227.31,
+  "country": "United States",
+  "description": "Ferguson Enterprises Inc.",
+  "market_cap_basic": 43973735723,
+  "name": "FERG",
+  "exchange": "NYSE"
+ },
+ "NYSE:KKR": {
+  "close": 93.09,
+  "country": "United States",
+  "description": "KKR & Co Inc",
+  "market_cap_basic": 83560896589,
+  "name": "KKR"
+ },
+ "NYSE:LNG": {
+  "close": 287.01,
+  "country": "United States",
+  "description": "Cheniere Energy, Inc.",
+  "market_cap_basic": 59277368170,
+  "name": "LNG"
+ },
+ "NYSE:LVS": {
+  "close": 36.53,
+  "country": "United States",
+  "description": "Las Vegas Sands Corp.",
+  "market_cap_basic": 23660523018,
+  "name": "LVS",
+  "exchange": "NYSE"
+ },
+ "NYSE:MPLX": {
+  "close": 58.18,
+  "country": "United States",
+  "description": "MPLX LP",
+  "market_cap_basic": 58986274828,
+  "name": "MPLX"
+ },
+ "NYSE:NET": {
+  "close": 303.61,
+  "country": "United States",
+  "description": "Cloudflare Inc Class A",
+  "market_cap_basic": 108109356877,
+  "name": "NET"
+ },
+ "NYSE:RBLX": {
+  "close": 53.96,
+  "country": "United States",
+  "description": "Roblox Corp. Class A",
+  "market_cap_basic": 38547724742,
+  "name": "RBLX",
+  "exchange": "NYSE"
+ },
+ "NYSE:S": {
+  "close": 22.5,
+  "country": "United States",
+  "description": "SentinelOne, Inc. Class A",
+  "market_cap_basic": 7831105499.000001,
+  "name": "S"
+ },
+ "NYSE:SNAP": {
+  "close": 6.35,
+  "country": "United States",
+  "description": "Snap, Inc. Class A",
+  "market_cap_basic": 10739105712.000002,
+  "name": "SNAP",
+  "exchange": "NYSE"
+ },
+ "NYSE:SNOW": {
+  "close": 313.96,
+  "country": "United States",
+  "description": "Snowflake, Inc.",
+  "market_cap_basic": 110765081153,
+  "name": "SNOW"
+ },
+ "NYSE:TWLO": {
+  "close": 253.63,
+  "country": "United States",
+  "description": "Twilio, Inc. Class A",
+  "market_cap_basic": 38951285277.00001,
+  "name": "TWLO",
+  "exchange": "NYSE"
+ },
+ "NYSE:XYZ": {
+  "close": 79.02,
+  "country": "United States",
+  "description": "Block, Inc. Class A",
+  "market_cap_basic": 47474975264,
+  "name": "XYZ",
+  "exchange": "NYSE"
+ },
+ "NASDAQ:CZR": {
+  "country": "United States",
+  "description": "Caesars Entertainment, Inc.",
+  "market_cap_basic": 5923888051,
+  "name": "CZR"
+ },
+ "NASDAQ:FISV": {
+  "country": "United States",
+  "description": "Fiserv, Inc.",
+  "market_cap_basic": 27024384733.000004,
+  "name": "FISV",
+  "close": 50.82,
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:FOSL": {
+  "country": "United States",
+  "description": "Fossil Group, Inc.",
+  "market_cap_basic": 387354239,
+  "name": "FOSL"
+ },
+ "NASDAQ:GT": {
+  "country": "United States",
+  "description": "Goodyear Tire & Rubber Company",
+  "market_cap_basic": 1275391380.9999998,
+  "name": "GT"
+ },
+ "NASDAQ:HONA": {
+  "country": "United States",
+  "description": "Honeywell Aerospace Inc",
+  "market_cap_basic": 51669635117,
+  "name": "HONA"
+ },
+ "NASDAQ:MAR": {
+  "country": "United States",
+  "description": "Marriott International, Inc. Class A",
+  "market_cap_basic": 103472063223.00002,
+  "name": "MAR",
+  "close": 396.8,
+  "float_shares_outstanding": 206845588.81800002,
+  "total_shares_outstanding_fundamental": 260766000.00000003
+ },
+ "NASDAQ:SATS": {
+  "country": "Japan",
+  "description": "Strive Inc 15% Fixed Rate Cumulative Perpatual Pfd Shs Series A",
+  "market_cap_basic": null,
+  "name": "SATS",
+  "Perf.5Y": 287.70491803278685,
+  "Perf.Y": 29.571291603889865,
+  "Perf.YTD": -12.955465587044547,
+  "close": 94.6,
+  "industry": "Investment Managers",
+  "total_revenue_YoYTTM": null,
+  "total_revenue_yoy_growth_ttm": 650.3060458871381
+ },
+ "NYSE:CI": {
+  "country": "United States",
+  "description": "Cigna Group",
+  "market_cap_basic": 83468293284,
+  "name": "CI"
+ },
+ "NYSE:COF": {
+  "country": "United States",
+  "description": "Capital One Financial Corp",
+  "market_cap_basic": 124801208828.00002,
+  "name": "COF"
+ },
+ "NYSE:CPAY": {
+  "country": "United States",
+  "description": "Corpay, Inc.",
+  "market_cap_basic": 27249390947.999996,
+  "name": "CPAY",
+  "close": 415.01,
+  "exchange": "NYSE"
+ },
+ "NYSE:CVX": {
+  "country": "United States",
+  "description": "Chevron Corporation",
+  "market_cap_basic": 447867810265,
+  "name": "CVX",
+  "close": 226.68
+ },
+ "NYSE:DD": {
+  "country": "United States",
+  "description": "DuPont de Nemours, Inc.",
+  "market_cap_basic": 18244305902,
+  "name": "DD",
+  "close": 135.1,
+  "exchange": "NYSE"
+ },
+ "NYSE:DINO": {
+  "country": "United States",
+  "description": "HF Sinclair Corporation",
+  "market_cap_basic": 21746519742.999996,
+  "name": "DINO",
+  "close": 122.32,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "total_shares_outstanding": 177784000
+ },
+ "NYSE:DKS": {
+  "country": "United States",
+  "description": "Dick's Sporting Goods, Inc.",
+  "market_cap_basic": 13230546883,
+  "name": "DKS"
+ },
+ "NYSE:DOC": {
+  "country": "United States",
+  "description": "Healthpeak Properties, Inc.",
+  "market_cap_basic": 13664236575,
+  "name": "DOC",
+  "close": 19.34,
+  "exchange": "NYSE"
+ },
+ "NYSE:DXC": {
+  "country": "United States",
+  "description": "DXC Technology Co.",
+  "market_cap_basic": 2569241267,
+  "name": "DXC",
+  "close": 16.08,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1774915200,
+  "fiscal_period_fy": "2025",
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "total_shares_outstanding": 159779000
+ },
+ "NYSE:EMN": {
+  "country": "United States",
+  "description": "Eastman Chemical Company",
+  "market_cap_basic": 7469988924.000001,
+  "name": "EMN",
+  "close": 65.31,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 114377000
+ },
+ "NYSE:EPAM": {
+  "country": "United States",
+  "description": "EPAM Systems, Inc.",
+  "market_cap_basic": 7153566271,
+  "name": "EPAM",
+  "close": 138.67,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "total_shares_outstanding": 51587000
+ },
+ "NYSE:FBIN": {
+  "country": "United States",
+  "description": "Fortune Brands Innovations, Inc.",
+  "market_cap_basic": 5227277009,
+  "name": "FBIN",
+  "close": 43.79,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Building Products",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 119371000
+ },
+ "NYSE:FDXF": {
+  "country": "United States",
+  "description": "FedEx Freight Holding Company, Inc.",
+  "market_cap_basic": 16599503701.000002,
+  "name": "FDXF",
+  "close": 111.02,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1772236800,
+  "fiscal_period_end_fy": 1780185600,
+  "fiscal_period_fy": "2025",
+  "industry": "Trucking",
+  "sector": "Transportation",
+  "total_shares_outstanding": 149518130
+ },
+ "NYSE:FLR": {
+  "country": "United States",
+  "description": "Fluor Corporation",
+  "market_cap_basic": 5807036508.999999,
+  "name": "FLR",
+  "close": 43.42,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 133741000.00000001
+ },
+ "NYSE:FLS": {
+  "country": "United States",
+  "description": "Flowserve Corporation",
+  "market_cap_basic": 8613162089,
+  "name": "FLS",
+  "close": 67.76,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 127113000
+ },
+ "NYSE:FMC": {
+  "country": "United States",
+  "description": "FMC Corporation",
+  "market_cap_basic": 780840943,
+  "name": "FMC",
+  "close": 5.02,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 155546000
+ },
+ "NYSE:FTI": {
+  "country": "United States",
+  "description": "TechnipFMC plc",
+  "market_cap_basic": 26204422928,
+  "name": "FTI",
+  "close": 66.82,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oilfield Services/Equipment",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 392164000
+ },
+ "NYSE:GAP": {
+  "country": "United States",
+  "description": "Gap, Inc.",
+  "market_cap_basic": 8047598191,
+  "name": "GAP",
+  "close": 22.91,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 351270000
+ },
+ "NYSE:GIL": {
+  "country": "Canada",
+  "description": "Gildan Activewear Inc.",
+  "market_cap_basic": 7598421554.123303,
+  "name": "GIL"
+ },
+ "NYSE:HOG": {
+  "country": "United States",
+  "description": "Harley-Davidson, Inc.",
+  "market_cap_basic": 3029550823,
+  "name": "HOG",
+  "close": 29.11,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "total_shares_outstanding": 104073000
+ },
+ "NYSE:HRB": {
+  "country": "United States",
+  "description": "H&R Block, Inc.",
+  "market_cap_basic": 6134452914.000001,
+  "name": "HRB",
+  "close": 50.08,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1782777600,
+  "fiscal_period_fy": "2026",
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "total_shares_outstanding": 122493000
+ },
+ "NYSE:J": {
+  "country": "United States",
+  "description": "Jacobs Solutions Inc.",
+  "market_cap_basic": 17118066802.000002,
+  "name": "J",
+  "close": 146.26,
+  "exchange": "NYSE"
+ },
+ "NYSE:JEF": {
+  "country": "United States",
+  "description": "Jefferies Financial Group Inc.",
+  "market_cap_basic": 10482122317,
+  "name": "JEF",
+  "close": 45.64,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1764460800,
+  "fiscal_period_fy": "2025",
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "total_shares_outstanding": 189091000
+ },
+ "NYSE:LHX": {
+  "country": "United States",
+  "description": "L3Harris Technologies Inc",
+  "market_cap_basic": 47341340742,
+  "name": "LHX",
+  "close": 254.23,
+  "exchange": "NYSE"
+ },
+ "NYSE:MS": {
+  "country": "United States",
+  "description": "Morgan Stanley",
+  "market_cap_basic": 288937081218,
+  "name": "MS"
+ },
+ "NYSE:NE": {
+  "country": "United States",
+  "description": "Noble Corporation PLC Class A",
+  "market_cap_basic": 7016275335.000001,
+  "name": "NE"
+ },
+ "NYSE:OMC": {
+  "country": "United States",
+  "description": "Omnicom Group Inc",
+  "market_cap_basic": 22650003255.999996,
+  "name": "OMC"
+ },
+ "NYSE:PLD": {
+  "country": "United States",
+  "description": "Prologis, Inc.",
+  "market_cap_basic": 122768389707,
+  "name": "PLD"
+ },
+ "NYSE:SPGI": {
+  "country": "United States",
+  "description": "S&P Global, Inc.",
+  "market_cap_basic": 133573876267.99998,
+  "name": "SPGI"
+ },
+ "NYSE:TDY": {
+  "country": "United States",
+  "description": "Teledyne Technologies Incorporated",
+  "market_cap_basic": 28762301782.999996,
+  "name": "TDY",
+  "close": 620.47,
+  "exchange": "NYSE"
+ },
+ "NASDAQ:ECHO": {
+  "country": "United States",
+  "description": "EchoStar Corporation Class A",
+  "market_cap_basic": 24949091670.000004,
+  "name": "ECHO",
+  "close": 85.79,
+  "exchange": "NASDAQ"
+ },
+ "NASDAQ:HON": {
+  "country": "United States",
+  "description": "Honeywell International Inc.",
+  "market_cap_basic": 69191171159.00002,
+  "name": "HON"
+ },
+ "NYSE:ETSY": {
+  "country": "United States",
+  "description": "Etsy, Inc.",
+  "market_cap_basic": 8335618828.000001,
+  "name": "ETSY",
+  "close": 90.82,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 91781700
+ },
+ "NYSE:FDX": {
+  "country": "United States",
+  "description": "FedEx Corporation",
+  "market_cap_basic": 71928883508,
+  "name": "FDX"
+ },
+ "NYSE:GE": {
+  "country": "United States",
+  "description": "GE Aerospace",
+  "market_cap_basic": 303330133984,
+  "name": "GE"
+ },
+ "NYSE:HPE": {
+  "country": "United States",
+  "description": "Hewlett Packard Enterprise Co.",
+  "market_cap_basic": 73634469732,
+  "name": "HPE"
+ },
+ "NYSE:VAL": {
+  "country": "Bermuda",
+  "description": "Valaris Ltd.",
+  "market_cap_basic": 6401955336,
+  "name": "VAL"
+ },
+ "NYSE:KGC": {
+  "close": 22.68,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "market_cap_basic": 26903939201.801453
+ },
+ "NYSE:LDOS": {
+  "close": 134.73,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16907564969
+ },
+ "NYSE:LII": {
+  "close": 378.72,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 13088819475
+ },
+ "NYSE:LU": {
+  "close": 8.4,
+  "country": "China",
+  "exchange": "NYSE",
+  "market_cap_basic": 769733836.34028
+ },
+ "NYSE:LW": {
+  "close": 55.18,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 7602725633.999999
+ },
+ "NYSE:LYV": {
+  "close": 174.5,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 41118109505
+ },
+ "NYSE:MAA": {
+  "close": 121.17,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 14058379440.999998
+ },
+ "NYSE:MGM": {
+  "close": 29.5,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 7421985916
+ },
+ "NYSE:MSCI": {
+  "close": 620.24,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 44347159302
+ },
+ "NYSE:MTD": {
+  "close": 1684.64,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 33754387616.999996
+ },
+ "NYSE:MTZ": {
+  "close": 171.55,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 13776313886
+ },
+ "NYSE:NIO": {
+  "close": 3.31,
+  "country": "China",
+  "exchange": "NYSE",
+  "market_cap_basic": 7605236550.044641
+ },
+ "NYSE:NOK": {
+  "close": 7.88,
+  "country": "Finland",
+  "exchange": "NYSE",
+  "market_cap_basic": 47175151762.63579
+ },
+ "NYSE:NTR": {
+  "close": 69.09,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "market_cap_basic": 32896976434.679012
+ },
+ "NYSE:NVO": {
+  "close": 39.43,
+  "country": "Denmark",
+  "exchange": "NYSE",
+  "market_cap_basic": 175687516301.61478
+ },
+ "NYSE:NVR": {
+  "close": 6110.63,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16283973212
+ },
+ "NYSE:ONON": {
+  "close": 34,
+  "country": "Switzerland",
+  "exchange": "NYSE",
+  "market_cap_basic": 11198665682.000002
+ },
+ "NYSE:P": {
+  "close": 121.2,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 40387143429.00001
+ },
+ "NYSE:PAAS": {
+  "close": 41.07,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "market_cap_basic": 16994911293.330439
+ },
+ "NYSE:PATH": {
+  "close": 13.94,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 7264910115.999999
+ },
+ "NYSE:PBR": {
+  "close": 25.62,
+  "country": "Brazil",
+  "exchange": "NYSE",
+  "market_cap_basic": 155805015093.86502
+ },
+ "NYSE:PCG": {
+  "close": 12.98,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 28586721917
+ },
+ "NYSE:PINS": {
+  "close": 22.93,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 12985557653.999998
+ },
+ "NYSE:PKG": {
+  "close": 248.92,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 22178347956.000004
+ },
+ "NYSE:RBRK": {
+  "close": 120.75,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 25032010130.999996
+ },
+ "NYSE:RDDT": {
+  "close": 150.26,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 28909500106
+ },
+ "NYSE:RH": {
+  "close": 140.15,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 2653482101
+ },
+ "NYSE:RIO": {
+  "close": 84.14,
+  "country": "United Kingdom",
+  "exchange": "NYSE",
+  "market_cap_basic": 144440679741.4368
+ },
+ "NYSE:RJF": {
+  "close": 159.19,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 30622063449
+ },
+ "NYSE:RKT": {
+  "close": 11.74,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 33243480569
+ },
+ "NYSE:RMD": {
+  "close": 253.06,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 35590168694
+ },
+ "NYSE:ROL": {
+  "close": 35.31,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16989245309.000002
+ },
+ "NYSE:RVTY": {
+  "close": 157.36,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 17559235227.000004,
+  "description": "Revvity, Inc.",
+  "name": "RVTY"
+ },
+ "NYSE:SE": {
+  "close": 75.69,
+  "country": "Singapore",
+  "exchange": "NYSE",
+  "market_cap_basic": 46358954966
+ },
+ "NYSE:SKM": {
+  "close": 30.83,
+  "country": "South Korea",
+  "exchange": "NYSE",
+  "market_cap_basic": 12063140132.904
+ },
+ "NYSE:STE": {
+  "close": 232.22,
+  "country": "Ireland",
+  "exchange": "NYSE",
+  "market_cap_basic": 22641474923
+ },
+ "NYSE:SW": {
+  "close": 42.43,
+  "country": "Ireland",
+  "exchange": "NYSE",
+  "market_cap_basic": 22186187225.000004,
+  "description": "Smurfit Westrock PLC",
+  "name": "SW"
+ },
+ "NYSE:TKO": {
+  "close": 177.72,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 33637013846.000004
+ },
+ "NYSE:TOST": {
+  "close": 33.42,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 19417018936.000004
+ },
+ "NYSE:TPL": {
+  "close": 333.67,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 23014781748.000004
+ },
+ "NYSE:ATO": {
+  "close": 173.91,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 29388797722.999996
+ },
+ "NYSE:AU": {
+  "close": 85.19,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 43021588182
+ },
+ "NYSE:AWK": {
+  "close": 143.23,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 28463952195
+ },
+ "NYSE:BEP": {
+  "close": 28.91,
+  "country": "Bermuda",
+  "exchange": "NYSE",
+  "market_cap_basic": 8676227384.260698
+ },
+ "NYSE:BG": {
+  "close": 103.15,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 19817088075
+ },
+ "NYSE:BP": {
+  "close": 50.05,
+  "country": "United Kingdom",
+  "exchange": "NYSE",
+  "market_cap_basic": 126634802299.01279
+ },
+ "NYSE:BR": {
+  "close": 186.12,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 21012953412.999996
+ },
+ "NYSE:BRO": {
+  "close": 74.49,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 24925124373
+ },
+ "NYSE:BURL": {
+  "close": 252.62,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 15868374757
+ },
+ "NYSE:CFG": {
+  "close": 65.24,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 27477572771
+ },
+ "NYSE:CIEN": {
+  "close": 322.64,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 45753107071.99999,
+  "Perf.5Y": 504.98781173823363,
+  "Perf.Y": 89.29828678713916,
+  "Perf.YTD": 33.87551867219916,
+  "description": "Ciena Corporation",
+  "total_revenue_yoy_growth_ttm": 32.57106746799335
+ },
+ "NYSE:CNC": {
+  "close": 71.24,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 35192202397,
+  "description": "Centene Corporation",
+  "name": "CNC"
+ },
+ "NYSE:COHR": {
+  "close": 207.82,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 40926236694,
+  "Perf.5Y": 252.89522839191713,
+  "Perf.Y": 73.0391340549542,
+  "Perf.YTD": 10.542553191489358,
+  "description": "Coherent Corp.",
+  "total_revenue_yoy_growth_ttm": 22.513790259994742,
+  "High.All": 440,
+  "Low.All": 0.101563,
+  "Perf.1M": -33.02286607473775,
+  "Perf.3M": -32.08496732026144,
+  "Perf.W": -16.817099285528457,
+  "price_52_week_high": 440,
+  "price_52_week_low": 123.75
+ },
+ "NYSE:CPT": {
+  "close": 102.74,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 13894490777.999998
+ },
+ "NYSE:CRL": {
+  "close": 339.66,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16214985617.999998
+ },
+ "NYSE:DECK": {
+  "close": 85.28,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 11613588364
+ },
+ "NYSE:EG": {
+  "close": 407.56,
+  "country": "Bermuda",
+  "exchange": "NYSE",
+  "market_cap_basic": 15626965101,
+  "description": "Everest Group, Ltd.",
+  "name": "EG"
+ },
+ "NYSE:EME": {
+  "close": 660.41,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 29130618818
+ },
+ "NYSE:EQT": {
+  "close": 54.67,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 34196958094
+ },
+ "NYSE:EXR": {
+  "close": 143.19,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 30251689065
+ },
+ "NYSE:FDS": {
+  "close": 335.45,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 11826511915.999998
+ },
+ "NYSE:FICO": {
+  "close": 823.27,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 17780685610
+ },
+ "NYSE:FIX": {
+  "close": 1279.37,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 45026567636.00001
+ },
+ "NYSE:GDDY": {
+  "close": 114.73,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 14530291628.999998
+ },
+ "NYSE:GFL": {
+  "close": 44.14,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 19245773591.21445
+ },
+ "NYSE:GPN": {
+  "close": 85.88,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 22725425549,
+  "description": "Global Payments Inc.",
+  "name": "GPN"
+ },
+ "NYSE:HMC": {
+  "close": 34.58,
+  "country": "Japan",
+  "exchange": "NYSE",
+  "market_cap_basic": 44587169032.53331
+ },
+ "NYSE:HUBS": {
+  "close": 267.19,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 13323749964
+ },
+ "NYSE:IEX": {
+  "close": 226.88,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16725571734.000002
+ },
+ "NYSE:INVH": {
+  "close": 27.53,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16259857927
+ },
+ "NYSE:IOT": {
+  "close": 43.78,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 25637795544
+ },
+ "NYSE:IQV": {
+  "close": 278.32,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 45811474904,
+  "description": "IQVIA Holdings Inc",
+  "name": "IQV"
+ },
+ "NYSE:IT": {
+  "close": 234.44,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 14804645940
+ },
+ "NYSE:JBL": {
+  "close": 267.41,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 28021115181
+ },
+ "NYSE:KEYS": {
+  "close": 311.52,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 53034642954
+ },
+ "NASDAQ:LYFT": {
+  "close": 17.43,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 6597956720
+ },
+ "NASDAQ:MBLY": {
+  "close": 6.95,
+  "country": "Israel",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 5908803560.000001
+ },
+ "NASDAQ:MDB": {
+  "close": 362.24,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 29180728930
+ },
+ "NASDAQ:NBIS": {
+  "close": 159.17,
+  "country": "Netherlands",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 43271196461.99999
+ },
+ "NASDAQ:NDSN": {
+  "close": 318.71,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 17751944947
+ },
+ "NASDAQ:ODFL": {
+  "close": 189.89,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 39374950044
+ },
+ "NASDAQ:OKTA": {
+  "close": 201.33,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 35196662974
+ },
+ "NASDAQ:PDD": {
+  "close": 79.17,
+  "country": "Ireland",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 112690295290
+ },
+ "NASDAQ:PODD": {
+  "close": 148.12,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 10272742971.999998
+ },
+ "NASDAQ:PTC": {
+  "close": 194,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 21074651656.999996
+ },
+ "NASDAQ:PTON": {
+  "close": 5.46,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 2396239982.9999995,
+  "float_shares_outstanding": 412288218.85999995,
+  "total_shares_outstanding": 423035000,
+  "total_shares_outstanding_fundamental": 423035000
+ },
+ "NASDAQ:QS": {
+  "close": 4.15,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 2569321168,
+  "Perf.5Y": -83.29979879275655,
+  "Perf.Y": -72.49834327369119,
+  "Perf.YTD": -60.66350710900473,
+  "description": "QuantumScape Corporation Class A",
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:REG": {
+  "close": 74.38,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 13620505592,
+  "float_shares_outstanding": 182175546.277,
+  "total_shares_outstanding": 183121000,
+  "total_shares_outstanding_fundamental": 183121000
+ },
+ "NASDAQ:RGEN": {
+  "close": 178.71,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11346363390
+ },
+ "NASDAQ:RKLB": {
+  "close": 51.22,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 30653110551,
+  "Perf.5Y": 305.22151898734177,
+  "Perf.Y": -18.65967921232333,
+  "Perf.YTD": -27.481240266175842,
+  "description": "Rocket Lab Corporation",
+  "industry": "Aerospace & Defense",
+  "total_revenue_YoYTTM": null,
+  "total_revenue_yoy_growth_ttm": 52.52873996307482
+ },
+ "NASDAQ:ROKU": {
+  "close": 160.06,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 23770290629
+ },
+ "NASDAQ:SBAC": {
+  "close": 178.39,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 18925058213
+ },
+ "NASDAQ:SEDG": {
+  "close": 32.94,
+  "country": "Israel",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 2026657969,
+  "Perf.Y": -13.361388742766978,
+  "description": "SolarEdge Technologies, Inc.",
+  "enterprise_value_to_revenue_ttm": 1.3753922550873277,
+  "name": "SEDG",
+  "price_52_week_high": 81.25,
+  "price_52_week_low": 28.21,
+  "total_revenue_yoy_growth_fq": 19.63037567071717,
+  "total_revenue_yoy_growth_ttm": 37.91314753490837
+ },
+ "NASDAQ:SMCI": {
+  "close": 33.72,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 22152873856
+ },
+ "NASDAQ:SOFI": {
+  "close": 14.77,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 19076495910
+ },
+ "NASDAQ:STLD": {
+  "close": 239.9,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 34384408991.99999
+ },
+ "NASDAQ:STNE": {
+  "close": 11.15,
+  "country": "Brazil",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 2711994638
+ },
+ "NASDAQ:TECH": {
+  "close": 72.62,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11388140824
+ },
+ "NASDAQ:TRMB": {
+  "close": 64.01,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 14925842061.999998
+ },
+ "NASDAQ:TTD": {
+  "close": 13.16,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 6221988212.999999
+ },
+ "NASDAQ:TTWO": {
+  "close": 207.81,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 38856404413,
+  "float_shares_outstanding": 163763067.36,
+  "total_shares_outstanding": 186980000,
+  "total_shares_outstanding_fundamental": 186980000
+ },
+ "NASDAQ:TXG": {
+  "close": 69.75,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 9087808935
+ },
+ "NASDAQ:ULTA": {
+  "close": 635.01,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 27151423341.999996
+ },
+ "NASDAQ:UTHR": {
+  "close": 584.79,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 25082045575
+ },
+ "NASDAQ:VTRS": {
+  "close": 18.48,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 21225957834.000004,
+  "description": "Viatris, Inc.",
+  "name": "VTRS",
+  "float_shares_outstanding": 1124863576.37,
+  "total_shares_outstanding": 1148590000,
+  "total_shares_outstanding_fundamental": 1148590000
+ },
+ "NASDAQ:WTW": {
+  "close": 332.18,
+  "country": "United Kingdom",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 30850200553,
+  "description": "Willis Towers Watson Public Limited Company",
+  "name": "WTW"
+ },
+ "NASDAQ:Z": {
+  "close": 33.98,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 7689277031
+ },
+ "NASDAQ:ZBRA": {
+  "close": 384.16,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 18174863824
+ },
+ "NASDAQ:ZS": {
+  "close": 237.76,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 38767885232
+ },
+ "NYSE:ACI": {
+  "close": 13.87,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 6525591561
+ },
+ "NYSE:AGI": {
+  "close": 30.3,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "market_cap_basic": 12683715143.286963
+ },
+ "NYSE:AMCR": {
+  "close": 46.28,
+  "country": "Switzerland",
+  "exchange": "NYSE",
+  "market_cap_basic": 21397357164
+ },
+ "NYSE:ARE": {
+  "close": 43.33,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 7550147032.999999
+ },
+ "CBOE:CBOE": {
+  "close": 327.72,
+  "country": "United States",
+  "exchange": "CBOE",
+  "market_cap_basic": 34224132368
+ },
+ "NASDAQ:AAL": {
+  "close": 12.6,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 8340821114
+ },
+ "NASDAQ:ACGL": {
+  "close": 102.69,
+  "country": "Bermuda",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 35040819779.99999
+ },
+ "NASDAQ:AFRM": {
+  "close": 72.4,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 24429299160
+ },
+ "NASDAQ:ALGN": {
+  "close": 155.51,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11047406423.000002
+ },
+ "NASDAQ:ARM": {
+  "close": 210.1,
+  "country": "United Kingdom",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 224386806519
+ },
+ "NASDAQ:ASML": {
+  "close": 1560.54,
+  "country": "Netherlands",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 608254064530.9095
+ },
+ "NASDAQ:ASTS": {
+  "close": 38.77,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 15088023984,
+  "Perf.5Y": 269.9427480916031,
+  "Perf.Y": -46.19014573213046,
+  "Perf.YTD": -47.84772666128598,
+  "description": "AST SpaceMobile, Inc. Class A",
+  "industry": "Specialty Telecommunications",
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -37.37683734453238,
+  "price_52_week_high": 133.8599,
+  "price_52_week_low": 37.8,
+  "total_revenue_ttm": 115299000,
+  "total_revenue_yoy_growth_ttm": 2256.8887980376126
+ },
+ "NASDAQ:AXON": {
+  "close": 414.6,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 33681031303.000004
+ },
+ "NASDAQ:BIDU": {
+  "close": 77.98,
+  "country": "China",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 25387356772.2906
+ },
+ "NASDAQ:BMRN": {
+  "close": 56.63,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 10962082291
+ },
+ "NASDAQ:BZ": {
+  "close": 16.41,
+  "country": "China",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 7515715621.811881
+ },
+ "NASDAQ:CASY": {
+  "close": 713.65,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 26376624033
+ },
+ "NASDAQ:CDW": {
+  "close": 164.62,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 20580369236.999996
+ },
+ "NASDAQ:CELH": {
+  "close": 28.36,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 7176074157
+ },
+ "NASDAQ:CHTR": {
+  "close": 111.77,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 19685240821,
+  "description": "Charter Communications, Inc. Class A",
+  "name": "CHTR"
+ },
+ "NASDAQ:COO": {
+  "close": 61.65,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11723074779
+ },
+ "NASDAQ:CPRT": {
+  "close": 29.09,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 26946952766.999996
+ },
+ "NASDAQ:CSGP": {
+  "close": 35.45,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 14364255276
+ },
+ "NASDAQ:DOCU": {
+  "close": 84.41,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 15776436535.999998
+ },
+ "NASDAQ:DPZ": {
+  "close": 317.7,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 10452092226.000002
+ },
+ "NASDAQ:DUOL": {
+  "close": 141.39,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 6615074276
+ },
+ "NASDAQ:DXCM": {
+  "close": 78.32,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 29554893691
+ },
+ "NASDAQ:ENPH": {
+  "close": 31.35,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 4142734454.000001,
+  "Perf.Y": -13.991769547325104,
+  "description": "Enphase Energy, Inc.",
+  "enterprise_value_to_revenue_ttm": 2.8521134736718508,
+  "name": "ENPH",
+  "price_52_week_high": 73.74,
+  "price_52_week_low": 25.775,
+  "total_revenue_yoy_growth_fq": -19.633322594058153,
+  "total_revenue_yoy_growth_ttm": -10.407243480847006
+ },
+ "NASDAQ:ERIE": {
+  "close": 256.8,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11959269893.000002
+ },
+ "NASDAQ:EVRG": {
+  "close": 84.95,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 19582081279.999996
+ },
+ "NASDAQ:FANG": {
+  "close": 197.14,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 55204000785
+ },
+ "NASDAQ:FLEX": {
+  "close": 76.69,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 28333922752.999996
+ },
+ "NASDAQ:FSLR": {
+  "close": 171.25,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 18404201126.000004
+ },
+ "NASDAQ:FUTU": {
+  "close": 98.92,
+  "country": "Hong Kong",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 13868038459
+ },
+ "NASDAQ:GEHC": {
+  "close": 71.38,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 32241363611.511898
+ },
+ "NASDAQ:GEN": {
+  "close": 24.89,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 14898830964,
+  "description": "Gen Digital Inc.",
+  "name": "GEN"
+ },
+ "NASDAQ:GRAB": {
+  "close": 2.85,
+  "country": "Singapore",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 11623773317
+ },
+ "NASDAQ:IDXX": {
+  "close": 566.76,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 44649988511
+ },
+ "NASDAQ:ILMN": {
+  "close": 269.4,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 40679399078
+ },
+ "NASDAQ:INCY": {
+  "close": 116.93,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 23701448426
+ },
+ "NASDAQ:JD": {
+  "close": 25.68,
+  "country": "China",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 30217786347.20112
+ },
+ "NASDAQ:KSPI": {
+  "close": 90.53,
+  "country": "Kazakhstan",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 17688595089.66295
+ },
+ "NASDAQ:LNT": {
+  "close": 70.3,
+  "country": "United States",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 18227715095
+ },
+ "NASDAQ:LULU": {
+  "close": 104.06,
+  "country": "Canada",
+  "exchange": "NASDAQ",
+  "market_cap_basic": 12052859813
+ },
+ "NYSE:TYL": {
+  "close": 392.45,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 16071720558.000002
+ },
+ "NYSE:U": {
+  "close": 40.27,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 17722381341
+ },
+ "NYSE:UDR": {
+  "close": 36.18,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 11623339621
+ },
+ "NYSE:VALE": {
+  "close": 12.2,
+  "country": "Brazil",
+  "exchange": "NYSE",
+  "market_cap_basic": 48401421601.990005
+ },
+ "NYSE:VEEV": {
+  "close": 322.55,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 52223695654
+ },
+ "NYSE:VICI": {
+  "close": 24.02,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 26447882406.000004
+ },
+ "NYSE:W": {
+  "close": 113.49,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 15544516153.000002
+ },
+ "NYSE:WAB": {
+  "close": 276.47,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 46392325150
+ },
+ "NYSE:WPM": {
+  "close": 123.53,
+  "country": "Canada",
+  "exchange": "NYSE",
+  "market_cap_basic": 56102381482.54115
+ },
+ "NYSE:WRB": {
+  "close": 75.55,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 28046241709.000004
+ },
+ "NYSE:WSM": {
+  "close": 260.8,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 30716807351
+ },
+ "NYSE:WST": {
+  "close": 394.03,
+  "country": "United States",
+  "exchange": "NYSE",
+  "market_cap_basic": 27730161785,
+  "Perf.5Y": -6.448396210736254,
+  "Perf.Y": 42.054221645396204,
+  "Perf.YTD": 43.15349682107174,
+  "description": "West Pharmaceutical Services, Inc.",
+  "total_revenue_ttm": 3327300000,
+  "total_revenue_yoy_growth_ttm": 12.416379485100345
+ },
+ "NYSE:XPEV": {
+  "close": 9.07,
+  "country": "China",
+  "exchange": "NYSE",
+  "market_cap_basic": 8633299948.54668
+ },
+ "EURONEXT:SU": {
+  "Perf.Y": -6.09731475873208,
+  "close": 232.55,
+  "description": "Schneider Electric SE",
+  "enterprise_value_to_revenue_ttm": 3.6625057260596545,
+  "market_cap_basic": 139024065735,
+  "name": "SU",
+  "price_52_week_high": 312.3,
+  "price_52_week_low": 220.4,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": 6.933563943432699
+ },
+ "HKEX:522": {
+  "Perf.Y": 46.62650602409639,
+  "close": 121.7,
+  "description": "ASMPT Limited",
+  "enterprise_value_to_revenue_ttm": 3.085161139190007,
+  "market_cap_basic": 51629152921,
+  "name": "522",
+  "price_52_week_high": 244.4,
+  "price_52_week_low": 68.9,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": 21.380613346451323
+ },
+ "KRX:010120": {
+  "Perf.Y": 133.8301043219076,
+  "close": 156900,
+  "description": "LS Electric Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 3.7759650503634883,
+  "market_cap_basic": 23998962899780,
+  "name": "010120",
+  "price_52_week_high": 335000,
+  "price_52_week_low": 74000,
+  "total_revenue_yoy_growth_fq": 54.38602591426894,
+  "total_revenue_yoy_growth_ttm": 32.384080045960374
+ },
+ "KRX:011790": {
+  "Perf.Y": -23.105706267539755,
+  "close": 82200,
+  "description": "SKC Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 3.54778104582974,
+  "market_cap_basic": 3924938974380,
+  "name": "011790",
+  "price_52_week_high": 184400,
+  "price_52_week_low": 61100,
+  "total_revenue_yoy_growth_fq": 38.24482604303572,
+  "total_revenue_yoy_growth_ttm": 19.367752357157244
+ },
+ "KRX:034020": {
+  "Perf.Y": -22.45430809399478,
+  "close": 59400,
+  "description": "Doosan Enerbility Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 2.7306756129772514,
+  "market_cap_basic": 39452656933594,
+  "name": "034020",
+  "price_52_week_high": 139200,
+  "price_52_week_low": 57000,
+  "total_revenue_yoy_growth_fq": 3.409636331284098,
+  "total_revenue_yoy_growth_ttm": 8.734493861693354
+ },
+ "KRX:042700": {
+  "Perf.Y": 29.579375848032566,
+  "close": 191000,
+  "description": "Hanmi Semiconductor Co., Ltd",
+  "enterprise_value_to_revenue_ttm": 32.739433403999094,
+  "market_cap_basic": 18135892993164,
+  "name": "042700",
+  "price_52_week_high": 426000,
+  "price_52_week_low": 113400,
+  "total_revenue_yoy_growth_fq": 39.49835620329895,
+  "total_revenue_yoy_growth_ttm": -19.582527207304327
+ },
+ "KRX:267260": {
+  "Perf.Y": -31.58660844250364,
+  "close": 470000,
+  "description": "HD Hyundai Electric",
+  "enterprise_value_to_revenue_ttm": 3.8766782131528594,
+  "market_cap_basic": 17636424217224,
+  "name": "267260",
+  "price_52_week_high": 1430000,
+  "price_52_week_low": 448500,
+  "total_revenue_yoy_growth_fq": 25.997441506286993,
+  "total_revenue_yoy_growth_ttm": 23.021128760530633
+ },
+ "KRX:298040": {
+  "Perf.Y": 9.254947613504074,
+  "close": 1877000,
+  "description": "Hyosung Heavy Industries Corp.",
+  "enterprise_value_to_revenue_ttm": 2.8242026251612473,
+  "market_cap_basic": 17915789443970,
+  "name": "298040",
+  "price_52_week_high": 4742000,
+  "price_52_week_low": 1731000,
+  "total_revenue_yoy_growth_fq": 10.600832966386598,
+  "total_revenue_yoy_growth_ttm": 20.574279368501116
+ },
+ "LSE:IQE": {
+  "Perf.Y": 417.0289855072464,
+  "close": 35.675,
+  "description": "IQE plc",
+  "enterprise_value_to_revenue_ttm": 4.215540238756818,
+  "market_cap_basic": 479205854,
+  "name": "IQE",
+  "price_52_week_high": 72.9,
+  "price_52_week_low": 4.75,
+  "total_revenue_yoy_growth_fq": null,
+  "total_revenue_yoy_growth_ttm": 19.87663205510435
+ },
+ "OMXSTO:MTRS": {
+  "Perf.Y": 6.900630914826509,
+  "close": 135.55,
+  "description": "Munters Group AB",
+  "enterprise_value_to_revenue_ttm": 1.9949468119374705,
+  "market_cap_basic": 23077329040,
+  "name": "MTRS",
+  "price_52_week_high": 212.4,
+  "price_52_week_low": 124.5,
+  "total_revenue_yoy_growth_fq": 5.518580144204104,
+  "total_revenue_yoy_growth_ttm": -4.325024279702169
+ },
+ "SIX:ABBN": {
+  "Perf.Y": 17.553559087767802,
+  "close": 68.04,
+  "description": "ABB Ltd.",
+  "enterprise_value_to_revenue_ttm": 4.27498032181387,
+  "market_cap_basic": 123859879263,
+  "name": "ABBN",
+  "price_52_week_high": 89.14,
+  "price_52_week_low": 53.78,
+  "total_revenue_yoy_growth_fq": 16.600585125912094,
+  "total_revenue_yoy_growth_ttm": 0.7931899907241082
+ },
+ "TPEX:8358": {
+  "Perf.Y": 104.90654205607477,
+  "close": 438.5,
+  "description": "CO-TECH DEVELOPMENT CORP.",
+  "enterprise_value_to_revenue_ttm": 11.293146066927761,
+  "market_cap_basic": 107076439552,
+  "name": "8358",
+  "price_52_week_high": 758,
+  "price_52_week_low": 209,
+  "total_revenue_yoy_growth_fq": 40.093204232650955,
+  "total_revenue_yoy_growth_ttm": 31.220434892964267
+ },
+ "TSE:2802": {
+  "Perf.Y": 17.60334417092429,
+  "close": 5064,
+  "description": "Ajinomoto Co., Inc.",
+  "enterprise_value_to_revenue_ttm": 3.1628215446079704,
+  "market_cap_basic": 4722357801636,
+  "name": "2802",
+  "price_52_week_high": 6340,
+  "price_52_week_low": 3270,
+  "total_revenue_yoy_growth_fq": 13.213171139095845,
+  "total_revenue_yoy_growth_ttm": 6.720486365443777
+ },
+ "TSE:3110": {
+  "Perf.Y": 101.33426966292134,
+  "close": 2867,
+  "description": "Nitto Boseki Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 4.555915495618031,
+  "market_cap_basic": 554596754837,
+  "name": "3110",
+  "price_52_week_high": 6580,
+  "price_52_week_low": 1586,
+  "total_revenue_yoy_growth_fq": 20.551875597747156,
+  "total_revenue_yoy_growth_ttm": 11.587839965452403
+ },
+ "TSE:3436": {
+  "Perf.Y": 43.053016453382085,
+  "close": 2347.5,
+  "description": "SUMCO Corporation",
+  "enterprise_value_to_revenue_ttm": 2.7763369785816834,
+  "market_cap_basic": 835673963837,
+  "name": "3436",
+  "price_52_week_high": 5939,
+  "price_52_week_low": 1131,
+  "total_revenue_yoy_growth_fq": 10.412050534499514,
+  "total_revenue_yoy_growth_ttm": 3.8630925547040262
+ },
+ "TSE:4004": {
+  "Perf.Y": 126.1421767507497,
+  "close": 12820,
+  "description": "Resonac Holdings Corporation",
+  "enterprise_value_to_revenue_ttm": 2.2329659567313085,
+  "market_cap_basic": 2439279013824,
+  "name": "4004",
+  "price_52_week_high": 20495,
+  "price_52_week_low": 5413,
+  "total_revenue_yoy_growth_fq": 14.965163959966599,
+  "total_revenue_yoy_growth_ttm": 1.4044045131143306
+ },
+ "TSE:4062": {
+  "Perf.Y": 252.79245674023417,
+  "close": 8512,
+  "description": "IBIDEN CO., LTD.",
+  "enterprise_value_to_revenue_ttm": 10.604027746581108,
+  "market_cap_basic": 4867096686768,
+  "name": "4062",
+  "price_52_week_high": 13740,
+  "price_52_week_low": 2625,
+  "total_revenue_yoy_growth_fq": 26.425141590741198,
+  "total_revenue_yoy_growth_ttm": 16.709622900602092
+ },
+ "TSE:4063": {
+  "Perf.Y": 18.970798448029406,
+  "close": 5826,
+  "description": "Shin-Etsu Chemical Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 3.928599447497243,
+  "market_cap_basic": 11454727497559,
+  "name": "4063",
+  "price_52_week_high": 7930,
+  "price_52_week_low": 4366,
+  "total_revenue_yoy_growth_fq": 5.389396848933019,
+  "total_revenue_yoy_growth_ttm": 0.6163894148930424
+ },
+ "TSE:5016": {
+  "Perf.Y": 54.166666666666664,
+  "close": 2830.5,
+  "description": "JX Advanced Metals Corporation",
+  "enterprise_value_to_revenue_ttm": 3.2312787525624604,
+  "market_cap_basic": 2765210066467,
+  "name": "5016",
+  "price_52_week_high": 5828,
+  "price_52_week_low": 1551,
+  "total_revenue_yoy_growth_fq": 36.24500721470545,
+  "total_revenue_yoy_growth_ttm": 29.687189874794385
+ },
+ "TSE:5631": {
+  "Perf.Y": -38.56071964017991,
+  "close": 6147,
+  "description": "Japan Steel Works, Ltd.",
+  "enterprise_value_to_revenue_ttm": 1.776531326676209,
+  "market_cap_basic": 460226536606,
+  "name": "5631",
+  "price_52_week_high": 10620,
+  "price_52_week_low": 5895,
+  "total_revenue_yoy_growth_fq": -13.875399739429112,
+  "total_revenue_yoy_growth_ttm": -1.1240307190370133
+ },
+ "TSE:5706": {
+  "Perf.Y": 55.459985041136875,
+  "close": 2078.5,
+  "description": "Mitsui Kinzoku Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 1.6265289989103628,
+  "market_cap_basic": 1212315199219,
+  "name": "5706",
+  "price_52_week_high": 5770,
+  "price_52_week_low": 1424,
+  "total_revenue_yoy_growth_fq": 19.25993847610033,
+  "total_revenue_yoy_growth_ttm": 11.183741734186912
+ },
+ "TSE:5801": {
+  "Perf.Y": 218.2517866959868,
+  "close": 2894.5,
+  "description": "Furukawa Electric Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 1.7266152686521168,
+  "market_cap_basic": 2072860412079,
+  "name": "5801",
+  "price_52_week_high": 6241,
+  "price_52_week_low": 879.1,
+  "total_revenue_yoy_growth_fq": 24.345368809900755,
+  "total_revenue_yoy_growth_ttm": 12.860949525171945
+ },
+ "TSE:5802": {
+  "Perf.Y": 65.4627539503386,
+  "close": 1832.5,
+  "description": "Sumitomo Electric Industries, Ltd.",
+  "enterprise_value_to_revenue_ttm": 1.2288348127456623,
+  "market_cap_basic": 5937684429199,
+  "name": "5802",
+  "price_52_week_high": 3712.5,
+  "price_52_week_low": 1168,
+  "total_revenue_yoy_growth_fq": 15.861136362844775,
+  "total_revenue_yoy_growth_ttm": 12.299758226638867
+ },
+ "TSE:5803": {
+  "Perf.Y": 46.26811301666672,
+  "close": 4037,
+  "description": "Fujikura Ltd",
+  "enterprise_value_to_revenue_ttm": 5.403555824204932,
+  "market_cap_basic": 7156958696777,
+  "name": "5803",
+  "price_52_week_high": 7933,
+  "price_52_week_low": 2622.50005245,
+  "total_revenue_yoy_growth_fq": 50.05486958209535,
+  "total_revenue_yoy_growth_ttm": 27.941606662306246
+ },
+ "TSE:6146": {
+  "Perf.Y": -3.125,
+  "close": 49290,
+  "description": "Disco Corporation",
+  "enterprise_value_to_revenue_ttm": 10.446134520918685,
+  "market_cap_basic": 5558872041092,
+  "name": "6146",
+  "price_52_week_high": 91680,
+  "price_52_week_low": 42370,
+  "total_revenue_yoy_growth_fq": 27.130369019285094,
+  "total_revenue_yoy_growth_ttm": 22.162780969993175
+ },
+ "TSE:6315": {
+  "Perf.Y": -1.1055276381909547,
+  "close": 1968,
+  "description": "Towa Corporation",
+  "enterprise_value_to_revenue_ttm": 2.219036042363695,
+  "market_cap_basic": 147754652603,
+  "name": "6315",
+  "price_52_week_high": 3735,
+  "price_52_week_low": 1801,
+  "total_revenue_yoy_growth_fq": 100.2851778082335,
+  "total_revenue_yoy_growth_ttm": 29.317191816812212
+ },
+ "TSE:6501": {
+  "Perf.Y": 26.986301369863014,
+  "close": 5562,
+  "description": "Hitachi, Ltd.",
+  "enterprise_value_to_revenue_ttm": 2.359327738730746,
+  "market_cap_basic": 26300826671875,
+  "name": "6501",
+  "price_52_week_high": 6039,
+  "price_52_week_low": 4388,
+  "total_revenue_yoy_growth_fq": 19.982110635094593,
+  "total_revenue_yoy_growth_ttm": 12.286231754319719
+ },
+ "TSE:6503": {
+  "Perf.Y": 22.62210796915167,
+  "close": 4770,
+  "description": "Mitsubishi Electric Corp.",
+  "enterprise_value_to_revenue_ttm": 1.6139784387252096,
+  "market_cap_basic": 10255356369873,
+  "name": "6503",
+  "price_52_week_high": 6686,
+  "price_52_week_low": 4002,
+  "total_revenue_yoy_growth_fq": 14.031042824412596,
+  "total_revenue_yoy_growth_ttm": 9.567866465829976
+ },
+ "TSE:6504": {
+  "Perf.Y": 23.95294117647059,
+  "close": 13170,
+  "description": "Fuji Electric Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 1.5436103930178509,
+  "market_cap_basic": 1899027118607,
+  "name": "6504",
+  "price_52_week_high": 17800,
+  "price_52_week_low": 9900,
+  "total_revenue_yoy_growth_fq": 10.222414043466335,
+  "total_revenue_yoy_growth_ttm": 10.397238258368754
+ },
+ "TSE:6857": {
+  "Perf.Y": 95.05428226779252,
+  "close": 32340,
+  "description": "Advantest Corp.",
+  "enterprise_value_to_revenue_ttm": 18.076170175059463,
+  "market_cap_basic": 22580349039917,
+  "name": "6857",
+  "price_52_week_high": 41990,
+  "price_52_week_low": 17645,
+  "total_revenue_yoy_growth_fq": 39.312522746572846,
+  "total_revenue_yoy_growth_ttm": 36.202940454795645
+ },
+ "TSE:6981": {
+  "Perf.Y": 117.05292286406087,
+  "close": 6275,
+  "description": "Murata Manufacturing Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 5.925990422495756,
+  "market_cap_basic": 11863001156250,
+  "name": "6981",
+  "price_52_week_high": 12895,
+  "price_52_week_low": 2821.5,
+  "total_revenue_yoy_growth_fq": 20.69185926363798,
+  "total_revenue_yoy_growth_ttm": 10.309995574862226
+ },
+ "TSE:7011": {
+  "Perf.Y": -15.501519756838906,
+  "close": 3614,
+  "description": "Mitsubishi Heavy Industries, Ltd.",
+  "enterprise_value_to_revenue_ttm": 2.337857250784617,
+  "market_cap_basic": 12392105884766,
+  "name": "7011",
+  "price_52_week_high": 5208,
+  "price_52_week_low": 3404,
+  "total_revenue_yoy_growth_fq": 15.481346743911908,
+  "total_revenue_yoy_growth_ttm": -2.63352535673862
+ },
+ "TWSE:1303": {
+  "Perf.Y": 618.3770883054893,
+  "close": 301,
+  "description": "Nan Ya Plastics Corporation",
+  "enterprise_value_to_revenue_ttm": 8.859611205900233,
+  "market_cap_basic": 2387177208008,
+  "name": "1303",
+  "price_52_week_high": 350.5,
+  "price_52_week_low": 39.7,
+  "total_revenue_yoy_growth_fq": 27.251585440957697,
+  "total_revenue_yoy_growth_ttm": 5.654074363553899
+ },
+ "TWSE:1802": {
+  "Perf.Y": 137.9432624113475,
+  "close": 67.1,
+  "description": "Taiwan Glass Industry Corp.",
+  "enterprise_value_to_revenue_ttm": 4.889843767973019,
+  "market_cap_basic": 195130874640,
+  "name": "1802",
+  "price_52_week_high": 81.2,
+  "price_52_week_low": 27.15,
+  "total_revenue_yoy_growth_fq": 16.836485953063058,
+  "total_revenue_yoy_growth_ttm": 5.253185891090625
+ },
+ "TWSE:2059": {
+  "Perf.Y": 157.3878627968338,
+  "close": 9755,
+  "description": "King Slide Works Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 35.25156056741104,
+  "market_cap_basic": 929622950668,
+  "name": "2059",
+  "price_52_week_high": 15085,
+  "price_52_week_low": 2875,
+  "total_revenue_yoy_growth_fq": 156.1059882224798,
+  "total_revenue_yoy_growth_ttm": 84.71622898884509
+ },
+ "TWSE:2308": {
+  "Perf.Y": 55.223880597014926,
+  "close": 1560,
+  "description": "Delta Electronics, Inc.",
+  "enterprise_value_to_revenue_ttm": 6.10419990016705,
+  "market_cap_basic": 4052167792969,
+  "name": "2308",
+  "price_52_week_high": 2585,
+  "price_52_week_low": 886,
+  "total_revenue_yoy_growth_fq": 47.745356503400984,
+  "total_revenue_yoy_growth_ttm": 39.453572242072646
+ },
+ "TWSE:2327": {
+  "Perf.Y": 145.52058111380146,
+  "close": 507,
+  "description": "Yageo Corporation",
+  "enterprise_value_to_revenue_ttm": 7.204770103429324,
+  "market_cap_basic": 1043906192139,
+  "name": "2327",
+  "price_52_week_high": 1220,
+  "price_52_week_low": 218,
+  "total_revenue_yoy_growth_fq": 35.6559172898017,
+  "total_revenue_yoy_growth_ttm": 20.743288803455467
+ },
+ "TWSE:2368": {
+  "Perf.Y": 164.5314353499407,
+  "close": 1115,
+  "description": "Gold Circuit Electronics Ltd",
+  "enterprise_value_to_revenue_ttm": 7.398133967822668,
+  "market_cap_basic": 585231133423,
+  "name": "2368",
+  "price_52_week_high": 1580,
+  "price_52_week_low": 404,
+  "total_revenue_yoy_growth_fq": 75.26807645976722,
+  "total_revenue_yoy_growth_ttm": 68.03488029407927
+ },
+ "TWSE:2383": {
+  "Perf.Y": 348.6725663716814,
+  "close": 5070,
+  "description": "Elite Material Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 13.97527774968078,
+  "market_cap_basic": 1816688161926,
+  "name": "2383",
+  "price_52_week_high": 6470,
+  "price_52_week_low": 1140,
+  "total_revenue_yoy_growth_fq": 110.04014893751443,
+  "total_revenue_yoy_growth_ttm": 62.586293102418686
+ },
+ "TWSE:3017": {
+  "Perf.Y": 178.31858407079645,
+  "close": 3145,
+  "description": "Asia Vital Components Co., Ltd.",
+  "enterprise_value_to_revenue_ttm": 6.505823883999601,
+  "market_cap_basic": 1234947480164,
+  "name": "3017",
+  "price_52_week_high": 3700,
+  "price_52_week_low": 1180,
+  "total_revenue_yoy_growth_fq": 65.97999311291159,
+  "total_revenue_yoy_growth_ttm": 99.00791004257621
+ },
+ "TWSE:3037": {
+  "Perf.Y": 581.273939695458,
+  "close": 1085,
+  "description": "Unimicron Technology Corp.",
+  "enterprise_value_to_revenue_ttm": 11.469659050241704,
+  "market_cap_basic": 1748542133789,
+  "name": "3037",
+  "price_52_week_high": 1420,
+  "price_52_week_low": 156.779766,
+  "total_revenue_yoy_growth_fq": 32.106691775977026,
+  "total_revenue_yoy_growth_ttm": 20.520188806277478
+ },
+ "TWSE:3653": {
+  "Perf.Y": 172.80898876404495,
+  "close": 6070,
+  "description": "Jentech Precision Industrial Co., Ltd",
+  "enterprise_value_to_revenue_ttm": 38.18468788251851,
+  "market_cap_basic": 886346705322,
+  "name": "3653",
+  "price_52_week_high": 7440,
+  "price_52_week_low": 1940,
+  "total_revenue_yoy_growth_fq": 40.39661836830326,
+  "total_revenue_yoy_growth_ttm": 27.722482911904617
+ },
+ "TWSE:6805": {
+  "Perf.Y": 79.61538461538461,
+  "close": 2335,
+  "description": "Fositek Corp.",
+  "enterprise_value_to_revenue_ttm": 9.858524226230719,
+  "market_cap_basic": 160073360405,
+  "name": "6805",
+  "price_52_week_high": 2750,
+  "price_52_week_low": 1205,
+  "total_revenue_yoy_growth_fq": 42.72614513285144,
+  "total_revenue_yoy_growth_ttm": 60.59824788982085
+ },
+ "XETR:LPK": {
+  "Perf.Y": 54.23242467718795,
+  "close": 10.75,
+  "description": "LPKF Laser & Electronics SE",
+  "enterprise_value_to_revenue_ttm": 2.868748129433486,
+  "market_cap_basic": 258438583,
+  "name": "LPK",
+  "price_52_week_high": 30.8,
+  "price_52_week_low": 5.35,
+  "total_revenue_yoy_growth_fq": -42.77771205489175,
+  "total_revenue_yoy_growth_ttm": -26.999227580118855
+ },
+ "NASDAQ:LPTH": {
+  "Perf.6M": -52.822580645161295,
+  "Perf.Y": -14.285714285714286,
+  "close": 7.02,
+  "description": "LightPath Technologies, Inc. Class A",
+  "enterprise_value_to_revenue_ttm": 5.832010368240895,
+  "industry": "Electronic Components",
+  "market_cap_basic": 491654453.99999994,
+  "name": "LPTH",
+  "price_52_week_high": 18.94,
+  "price_52_week_low": 5.83,
+  "total_revenue_ttm": 71722099,
+  "total_revenue_yoy_growth_fq": 73.32277459576915,
+  "total_revenue_yoy_growth_ttm": 92.78771151394403
+ },
+ "NASDAQ:SHLS": {
+  "Perf.6M": -2.1518987341772142,
+  "Perf.Y": -27.82446311858077,
+  "close": 7.73,
+  "description": "Shoals Technologies Group, Inc. Class A",
+  "enterprise_value_to_revenue_ttm": 2.5831562073809047,
+  "industry": "Semiconductors",
+  "market_cap_basic": 1300958673,
+  "name": "SHLS",
+  "price_52_week_high": 13.1799,
+  "price_52_week_low": 5.43,
+  "total_revenue_ttm": 588058000,
+  "total_revenue_yoy_growth_fq": 47.393112656868844,
+  "total_revenue_yoy_growth_ttm": 46.88450721111816
+ },
+ "NYSE:CC": {
+  "Perf.6M": -46.620237607537895,
+  "Perf.Y": -1.956358164033106,
+  "close": 13.03,
+  "description": "Chemours Co.",
+  "enterprise_value_to_revenue_ttm": 0.9334141518026565,
+  "industry": "Chemicals: Specialty",
+  "market_cap_basic": 1961001837.9999998,
+  "name": "CC",
+  "price_52_week_high": 28.67,
+  "price_52_week_low": 10.44,
+  "total_revenue_ttm": 5797000000,
+  "total_revenue_yoy_growth_fq": -1.4860681114551082,
+  "total_revenue_yoy_growth_ttm": -1.3780197346036067
+ },
+ "NYSE:DY": {
+  "Perf.6M": -45.90360866849263,
+  "Perf.Y": -22.63340549084286,
+  "close": 225.16,
+  "description": "Dycom Industries, Inc.",
+  "enterprise_value_to_revenue_ttm": 1.3805202933874454,
+  "industry": "Engineering & Construction",
+  "market_cap_basic": 6791041264,
+  "name": "DY",
+  "price_52_week_high": 566.465,
+  "price_52_week_low": 223.795,
+  "total_revenue_ttm": 6880049000,
+  "total_revenue_yoy_growth_fq": 45.57246158044158,
+  "total_revenue_yoy_growth_ttm": 37.791545707713766
+ },
+ "NYSE:FPS": {
+  "Perf.6M": -28.73891907349156,
+  "Perf.Y": -4.153846153846147,
+  "close": 24.92,
+  "description": "Forgent Power Solutions, Inc. Class A",
+  "enterprise_value_to_revenue_ttm": 5.827581865964723,
+  "industry": "Electrical Products",
+  "market_cap_basic": 7586368076.999999,
+  "name": "FPS",
+  "price_52_week_high": 66,
+  "price_52_week_low": 23.155,
+  "total_revenue_ttm": 1420059000,
+  "total_revenue_yoy_growth_fq": 147.91219176905233,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NYSE:NRGV": {
+  "Perf.6M": -42.3162583518931,
+  "Perf.Y": -26.628895184135978,
+  "close": 2.59,
+  "description": "Energy Vault Holdings, Inc.",
+  "enterprise_value_to_revenue_ttm": 2.806747455428493,
+  "industry": "Electrical Products",
+  "market_cap_basic": 470964468,
+  "name": "NRGV",
+  "price_52_week_high": 6.645,
+  "price_52_week_low": 2.49,
+  "total_revenue_ttm": 225873000,
+  "total_revenue_yoy_growth_fq": 104.0531015037594,
+  "total_revenue_yoy_growth_ttm": 336.7565163585737
+ },
+ "AMEX:CATX": {
+  "Perf.5Y": -66.11694152923538,
+  "Perf.Y": -27.33118971061094,
+  "Perf.YTD": -17.818181818181827,
+  "close": 2.26,
+  "description": "Perspective Therapeutics, Inc.",
+  "industry": "Medical Specialties",
+  "market_cap_basic": 257982761,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -24.666666666666675,
+  "price_52_week_high": 6.16,
+  "price_52_week_low": 1.955,
+  "total_revenue_ttm": 409000,
+  "total_revenue_yoy_growth_ttm": -66.88259109311741
+ },
+ "AMEX:UUUU": {
+  "Perf.5Y": -10.058479532163744,
+  "Perf.Y": -59.290629962943356,
+  "Perf.YTD": -47.544338335607094,
+  "close": 7.69,
+  "description": "Energy Fuels Inc.",
+  "industry": "Other Metals/Minerals",
+  "market_cap_basic": 2036526888,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:AEVA": {
+  "Perf.5Y": -74.6341463414634,
+  "Perf.Y": -41.22546103509814,
+  "Perf.YTD": -26.48809523809523,
+  "close": 9.88,
+  "description": "Aeva Technologies, Inc.",
+  "industry": "Semiconductors",
+  "market_cap_basic": 688692889,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:AIRO": {
+  "Perf.5Y": -62.94573643410853,
+  "Perf.Y": -73.11586051743532,
+  "Perf.YTD": -42.34016887816646,
+  "close": 4.78,
+  "description": "Airo Group Holdings, Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 150837293,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -34.34065934065934,
+  "price_52_week_high": 17.92,
+  "price_52_week_low": 4.74,
+  "total_revenue_ttm": 106642692,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:ALM": {
+  "Perf.5Y": 709.7353322228391,
+  "Perf.Y": 15.359261700725115,
+  "Perf.YTD": -0.3416856492027262,
+  "close": 8.75,
+  "description": "Almonty Industries Inc.",
+  "industry": "Other Metals/Minerals",
+  "market_cap_basic": 2524206505,
+  "total_revenue_YoYTTM": null,
+  "High.All": 24.41,
+  "Low.All": 0.231,
+  "Perf.1M": -39.61352657004831,
+  "Perf.3M": -38.59649122807018,
+  "Perf.W": -10.941475826972004,
+  "price_52_week_high": 24.41,
+  "price_52_week_low": 5.435,
+  "total_revenue_ttm": 62136791.4411228,
+  "total_revenue_yoy_growth_ttm": 207.96026252811345
+ },
+ "NASDAQ:ALNT": {
+  "Perf.5Y": 154.36835891381344,
+  "Perf.Y": 66.59578581094145,
+  "Perf.YTD": 58.71086556169431,
+  "close": 86.18,
+  "description": "Allient Inc.",
+  "industry": "Electrical Products",
+  "market_cap_basic": 1465276487.0000002,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -20.644567219152844,
+  "price_52_week_high": 121.4199,
+  "price_52_week_low": 44.3,
+  "total_revenue_ttm": 574782000,
+  "total_revenue_yoy_growth_ttm": 10.619240806460292
+ },
+ "NASDAQ:AVAV": {
+  "Perf.5Y": 26.886589047003017,
+  "Perf.Y": -68.49318735444496,
+  "Perf.YTD": -52.626282954316764,
+  "close": 117.7,
+  "description": "AeroVironment, Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 5981596423,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -28.27544180377818,
+  "price_52_week_high": 408.25,
+  "price_52_week_low": 114.255,
+  "total_revenue_ttm": 2002659000,
+  "total_revenue_yoy_growth_ttm": 84.43747582472233
+ },
+ "NASDAQ:DPRO": {
+  "Perf.5Y": -95.83815028901734,
+  "Perf.Y": -59.02105862265225,
+  "Perf.YTD": -49.36708860759494,
+  "close": 3.6,
+  "description": "Draganfly Inc",
+  "industry": "Motor Vehicles",
+  "market_cap_basic": 140913932.85171103,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:FLY": {
+  "Perf.5Y": -74.97142857142858,
+  "Perf.Y": -36.97841726618705,
+  "Perf.YTD": -24.18866291648637,
+  "close": 17.52,
+  "description": "Firefly Aerospace, Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 2932929507,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:IPX": {
+  "Perf.5Y": 83.14285714285714,
+  "Perf.Y": -74.46215139442232,
+  "Perf.YTD": -65.58389261744966,
+  "close": 12.82,
+  "description": "Iperionx Ltd. Sponsored ADR",
+  "industry": "Precious Metals",
+  "market_cap_basic": 475195205.79418993,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:IRDM": {
+  "Perf.5Y": 7.1183953033268015,
+  "Perf.Y": 131.6931216931217,
+  "Perf.YTD": 149.94292237442923,
+  "close": 43.79,
+  "description": "Iridium Communications Inc.",
+  "industry": "Specialty Telecommunications",
+  "market_cap_basic": 4648679839,
+  "total_revenue_YoYTTM": null,
+  "total_revenue_yoy_growth_ttm": 3.585710844202774
+ },
+ "NASDAQ:KTOS": {
+  "Perf.5Y": 66.3913043478261,
+  "Perf.Y": -57.477777777777774,
+  "Perf.YTD": -50.00653167864141,
+  "close": 38.27,
+  "description": "Kratos Defense & Security Solutions, Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 7184207456,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -22.741495911981414,
+  "price_52_week_high": 134,
+  "price_52_week_low": 37.4001,
+  "total_revenue_ttm": 1522500000,
+  "total_revenue_yoy_growth_ttm": 25.50490478938257
+ },
+ "NASDAQ:LNTH": {
+  "Perf.5Y": 333.7088388214905,
+  "Perf.Y": 73.48353552859616,
+  "Perf.YTD": 49.8502994011976,
+  "close": 100.1,
+  "description": "Lantheus Holdings Inc",
+  "industry": "Medical Specialties",
+  "market_cap_basic": 6536517223,
+  "total_revenue_YoYTTM": null,
+  "revenue_forecast_next_fy": 1483966410,
+  "total_revenue_YoYQuaterly": null,
+  "total_revenue_fy": 1541609000,
+  "total_revenue_ttm": 1556313000,
+  "total_revenue_yoy_growth_fq": 2.6808977767197026,
+  "total_revenue_yoy_growth_ttm": 2.3450451878239154,
+  "Perf.1M": -0.17949740725967972,
+  "price_52_week_high": 111.86,
+  "price_52_week_low": 50.155
+ },
+ "NASDAQ:LUNR": {
+  "Perf.5Y": 8.290155440414496,
+  "Perf.Y": -16.400000000000006,
+  "Perf.YTD": -37.68634466308885,
+  "close": 10.45,
+  "description": "Intuitive Machines, Inc. Class A",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 2392256420,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:METC": {
+  "Perf.5Y": -49.75677553856845,
+  "Perf.Y": -81.42343268242549,
+  "Perf.YTD": -60.20913593835994,
+  "close": 7.23,
+  "description": "Ramaco Resources, Inc. Class A",
+  "industry": "Coal",
+  "market_cap_basic": 422140590,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:NOVT": {
+  "Perf.5Y": -16.03072196620584,
+  "Perf.Y": 20.07732185220982,
+  "Perf.YTD": 13.987822170322792,
+  "close": 136.66,
+  "description": "Novanta Inc",
+  "industry": "Electronic Equipment/Instruments",
+  "market_cap_basic": 5168176327,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:ONDS": {
+  "Perf.5Y": -33.03670745272525,
+  "Perf.Y": -12.116788321167883,
+  "Perf.YTD": -40.60187469166256,
+  "close": 6.02,
+  "description": "Ondas Inc.",
+  "industry": "Telecommunications Equipment",
+  "market_cap_basic": 3505462082,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -19.410977242302547,
+  "price_52_week_high": 15.28,
+  "price_52_week_low": 4.95,
+  "total_revenue_ttm": 174103430,
+  "total_revenue_yoy_growth_ttm": 979.2825596581673
+ },
+ "NASDAQ:OUST": {
+  "Perf.5Y": -59.03367496339677,
+  "Perf.Y": -8.7707857841539,
+  "Perf.YTD": 25.527142216240474,
+  "close": 27.98,
+  "description": "Ouster, Inc.",
+  "industry": "Semiconductors",
+  "market_cap_basic": 2017703105.9999998,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -26.60020986358866,
+  "price_52_week_high": 63.79,
+  "price_52_week_low": 16.4,
+  "total_revenue_ttm": 204907000,
+  "total_revenue_yoy_growth_ttm": 62.82102218549361
+ },
+ "NASDAQ:PDYN": {
+  "Perf.5Y": -90.32856385797562,
+  "Perf.Y": -56.443914081145586,
+  "Perf.YTD": -15.898617511520738,
+  "close": 3.65,
+  "description": "Palladyne AI Corp.",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 180085575,
+  "total_revenue_YoYTTM": null,
+  "total_revenue_yoy_growth_ttm": 171.79251778746846
+ },
+ "NASDAQ:PPTA": {
+  "Perf.5Y": 257.3498964803313,
+  "Perf.Y": -24.430823117337994,
+  "Perf.YTD": -30.40322580645161,
+  "close": 17.26,
+  "description": "Perpetua Resources Corp.",
+  "industry": "Precious Metals",
+  "market_cap_basic": 2159153576,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -27.47899159663865,
+  "price_52_week_high": 37.37,
+  "price_52_week_low": 16.435,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:RADX": {
+  "Perf.5Y": -83.03571428571428,
+  "Perf.Y": -83.67697594501718,
+  "Perf.YTD": -81.93916349809885,
+  "close": 0.95,
+  "description": "Radiopharm Theranostics Limited Sponsored ADR",
+  "industry": "Medical/Nursing Services",
+  "market_cap_basic": 13218926.133319998,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:RCAT": {
+  "Perf.5Y": 57.761732851985556,
+  "Perf.Y": -58.92857142857142,
+  "Perf.YTD": -47.03030303030303,
+  "close": 4.37,
+  "description": "Red Cat Holdings Inc",
+  "industry": "Packaged Software",
+  "market_cap_basic": 667361716,
+  "total_revenue_YoYTTM": null,
+  "High.All": 18.78,
+  "Low.All": 0.35,
+  "Perf.1M": -37.749287749287745,
+  "Perf.3M": -45.51122194513715,
+  "Perf.W": -4.166666666666656,
+  "price_52_week_high": 18.78,
+  "price_52_week_low": 4.27,
+  "total_revenue_ttm": 71541392,
+  "total_revenue_yoy_growth_ttm": 693.2650293022231
+ },
+ "NASDAQ:RR": {
+  "Perf.5Y": -76.6,
+  "Perf.Y": -77.94533459000942,
+  "Perf.YTD": -64.97005988023952,
+  "close": 1.17,
+  "description": "Richtech Robotics Inc. Class B",
+  "industry": "Electronics/Appliances",
+  "market_cap_basic": 263369265.99999997,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:SATL": {
+  "Perf.5Y": -62.288503035069674,
+  "Perf.Y": 66.22222222222223,
+  "Perf.YTD": 92.78350515463919,
+  "close": 3.74,
+  "description": "Satellogic Inc. Class A",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 574987281.0000001,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -32.85457809694793,
+  "price_52_week_high": 12,
+  "price_52_week_low": 1.255,
+  "total_revenue_ttm": 31906000,
+  "total_revenue_yoy_growth_ttm": 368.6545240893067
+ },
+ "NASDAQ:SERV": {
+  "Perf.5Y": -39.36842105263158,
+  "Perf.Y": -79.10014513788097,
+  "Perf.YTD": -73.35800185013876,
+  "close": 2.88,
+  "description": "Serve Robotics Inc",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 249717622,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:SPAI": {
+  "Perf.5Y": -20.499999999999996,
+  "Perf.Y": -53.303964757709245,
+  "Perf.YTD": -23.7410071942446,
+  "close": 3.18,
+  "description": "Safe Pro Group, Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 64753901,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:TLX": {
+  "Perf.5Y": -40.33771106941839,
+  "Perf.Y": -11.829944547134945,
+  "Perf.YTD": 26.0237780713342,
+  "close": 9.54,
+  "description": "Telix Pharmaceuticals Limited Sponsored ADR",
+  "industry": "Biotechnology",
+  "market_cap_basic": 3261258947.4058394,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -20.033528918692376,
+  "price_52_week_high": 13.1098,
+  "price_52_week_low": 6.28,
+  "total_revenue_ttm": 893099895.108732,
+  "total_revenue_yoy_growth_ttm": 33.77551383679203
+ },
+ "NASDAQ:TMC": {
+  "Perf.5Y": -30.617977528089884,
+  "Perf.Y": -66.71159029649596,
+  "Perf.YTD": -60.97946287519747,
+  "close": 2.47,
+  "description": "TMC the metals company Inc.",
+  "industry": "Other Metals/Minerals",
+  "market_cap_basic": 1089604617,
+  "total_revenue_YoYTTM": null
+ },
+ "NYSE:KRMN": {
+  "Perf.5Y": 15.26666666666666,
+  "Perf.Y": -55.88723051409619,
+  "Perf.YTD": -53.41506129597198,
+  "close": 34.58,
+  "description": "Karman Holdings Inc.",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 4583015819,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -2.72855133614627,
+  "price_52_week_high": 118.38,
+  "price_52_week_low": 29.34,
+  "total_revenue_ttm": 589552000,
+  "total_revenue_yoy_growth_ttm": 50.23228436677603
+ },
+ "NYSE:PL": {
+  "Perf.5Y": 31.062124248496986,
+  "Perf.Y": 2.5882352941176476,
+  "Perf.YTD": -34.122387307982876,
+  "close": 13.08,
+  "description": "Planet Labs PBC Class A",
+  "industry": "Packaged Software",
+  "market_cap_basic": 4759131590,
+  "total_revenue_YoYTTM": null
+ },
+ "NYSE:RDW": {
+  "Perf.5Y": -27.580071174377217,
+  "Perf.Y": 5.032258064516136,
+  "Perf.YTD": 2.7777777777777857,
+  "close": 8.14,
+  "description": "Redwire Corp",
+  "industry": "Aerospace & Defense",
+  "market_cap_basic": 2034939969.9999998,
+  "total_revenue_YoYTTM": null
+ },
+ "NYSE:RRX": {
+  "Perf.5Y": -1.2680918868676117,
+  "Perf.Y": 1.9399506443652403,
+  "Perf.YTD": 4.836094465985205,
+  "close": 148.71,
+  "description": "Regal Rexnord Corporation",
+  "industry": "Electrical Products",
+  "market_cap_basic": 9902876771,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -1.8221429986135809,
+  "price_52_week_high": 247.8,
+  "price_52_week_low": 127.96,
+  "total_revenue_ttm": 6057700000,
+  "total_revenue_yoy_growth_ttm": 3.5026568933996276
+ },
+ "NYSE:TKR": {
+  "Perf.5Y": 49.72375690607734,
+  "Perf.Y": 42.014935150006565,
+  "Perf.YTD": 27.649552520018847,
+  "close": 108.4,
+  "description": "Timken Company",
+  "industry": "Industrial Machinery",
+  "market_cap_basic": 7511777221.000001,
+  "total_revenue_YoYTTM": null,
+  "Perf.1M": -6.414573081239742,
+  "price_52_week_high": 146.37,
+  "price_52_week_low": 73.62,
+  "total_revenue_ttm": 4760300000,
+  "total_revenue_yoy_growth_ttm": 5.454021842670743
+ },
+ "NYSE:VOYG": {
+  "Perf.5Y": -65.84946236559139,
+  "Perf.Y": -27.444410600060916,
+  "Perf.YTD": -10.953271028037383,
+  "close": 23.82,
+  "description": "Voyager Technologies, Inc. Class A",
+  "industry": "Information Technology Services",
+  "market_cap_basic": 1453712156,
+  "total_revenue_YoYTTM": null
+ },
+ "NASDAQ:ALT": {
+  "Perf.5Y": -81.44268183178689,
+  "Perf.Y": -45.75,
+  "Perf.YTD": -40.05524861878454,
+  "close": 2.17,
+  "description": "Altimmune, Inc.",
+  "market_cap_basic": 422103424,
+  "total_revenue_ttm": 31000,
+  "total_revenue_yoy_growth_ttm": 55.00000000000001
+ },
+ "NASDAQ:BEAM": {
+  "Perf.5Y": -73.93887945670627,
+  "Perf.Y": -16.745762711864412,
+  "Perf.YTD": -11.591072714182873,
+  "close": 24.56,
+  "description": "Beam Therapeutics, Inc.",
+  "market_cap_basic": 2536745030,
+  "total_revenue_ttm": 156035000,
+  "total_revenue_yoy_growth_ttm": 158.88472259092117,
+  "Perf.1M": -4.137392661982835,
+  "price_52_week_high": 38.26,
+  "price_52_week_low": 20.23
+ },
+ "NASDAQ:CLPT": {
+  "Perf.5Y": -49.398249452954055,
+  "Perf.Y": -63.01479408236706,
+  "Perf.YTD": -33.548850574712645,
+  "close": 9.25,
+  "description": "ClearPoint Neuro, Inc.",
+  "market_cap_basic": 282164097,
+  "total_revenue_ttm": 42279000,
+  "total_revenue_yoy_growth_ttm": 25.856577263120293
+ },
+ "NASDAQ:CRSP": {
+  "Perf.5Y": -48.43733883445075,
+  "Perf.Y": -28.687589158345215,
+  "Perf.YTD": -5.178300455235198,
+  "close": 49.99,
+  "description": "CRISPR Therapeutics AG",
+  "market_cap_basic": 4833666109,
+  "total_revenue_ttm": 13392000,
+  "total_revenue_yoy_growth_ttm": -64.80420499342969,
+  "Perf.1M": -14.881661842329297,
+  "price_52_week_high": 68.71,
+  "price_52_week_low": 44.12
+ },
+ "NASDAQ:CWCO": {
+  "Perf.5Y": 151.79533213644524,
+  "Perf.Y": -22.642029784886923,
+  "Perf.YTD": -20.221843003412957,
+  "close": 28.05,
+  "description": "Consolidated Water Co. Ltd.",
+  "market_cap_basic": 449160852.99999994,
+  "total_revenue_ttm": 127610966.001533,
+  "total_revenue_yoy_growth_ttm": -1.1568786782085447
+ },
+ "NASDAQ:DJT": {
+  "Perf.5Y": -94.43579275222021,
+  "Perf.Y": -58.427672955974835,
+  "Perf.YTD": -50.486891385767784,
+  "close": 6.61,
+  "description": "Trump Media & Technology Group Corp.",
+  "market_cap_basic": 1837191926,
+  "total_revenue_ttm": 4519000,
+  "total_revenue_yoy_growth_ttm": 21.612529938911166
+ },
+ "NASDAQ:EDIT": {
+  "Perf.5Y": -93.51562499999999,
+  "Perf.Y": -35.65891472868217,
+  "Perf.YTD": 20.873786407766996,
+  "close": 2.49,
+  "description": "Editas Medicine, Inc.",
+  "market_cap_basic": 382414282,
+  "total_revenue_ttm": 47005000,
+  "total_revenue_yoy_growth_ttm": 20.832369347831676,
+  "Perf.1M": -12.937062937062926,
+  "price_52_week_high": 3.94,
+  "price_52_week_low": 1.66
+ },
+ "NASDAQ:ERII": {
+  "Perf.5Y": -64.61538461538463,
+  "Perf.Y": -61.016949152542374,
+  "Perf.YTD": -50.95588235294118,
+  "close": 6.67,
+  "description": "Energy Recovery, Inc.",
+  "market_cap_basic": 340469327,
+  "total_revenue_ttm": 120573000,
+  "total_revenue_yoy_growth_ttm": -14.954681713983426
+ },
+ "NASDAQ:FRVO": {
+  "Perf.5Y": -77.08333333333333,
+  "Perf.Y": -77.08333333333333,
+  "Perf.YTD": -77.08333333333333,
+  "close": 8.25,
+  "description": "Fervo Energy Company Class A",
+  "market_cap_basic": 2431796360,
+  "total_revenue_ttm": null,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.1M": -51.12559241706161,
+  "price_52_week_high": 42.65,
+  "price_52_week_low": 8.22
+ },
+ "NASDAQ:GPCR": {
+  "Perf.5Y": -12.28,
+  "Perf.Y": -18.049327354260097,
+  "Perf.YTD": -68.56815250107496,
+  "close": 21.93,
+  "description": "Structure Therapeutics, Inc. Sponsored ADR",
+  "market_cap_basic": 1563825193,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:GSAT": {
+  "Perf.5Y": 254.32258064516128,
+  "Perf.Y": 85.08200404403505,
+  "Perf.YTD": 32.87096774193547,
+  "close": 82.38,
+  "description": "Globalstar, Inc.",
+  "market_cap_basic": 10673431301,
+  "total_revenue_ttm": 280642000,
+  "total_revenue_yoy_growth_ttm": 7.664272780284197,
+  "Perf.1M": -0.5072463768115962,
+  "price_52_week_high": 84.85,
+  "price_52_week_low": 41.06
+ },
+ "NASDAQ:KRRO": {
+  "Perf.5Y": -96.4766081871345,
+  "Perf.Y": -70.61692270178004,
+  "Perf.YTD": 49.13366336633664,
+  "close": 12.05,
+  "description": "Korro Bio, Inc.",
+  "market_cap_basic": 177444037,
+  "total_revenue_ttm": 2382000,
+  "total_revenue_yoy_growth_ttm": -62.076102531444036
+ },
+ "NASDAQ:LAES": {
+  "Perf.5Y": -81.76470588235294,
+  "Perf.Y": -72.78314310798947,
+  "Perf.YTD": -60.40868454661559,
+  "close": 1.55,
+  "description": "SEALSQ Corp.",
+  "market_cap_basic": 357941133.99999994,
+  "total_revenue_ttm": 30960081.63284,
+  "total_revenue_yoy_growth_ttm": 144.67842811143348
+ },
+ "NASDAQ:MGX": {
+  "Perf.5Y": -92.0370731707317,
+  "Perf.Y": -73.67096774193548,
+  "Perf.YTD": -49.617283950617285,
+  "close": 0.8162,
+  "description": "Metagenomi Therapeutics, Inc.",
+  "market_cap_basic": 30833676.000000007,
+  "total_revenue_ttm": 13561000,
+  "total_revenue_yoy_growth_ttm": -59.84067756455816
+ },
+ "NASDAQ:NPCE": {
+  "Perf.5Y": -14.619883040935672,
+  "Perf.Y": 21.89239332096476,
+  "Perf.YTD": -15.715202052597816,
+  "close": 13.14,
+  "description": "NeuroPace, Inc.",
+  "market_cap_basic": 451020948,
+  "total_revenue_ttm": 98836000,
+  "total_revenue_yoy_growth_ttm": 11.590832110195326
+ },
+ "NASDAQ:NTLA": {
+  "Perf.5Y": -91.6492068243041,
+  "Perf.Y": -58.18658673660547,
+  "Perf.YTD": 20.9100758396533,
+  "close": 11.16,
+  "description": "Intellia Therapeutics, Inc.",
+  "market_cap_basic": 1563813881,
+  "total_revenue_ttm": 59506000,
+  "total_revenue_yoy_growth_ttm": 12.579223187089694,
+  "Perf.1M": -9.046454767726157,
+  "price_52_week_high": 26.35,
+  "price_52_week_low": 7.95
+ },
+ "NASDAQ:PRME": {
+  "Perf.5Y": -80.33737480231945,
+  "Perf.Y": -32.18181818181818,
+  "Perf.YTD": 6.571428571428571,
+  "close": 3.73,
+  "description": "Prime Medicine, Inc.",
+  "market_cap_basic": 676535697,
+  "total_revenue_ttm": 4073000.0000000005,
+  "total_revenue_yoy_growth_ttm": -17.899617012699043,
+  "Perf.1M": 15.838509316770178,
+  "price_52_week_high": 5.554,
+  "price_52_week_low": 2.67
+ },
+ "NASDAQ:QUBT": {
+  "Perf.5Y": 28.460038986354775,
+  "Perf.Y": -57.20779220779221,
+  "Perf.YTD": -37.53554502369669,
+  "close": 6.59,
+  "description": "Quantum Computing Inc.",
+  "market_cap_basic": 1491625860,
+  "total_revenue_ttm": 9824000,
+  "total_revenue_yoy_growth_ttm": 3635.3612167300384
+ },
+ "NASDAQ:RGTI": {
+  "Perf.5Y": 13.663366336633672,
+  "Perf.Y": -70.19730010384217,
+  "Perf.YTD": -49.113475177304956,
+  "close": 11.48,
+  "description": "Rigetti Computing, Inc.",
+  "market_cap_basic": 3831664957,
+  "total_revenue_ttm": 13353000,
+  "total_revenue_yoy_growth_ttm": 68.49211356466877
+ },
+ "NASDAQ:SANA": {
+  "Perf.5Y": -88.07847082494969,
+  "Perf.Y": -56.67276051188299,
+  "Perf.YTD": -42.61501210653753,
+  "close": 2.37,
+  "description": "Sana Biotechnology, Inc.",
+  "market_cap_basic": 709484650.0000001,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_ttm": null,
+  "Perf.1M": -24.76190476190476,
+  "price_52_week_high": 5.9,
+  "price_52_week_low": 2.22
+ },
+ "NASDAQ:SLDP": {
+  "Perf.5Y": -80.29268292682927,
+  "Perf.Y": -66.50082918739635,
+  "Perf.YTD": -53.456221198156676,
+  "close": 2.02,
+  "description": "Solid Power, Inc. Class A",
+  "market_cap_basic": 460926047,
+  "total_revenue_ttm": 10996000,
+  "total_revenue_yoy_growth_ttm": -51.488948691931
+ },
+ "NASDAQ:SYM": {
+  "Perf.5Y": 307.67676767676767,
+  "Perf.Y": -40.33557543055658,
+  "Perf.YTD": -33.6402499177902,
+  "close": 40.36,
+  "description": "Symbotic, Inc. Class A",
+  "market_cap_basic": 24409797367,
+  "total_revenue_ttm": 2645760000,
+  "total_revenue_yoy_growth_ttm": 19.976437863935466
+ },
+ "NASDAQ:VKTX": {
+  "Perf.5Y": 353.1578947368421,
+  "Perf.Y": -20.83971805087344,
+  "Perf.YTD": -27.321328081035457,
+  "close": 25.83,
+  "description": "Viking Therapeutics, Inc.",
+  "market_cap_basic": 3284678467,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:VOR": {
+  "Perf.5Y": -94.05897114178168,
+  "Perf.Y": -29.851851851851848,
+  "Perf.YTD": 43.484848484848506,
+  "close": 18.94,
+  "description": "Vor Biopharma, Inc.",
+  "market_cap_basic": 1120533851,
+  "total_revenue_ttm": 0,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NASDAQ:WVE": {
+  "Perf.5Y": -24.208144796380086,
+  "Perf.Y": -57.106274007682444,
+  "Perf.YTD": -80.31727379553466,
+  "close": 3.35,
+  "description": "Wave Life Sciences Inc",
+  "market_cap_basic": 660713975,
+  "total_revenue_ttm": 65371000.0001758,
+  "total_revenue_yoy_growth_ttm": -30.416409426913592
+ },
+ "NYSE:HIMS": {
+  "Perf.5Y": 251.38721351025333,
+  "Perf.Y": -40.38067949242734,
+  "Perf.YTD": -11.72727272727273,
+  "close": 29.13,
+  "description": "Hims & Hers Health, Inc. Class A",
+  "market_cap_basic": 6796419554.000001,
+  "total_revenue_ttm": 2578112000,
+  "total_revenue_yoy_growth_ttm": 28.038904654394404
+ },
+ "NYSE:INFQ": {
+  "Perf.5Y": -9.650921891140866,
+  "Perf.Y": -50.75545607162842,
+  "Perf.YTD": -44.549464398235656,
+  "close": 8.8,
+  "description": "Infleqtion, Inc.",
+  "market_cap_basic": 1983141999,
+  "total_revenue_ttm": 22999000,
+  "total_revenue_yoy_growth_ttm": null
+ },
+ "NYSE:IONQ": {
+  "Perf.5Y": 205.78999018645732,
+  "Perf.Y": -46.46048109965636,
+  "Perf.YTD": -32.27559226255162,
+  "close": 31.16,
+  "description": "IonQ, Inc.",
+  "market_cap_basic": 13380343378,
+  "total_revenue_ttm": 246474000,
+  "total_revenue_yoy_growth_ttm": 370.6396792056521
+ },
+ "NYSE:LBRT": {
+  "Perf.5Y": -1.410256410256403,
+  "Perf.Y": -4.472049689440997,
+  "Perf.YTD": -16.864864864864863,
+  "close": 15.38,
+  "description": "Liberty Energy, Inc. Class A",
+  "market_cap_basic": 2509884081,
+  "total_revenue_ttm": 4444673000,
+  "total_revenue_yoy_growth_ttm": 13.646801687465945
+ },
+ "NYSE:ORA": {
+  "Perf.5Y": 23.285754268122027,
+  "Perf.Y": -16.93381105034887,
+  "Perf.YTD": -20.858785483291413,
+  "close": 88.1,
+  "description": "Ormat Technologies, Inc.",
+  "market_cap_basic": 5417880374.000001,
+  "total_revenue_ttm": 1188438000,
+  "total_revenue_yoy_growth_ttm": 31.130027970716263,
+  "Perf.1M": -8.467532467532473,
+  "price_52_week_high": 146.39,
+  "price_52_week_low": 85.77
+ },
+ "NYSE:STVN": {
+  "Perf.5Y": -23.01618634030793,
+  "Perf.Y": -25.827310764549257,
+  "Perf.YTD": -3.9408866995073923,
+  "close": 19.5,
+  "description": "Stevanato Group SpA",
+  "market_cap_basic": 5323572084,
+  "total_revenue_ttm": 1428795070.70859,
+  "total_revenue_yoy_growth_ttm": 14.729079490883013
+ },
+ "NYSE:UAMY": {
+  "Perf.5Y": 256.32183908045977,
+  "Perf.Y": -74.29519071310116,
+  "Perf.YTD": -40.38461538461538,
+  "close": 3.1,
+  "description": "United States Antimony Corporation",
+  "market_cap_basic": 463975088,
+  "total_revenue_ttm": 36442250,
+  "total_revenue_yoy_growth_ttm": 35.88768256449419,
+  "High.All": 19.71,
+  "Low.All": 0.0625,
+  "Perf.1M": -36.734693877551024,
+  "Perf.3M": -44.64285714285714,
+  "Perf.W": 13.138686131386855,
+  "price_52_week_high": 12.64,
+  "price_52_week_low": 2.64
+ },
+ "NASDAQ:QBTS": {
+  "Perf.5Y": 18.6734693877551,
+  "Perf.Y": -61.374958485552966,
+  "Perf.YTD": -56.83800334013732,
+  "close": 11.63,
+  "description": "D-Wave Quantum Inc.",
+  "market_cap_basic": 4415057716,
+  "total_revenue_yoy_growth_ttm": -44.21997755331088
+ },
+ "NASDAQ:VIAV": {
+  "Perf.5Y": 94.35535599743426,
+  "Perf.Y": 127.64838467317807,
+  "Perf.YTD": 67.86703601108033,
+  "close": 30.3,
+  "description": "Viavi Solutions Inc",
+  "market_cap_basic": 7451440022,
+  "total_revenue_yoy_growth_ttm": 40.02582311168496
+ },
+ "NYSE:AMR": {
+  "Perf.5Y": 153.72492836676219,
+  "Perf.Y": 1.75561797752809,
+  "Perf.YTD": -20.961023504909257,
+  "close": 159.39,
+  "description": "Alpha Metallurgical Resources, Inc.",
+  "market_cap_basic": 2020912931,
+  "total_revenue_yoy_growth_ttm": -12.919469950136527
+ },
+ "NYSE:HY": {
+  "Perf.5Y": -40.176193402991196,
+  "Perf.Y": -20.435967302452323,
+  "Perf.YTD": -1.5509103169251546,
+  "close": 29.2,
+  "description": "Hyster-Yale, Inc. Class A",
+  "market_cap_basic": 523573610.00000006,
+  "total_revenue_yoy_growth_ttm": -11.142611248924213
+ },
+ "NASDAQ:CBRS": {
+  "Perf.Y": -68.87428571428572,
+  "Perf.YTD": -68.87428571428572,
+  "close": 108.94,
+  "description": "Cerebras Systems, Inc. Class A",
+  "market_cap_basic": 24386059673,
+  "total_revenue_yoy_growth_ttm": 90.83362303888035
+ },
+ "NASDAQ:LASR": {
+  "Perf.Y": 14.494132572153504,
+  "Perf.YTD": -6.209405040270201,
+  "close": 36.1,
+  "description": "nLIGHT, Inc.",
+  "market_cap_basic": 2082616023,
+  "total_revenue_yoy_growth_ttm": 43.23668936393854
+ },
+ "NASDAQ:TWST": {
+  "Perf.Y": 313.3963991455599,
+  "Perf.YTD": 326.94610778443115,
+  "close": 135.47,
+  "description": "Twist Bioscience Corp.",
+  "market_cap_basic": 8918318065,
+  "total_revenue_yoy_growth_ttm": 19.191328086829547
+ },
+ "NASDAQ:VSAT": {
+  "Perf.Y": 63.48018841784426,
+  "Perf.YTD": 68.18700114025086,
+  "close": 59,
+  "description": "ViaSat, Inc.",
+  "market_cap_basic": 8127593001.999999,
+  "total_revenue_yoy_growth_ttm": 1.349732097765966
+ },
+ "NYSE:DNA": {
+  "Perf.Y": -24.021909233176828,
+  "Perf.YTD": 14.63990554899646,
+  "close": 9.71,
+  "description": "Ginkgo Bioworks Holdings, Inc. Class A",
+  "market_cap_basic": 653874094.0000001,
+  "total_revenue_yoy_growth_ttm": -51.53564543032299
+ },
+ "AMEX:ET": {
+  "country": "United States",
+  "description": "Energy Transfer LP",
+  "industry": "Oil & Gas Pipelines",
+  "market_cap_basic": 69003726345.99998,
+  "name": "ET",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 3443300000
+ },
+ "NASDAQ:AMD": {
+  "close": 507.93,
+  "country": "United States",
+  "description": "Advanced Micro Devices, Inc.",
+  "market_cap_basic": 829183002392.9999,
+  "name": "AMD"
+ },
+ "NASDAQ:TRIP": {
+  "close": 9.67,
+  "country": "United States",
+  "description": "TripAdvisor, Inc.",
+  "market_cap_basic": 1133317635,
+  "name": "TRIP"
+ },
+ "NASDAQ:URBN": {
+  "close": 88.29,
+  "country": "United States",
+  "description": "Urban Outfitters, Inc.",
+  "market_cap_basic": 7562937295,
+  "name": "URBN"
+ },
+ "NASDAQ:WDC": {
+  "close": 354.19,
+  "country": "United States",
+  "description": "Western Digital Corporation",
+  "market_cap_basic": 132581560873.00002,
+  "name": "WDC"
+ },
+ "NASDAQ:XRAY": {
+  "close": 9.5,
+  "country": "United States",
+  "description": "DENTSPLY SIRONA, Inc.",
+  "market_cap_basic": 1893861877,
+  "name": "XRAY"
+ },
+ "NASDAQ:XRX": {
+  "close": 2.79,
+  "country": "United States",
+  "description": "Xerox Holdings Corporation",
+  "market_cap_basic": 366367488.99999994,
+  "name": "XRX"
+ },
+ "NASDAQ:ZION": {
+  "close": 66.39,
+  "country": "United States",
+  "description": "Zions Bancorporation NA",
+  "market_cap_basic": 9689843075.000002,
+  "name": "ZION"
+ },
+ "NYSE:ABT": {
+  "close": 102.51,
+  "country": "United States",
+  "description": "Abbott Laboratories",
+  "market_cap_basic": 177381595860,
+  "name": "ABT"
+ },
+ "NYSE:D": {
+  "close": 65.4,
+  "country": "United States",
+  "description": "Dominion Energy Inc",
+  "market_cap_basic": 57520997814,
+  "name": "D"
+ },
+ "NYSE:GL": {
+  "close": 168.41,
+  "country": "United States",
+  "description": "Globe Life Inc.",
+  "market_cap_basic": 12942214728.999998,
+  "name": "GL"
+ },
+ "NYSE:RHI": {
+  "close": 37.68,
+  "country": "United States",
+  "description": "Robert Half Inc.",
+  "market_cap_basic": 3856993847.9999995,
+  "name": "RHI"
+ },
+ "NYSE:RRC": {
+  "close": 43.86,
+  "country": "United States",
+  "description": "Range Resources Corporation",
+  "market_cap_basic": 10249183875,
+  "name": "RRC"
+ },
+ "NYSE:SIG": {
+  "close": 116.94,
+  "country": "Bermuda",
+  "description": "Signet Jewelers Limited",
+  "market_cap_basic": 4361188851,
+  "name": "SIG"
+ },
+ "NYSE:SLG": {
+  "close": 49.19,
+  "country": "United States",
+  "description": "SL Green Realty Corp.",
+  "market_cap_basic": 3757963747,
+  "name": "SLG"
+ },
+ "NYSE:SOLV": {
+  "close": 87.45,
+  "country": "United States",
+  "description": "Solventum Corporation",
+  "market_cap_basic": 14886065511,
+  "name": "SOLV"
+ },
+ "NYSE:T": {
+  "close": 22.74,
+  "country": "United States",
+  "description": "AT&T Inc",
+  "market_cap_basic": 153187408868,
+  "name": "T"
+ },
+ "NYSE:TAP": {
+  "close": 41.67,
+  "country": "United States",
+  "description": "Molson Coors Beverage Company Class B",
+  "market_cap_basic": 7781759938.000001,
+  "name": "TAP"
+ },
+ "NYSE:TDC": {
+  "close": 34.21,
+  "country": "United States",
+  "description": "Teradata Corporation",
+  "market_cap_basic": 3181529915,
+  "name": "TDC"
+ },
+ "NYSE:TFX": {
+  "close": 136.58,
+  "country": "United States",
+  "description": "Teleflex Incorporated",
+  "market_cap_basic": 5787222248,
+  "name": "TFX"
+ },
+ "NYSE:THC": {
+  "close": 270.63,
+  "country": "United States",
+  "description": "Tenet Healthcare Corporation",
+  "market_cap_basic": 21790856603,
+  "name": "THC"
+ },
+ "NYSE:TNL": {
+  "close": 67.32,
+  "country": "United States",
+  "description": "Travel + Leisure Co.",
+  "market_cap_basic": 4120268829.9999995,
+  "name": "TNL"
+ },
+ "NYSE:UA": {
+  "close": 4.73,
+  "country": "United States",
+  "description": "Under Armour, Inc. Class C",
+  "market_cap_basic": 2065243763,
+  "name": "UA"
+ },
+ "NYSE:UAA": {
+  "close": 4.88,
+  "country": "United States",
+  "description": "Under Armour, Inc. Class A",
+  "market_cap_basic": 2065243763,
+  "name": "UAA"
+ },
+ "NYSE:UNM": {
+  "close": 93.75,
+  "country": "United States",
+  "description": "Unum Group",
+  "market_cap_basic": 14841261864,
+  "name": "UNM"
+ },
+ "NYSE:VFC": {
+  "close": 17.48,
+  "country": "United States",
+  "description": "V.F. Corporation",
+  "market_cap_basic": 6871991789,
+  "name": "VFC"
+ },
+ "NYSE:VNO": {
+  "close": 34.34,
+  "country": "United States",
+  "description": "Vornado Realty Trust",
+  "market_cap_basic": 6411983210,
+  "name": "VNO"
+ },
+ "NYSE:VNT": {
+  "close": 34.54,
+  "country": "United States",
+  "description": "Vontier Corp",
+  "market_cap_basic": 4669808018,
+  "name": "VNT"
+ },
+ "NYSE:WHR": {
+  "close": 28.8,
+  "country": "United States",
+  "description": "Whirlpool Corporation",
+  "market_cap_basic": 1877742065.0000002,
+  "name": "WHR"
+ },
+ "NYSE:WU": {
+  "close": 6.43,
+  "country": "United States",
+  "description": "Western Union Company",
+  "market_cap_basic": 2005381706,
+  "name": "WU"
+ },
+ "NASDAQ:NXST": {
+  "close": 168.76,
+  "country": "United States",
+  "description": "Nexstar Media Group, Inc.",
+  "market_cap_basic": 5199208542,
+  "name": "NXST"
+ },
+ "NASDAQ:ADI": {
+  "close": 385.76,
+  "country": "United States",
+  "description": "Analog Devices, Inc.",
+  "market_cap_basic": 186925976661,
+  "name": "ADI"
+ },
+ "NASDAQ:LIN": {
+  "close": 510.36,
+  "country": "United Kingdom",
+  "description": "Linde plc",
+  "market_cap_basic": 235265829529,
+  "name": "LIN",
+  "float_shares_outstanding": 457902958.5,
+  "total_shares_outstanding_fundamental": 460980000
+ },
+ "NASDAQ:LKQ": {
+  "close": 22.47,
+  "country": "United States",
+  "description": "LKQ Corporation",
+  "market_cap_basic": 5684956799,
+  "name": "LKQ"
+ },
+ "NASDAQ:MAT": {
+  "close": 16.94,
+  "country": "United States",
+  "description": "Mattel, Inc.",
+  "market_cap_basic": 4839758359,
+  "name": "MAT"
+ },
+ "NASDAQ:MKTX": {
+  "close": 164.66,
+  "country": "United States",
+  "description": "MarketAxess Holdings Inc.",
+  "market_cap_basic": 5795570579.999999,
+  "name": "MKTX"
+ },
+ "NASDAQ:MTCH": {
+  "close": 45.92,
+  "country": "United States",
+  "description": "Match Group, Inc.",
+  "market_cap_basic": 10540980564,
+  "name": "MTCH"
+ },
+ "NASDAQ:NAVI": {
+  "close": 8.86,
+  "country": "United States",
+  "description": "Navient Corp",
+  "market_cap_basic": 830924690,
+  "name": "NAVI"
+ },
+ "NASDAQ:NKTR": {
+  "close": 38.65,
+  "country": "United States",
+  "description": "Nektar Therapeutics",
+  "market_cap_basic": 1319626767,
+  "name": "NKTR"
+ },
+ "NASDAQ:NWL": {
+  "close": 5.73,
+  "country": "United States",
+  "description": "Newell Brands Inc",
+  "market_cap_basic": 2440406973.0000005,
+  "name": "NWL"
+ },
+ "NASDAQ:PENN": {
+  "close": 15.46,
+  "country": "United States",
+  "description": "PENN Entertainment, Inc.",
+  "market_cap_basic": 2072669476.9999998,
+  "name": "PENN"
+ },
+ "NASDAQ:POOL": {
+  "close": 197.21,
+  "country": "United States",
+  "description": "Pool Corporation",
+  "market_cap_basic": 7166759124.000001,
+  "name": "POOL"
+ },
+ "NYSE:BTI": {
+  "close": 60.47,
+  "country": "United Kingdom",
+  "description": "British American Tobacco PLC Sponsored ADR",
+  "market_cap_basic": 128892134444.616,
+  "name": "BTI"
+ },
+ "NYSE:CP": {
+  "close": 90.62,
+  "country": "Canada",
+  "description": "Canadian Pacific Kansas City Limited",
+  "market_cap_basic": 79662159437.14551,
+  "name": "CP"
+ },
+ "NYSE:KMX": {
+  "close": 52.96,
+  "country": "United States",
+  "description": "CarMax, Inc.",
+  "market_cap_basic": 7517291091,
+  "name": "KMX",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1772236800,
+  "fiscal_period_fy": "2025",
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 141943000
+ },
+ "NYSE:KSS": {
+  "close": 24.78,
+  "country": "United States",
+  "description": "Kohl's Corporation",
+  "market_cap_basic": 2809468310,
+  "name": "KSS",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Department Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 113376000
+ },
+ "NYSE:LNC": {
+  "close": 41.11,
+  "country": "United States",
+  "description": "Lincoln National Corp",
+  "market_cap_basic": 7870400343.000001,
+  "name": "LNC",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Multi-Line Insurance",
+  "sector": "Finance",
+  "total_shares_outstanding": 191447000
+ },
+ "NYSE:M": {
+  "close": 24.17,
+  "country": "United States",
+  "description": "Macy's, Inc.",
+  "market_cap_basic": 6312639306.000001,
+  "name": "M",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Department Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 261177000.00000003
+ },
+ "NYSE:MAC": {
+  "close": 23.95,
+  "country": "United States",
+  "description": "Macerich Company",
+  "market_cap_basic": 6791247540.000001,
+  "name": "MAC"
+ },
+ "NYSE:MHK": {
+  "close": 128.7,
+  "country": "United States",
+  "description": "Mohawk Industries, Inc.",
+  "market_cap_basic": 7778389036,
+  "name": "MHK"
+ },
+ "NYSE:MOH": {
+  "close": 216.64,
+  "country": "United States",
+  "description": "Molina Healthcare, Inc.",
+  "market_cap_basic": 11308608133,
+  "name": "MOH"
+ },
+ "NYSE:MRSH": {
+  "close": 199.27,
+  "country": "United States",
+  "description": "Marsh & McLennan Companies, Inc.",
+  "market_cap_basic": 94755739132.00002,
+  "name": "MRSH"
+ },
+ "NYSE:MTB": {
+  "close": 222.83,
+  "country": "United States",
+  "description": "M&T Bank Corporation",
+  "market_cap_basic": 32180275427.999996,
+  "name": "MTB"
+ },
+ "NYSE:MUR": {
+  "close": 42.37,
+  "country": "United States",
+  "description": "Murphy Oil Corporation",
+  "market_cap_basic": 6075057849,
+  "name": "MUR"
+ },
+ "NYSE:NOV": {
+  "close": 18.76,
+  "country": "United States",
+  "description": "NOV Inc.",
+  "market_cap_basic": 6687529592,
+  "name": "NOV"
+ },
+ "NYSE:OI": {
+  "close": 6.41,
+  "country": "United States",
+  "description": "O-I Glass Inc",
+  "market_cap_basic": 984958937,
+  "name": "OI"
+ },
+ "NYSE:OVV": {
+  "close": 69.3,
+  "country": "United States",
+  "description": "Ovintiv Inc",
+  "market_cap_basic": 19092400395,
+  "name": "OVV"
+ },
+ "NYSE:PAYC": {
+  "close": 272.61,
+  "country": "United States",
+  "description": "Paycom Software, Inc.",
+  "market_cap_basic": 12072610114,
+  "name": "PAYC"
+ },
+ "NYSE:PBI": {
+  "close": 17.54,
+  "country": "United States",
+  "description": "Pitney Bowes Inc.",
+  "market_cap_basic": 2404562676,
+  "name": "PBI"
+ },
+ "NYSE:PRGO": {
+  "close": 16.37,
+  "country": "United States",
+  "description": "Perrigo Co. Plc",
+  "market_cap_basic": 2271652846.9999995,
+  "name": "PRGO"
+ },
+ "NYSE:PVH": {
+  "close": 84.26,
+  "country": "United States",
+  "description": "PVH Corp.",
+  "market_cap_basic": 3887573877.0000005,
+  "name": "PVH"
+ },
+ "NYSE:R": {
+  "close": 265.53,
+  "country": "United States",
+  "description": "Ryder System, Inc.",
+  "market_cap_basic": 10182243443.999998,
+  "name": "R"
+ },
+ "NASDAQ:SWKS": {
+  "close": 82.39,
+  "country": "United States",
+  "description": "Skyworks Solutions, Inc.",
+  "market_cap_basic": 19375288911,
+  "name": "SWKS"
+ },
+ "NYSE:SGI": {
+  "close": 65.99,
+  "country": "United States",
+  "description": "Somnigroup International Inc.",
+  "market_cap_basic": 15193483097.000002,
+  "name": "SGI"
+ },
+ "NASDAQ:TMUS": {
+  "close": 158.79,
+  "float_shares_outstanding": 476366310.97999996,
+  "market_cap_basic": 170329521062,
+  "total_shares_outstanding": 1072670000.0000001,
+  "total_shares_outstanding_fundamental": 1072670000.0000001
+ },
+ "NASDAQ:UAL": {
+  "close": 102,
+  "float_shares_outstanding": 322059624.744,
+  "market_cap_basic": 33139226624.000004,
+  "total_shares_outstanding": 324894000,
+  "total_shares_outstanding_fundamental": 324894000
+ },
+ "NASDAQ:MCHP": {
+  "close": 74.52,
+  "float_shares_outstanding": 533293482.972,
+  "market_cap_basic": 40465004040.99999,
+  "total_shares_outstanding_fundamental": 543009000
+ }
+}

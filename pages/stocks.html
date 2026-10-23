@@ -338,14 +338,20 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
     </div>
     <p>كل جزء يغطي ضعف غيره: السهم الرخيص بس ضعيف ياخذ درجة سعر عالية وجودة منخفضة، والسهم القوي بس غالي بالعكس. الأرقام اللي ما لها تاريخ نختبرها عليه (توقعات المحللين، Altman Z، العائد على رأس المال) تظهر في التفاصيل، وما تدخل في الدرجة.</p>
     <h2>القيمة العادلة</h2>
-    <p>قريب من مؤشرنا للقيمة العادلة في TradingView: يحدد نوع الشركة (ناضجة، نمو، دورية، مالية، تخسر، بدون إيرادات)، ويأخذ متوسط موزون للطرق المناسبة لنوعها: P/E و EV/EBITDA و P/S مقارنة بتاريخ السهم، قاعدة Lynch (المكرر = النمو، للشركات اللي تنمو 10% أو أكثر)، DCF على التدفق النقدي (نمو أول سنة من توقع المحللين، ومعدل خصم حسب بيتا السهم)، P/B من العائد على حقوق المساهمين، والكاش الصافي. سقف Graham يطلع كفحص بس بدون وزن. ما فيه P/B تاريخي لأن الربط ما يعطي القيمة الدفترية التاريخية. تفاصيل كل طريقة ووزنها تطلع لما تضغط على السهم.</p>
+    <p>قريب من مؤشرنا للقيمة العادلة في TradingView: يحدد نوع الشركة (ناضجة، نمو، دورية، مالية، تخسر، بدون إيرادات)، ويأخذ متوسط موزون للطرق المناسبة لنوعها: P/E و EV/EBITDA و P/S مقارنة بتاريخ السهم، قاعدة Lynch (المكرر = النمو، للشركات اللي تنمو 10% أو أكثر)، DCF على التدفق النقدي (نمو أول سنة من توقع المحللين، ومعدل خصم حسب بيتا السهم)، P/B من العائد على حقوق المساهمين، والكاش الصافي. ولما يكون فيه 3 طرق أو أكثر، الطريقة اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال من المتوسط (دراسة 16). سقف Graham يطلع كفحص بس بدون وزن. ما فيه P/B تاريخي لأن الربط ما يعطي القيمة الدفترية التاريخية. تفاصيل كل طريقة ووزنها تطلع لما تضغط على السهم.</p>
     <p class="dim">الاختبار على أسهمك (دراسة 7): الترتيب حسب "كم السهم أرخص من قيمته العادلة" ما تنبأ بأداء السنة التالية. استخدمها كمرجع لوش تقول أرقام الشركة، مو كإشارة شراء.</p>
+    <div class="result">
+      <b>اختبار خيارات الحساب (دراسة 16: 815 سهم أمريكي، 2012–2025)</b>
+      <p>كل خيار قدرنا نختبره جربناه على تاريخ الأسهم، وشفنا أي واحد يطلّع القيمة العادلة أقرب لسعر السهم بعد سنة (بعد ما نشيل حركة السوق كله). الخطة انكتبت وانراجعت قبل أي نتيجة. الرقم هو الخطأ: كم تبعد القيمة عن السعر بعد سنة (الوسيط، 0.30 يعني تقريباً 30%)، على الأسهم اللي يفرق فيها الخيار، وجنبه خطأ "سعر اليوم هو القيمة العادلة".</p>
+      <p>1) <b>طريقة الجمع (تغيّرت):</b> لما يكون للسهم 3 طرق أو أكثر، الطريقة اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال من المتوسط. الخطأ <span class="n">0.302</span> صار <span class="n">0.295</span> (سعر اليوم <span class="n">0.159</span>)، وصارت أقرب في 12 سنة من 14، وبالشركات الكبيرة بعد (<span class="n">0.271</span> صار <span class="n">0.263</span>). 2) <b>الطرق اللي مكررها اليوم فوق 100 (تبقى منشالة):</b> لو خليناها يصير الخطأ <span class="n">0.695</span> بدل <span class="n">0.588</span> (سعر اليوم <span class="n">0.194</span>). 3) <b>شرط Lynch لـ PEG (يبقى):</b> شيل PEG كله نزّل الخطأ من <span class="n">0.373</span> لـ <span class="n">0.344</span> (سعر اليوم <span class="n">0.187</span>)، بس لأنه قرّب القيمة لسعر اليوم، مو لأنه أدق: الطريقة الحالية لو قرّبناها لسعر اليوم بنفس القدر طلعت أدق منه. 4) <b>مين الشركة الدورية (يبقى حسب القطاع):</b> التصنيف حسب تذبذب أرباحها <span class="n">0.317</span> مقابل <span class="n">0.321</span> (سعر اليوم <span class="n">0.171</span>)، وكان أحسن في 7 سنين من 11 بس، فما هو فرق مؤكد. 5) <b>معدل خصم DCF حسب بيتا (يبقى):</b> 9% ثابت <span class="n">0.310</span> مقابل <span class="n">0.314</span> (سعر اليوم <span class="n">0.157</span>)، فرق مو مؤكد. 6) <b>ما قدرنا نختبرها، فتبقى مثل ما هي:</b> سقف P/B من العائد على حقوق المساهمين (4 أضعاف القيمة الدفترية، وهو اللي يخلي فيزا وماستركارد تحت سعرها بكثير)، وزن Graham، P/B التاريخي للشركات الدورية، وDCF على الإيرادات للشركات الخسرانة. TradingView ما يعطي تاريخ حقوق المساهمين ولا الكاش ولا الربح التشغيلي.</p>
+      <p class="dim">وبصراحة: سعر اليوم نفسه أقرب لسعر السنة الجاية من أي قيمة عادلة (على كل الأسهم: الخطأ <span class="n">0.18</span> مقابل <span class="n">0.33</span>). القيمة العادلة تقول لك وش تقول أرقام الشركة، مو وين بيروح السعر.</p>
+    </div>
     <div class="result">
       <b>نتيجة اختبار الدرجة (2012–2025، 819 سهم أمريكي)</b>
       <p>الدرجة رتبت الأسهم أفضل من العشوائي بفرق صغير: الارتباط مع عائد السنة التالية <span dir="ltr">+0.03</span> في المتوسط، وموجب في 10 سنوات من 14. لكن أعلى خُمس ما تفوّق على أدنى خُمس في المتوسط (<span dir="ltr">−0.6%</span> سنوياً)، لأن الأسهم الضعيفة انفجرت في سنوات المضاربة (2020 و2025). يعني الدرجة ملخص صادق لصحة الشركة وسعرها، مو توقع لسعرها السنة الجاية. في السعودي التاريخ قصير، والنتيجة ما يُعتمد عليها.</p>
     </div>
     <details class="result log">
-      <summary><b>سجل التصحيحات (14 و18 و21 و22 أكتوبر 2026)</b></summary>
+      <summary><b>سجل التصحيحات (14 و18 و21 و22 و23 أكتوبر 2026)</b></summary>
       <p><b>تصحيحات 14 أكتوبر 2026 (بعد الاختبار)</b></p>
       <p>1) الشركات اللي سنتها المالية تخلص نص السنة (مايكروسوفت، مايكرون، كوستكو، بروكتر…) كانت الصفحة تاخذ أرقام السنة اللي قبل، فطلعت قيمة مايكرون العادلة عُشر سعرها. الحين تاخذ آخر سنة منشورة. 2) البنوك والشركات المالية: تدفقها النقدي يتحرك مع الودائع والقروض، فشلناه من الدرجة والتنبيهات، وتوقع إيرادات المحللين للبنوك ما ينقارن بإيرادات TradingView (كان يطلع <span dir="ltr">−30%</span> إلى <span dir="ltr">−45%</span> لكل بنك). 3) الشركات اللي بدأت إيراداتها من شبه صفر كانت قيمتها العادلة 20–90 ضعف سعرها، لأن مكررها القديم بالآلاف. نفس الشي مع الأرباح اللي كانت شبه صفر. الحين أي شهر مكرره (المبيعات أو الأرباح أو EBITDA) فوق 100 ما ينحسب في "متوسط السهم". 4) إذا عدد الأسهم المحسوب من الأرباح بعيد عن عدد الأسهم الفعلي (أسهم ممتازة أو ربح شبه صفر)، تستخدم الصفحة العدد الفعلي.</p>
       <p><b>تصحيحات 18 أكتوبر</b> (من مراجعة كاملة للصفحة): 5) نفس الشركات اللي سنتها تخلص نص السنة صار تاريخها يتقارن بنفس الطريقة، فمايكروسوفت كانت تطلع أرخص من 93% من تاريخها والصحيح 72%. 6) "النمو الفعلي" يعرض نمو الإيرادات بس، كان أحياناً يعرض نمو الأرباح أو 0%. 7) سنة مالية فاضية في TradingView ما تنحسب، كانت تخلي شركة إيراداتها 1.6 مليار تطلع "بدون إيرادات". 8) البنوك: شلنا مكرر التدفق النقدي من جزء السعر بعد. 9) PEG ما يطلع 0.00 لما الشركة تخسر.</p>
@@ -357,6 +363,8 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
       <p><b>تصحيحات 22 أكتوبر (الثالث):</b> 36) السرعة: فتح السهم وقفله يرسم صفه بس بدل الجدول كله (كان ياخذ ثانيتين وأكثر على الجوال ويضيّع مكانك بالكيبورد)، والتحديث يرسم الصفوف اللي تغيّرت بس بدل ما يعيد الجدول 15 مرة أو أكثر. 37) لو دفعة أسعار ما ردت، الصفحة تقول لك كم سهم ما تحدّث وتحاول مرة ثانية بالتحديث الجاي، والسهم اللي TradingView ما يعرفه يطلع "—" بدل التحميل اللي ما يخلص، والتبويبات ما تعيد طلب أسعار انجابت قبل أقل من 5 دقايق. وكمان: "<span dir="ltr">-0%</span>" صار "0%"، و"—%" صار "—"، والشرح اللي فتحته يبقى مفتوح لما تتحدث الصفحة، والأخبار اللي ما ردت تنطلب من جديد لما تفتح السهم مرة ثانية، والبحث ما يعرض نتايج بحث أقدم.</p>
       <p><b>تصحيحات 22 أكتوبر (الرابع):</b> 38) العرض: على الكمبيوتر الجدول وتفاصيل السهم صاروا داخل الشاشة، فالقيمة العادلة ورقم كل طريقة وزر الحذف يبانون بدون سحب للجنب (على 1280 كانت أرقام الطرق مقصوصة، وعلى التابلت نص الجدول مخفي). تحت 1240 بكسل كل سهم بطاقة مثل الجوال، و"النمو المفترض" و"النمو الفعلي" وAltman Z صاروا في تفاصيل السهم بس. 39) "تقريره بكرة" صار بأيام التقويم على توقيتك: كان يطلع يوم التقرير نفسه. وكمان: الفلترة على الرمز والاسم بس (حرف q كان يطلع كل أسهم NASDAQ)، إشارة السالب والموجب بمكانها (<span dir="ltr">-1.5%</span> بالسعودي وفي الشروحات)، "نجح في 4 من 7" بترتيبها، "74 شهر" و"8 أشهر" و"بعد 12 يوم" و"بين 7 أسهم"، أسماء الشركات بنقطتها آخر الاسم، ما يطلع سطر شرطات للشركات اللي تدفقها النقدي سالب، تبويبات الجوال كلها تبان، Enter على النجمة أو الحذف يسويها وEsc يقفل السهم، وألوان أوضح وخط عربي صح داخل الأرقام.</p>
       <p><b>تصحيحات 23 أكتوبر:</b> 40) الأسهم السعودية: TradingView يحسب القيمة السوقية على إغلاق أمس، فصار عدد الأسهم يتحسب على إغلاق أمس بدل سعر اليوم (4292 نزل 7.5% اليوم: مكرر الربح 14.5 صار 13.4). 41) ملاحظة "فوق 100 ضعف" صارت تذكر بس الطرق اللي لها وزن، وتقول السبب الصح. 42) الأسهم اللي ما عندنا أرباعها المحفوظة يطلع فيها إن الأرقام من آخر سنة مالية. 43) موعد التقرير بتاريخ السوق نفسه: تقرير أمريكي بعد الإغلاق ما يصير "بكرة" بتوقيت الرياض. 44) الكيبورد: مكانك داخل تفاصيل السهم ما يضيع وقت التحديث، وEsc يسكّرها من أي مكان. 45) الشاشات المتوسطة (761–1239): بطاقات أصغر، 5 أسهم بالشاشة بدل 3. 46) قائمة الترتيب صارت تظهر بكل الشاشات وفيها النمو الفعلي والمفترض وAltman Z.</p>
+      <p><b>تغيير 23 أكتوبر (من دراسة 16):</b> 47) لما يكون للسهم 3 طرق أو أكثر، الطريقة اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه ما تدخل في متوسط القيمة العادلة، وتطلع باهتة في تفاصيل السهم مع السبب. هذا الخيار الوحيد اللي فاز في الاختبار (نتيجته فوق في "اختبار خيارات الحساب"). على بياناتك المحفوظة يوم 22 أكتوبر تغيّرت القيمة العادلة لـ 55 سهم أكثر من 10% (41 أمريكي و14 سعودي)، منها 7 من مفضلتك: أوسكار <span class="n">205.75</span> صارت <span class="n">30.23</span> (انشال DCF)، ARM <span class="n">67.55</span> صارت <span class="n">25.35</span> (P/S)، كراودسترايك <span class="n">53.37</span> صارت <span class="n">84.85</span> (PEG)، Astera Labs <span class="n">117.41</span> صارت <span class="n">50.30</span> (P/S)، BWXT <span class="n">110.31</span> صارت <span class="n">138.88</span> (PEG)، سانديسك <span class="n">1766.15</span> صارت <span class="n">2153.47</span> (P/S)، مايكرون <span class="n">1428.56</span> صارت <span class="n">1650.71</span> (P/S عند <span class="n">539.96</span>، أقل بشوي من ثلث الوسيط الموزون لطرقها <span class="n">1628.16</span>).</p>
+      <details><summary>الـ 55 سهم كلها</summary><table class="ptable"><thead><tr><th>السهم</th><th>قبل</th><th>بعد</th><th>التغيّر</th><th>اللي انشالت</th></tr></thead><tbody><tr><th>★ <span class="n">OSCR</span></th><td class="n">205.75</td><td class="n">30.23</td><td class="n" dir="ltr">-85.3%</td><td>DCF</td></tr><tr><th>★ <span class="n">ARM</span></th><td class="n">67.55</td><td class="n">25.35</td><td class="n" dir="ltr">-62.5%</td><td>P/S</td></tr><tr><th>★ <span class="n">CRWD</span></th><td class="n">53.37</td><td class="n">84.85</td><td class="n" dir="ltr">+59.0%</td><td>PEG</td></tr><tr><th>★ <span class="n">ALAB</span></th><td class="n">117.41</td><td class="n">50.3</td><td class="n" dir="ltr">-57.2%</td><td>P/S</td></tr><tr><th>★ <span class="n">BWXT</span></th><td class="n">110.31</td><td class="n">138.88</td><td class="n" dir="ltr">+25.9%</td><td>PEG</td></tr><tr><th>★ <span class="n">SNDK</span></th><td class="n">1766.15</td><td class="n">2153.47</td><td class="n" dir="ltr">+21.9%</td><td>P/S</td></tr><tr><th>★ <span class="n">MU</span></th><td class="n">1428.56</td><td class="n">1650.71</td><td class="n" dir="ltr">+15.6%</td><td>P/S</td></tr><tr><th><span class="n">PINS</span></th><td class="n">37.6</td><td class="n">8.39</td><td class="n" dir="ltr">-77.7%</td><td>DCF وP/S</td></tr><tr><th><span class="n">4017</span></th><td class="n">23.68</td><td class="n">40.65</td><td class="n" dir="ltr">+71.7%</td><td>DCF</td></tr><tr><th><span class="n">JD</span></th><td class="n">54.74</td><td class="n">16.1</td><td class="n" dir="ltr">-70.6%</td><td>DCF</td></tr><tr><th><span class="n">4071</span></th><td class="n">105.64</td><td class="n">177.95</td><td class="n" dir="ltr">+68.4%</td><td>DCF</td></tr><tr><th><span class="n">7200</span></th><td class="n">106.69</td><td class="n">179.03</td><td class="n" dir="ltr">+67.8%</td><td>DCF</td></tr><tr><th><span class="n">2084</span></th><td class="n">8.92</td><td class="n">2.9</td><td class="n" dir="ltr">-67.5%</td><td>PEG وP/S</td></tr><tr><th><span class="n">TIMB</span></th><td class="n">63.21</td><td class="n">22.67</td><td class="n" dir="ltr">-64.1%</td><td>DCF</td></tr><tr><th><span class="n">HPE</span></th><td class="n">63.57</td><td class="n">24.91</td><td class="n" dir="ltr">-60.8%</td><td>DCF</td></tr><tr><th><span class="n">TENB</span></th><td class="n">32.84</td><td class="n">52.07</td><td class="n" dir="ltr">+58.6%</td><td>PEG</td></tr><tr><th><span class="n">CELH</span></th><td class="n">76.59</td><td class="n">119.08</td><td class="n" dir="ltr">+55.5%</td><td>PEG</td></tr><tr><th><span class="n">BMRN</span></th><td class="n">108.99</td><td class="n">168.82</td><td class="n" dir="ltr">+54.9%</td><td>PEG</td></tr><tr><th><span class="n">MDB</span></th><td class="n">198.58</td><td class="n">307.41</td><td class="n" dir="ltr">+54.8%</td><td>PEG</td></tr><tr><th><span class="n">DLO</span></th><td class="n">41.46</td><td class="n">18.9</td><td class="n" dir="ltr">-54.4%</td><td>DCF</td></tr><tr><th><span class="n">DDOG</span></th><td class="n">100.63</td><td class="n">153.67</td><td class="n" dir="ltr">+52.7%</td><td>PEG</td></tr><tr><th><span class="n">4006</span></th><td class="n">16.31</td><td class="n">24.83</td><td class="n" dir="ltr">+52.2%</td><td>DCF</td></tr><tr><th><span class="n">SKM</span></th><td class="n">31.3</td><td class="n">15.33</td><td class="n" dir="ltr">-51.0%</td><td>DCF</td></tr><tr><th><span class="n">HUBS</span></th><td class="n">389.88</td><td class="n">586.77</td><td class="n" dir="ltr">+50.5%</td><td>PEG</td></tr><tr><th><span class="n">4002</span></th><td class="n">88.37</td><td class="n">132.94</td><td class="n" dir="ltr">+50.4%</td><td>DCF</td></tr><tr><th><span class="n">4050</span></th><td class="n">99.59</td><td class="n">50.41</td><td class="n" dir="ltr">-49.4%</td><td>DCF</td></tr><tr><th><span class="n">TTD</span></th><td class="n">45.13</td><td class="n">23.15</td><td class="n" dir="ltr">-48.7%</td><td>P/S</td></tr><tr><th><span class="n">2083</span></th><td class="n">61.99</td><td class="n">32</td><td class="n" dir="ltr">-48.4%</td><td>DCF</td></tr><tr><th><span class="n">STM</span></th><td class="n">16.34</td><td class="n">8.94</td><td class="n" dir="ltr">-45.3%</td><td>P/S</td></tr><tr><th><span class="n">CEG</span></th><td class="n">204.79</td><td class="n">297.16</td><td class="n" dir="ltr">+45.1%</td><td>DCF</td></tr><tr><th><span class="n">6015</span></th><td class="n">4.96</td><td class="n">2.77</td><td class="n" dir="ltr">-44.2%</td><td>DCF</td></tr><tr><th><span class="n">OKTA</span></th><td class="n">101.44</td><td class="n">146.16</td><td class="n" dir="ltr">+44.1%</td><td>PEG</td></tr><tr><th><span class="n">MNDY</span></th><td class="n">218.96</td><td class="n">315.15</td><td class="n" dir="ltr">+43.9%</td><td>PEG</td></tr><tr><th><span class="n">FN</span></th><td class="n">235.07</td><td class="n">333.8</td><td class="n" dir="ltr">+42.0%</td><td>DCF</td></tr><tr><th><span class="n">4290</span></th><td class="n">19.94</td><td class="n">28.25</td><td class="n" dir="ltr">+41.7%</td><td>P/E</td></tr><tr><th><span class="n">DGII</span></th><td class="n">78.59</td><td class="n">45.84</td><td class="n" dir="ltr">-41.7%</td><td>DCF</td></tr><tr><th><span class="n">MELI</span></th><td class="n">3727.47</td><td class="n">2183.4</td><td class="n" dir="ltr">-41.4%</td><td>DCF</td></tr><tr><th><span class="n">INOD</span></th><td class="n">75.81</td><td class="n">44.75</td><td class="n" dir="ltr">-41.0%</td><td>DCF</td></tr><tr><th><span class="n">PTGX</span></th><td class="n">62.83</td><td class="n">88.04</td><td class="n" dir="ltr">+40.1%</td><td>PEG</td></tr><tr><th><span class="n">SHOP</span></th><td class="n">68.09</td><td class="n">40.91</td><td class="n" dir="ltr">-39.9%</td><td>P/S</td></tr><tr><th><span class="n">CVNA</span></th><td class="n">86.71</td><td class="n">121.15</td><td class="n" dir="ltr">+39.7%</td><td>DCF</td></tr><tr><th><span class="n">NKE</span></th><td class="n">50.13</td><td class="n">70.01</td><td class="n" dir="ltr">+39.7%</td><td>DCF</td></tr><tr><th><span class="n">TKO</span></th><td class="n">242.89</td><td class="n">147.13</td><td class="n" dir="ltr">-39.4%</td><td>DCF</td></tr><tr><th><span class="n">4007</span></th><td class="n">27.8</td><td class="n">38.66</td><td class="n" dir="ltr">+39.1%</td><td>DCF</td></tr><tr><th><span class="n">OGN</span></th><td class="n">12.43</td><td class="n">17.19</td><td class="n" dir="ltr">+38.3%</td><td>P/E</td></tr><tr><th><span class="n">4009</span></th><td class="n">57.94</td><td class="n">79.26</td><td class="n" dir="ltr">+36.8%</td><td>DCF</td></tr><tr><th><span class="n">4051</span></th><td class="n">5.47</td><td class="n">7.46</td><td class="n" dir="ltr">+36.4%</td><td>DCF</td></tr><tr><th><span class="n">WDC</span></th><td class="n">252.4</td><td class="n">333.71</td><td class="n" dir="ltr">+32.2%</td><td>P/S</td></tr><tr><th><span class="n">BURL</span></th><td class="n">286.9</td><td class="n">378.75</td><td class="n" dir="ltr">+32.0%</td><td>DCF</td></tr><tr><th><span class="n">NOW</span></th><td class="n">137.44</td><td class="n">179.18</td><td class="n" dir="ltr">+30.4%</td><td>PEG</td></tr><tr><th><span class="n">ADSK</span></th><td class="n">286.99</td><td class="n">372.07</td><td class="n" dir="ltr">+29.6%</td><td>PEG</td></tr><tr><th><span class="n">WDAY</span></th><td class="n">220.08</td><td class="n">281.81</td><td class="n" dir="ltr">+28.0%</td><td>PEG</td></tr><tr><th><span class="n">IOT</span></th><td class="n">21.24</td><td class="n">15.43</td><td class="n" dir="ltr">-27.4%</td><td>PEG وP/S</td></tr><tr><th><span class="n">TMDX</span></th><td class="n">151.31</td><td class="n">114.5</td><td class="n" dir="ltr">-24.3%</td><td>P/S</td></tr><tr><th><span class="n">4013</span></th><td class="n">212.4</td><td class="n">162.24</td><td class="n" dir="ltr">-23.6%</td><td>P/S</td></tr></tbody></table></details>
       <p class="dim">أعدنا اختبار الدرجة بعد التصحيحات اللي تمس الاختبار (3 و7 و8 وشيل التدفق النقدي للبنوك): النتيجة نفسها (الارتباط <span dir="ltr">+0.03</span>، مؤكد؛ أعلى خُمس ما تفوّق). ونتائج القيمة العادلة والتنبيهات بعد التصحيح بعد ما تغيّرت: ما تنبأت.</p>
     </details>
     <h2>توقع السعر لـ 5 سنوات</h2>
@@ -369,7 +377,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
 
 <script>
 // ---- engine/fairvalue.js
-const { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch } = (() => {
+const { METHODS, WEIGHTS, HEAVY_SECTORS, TECH_SECTORS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, blendTrimmed, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch } = (() => {
 // Study 7 (PROTOCOL-study7.md): the fair value indicator (pine/fair-value.pine) rebuilt on
 // annual fundamentals and monthly closes, so it can be scored against later returns.
 //
@@ -727,6 +735,26 @@ function blend(values, weights) {
   return sw > 0 ? { fair: sv / sw, coverage: sw } : null
 }
 
+/**
+ * POST-HOC (2026-10-23, PROTOCOL-study16.md D2 option C, adopted; reports/study16.txt): with 3 or more
+ * valued methods, each one above 3× or below ⅓ of their weighted median is dropped before the weighted
+ * mean (closer to the price a year later in 12 of 14 years, Holm p 0.034). Weighted median: in
+ * ascending value order, the first value whose cumulative weight reaches half the total. `coverage`
+ * still counts every valued method; `dropped` lists the methods left out, `med` is the weighted median.
+ * The studies keep `blend`.
+ */
+function blendTrimmed(values, weights) {
+  const b = blend(values, weights)
+  const valued = METHODS.map((m, i) => [m, values[m], weights[i]]).filter(([, x, w]) => w > 0 && pos(x))
+  if (!b || valued.length < 3) return b && { ...b, dropped: [] }
+  const s = [...valued].sort((a, c) => a[1] - c[1])
+  const half = s.reduce((a, p) => a + p[2], 0) / 2
+  let c = 0
+  const med = s.find((p) => (c += p[2]) >= half - 1e-12)[1]
+  const kept = valued.filter(([, x]) => x <= 3 * med && x >= med / 3)
+  return { fair: kept.reduce((a, [, x, w]) => a + x * w, 0) / kept.reduce((a, [, , w]) => a + w, 0), coverage: b.coverage, med, dropped: valued.filter((p) => !kept.includes(p)).map(([m]) => m) }
+}
+
 const one = (m) => METHODS.map((k) => (k === m ? 1 : 0))
 const equal = (ms) => METHODS.map((k) => (ms.includes(k) ? 1 : 0))
 
@@ -910,7 +938,7 @@ function histFromBatch(row, period, max = 16) {
   }
 }
 
-return { METHODS, WEIGHTS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch }
+return { METHODS, WEIGHTS, HEAVY_SECTORS, TECH_SECTORS, PARAMS, MULT_MAX, liveShift, ttmFromQuarters, liveContext, quoteShares, allShares, stateFn, lastUsableFiscalYear, monthKey, addMonths, parseFundamentals, cagr, dcf, stateAt, multiplesAt, profileOf, fairValuesAt, blend, blendTrimmed, VARIANTS, variantFair, spearman, tTestGreater, trendUp, signFlipGreater, holm, HIST_SERIES, HIST_COLS, histFromBatch }
 })();
 
 // ---- engine/score.js
@@ -1372,9 +1400,10 @@ function residualMomentum(closes, market, m) {
  * Total assets per stored fiscal year from TradingView's unlabelled newest-first arrays
  * (PROTOCOL-study14.md §1): index i matches year Y when both revenues are > 0 and within 0.1%;
  * the offset o is the most common Y + i over one-to-one matches (none on a tie); year Y takes
- * assets[o − Y] when that index matches Y and the assets are > 0.
+ * assets[o − Y] when that index matches Y and the assets are > 0. `ok` replaces that last test for
+ * columns that can be zero or negative (study 16's cash and operating income: Number.isFinite).
  */
-function assetsByYear(funds, assets, revenue) {
+function assetsByYear(funds, assets, revenue, ok = pos) {
   const out = new Map()
   if (!Array.isArray(assets) || !Array.isArray(revenue)) return out
   const years = funds.filter((f) => pos(f.rev))
@@ -1390,7 +1419,7 @@ function assetsByYear(funds, assets, revenue) {
   const o = best[0][0]
   for (const f of years) {
     const i = o - f.year
-    if (i >= 0 && i < revenue.length && match(i, f) && pos(assets[i])) out.set(f.year, assets[i])
+    if (i >= 0 && i < revenue.length && match(i, f) && ok(assets[i])) out.set(f.year, assets[i])
   }
   return out
 }
@@ -1894,9 +1923,10 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     // POST-HOC (2026-10-22, display only; the blend is the same): PEG outside Lynch's rule gets no weight,
     // like Graham, and coverage is over the weights left (KO showed 85% with every method there).
     const weights = WEIGHTS[fv.profile].map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
-    const b = blend(v, weights)
+    // POST-HOC (2026-10-23, study 16 D2 C): a method above 3× or below ⅓ of the methods' weighted median is left out.
+    const b = blendTrimmed(v, weights)
     const used = METHODS.filter((m, i) => weights[i] > 0 && v[m] > 0).map((m) => v[m])
-    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
+    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, dropped: b?.dropped ?? [], med: b?.med ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
@@ -2169,7 +2199,7 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
     if (!f?.fair) return null
     if (peNow(sym) > 100 && f.values.pe > 0) return 'مكرر الربح فوق 100 (ربح شبه صفر)، فالطرق على الربح ما لها معنى'
     if (up != null && Math.abs(up) > 0.6) return 'بعيدة أكثر من 60% عن السعر'
-    if (f.low > 0 && f.high / f.low > 3) return 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)'
+    if (f.low > 0 && f.high / f.low > 3) return f.dropped?.length ? 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)، وانشالت البعيدة منها' : 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)'
     return null
   }
 
@@ -2609,8 +2639,9 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       if (!(w > 0) && !(v > 0)) return ''
       if (m === 'dcf' && q.sector === 'Finance' && !(w > 0)) return '' // a bank's FCF moves with deposits (GS: $13,117 against $891)
       if (m === 'pb' && !(v > 0)) return `<div class="off"><span>${METHOD_NAMES[m]}</span><b>ما فيه تاريخ للقيمة الدفترية</b></div>`
-      const used = w > 0 && v > 0
-      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
+      const gone = f.dropped?.includes(m)
+      const used = w > 0 && v > 0 && !gone
+      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}${gone ? ' · انشالت' : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
     }).join('')
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
@@ -2621,13 +2652,14 @@ return { nolFrom, targetMargin, rdcf, impliedInput }
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
+      f.dropped?.length ? `${f.dropped.map((m) => `${METHOD_NAMES[m]} (${f.values[m] > f.med ? 'أكثر من 3 أضعافه' : 'أقل من ثلثه'})`).join(' و')}: بعيدة عن الوسيط الموزون لطرق السهم (<b class="n">${fmt(f.med, dp(q))}</b>)، فانشالت من المتوسط. دراسة 16: كذا صارت القيمة أقرب للسعر بعد سنة في 12 من 14 سنة.` : '',
       noQ ? `الأرقام من سنة <span class="n">${noQ}</span> المالية: ما عندنا أرباع محفوظة لهالسهم للحين، وتنجاب بالتحديث الجاي.` : '',
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
-      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
+      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
       <div class="fair-list">${rows}</div>
       ${rdcfBlock(sym)}

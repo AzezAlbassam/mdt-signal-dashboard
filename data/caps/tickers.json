@@ -1,0 +1,1264 @@
+{
+ "AABA": [
+  {
+   "dead": "AABA"
+  }
+ ],
+ "AAP": [
+  {
+   "symbol": "NYSE:AAP"
+  }
+ ],
+ "ABC": [
+  {
+   "symbol": "NYSE:COR"
+  }
+ ],
+ "ABMD": [
+  {
+   "skip": "dead, peak ~$16B, not researched (below the threshold)"
+  }
+ ],
+ "ADS": [
+  {
+   "symbol": "NYSE:BFH"
+  }
+ ],
+ "ADT": [
+  {
+   "skip": "dead, peak ~$5.5B, not researched (below the threshold)"
+  }
+ ],
+ "AET": [
+  {
+   "dead": "AET"
+  }
+ ],
+ "AGN": [
+  {
+   "dead": "AGN"
+  }
+ ],
+ "AIV": [
+  {
+   "symbol": "NYSE:AIV"
+  }
+ ],
+ "ALK": [
+  {
+   "symbol": "NYSE:ALK"
+  }
+ ],
+ "ALXN": [
+  {
+   "dead": "ALXN"
+  }
+ ],
+ "AMG": [
+  {
+   "symbol": "NYSE:AMG"
+  }
+ ],
+ "AN": [
+  {
+   "symbol": "NYSE:AN"
+  }
+ ],
+ "ANDV": [
+  {
+   "skip": "merged_into_listed, peak ~$18B, not researched (below the threshold)"
+  }
+ ],
+ "ANSS": [
+  {
+   "skip": "merged_into_listed, peak ~$35B, not researched (below the threshold)"
+  }
+ ],
+ "ANTM": [
+  {
+   "symbol": "NYSE:ELV"
+  }
+ ],
+ "APC": [
+  {
+   "dead": "APC"
+  }
+ ],
+ "ARG": [
+  {
+   "skip": "dead, peak ~$10.5B, not researched (below the threshold)"
+  }
+ ],
+ "ARNC": [
+  {
+   "symbol": "NYSE:HWM"
+  }
+ ],
+ "ATVI": [
+  {
+   "dead": "ATVI"
+  }
+ ],
+ "AVB": [
+  {
+   "skip": "merged_into_listed, peak ~$35B, not researched (below the threshold)"
+  }
+ ],
+ "AYI": [
+  {
+   "symbol": "NYSE:AYI"
+  }
+ ],
+ "BBBY": [
+  {
+   "skip": "dead, peak ~$7.6B, not researched (below the threshold)"
+  }
+ ],
+ "BBT": [
+  {
+   "symbol": "NYSE:TFC"
+  }
+ ],
+ "BBWI": [
+  {
+   "symbol": "NYSE:BBWI"
+  }
+ ],
+ "BCR": [
+  {
+   "skip": "merged_into_listed, peak ~$16.4B, not researched (below the threshold)"
+  }
+ ],
+ "BHF": [
+  {
+   "symbol": "NASDAQ:BHF"
+  }
+ ],
+ "BHGE": [
+  {
+   "symbol": "NASDAQ:BKR"
+  }
+ ],
+ "BIO": [
+  {
+   "symbol": "NYSE:BIO"
+  }
+ ],
+ "BK": [
+  {
+   "symbol": "NYSE:BNY"
+  }
+ ],
+ "BLDR": [
+  {
+   "symbol": "NYSE:BLDR"
+  }
+ ],
+ "BLL": [
+  {
+   "symbol": "NYSE:BALL"
+  }
+ ],
+ "BRCM": [
+  {
+   "dead": "BRCM"
+  }
+ ],
+ "BWA": [
+  {
+   "symbol": "NYSE:BWA"
+  }
+ ],
+ "BXLT": [
+  {
+   "skip": "dead, peak ~$26.6B, not researched (below the threshold)"
+  }
+ ],
+ "CA": [
+  {
+   "skip": "dead, peak ~$13.9B, not researched (below the threshold)"
+  }
+ ],
+ "CAG": [
+  {
+   "symbol": "NYSE:CAG"
+  }
+ ],
+ "CAM": [
+  {
+   "skip": "merged_into_listed, peak ~$12B, not researched (below the threshold)"
+  }
+ ],
+ "CBS": [
+  {
+   "symbol": "NYSE:SKYD"
+  }
+ ],
+ "CCE": [
+  {
+   "skip": "merged_into_listed, peak ~$11.3B, not researched (below the threshold)"
+  }
+ ],
+ "CDAY": [
+  {
+   "skip": "dead, peak ~$15.9B, not researched (below the threshold)"
+  }
+ ],
+ "CE": [
+  {
+   "symbol": "NYSE:CE"
+  }
+ ],
+ "CELG": [
+  {
+   "dead": "CELG"
+  }
+ ],
+ "CERN": [
+  {
+   "skip": "dead, peak ~$27.3B, not researched (below the threshold)"
+  }
+ ],
+ "CHK": [
+  {
+   "symbol": "NASDAQ:EXE"
+  }
+ ],
+ "CMA": [
+  {
+   "skip": "merged_into_listed, peak ~$11.4B, not researched (below the threshold)"
+  }
+ ],
+ "CNX": [
+  {
+   "symbol": "NYSE:CNX"
+  }
+ ],
+ "COG": [
+  {
+   "skip": "merged_into_listed, peak ~$19B, not researched (below the threshold)"
+  }
+ ],
+ "COL": [
+  {
+   "skip": "merged_into_listed, peak ~$22B, not researched (below the threshold)"
+  }
+ ],
+ "COTY": [
+  {
+   "symbol": "NYSE:COTY"
+  }
+ ],
+ "CPGX": [
+  {
+   "skip": "dead, peak ~$8B, not researched (below the threshold)"
+  }
+ ],
+ "CPRI": [
+  {
+   "symbol": "NYSE:CPRI"
+  }
+ ],
+ "CSRA": [
+  {
+   "skip": "dead, peak ~$4.9B, not researched (below the threshold)"
+  }
+ ],
+ "CTL": [
+  {
+   "symbol": "NASDAQ:LUMN"
+  }
+ ],
+ "CTLT": [
+  {
+   "skip": "dead, peak ~$21.8B, not researched (below the threshold)"
+  }
+ ],
+ "CTRA": [
+  {
+   "skip": "merged_into_listed, peak ~$19B, not researched (below the threshold)"
+  }
+ ],
+ "CTVA": [
+  {
+   "symbol": "NYSE:CTVA"
+  }
+ ],
+ "CTXS": [
+  {
+   "skip": "dead, peak ~$16B, not researched (below the threshold)"
+  }
+ ],
+ "CVC": [
+  {
+   "skip": "dead, peak ~$8.8B, not researched (below the threshold)"
+  }
+ ],
+ "CXO": [
+  {
+   "skip": "merged_into_listed, peak ~$22B, not researched (below the threshold)"
+  }
+ ],
+ "CZR": [
+  {
+   "symbol": "NASDAQ:CZR"
+  }
+ ],
+ "DAY": [
+  {
+   "skip": "dead, peak ~$17B, not researched (below the threshold)"
+  }
+ ],
+ "DFS": [
+  {
+   "skip": "merged_into_listed, peak ~$43B, not researched (below the threshold)"
+  }
+ ],
+ "DISCA": [
+  {
+   "skip": "dead, peak ~$71B, not researched (below the threshold)"
+  }
+ ],
+ "DISCK": [
+  {
+   "skip": "second class of DISCA"
+  }
+ ],
+ "DISH": [
+  {
+   "skip": "merged_into_listed, peak ~$27B, not researched (below the threshold)"
+  }
+ ],
+ "DNB": [
+  {
+   "skip": "dead, peak ~$11B, not researched (below the threshold)"
+  }
+ ],
+ "DO": [
+  {
+   "skip": "dead, peak ~$3B, not researched (below the threshold)"
+  }
+ ],
+ "DRE": [
+  {
+   "skip": "merged_into_listed, peak ~$25B, not researched (below the threshold)"
+  }
+ ],
+ "DWDP": [
+  {
+   "dead": "DWDP"
+  }
+ ],
+ "DXC": [
+  {
+   "symbol": "NYSE:DXC"
+  }
+ ],
+ "EA": [
+  {
+   "skip": "dead, peak ~$51B, not researched (below the threshold)"
+  }
+ ],
+ "EMC": [
+  {
+   "dead": "EMC"
+  }
+ ],
+ "EMN": [
+  {
+   "symbol": "NYSE:EMN"
+  }
+ ],
+ "ENDP": [
+  {
+   "skip": "dead, peak ~$14B, not researched (below the threshold)"
+  }
+ ],
+ "EPAM": [
+  {
+   "symbol": "NYSE:EPAM"
+  }
+ ],
+ "EQR": [
+  {
+   "symbol": "NYSE:VMRK"
+  }
+ ],
+ "ESRX": [
+  {
+   "dead": "ESRX"
+  }
+ ],
+ "ESV": [
+  {
+   "skip": "dead, peak ~$4B, not researched (below the threshold)"
+  }
+ ],
+ "ETFC": [
+  {
+   "skip": "merged_into_listed, peak ~$13B, not researched (below the threshold)"
+  }
+ ],
+ "ETSY": [
+  {
+   "symbol": "NYSE:ETSY"
+  }
+ ],
+ "EVHC": [
+  {
+   "skip": "dead, peak ~$7B, not researched (below the threshold)"
+  }
+ ],
+ "FB": [
+  {
+   "symbol": "NASDAQ:META"
+  }
+ ],
+ "FBHS": [
+  {
+   "symbol": "NYSE:FBIN"
+  }
+ ],
+ "FDXF": [
+  {
+   "symbol": "NYSE:FDXF"
+  }
+ ],
+ "FI": [
+  {
+   "symbol": "NASDAQ:FISV"
+  }
+ ],
+ "FL": [
+  {
+   "skip": "merged_into_listed, peak ~$9B, not researched (below the threshold)"
+  }
+ ],
+ "FLIR": [
+  {
+   "skip": "merged_into_listed, peak ~$6.4B, not researched (below the threshold)"
+  }
+ ],
+ "FLR": [
+  {
+   "symbol": "NYSE:FLR"
+  }
+ ],
+ "FLS": [
+  {
+   "symbol": "NYSE:FLS"
+  }
+ ],
+ "FLT": [
+  {
+   "symbol": "NYSE:CPAY"
+  }
+ ],
+ "FMC": [
+  {
+   "symbol": "NYSE:FMC"
+  }
+ ],
+ "FOSL": [
+  {
+   "symbol": "NASDAQ:FOSL"
+  }
+ ],
+ "FRC": [
+  {
+   "skip": "dead, peak ~$36B, not researched (below the threshold)"
+  }
+ ],
+ "FTI": [
+  {
+   "symbol": "NYSE:FTI"
+  }
+ ],
+ "FTR": [
+  {
+   "skip": "dead, peak ~$5.5B, not researched (below the threshold)"
+  }
+ ],
+ "GAS": [
+  {
+   "skip": "dead, peak ~$7.6B, not researched (below the threshold)"
+  }
+ ],
+ "GEV": [
+  {
+   "symbol": "NYSE:GEV"
+  }
+ ],
+ "GGP": [
+  {
+   "skip": "dead, peak ~$24B, not researched (below the threshold)"
+  }
+ ],
+ "GMCR": [
+  {
+   "skip": "dead, peak ~$13.5B, not researched (below the threshold)"
+  }
+ ],
+ "GPS": [
+  {
+   "symbol": "NYSE:GAP"
+  }
+ ],
+ "GT": [
+  {
+   "symbol": "NASDAQ:GT"
+  }
+ ],
+ "HAR": [
+  {
+   "skip": "dead, peak ~$7.8B, not researched (below the threshold)"
+  }
+ ],
+ "HBI": [
+  {
+   "skip": "merged_into_listed, peak ~$11.6B, not researched (below the threshold)"
+  }
+ ],
+ "HCP": [
+  {
+   "symbol": "NYSE:DOC"
+  }
+ ],
+ "HES": [
+  {
+   "skip": "merged_into_listed, peak ~$44B, not researched (below the threshold)"
+  }
+ ],
+ "HFC": [
+  {
+   "symbol": "NYSE:DINO"
+  }
+ ],
+ "HOG": [
+  {
+   "symbol": "NYSE:HOG"
+  }
+ ],
+ "HOLX": [
+  {
+   "skip": "dead, peak ~$19B, not researched (below the threshold)"
+  }
+ ],
+ "HONA": [
+  {
+   "symbol": "NASDAQ:HONA"
+  }
+ ],
+ "HOT": [
+  {
+   "skip": "merged_into_listed, peak ~$11.7B, not researched (below the threshold)"
+  }
+ ],
+ "HRB": [
+  {
+   "symbol": "NYSE:HRB"
+  }
+ ],
+ "HRS": [
+  {
+   "symbol": "NYSE:LHX"
+  }
+ ],
+ "INFO": [
+  {
+   "skip": "merged_into_listed, peak ~$53B, not researched (below the threshold)"
+  }
+ ],
+ "IPG": [
+  {
+   "skip": "merged_into_listed, peak ~$15B, not researched (below the threshold)"
+  }
+ ],
+ "IPGP": [
+  {
+   "symbol": "NASDAQ:IPGP"
+  }
+ ],
+ "JEC": [
+  {
+   "symbol": "NYSE:J"
+  }
+ ],
+ "JEF": [
+  {
+   "symbol": "NYSE:JEF"
+  }
+ ],
+ "JNPR": [
+  {
+   "skip": "dead, peak ~$12.4B, not researched (below the threshold)"
+  }
+ ],
+ "JWN": [
+  {
+   "skip": "dead, peak ~$8.6B, not researched (below the threshold)"
+  }
+ ],
+ "K": [
+  {
+   "skip": "dead, peak ~$28B, not researched (below the threshold)"
+  }
+ ],
+ "KMX": [
+  {
+   "symbol": "NYSE:KMX"
+  }
+ ],
+ "KORS": [
+  {
+   "symbol": "NYSE:CPRI"
+  }
+ ],
+ "KSS": [
+  {
+   "symbol": "NYSE:KSS"
+  }
+ ],
+ "KSU": [
+  {
+   "skip": "merged_into_listed, peak ~$18.5B, not researched (below the threshold)"
+  }
+ ],
+ "LB": [
+  {
+   "symbol": "NYSE:BBWI"
+  }
+ ],
+ "LEG": [
+  {
+   "skip": "merged_into_listed, peak ~$6.6B, not researched (below the threshold)"
+  }
+ ],
+ "LKQ": [
+  {
+   "symbol": "NASDAQ:LKQ"
+  }
+ ],
+ "LLL": [
+  {
+   "skip": "merged_into_listed, peak ~$15.5B, not researched (below the threshold)"
+  }
+ ],
+ "LLTC": [
+  {
+   "skip": "merged_into_listed, peak ~$15B, not researched (below the threshold)"
+  }
+ ],
+ "LM": [
+  {
+   "skip": "dead, peak ~$4.2B, not researched (below the threshold)"
+  }
+ ],
+ "LNC": [
+  {
+   "symbol": "NYSE:LNC"
+  }
+ ],
+ "LUMN": [
+  {
+   "symbol": "NASDAQ:LUMN"
+  }
+ ],
+ "LVLT": [
+  {
+   "skip": "merged_into_listed, peak ~$20.3B, not researched (below the threshold)"
+  }
+ ],
+ "M": [
+  {
+   "symbol": "NYSE:M"
+  }
+ ],
+ "MAC": [
+  {
+   "symbol": "NYSE:MAC"
+  }
+ ],
+ "MAT": [
+  {
+   "symbol": "NASDAQ:MAT"
+  }
+ ],
+ "MHK": [
+  {
+   "symbol": "NYSE:MHK"
+  }
+ ],
+ "MJN": [
+  {
+   "skip": "dead, peak ~$14.7B, not researched (below the threshold)"
+  }
+ ],
+ "MKTX": [
+  {
+   "symbol": "NASDAQ:MKTX"
+  }
+ ],
+ "MMC": [
+  {
+   "symbol": "NYSE:MRSH"
+  }
+ ],
+ "MNK": [
+  {
+   "skip": "dead, peak ~$8.7B, not researched (below the threshold)"
+  }
+ ],
+ "MOH": [
+  {
+   "symbol": "NYSE:MOH"
+  }
+ ],
+ "MON": [
+  {
+   "dead": "MON"
+  }
+ ],
+ "MRO": [
+  {
+   "skip": "merged_into_listed, peak ~$17B, not researched (below the threshold)"
+  }
+ ],
+ "MTCH": [
+  {
+   "symbol": "NASDAQ:MTCH"
+  }
+ ],
+ "MUR": [
+  {
+   "symbol": "NYSE:MUR"
+  }
+ ],
+ "MXIM": [
+  {
+   "skip": "merged_into_listed, peak ~$23.8B, not researched (below the threshold)"
+  }
+ ],
+ "MYL": [
+  {
+   "skip": "merged_into_listed, peak ~$26.5B, not researched (below the threshold)"
+  }
+ ],
+ "NAVI": [
+  {
+   "symbol": "NASDAQ:NAVI"
+  }
+ ],
+ "NBL": [
+  {
+   "skip": "merged_into_listed, peak ~$14.2B, not researched (below the threshold)"
+  }
+ ],
+ "NFX": [
+  {
+   "skip": "merged_into_listed, peak ~$8B, not researched (below the threshold)"
+  }
+ ],
+ "NKTR": [
+  {
+   "symbol": "NASDAQ:NKTR"
+  }
+ ],
+ "NLOK": [
+  {
+   "symbol": "NASDAQ:GEN"
+  }
+ ],
+ "NLSN": [
+  {
+   "skip": "dead, peak ~$16.9B, not researched (below the threshold)"
+  }
+ ],
+ "NOV": [
+  {
+   "symbol": "NYSE:NOV"
+  }
+ ],
+ "NWL": [
+  {
+   "symbol": "NASDAQ:NWL"
+  }
+ ],
+ "OI": [
+  {
+   "symbol": "NYSE:OI"
+  }
+ ],
+ "PARA": [
+  {
+   "skip": "merged_into_listed, peak ~$23B, not researched (below the threshold)"
+  }
+ ],
+ "PAYC": [
+  {
+   "symbol": "NYSE:PAYC"
+  }
+ ],
+ "PBCT": [
+  {
+   "skip": "merged_into_listed, peak ~$7.5B, not researched (below the threshold)"
+  }
+ ],
+ "PBI": [
+  {
+   "symbol": "NYSE:PBI"
+  }
+ ],
+ "PCL": [
+  {
+   "skip": "merged_into_listed, peak ~$8.3B, not researched (below the threshold)"
+  }
+ ],
+ "PCP": [
+  {
+   "dead": "PCP"
+  }
+ ],
+ "PDCO": [
+  {
+   "skip": "dead, peak ~$4.5B, not researched (below the threshold)"
+  }
+ ],
+ "PEAK": [
+  {
+   "symbol": "NYSE:DOC"
+  }
+ ],
+ "PENN": [
+  {
+   "symbol": "NASDAQ:PENN"
+  }
+ ],
+ "PKI": [
+  {
+   "symbol": "NYSE:RVTY"
+  }
+ ],
+ "POM": [
+  {
+   "skip": "dead, peak ~$6.6B, not researched (below the threshold)"
+  }
+ ],
+ "POOL": [
+  {
+   "symbol": "NASDAQ:POOL"
+  }
+ ],
+ "PRGO": [
+  {
+   "symbol": "NYSE:PRGO"
+  }
+ ],
+ "PSKY": [
+  {
+   "symbol": "NYSE:SKYD"
+  }
+ ],
+ "PVH": [
+  {
+   "symbol": "NYSE:PVH"
+  }
+ ],
+ "PX": [
+  {
+   "dead": "PX"
+  }
+ ],
+ "PXD": [
+  {
+   "skip": "merged_into_listed, peak ~$54B, not researched (below the threshold)"
+  }
+ ],
+ "Q": [
+  {
+   "symbol": "NYSE:IQV"
+  }
+ ],
+ "QRVO": [
+  {
+   "skip": "merged_into_listed, peak ~$19B, not researched (below the threshold)"
+  }
+ ],
+ "R": [
+  {
+   "symbol": "NYSE:R"
+  }
+ ],
+ "RAI": [
+  {
+   "dead": "RAI"
+  }
+ ],
+ "RE": [
+  {
+   "symbol": "NYSE:EG"
+  }
+ ],
+ "RHI": [
+  {
+   "symbol": "NYSE:RHI"
+  }
+ ],
+ "RHT": [
+  {
+   "skip": "dead, peak ~$30.9B, not researched (below the threshold)"
+  }
+ ],
+ "RRC": [
+  {
+   "symbol": "NYSE:RRC"
+  }
+ ],
+ "RTN": [
+  {
+   "dead": "RTN"
+  }
+ ],
+ "SBNY": [
+  {
+   "skip": "dead, peak ~$20.4B, not researched (below the threshold)"
+  }
+ ],
+ "SCG": [
+  {
+   "skip": "merged_into_listed, peak ~$10.5B, not researched (below the threshold)"
+  }
+ ],
+ "SEE": [
+  {
+   "skip": "dead, peak ~$10B, not researched (below the threshold)"
+  }
+ ],
+ "SIG": [
+  {
+   "symbol": "NYSE:SIG"
+  }
+ ],
+ "SIVB": [
+  {
+   "skip": "dead, peak ~$39.9B, not researched (below the threshold)"
+  }
+ ],
+ "SLG": [
+  {
+   "symbol": "NYSE:SLG"
+  }
+ ],
+ "SNDK": [
+  {
+   "until": "2016-05-12",
+   "skip": "old SanDisk, ~$15B, below the top-100 band (addendum 2)"
+  },
+  {
+   "from": "2025-01-01",
+   "symbol": "NASDAQ:SNDK"
+  }
+ ],
+ "SNI": [
+  {
+   "skip": "merged_into_listed, peak ~$11.1B, not researched (below the threshold)"
+  }
+ ],
+ "SOLV": [
+  {
+   "symbol": "NYSE:SOLV"
+  }
+ ],
+ "SPLS": [
+  {
+   "skip": "dead, peak ~$6.1B, not researched (below the threshold)"
+  }
+ ],
+ "SRCL": [
+  {
+   "skip": "dead, peak ~$10.3B, not researched (below the threshold)"
+  }
+ ],
+ "STI": [
+  {
+   "skip": "merged_into_listed, peak ~$30.4B, not researched (below the threshold)"
+  }
+ ],
+ "STJ": [
+  {
+   "skip": "merged_into_listed, peak ~$23.3B, not researched (below the threshold)"
+  }
+ ],
+ "SWN": [
+  {
+   "skip": "merged_into_listed, peak ~$6.4B, not researched (below the threshold)"
+  }
+ ],
+ "SYMC": [
+  {
+   "symbol": "NASDAQ:GEN"
+  }
+ ],
+ "TAP": [
+  {
+   "symbol": "NYSE:TAP"
+  }
+ ],
+ "TDC": [
+  {
+   "symbol": "NYSE:TDC"
+  }
+ ],
+ "TFX": [
+  {
+   "symbol": "NYSE:TFX"
+  }
+ ],
+ "TGNA": [
+  {
+   "skip": "dead, peak ~$5.6B, not researched (below the threshold)"
+  }
+ ],
+ "THC": [
+  {
+   "symbol": "NYSE:THC"
+  }
+ ],
+ "TIF": [
+  {
+   "skip": "dead, peak ~$16.2B, not researched (below the threshold)"
+  }
+ ],
+ "TMK": [
+  {
+   "symbol": "NYSE:GL"
+  }
+ ],
+ "TRIP": [
+  {
+   "symbol": "NASDAQ:TRIP"
+  }
+ ],
+ "TSS": [
+  {
+   "skip": "merged_into_listed, peak ~$14.4B, not researched (below the threshold)"
+  }
+ ],
+ "TWC": [
+  {
+   "dead": "TWC"
+  }
+ ],
+ "TWTR": [
+  {
+   "skip": "dead, peak ~$43.1B, not researched (below the threshold)"
+  }
+ ],
+ "TWX": [
+  {
+   "dead": "TWX"
+  }
+ ],
+ "UA": [
+  {
+   "symbol": "NYSE:UA"
+  }
+ ],
+ "UAA": [
+  {
+   "symbol": "NYSE:UAA"
+  }
+ ],
+ "UNM": [
+  {
+   "symbol": "NYSE:UNM"
+  }
+ ],
+ "URBN": [
+  {
+   "symbol": "NASDAQ:URBN"
+  }
+ ],
+ "UTX": [
+  {
+   "symbol": "NYSE:RTX"
+  }
+ ],
+ "VAR": [
+  {
+   "skip": "dead, peak ~$15.9B, not researched (below the threshold)"
+  }
+ ],
+ "VFC": [
+  {
+   "symbol": "NYSE:VFC"
+  }
+ ],
+ "VIAB": [
+  {
+   "skip": "merged_into_listed, peak ~$16.3B, not researched (below the threshold)"
+  }
+ ],
+ "VIAC": [
+  {
+   "symbol": "NYSE:SKYD"
+  }
+ ],
+ "VNO": [
+  {
+   "symbol": "NYSE:VNO"
+  }
+ ],
+ "VNT": [
+  {
+   "symbol": "NYSE:VNT"
+  }
+ ],
+ "WBA": [
+  {
+   "dead": "WBA"
+  }
+ ],
+ "WBD": [
+  {
+   "skip": "dead, peak ~$71.5B, not researched (below the threshold)"
+  }
+ ],
+ "WCG": [
+  {
+   "skip": "merged_into_listed, peak ~$16.5B, not researched (below the threshold)"
+  }
+ ],
+ "WFM": [
+  {
+   "skip": "dead, peak ~$11.5B, not researched (below the threshold)"
+  }
+ ],
+ "WHR": [
+  {
+   "symbol": "NYSE:WHR"
+  }
+ ],
+ "WLTW": [
+  {
+   "symbol": "NASDAQ:WTW"
+  }
+ ],
+ "WRK": [
+  {
+   "skip": "merged_into_listed, peak ~$16.1B, not researched (below the threshold)"
+  }
+ ],
+ "WU": [
+  {
+   "symbol": "NYSE:WU"
+  }
+ ],
+ "WYND": [
+  {
+   "symbol": "NYSE:TNL"
+  }
+ ],
+ "XEC": [
+  {
+   "skip": "merged_into_listed, peak ~$11.6B, not researched (below the threshold)"
+  }
+ ],
+ "XL": [
+  {
+   "skip": "dead, peak ~$11.8B, not researched (below the threshold)"
+  }
+ ],
+ "XLNX": [
+  {
+   "skip": "merged_into_listed, peak ~$52.6B, not researched (below the threshold)"
+  }
+ ],
+ "XRAY": [
+  {
+   "symbol": "NASDAQ:XRAY"
+  }
+ ],
+ "XRX": [
+  {
+   "symbol": "NASDAQ:XRX"
+  }
+ ],
+ "ZION": [
+  {
+   "symbol": "NASDAQ:ZION"
+  }
+ ],
+ "DD": [
+  {
+   "until": "2017-08-31",
+   "dead": "DD-old"
+  },
+  {
+   "from": "2019-06-03",
+   "symbol": "NYSE:DD"
+  }
+ ],
+ "DOW": [
+  {
+   "until": "2017-08-31",
+   "dead": "DOW-old"
+  },
+  {
+   "from": "2019-04-02",
+   "symbol": "NYSE:DOW"
+  }
+ ],
+ "FOXA": [
+  {
+   "until": "2019-03-18",
+   "dead": "FOXA-old"
+  },
+  {
+   "from": "2019-03-19",
+   "symbol": "NASDAQ:FOXA"
+  }
+ ],
+ "FOX": [
+  {
+   "until": "2019-03-18",
+   "dead": "FOXA-old"
+  },
+  {
+   "from": "2019-03-19",
+   "symbol": "NASDAQ:FOX"
+  }
+ ],
+ "KDP": [
+  {
+   "until": "2018-07-08",
+   "skip": "Dr Pepper Snapple, ~$17B, below the top-100 band (addendum 2)"
+  },
+  {
+   "from": "2018-07-09",
+   "symbol": "NASDAQ:KDP"
+  }
+ ],
+ "SE": [
+  {
+   "until": "2017-02-27",
+   "skip": "Spectra Energy, ~$25B, below the top-100 band (addendum 2)"
+  }
+ ],
+ "IR": [
+  {
+   "until": "2020-03-01",
+   "symbol": "NYSE:TT"
+  },
+  {
+   "from": "2020-03-02",
+   "symbol": "NYSE:IR"
+  }
+ ],
+ "TE": [
+  {
+   "until": "2016-07-01",
+   "skip": "TECO Energy, ~$6B, acquired by Emera 2016"
+  }
+ ]
+}

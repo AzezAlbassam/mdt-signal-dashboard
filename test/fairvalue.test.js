@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, WEIGHTS, variantFair, quoteShares, allShares } from '../engine/fairvalue.js'
+import { lastUsableFiscalYear, addMonths, cagr, dcf, fairValuesAt, spearman, tTestGreater, blend, blendTrimmed, METHODS, WEIGHTS, variantFair, quoteShares, allShares } from '../engine/fairvalue.js'
 
 const funds = (n = 12) =>
   Array.from({ length: n }, (_, i) => {
@@ -221,4 +221,18 @@ test('quoteShares: a Tadawul market value is at the previous close (4292, −7.5
   const q = { close: 30.68, change: -7.53465943339361, market_cap_basic: 1396453821, total_shares_outstanding: 42087200, net_income_ttm: 96524465, earnings_per_share_diluted_ttm: null, currency: 'SAR' }
   assert.ok(Math.abs((q.close * quoteShares(q)) / q.net_income_ttm - 13.38) < 0.01)
   assert.ok(Math.abs(quoteShares({ ...q, currency: 'USD' }) - q.market_cap_basic / q.close) < 1) // elsewhere, today's close
+})
+
+test('blendTrimmed (study 16 D2 C): a method above 3× or below ⅓ of the weighted median is left out', () => {
+  const w = WEIGHTS['Mature / profitable'] // pe .3, dcf .3, graham .15, ev .25
+  const noGraham = w.map((x, i) => (METHODS[i] === 'graham' ? 0 : x))
+  const b = blendTrimmed({ pe: 10, dcf: 100, ev: 12 }, noGraham) // median 12 (cumulative .3, .55 ≥ .425)
+  assert.deepEqual(b.dropped, ['dcf'])
+  assert.equal(b.med, 12)
+  assert.ok(Math.abs(b.fair - (10 * 0.3 + 12 * 0.25) / 0.55) < 1e-12)
+  assert.ok(Math.abs(b.coverage - 0.85) < 1e-12) // coverage still counts the dropped method's data
+  const two = blendTrimmed({ pe: 10, dcf: 100 }, noGraham) // fewer than 3 valued methods: the plain blend
+  assert.deepEqual(two.dropped, [])
+  assert.equal(two.fair, blend({ pe: 10, dcf: 100 }, noGraham).fair)
+  assert.equal(blendTrimmed({}, noGraham), null)
 })

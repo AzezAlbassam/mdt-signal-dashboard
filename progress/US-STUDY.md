@@ -163,6 +163,52 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
   20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 
+- [x] Study 16 protocol (PROTOCOL-study16.md): the page's untested valuation choices, each decided by test —
+  D1 P/B-from-ROE cap (Visa/MA), D2 blend rule, D3 cyclical rule, D4 loss-makers' revenue DCF, D5 the 100×
+  rule, D6 Lynch's 10%, D7 Graham's weight, D8 CAPM vs 9%, D9 own-history P/B for Heavy. Error = median
+  |ln(V ÷ market-adjusted price a year later)|, sign-flip over years, Holm within a decision, IC guard,
+  price-closeness control (A moved as close to the price as X). Two review rounds (3 reviewers + skeptics).
+- [x] Study 16 data: 17 batch calls, all succeeded, but TradingView serves no history of equity, cash or
+  operating income (null for all 815; 30 other *_h names probed: only total_assets/total_debt and the
+  income/cash-flow lines have history) → D1, D7, D9, D4 not testable per §1 (A stays).
+- [x] Study 16 run (reports/study16.txt): D2 C ADOPTED (drop a method above 3x / below 1/3 of the weighted
+  median, ≥3 methods): 12 of 14 years, Holm 0.034, δ* +0.0024, guard ok, large caps too. D5: keeping
+  methods above 100x is much worse (0.695 vs 0.588) → A. D6 C (no PEG) 12/14 years but δ* < 0 → A.
+  D3, D8: not significant → A. Today's price beats every option (0.178 vs 0.329).
+- [x] Study 16 clean-room x2 (reports/study16-crosscheck.txt): 813 values each, 0 mismatches.
+- [x] Study 16 on the page (POST-HOC, engine blendTrimmed): dropped methods greyed with side and median,
+  result box per decision with the naive baseline, change log 47 with all 55 movers
+  (reports/study16-today.txt; MU 1428.56 → 1650.71, P/S just under 1/3). Published v25.
+
+- [x] Study 17 protocol (PROTOCOL-study17.md, 0022845) + addendum 1 (c209633, share-count screens S1–S4,
+  sourced overrides, V4 cross-check), both before any rule value: who climbs the top of the US market
+  (ranks 2015–2026, survivorship-free) and four rules tested (M momentum, G revenue growth, S size,
+  V sales yield; one-year IC over the top 200, sign-flip, Holm). engine/caps.js (+6 tests),
+  scripts/study17-run.js committed with the protocol; dry run on synthetic data only.
+- [x] Study 17 data inputs: data/caps/sp500-history.csv (fja05680/sp500, daily S&P lists since 1996),
+  data/caps/screener-2026-10-23.json, data/caps/map.json (237 removed/missing S&P tickers classified by
+  agents), data/caps/tickers.json (scripts/caps-tickers.js), data/caps/quotes.json (scripts/caps-collect.js
+  reads TradingView answers out of the session transcripts; nothing typed by hand).
+- [ ] Study 17: finish data — TradingView fetch of the 89 listed companies still missing (workflow
+  caps-fetch-3), then the WEB-SEARCH work: dead companies first pass (18, data/caps/map.json flags) +
+  second pass (64 incl. identity cases DD-old/DOW-old/DWDP/FOXA-old/SNDK-old/KDP-old/SE-old) + non-S&P
+  finder, each with an independent check; addendum-1 lookups for the 316 screened company-years
+  (data/caps/screens.json); V4 cross-check 2015/2021. LIMIT: WebSearch has a budget of 200 searches PER
+  TURN shared by every agent — the first attempt (2026-10-23) ran out and most agents returned nulls; run
+  one ≤180-search workflow per turn, and prefer one search per company that returns many years.
+  Then: node scripts/caps-import.js <journals> → dead.json/overrides.json; node scripts/caps-tickers.js;
+  node scripts/caps-build.js; node scripts/study17-run.js; clean-room check; page.
+  2026-10-23 state: addenda 2 (top 100), 3 (spin-off price basis) and 4 (basis segments/leftovers, V4
+  after basis) committed before results. Journals (subagents/workflows/<id>/journal.jsonl of this
+  session): import = RAW=1 node scripts/caps-build.js, then caps-import.js wf_07b17b7c-a36 wf_805a89fd-428
+  wf_0bc58a29-bb6 (GE/FISV 2019 counts; DOW-old: no close found, still missing); basis = wf_5adfb09d-050 wf_3fb51fb8-792 (+ wf_0bc58a29-bb6 for V2) →
+  node scripts/caps-basis.js <journals> → data/caps/basis.json, basis-log.json, v4.json, v2.json.
+  The 58 S&P tickers still without TradingView data all peaked at ≤ $39.6B (map.json), below the 100th
+  value of every year (smallest $41B, 2015), so they cannot enter the top 100: no further fetch needed.
+- [ ] Study 17 page 2 (technologies people may be overlooking): research workflow caps-research — the
+  literature agents finished (journal wf_08d41c9e-707, 2 results); sweeps/verify/synthesis to rerun in a
+  fresh turn (search budget).
+
 ## Counts
 (updated as work proceeds)
 
@@ -374,3 +420,6 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   761–1239 px, sort menu at every width with growth and Altman Z, phone forecast table fits 360 px,
   keyboard delete lands on undo. All checks pass (402 tests; DUE/VALUE/WIPE/FETCH/REDRAW/FAIL/UI/NODB/
   CLOCK/MU).
+- 2026-10-23 — Study 16 pre-registered (PROTOCOL-study16.md, with scripts/study16-run.js and
+  study16-collect.js as they stand at that commit). Numbered 16: 15 is the Flow VWAP study.
+- 2026-10-23 — Study 16 run, cross-checked twice (0 mismatches), D2 C applied to the page, v25.

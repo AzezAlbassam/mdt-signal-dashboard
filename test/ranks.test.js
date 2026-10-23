@@ -58,4 +58,8 @@ test('total assets: one offset from one-to-one revenue matches; flat-revenue yea
   assert.equal(assetsByYear(funds, [1, 2, 3], [130, 119, 108]).size, 0)
   // Two offsets with one match each: a tie, no assets.
   assert.equal(assetsByYear([{ year: 2024, rev: 50 }, { year: 2025, rev: 70 }], [1, 2, 3], [70, 60, 50]).size, 0)
+  // Study 16: cash and operating income may be zero or negative (ok = Number.isFinite); the default still drops them.
+  const flat = [-5, 0, null, 7, 3, 2]
+  assert.deepEqual([...assetsByYear(funds, flat, [120, 110, 100.05, 100, 90, 80], Number.isFinite)].sort(), [[2021, 3], [2022, 7], [2024, 0], [2025, -5]])
+  assert.deepEqual([...assetsByYear(funds, flat, [120, 110, 100.05, 100, 90, 80])].sort(), [[2021, 3], [2022, 7]])
 })

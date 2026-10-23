@@ -1,0 +1,608 @@
+{
+ "2015": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 583.67
+   },
+   {
+    "rank": 2,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 534.88
+   },
+   {
+    "rank": 3,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 439.68
+   },
+   {
+    "rank": 4,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 325.48
+   },
+   {
+    "rank": 5,
+    "company": "Exxon Mobil",
+    "ticker": "XOM",
+    "capBn": 323.96
+   },
+   {
+    "rank": 6,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 318.34
+   },
+   {
+    "rank": 7,
+    "company": "Facebook (now Meta)",
+    "ticker": "FB (now META)",
+    "capBn": 296.61
+   },
+   {
+    "rank": 8,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 284.23
+   },
+   {
+    "rank": 9,
+    "company": "Wells Fargo",
+    "ticker": "WFC",
+    "capBn": 276.8
+   },
+   {
+    "rank": 10,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": 241.87
+   }
+  ],
+  "source": "finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (says its data comes from EDGAR, YCharts, Bloomberg and Yahoo Finance). Values were read from WebSearch result summaries; the page itself was not fetched.",
+  "note": "The source ranks S&P 500 members only, so no non-US names (TSMC, Aramco, Tencent, etc.) appear and none had to be dropped. The page does not say which date each year's snapshot uses; it appears to be year-end but this is unconfirmed. Alphabet and Berkshire are listed as one company each. Check this year: the same source puts General Electric 17th at 174.72B, which looks too low for GE at end-2015, and it is the only figure here that looks off. If GE's real year-end value was higher, GE could belong in the top 10 and JPMorgan (rank 10) could drop out. Compare with an SPY/IVV holdings file for 2015-12-31 before relying on rank 10. The source's top-20 total is about 5.48T against an S&P 500 total of about 17.90T. A search for an S&P 500 factsheet from Dec 2015 found nothing."
+ },
+ "2016": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 608.92
+   },
+   {
+    "rank": 2,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 546
+   },
+   {
+    "rank": 3,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 483.14
+   },
+   {
+    "rank": 4,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 401.91
+   },
+   {
+    "rank": 5,
+    "company": "Exxon Mobil",
+    "ticker": "XOM",
+    "capBn": 374.31
+   },
+   {
+    "rank": 6,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 356.3
+   },
+   {
+    "rank": 7,
+    "company": "Facebook (now Meta)",
+    "ticker": "FB (now META)",
+    "capBn": 331.57
+   },
+   {
+    "rank": 8,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 313.49
+   },
+   {
+    "rank": 9,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": 308.75
+   },
+   {
+    "rank": 10,
+    "company": "Wells Fargo",
+    "ticker": "WFC",
+    "capBn": 276.76
+   }
+  ],
+  "source": "finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (read from WebSearch result summaries; the page was not fetched).",
+  "note": "S&P 500 members only, so there were no non-US names to drop. The snapshot date is not stated and is assumed to be year-end. The source lists Facebook under its current name, Meta. The search result did not say where General Electric ranked. Given the doubtful GE figure in 2015, check rank 10 (Wells Fargo at 276.76) against a 2016-12-30 holdings file. The source's top-20 total is about 6.02T against an S&P 500 total of about 19.27T. No second source was checked."
+ },
+ "2017": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 860.96
+   },
+   {
+    "rank": 2,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 732.11
+   },
+   {
+    "rank": 3,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 659.94
+   },
+   {
+    "rank": 4,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 563.51
+   },
+   {
+    "rank": 5,
+    "company": "Facebook (now Meta)",
+    "ticker": "FB (now META)",
+    "capBn": 512.79
+   },
+   {
+    "rank": 6,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 489.01
+   },
+   {
+    "rank": 7,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 375.43
+   },
+   {
+    "rank": 8,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": 371.08
+   },
+   {
+    "rank": 9,
+    "company": "Exxon Mobil",
+    "ticker": "XOM",
+    "capBn": 354.38
+   },
+   {
+    "rank": 10,
+    "company": "Bank of America",
+    "ticker": "BAC",
+    "capBn": 307.89
+   }
+  ],
+  "source": "finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (read from WebSearch result summaries; the page was not fetched).",
+  "note": "S&P 500 members only, so there were no non-US names to drop. The snapshot date is not stated and is assumed to be year-end. The search summary warned that some year headings on the page are inconsistent. The source's top-20 total is about 7.618T against an S&P 500 total of about 22.82T. Separately, a PwC summary seen in search said that all of its global top 10 at that time were US companies, which fits this list. No second year-end source was checked."
+ },
+ "2018": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 780.36
+   },
+   {
+    "rank": 2,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 746.11
+   },
+   {
+    "rank": 3,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 737.47
+   },
+   {
+    "rank": 4,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 726.77
+   },
+   {
+    "rank": 5,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 502.49
+   },
+   {
+    "rank": 6,
+    "company": "Facebook (now Meta)",
+    "ticker": "FB (now META)",
+    "capBn": 374.13
+   },
+   {
+    "rank": 7,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 343.53
+   },
+   {
+    "rank": 8,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": 319.8
+   },
+   {
+    "rank": 9,
+    "company": "Visa",
+    "ticker": "V",
+    "capBn": 289.21
+   },
+   {
+    "rank": 10,
+    "company": "Exxon Mobil",
+    "ticker": "XOM",
+    "capBn": 288.92
+   }
+  ],
+  "source": "finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (read from WebSearch result summaries; the page was not fetched).",
+  "note": "S&P 500 members only, so there were no non-US names to drop. The snapshot date is not stated. The search summary said the figures could be year-end or another 2018 date. Ranks 9 and 10 (Visa 289.21, Exxon 288.92) differ by only about 0.3B, so their order could flip depending on the date. Ranks 11-20 in the source, with values not captured: Walmart, UnitedHealth, Bank of America, Pfizer, Verizon, Procter & Gamble, Intel, Wells Fargo, Chevron, Coca-Cola. The source's top-20 total is about 7,388B against an S&P 500 total of about 21,030B. No second source was checked."
+ },
+ "2019": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 1288
+   },
+   {
+    "rank": 2,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 1200
+   },
+   {
+    "rank": 3,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 922
+   },
+   {
+    "rank": 4,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 920
+   },
+   {
+    "rank": 5,
+    "company": "Facebook (Meta)",
+    "ticker": "FB",
+    "capBn": 585
+   },
+   {
+    "rank": 6,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 552
+   },
+   {
+    "rank": 7,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": 430
+   },
+   {
+    "rank": 8,
+    "company": "Visa",
+    "ticker": "V",
+    "capBn": 403
+   },
+   {
+    "rank": 9,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 384
+   }
+  ],
+  "source": "FinHacker, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (seen through WebSearch summaries, because WebFetch does not work here)",
+  "note": "Rank 10 not found: the search excerpt cut off before it, and Walmart, P&G and others did not appear in it. JPMorgan's rank 7 is worked out, not stated: it was listed right after Berkshire at about $430B, and Visa is stated as #8 at $403B, so only one slot remains. Values are approximate in the excerpt ('~$1.288T' and so on). FinHacker does not state the exact pricing date. The list covers the S&P 500 only, so non-US names are excluded by design. Visual Capitalist's 2019 snapshot also listed Alibaba and Tencent (non-US, dropped). It ranked Microsoft first at about $1,050B on an unstated, apparently mid-year date, so it was not used. Alphabet's $922B looks like the total of both share classes."
+ },
+ "2020": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 2230
+   },
+   {
+    "rank": 2,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 1680
+   },
+   {
+    "rank": 3,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": 1640
+   },
+   {
+    "rank": 4,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": 1180
+   },
+   {
+    "rank": 5,
+    "company": "Facebook (Meta)",
+    "ticker": "FB",
+    "capBn": 778
+   },
+   {
+    "rank": 6,
+    "company": "Tesla",
+    "ticker": "TSLA",
+    "capBn": 677
+   },
+   {
+    "rank": 7,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": 537
+   },
+   {
+    "rank": 8,
+    "company": "Visa",
+    "ticker": "V",
+    "capBn": 466
+   },
+   {
+    "rank": 9,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 414
+   },
+   {
+    "rank": 10,
+    "company": "Walmart",
+    "ticker": "WMT",
+    "capBn": null
+   }
+  ],
+  "source": "FinHacker, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ (seen through WebSearch summaries)",
+  "note": "Walmart's rank 10 is stated (JPMorgan was #11 at about $387B), but no Walmart value was shown, so its value is null. The ranks for Apple (1) and Microsoft (2) come from the order of the list. Ranks 3 to 10 were stated. Values are approximate in the excerpt, and the exact pricing date is not stated. The list covers the S&P 500 only. Visual Capitalist's 2020 ranking includes Saudi Aramco (non-US, dropped) and gives Apple about $2.26T. A Substack post (endlessmetrics) made before year-end gave a similar order, with Tesla at about $627B ranked below Facebook, but it was a projection and was not used."
+ },
+ "2021": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 2913.28
+   },
+   {
+    "rank": 2,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 2525.08
+   },
+   {
+    "rank": 3,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": null
+   },
+   {
+    "rank": 4,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": null
+   },
+   {
+    "rank": 5,
+    "company": "Tesla",
+    "ticker": "TSLA",
+    "capBn": 1090
+   },
+   {
+    "rank": 6,
+    "company": "Meta Platforms",
+    "ticker": "FB",
+    "capBn": 935.64
+   },
+   {
+    "rank": 7,
+    "company": "Nvidia",
+    "ticker": "NVDA",
+    "capBn": 735
+   },
+   {
+    "rank": 8,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": null
+   },
+   {
+    "rank": 9,
+    "company": "UnitedHealth Group",
+    "ticker": "UNH",
+    "capBn": 473
+   },
+   {
+    "rank": 10,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": null
+   }
+  ],
+  "source": "FinHacker top-20 S&P 500 page (ranks, plus values for Tesla, Nvidia and UnitedHealth), https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ ; Finaeon/Global Financial Data, 'The Decline of the Top Ten Stocks in 2022' (values for Apple, Microsoft and Meta), https://finaeon.com/the-decline-of-the-top-ten-stocks-in-2022/",
+  "note": "Two sources are mixed here. The ranks for Alphabet, Amazon, Meta, Berkshire and JPMorgan come from FinHacker, but no values were shown for them, so those are null. Apple, Microsoft and Meta values come from the GFD/Finaeon top-10 table, which ranks Apple 1 and Microsoft 2. GFD gives Tesla $1,061.29B, while FinHacker gives about $1.09T; the FinHacker figure is used. For context, Visa was #11 ($453B) and J&J #12 ($450B). S&P DJI: the top 10 made up 29.9% of the S&P 500's market cap at end-2021. Non-US names are excluded, since both sources cover US/S&P 500 stocks only."
+ },
+ "2022": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": 2066.94
+   },
+   {
+    "rank": 2,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": 1787.73
+   },
+   {
+    "rank": 3,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": null
+   },
+   {
+    "rank": 4,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": null
+   },
+   {
+    "rank": 5,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": null
+   },
+   {
+    "rank": 6,
+    "company": "UnitedHealth Group",
+    "ticker": "UNH",
+    "capBn": 495
+   },
+   {
+    "rank": 7,
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "capBn": 462
+   },
+   {
+    "rank": 8,
+    "company": "Exxon Mobil",
+    "ticker": "XOM",
+    "capBn": 454
+   },
+   {
+    "rank": 9,
+    "company": "Visa",
+    "ticker": "V",
+    "capBn": 432
+   },
+   {
+    "rank": 10,
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "capBn": null
+   }
+  ],
+  "source": "FinHacker top-20 S&P 500 page (ranks, plus values for UnitedHealth, J&J, Exxon and Visa), https://www.finhacker.cz/en/top-20-sp-500-companies-by-market-cap/ ; Finaeon/Global Financial Data, 'The Decline of the Top Ten Stocks in 2022' (values for Apple and Microsoft), https://finaeon.com/the-decline-of-the-top-ten-stocks-in-2022/",
+  "note": "No values were shown for Alphabet, Amazon, Berkshire or JPMorgan, so those are null. Apple and Microsoft values come from GFD/Finaeon: Apple fell 29.05% and Microsoft 29.2% from their end-2021 levels. For context, Tesla was #11 ($389B; GFD $388.97B), Nvidia #13 ($360B) and Meta #19 (GFD $319.09B). S&P DJI: the top 10 made up 24% of the S&P 500 at end-2022, and Apple's index weight was 6.2%. S&P Global's 'top three' is measured by index weight, not by total company market cap. Non-US names are excluded, since both sources cover US/S&P 500 stocks only."
+ },
+ "2024": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": null
+   },
+   {
+    "rank": 2,
+    "company": "Nvidia",
+    "ticker": "NVDA",
+    "capBn": null
+   },
+   {
+    "rank": 3,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": null
+   }
+  ],
+  "source": "EY market capitalisation analysis, published 3 January 2025 (as summarised in the search result), https://www.ey.com/en_ch/functional/forms/download/ey-marketcapitalization-analysis",
+  "note": "Partial only. No searched source gave a full year-end 2024 top-10 list. EY said Apple, Nvidia and Microsoft were the world's most valuable companies at the end of 2024. Ranks 1-3 follow the order the search summary listed them in, which may not be a strict ranking. SeasiaStats separately put Apple first as of December 2024. A Statista snapshot showed Microsoft about $3.12T, Apple $2.91T and Nvidia $2.31T, but it had no date and does not match year-end, so it is left out. A CEOWORLD snapshot from 18 February 2025 (Apple $3,674B, Nvidia $3,400B, Microsoft $3,036B) is also left out because it is not year-end. Ranks 4-10 and all values are unknown (null)."
+ },
+ "2025": {
+  "top": [
+   {
+    "rank": 1,
+    "company": "Nvidia",
+    "ticker": "NVDA",
+    "capBn": null
+   },
+   {
+    "rank": 2,
+    "company": "Apple",
+    "ticker": "AAPL",
+    "capBn": null
+   },
+   {
+    "rank": 3,
+    "company": "Alphabet",
+    "ticker": "GOOGL/GOOG",
+    "capBn": null
+   },
+   {
+    "rank": 4,
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "capBn": null
+   },
+   {
+    "rank": 5,
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "capBn": null
+   },
+   {
+    "rank": 6,
+    "company": "Meta Platforms",
+    "ticker": "META",
+    "capBn": null
+   },
+   {
+    "rank": 7,
+    "company": "Broadcom",
+    "ticker": "AVGO",
+    "capBn": null
+   },
+   {
+    "rank": 8,
+    "company": "Tesla",
+    "ticker": "TSLA",
+    "capBn": null
+   },
+   {
+    "rank": 9,
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK.A/BRK.B",
+    "capBn": null
+   }
+  ],
+  "source": "Wikipedia, 'List of public corporations by market capitalization', fourth-quarter 2025 column (page says it is current as of 31 December 2025), https://en.wikipedia.org/wiki/List_of_public_corporations_by_market_capitalization",
+  "note": "Ranks 1-9 are the global Q4 2025 top 10 with TSMC (non-US, global rank 9) removed. Berkshire Hathaway was 10th globally, so it becomes 9th here. The search result named the companies but gave no market-cap values, so every capBn is null. US rank 10 is unknown because no searched source showed the 11th company worldwide or the 10th US company. Alphabet's share classes are counted as one company and so are Berkshire's. The tickers are listing symbols, not figures from the search."
+ }
+}
