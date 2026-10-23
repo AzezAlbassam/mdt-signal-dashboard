@@ -189,25 +189,26 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   data/caps/screener-2026-10-23.json, data/caps/map.json (237 removed/missing S&P tickers classified by
   agents), data/caps/tickers.json (scripts/caps-tickers.js), data/caps/quotes.json (scripts/caps-collect.js
   reads TradingView answers out of the session transcripts; nothing typed by hand).
-- [ ] Study 17: finish data — TradingView fetch of the 89 listed companies still missing (workflow
-  caps-fetch-3), then the WEB-SEARCH work: dead companies first pass (18, data/caps/map.json flags) +
-  second pass (64 incl. identity cases DD-old/DOW-old/DWDP/FOXA-old/SNDK-old/KDP-old/SE-old) + non-S&P
-  finder, each with an independent check; addendum-1 lookups for the 316 screened company-years
-  (data/caps/screens.json); V4 cross-check 2015/2021. LIMIT: WebSearch has a budget of 200 searches PER
-  TURN shared by every agent — the first attempt (2026-10-23) ran out and most agents returned nulls; run
-  one ≤180-search workflow per turn, and prefer one search per company that returns many years.
-  Then: node scripts/caps-import.js <journals> → dead.json/overrides.json; node scripts/caps-tickers.js;
-  node scripts/caps-build.js; node scripts/study17-run.js; clean-room check; page.
-  2026-10-23 state: addenda 2 (top 100), 3 (spin-off price basis) and 4 (basis segments/leftovers, V4
-  after basis) committed before results. Journals (subagents/workflows/<id>/journal.jsonl of this
-  session): import = RAW=1 node scripts/caps-build.js, then caps-import.js wf_07b17b7c-a36 wf_805a89fd-428
-  wf_0bc58a29-bb6 (GE/FISV 2019 counts; DOW-old: no close found, still missing); basis = wf_5adfb09d-050 wf_3fb51fb8-792 (+ wf_0bc58a29-bb6 for V2) →
-  node scripts/caps-basis.js <journals> → data/caps/basis.json, basis-log.json, v4.json, v2.json.
-  The 58 S&P tickers still without TradingView data all peaked at ≤ $39.6B (map.json), below the 100th
-  value of every year (smallest $41B, 2015), so they cannot enter the top 100: no further fetch needed.
-- [ ] Study 17 page 2 (technologies people may be overlooking): research workflow caps-research — the
-  literature agents finished (journal wf_08d41c9e-707, 2 results); sweeps/verify/synthesis to rerun in a
-  fresh turn (search budget).
+- [x] Study 17 data (2026-10-23): 954 companies (24 dead, 85 sourced year-ends; 29 confirmed by a second
+  researcher, 9 checker-only, 47 without an independent number), 82 share-count overrides, 24 spin-off
+  basis segments (addenda 3–4). V4 median gap 2.3% (2015) / 1.7% (2021); V2 top 10 matches published lists
+  9–10 of 10 each year found (2023: none found). Known residuals: GE 2023 ~+30% (rule 3 earlier segment),
+  DHR 2015 ~−22% (partial), banks/REITs +6–25% in 2015 (pre-registered share definition), DOW-old 2015–16
+  missing. Rebuild: RAW=1 node scripts/caps-build.js; node scripts/caps-import.js wf_07b17b7c-a36
+  wf_805a89fd-428 wf_0bc58a29-bb6; node scripts/caps-tickers.js; node scripts/caps-build.js;
+  node scripts/caps-basis.js wf_5adfb09d-050 wf_3fb51fb8-792 wf_0bc58a29-bb6; node scripts/caps-build.js
+  (journals under this session's subagents/workflows/<id>/journal.jsonl). The 58 S&P tickers without
+  TradingView data all peaked at ≤ $39.6B, below every year's 100th value: no further fetch needed.
+- [x] Study 17 run (60face4) + clean-room cross-check (reports/study17-crosscheck.txt: 233 values, 0
+  mismatches, twice). POST-HOC data fix it found (efd1fd1): VMware/LinkedIn/Sprint/Altaba lacked the US flag.
+  All four rules NOT CONFIRMED: M +0.082 (p 0.19, Holm 0.56), G +0.114 (p 0.091, Holm 0.36), S −0.034,
+  V −0.122 (6 counted years). Hindsight: of the top fifth by revenue growth 18% tripled in 5 years vs ~9%
+  overall. Base rates: top 10 stays top 10 after 1 year 84%, after 5 years 68%; 51–100 → below 100 in 5
+  years 33%.
+- [x] Study 17 page caps.html (two tabs, Arabic RTL) published: https://claude.ai/artifact/Cmg4CGbsa2TMA24zEFKwmB
+  Page 2 research: workflow caps-research wf_08d41c9e-707 (28 agents); data/caps/research.json written in
+  Arabic from its synthesis (only confirmed/corrected literature claims). Headline: no theme today matches
+  the optics 2022–23 profile. Plays' market caps not filled (TradingView quota); prices not shown.
 
 ## Counts
 (updated as work proceeds)
@@ -423,3 +424,5 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-23 — Study 16 pre-registered (PROTOCOL-study16.md, with scripts/study16-run.js and
   study16-collect.js as they stand at that commit). Numbered 16: 15 is the Flow VWAP study.
 - 2026-10-23 — Study 16 run, cross-checked twice (0 mismatches), D2 C applied to the page, v25.
+- 2026-10-23 — Study 17 (who climbs the top of the US market) run, cross-checked twice, page published
+  (caps.html, artifact Cmg4CGbsa2TMA24zEFKwmB). TradingView quota for the day was used by the data fetch.
