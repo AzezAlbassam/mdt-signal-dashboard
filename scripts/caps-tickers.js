@@ -22,9 +22,10 @@ Object.assign(out, {
   DOW: [{ until: '2017-08-31', dead: 'DOW-old' }, { from: '2019-04-02', symbol: 'NYSE:DOW' }],
   FOXA: [{ until: '2019-03-18', dead: 'FOXA-old' }, { from: '2019-03-19', symbol: 'NASDAQ:FOXA' }],
   FOX: [{ until: '2019-03-18', dead: 'FOXA-old' }, { from: '2019-03-19', symbol: 'NASDAQ:FOX' }],
-  SNDK: [{ until: '2016-05-12', dead: 'SNDK-old' }, { from: '2025-01-01', symbol: 'NASDAQ:SNDK' }],
-  KDP: [{ until: '2018-07-08', dead: 'KDP-old' }, { from: '2018-07-09', symbol: 'NASDAQ:KDP' }],
-  SE: [{ until: '2017-02-27', dead: 'SE-old' }],
+  // below the top-100 band (addendum 2): left out like any other company of that size
+  SNDK: [{ until: '2016-05-12', skip: 'old SanDisk, ~$15B, below the top-100 band (addendum 2)' }, { from: '2025-01-01', symbol: 'NASDAQ:SNDK' }],
+  KDP: [{ until: '2018-07-08', skip: 'Dr Pepper Snapple, ~$17B, below the top-100 band (addendum 2)' }, { from: '2018-07-09', symbol: 'NASDAQ:KDP' }],
+  SE: [{ until: '2017-02-27', skip: 'Spectra Energy, ~$25B, below the top-100 band (addendum 2)' }],
   // old Ingersoll-Rand plc is today's Trane Technologies (NYSE:TT); NYSE:IR is the former Gardner Denver
   IR: [{ until: '2020-03-01', symbol: 'NYSE:TT' }, { from: '2020-03-02', symbol: 'NYSE:IR' }],
   TE: [{ until: '2016-07-01', skip: 'TECO Energy, ~$6B, acquired by Emera 2016' }],

@@ -952,7 +952,7 @@
  "SNDK": [
   {
    "until": "2016-05-12",
-   "dead": "SNDK-old"
+   "skip": "old SanDisk, ~$15B, below the top-100 band (addendum 2)"
   },
   {
    "from": "2025-01-01",
@@ -1232,7 +1232,7 @@
  "KDP": [
   {
    "until": "2018-07-08",
-   "dead": "KDP-old"
+   "skip": "Dr Pepper Snapple, ~$17B, below the top-100 band (addendum 2)"
   },
   {
    "from": "2018-07-09",
@@ -1242,7 +1242,7 @@
  "SE": [
   {
    "until": "2017-02-27",
-   "dead": "SE-old"
+   "skip": "Spectra Energy, ~$25B, below the top-100 band (addendum 2)"
   }
  ],
  "IR": [
