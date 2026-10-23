@@ -1,0 +1,417 @@
+<title>سباق القمة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reem+Kufi:wght@600;700&display=swap">
+<style>
+/* Layout: one reading column; the race is the hero, tables and odds follow; tab 2 is a research brief. */
+:root {
+  --bg: #f4f5f7; --panel: #ffffff; --soft: #eceef2; --fg: #141b24; --muted: #5a6573; --faint: #8a94a1; --line: #d9dde3;
+  --accent: #1f5fbf; --up: #12804f; --down: #b8352b; --pend: #8a6a10;
+  --s-tech: #2a78d6; --s-fin: #eb6834; --s-health: #1baf7a; --s-rest: #cfd4da;
+  --heat0: #ffffff; --heat1: #cde2fb; --heat2: #86b6ef; --heat3: #3987e5; --heat4: #1c5cab;
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e131a; --panel: #141b24; --soft: #1a2330; --fg: #e3e8ee; --muted: #9aa6b3; --faint: #6f7b89; --line: #283241;
+  --accent: #6ea4ff; --up: #3ccf91; --down: #ff7a6b; --pend: #e6b84f;
+  --s-tech: #3987e5; --s-fin: #d95926; --s-health: #199e70; --s-rest: #3a4553;
+  --heat0: #141b24; --heat1: #16304f; --heat2: #1c4f8c; --heat3: #2a78d6; --heat4: #6da7ec; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0e131a; --panel: #141b24; --soft: #1a2330; --fg: #e3e8ee; --muted: #9aa6b3; --faint: #6f7b89; --line: #283241;
+  --accent: #6ea4ff; --up: #3ccf91; --down: #ff7a6b; --pend: #e6b84f;
+  --s-tech: #3987e5; --s-fin: #d95926; --s-health: #199e70; --s-rest: #3a4553;
+  --heat0: #141b24; --heat1: #16304f; --heat2: #1c4f8c; --heat3: #2a78d6; --heat4: #6da7ec; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.65; margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px }
+.wrap { max-width: 1000px; margin: 0 auto }
+header.top { padding-block: 36px 18px; display: grid; gap: 8px }
+h1 { font-family: var(--display); font-size: clamp(2rem, 6vw, 3rem); line-height: 1.1; margin: 0; text-wrap: balance }
+.lede { color: var(--muted); max-width: 64ch; margin: 0; font-size: 1.02rem }
+h2 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance }
+h3 { font-size: 1.05rem; margin: 0 }
+p { margin: 0 }
+.num, .tab-num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block }
+nav.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin-block: 8px 24px }
+nav.tabs button { font: inherit; font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
+  padding: 10px 12px; cursor: pointer; min-height: 44px }
+nav.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent) }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+section.block { display: grid; gap: 14px; margin-block: 0 40px }
+.sub { color: var(--muted); font-size: .92rem; max-width: 70ch }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px }
+.chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px }
+.chip { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px }
+.chip b { font-family: var(--display); font-size: 1.5rem; font-weight: 700 }
+.chip span { color: var(--muted); font-size: .88rem }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center }
+.controls label { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: .9rem }
+select, .btn { font: inherit; background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; min-height: 36px }
+.btn { cursor: pointer; font-weight: 600 }
+.btn.primary { background: var(--accent); color: var(--panel); border-color: var(--accent) }
+input[type="range"] { width: min(360px, 60vw); accent-color: var(--accent) }
+.frame { font-family: var(--display); font-size: 1.6rem; font-weight: 700; min-width: 8ch }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .85rem; color: var(--muted) }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px }
+/* race */
+.race { position: relative; overflow: hidden }
+.row { position: absolute; inset-inline: 0; top: 0; display: grid; grid-template-columns: 2.6em 1fr; gap: 8px; align-items: center;
+  transition: transform .7s ease, opacity .5s ease; will-change: transform }
+.row .rk { color: var(--faint); text-align: center; font-family: var(--mono); font-size: .82rem }
+.row .track { position: relative; height: 100%; min-width: 0; container-type: inline-size; overflow: hidden }
+/* bar and label move by transform only: the bar scales from the start edge, the label rides its end */
+.row .bar { position: absolute; inset-block: 0; inset-inline-start: 0; width: 70%; border-radius: 4px; transform-origin: 100% 50%; transform: scaleX(var(--f, 0)); transition: transform .7s ease }
+.row .lab { position: absolute; top: 50%; inset-inline-start: 0; display: flex; gap: 6px; align-items: baseline; white-space: nowrap; font-size: .86rem; transform: translate(calc(var(--f, 0) * -70cqw - 8px), -50%); transition: transform .7s ease }
+.row .lab .v { color: var(--muted); font-family: var(--mono); font-size: .8rem }
+.row.gone { opacity: 0 }
+.g1 { background: var(--s-tech) } .g2 { background: var(--s-fin) } .g3 { background: var(--s-health) } .g0 { background: var(--s-rest) }
+@media (prefers-reduced-motion: reduce) { .row, .row .bar, .row .lab { transition: none } }
+/* tables */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel) }
+table { border-collapse: collapse; width: 100%; font-size: .9rem }
+th, td { padding: 7px 10px; text-align: start; border-bottom: 1px solid var(--line); white-space: nowrap }
+th { color: var(--muted); font-weight: 600; font-size: .82rem; background: var(--soft); position: sticky; top: 0 }
+td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: end }
+tr.sep td { background: var(--soft); color: var(--muted); font-weight: 600 }
+.up { color: var(--up) } .down { color: var(--down) }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-inline-end: 6px; vertical-align: 0 }
+.tk { color: var(--faint); font-family: var(--mono); font-size: .78rem; margin-inline-start: 6px }
+.deadtag { font-size: .72rem; color: var(--pend); border: 1px solid currentColor; border-radius: 6px; padding: 0 5px; margin-inline-start: 6px }
+/* bump chart */
+.bump { overflow-x: auto }
+.bump svg { width: 100%; min-width: 680px; height: auto; display: block }
+.bump text { fill: var(--muted); font-family: var(--body); font-size: 11px }
+.bump .gridl { stroke: var(--line); stroke-width: 1 }
+.bump path.l { fill: none; stroke-width: 2; opacity: .85; transition: opacity .15s }
+.bump.focus path.l { opacity: .12 } .bump.focus path.l.on { opacity: 1; stroke-width: 3 }
+.bump circle { stroke: var(--panel); stroke-width: 1.5 }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); padding: 6px 9px; border-radius: 6px; font-size: .82rem; z-index: 20; max-width: 280px }
+/* odds + rules */
+.heat td.c { text-align: center; font-family: var(--mono); font-variant-numeric: tabular-nums; min-width: 4.2em }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; min-width: 0 }
+.pill { justify-self: start; font-size: .78rem; font-weight: 600; border-radius: 999px; padding: 2px 10px; border: 1px solid currentColor }
+.pill.no { color: var(--down) } .pill.yes { color: var(--up) } .pill.pend { color: var(--pend) } .pill.mid { color: var(--muted) }
+.ics { display: flex; align-items: center; gap: 3px; height: 54px; direction: ltr }
+.ics span { flex: 1; position: relative; height: 100% }
+.ics span i { position: absolute; left: 0; right: 0; border-radius: 2px }
+.note { font-size: .85rem; color: var(--muted) }
+.pending { border: 1px dashed var(--line); border-radius: 10px; padding: 16px; color: var(--muted) }
+ul.facts { margin: 0; padding-inline-start: 1.2em; display: grid; gap: 8px; max-width: 75ch }
+ul.facts a, .card a { color: var(--accent) }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px }
+summary { cursor: pointer; font-weight: 600 }
+footer { color: var(--muted); font-size: .84rem; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; max-width: 80ch }
+@media (max-width: 560px) { .row .lab .v { display: none } .frame { font-size: 1.3rem } }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <h1>سباق القمة</h1>
+  <p class="lede">أكبر الشركات الأمريكية بالقيمة السوقية من نهاية 2015 إلى اليوم: من صعد، من نزل، من اختفى، وهل كان ممكن تعرف قبلها.</p>
+</header>
+<nav class="tabs" role="tablist">
+  <button role="tab" id="t-race" aria-selected="true" aria-controls="p-race">السباق والاحتمالات</button>
+  <button role="tab" id="t-tech" aria-selected="false" aria-controls="p-tech">تقنيات قد تفوت الناس</button>
+</nav>
+
+<main>
+<div id="p-race" role="tabpanel" aria-labelledby="t-race">
+  <section class="block"><div class="chips" id="chips"></div></section>
+
+  <section class="block">
+    <h2>الترتيب سنة بسنة</h2>
+    <div class="controls">
+      <button class="btn primary" id="play" type="button">تشغيل</button>
+      <input type="range" id="frame" min="0" max="11" value="11" aria-label="السنة">
+      <span class="frame" id="frameLab"></span>
+      <label>عدد الشركات <select id="topn"><option>10</option><option selected>20</option><option>50</option><option>100</option></select></label>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="panel"><div class="race" id="race"></div></div>
+    <p class="note" id="raceNote"></p>
+  </section>
+
+  <section class="block bump-wrap">
+    <h2>مسار كل من وصل أكبر 10</h2>
+    <p class="sub">المحور الرأسي الترتيب (1 في الأعلى، حتى 25). مرّر على أي خط لتعرف الشركة.</p>
+    <div class="panel bump" id="bump"></div>
+  </section>
+
+  <section class="block">
+    <h2>من صعد ومن نزل</h2>
+    <div class="controls">
+      <label>من <select id="from"></select></label>
+      <label>إلى <select id="to"></select></label>
+      <label>ترتيب <select id="sort"><option value="rank">الترتيب الحالي</option><option value="change">أكبر صعود</option><option value="mult">مضاعف القيمة</option></select></label>
+    </div>
+    <div class="tablewrap"><table id="moves"></table></div>
+    <p class="note">مضاعف القيمة = القيمة السوقية في نهاية الفترة ÷ بدايتها. عائد السعر من أسعار TradingView المعدلة للتجزئة فقط، بدون توزيعات، ولا يظهر للشركات المختفية.</p>
+  </section>
+
+  <section class="block">
+    <h2>من دخل أكبر 10، ومن وين جا</h2>
+    <div id="entrants"></div>
+  </section>
+
+  <section class="block">
+    <h2>الاحتمالات</h2>
+    <p class="sub">لو كانت الشركة في مجموعة معيّنة في نهاية سنة، وين كانت بعد عدد من السنوات؟ محسوبة من كل نهايات السنوات 2015–2025، ومعها الشركات اللي انشرت أو اختفت.</p>
+    <div class="controls"><label>بعد <select id="hz"><option value="1">سنة</option><option value="3">3 سنوات</option><option value="5" selected>5 سنوات</option><option value="10">10 سنوات</option></select></label>
+      <label><input type="checkbox" id="surv"> لو تجاهلنا الشركات المختفية</label></div>
+    <div id="odds"></div>
+    <div id="multi"></div>
+  </section>
+
+  <section class="block">
+    <h2>هل فيه خوارزمية؟</h2>
+    <p class="sub">أربع قواعد يكررها الناس لتوقع "العملاق القادم"، كُتبت وثُبّتت في المستودع قبل حساب أي نتيجة (دراسة 17). كل سنة نرتب أكبر 100 شركة حسب القاعدة ونقيس هل اللي في أعلى الترتيب نمت قيمتها أكثر في السنة اللي بعدها.</p>
+    <div id="rules"></div>
+    <div id="hindsight"></div>
+  </section>
+
+  <section class="block">
+    <h2>ماذا تقول الأبحاث</h2>
+    <div id="lit"></div>
+  </section>
+</div>
+
+<div id="p-tech" role="tabpanel" aria-labelledby="t-tech" hidden>
+  <div id="tech"></div>
+</div>
+</main>
+
+<footer id="foot"></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const D = /*DATA*/null;
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const P = D.points, PL = D.pointLabels, C = D.cos;
+const GROUPS = ['باقي القطاعات', 'تقنية', 'مالية', 'صحة'];
+const money = (b) => (b == null ? '—' : b >= 1000 ? `$${(b / 1000).toFixed(b >= 10000 ? 1 : 2)}T` : b >= 100 ? `$${b.toFixed(0)}B` : `$${b.toFixed(1)}B`);
+const pct = (x, d = 0) => (x == null || !isFinite(x) ? '—' : `${(100 * x).toFixed(d)}%`);
+const sgn = (x, d = 2) => (x == null || !isFinite(x) ? '—' : (x > 0 ? '+' : '') + x.toFixed(d));
+const nameOf = (i) => C[i].n;
+const rankAt = (i, p) => { const r = D.ranks[p].indexOf(i); return r < 0 ? null : r + 1 };
+const store = { get(k) { try { return localStorage.getItem(k) } catch { return null } }, set(k, v) { try { localStorage.setItem(k, v) } catch {} } };
+
+// tabs
+const tabs = [['t-race', 'p-race'], ['t-tech', 'p-tech']];
+function show(id) {
+  for (const [t, p] of tabs) { $('#' + t).setAttribute('aria-selected', String(t === id)); $('#' + p).hidden = t !== id }
+  store.set('caps-tab', id)
+}
+for (const [t] of tabs) $('#' + t).addEventListener('click', () => show(t));
+const h = location.hash.slice(1);
+show(h === 'tech' ? 't-tech' : h === 'race' ? 't-race' : store.get('caps-tab') || 't-race');
+
+// summary chips
+(function chips() {
+  const last = P.length - 1, first = 0;
+  const top10a = D.ranks[first].slice(0, 10), top10b = new Set(D.ranks[last].slice(0, 10));
+  const kept = top10a.filter((i) => top10b.has(i)).length;
+  const sum = (p, n) => D.ranks[p].slice(0, n).reduce((s, i) => s + C[i].cap[p], 0);
+  let best = null;
+  for (const i of D.ranks[last].slice(0, 20)) { const a = rankAt(i, first); if (a && (!best || a - rankAt(i, last) > best.d)) best = { i, d: a - rankAt(i, last), a } }
+  const deadTop = D.ranks.slice(0, last).flat().filter((i) => C[i].dead != null);
+  const deadN = new Set(deadTop).size;
+  $('#chips').innerHTML = [
+    [`${kept} من 10`, `من أكبر 10 في ${PL[first]} ما زالوا في أكبر 10 في ${PL[last]}`, false],
+    [money(sum(last, 10)), `قيمة أكبر 10 اليوم، مقابل <span class="ltr">${money(sum(first, 10))}</span> في ${PL[first]}`, true],
+    best ? [`من ${best.a} إلى ${rankAt(best.i, last)}`, `أكبر صعود في الترتيب بين أكبر 20 اليوم: ${esc(nameOf(best.i))}`, false] : null,
+    [`${deadN}`, 'شركة كانت في أكبر 100 ثم انشرت أو اندمجت أو خرجت من السوق (محسوبة هنا)', false],
+  ].filter(Boolean).map(([b, s, l]) => `<div class="chip"><b${l ? ' class="ltr"' : ''}>${b}</b><span>${s}</span></div>`).join('');
+})();
+
+// race
+const race = $('#race'), rowH = 24, rows = new Map();
+$('#legend').innerHTML = [1, 2, 3, 0].map((g) => `<span><i class="g${g}"></i>${GROUPS[g]}</span>`).join('');
+function drawRace(p, n) {
+  const ids = D.ranks[p].slice(0, n);
+  const max = C[ids[0]].cap[p];
+  race.style.height = `${n * rowH + 4}px`;
+  const live = new Set(ids);
+  for (const [i, el] of rows) if (!live.has(i)) { el.classList.add('gone'); el.style.transform = `translateY(${(n + 1) * rowH}px)` }
+  ids.forEach((i, r) => {
+    let el = rows.get(i);
+    if (!el) {
+      el = document.createElement('div'); el.className = 'row gone';
+      el.innerHTML = `<span class="rk"></span><span class="track"><span class="bar g${C[i].g}"></span><span class="lab"></span></span>`;
+      el.style.transform = `translateY(${(n + 1) * rowH}px)`; el.style.height = `${rowH - 4}px`;
+      race.appendChild(el); rows.set(i, el); void el.offsetWidth
+    }
+    el.classList.remove('gone');
+    el.style.transform = `translateY(${r * rowH}px)`;
+    el.querySelector('.rk').textContent = r + 1;
+    el.style.setProperty('--f', String(C[i].cap[p] / max));
+    el.querySelector('.lab').innerHTML = `<span>${esc(nameOf(i))}</span>${C[i].dead != null ? '<span class="deadtag">لم تعد موجودة</span>' : ''}<span class="v ltr">${money(C[i].cap[p])}</span>`;
+  });
+  $('#frameLab').textContent = PL[p];
+  $('#raceNote').textContent = p === P.length - 1 ? 'آخر نقطة من شاشة TradingView يوم 23 أكتوبر 2026؛ باقي النقاط إغلاق ديسمبر من كل سنة.' : `إغلاق آخر يوم تداول في ${PL[p]}.`;
+}
+let frame = P.length - 1, timer = null;
+const topn = () => Number($('#topn').value);
+$('#frame').max = P.length - 1;
+$('#frame').addEventListener('input', (e) => { frame = Number(e.target.value); drawRace(frame, topn()) });
+$('#topn').addEventListener('change', () => { for (const el of rows.values()) el.remove(); rows.clear(); drawRace(frame, topn()) });
+$('#play').addEventListener('click', () => {
+  if (timer) { clearInterval(timer); timer = null; $('#play').textContent = 'تشغيل'; return }
+  if (frame >= P.length - 1) frame = -1;
+  $('#play').textContent = 'إيقاف';
+  timer = setInterval(() => {
+    frame += 1; $('#frame').value = frame; drawRace(frame, topn());
+    if (frame >= P.length - 1) { clearInterval(timer); timer = null; $('#play').textContent = 'تشغيل' }
+  }, 1300);
+});
+drawRace(frame, topn());
+
+// tooltip helper
+const tip = $('#tip');
+function tipAt(e, html) { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = `${x}px`; tip.style.top = `${e.clientY + 14}px` }
+const tipOff = () => { tip.hidden = true };
+
+// bump chart: everyone ever in the top 10, ranks 1–25
+(function bump() {
+  const ever = [...new Set(D.ranks.flatMap((r) => r.slice(0, 10)))];
+  const W = 960, H = 470, L = 44, R = 150, T = 14, B = 30, MAXR = 25;
+  const x = (p) => L + (p * (W - L - R)) / (P.length - 1), y = (r) => T + ((r - 1) * (H - T - B)) / (MAXR - 1);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="مسار ترتيب الشركات التي وصلت أكبر 10">`;
+  for (const r of [1, 5, 10, 15, 20, 25]) s += `<line class="gridl" x1="${L}" x2="${W - R}" y1="${y(r)}" y2="${y(r)}"/><text x="${L - 8}" y="${y(r) + 4}" text-anchor="end">${r}</text>`;
+  P.forEach((pt, p) => { s += `<text x="${x(p)}" y="${H - 8}" text-anchor="middle">${pt === 2026 ? '2026*' : pt}</text>` });
+  const ends = [];
+  for (const i of ever) {
+    const pts = P.map((_, p) => [p, rankAt(i, p)]).filter(([, r]) => r && r <= MAXR);
+    if (!pts.length) continue;
+    let d = '', prev = null;
+    for (const [p, r] of pts) { d += `${prev != null && p === prev + 1 ? 'L' : 'M'}${x(p).toFixed(1)},${y(r).toFixed(1)}`; prev = p }
+    const col = `var(--${['s-rest', 's-tech', 's-fin', 's-health'][C[i].g]})`;
+    s += `<path class="l" data-i="${i}" d="${d}" stroke="${col === 'var(--s-rest)' ? 'var(--faint)' : col}"/>`;
+    const [lp, lr] = pts[pts.length - 1];
+    if (lp === P.length - 1) ends.push({ i, y: y(lr), r: lr });
+    s += pts.map(([p, r]) => `<circle data-i="${i}" cx="${x(p).toFixed(1)}" cy="${y(r).toFixed(1)}" r="3.2" fill="${col === 'var(--s-rest)' ? 'var(--faint)' : col}"/>`).join('');
+  }
+  ends.sort((a, b) => a.y - b.y); let last = -1e9;
+  for (const e of ends) { const yy = Math.max(e.y, last + 13); last = yy; s += `<text data-i="${e.i}" x="${W - R + 8}" y="${yy + 4}">${e.r}. ${esc(nameOf(e.i))}</text>` }
+  s += '</svg>';
+  const box = $('#bump'); box.innerHTML = s; box.dir = 'ltr';
+  box.addEventListener('mousemove', (e) => {
+    const t = e.target.closest('[data-i]');
+    if (!t) { box.classList.remove('focus'); box.querySelectorAll('.on').forEach((n) => n.classList.remove('on')); tipOff(); return }
+    const i = Number(t.dataset.i);
+    box.classList.add('focus'); box.querySelectorAll('path.l').forEach((n) => n.classList.toggle('on', Number(n.dataset.i) === i));
+    tipAt(e, `<b>${esc(nameOf(i))}</b><br>${P.map((pt, p) => `${pt === 2026 ? '2026*' : pt}: ${rankAt(i, p) ?? '—'}`).join(' · ')}`);
+  });
+  box.addEventListener('mouseleave', () => { box.classList.remove('focus'); tipOff() });
+})();
+
+// moves table
+(function moves() {
+  const opts = P.map((pt, p) => `<option value="${p}">${PL[p]}</option>`).join('');
+  $('#from').innerHTML = opts; $('#to').innerHTML = opts;
+  $('#from').value = '0'; $('#to').value = String(P.length - 1);
+  function draw() {
+    const a = Number($('#from').value), b = Number($('#to').value);
+    const inB = D.ranks[b].slice(0, 100), setB = new Set(inB);
+    const out = D.ranks[a].slice(0, 100).filter((i) => !setB.has(i));
+    const row = (i) => {
+      const ra = rankAt(i, a), rb = rankAt(i, b), ca = C[i].cap[a], cb = C[i].cap[b];
+      const mult = ca && cb ? cb / ca : null, ret = C[i].px[a] && C[i].px[b] ? C[i].px[b] / C[i].px[a] - 1 : null;
+      return { i, ra, rb, ch: ra && rb ? ra - rb : null, mult, ret };
+    };
+    let rs = inB.map(row);
+    const k = $('#sort').value;
+    if (k === 'change') rs.sort((x, y) => (y.ch ?? -1e9) - (x.ch ?? -1e9));
+    if (k === 'mult') rs.sort((x, y) => (y.mult ?? -1) - (x.mult ?? -1));
+    const cell = (r) => `<tr><td><span class="dot g${C[r.i].g}"></span>${esc(nameOf(r.i))}<span class="tk">${esc(C[r.i].t)}</span>${C[r.i].dead != null ? '<span class="deadtag">لم تعد موجودة</span>' : ''}</td>
+      <td class="n">${r.ra ?? (C[r.i].cap[a] ? '>100' : '—')}</td><td class="n">${r.rb ?? (C[r.i].cap[b] ? '>100' : '—')}</td>
+      <td class="n ${r.ch > 0 ? 'up' : r.ch < 0 ? 'down' : ''}">${r.ch == null ? (r.ra ? '' : 'جديد') : (r.ch > 0 ? '▲' : r.ch < 0 ? '▼' : '') + Math.abs(r.ch)}</td>
+      <td class="n">${r.mult == null ? '—' : r.mult.toFixed(1) + '×'}</td><td class="n">${C[r.i].dead != null ? '—' : pct(r.ret)}</td></tr>`;
+    $('#moves').innerHTML = `<thead><tr><th>الشركة</th><th>الترتيب ${esc(PL[a])}</th><th>الترتيب ${esc(PL[b])}</th><th>التغير</th><th>مضاعف القيمة</th><th>عائد السعر</th></tr></thead><tbody>
+      ${rs.map(cell).join('')}
+      ${out.length ? `<tr class="sep"><td colspan="6">خرجت من أكبر 100 (${out.length})</td></tr>` + out.map(row).sort((x, y) => x.ra - y.ra).map(cell).join('') : ''}</tbody>`;
+  }
+  for (const id of ['#from', '#to', '#sort']) $(id).addEventListener('change', draw);
+  draw();
+})();
+
+// study-driven sections
+const S = D.study;
+const pend = (t) => `<div class="pending">${t}</div>`;
+(function entrants() {
+  if (!S) { $('#entrants').innerHTML = pend('يُحسب بعد اكتمال بيانات الشركات المختفية.'); return }
+  const rows = S.page.entrants.filter((e) => e.n === 10);
+  const fmt = (v) => (typeof v === 'number' ? v : v === 'not a US company then' ? 'ليست أمريكية آنذاك' : 'غير مدرجة/لا قيمة');
+  $('#entrants').innerHTML = `<div class="tablewrap"><table><thead><tr><th>الشركة</th><th>دخلت أكبر 10</th><th>ترتيبها قبل سنة</th><th>قبل 3 سنوات</th><th>قبل 5 سنوات</th></tr></thead><tbody>${rows.map((e) => {
+    const i = D.keyIndex[e.key];
+    return `<tr><td>${i != null ? esc(nameOf(i)) : esc(e.key)}</td><td class="n">${e.y === 2026 ? '2026*' : e.y} (#${e.rank})</td><td class="n">${fmt(e.back1)}</td><td class="n">${fmt(e.back3)}</td><td class="n">${fmt(e.back5)}</td></tr>` }).join('')}</tbody></table></div>`;
+})();
+
+(function odds() {
+  if (!S) { $('#odds').innerHTML = pend('يُحسب بعد اكتمال البيانات.'); return }
+  const DEST = [['1–10', 'أكبر 10'], ['11–20', '11–20'], ['21–50', '21–50'], ['51–100', '51–100'], ['below 100', 'تحت 100'], ['no longer trading', 'اختفت']];
+  const heat = (s) => (s == null ? 'var(--heat0)' : s >= 0.6 ? 'var(--heat4)' : s >= 0.35 ? 'var(--heat3)' : s >= 0.15 ? 'var(--heat2)' : s > 0 ? 'var(--heat1)' : 'var(--heat0)');
+  const ink = (s) => (s >= 0.35 ? 'color:#fff' : '');
+  function draw() {
+    const hz = $('#hz').value, br = $('#surv').checked ? S.baseRatesSurvivors : S.baseRates;
+    const t = br[hz];
+    $('#odds').innerHTML = `<div class="tablewrap heat"><table><thead><tr><th>كانت في</th>${DEST.map(([, l]) => `<th>${l}</th>`).join('')}<th>عدد الحالات</th></tr></thead><tbody>${Object.entries(t).map(([from, v]) =>
+      `<tr><th>${from === '1–10' ? 'أكبر 10' : from}</th>${DEST.map(([k]) => `<td class="c" style="background:${heat(v.shares[k])};${ink(v.shares[k])}">${pct(v.shares[k])}</td>`).join('')}<td class="n">${v.n}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">كل خانة: نسبة الشركات اللي كانت في الصف (في نهاية سنة) ووصلت العمود بعد المدة المختارة. الحالات تتداخل لأن كل سنة بداية جديدة.${$('#surv').checked ? ' هذا العرض يتجاهل الشركات المختفية عمداً، لترى كيف تخدع بيانات "الناجين فقط".' : ''}</p>`;
+  }
+  $('#hz').addEventListener('change', draw); $('#surv').addEventListener('change', draw); draw();
+  const m = S.page.multi;
+  $('#multi').innerHTML = `<h3>كم شركة من أكبر 100 تضاعفت خلال 5 سنوات؟</h3><div class="tablewrap"><table><thead><tr><th>الفترة</th><th>3 أضعاف أو أكثر</th><th>5 أضعاف أو أكثر</th><th>من هي</th></tr></thead><tbody>${m.map((r) =>
+    `<tr><td class="n">${r.y}–${r.y + 5}</td><td class="n">${r.x3} من ${r.n}</td><td class="n">${r.x5}</td><td style="white-space:normal">${r.list.sort((a, b) => b.mult - a.mult).map((x) => `${esc(D.keyIndex[x.key] != null ? nameOf(D.keyIndex[x.key]) : x.key)} <span class="ltr">${x.mult.toFixed(1)}×</span> (${x.from}→${x.to ?? '—'})`).join('، ')}</td></tr>`).join('')}</tbody></table></div>`;
+})();
+
+(function rules() {
+  if (!S) { $('#rules').innerHTML = pend('النتيجة تُحسب بعد اكتمال البيانات، بالقواعد المثبتة مسبقاً كما هي.'); return }
+  const NAMES = { M: ['اللي صعد يكمل', 'تغيّر القيمة السوقية في السنة الماضية'], G: ['النمو السريع يصنع العمالقة', 'نمو الإيرادات السنوي على سنتين'], S: ['الأصغر يصعد أسرع', 'الأصغر قيمة بين أكبر 100'], V: ['الرخيص يلحق', 'المبيعات ÷ القيمة السوقية (بدون البنوك)'] };
+  $('#rules').innerHTML = `<div class="cards">${Object.entries(S.tests).map(([k, r]) => {
+    const ys = r.yearly.filter((x) => x.counts), pos = ys.filter((x) => x.ic > 0).length;
+    const mx = Math.max(0.3, ...ys.map((x) => Math.abs(x.ic)));
+    return `<div class="card"><h3>${NAMES[k][0]}</h3><p class="note">${NAMES[k][1]}</p>
+      <span class="pill ${r.confirmed ? 'yes' : 'no'}">${r.confirmed ? 'ثبتت' : 'لم تثبت'}</span>
+      <p>متوسط الارتباط <b class="ltr num">${sgn(r.meanIC, 3)}</b> · إيجابي في ${pos} من ${ys.length} سنوات · p بعد التصحيح <span class="ltr num">${r.holm?.toFixed(3) ?? '—'}</span></p>
+      <div class="ics" title="الارتباط كل سنة">${ys.map((x) => { const hgt = (Math.abs(x.ic) / mx) * 50; return `<span><i style="${x.ic >= 0 ? `bottom:50%;height:${hgt}%;background:var(--up)` : `top:50%;height:${hgt}%;background:var(--down)`}" title="${x.y}: ${sgn(x.ic, 3)}"></i></span>` }).join('')}</div>
+    </div>` }).join('')}</div>
+    <p class="note">الارتباط هنا ترتيبي (Spearman) بين القاعدة ونمو القيمة السوقية في السنة التالية، داخل أكبر 100 كل سنة. 0 يعني لا علاقة؛ ‎+0.05‎ علاقة ضعيفة جداً. "ثبتت" تعني إيجابية ومعنوية بعد تصحيح Holm لأربع قواعد. مع 9–10 سنوات فقط، عدم الثبوت متوقع حتى لو كان هناك أثر صغير حقيقي.</p>`;
+  const H = S.page.hindsight;
+  $('#hindsight').innerHTML = `<h3>"كان واضح من البداية"؟</h3><p class="sub">الشركات اللي تضاعفت 3 مرات خلال 5 سنوات: كم منها كانت في الخُمس الأعلى لكل قاعدة عند البداية، ومن كل اللي كانوا في الخُمس الأعلى كم تضاعف فعلاً.</p>
+    <div class="tablewrap"><table><thead><tr><th>القاعدة</th><th>من المتضاعفين: في الخمس الأعلى</th><th>من الخمس الأعلى: تضاعف</th><th>عدد المتضاعفين</th></tr></thead><tbody>${Object.entries(H).map(([k, h]) =>
+      `<tr><td>${NAMES[k][0]}</td><td class="n">${pct(h.tripledTopFifth)}</td><td class="n">${pct(h.topFifthHitRate)}</td><td class="n">${h.tripled}</td></tr>`).join('')}</tbody></table></div>`;
+})();
+
+(function lit() {
+  const L = D.lit;
+  if (!L || !L.length) { $('#lit').innerHTML = pend('قيد التحقق: كل رقم من الأبحاث يمر على مراجع ثانٍ مهمته يكذّبه قبل ما يظهر هنا.'); return }
+  $('#lit').innerHTML = `<ul class="facts">${L.map((f) => `<li>${esc(f.ar)} <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src)}</a></li>`).join('')}</ul>`;
+})();
+
+(function tech() {
+  const T = D.research;
+  if (!T) { $('#tech').innerHTML = pend('هذه الصفحة بحث (وليست اختباراً): تشريح لقصة البصريات، قائمة إشارات مبكرة، ثم قطاعات مرشحة اليوم يراجع كل واحد منها باحث ثانٍ مهمته يثبت أنه خطأ أو أن السعر سبق القصة. قيد الإعداد.'); return }
+  const vMap = { 'overlooked-with-evidence': ['مهمل وعليه أدلة', 'yes'], 'partly-priced': ['جزء منه في السعر', 'mid'], 'crowded-already-ran': ['صعد خلاص', 'no'], 'too-early-speculative': ['مبكر وتخميني', 'pend'], 'weak-or-wrong': ['ضعيف', 'no'] };
+  $('#tech').innerHTML = `
+    <section class="block"><h2>${esc(T.title)}</h2><p class="sub">${esc(T.intro)}</p></section>
+    <section class="block"><h2>دروس قصة البصريات</h2>${T.optics}</section>
+    <section class="block"><h2>قائمة الإشارات المبكرة</h2><ul class="facts">${T.checklist.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>
+    <section class="block"><h2>قطاعات مرشحة اليوم</h2><div class="cards">${T.themes.map((t) => `<div class="card"><h3>${esc(t.name)}</h3>
+      <span class="pill ${(vMap[t.verdict] ?? ['', 'mid'])[1]}">${esc((vMap[t.verdict] ?? [t.verdict])[0])}</span>
+      <p>${esc(t.why)}</p><p class="note"><b>شركات مدرجة:</b> <span class="ltr">${esc(t.plays.join(' · '))}</span></p>
+      <details><summary>إشارات تراقبها</summary><ul class="facts">${t.signals.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></details>
+      <p class="note"><b>أكبر خطر:</b> ${esc(t.risk)}</p></div>`).join('')}</div></section>
+    <section class="block"><h2>قصص طبّلت ثم سقطت</h2>${T.failed}</section>
+    <section class="block"><h2>حدود هذا البحث</h2><ul class="facts">${T.caveats.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>`;
+})();
+
+$('#foot').innerHTML = `<p>البيانات: أسعار شهرية وأرقام مالية من TradingView؛ عضوية S&amp;P 500 التاريخية من fja05680/sp500؛ قيم الشركات المختفية مأخوذة يدوياً من مصادر منشورة ومراجَعة من باحث ثانٍ. القيمة السوقية = إغلاق ديسمبر × عدد الأسهم المخفف للسنة المالية، مع تصحيحات موثقة للحالات الشاذة. "شركة أمريكية" = عضو في S&amp;P 500 وقتها، أو شركة مقرها أمريكا ومدرجة في بورصة أمريكية.</p>
+  <p>دراسة 17 مسجلة مسبقاً: PROTOCOL-study17.md والملحقان 1 و2. ليست توصية شراء أو بيع.</p><p>بُنيت في ${esc(D.asOf)}.</p>`;
+</script>
