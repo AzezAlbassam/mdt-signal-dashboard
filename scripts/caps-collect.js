@@ -38,7 +38,7 @@ const walk = function* (d) {
   }
 }
 const columnar = (bars) => (Array.isArray(bars) ? Object.fromEntries(['t', 'o', 'h', 'l', 'c', 'v'].map((k) => [k, bars.map((x) => x[k])])) : bars)
-const isMonthly = (iv) => ['M', '1M', 'mo', '1mo', 'month'].includes(String(iv))
+const isMonthly = (iv) => ['M', 'mo', '1mo', 'month'].includes(String(iv)) // not '1M' (ambiguous with one minute)
 
 const px = new Map()
 const rows = new Map()

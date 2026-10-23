@@ -178,6 +178,28 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   result box per decision with the naive baseline, change log 47 with all 55 movers
   (reports/study16-today.txt; MU 1428.56 → 1650.71, P/S just under 1/3). Published v25.
 
+- [x] Study 17 protocol (PROTOCOL-study17.md, 0022845) + addendum 1 (c209633, share-count screens S1–S4,
+  sourced overrides, V4 cross-check), both before any rule value: who climbs the top of the US market
+  (ranks 2015–2026, survivorship-free) and four rules tested (M momentum, G revenue growth, S size,
+  V sales yield; one-year IC over the top 200, sign-flip, Holm). engine/caps.js (+6 tests),
+  scripts/study17-run.js committed with the protocol; dry run on synthetic data only.
+- [x] Study 17 data inputs: data/caps/sp500-history.csv (fja05680/sp500, daily S&P lists since 1996),
+  data/caps/screener-2026-10-23.json, data/caps/map.json (237 removed/missing S&P tickers classified by
+  agents), data/caps/tickers.json (scripts/caps-tickers.js), data/caps/quotes.json (scripts/caps-collect.js
+  reads TradingView answers out of the session transcripts; nothing typed by hand).
+- [ ] Study 17: finish data — TradingView fetch of the 89 listed companies still missing (workflow
+  caps-fetch-3), then the WEB-SEARCH work: dead companies first pass (18, data/caps/map.json flags) +
+  second pass (64 incl. identity cases DD-old/DOW-old/DWDP/FOXA-old/SNDK-old/KDP-old/SE-old) + non-S&P
+  finder, each with an independent check; addendum-1 lookups for the 316 screened company-years
+  (data/caps/screens.json); V4 cross-check 2015/2021. LIMIT: WebSearch has a budget of 200 searches PER
+  TURN shared by every agent — the first attempt (2026-10-23) ran out and most agents returned nulls; run
+  one ≤180-search workflow per turn, and prefer one search per company that returns many years.
+  Then: node scripts/caps-import.js <journals> → dead.json/overrides.json; node scripts/caps-tickers.js;
+  node scripts/caps-build.js; node scripts/study17-run.js; clean-room check; page.
+- [ ] Study 17 page 2 (technologies people may be overlooking): research workflow caps-research — the
+  literature agents finished (journal wf_08d41c9e-707, 2 results); sweeps/verify/synthesis to rerun in a
+  fresh turn (search budget).
+
 ## Counts
 (updated as work proceeds)
 
