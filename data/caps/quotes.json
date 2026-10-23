@@ -2300,49 +2300,98 @@
   "country": "United States",
   "description": "Bread Financial Holdings, Inc.",
   "market_cap_basic": 3936054049,
-  "name": "BFH"
+  "name": "BFH",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1790726400,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "total_shares_outstanding": 38419300
  },
  "NYSE:BIO": {
   "close": 363.5,
   "country": "United States",
   "description": "Bio-Rad Laboratories, Inc. Class A",
   "market_cap_basic": 9769329835.000002,
-  "name": "BIO"
+  "name": "BIO",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "total_shares_outstanding": 21677100
  },
  "NYSE:BLDR": {
   "close": 57.54,
   "country": "United States",
   "description": "Builders FirstSource, Inc.",
   "market_cap_basic": 6191099878.000001,
-  "name": "BLDR"
+  "name": "BLDR",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Home Improvement Chains",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 107596000
  },
  "NYSE:BWA": {
   "close": 55.46,
   "country": "United States",
   "description": "BorgWarner Inc.",
   "market_cap_basic": 11295336504.000002,
-  "name": "BWA"
+  "name": "BWA",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Trucks/Construction/Farm Machinery",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 203666000
  },
  "NYSE:CAG": {
   "close": 15.07,
   "country": "United States",
   "description": "Conagra Brands, Inc.",
   "market_cap_basic": 7194591604,
-  "name": "CAG"
+  "name": "CAG",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1780185600,
+  "fiscal_period_fy": "2025",
+  "industry": "Food: Major Diversified",
+  "sector": "Consumer Non-Durables",
+  "total_shares_outstanding": 477412000
  },
  "NYSE:CE": {
   "close": 47.22,
   "country": "United States",
   "description": "Celanese Corporation",
   "market_cap_basic": 5182344697.999999,
-  "name": "CE"
+  "name": "CE",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 109749000
  },
  "NYSE:CNX": {
   "close": 35.73,
   "country": "United States",
   "description": "CNX Resources Corporation",
   "market_cap_basic": 5286025976,
-  "name": "CNX"
+  "name": "CNX",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "total_shares_outstanding": 147944000
  },
  "NYSE:COR": {
   "close": 338.48,
@@ -2356,21 +2405,42 @@
   "country": "United States",
   "description": "Coty Inc. Class A",
   "market_cap_basic": 2827003578,
-  "name": "COTY"
+  "name": "COTY",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1782777600,
+  "fiscal_period_fy": "2026",
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "total_shares_outstanding": 880686000
  },
  "NYSE:CPRI": {
   "close": 16.36,
   "country": "United Kingdom",
   "description": "Capri Holdings Limited",
   "market_cap_basic": 1859340556.0000002,
-  "name": "CPRI"
+  "name": "CPRI",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1774915200,
+  "fiscal_period_fy": "2025",
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 113652000
  },
  "NYSE:CTVA": {
   "close": 12.86,
   "country": "United States",
   "description": "Corteva Inc",
   "market_cap_basic": 8581477614,
-  "name": "CTVA"
+  "name": "CTVA",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Agricultural Commodities/Milling",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 667300000
  },
  "NYSE:DVN": {
   "close": 49.18,
@@ -2736,7 +2806,11 @@
   "name": "EPD",
   "industry": "Oil & Gas Pipelines",
   "sector": "Industrial Services",
-  "total_shares_outstanding": 2159480000
+  "total_shares_outstanding": 2159480000,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025"
  },
  "NYSE:FERG": {
   "close": 227.31,
@@ -2921,7 +2995,15 @@
   "country": "United States",
   "description": "HF Sinclair Corporation",
   "market_cap_basic": 21746519742.999996,
-  "name": "DINO"
+  "name": "DINO",
+  "close": 122.32,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "total_shares_outstanding": 177784000
  },
  "NYSE:DKS": {
   "country": "United States",
@@ -2941,61 +3023,141 @@
   "country": "United States",
   "description": "DXC Technology Co.",
   "market_cap_basic": 2569241267,
-  "name": "DXC"
+  "name": "DXC",
+  "close": 16.08,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1774915200,
+  "fiscal_period_fy": "2025",
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "total_shares_outstanding": 159779000
  },
  "NYSE:EMN": {
   "country": "United States",
   "description": "Eastman Chemical Company",
   "market_cap_basic": 7469988924.000001,
-  "name": "EMN"
+  "name": "EMN",
+  "close": 65.31,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 114377000
  },
  "NYSE:EPAM": {
   "country": "United States",
   "description": "EPAM Systems, Inc.",
   "market_cap_basic": 7153566271,
-  "name": "EPAM"
+  "name": "EPAM",
+  "close": 138.67,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "total_shares_outstanding": 51587000
  },
  "NYSE:FBIN": {
   "country": "United States",
   "description": "Fortune Brands Innovations, Inc.",
   "market_cap_basic": 5227277009,
-  "name": "FBIN"
+  "name": "FBIN",
+  "close": 43.79,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Building Products",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 119371000
  },
  "NYSE:FDXF": {
   "country": "United States",
   "description": "FedEx Freight Holding Company, Inc.",
   "market_cap_basic": 16599503701.000002,
-  "name": "FDXF"
+  "name": "FDXF",
+  "close": 111.02,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1772236800,
+  "fiscal_period_end_fy": 1780185600,
+  "fiscal_period_fy": "2025",
+  "industry": "Trucking",
+  "sector": "Transportation",
+  "total_shares_outstanding": 149518130
  },
  "NYSE:FLR": {
   "country": "United States",
   "description": "Fluor Corporation",
   "market_cap_basic": 5807036508.999999,
-  "name": "FLR"
+  "name": "FLR",
+  "close": 43.42,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 133741000.00000001
  },
  "NYSE:FLS": {
   "country": "United States",
   "description": "Flowserve Corporation",
   "market_cap_basic": 8613162089,
-  "name": "FLS"
+  "name": "FLS",
+  "close": 67.76,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "total_shares_outstanding": 127113000
  },
  "NYSE:FMC": {
   "country": "United States",
   "description": "FMC Corporation",
   "market_cap_basic": 780840943,
-  "name": "FMC"
+  "name": "FMC",
+  "close": 5.02,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "total_shares_outstanding": 155546000
  },
  "NYSE:FTI": {
   "country": "United States",
   "description": "TechnipFMC plc",
   "market_cap_basic": 26204422928,
-  "name": "FTI"
+  "name": "FTI",
+  "close": 66.82,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Oilfield Services/Equipment",
+  "sector": "Industrial Services",
+  "total_shares_outstanding": 392164000
  },
  "NYSE:GAP": {
   "country": "United States",
   "description": "Gap, Inc.",
   "market_cap_basic": 8047598191,
-  "name": "GAP"
+  "name": "GAP",
+  "close": 22.91,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 351270000
  },
  "NYSE:GIL": {
   "country": "Canada",
@@ -3007,13 +3169,29 @@
   "country": "United States",
   "description": "Harley-Davidson, Inc.",
   "market_cap_basic": 3029550823,
-  "name": "HOG"
+  "name": "HOG",
+  "close": 29.11,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "total_shares_outstanding": 104073000
  },
  "NYSE:HRB": {
   "country": "United States",
   "description": "H&R Block, Inc.",
   "market_cap_basic": 6134452914.000001,
-  "name": "HRB"
+  "name": "HRB",
+  "close": 50.08,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1782777600,
+  "fiscal_period_fy": "2026",
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "total_shares_outstanding": 122493000
  },
  "NYSE:J": {
   "country": "United States",
@@ -3027,7 +3205,15 @@
   "country": "United States",
   "description": "Jefferies Financial Group Inc.",
   "market_cap_basic": 10482122317,
-  "name": "JEF"
+  "name": "JEF",
+  "close": 45.64,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1764460800,
+  "fiscal_period_fy": "2025",
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "total_shares_outstanding": 189091000
  },
  "NYSE:LHX": {
   "country": "United States",
@@ -3093,7 +3279,15 @@
   "country": "United States",
   "description": "Etsy, Inc.",
   "market_cap_basic": 8335618828.000001,
-  "name": "ETSY"
+  "name": "ETSY",
+  "close": 90.82,
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 91781700
  },
  "NYSE:FDX": {
   "country": "United States",
@@ -6008,28 +6202,56 @@
   "country": "United States",
   "description": "CarMax, Inc.",
   "market_cap_basic": 7517291091,
-  "name": "KMX"
+  "name": "KMX",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1788134400,
+  "fiscal_period_end_fy": 1772236800,
+  "fiscal_period_fy": "2025",
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 141943000
  },
  "NYSE:KSS": {
   "close": 24.78,
   "country": "United States",
   "description": "Kohl's Corporation",
   "market_cap_basic": 2809468310,
-  "name": "KSS"
+  "name": "KSS",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Department Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 113376000
  },
  "NYSE:LNC": {
   "close": 41.11,
   "country": "United States",
   "description": "Lincoln National Corp",
   "market_cap_basic": 7870400343.000001,
-  "name": "LNC"
+  "name": "LNC",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1782777600,
+  "fiscal_period_end_fy": 1767139200,
+  "fiscal_period_fy": "2025",
+  "industry": "Multi-Line Insurance",
+  "sector": "Finance",
+  "total_shares_outstanding": 191447000
  },
  "NYSE:M": {
   "close": 24.17,
   "country": "United States",
   "description": "Macy's, Inc.",
   "market_cap_basic": 6312639306.000001,
-  "name": "M"
+  "name": "M",
+  "exchange": "NYSE",
+  "fiscal_period_end_fq": 1785456000,
+  "fiscal_period_end_fy": 1769817600,
+  "fiscal_period_fy": "2025",
+  "industry": "Department Stores",
+  "sector": "Retail Trade",
+  "total_shares_outstanding": 261177000.00000003
  },
  "NYSE:MAC": {
   "close": 23.95,
