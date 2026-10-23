@@ -139,6 +139,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   P/S +9.5%, P/FCF +8.8%, combined +2.1%, EV/EBITDA −3.1%, P/E −6.9%, P/E vs sector −8.7%, PEG −14.7%,
   price stretch −3.3%. Plus where each favourite sits now per rule.
 
+- [x] Study 15 protocol (PROTOCOL-study15.md): @t38p_flow "Flow VWAP x Gamma" chart of 2026-10-12 — open look-alike
+  (OFV/OGL), chart measured from the screenshot, VWAP/band candidates and MATCH thresholds fixed before any value;
+  gamma for 10-12 untestable (0DTE contracts no longer served), OGL frozen for forward checks
+- [ ] Study 15: measure the chart, engine/vwap.js + engine/gamma.js + tests, run → reports/study15.txt
+
 ## Counts
 (updated as work proceeds)
 
