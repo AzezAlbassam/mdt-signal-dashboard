@@ -12,7 +12,7 @@ const YEARS = Array.from({ length: 11 }, (_, i) => 2015 + i) // December closes 
 const POINTS = [...YEARS, 2026] // + the 2026-10-23 snapshot (descriptive only)
 const RULES = ['M', 'G', 'S', 'V']
 const RULE_YEARS = { M: [2016, 2024], G: [2015, 2024], S: [2015, 2024], V: [2015, 2024] }
-const MIN_N = 100
+const MIN_N = 80 // addendum 2 (was 100)
 const lines = []
 const out = (s = '') => lines.push(s)
 const pct = (x, d = 1) => (x == null || !Number.isFinite(x) ? '—' : `${(100 * x).toFixed(d)}%`)
@@ -46,7 +46,7 @@ function ics(ctx, horizon) {
     const [y0, y1] = RULE_YEARS[k]
     const yearly = []
     for (let y = y0; y <= Math.min(y1, 2025 - horizon); y += 1) {
-      const U = ctx.top(y, 200)
+      const U = ctx.top(y, 100) // addendum 2: top 100
       const rows = []
       const gone = []
       for (const c of U) {
@@ -75,14 +75,14 @@ testable.forEach((k, i) => { T1[k].holm = adj[i]; T1[k].confirmed = T1[k].meanIC
 out('STUDY 17 — who climbs the top of the US market (PROTOCOL-study17.md)')
 out(`companies in the file: ${ALL.length} (${ALL.filter((c) => c.dead != null).length} no longer trading); built ${D.asOf}`)
 out()
-out('§4 TESTS — one-year outcome g1 = ln(cap Y+1 ÷ cap Y), U(Y) = the 200 largest US companies')
+out('§4 TESTS — one-year outcome g1 = ln(cap Y+1 ÷ cap Y), U(Y) = the 100 largest US companies (addendum 2)')
 for (const k of RULES) {
   const r = T1[k]
   out(`  H_${k}: mean IC ${f3(r.meanIC)} over ${r.counted} counted years, sign-flip p ${r.p?.toFixed(4) ?? '—'}, Holm ${r.holm?.toFixed(4) ?? '—'} → ${r.confirmed ? 'CONFIRMED' : 'NOT CONFIRMED'}`)
   out(`        yearly IC: ${r.yearly.map((x) => `${x.y} ${f3(x.ic)}${x.counts ? '' : '*'} (n ${x.n})`).join(', ')}`)
   out(`        top fifth − bottom fifth median g1: ${r.yearly.map((x) => `${x.y} ${pct(x.spread)}`).join(', ')}`)
 }
-out('  * = fewer than 100 companies with both values; not counted')
+out(`  * = fewer than ${MIN_N} companies with both values; not counted`)
 out('  left out (stopped trading within the year): ' + T1.S.yearly.map((x) => `${x.y}: ${x.gone.length ? x.gone.join(', ') : 'none'}`).join(' | '))
 out()
 
@@ -94,7 +94,7 @@ out()
 
 function baseRates(ctx) {
   const o = {}
-  const dests = ['1–10', '11–20', '21–50', '51–100', '101–200', 'below 200', 'no longer trading']
+  const dests = ['1–10', '11–20', '21–50', '51–100', 'below 100', 'no longer trading']
   for (const h of [1, 3, 5, 10]) {
     const tr = transitions(Object.fromEntries(POINTS.filter((y) => y <= 2025).map((y) => [y, ctx.ranks[y]])), ctx.dead, h)
     o[h] = Object.fromEntries(BUCKETS.map(([a, b]) => `${a}–${b}`).map((from) => {
@@ -138,7 +138,7 @@ for (const n of [10, 20]) {
       seen.add(c.key)
       const back = (k) => {
         const yy = (y === 2026 ? 2025 : y) - k
-        return R.ranks[yy]?.get(c.key) ?? (c.cap?.[yy] ? `>${R.ranks[yy]?.size ?? '?'} or not US` : 'not listed/no data')
+        return R.ranks[yy]?.get(c.key) ?? (c.cap?.[yy] ? 'not a US company then' : 'not listed / no value')
       }
       out(`  top ${n} from ${y === 2026 ? '2026-10' : y}: ${c.name ?? c.key} (rank ${R.ranks[y].get(c.key)}) — 1y before ${back(1)}, 3y ${back(3)}, 5y ${back(5)}`)
     }
@@ -146,10 +146,10 @@ for (const n of [10, 20]) {
 }
 out()
 
-out('§5 multi-baggers within 5 years (cap Y+5 ÷ cap Y), from the top 200 at Y')
+out('§5 multi-baggers within 5 years (cap Y+5 ÷ cap Y), from the top 100 at Y')
 const climbers = []
 for (let y = 2015; y <= 2020; y += 1) {
-  const U = R.top(y, 200)
+  const U = R.top(y, 100)
   const x3 = U.filter((c) => c.cap?.[y + 5] / c.cap[y] >= 3)
   const x5 = x3.filter((c) => c.cap[y + 5] / c.cap[y] >= 5)
   for (const c of x3) climbers.push({ c, y })
@@ -171,7 +171,7 @@ for (const k of RULES) {
   const tri = []
   const rest = []
   for (let y = 2015; y <= 2020; y += 1) {
-    const U = R.top(y, 200)
+    const U = R.top(y, 100)
     const vals = U.map((c) => rules(c.cap, R.funds(c), y, c.sector)?.[k])
     const ok = U.map((c, i) => [c, vals[i]]).filter(([, v]) => v != null && Number.isFinite(v))
     const p = percentiles(ok.map(([, v]) => v))

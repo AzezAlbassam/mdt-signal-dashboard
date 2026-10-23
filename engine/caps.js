@@ -66,15 +66,17 @@ export function rankByCap(rows) {
   return out
 }
 
-export const BUCKETS = [[1, 10], [11, 20], [21, 50], [51, 100], [101, 200]]
+// addendum 2: the top 100 (was 200)
+export const BUCKETS = [[1, 10], [11, 20], [21, 50], [51, 100]]
+export const BELOW = 'below 100'
 export const bucketOf = (rank) => {
   if (!rank) return null
   const i = BUCKETS.findIndex(([a, b]) => rank >= a && rank <= b)
-  return i < 0 ? 'below 200' : `${BUCKETS[i][0]}–${BUCKETS[i][1]}`
+  return i < 0 ? BELOW : `${BUCKETS[i][0]}–${BUCKETS[i][1]}`
 }
 
 /**
- * §5 transition shares from rank buckets at Y to Y+h. ranksByYear: { year → Map(key → rank) };
+ * §5 transition shares from rank buckets at Y to Y+h (addendum 2: top-100 buckets). ranksByYear: { year → Map(key → rank) };
  * dead: Map(key → last year with a December value). Pooled over every start year with Y+h present.
  */
 export function transitions(ranksByYear, dead, h) {
@@ -85,9 +87,9 @@ export function transitions(ranksByYear, dead, h) {
     if (!to) continue
     for (const [key, r] of ranksByYear[y]) {
       const from = bucketOf(r)
-      if (from === 'below 200') continue
+      if (from === BELOW) continue
       const r2 = to.get(key)
-      const dest = r2 ? bucketOf(r2) : dead.has(key) && dead.get(key) < y + h ? 'no longer trading' : 'below 200'
+      const dest = r2 ? bucketOf(r2) : dead.has(key) && dead.get(key) < y + h ? 'no longer trading' : BELOW
       out[from] ??= {}
       out[from][dest] = (out[from][dest] ?? 0) + 1
     }

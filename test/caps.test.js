@@ -39,11 +39,11 @@ test('ranks largest first; buckets', () => {
   assert.deepEqual([...r], [['b', 1], ['a', 2]])
   assert.equal(bucketOf(10), '1–10')
   assert.equal(bucketOf(11), '11–20')
-  assert.equal(bucketOf(201), 'below 200')
+  assert.equal(bucketOf(101), 'below 100')
 })
 
-test('transitions count dead companies as no longer trading, others as below 200', () => {
+test('transitions count dead companies as no longer trading, others as below 100', () => {
   const ranks = { 2015: new Map([['a', 1], ['b', 2], ['c', 15]]), 2016: new Map([['c', 3]]) }
   const out = transitions(ranks, new Map([['a', 2015]]), 1)
-  assert.deepEqual(out, { '1–10': { 'no longer trading': 1, 'below 200': 1 }, '11–20': { '1–10': 1 } })
+  assert.deepEqual(out, { '1–10': { 'no longer trading': 1, 'below 100': 1 }, '11–20': { '1–10': 1 } })
 })
