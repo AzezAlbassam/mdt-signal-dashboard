@@ -152,6 +152,12 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   V0 ± σ_eq, H6 F1 (0DTE-contract-weighted) beats V0; OGL check. scripts/study15-forward.js freezes a session.
 - [x] Study 15: pine/open-flow-vwap.pine (Equal/Volume/0DTE-flow line, ±1σ/±2σ, OGL from OPRA 0DTE on the last session).
   NOT compiled on TradingView yet — the user runs it.
+- [x] Study 15 independent verification (3 agents): clean-room recompute identical; independent hand-reading of the image
+  agrees with the line within 0.01 and edges within ~0.03; skeptic: measurement sound, but a STANDARD VWAP + its own σ
+  bands anchored 09:35 (opening-auction minutes left out; 09:30 bar 68.5M = 9.8x normal) matches the line (0.05) AND all
+  four edges (k +2.01/+0.99/−1.01/−2.03) — post-hoc, reproduced as P3 in reports/study15.txt; equal weights match the
+  line only. Addendum 2 adds H7 (A07, 09:35) / H8 for the next chart. Pine default now Volume + 5-minute delay.
+  Bubble description fix (POST-HOC, description only): the line was read as 7810 bubbles from x 317 (now 891).
 - [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
   20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 

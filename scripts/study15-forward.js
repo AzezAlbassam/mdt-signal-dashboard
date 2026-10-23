@@ -1,4 +1,4 @@
-// Study 15 addendum 1 §4: freeze OGL and the line candidates for one session, before any vendor
+// Study 15 addendum 1 §4 and addendum 2 §3: freeze OGL and the line candidates for one session, before any vendor
 // chart of it is looked at.
 //
 //   node scripts/study15-forward.js 2026-10-23     → forward-log/study15-2026-10-23.json
@@ -45,6 +45,9 @@ const lines = {
   V1: sessionVwap(spot),
   F1: sessionVwap(spot, { weight: (b) => flow.get(b.t) ?? 0 }),
   F2: sessionVwap(spot, { weight: (b) => prem.get(b.t) ?? 0 }),
+  // addendum 2: the same as V1 with the first minutes left out (null before the anchor)
+  A03: [null, null, null, ...sessionVwap(spot.slice(3))],
+  A07: [null, null, null, null, null, ...sessionVwap(spot.slice(5))],
 }
 const every3 = []
 for (let i = 2; i < spot.length; i += 3) {
@@ -54,11 +57,11 @@ for (let i = 2; i < spot.length; i += 3) {
 }
 
 const out = {
-  study: 'PROTOCOL-study15-addendum-1.md §4', session: DAY, frozen_utc: new Date().toISOString(),
+  study: 'PROTOCOL-study15-addendum-1.md §4, addendum-2.md §3', session: DAY, frozen_utc: new Date().toISOString(),
   strikes: [want[0], want.at(-1)], contracts_used: used.length, missing,
   ogl_note: 'E = $ per 1% move; + yellow (calls), − purple (puts); top 7 by |E|',
   ogl_levels: levels,
-  lines_note: 'per 3-minute bar from 09:30 (bar start ET): [line, sigma] after its last minute; V0 equal, V1 SPX volume, F1 0DTE contracts, F2 0DTE premium',
+  lines_note: 'per 3-minute bar from 09:30 (bar start ET): [line, sigma] after its last minute; V0 equal, V1 SPX volume, F1 0DTE contracts, F2 0DTE premium, A03/A07 V1 anchored 09:33/09:35',
   lines: every3,
 }
 fs.mkdirSync('forward-log', { recursive: true })

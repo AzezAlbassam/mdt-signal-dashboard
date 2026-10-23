@@ -102,6 +102,24 @@ const P2 = {}
 for (const [name, ser] of Object.entries(P2series)) P2[name] = compare('line', (c) => ser[spx.findLastIndex((b) => b.t < sessionT(DAY, c.bar_start_et) + 60 * M)].vwap)
 P2[`equal-weight hlc3, ${M}-minute bars`] = compare('line', (c) => twap3[(sessionT(DAY, c.bar_start_et) - spx[0].t) / (60 * M)].vwap)
 
+// P3 — found by the independent skeptic review (a 31-anchor search), reproduced here: the same
+// standard VWAP (hlc3, SP:SPX volume) and its own volume-weighted sigma bands, anchored later than
+// 09:30. Why it matters: the 09:30 bar carries the constituents' opening-auction volume.
+const anchorScan = []
+for (let a = 0; a <= 30; a += 1) {
+  const sub = spx.slice(a)
+  const ser = sessionVwap(sub)
+  const at = (hm) => ser[sub.findLastIndex((b) => b.t < sessionT(DAY, hm) + 60 * M)]
+  const row = { anchor: etHM(sub[0].t), line: compare('line', (c) => at(c.bar_start_et).vwap) }
+  for (const [e, k] of Object.entries(EDGES)) {
+    let num = 0, den = 0
+    for (const c of candles.filter((c) => c[e] != null)) { const x = at(c.bar_start_et); num += (c[e] - x.vwap) * x.sd; den += x.sd * x.sd }
+    row[e] = { ...compare(e, (c) => { const x = at(c.bar_start_et); return x.vwap + k * x.sd }), kFit: num / den }
+  }
+  anchorScan.push(row)
+}
+const vol930 = spx[0].v, medVol = [...spx.slice(1, 30).map((b) => b.v)].sort((x, y) => x - y)[14]
+
 // ---- descriptive: bubble rows and trades ----
 const barAt = (hm) => resampled[(sessionT(DAY, hm) - spx[0].t) / (60 * M)]
 const strikes = meas.bubble_rows.map((r) => r.strike)
@@ -159,6 +177,11 @@ L.push('='.repeat(86))
 L.push(`H1 the line is a standard session VWAP ............ ${h1Confirmed ? 'CONFIRMED' : 'NOT CONFIRMED'}  (V1 median |d| ${H1.V1.median.toFixed(2)}; equal-weight control ${H1.V0.median.toFixed(2)} = ${H1.V0.label})`)
 L.push(`H2 the zone is VWAP ± 1σ / ± 2σ ................... ${h2Confirmed ? 'CONFIRMED' : 'NOT CONFIRMED'}  (on ${vStar}; ${Object.entries(H2).map(([e, r]) => `${e} ${r.label}`).join(', ')})`)
 L.push('H3 the gamma bubbles of 10-12 ...................... NOT TESTABLE (0DTE contracts no longer served)')
+{
+  const a35 = anchorScan.find((r) => r.anchor === '09:35')
+  L.push(`POST-HOC (P3, independent review): standard VWAP + its σ bands anchored 09:35 instead of 09:30 — line ${a35.line.median.toFixed(2)} ${a35.line.label},`)
+  L.push(`  edges ${['E1', 'E2', 'E3', 'E4'].filter((e) => a35[e].label === 'MATCH').length}/4 MATCH, k ${['E1', 'E2', 'E3', 'E4'].map((e) => a35[e].kFit.toFixed(2)).join(' ')}. Found by searching anchors on this chart; tested next chart (addendum 2).`)
+}
 L.push('')
 L.push('§1 MEASUREMENT')
 L.push(`  price axis: ${meas.axis.labels.length} labels, ${meas.axis.px_per_point.toFixed(2)} px/point, worst residual ${Math.max(...meas.axis.residual_px.map(Math.abs)).toFixed(2)} px;`)
@@ -202,6 +225,17 @@ for (const [e, r] of Object.entries(P1)) {
 L.push('  P2: near variants of V0 for the line')
 for (const [name, r] of Object.entries(P2)) L.push(`  ${f2(r.median)}  ${f2(r.p90)}  ${f2(r.max)}  ${f2(r.meanSigned)}  ${String(r.n).padStart(3)}   ${r.label.padEnd(9)}  ${name}`)
 L.push('')
+L.push(`  P3: standard VWAP (hlc3, SP:SPX volume) and its own ±1σ/±2σ, anchored later — from the independent skeptic review`)
+L.push(`      (09:30 bar volume ${(vol930 / 1e6).toFixed(1)}M = ${(vol930 / medVol).toFixed(1)}× the 09:31-09:59 median; it holds the opening-auction prints)`)
+L.push('  anchor  line med/p90   E1 +2σ       E2 +1σ       E3 −1σ       E4 −2σ      edges MATCH   best-fit k (E1..E4)')
+for (const r of anchorScan.filter((r, i) => i <= 10 || i % 5 === 0)) {
+  const ed = ['E1', 'E2', 'E3', 'E4'].map((e) => `${r[e].median.toFixed(2)}/${r[e].p90.toFixed(2)}`.padEnd(11))
+  L.push(`  ${r.anchor}   ${r.line.median.toFixed(2)}/${r.line.p90.toFixed(2)} ${r.line.label === 'MATCH' ? 'M' : r.line.label === 'CLOSE' ? 'c' : '-'}  ${ed.join('  ')}  ${['E1', 'E2', 'E3', 'E4'].filter((e) => r[e].label === 'MATCH').length}/4          ${['E1', 'E2', 'E3', 'E4'].map((e) => r[e].kFit.toFixed(2)).join(' ')}`)
+}
+L.push('  (M = MATCH, c = CLOSE.) Chosen by searching anchors on this one chart: a hypothesis for the next chart, not a result.')
+L.push('  Note: V3 is not a real SPY-volume test — the AMEX:SPY 1-minute volume served here totals 2.5M shares for the')
+L.push('  session (a partial, non-consolidated feed; consolidated is ~50-80M).')
+L.push('')
 L.push('§3 H3 — gamma bubbles of 10-12: NOT TESTABLE (0DTE contracts no longer served). Described only:')
 for (const r of meas.bubble_rows) {
   L.push(`  ${r.strike} ${r.colour.padEnd(6)} row centre ${r.price_center.toFixed(2)}; height px first ${r.height_first_px}, at the screenshot ${r.height_at_end_px}, max ${r.height_max_px} (x ${r.x_of_max}, ~${meas.candles.reduce((a, c) => (Math.abs(c.cx - r.x_of_max) < Math.abs(a.cx - r.x_of_max) ? c : a)).bar_start_et})`)
@@ -227,5 +261,5 @@ for (const [name, g] of Object.entries(flowGap)) L.push(`  ${name.padEnd(17)} ${
 L.push('  Same-day option volume is spread over the session far more evenly than share volume, so a price')
 L.push('  weighted by options flow would sit near the equal-weight line. One day; a hypothesis, not a finding.')
 fs.writeFileSync('reports/study15.txt', L.join('\n') + '\n')
-fs.writeFileSync('reports/study15.json', JSON.stringify({ H1, h1Confirmed, vStar, H2, h2Confirmed, posthoc: { P1, P2, flowProfile, flowGap }, trades, ogl: { day: OGL_DAY, strikes: ogl.strikes, snaps: oglSnaps } }, null, 1))
+fs.writeFileSync('reports/study15.json', JSON.stringify({ H1, h1Confirmed, vStar, H2, h2Confirmed, posthoc: { P1, P2, anchorScan, flowProfile, flowGap }, trades, ogl: { day: OGL_DAY, strikes: ogl.strikes, snaps: oglSnaps } }, null, 1))
 console.log(L.join('\n'))

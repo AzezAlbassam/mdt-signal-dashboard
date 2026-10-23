@@ -318,7 +318,8 @@ for strike in range(7790, 7830, 5):
     hs = []
     for x in range(0, X_END + 12):
         col = bub[band, x]
-        if col.sum() >= 3 and (x not in line_y or abs(line_y[x] - yc) > 22):
+        # POST-HOC (description only): 30 px, not 22 — the line ~24 px off a row was read as 3 px bubbles
+        if col.sum() >= 3 and (x not in line_y or abs(line_y[x] - yc) > 30):
             ys = np.where(col)[0]
             hs.append((x, int(ys.max() - ys.min() + 1), float(ys.mean() + band.start), bool(purple[band, x].sum() > col.sum() / 2)))
     if len(hs) < 20: continue

@@ -3,6 +3,8 @@ Study 15 — "Flow VWAP x Gamma" (@t38p_flow), 2026-10-12 chart. PROTOCOL-study1
 H1 the line is a standard session VWAP ............ NOT CONFIRMED  (V1 median |d| 1.10; equal-weight control 0.21 = MATCH)
 H2 the zone is VWAP ± 1σ / ± 2σ ................... NOT CONFIRMED  (on V4; E1 NO MATCH, E2 NO MATCH, E3 CLOSE, E4 CLOSE)
 H3 the gamma bubbles of 10-12 ...................... NOT TESTABLE (0DTE contracts no longer served)
+POST-HOC (P3, independent review): standard VWAP + its σ bands anchored 09:35 instead of 09:30 — line 0.05 MATCH,
+  edges 4/4 MATCH, k 2.01 0.99 -1.01 -2.03. Found by searching anchors on this chart; tested next chart (addendum 2).
 
 §1 MEASUREMENT
   price axis: 15 labels, 47.47 px/point, worst residual 0.91 px;
@@ -121,10 +123,32 @@ POST-HOC — chosen after seeing H1/H2 (not tests; this chart cannot confirm wha
      0.21     0.32     0.66     0.06   53   MATCH      equal-weight ohlc4, 1-minute
      0.32     0.42     0.47     0.21   53   CLOSE      equal-weight hlc3, 3-minute bars
 
+  P3: standard VWAP (hlc3, SP:SPX volume) and its own ±1σ/±2σ, anchored later — from the independent skeptic review
+      (09:30 bar volume 68.5M = 9.8× the 09:31-09:59 median; it holds the opening-auction prints)
+  anchor  line med/p90   E1 +2σ       E2 +1σ       E3 −1σ       E4 −2σ      edges MATCH   best-fit k (E1..E4)
+  09:30   1.10/1.56 -  1.43/1.91    1.23/1.68    0.56/1.02    0.27/0.71    0/4          1.70 0.74 -1.14 -2.08
+  09:31   0.36/0.65 c  0.42/0.57    0.40/0.63    0.25/0.39    0.22/0.38    2/4          1.92 0.91 -1.06 -2.06
+  09:32   0.26/0.53 c  0.25/0.44    0.28/0.50    0.20/0.30    0.19/0.31    3/4          1.94 0.93 -1.05 -2.05
+  09:33   0.17/0.42 M  0.14/0.38    0.18/0.41    0.16/0.23    0.16/0.25    4/4          1.96 0.95 -1.04 -2.04
+  09:34   0.08/0.29 M  0.08/0.23    0.07/0.29    0.10/0.20    0.15/0.21    4/4          1.99 0.98 -1.02 -2.04
+  09:35   0.05/0.18 M  0.14/0.22    0.11/0.22    0.04/0.15    0.11/0.19    4/4          2.01 0.99 -1.01 -2.03
+  09:36   0.15/0.18 M  0.34/0.44    0.19/0.31    0.04/0.12    0.14/0.22    3/4          2.06 1.03 -1.00 -2.03
+  09:37   0.28/0.32 c  0.59/0.80    0.38/0.56    0.07/0.14    0.20/0.29    2/4          2.13 1.08 -0.99 -2.04
+  09:38   0.40/0.48 c  0.86/1.23    0.62/0.83    0.08/0.15    0.29/0.40    1/4          2.21 1.14 -0.99 -2.06
+  09:39   0.54/0.65 c  1.14/1.64    0.86/1.09    0.09/0.15    0.38/0.53    1/4          2.29 1.20 -0.99 -2.09
+  09:40   0.69/0.85 c  1.41/2.10    1.25/1.43    0.09/0.17    0.47/0.71    1/4          2.39 1.27 -0.99 -2.12
+  09:45   1.25/1.69 -  2.31/3.94    2.43/2.84    0.14/0.31    0.69/1.25    1/4          2.77 1.55 -0.96 -2.20
+  09:50   1.67/2.51 -  2.88/5.56    3.31/4.02    0.23/0.40    0.76/1.66    1/4          3.10 1.81 -0.93 -2.26
+  09:55   1.94/3.02 -  3.03/6.21    3.62/4.61    0.37/0.62    0.64/1.65    0/4          3.19 1.90 -0.88 -2.22
+  10:00   2.33/3.92 -  3.39/8.12    4.45/5.95    0.47/0.66    0.59/2.01    0/4          3.50 2.17 -0.83 -2.24
+  (M = MATCH, c = CLOSE.) Chosen by searching anchors on this one chart: a hypothesis for the next chart, not a result.
+  Note: V3 is not a real SPY-volume test — the AMEX:SPY 1-minute volume served here totals 2.5M shares for the
+  session (a partial, non-consolidated feed; consolidated is ~50-80M).
+
 §3 H3 — gamma bubbles of 10-12: NOT TESTABLE (0DTE contracts no longer served). Described only:
   7800 purple row centre 7800.01; height px first 11, at the screenshot 19, max 27 (x 552, ~11:21)
   7805 yellow row centre 7805.01; height px first 3, at the screenshot 45, max 45 (x 1719, ~14:03)
-  7810 yellow row centre 7810.01; height px first 3, at the screenshot 45, max 45 (x 1286, ~13:03)
+  7810 yellow row centre 7810.01; height px first 8, at the screenshot 45, max 45 (x 1286, ~13:03)
   7815 yellow row centre 7815.00; height px first 23, at the screenshot 22, max 28 (x 1159, ~12:45)
   7820 yellow row centre 7820.00; height px first 15, at the screenshot 27, max 45 (x 919, ~12:12)
 
