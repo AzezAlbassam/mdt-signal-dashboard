@@ -2,7 +2,7 @@
  "TWX": {
   "name": "Time Warner Inc.",
   "tvSymbol": null,
-  "lastYear": 2016,
+  "lastYear": 2017,
   "us": false,
   "yearEnds": {
    "2015": {
@@ -22,9 +22,45 @@
     "priceSource": "not found (only dividend-adjusted 94.19 from Macrotrends; not used)",
     "sharesSource": "not found (FY2016 10-K cover count not returned by search)",
     "checkSource": "Close $96.53 on 12/30/2016, unadjusted. Two sites agree: averageannualreturn.com TWX 2016 (https://www.averageannualreturn.com/twx/2016.html) and valuesider.com's Q4-2016 quarter-end price (https://valuesider.com/ticker/TWX/history/david-abrams-abrams-capital-management). Shares are approximate, about 778.4M, worked out from Malay Mail's Oct 21, 2016 report: a close of $82.99 with a market cap of $64.6B (https://www.malaymail.com/amp/news/money/2016/10/21/time-warner-reported-in-talks-to-merge-with-att/1232577). 96.53 x 778.4M = about $75.1B."
+   },
+   "2017": {
+    "cap": 71330000000,
+    "close": 91.47,
+    "shares": 779850000,
+    "how": "research, checked",
+    "priceSource": "averageannualreturn.com TWX 2017 page (end price/share $91.47, 12/29/2017); corroborated by Investing.com scoreboard mirrors",
+    "sharesSource": "Time Warner FY2017 10-K cover / DEI data (SEC EDGAR accession 0001193125-18-053619, Financial_Report.xlsx), approx 779.85M; balance sheet Dec-31-2017 approx 780M",
+    "checkSource": "stock-analysis-on.net TWX valuation (779,851,623 shares) + 1stock1 TWX yearly returns (2017 close 91.47) (https://www.1stock1.com/1stock1_376.htm, https://www.stock-analysis-on.net/NYSE/Company/Time-Warner-Inc/Valuation/Ratios)"
    }
   },
-  "note": "No raw (unadjusted) Dec closes were found within budget. Macrotrends (https://download.macrotrends.net/stocks/delisted/TWX/Time%20Warner%20Inc./price-book) only shows dividend-adjusted prices (61.80 at end-2015, 94.19 at end-2016, 90.69 at end-2017), which are not on a raw basis, so they are not used. stock-analysis-on.net lists 66.66, 97.06 and 94.37, but those are probably prices at the report filing date, not Dec closes, so they are not used either. Share counts on the 10-K covers for Feb 2016, 2017 and 2018 were not returned. The only count found is 795M shares outstanding at 2015-12-31 (balance sheet, net of treasury). TradingView symbol not checked (likely NYSE:TWX, delisted). marketcaphistory.com/twx showed up in results with no numbers and could be a source for a direct cap."
+  "note": "No raw (unadjusted) Dec closes were found within budget. Macrotrends (https://download.macrotrends.net/stocks/delisted/TWX/Time%20Warner%20Inc./price-book) only shows dividend-adjusted prices (61.80 at end-2015, 94.19 at end-2016, 90.69 at end-2017), which are not on a raw basis, so they are not used. stock-analysis-on.net lists 66.66, 97.06 and 94.37, but those are probably prices at the report filing date, not Dec closes, so they are not used either. Share counts on the 10-K covers for Feb 2016, 2017 and 2018 were not returned. The only count found is 795M shares outstanding at 2015-12-31 (balance sheet, net of treasury). TradingView symbol not checked (likely NYSE:TWX, delisted). marketcaphistory.com/twx showed up in results with no numbers and could be a source for a direct cap. | Close of $91.47 on 2017-12-29 (last trading day of 2017) comes from averageannualreturn.com (start $96.76 on 2017-01-03), and Investing.com scoreboard mirrors show the same price. The FY2017 10-K cover gives about 779.85M shares as of 2018-02-14. The search summary read this from the filing's Financial_Report.xlsx, so it is precise only to roughly ±10k shares. The 10-K balance-sheet table gives about 780M outstanding at Dec-31-2017, which yields $71.35B. No quoted year-end market cap found."
+ },
+ "RAI": {
+  "name": "Reynolds American Inc.",
+  "tvSymbol": null,
+  "lastYear": 2016,
+  "us": false,
+  "yearEnds": {
+   "2015": {
+    "cap": 65870000000.00001,
+    "close": 46.15,
+    "shares": 1427341341,
+    "how": "research, checked",
+    "priceSource": "1stock1.com (1stock1_348) RAI table, 2016 beginning price = 2015-12-31 close; post-split actual",
+    "sharesSource": "Reynolds American FY2015 10-K cover page (SEC EDGAR, accession 0001564590-16-012630)",
+    "checkSource": "Digrin RAI price/dividend history (https://www.digrin.com/stocks/detail/RAI/price); Reuters via StreetInsider (https://www.streetinsider.com/Reuters/Reynolds+American+rejects+BATs+%2447+billion+takeover+offer%3A+source/12244668.html)"
+   },
+   "2016": {
+    "cap": 79910000000,
+    "close": 56.04,
+    "shares": 1425934305,
+    "how": "research, checked",
+    "priceSource": "1stock1.com (1stock1_348) RAI table, 2016 ending price; actual close 2016-12-30",
+    "sharesSource": "Reynolds American FY2016 10-K cover page (SEC EDGAR, accession 0001564590-17-001245)",
+    "checkSource": "Digrin RAI monthly price (Dec 2016 real price 56.04) (https://www.digrin.com/stocks/detail/RAI/price) x shares implied by Reuters Nov 2016 ($76B mcap at $53.05 close = ~1.4326B shares) (https://www.streetinsider.com/Reuters/Reynolds+American+rejects+BATs+%2447+billion+takeover+offer%3A+source/12244668.html)"
+   }
+  },
+  "note": "Share counts come from the 10-K covers, one class of common stock, on a post-split basis after the Aug 2015 2-for-1 split. No raw Dec closes were found. Macrotrends only shows split- and dividend-adjusted closes (43.90 for 2015, 55.15 for 2016), which are not used. Nearby raw closes quoted in the 10-Ks: $46.89 on 2016-01-25 and $58.88 on 2017-01-23. Neither is a year-end close, so neither is used. To finish this row, multiply the raw Dec 31 2015 and Dec 30 2016 closes by the share counts here. TradingView symbol not checked (likely NYSE:RAI, delisted). | Closes come from the 1stock1 RAI yearly table: 2016 began at 46.15 and ended at 56.04. The table shows 2015's ending price as 92.30, which is 2 x 46.15; it is footnoted as split-adjusted and is on the old basis from before the August 2015 2-for-1 split. The actual post-split close on 2015-12-31 was 46.15, the 2016 opening value. Both share counts come from the 10-K covers and are post-split. The Q1-2016 10-Q cover gives 1,427,341,241 shares as of 2016-04-04, 100 shares different from the FY2015 10-K figure, which does not matter. No quoted year-end market cap found."
  },
  "ESRX": {
   "name": "Express Scripts Holding Co.",
@@ -68,6 +104,33 @@
   "lastYear": 2018,
   "us": false,
   "yearEnds": {
+   "2015": {
+    "cap": 93610000000,
+    "close": 119.76,
+    "shares": 781664535,
+    "how": "research, checked",
+    "priceSource": "Provided by orchestrator (1stock1; HSBC filing confirms); actual close 2015-12-31",
+    "sharesSource": "Celgene FY2015 10-K cover page (SEC EDGAR, accession 0001628280-16-011012)",
+    "checkSource": "1stock1.com CELG yearly returns (https://1stock1.com/1stock1_158.htm)"
+   },
+   "2016": {
+    "cap": 90050000000,
+    "close": 115.75,
+    "shares": 777966471,
+    "how": "research, checked",
+    "priceSource": "Provided by orchestrator (1stock1); actual close 2016-12-30",
+    "sharesSource": "Celgene FY2016 10-K cover page (SEC EDGAR, accession 0000816284-17-000003); balance-sheet Dec-31-2016 derived 778.6M is consistent",
+    "checkSource": "1stock1.com CELG yearly returns (https://1stock1.com/1stock1_158.htm)"
+   },
+   "2017": {
+    "cap": 78500000000,
+    "close": 104.36,
+    "shares": 752175608,
+    "how": "research, checked",
+    "priceSource": "Provided by orchestrator (1stock1); actual close 2017-12-29",
+    "sharesSource": "Celgene FY2017 10-K cover page (SEC EDGAR, accession 0000816284-18-000005). Alternative: Dec-31-2017 balance sheet 971.7M issued - 212.4M treasury = 759.3M, giving about $79.24B",
+    "checkSource": "Marketscreener CELGENE-8736 valuation table (https://www.marketscreener.com/quote/stock/CELGENE-8736/); close confirmed by 1stock1 and Investing Daily (https://investingdaily.com/44575/our-celgene-stock-prediction-in-2019-buy-or-sell-2)"
+   },
    "2018": {
     "cap": 45000000000,
     "close": 64.09,
@@ -78,7 +141,7 @@
     "checkSource": "Celgene FY2018 10-K cover (sec.gov/Archives/edgar/data/816284/000081628419000014/a2018123110-k.htm): 702,164,345 shares as of 2019-02-21; Wikipedia: market cap over $51.8B in Nov 2018 with shares above $74"
    }
   },
-  "note": "Dec closes for 2015-2018 come from the 1stock1 yearly table (1stock1.com/1stock1_158.htm). Investing Daily confirms the 2017 close of $104.36. All closes are on the same basis as the share counts: the last split was 2-for-1 in 2014. Only the FY2018 10-K cover count (702,164,345 as of 2019-02-21) was found. For 2015-2017 the searches returned only issued shares, which include treasury stock (about 940.1M at end-2015, 954.1M at end-2016 and 971.7M at end-2017). Issued shares are not shares outstanding, so they were not used and those caps are null. The FY2015/16/17 10-K cover pages on EDGAR (CIK 816284) would fill the gap. No direct year-end market cap was found for any year."
+  "note": "Dec closes for 2015-2018 come from the 1stock1 yearly table (1stock1.com/1stock1_158.htm). Investing Daily confirms the 2017 close of $104.36. All closes are on the same basis as the share counts: the last split was 2-for-1 in 2014. Only the FY2018 10-K cover count (702,164,345 as of 2019-02-21) was found. For 2015-2017 the searches returned only issued shares, which include treasury stock (about 940.1M at end-2015, 954.1M at end-2016 and 971.7M at end-2017). Issued shares are not shares outstanding, so they were not used and those caps are null. The FY2015/16/17 10-K cover pages on EDGAR (CIK 816284) would fill the gap. No direct year-end market cap was found for any year. | No quoted year-end market cap found. All three caps use the Dec closes you supplied multiplied by the share count on the 10-K cover nearest Dec-31 (CIK 816284). The covers are dated in early February, so for FY2017 the count already reflects the January 2018 buybacks. Check against the balance sheet (issued minus treasury): 2016: 954.1M - 175.5M = 778.6M, consistent with the cover's 777.97M. 2017: 971.7M - 212.4M = 759.3M (treasury count from the 2018 10-Qs). At 759.3M shares the Dec-31-2017 cap would be about $79.24B, versus $78.50B using the cover count."
  },
  "AGN": {
   "name": "Allergan plc (formerly Actavis)",
@@ -422,6 +485,24 @@
   },
   "note": "The share count is the issued-and-outstanding figure at 2015-12-31 from the FY2015 10-K balance sheet. Four searches did not surface the Dec-31-2015 close or a direct year-end market cap, so marketCapBn is null. Unverified recollection, not a source and not to be used without checking: the close was about $185.6, which would give a cap of about $52.6B. One price lookup (Yahoo, Nasdaq or Investing.com, TWC on 2015-12-31) would complete this row."
  },
+ "EMC": {
+  "name": "EMC Corporation",
+  "tvSymbol": "NYSE:EMC",
+  "lastYear": 2015,
+  "us": false,
+  "yearEnds": {
+   "2015": {
+    "cap": 50000000000,
+    "close": 25.68,
+    "shares": 1947047380,
+    "how": "research, checked",
+    "priceSource": "1stock1.com (1stock1_176) EMC table, 2015 ending price",
+    "sharesSource": "EMC FY2015 10-K cover / XBRL DEI R1.htm (SEC EDGAR, accession 0000790070-16-000229)",
+    "checkSource": "stock-analysis-on.net EMC valuation (price 25.93 x 1,947,047,380 shares = 50,487M) (https://www.stock-analysis-on.net/NYSE/Company/EMC-Corp/Valuation/Ratios); 10-K FY2015 Q4 range 23.71-28.77 (https://www.sec.gov/Archives/edgar/data/0000790070/000079007016000229/emc-2015123110xk.htm)"
+   }
+  },
+  "note": "The share count is the FY2015 10-K cover figure (1,947,047,380 at 2016-01-29). The 10-K's public float of $50.63B is measured at 2015-06-30 and was not used. Three searches did not surface the Dec-31-2015 close or a direct year-end cap, so marketCapBn is null. Unverified recollection, not a source and not to be used without checking: the close was about $25.68, which would give a cap of about $50.0B. One price lookup (EMC on 2015-12-31) would complete this row. | Close of $25.68 on 2015-12-31 comes from the 1stock1 EMC yearly table: 2015 ended at 25.68 and 2016 began at 25.68. The share count is from the FY2015 10-K XBRL cover (R1.htm DEI). No quoted year-end market cap found."
+ },
  "BRCM": {
   "name": "Broadcom Corporation (old; acquired by Avago 2016-02-01)",
   "tvSymbol": null,
@@ -647,6 +728,33 @@
   },
   "note": "The 2015 and 2016 closes are YHOO and come from averageannualreturn.com. The 2017 and 2018 closes are AABA and come from 1stock1 (1stock1.com/1stock1_217.htm). Motley Fool's +80.6% for 2017 agrees with 38.67 to 69.85. The 2015 and 2016 counts are Dec-31 balance-sheet counts from the Yahoo FY2016 10-K, given in thousands. The Feb-10-2017 cover count of 956,487,217 confirms the 2016 figure. The 2017 and 2018 counts are Dec-31 figures from Altaba's N-CSR filings and 8-K. The 2018 count checks: 824,921,315 less the 195,000,000-share tender less 62,457,045 repurchased = 567,464,270. Altaba was a closed-end fund from mid-2017; market cap here is price times shares, not NAV."
  },
+ "DD-old": {
+  "name": "E. I. du Pont de Nemours and Company (old DuPont, NYSE: DD)",
+  "tvSymbol": null,
+  "lastYear": 2016,
+  "us": false,
+  "yearEnds": {
+   "2015": {
+    "cap": 57500000000,
+    "close": null,
+    "shares": 871681000,
+    "how": "research, checked",
+    "priceSource": "not found (search did not return an unadjusted 2015-12-31 close)",
+    "sharesSource": "FY2015 10-K cover: 871,681,000 shares (excludes 87,041,000 treasury) - https://www.sec.gov/Archives/edgar/data/30554/000003055416000106/dd-12312015x10k.htm",
+    "checkSource": "DuPont FY2015 and FY2016 10-K, selected financial data, closing stock price 2015 = $66.60 (sec.gov/Archives/edgar/data/30554/000003055416000106/dd-12312015x10k.htm)"
+   },
+   "2016": {
+    "cap": 64160000000,
+    "close": null,
+    "shares": 864574000,
+    "how": "research, checked",
+    "priceSource": "not found (search did not return an unadjusted 2016-12-30 close)",
+    "sharesSource": "FY2016 10-K cover: 864,574,000 shares (excludes 87,041,000 treasury) - https://www.sec.gov/Archives/edgar/data/0000030554/000003055417000004/dd-12312016x10k.htm",
+    "checkSource": "DuPont FY2016 10-K, selected financial data, closing stock price 2016 = $73.40 (sec.gov/Archives/edgar/data/30554/000003055417000004/dd-12312016x10k.htm)"
+   }
+  },
+  "note": "Search budget ran out before I found a year-end close for 2015 or 2016, so both market caps are null. Only one share count was found: 864,574,000 outstanding as of 2017-01-31, from the FY2016 10-K XBRL cover page (sec.gov/Archives/edgar/data/30554/000003055417000004/R1.htm). The 2015 share count was never searched for. Don't take old-DD prices from the current NYSE:DD or digrin 'DD' series: they are back-adjusted for the 2019 1-for-3 reverse split and the Dow/Corteva spin-offs. A digrin DWDP dividend row shows a 2016-12-23 'DuPont-era' close of 83.13, which is on a different basis, so I did not use it. A stock3 page puts DuPont near $66.60 on 2015-12-09, an intraday price in merger-announcement week, not a year-end close. Next step: get the unadjusted closes for 2015-12-31 and 2016-12-30 (CRSP, Yahoo unadjusted, or WSJ) and the FY2015 10-K cover count as of about 2016-01-31. | Both years use a market cap quoted directly by companiesmarketcap (its continuous DD ticker history covers old DuPont before the 2017-08-31 merger). 2016: stockanalysis gives the same figure. 2015: stockanalysis gives $59.65B instead (https://stockanalysis.com/stocks/dd/market-cap/), so the 2015 value is uncertain by about 4%. Shares come from the 10-K cover pages and exclude 87,041,000 treasury shares. No search returned an actual unadjusted Dec close, so closePrice is null. The closes implied by quoted cap / cover shares are $65.97 (2015) and $74.21 (2016). Unverified recollection: closes were about $66.60 (2015) and $73.40 (2016), which would give about $58.05B and $63.46B. Confirm both closes before use. tvSymbol is null because NYSE:DD now belongs to the successor DuPont de Nemours Inc."
+ },
  "DWDP": {
   "name": "DowDuPont Inc. (NYSE: DWDP; renamed DuPont de Nemours 2019-06-03)",
   "tvSymbol": "NYSE:DD",
@@ -677,9 +785,27 @@
  "S": {
   "name": "Sprint Corporation",
   "tvSymbol": null,
-  "lastYear": 2017,
+  "lastYear": 2019,
   "us": false,
   "yearEnds": {
+   "2015": {
+    "cap": 14370000000,
+    "close": null,
+    "shares": null,
+    "how": "research, checked",
+    "priceSource": "n/a - used direct year-end market cap",
+    "sharesSource": "n/a - used direct year-end market cap",
+    "checkSource": "Close $3.62 from 1stock1.com yearly returns (1stock1_837.htm, opening price of the 2016 row). Shares 3,974,592,358 from Sprint 10-K cover (May 2016)"
+   },
+   "2016": {
+    "cap": 33520000000.000004,
+    "close": null,
+    "shares": null,
+    "how": "research, checked",
+    "priceSource": "n/a - used direct year-end market cap",
+    "sharesSource": "n/a - used direct year-end market cap",
+    "checkSource": "Close $8.42 from 1stock1.com yearly returns. Shares 3,974,592,358 (May 2016 10-K cover)"
+   },
    "2017": {
     "cap": 23580000000,
     "close": 5.89,
@@ -688,9 +814,27 @@
     "priceSource": "1stock1.com S yearly returns table, 2017 end price (via WebSearch summary)",
     "sharesSource": "not found within search budget; use the cover of 10-Q accession 0000101830-18-000013 (quarter ended Dec 2017)",
     "checkSource": "Shares: 4,003,046,276 Sprint common shares outstanding at Jan 31, 2018, from the cover of the 10-Q for the quarter ended Dec 31, 2017 (accession 0000101830-18-000013, sec.gov/Archives/edgar/data/101830/000010183018000013/sprintcorp12-31x1710q.htm). Price: their 5.89 close. 5.89 x 4.003046276B = 23.58B."
+   },
+   "2018": {
+    "cap": 23730000000,
+    "close": null,
+    "shares": null,
+    "how": "research, checked",
+    "priceSource": "n/a - used direct year-end market cap",
+    "sharesSource": "n/a - used direct year-end market cap",
+    "checkSource": "Close $5.82 from 1stock1.com yearly returns. Shares about 4.1B as of 2019-03-31 (Sprint FY2018 10-K)"
+   },
+   "2019": {
+    "cap": 21250000000,
+    "close": null,
+    "shares": null,
+    "how": "research, checked",
+    "priceSource": "n/a - used direct year-end market cap",
+    "sharesSource": "n/a - used direct year-end market cap",
+    "checkSource": "Close $5.21 from 1stock1.com yearly returns. Shares about 4.1B (2019-03-31, Sprint FY2018 10-K)"
    }
   },
-  "note": "I used all 4 searches. The Dec-31 closes came from one source, the 1stock1 yearly-returns table for S (https://www.1stock1.com/1stock1_837.htm), read through the search summary. They match the sequence 3.62 / 8.42 / 5.89 / 5.82 / 5.21. Sprint had no splits or dividends in 2015-2019, so these are unadjusted closes on the same share basis throughout. The 2015 close is the 2016 row's starting price; 1stock1 starts each year at the prior year's close. I found no share count or directly quoted year-end market cap. The companiesmarketcap Sprint pages (https://companiesmarketcap.com/sprint-corporation/marketcap/) showed up as links, but no figures came through. So shares and market cap are null for every year. To fill them, take the cover-page share count from Sprint's fiscal Q3 10-Q, the quarter ended Dec 31, filed around early February with a count as of late January. Accession numbers seen: 0000101830-18-000013 (Dec 2017 quarter) and 0000101830-19-000009 (Dec 2018 quarter). Find the Dec 2015, Dec 2016 and Dec 2019 quarter 10-Qs on EDGAR, CIK 101830. My unsourced memory puts the count at about 3.98-4.12B shares. That is a sanity range only, not data. tvSymbol is null because NYSE:S now belongs to SentinelOne, and I could not confirm TradingView's symbol for delisted Sprint."
+  "note": "I used all 4 searches. The Dec-31 closes came from one source, the 1stock1 yearly-returns table for S (https://www.1stock1.com/1stock1_837.htm), read through the search summary. They match the sequence 3.62 / 8.42 / 5.89 / 5.82 / 5.21. Sprint had no splits or dividends in 2015-2019, so these are unadjusted closes on the same share basis throughout. The 2015 close is the 2016 row's starting price; 1stock1 starts each year at the prior year's close. I found no share count or directly quoted year-end market cap. The companiesmarketcap Sprint pages (https://companiesmarketcap.com/sprint-corporation/marketcap/) showed up as links, but no figures came through. So shares and market cap are null for every year. To fill them, take the cover-page share count from Sprint's fiscal Q3 10-Q, the quarter ended Dec 31, filed around early February with a count as of late January. Accession numbers seen: 0000101830-18-000013 (Dec 2017 quarter) and 0000101830-19-000009 (Dec 2018 quarter). Find the Dec 2015, Dec 2016 and Dec 2019 quarter 10-Qs on EDGAR, CIK 101830. My unsourced memory puts the count at about 3.98-4.12B shares. That is a sanity range only, not data. tvSymbol is null because NYSE:S now belongs to SentinelOne, and I could not confirm TradingView's symbol for delisted Sprint. | All four years use the year-end market cap quoted directly in companiesmarketcap's table (https://companiesmarketcap.com/sprint-corporation/marketcap/). These are consistent with the already-found 2017 value ($23.6B). Close and share counts were not pulled because the direct quote is acceptable on its own. companiesmarketcap gives $35.16B at the last trade on 2020-03-31. tvSymbol is null because NYSE:S is now SentinelOne."
  },
  "FOXA-old": {
   "name": "Twenty-First Century Fox (FOXA Class A + FOX Class B)",

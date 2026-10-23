@@ -31,7 +31,21 @@ const addChecks = (id, cs) => {
 }
 const normId = (t) => t.replace(/^(NYSE|NASDAQ|AMEX):/, '')
 for (const r of results) {
-  if (Array.isArray(r.firms) && r.firms.some((f) => f.yearEnds)) for (const f of r.firms) research.set(normId(f.ticker), f)
+  // several batches may cover one company: merge their year-ends, a later number filling a gap
+  if (Array.isArray(r.firms) && r.firms.some((f) => f.yearEnds)) {
+    for (const f of r.firms) {
+      const id = normId(f.ticker)
+      const prev = research.get(id)
+      if (!prev) { research.set(id, { ...f, yearEnds: [...(f.yearEnds ?? [])] }); continue }
+      for (const y of f.yearEnds ?? []) {
+        const i = prev.yearEnds.findIndex((p) => p.date.slice(0, 4) === y.date.slice(0, 4))
+        const has = (x) => x && (x.marketCapBn > 0 || (x.closePrice > 0 && x.sharesOutstanding > 0))
+        if (i < 0) prev.yearEnds.push(y)
+        else if (!has(prev.yearEnds[i]) && has(y)) prev.yearEnds[i] = y
+      }
+      prev.note = [prev.note, f.note].filter(Boolean).join(' | ')
+    }
+  }
   if (Array.isArray(r.firms) && r.firms.some((f) => f.checks)) for (const f of r.firms) addChecks(normId(f.ticker), f.checks)
   if (r.ticker && r.checks) addChecks(normId(r.ticker), r.checks)
   if (Array.isArray(r.companies) && r.companies.some((c) => c.yearsAboveThresholdOutsideSP || c.years)) {

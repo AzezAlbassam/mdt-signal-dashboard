@@ -361,7 +361,7 @@
  ],
  "EMC": [
   {
-   "skip": "dead, peak ~$50B, not researched (below the threshold)"
+   "dead": "EMC"
   }
  ],
  "EMN": [
@@ -891,7 +891,7 @@
  ],
  "RAI": [
   {
-   "skip": "merged_into_listed, peak ~$80B, not researched (below the threshold)"
+   "dead": "RAI"
   }
  ],
  "RE": [

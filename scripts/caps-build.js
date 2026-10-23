@@ -29,6 +29,7 @@ const SP = Object.fromEntries(Object.entries(spDates).map(([y, d]) => [y, spAt(d
 const tickers = readJson('data/caps/tickers.json', {}) // S&P ticker → [{ from?, until?, symbol? | dead? }]
 const dead = readJson('data/caps/dead.json', {}) // id → { name, sector, lastYear, yearEnds: { Y: { close, shares, cap, src } } }
 const overrides = readJson('data/caps/overrides.json', {}) // symbol → { Y: { shares?, close?, src } }
+const basis = readJson('data/caps/basis.json', {}) // addendum 3: symbol → { Y: { s, src } }, TradingView close ÷ actual close
 const snap = readJson('data/caps/screener-2026-10-23.json').data.rows
 const quotes = { ...readJson('data/caps/quotes.json', {}) }
 for (const r of snap) quotes[r.symbol] = { ...(quotes[r.symbol] ?? {}), ...r }
@@ -111,7 +112,8 @@ for (const [, g] of groups) {
     const c = dec[y]
     const s = shareOf(k, funds, y)
     if (c > 0 && s) {
-      cap[y] = c * s.shares
+      const b = basis[k]?.[y]?.s
+      cap[y] = c * s.shares / (b > 0 && Math.abs(b - 1) > 0.02 ? b : 1) // addendum 3: undo spin-off scaling
       close[y] = c
       if (s.flagged || s.override) flags[y] = s.override ? `override: ${s.override}` : `shares from FY${s.year}`
     }
