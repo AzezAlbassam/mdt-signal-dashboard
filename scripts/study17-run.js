@@ -49,17 +49,18 @@ function ics(ctx, horizon) {
       const U = ctx.top(y, 100) // addendum 2: top 100
       const rows = []
       const gone = []
+      let deadNoValue = 0 // §1: dead companies have no revenue, so they are missing from G and V (counted)
       for (const c of U) {
         const later = c.cap?.[y + horizon]
         if (!(later > 0)) { gone.push(c.name ?? c.key); continue }
         const v = rules(c.cap, ctx.funds(c), y, c.sector)?.[k]
-        if (v == null || !Number.isFinite(v)) continue
+        if (v == null || !Number.isFinite(v)) { if (c.dead != null) deadNoValue += 1; continue }
         rows.push({ v, g: Math.log(later / c.cap[y]) })
       }
       const p = percentiles(rows.map((r) => r.v))
       const hi = rows.filter((_, i) => p[i] >= 0.8).map((r) => r.g)
       const lo = rows.filter((_, i) => p[i] <= 0.2).map((r) => r.g)
-      yearly.push({ y, n: rows.length, counts: rows.length >= MIN_N, ic: rows.length >= 2 ? spearman(rows.map((r) => r.v), rows.map((r) => r.g)) : null, spread: hi.length && lo.length ? median(hi) - median(lo) : null, gone })
+      yearly.push({ y, n: rows.length, counts: rows.length >= MIN_N, ic: rows.length >= 2 ? spearman(rows.map((r) => r.v), rows.map((r) => r.g)) : null, spread: hi.length && lo.length ? median(hi) - median(lo) : null, gone, deadNoValue })
     }
     const counted = yearly.filter((x) => x.counts)
     res[k] = { yearly, counted: counted.length, meanIC: counted.length ? mean(counted.map((x) => x.ic)) : null, p: counted.length >= 2 ? signFlipGreater(counted.map((x) => x.ic)) : null }
@@ -79,7 +80,7 @@ out('§4 TESTS — one-year outcome g1 = ln(cap Y+1 ÷ cap Y), U(Y) = the 100 la
 for (const k of RULES) {
   const r = T1[k]
   out(`  H_${k}: mean IC ${f3(r.meanIC)} over ${r.counted} counted years, sign-flip p ${r.p?.toFixed(4) ?? '—'}, Holm ${r.holm?.toFixed(4) ?? '—'} → ${r.confirmed ? 'CONFIRMED' : 'NOT CONFIRMED'}`)
-  out(`        yearly IC: ${r.yearly.map((x) => `${x.y} ${f3(x.ic)}${x.counts ? '' : '*'} (n ${x.n})`).join(', ')}`)
+  out(`        yearly IC: ${r.yearly.map((x) => `${x.y} ${f3(x.ic)}${x.counts ? '' : '*'} (n ${x.n}${x.deadNoValue ? `; ${x.deadNoValue} dead without revenue` : ''})`).join(', ')}`)
   out(`        top fifth − bottom fifth median g1: ${r.yearly.map((x) => `${x.y} ${pct(x.spread)}`).join(', ')}`)
 }
 out(`  * = fewer than ${MIN_N} companies with both values; not counted`)
@@ -195,6 +196,7 @@ const v1 = ALL.filter((c) => c.v1?.model > 0 && c.v1?.tv > 0).map((c) => ({ c, g
 out(`  V1: ${v1.length} trading companies; median |gap| ${pct(median(v1.map((x) => Math.abs(x.gap))))}; above 15%: ${v1.filter((x) => Math.abs(x.gap) > 0.15).map((x) => `${x.c.name ?? x.c.key} ${pct(x.gap, 0)}`).join(', ') || 'none'}`)
 if (D.v2) for (const l of D.v2) out(`  V2: ${l}`)
 if (D.v3) for (const l of D.v3) out(`  V3: ${l}`)
+if (D.v4) for (const l of D.v4) out(`  V4: ${l}`)
 
 fs.mkdirSync('reports', { recursive: true })
 fs.writeFileSync('reports/study17.txt', lines.join('\n') + '\n')

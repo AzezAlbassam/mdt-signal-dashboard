@@ -61,7 +61,7 @@ for (const [id, f] of research) {
     const base = y.marketCapBn ?? (y.closePrice > 0 && y.sharesOutstanding > 0 ? (y.closePrice * y.sharesOutstanding) / 1e9 : null)
     const c = checks.get(id)?.get(year)
     let capBn = base
-    let how = c ? 'research, checked' : 'research, no check returned'
+    let how = !c ? 'research, no check returned' : c.agreeWithin10pct === true ? 'research, confirmed by the check' : 'research, check found no independent number'
     if (c && c.agreeWithin10pct === false) {
       const fix = c.correctMcapBn ?? c.myMcapBn
       if (fix > 0) { capBn = fix; how = `checker's value (research had ${base?.toFixed(1) ?? 'none'})` }

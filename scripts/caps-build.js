@@ -171,9 +171,49 @@ for (const y of [...YEARS, 2026]) {
 const kept = screens.filter((s) => s.member || top250[s.year]?.has(s.key))
 const missingCountry = companies.filter((c) => !c.country && !c.dead && Object.keys(c.cap).some((y) => !member[c.key]?.[y]) && YEARS.some((y) => c.cap[y] >= 15e9)).map((c) => c.key)
 
+// addendum 4 rule 4: V4, independent year-end values for the top 100 of 2015 and 2021, after the basis
+const V4MAP = { BRK: 'NYSE:BRK.A', FB: 'NASDAQ:META', PCLN: 'NASDAQ:BKNG', 'PCLN/BKNG': 'NASDAQ:BKNG', ANTM: 'NYSE:ELV', UTX: 'NYSE:RTX', BK: 'NYSE:BNY' }
+const V4OLD = { DD: 'dead:DD-old', FOXA: 'dead:FOXA-old', DOW: 'dead:DOW-old' } // the 2015 holders of these tickers
+const v4 = []
+for (const [y, { rows, missing }] of Object.entries(readJson('data/caps/v4.json', {}))) {
+  const ranked = companies.filter((c) => c.us[y] && c.cap[y] > 0).sort((a, b) => b.cap[y] - a.cap[y])
+  const rank = new Map(ranked.map((c, i) => [c.key, i + 1]))
+  const find = (t) => {
+    const key = (y === '2015' && V4OLD[t]) || V4MAP[t]
+    return key ? companies.find((c) => c.key === key) : companies.find((c) => c.cap[y] > 0 && [c.key, ...c.aliases].some((k) => k.split(':').pop() === t.replace('-', '.')))
+  }
+  const all = [...rows, ...missing].filter((x) => x.yearEndMcapBn > 0).map((x) => ({ x, c: find(x.ticker) }))
+  const m = all.filter((a) => a.c?.cap[y] > 0).map((a) => ({ ...a, gap: a.c.cap[y] / 1e9 / a.x.yearEndMcapBn - 1, r: rank.get(a.c.key) }))
+  const gaps = m.map((a) => Math.abs(a.gap)).sort((a, b) => a - b)
+  const fmt = (a) => `${a.x.ticker} ${a.gap > 0 ? '+' : ''}${Math.round(a.gap * 100)}% (ours $${(a.c.cap[y] / 1e9).toFixed(1)}B, V4 $${a.x.yearEndMcapBn}B, rank ${a.r ?? '—'})`
+  v4.push(`${y}: ${m.length} of ${rows.length + missing.length} matched; median |gap| ${(gaps[Math.floor(gaps.length / 2)] * 100).toFixed(1)}%; above 15%: ${m.filter((a) => Math.abs(a.gap) > 0.15).map(fmt).join(', ') || 'none'}`)
+  const cut = ranked[99]?.cap[y] / 1e9
+  v4.push(`${y}: in V4's top 100 but below our 100th ($${cut?.toFixed(1)}B): ${m.filter((a) => !(a.r <= 100)).map(fmt).join(', ') || 'none'}; no value or no match: ${[...rows, ...missing].filter((x) => !m.some((a) => a.x === x)).map((x) => x.ticker).join(', ') || 'none'}`)
+}
+
+// V2 (§5): each year's top 10 against a published year-end top-10 list; differences listed for the report
+const v2 = []
+for (const [y, { top, source }] of Object.entries(readJson('data/caps/v2.json', {}))) {
+  const ours = companies.filter((c) => c.us[y] && c.cap[y] > 0).sort((a, b) => b.cap[y] - a.cap[y])
+  const find = (t) => (t ? companies.find((c) => c.key === V4MAP[t]) ?? companies.find((c) => [c.key, ...c.aliases].some((k) => k.split(':').pop() === t.replace('-', '.'))) : null)
+  const theirs = top.slice(0, 10).map((x) => ({ x, c: find(x.ticker) }))
+  const at = (c) => ours.findIndex((o) => o.key === c?.key) + 1
+  const out = theirs.filter((t) => !(at(t.c) >= 1 && at(t.c) <= 10)).map((t) => `${t.x.company} (theirs #${t.x.rank}, ours #${at(t.c) || '—'})`)
+  const extra = ours.slice(0, 10).filter((o) => !theirs.some((t) => t.c?.key === o.key)).map((o) => `${o.name} (ours #${at(o)}, $${(o.cap[y] / 1e9).toFixed(0)}B)`)
+  v2.push(`${y}: ${10 - extra.length} of 10 in both (${String(source).slice(0, 80)}); theirs only: ${out.join(', ') || 'none'}; ours only: ${extra.join(', ') || 'none'}`)
+}
+// V3 (§5): every dead company's values, how each was settled, and the disagreements
+const hows = Object.values(dead).flatMap((d) => Object.values(d.yearEnds ?? {}).map((v) => v.how?.replace(/ \(.*/, '') ?? '?'))
+const v3 = [`${Object.keys(dead).length} dead companies, ${hows.length} year-ends: ${Object.entries(hows.reduce((m, h) => ({ ...m, [h]: (m[h] ?? 0) + 1 }), {})).map(([h, n]) => `${h} ${n}`).join(', ')}`,
+  ...(readJson('data/caps/import-log.json', {}).v3 ?? []).map((l) => `disagreement: ${l}`),
+  ...Object.entries(dead).map(([id, d]) => `${id}: ${Object.entries(d.yearEnds).map(([y, v]) => `${y} $${(v.cap / 1e9).toFixed(1)}B (${v.how})`).join('; ')}`)]
+
 const asOf = new Date().toISOString().slice(0, 10)
-fs.writeFileSync('data/caps/companies.json', JSON.stringify({ asOf, companies }))
+fs.writeFileSync('data/caps/companies.json', JSON.stringify({ asOf, companies, v2, v3, v4 }))
 fs.writeFileSync('data/caps/screens.json', JSON.stringify({ asOf, screens: kept, unresolved, noData, missingCountry }, null, 1))
 console.log(`companies ${companies.length} (${Object.keys(dead).length} dead); share-class groups merged: ${[...groups.values()].filter((g) => g.length > 1).map((g) => g.join('+')).join(', ')}`)
 console.log(`unresolved S&P tickers per date: ${Object.entries(unresolved).map(([y, t]) => `${y}: ${t.length}`).join(', ') || 'none'}; mapped without data: ${Object.entries(noData).map(([y, t]) => `${y}: ${t.length}`).join(', ') || 'none'}`)
+for (const l of v4) console.log(`V4 ${l}`)
+for (const l of v2) console.log(`V2 ${l}`)
+console.log(`V3 ${v3[0]}`)
 console.log(`screens kept: ${kept.length} (${['S1', 'S2', 'S3', 'S4'].map((s) => `${s} ${kept.filter((x) => x.why.some((w) => w.startsWith(s))).length}`).join(', ')}); non-members ≥$15B with no country: ${missingCountry.length}`)
