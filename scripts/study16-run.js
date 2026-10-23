@@ -48,6 +48,7 @@ const spy = new Map(spyRaw.date.map((d, i) => [d.slice(0, 7), spyRaw.close[i]]))
 
 let balFiles = 0
 const cover = { equity: 0, cash: 0, oi: 0 }
+const coverYears = { equity: 0, cash: 0, oi: 0 }
 for (const s of stocks) {
   s.industry = sectorsOf[s.dir][s.sym]?.industry ?? null
   const f = path.join(s.dir, 'raw/bal', `${s.sym.replace(':', '_')}.json`)
@@ -56,7 +57,7 @@ for (const s of stocks) {
   s.equity = assetsByYear(s.funds, b?.total_equity_fy_h, b?.total_revenue_fy_h)
   s.cash = assetsByYear(s.funds, b?.cash_n_short_term_invest_fy_h, b?.total_revenue_fy_h, fin)
   s.oi = assetsByYear(s.funds, b?.oper_income_fy_h, b?.total_revenue_fy_h, fin)
-  for (const k of Object.keys(cover)) if (s[k].size) cover[k] += 1
+  for (const k of Object.keys(cover)) if (s[k].size) { cover[k] += 1; coverYears[k] += s[k].size }
   s.byYear = new Map(s.funds.map((r) => [r.year, r]))
   s.bvps = (y) => { const r = s.byYear.get(y); const e = s.equity.get(y); return r && pos(e) && pos(r.shares) ? e / r.shares : null }
 }
@@ -79,11 +80,11 @@ function betaAt(s, month) {
   return sxx > 0 ? sxy / sxx : null
 }
 
-// D3 B's rule (§3): the last 8 known fiscal years F0−7 … F0, at least 5 with EPS.
+// D3's rule (§3): the fiscal years F0−7 … F0, at least 5 with EPS; null (A's answer kept) with fewer.
 function cyclical(s, F0) {
   const eps = (y) => s.byYear.get(y)?.eps ?? null
   const ys = Array.from({ length: 8 }, (_, i) => F0 - 7 + i)
-  if (ys.filter((y) => eps(y) != null).length < 5) return false
+  if (ys.filter((y) => eps(y) != null).length < 5) return null
   if (ys.some((y) => eps(y) != null && eps(y) <= 0)) return true
   return ys.slice(1).filter((y) => eps(y - 1) > 0 && eps(y) > 0 && eps(y) < 0.7 * eps(y - 1)).length >= 2
 }
@@ -103,7 +104,8 @@ function ownPb(s, month, bv0) {
 }
 
 // §3.1: the revenue DCF on F0's figures.
-function rdcfAt(s, st, R, c0, beta) {
+let rdcfZero = 0
+function rdcfAt(s, st, c0, beta) {
   const F0 = st.fiscalYear
   const hist = s.funds.filter((r) => r.year <= F0).reverse()
   const r0 = s.byYear.get(F0)
@@ -114,8 +116,9 @@ function rdcfAt(s, st, R, c0, beta) {
     net_debt_fq: fin(cash) ? st.debt - cash : null, free_cash_flow_ttm: r0.fcf, beta_5_year: beta, close: c0,
     market_cap_basic: pos(r0.shares) ? c0 * r0.shares : null, sector: s.sector, industry: s.industry,
   }
-  const out = rdcf(q, { shares: pos(r0.shares) ? r0.shares : undefined, now: Date.UTC(R, 5, 0) / 1000, peers: PEERS })
-  return fin(out.value) ? out.value : null
+  const out = rdcf(q, { shares: pos(r0.shares) ? r0.shares : undefined, peers: PEERS })
+  if (out.value === 0) rdcfZero += 1
+  return out.value > 0 ? out.value : null // a value of 0 (raw ≤ 0) counts as none (§3.1)
 }
 
 // ---------------------------------------------------------------- B0 and the options (§2, §3)
@@ -152,8 +155,8 @@ for (const s of stocks) for (const R of YEARS) {
   rows.push({
     sym: s.sym, R, sector: s.sector, c0, c1: s.closes.get(`${R + 1}-05`) ?? null, c2: s.closes.get(`${R + 2}-05`) ?? null, big,
     profile: fv.profile, st, v, raw, capped, roe, pbj8: pbj(8), pbjInf: pbj(Infinity),
-    cyc: fv.profile === HEAVY || fv.profile === GROWTH || fv.profile === MATURE ? cyclical(s, st.fiscalYear) : false,
-    pb: ownPb(s, month, bv), rd: fv.profile === UNPROF ? rdcfAt(s, st, R, c0, beta) : null,
+    cyc: cyclical(s, st.fiscalYear),
+    pb: ownPb(s, month, bv), rd: fv.profile === UNPROF ? rdcfAt(s, st, c0, beta) : null,
   })
 }
 
@@ -176,7 +179,7 @@ function fair(r, opt = {}) {
     v.pbj = null
     if (o('D1') === 'E') profile = profileOf(r.st, r.c0, 'Not Finance')
   }
-  if (o('D3') !== 'A' && (profile === HEAVY || profile === GROWTH || profile === MATURE)) {
+  if (o('D3') !== 'A' && r.cyc != null && (profile === HEAVY || profile === GROWTH || profile === MATURE)) {
     const heavy = o('D3') === 'B' ? r.cyc : HEAVY_SECTORS.includes(r.sector) && r.cyc
     profile = heavy ? HEAVY : TECH_SECTORS.includes(r.sector) || r.st.revG > 0.15 ? GROWTH : MATURE
   }
@@ -204,8 +207,7 @@ function fair(r, opt = {}) {
 
 // ---------------------------------------------------------------- scoring (§4)
 
-const floor = (V) => Math.max(V, 0.01) // the revenue DCF can return 0
-const err = (V, c) => Math.abs(Math.log(floor(V) / c))
+const err = (V, c) => Math.abs(Math.log(V / c))
 const OPTIONS = { D1: 'ABCDE', D2: 'ABC', D3: 'ABC', D4: 'ABC', D5: 'AB', D6: 'ABC', D7: 'AB', D8: 'AB', D9: 'AB' }
 const NAME = { D1: 'P/B from ROE, very profitable financials', D2: 'How methods are combined', D3: 'Which companies count as cyclical', D4: "Loss-makers' fair value", D5: 'Methods on a multiple above 100', D6: "Lynch's rule for PEG", D7: "Graham's number", D8: 'DCF discount rate', D9: 'Own-history P/B for Heavy' }
 
@@ -215,7 +217,7 @@ function compare(opts, set, cKey = 'c1') {
   for (const x of set) (byY.get(x.r.R) ?? byY.set(x.r.R, []).get(x.r.R)).push(x)
   const counted = [...byY].filter(([, xs]) => xs.length >= MIN_ROWS).sort((a, b) => a[0] - b[0])
   const M = (xs, X) => median(xs.map((x) => err(x.V[X], x.r[cKey])))
-  const IC = (xs, X) => spearman(xs.map((x) => Math.log(floor(x.V[X]) / x.r.c0)), xs.map((x) => x.r[cKey] / x.r.c0 - 1))
+  const IC = (xs, X) => spearman(xs.map((x) => Math.log(x.V[X] / x.r.c0)), xs.map((x) => x.r[cKey] / x.r.c0 - 1))
   const yearly = counted.map(([y, xs]) => ({ y, n: xs.length, M: Object.fromEntries(opts.map((X) => [X, M(xs, X)])), IC: Object.fromEntries(opts.map((X) => [X, IC(xs, X)])), naive: median(xs.map((x) => Math.abs(Math.log(x.r.c0 / x.r[cKey])))) }))
   return { counted: yearly }
 }
@@ -231,10 +233,10 @@ function signFlipMC(xs, draws, rng) {
   return (1 + ge) / (draws + 1)
 }
 
-const report = { decisions: {}, coverage: { stocks: stocks.length, balFiles, ...cover, rows: rows.length } }
+const report = { decisions: {}, coverage: { stocks: stocks.length, balFiles, stocksWith: cover, stockYearsWith: coverYears, rows: rows.length, rdcfZero } }
 const L = []
 L.push('Study 16 — the stock page\'s untested valuation choices (PROTOCOL-study16.md)')
-L.push(`Universe ${stocks.length} stocks; balance-sheet files ${balFiles}; stocks with equity ${cover.equity}, cash ${cover.cash}, operating income ${cover.oi}.`)
+L.push(`Universe ${stocks.length} stocks; balance-sheet files ${balFiles}; stocks (stored fiscal years) with equity ${cover.equity} (${coverYears.equity}), cash ${cover.cash} (${coverYears.cash}), operating income ${cover.oi} (${coverYears.oi}).`)
 L.push(`Stock-years with a B0 row (May 2012–2025, pre-revenue left out): ${rows.length}.`)
 L.push('Error e = |ln(V ÷ price 12 months later)|; M = the year\'s median e; δ = M_A − M_X (positive: X closer).')
 L.push('')
@@ -278,7 +280,7 @@ for (const d of Object.keys(OPTIONS)) {
   // §6 reported
   res.pooled = Object.fromEntries(opts.map((X) => {
     const es = U.map((x) => err(x.V[X], x.r.c1))
-    return [X, { medianE: median(es), within25: es.filter((e) => e < Math.log(1.25)).length / (es.length || 1), signed: median(U.map((x) => Math.log(floor(x.V[X]) / x.r.c1))) }]
+    return [X, { medianE: median(es), within25: es.filter((e) => e < Math.log(1.25)).length / (es.length || 1), signed: median(U.map((x) => Math.log(x.V[X] / x.r.c1))) }]
   }))
   res.pooled.naive = { medianE: median(U.map((x) => Math.abs(Math.log(x.r.c0 / x.r.c1)))) }
   const U2 = all.filter((x) => x.r.R <= 2024 && opts.every((X) => x.V[X] != null) && pos(x.r.c2) && differ(x))
@@ -306,14 +308,15 @@ for (const d of Object.keys(OPTIONS)) {
   L.push(`   Pooled median e: ${opts.map((X) => `${X} ${f3(res.pooled[X].medianE)}`).join(', ')}, naive ${f3(res.pooled.naive.medianE)}; within 25%: ${opts.map((X) => `${X} ${pct(res.pooled[X].within25)}`).join(', ')}; median signed: ${opts.map((X) => `${X} ${f3(res.pooled[X].signed)}`).join(', ')}`)
   L.push(`   24 months: ${U2.length} stock-years, ${h2.length} counted years; mean δ ${ch.map((X) => `${X} ${f4(res.horizon24.meanDelta[X])} (p ${f4(res.horizon24.p[X])})`).join(', ')}`)
   L.push(`   Large caps (top 300 a year): ${UL.length} stock-years; median e ${opts.map((X) => `${X} ${f3(res.largeCaps.medianE[X])}`).join(', ')}${res.largeCapFlag ? ' — FLAG: the adopted option is worse than A on large caps' : ''}`)
-  L.push(`   Stock-years where options disagree on whether a value exists: ${someNone.length}`)
+  L.push(`   Stock-years where options disagree on whether a value exists: ${someNone.length}${d === 'D4' ? `; Unprofitable stock-years whose revenue DCF is 0 (counted as none): ${rdcfZero}` : ''}`)
   L.push(`   → adopted: ${res.adopted}`)
   L.push('')
 }
 
 // ---------------------------------------------------------------- combination (§5)
 
-const order = Object.keys(adopted).sort((a, b) => (report.decisions[a].challengers[adopted[a]].meanDelta - report.decisions[b].challengers[adopted[b]].meanDelta))
+// removal order (§5): smallest mean δ first; on a tie, the higher decision number
+const order = Object.keys(adopted).sort((a, b) => report.decisions[a].challengers[adopted[a]].meanDelta - report.decisions[b].challengers[adopted[b]].meanDelta || b.localeCompare(a))
 const combo = { ...adopted }
 const pooledE = (opt) => {
   const xs = rows.filter((r) => pos(r.c1)).map((r) => ({ r, a: fair(r), b: fair(r, opt) })).filter((x) => x.a != null && x.b != null)
@@ -332,8 +335,8 @@ const yr = yearsOf(pc.xs)
 report.combination = {
   adopted, applied: combo, removed, n: pc.n, pooledB0: pc.A, pooledBstar: pc.B, naive: pc.naive,
   yearly: yr.map((g) => ({ y: g[0].r.R, n: g.length, B0: median(g.map((x) => err(x.a, x.r.c1))), Bstar: median(g.map((x) => err(x.b, x.r.c1))), naive: median(g.map((x) => Math.abs(Math.log(x.r.c0 / x.r.c1)))) })),
-  icB0: mean(yr.map((g) => spearman(g.map((x) => Math.log(floor(x.a) / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
-  icBstar: mean(yr.map((g) => spearman(g.map((x) => Math.log(floor(x.b) / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
+  icB0: mean(yr.map((g) => spearman(g.map((x) => Math.log(x.a / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
+  icBstar: mean(yr.map((g) => spearman(g.map((x) => Math.log(x.b / x.r.c0)), g.map((x) => x.r.c1 / x.r.c0 - 1)))),
 }
 L.push(`Combination: adopted ${JSON.stringify(adopted)}; applied ${JSON.stringify(combo)}${removed.length ? `; removed ${removed.join(', ')}` : ''}`)
 L.push(`   ${pc.n} stock-years; pooled median e B0 ${f3(pc.A)}, B* ${f3(pc.B)}, naive (today's price) ${f3(pc.naive)}; mean IC B0 ${f3(report.combination.icB0)}, B* ${f3(report.combination.icBstar)}`)
