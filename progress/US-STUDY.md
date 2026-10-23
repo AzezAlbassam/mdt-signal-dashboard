@@ -148,7 +148,12 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   always below); the equal-weight control V0 MATCHES (median 0.21, p90 0.32). H2 NOT CONFIRMED on V4 (E3/E4 CLOSE).
   H3 not testable. POST-HOC: V0 ± σ_eq fits k = +2.11/+1.06/−1.04/−2.10 (E3 MATCH, others CLOSE); 10-22 0DTE option
   volume is near-flat through the day, so an options-flow-weighted price sits ~0.66 from the equal-weight line (one day)
-- [ ] Study 15: addendum for the next vendor chart (flow-weighted candidates, OGL), 10-23 chain capture, Pine
+- [x] Study 15 addendum 1 (PROTOCOL-study15-addendum-1.md), before any other vendor chart: H4 V0 replicates, H5 bands
+  V0 ± σ_eq, H6 F1 (0DTE-contract-weighted) beats V0; OGL check. scripts/study15-forward.js freezes a session.
+- [x] Study 15: pine/open-flow-vwap.pine (Equal/Volume/0DTE-flow line, ±1σ/±2σ, OGL from OPRA 0DTE on the last session).
+  NOT compiled on TradingView yet — the user runs it.
+- [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
+  20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 
 ## Counts
 (updated as work proceeds)

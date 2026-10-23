@@ -1,0 +1,181 @@
+//@version=6
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// Study 15 — an OPEN look-alike of "Flow VWAP x Gamma" (@t38p_flow). Not his code: his method is
+// not published (his "formula" post is a quantum-mechanics identity, a joke). PROTOCOL-study15.md.
+//
+// What was tested on his 2026-10-12 chart (SPX, 3-minute bars), reports/study15.txt:
+//   H1 the yellow line is a standard session VWAP ............ NOT CONFIRMED (1.10 point off, always above)
+//      the pre-registered equal-weight control ................ MATCH (median 0.21 point, p90 0.32)
+//   H2 the shaded zone is VWAP ± 1σ / ± 2σ .................... NOT CONFIRMED
+//      POST-HOC: around the equal-weight line the edges fit ±2.11σ, ±1.06σ, ∓1.04σ, ∓2.10σ (close, not exact)
+//   H3 his gamma bubbles .................................... NOT TESTABLE (those 0DTE contracts expired)
+// So: the default "Equal" line reproduces his line on that chart; it is NOT shown to be his formula
+// (one chart). The gamma levels below follow PROTOCOL-study15.md §4 and are untested against his.
+//
+// Line  = session mean of 1-minute hlc3 from 09:30 ET (weights: Equal, Volume, or 0DTE options flow).
+// Bands = line ± 1σ, ± 2σ; σ = same-weight deviation of hlc3 around the line.
+// Gamma = 0DTE SPXW calls/puts at 5-point strikes around the open, last session on the chart only:
+//         Black-Scholes IV per traded bar (r = q = 0), gamma at the current spot × cumulative session
+//         volume × 100 × S² × 1%; calls +, puts −. Yellow = calls dominate, purple = puts dominate.
+//         Needs OPRA data on your TradingView plan. Strikes are fixed at the open (± 5 × "strikes each side").
+// Not yet compiled on TradingView: compile once and report any error.
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+indicator("Open Flow VWAP + gamma levels (study 15)", "OFV", overlay = true, max_lines_count = 40, max_labels_count = 40)
+
+wMode = input.string("Equal", "Line weights", options = ["Equal", "Volume", "0DTE options flow"],
+     tooltip = "Equal matched his 2026-10-12 line. 0DTE options flow uses the option volume of the gamma block (last session only).")
+showB = input.bool(true, "Bands ±1σ / ±2σ")
+showG = input.bool(true, "Gamma levels (0DTE SPXW)")
+nSide = input.int(9, "Strikes each side of the open", minval = 1, maxval = 9, tooltip = "Two requests per strike; TradingView allows 40.")
+topN  = input.int(5, "Gamma levels to draw", minval = 1, maxval = 10)
+cLine = input.color(color.rgb(240, 192, 80), "Line")
+cFill = input.color(color.new(color.rgb(240, 192, 80), 88), "Inner band fill")
+
+TZ = "America/New_York"
+
+// ── Black-Scholes, r = q = 0 ──
+erf(float x) =>
+    // Abramowitz & Stegun 7.1.26, |error| < 1.5e-7
+    t = 1.0 / (1.0 + 0.3275911 * math.abs(x))
+    y = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * math.exp(-x * x)
+    x >= 0 ? y : -y
+ncdf(float x) => 0.5 * (1.0 + erf(x / math.sqrt(2.0)))
+npdf(float x) => math.exp(-0.5 * x * x) / math.sqrt(2.0 * math.pi)
+bsPrice(bool isCall, float S, float K, float T, float v) =>
+    d1 = (math.log(S / K) + 0.5 * v * v * T) / (v * math.sqrt(T))
+    d2 = d1 - v * math.sqrt(T)
+    isCall ? S * ncdf(d1) - K * ncdf(d2) : K * ncdf(-d2) - S * ncdf(-d1)
+bsGamma(float S, float K, float T, float v) =>
+    d1 = (math.log(S / K) + 0.5 * v * v * T) / (v * math.sqrt(T))
+    npdf(d1) / (S * v * math.sqrt(T))
+impliedVol(bool isCall, float p, float S, float K, float T) =>
+    float res = na
+    intrinsic = math.max(0.0, isCall ? S - K : K - S)
+    if not na(p) and p >= intrinsic + 0.01 and p >= bsPrice(isCall, S, K, T, 0.01) and p <= bsPrice(isCall, S, K, T, 3.0)
+        lo = 0.01
+        hi = 3.0
+        for _ = 1 to 40
+            mid = 0.5 * (lo + hi)
+            if bsPrice(isCall, S, K, T, mid) < p
+                lo := mid
+            else
+                hi := mid
+        res := 0.5 * (lo + hi)
+    res
+
+// ── gamma block: last session on the chart only (its contracts expire that day) ──
+dayKey(int t) => year(t, TZ) * 10000 + month(t, TZ) * 100 + dayofmonth(t, TZ)
+isLastDay = dayKey(time) == dayKey(last_bar_time)
+nK = 2 * nSide + 1
+var array<string> tickers = array.new<string>()
+var array<float> strikes  = array.new<float>()
+var array<float> ivs      = array.new<float>(2 * 19, na)
+var array<float> cvs      = array.new<float>(2 * 19, 0.0)
+float flowVol = 0.0
+float S = close
+if showG and isLastDay and session.isfirstbar_regular
+    center = math.round(open / 5) * 5
+    ymd = str.tostring(year(time, TZ) % 100, "00") + str.tostring(month(time, TZ), "00") + str.tostring(dayofmonth(time, TZ), "00")
+    array.clear(tickers)
+    array.clear(strikes)
+    for i = 0 to nK - 1
+        K = center + 5 * (i - nSide)
+        array.push(strikes, K)
+        array.push(tickers, "OPRA:SPXW" + ymd + "C" + str.tostring(K) + ".0")
+        array.push(tickers, "OPRA:SPXW" + ymd + "P" + str.tostring(K) + ".0")
+    array.fill(ivs, na)
+    array.fill(cvs, 0.0)
+closeT = timestamp(TZ, year(time, TZ), month(time, TZ), dayofmonth(time, TZ), 16, 0)
+T = math.max(1.0, (closeT - time_close) / 60000.0) / (365.0 * 1440.0)
+expo = array.new<float>(nK, 0.0)
+if showG and isLastDay and session.ismarket and array.size(tickers) == 2 * nK
+    for j = 0 to 2 * nK - 1
+        [oc, ov] = request.security(array.get(tickers, j), timeframe.period, [close, volume], gaps = barmerge.gaps_on, ignore_invalid_symbol = true)
+        isCall = j % 2 == 0
+        jk = math.floor(j / 2)
+        K = array.get(strikes, jk)
+        if not na(oc) and nz(ov) > 0
+            array.set(cvs, j, array.get(cvs, j) + ov)
+            flowVol += ov
+            ivNew = impliedVol(isCall, oc, S, K, T)
+            if not na(ivNew)
+                array.set(ivs, j, ivNew)   // carried forward between trades
+        ivNow = array.get(ivs, j)
+        cv = array.get(cvs, j)
+        if not na(ivNow) and cv > 0
+            e = (isCall ? 1.0 : -1.0) * 100.0 * S * S * 0.01 * bsGamma(S, K, T, ivNow) * cv
+            array.set(expo, jk, array.get(expo, jk) + e)
+
+// ── the line and its bands, on 1-minute hlc3 inside each chart bar ──
+[h3s, vols] = request.security_lower_tf(syminfo.tickerid, "1", [hlc3, volume])
+var float ref = na
+var float sw = 0.0
+var float s1 = 0.0
+var float s2 = 0.0
+if session.isfirstbar_regular
+    ref := hlc3
+    sw := 0.0
+    s1 := 0.0
+    s2 := 0.0
+if session.ismarket and not na(ref)
+    if wMode == "0DTE options flow"
+        // option volume exists per chart bar only, so this mode weights chart bars
+        p = hlc3 - ref
+        sw += flowVol
+        s1 += flowVol * p
+        s2 += flowVol * p * p
+    else if array.size(h3s) > 0
+        for i = 0 to array.size(h3s) - 1
+            w = wMode == "Volume" ? nz(array.get(vols, i)) : 1.0
+            p = array.get(h3s, i) - ref
+            sw += w
+            s1 += w * p
+            s2 += w * p * p
+m = sw > 0 ? s1 / sw : na
+ofv = session.ismarket ? ref + m : na
+sd = sw > 0 ? math.sqrt(math.max(0.0, s2 / sw - m * m)) : na
+
+pL  = plot(ofv, "Flow VWAP (open)", cLine, 2, plot.style_linebr)
+pU1 = plot(showB ? ofv + sd : na, "+1σ", color.new(cLine, 55), 1, plot.style_linebr)
+pL1 = plot(showB ? ofv - sd : na, "−1σ", color.new(cLine, 55), 1, plot.style_linebr)
+pU2 = plot(showB ? ofv + 2 * sd : na, "+2σ", color.new(cLine, 70), 1, plot.style_linebr)
+pL2 = plot(showB ? ofv - 2 * sd : na, "−2σ", color.new(cLine, 70), 1, plot.style_linebr)
+fill(pU1, pL1, showB ? cFill : na)
+fill(pU2, pU1, showB ? color.new(cFill, 94) : na)
+fill(pL1, pL2, showB ? color.new(cFill, 94) : na)
+
+// ── draw the strongest gamma levels on the last bar ──
+var array<line> gl = array.new<line>()
+var array<label> gb = array.new<label>()
+var int sessStart = na
+if session.isfirstbar_regular
+    sessStart := bar_index
+if barstate.islast and showG
+    for l in gl
+        line.delete(l)
+    for lb in gb
+        label.delete(lb)
+    array.clear(gl)
+    array.clear(gb)
+    if array.size(strikes) == nK
+        idx = array.new<int>()
+        for i = 0 to nK - 1
+            array.push(idx, i)
+        // selection by |exposure|, largest first
+        for a = 0 to math.min(topN, nK) - 1
+            best = a
+            if a + 1 <= nK - 1   // a Pine for loop counts down when start > end
+                for b = a + 1 to nK - 1
+                    if math.abs(array.get(expo, array.get(idx, b))) > math.abs(array.get(expo, array.get(idx, best)))
+                        best := b
+            tmp = array.get(idx, a)
+            array.set(idx, a, array.get(idx, best))
+            array.set(idx, best, tmp)
+            j = array.get(idx, a)
+            e = array.get(expo, j)
+            if e != 0
+                col = e > 0 ? color.rgb(240, 192, 80) : color.rgb(150, 70, 220)
+                K = array.get(strikes, j)
+                array.push(gl, line.new(nz(sessStart, bar_index - 1), K, bar_index + 5, K, color = color.new(col, 10 + 15 * a), width = math.max(1, 5 - a)))
+                array.push(gb, label.new(bar_index + 6, K, str.tostring(K) + "  " + (e > 0 ? "+" : "−") + str.tostring(math.abs(e) / 1e9, "#.##") + "B/1%",
+                     style = label.style_label_left, color = color.new(col, 30), textcolor = color.black, size = size.small))
