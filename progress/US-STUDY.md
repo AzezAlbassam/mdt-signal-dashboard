@@ -158,6 +158,8 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   four edges (k +2.01/+0.99/−1.01/−2.03) — post-hoc, reproduced as P3 in reports/study15.txt; equal weights match the
   line only. Addendum 2 adds H7 (A07, 09:35) / H8 for the next chart. Pine default now Volume + 5-minute delay.
   Bubble description fix (POST-HOC, description only): the line was read as 7810 bubbles from x 317 (now 891).
+- [x] Study 15: ofv.html (scripts/build-ofv-page.js, Arabic, Pine with a copy button + best timeframe = 3m on SP:SPX) →
+  https://claude.ai/artifact/JWrGWTdESc1xBgTM2AdZ7N
 - [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
   20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
 

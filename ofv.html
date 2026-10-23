@@ -1,0 +1,342 @@
+<title>مؤشر Flow VWAP المفتوح</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  /* One reading column, right to left. The answer to "which timeframe" comes first, then what was
+     shown and what was not, then the code. Colours are the indicator's own: the gold line and the
+     purple of put-dominated gamma, on a chart-dark code panel. */
+  --bg:#F3F2EE; --surface:#FCFBF8; --raise:#EAE8E1; --ink:#1C1B18; --body:#45433C; --muted:#706D63; --line:#DCD9D0;
+  --gold:#9A6B00; --goldbg:#F6EDD6; --purple:#6B3FB0; --ok:#2E6B45; --okbg:#E5F0E8; --no:#A13A2C; --nobg:#F7E7E3;
+  --codebg:#16161A; --codeink:#E9E6DD; --codemuted:#8E8A80;
+  --sans:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1D1C19; --surface:#262521; --raise:#302E29; --ink:#EEEBE3; --body:#CBC7BC; --muted:#99958A; --line:#3B3933;
+  --gold:#E8BC5A; --goldbg:#3A3020; --purple:#B48BF0; --ok:#7CC496; --okbg:#1F3326; --no:#F0A496; --nobg:#3A2420;
+  --codebg:#111114; --codeink:#E9E6DD; --codemuted:#8E8A80; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1D1C19; --surface:#262521; --raise:#302E29; --ink:#EEEBE3; --body:#CBC7BC; --muted:#99958A; --line:#3B3933;
+  --gold:#E8BC5A; --goldbg:#3A3020; --purple:#B48BF0; --ok:#7CC496; --okbg:#1F3326; --no:#F0A496; --nobg:#3A2420;
+  --codebg:#111114; --codeink:#E9E6DD; --codemuted:#8E8A80; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font:16px/1.75 var(--sans)}
+.wrap{max-width:840px;margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:34px}
+h1{color:var(--ink);font-size:clamp(1.7rem,4.6vw,2.3rem);line-height:1.25;margin:0;text-wrap:balance}
+h2{color:var(--ink);font-size:1.18rem;line-height:1.4;margin:0;text-wrap:balance}
+p{margin:0;max-width:64ch}
+.sub{color:var(--muted);margin-top:8px}
+section{display:grid;gap:14px;min-width:0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.tf{background:var(--goldbg);border-radius:8px;padding:22px;display:grid;gap:14px}
+.tf .big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tf .big b{font:700 2.4rem/1 var(--mono);color:var(--gold)}
+.tf .big span{color:var(--ink);font-weight:500}
+ul{margin:0;padding-inline-start:1.2em;display:grid;gap:8px;max-width:64ch}
+li::marker{color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:start;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:.82rem;background:var(--raise)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
+.pill{display:inline-block;font-size:.8rem;font-weight:700;padding:1px 10px;border-radius:99px;white-space:nowrap;margin-inline-end:6px}
+.pill.ok{color:var(--ok);background:var(--okbg)}
+.pill.no{color:var(--no);background:var(--nobg)}
+.pill.na{color:var(--muted);background:var(--raise)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.code{border-radius:8px;background:var(--codebg);min-width:0;overflow:hidden}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 16px;flex-wrap:wrap;border-bottom:1px solid #2A2A30}
+.bar span{font:500 .82rem var(--mono);color:var(--codemuted)}
+button{font:700 .95rem var(--sans);color:#1C1B18;background:#F0C050;border:0;border-radius:6px;padding:9px 20px;cursor:pointer}
+button.done{background:#8FD3A6}
+button:focus-visible{outline:2px solid #F0C050;outline-offset:3px}
+pre{margin:0;overflow:auto;max-height:480px;padding:16px;font:12.5px/1.6 var(--mono);color:var(--codeink);direction:ltr;text-align:left;tab-size:4}
+ol{margin:0;padding-inline-start:1.3em;display:grid;gap:8px;max-width:64ch}
+code{font:.86em var(--mono);background:var(--raise);padding:1px 6px;border-radius:4px;color:var(--ink);direction:ltr;unicode-bidi:isolate}
+.note{font-size:.9rem;color:var(--muted);max-width:64ch}
+.swatch{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em;margin-inline-end:4px}
+@media (max-width:560px){td:first-child{white-space:normal} th,td{padding:9px 10px} .pill{display:table;margin-block-end:4px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <h1>مؤشر Flow VWAP، نسخة مفتوحة</h1>
+    <p class="sub">بنيناه وقِسناه على شارت <span class="ltr">@t38p_flow</span> ليوم 12 أكتوبر 2026، وهو ليس كوده الأصلي.
+    <span class="ltr">Pine v6</span>، 189 سطراً.</p>
+  </header>
+
+  <section class="tf">
+    <h2>أفضل فريم</h2>
+    <div class="big"><b class="ltr">3m</b><span>ثلاث دقائق، على <span class="ltr">SP:SPX</span></span></div>
+    <ul>
+      <li>شارته نفسه على شموع 3 دقائق: شموعه طابقت شموع SPX الحقيقية بفرق متوسطه <span class="num">0.03</span> نقطة. هذا الفريم يجعل شارتك مثل شارته تماماً.</li>
+      <li>الخط والنطاقات تُحسب من بيانات الدقيقة داخل كل شمعة، فقيمتها واحدة على 1 و2 و3 و5 دقائق. تغيير الفريم يغيّر شكل الشموع فقط.</li>
+      <li>مستويات الغاما تتحدث مع كل شمعة، فالأفضل لها من دقيقة إلى 3 دقائق. فوق 15 دقيقة تصير بطيئة، ولا يعمل المؤشر على اليومي.</li>
+      <li>أي فريم يربح أكثر؟ <strong>لم نختبر ذلك.</strong> لا يوجد عندنا دليل على أفضلية لأي فريم، والصفقات الثلاث في تغريدته لا تثبت شيئاً.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>ماذا أثبتنا وماذا لم نثبت</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>الجزء</th><th>النتيجة</th></tr></thead>
+        <tbody>
+          <tr><td>المعادلة التي نشرها</td><td><span class="pill no">مزحة</span>معادلة فيزياء كمّية (ثابت بلانك ودوال بيسل)، لا سعر فيها ولا حجم.</td></tr>
+          <tr><td>VWAP عادي من 9:30</td><td><span class="pill no">لا يطابق</span>أعلى من خطه دائماً، بفرق وسيطه <span class="num">1.10</span> نقطة. هذا كان الاختبار المسجّل قبل القياس.</td></tr>
+          <tr><td>VWAP عادي من 9:35</td><td><span class="pill ok">يطابق</span>بفرق <span class="num">0.05</span> نقطة فقط. السبب أن دقيقة 9:30 فيها صفقات مزاد الافتتاح (حجمها نحو عشرة أضعاف الدقيقة العادية)، وخطه لا يحسبها.</td></tr>
+          <tr><td>المنطقة المظللة</td><td><span class="pill ok">4 من 4</span>حوافها الأربع هي ±1σ و±2σ لنفس الـVWAP من 9:35 (المضاعفات المقيسة <span class="num">+2.01  +0.99  −1.01  −2.03</span>).</td></tr>
+          <tr><td>فقاعات الغاما</td><td><span class="pill na">لا يمكن اختبارها</span>عقود أوبشن 12 أكتوبر انتهت، وTradingView لا يعرض إلا عقود اليوم السابق. الشارت يحمل علامة <span class="ltr">skylit.ai</span>، فالفقاعات غالباً من تلك المنصة.</td></tr>
+          <tr><td>هل يربح؟</td><td><span class="pill na">غير مختبر</span>لم نختبر أي استراتيجية دخول وخروج عليه.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">بداية 9:35 وجدناها بالبحث على نفس الشارت، لذلك لا تُعتبر مثبتة بعد. سجّلناها مسبقاً كفرضية تُختبر على أول شارت جديد له، بنفس طريقة القياس ونفس حدود المطابقة.</p>
+  </section>
+
+  <section>
+    <h2>الكود</h2>
+    <div class="code">
+      <div class="bar"><span>open-flow-vwap.pine · Pine v6 · 189 lines</span><button type="button" id="copy">نسخ الكود</button></div>
+      <pre id="src">//@version=6
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// Study 15 — an OPEN look-alike of "Flow VWAP x Gamma" (@t38p_flow). Not his code: his method is
+// not published (his "formula" post is a quantum-mechanics identity, a joke). PROTOCOL-study15.md.
+//
+// What was tested on his 2026-10-12 chart (SPX, 3-minute bars), reports/study15.txt:
+//   H1 the yellow line is a standard session VWAP ............ NOT CONFIRMED (1.10 point off, always above)
+//      the pre-registered equal-weight control ................ MATCH (median 0.21 point, p90 0.32)
+//   H2 the shaded zone is VWAP ± 1σ / ± 2σ .................... NOT CONFIRMED
+//      POST-HOC: around the equal-weight line the edges fit ±2.11σ, ±1.06σ, ∓1.04σ, ∓2.10σ (close, not exact)
+//   H3 his gamma bubbles .................................... NOT TESTABLE (those 0DTE contracts expired)
+//   POST-HOC (independent review, reports/study15.txt P3): a STANDARD VWAP (SPX volume) with standard ±1σ/±2σ,
+//      started at 09:35 instead of 09:30 (the opening-auction minutes left out), matches the line AND all four
+//      band edges (line 0.05 point; band multiples +2.01 +0.99 −1.01 −2.03). Found by searching one chart:
+//      the defaults below reproduce that chart; that this is his formula is NOT shown. Pre-registered for his
+//      next chart in PROTOCOL-study15-addendum-2.md.
+// The gamma levels below follow PROTOCOL-study15.md §4 and are untested against his.
+//
+// Line  = session VWAP of 1-minute hlc3 from 09:30 ET + "start delay" (weights: Volume, Equal, or 0DTE options flow).
+// Bands = line ± 1σ, ± 2σ; σ = same-weight deviation of hlc3 around the line.
+// Use it on SP:SPX (its volume is the constituents' total); CBOE:SPX has no volume, use Equal there.
+// Gamma = 0DTE SPXW calls/puts at 5-point strikes around the open, last session on the chart only:
+//         Black-Scholes IV per traded bar (r = q = 0), gamma at the current spot × cumulative session
+//         volume × 100 × S² × 1%; calls +, puts −. Yellow = calls dominate, purple = puts dominate.
+//         Needs OPRA data on your TradingView plan. Strikes are fixed at the open (± 5 × "strikes each side").
+// Not yet compiled on TradingView: compile once and report any error.
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+indicator("Open Flow VWAP + gamma levels (study 15)", "OFV", overlay = true, max_lines_count = 40, max_labels_count = 40)
+
+wMode = input.string("Volume", "Line weights", options = ["Volume", "Equal", "0DTE options flow"],
+     tooltip = "Volume + 5-minute delay matched his 2026-10-12 line and bands (post-hoc). Equal (from 09:30) matched the line only. 0DTE options flow uses the gamma block's option volume (last session only).")
+delayM = input.int(5, "Start delay after 09:30 (minutes)", minval = 0, maxval = 60, tooltip = "5 left out the opening-auction minutes and matched his chart (post-hoc). 0 = standard session VWAP.")
+showB = input.bool(true, "Bands ±1σ / ±2σ")
+showG = input.bool(true, "Gamma levels (0DTE SPXW)")
+nSide = input.int(9, "Strikes each side of the open", minval = 1, maxval = 9, tooltip = "Two requests per strike; TradingView allows 40.")
+topN  = input.int(5, "Gamma levels to draw", minval = 1, maxval = 10)
+cLine = input.color(color.rgb(240, 192, 80), "Line")
+cFill = input.color(color.new(color.rgb(240, 192, 80), 88), "Inner band fill")
+
+TZ = "America/New_York"
+
+// ── Black-Scholes, r = q = 0 ──
+erf(float x) =&gt;
+    // Abramowitz &amp; Stegun 7.1.26, |error| &lt; 1.5e-7
+    t = 1.0 / (1.0 + 0.3275911 * math.abs(x))
+    y = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * math.exp(-x * x)
+    x &gt;= 0 ? y : -y
+ncdf(float x) =&gt; 0.5 * (1.0 + erf(x / math.sqrt(2.0)))
+npdf(float x) =&gt; math.exp(-0.5 * x * x) / math.sqrt(2.0 * math.pi)
+bsPrice(bool isCall, float S, float K, float T, float v) =&gt;
+    d1 = (math.log(S / K) + 0.5 * v * v * T) / (v * math.sqrt(T))
+    d2 = d1 - v * math.sqrt(T)
+    isCall ? S * ncdf(d1) - K * ncdf(d2) : K * ncdf(-d2) - S * ncdf(-d1)
+bsGamma(float S, float K, float T, float v) =&gt;
+    d1 = (math.log(S / K) + 0.5 * v * v * T) / (v * math.sqrt(T))
+    npdf(d1) / (S * v * math.sqrt(T))
+impliedVol(bool isCall, float p, float S, float K, float T) =&gt;
+    float res = na
+    intrinsic = math.max(0.0, isCall ? S - K : K - S)
+    if not na(p) and p &gt;= intrinsic + 0.01 and p &gt;= bsPrice(isCall, S, K, T, 0.01) and p &lt;= bsPrice(isCall, S, K, T, 3.0)
+        lo = 0.01
+        hi = 3.0
+        for it = 1 to 40
+            mid = 0.5 * (lo + hi)
+            if bsPrice(isCall, S, K, T, mid) &lt; p
+                lo := mid
+            else
+                hi := mid
+        res := 0.5 * (lo + hi)
+    res
+
+// ── gamma block: last session on the chart only (its contracts expire that day) ──
+dayKey(int t) =&gt; year(t, TZ) * 10000 + month(t, TZ) * 100 + dayofmonth(t, TZ)
+isLastDay = dayKey(time) == dayKey(last_bar_time)
+nK = 2 * nSide + 1
+var array&lt;string&gt; tickers = array.new&lt;string&gt;()
+var array&lt;float&gt; strikes  = array.new&lt;float&gt;()
+var array&lt;float&gt; ivs      = array.new&lt;float&gt;(2 * 19, na)
+var array&lt;float&gt; cvs      = array.new&lt;float&gt;(2 * 19, 0.0)
+float flowVol = 0.0
+float S = close
+if showG and isLastDay and session.isfirstbar_regular
+    center = math.round(open / 5) * 5
+    ymd = str.tostring(year(time, TZ) % 100, "00") + str.tostring(month(time, TZ), "00") + str.tostring(dayofmonth(time, TZ), "00")
+    array.clear(tickers)
+    array.clear(strikes)
+    for i = 0 to nK - 1
+        K = center + 5 * (i - nSide)
+        array.push(strikes, K)
+        array.push(tickers, "OPRA:SPXW" + ymd + "C" + str.tostring(K) + ".0")
+        array.push(tickers, "OPRA:SPXW" + ymd + "P" + str.tostring(K) + ".0")
+    array.fill(ivs, na)
+    array.fill(cvs, 0.0)
+closeT = timestamp(TZ, year(time, TZ), month(time, TZ), dayofmonth(time, TZ), 16, 0)
+T = math.max(1.0, (closeT - time_close) / 60000.0) / (365.0 * 1440.0)
+expo = array.new&lt;float&gt;(nK, 0.0)
+if showG and isLastDay and session.ismarket and array.size(tickers) == 2 * nK
+    for j = 0 to 2 * nK - 1
+        [oc, ov] = request.security(array.get(tickers, j), timeframe.period, [close, volume], gaps = barmerge.gaps_on, ignore_invalid_symbol = true)
+        isCall = j % 2 == 0
+        jk = math.floor(j / 2)
+        K = array.get(strikes, jk)
+        if not na(oc) and nz(ov) &gt; 0
+            array.set(cvs, j, array.get(cvs, j) + ov)
+            flowVol += ov
+            ivNew = impliedVol(isCall, oc, S, K, T)
+            if not na(ivNew)
+                array.set(ivs, j, ivNew)   // carried forward between trades
+        ivNow = array.get(ivs, j)
+        cv = array.get(cvs, j)
+        if not na(ivNow) and cv &gt; 0
+            e = (isCall ? 1.0 : -1.0) * 100.0 * S * S * 0.01 * bsGamma(S, K, T, ivNow) * cv
+            array.set(expo, jk, array.get(expo, jk) + e)
+
+// ── the line and its bands, on 1-minute hlc3 inside each chart bar ──
+[h3s, vols, tms] = request.security_lower_tf(syminfo.tickerid, "1", [hlc3, volume, time])
+var float ref = na
+var float sw = 0.0
+var float s1 = 0.0
+var float s2 = 0.0
+startT = timestamp(TZ, year(time, TZ), month(time, TZ), dayofmonth(time, TZ), 9, 30) + delayM * 60000
+if session.isfirstbar_regular
+    ref := hlc3
+    sw := 0.0
+    s1 := 0.0
+    s2 := 0.0
+if session.ismarket and not na(ref)
+    if wMode == "0DTE options flow"
+        // option volume exists per chart bar only, so this mode weights chart bars (from the first bar at or after the delay)
+        p = hlc3 - ref
+        flowVol := time &gt;= startT ? flowVol : 0.0
+        sw += flowVol
+        s1 += flowVol * p
+        s2 += flowVol * p * p
+    else if array.size(h3s) &gt; 0
+        for i = 0 to array.size(h3s) - 1
+            w = array.get(tms, i) &lt; startT ? 0.0 : wMode == "Volume" ? nz(array.get(vols, i)) : 1.0
+            p = array.get(h3s, i) - ref
+            sw += w
+            s1 += w * p
+            s2 += w * p * p
+m = sw &gt; 0 ? s1 / sw : na
+ofv = session.ismarket and sw &gt; 0 ? ref + m : na
+sd = sw &gt; 0 ? math.sqrt(math.max(0.0, s2 / sw - m * m)) : na
+
+pL  = plot(ofv, "Flow VWAP (open)", cLine, 2, plot.style_linebr)
+pU1 = plot(showB ? ofv + sd : na, "+1σ", color.new(cLine, 55), 1, plot.style_linebr)
+pL1 = plot(showB ? ofv - sd : na, "−1σ", color.new(cLine, 55), 1, plot.style_linebr)
+pU2 = plot(showB ? ofv + 2 * sd : na, "+2σ", color.new(cLine, 70), 1, plot.style_linebr)
+pL2 = plot(showB ? ofv - 2 * sd : na, "−2σ", color.new(cLine, 70), 1, plot.style_linebr)
+fill(pU1, pL1, showB ? cFill : na)
+fill(pU2, pU1, showB ? color.new(cFill, 94) : na)
+fill(pL1, pL2, showB ? color.new(cFill, 94) : na)
+
+// ── draw the strongest gamma levels on the last bar ──
+var array&lt;line&gt; gl = array.new&lt;line&gt;()
+var array&lt;label&gt; gb = array.new&lt;label&gt;()
+var int sessStart = na
+if session.isfirstbar_regular
+    sessStart := bar_index
+if barstate.islast and showG
+    for l in gl
+        line.delete(l)
+    for lb in gb
+        label.delete(lb)
+    array.clear(gl)
+    array.clear(gb)
+    if array.size(strikes) == nK
+        idx = array.new&lt;int&gt;()
+        for i = 0 to nK - 1
+            array.push(idx, i)
+        // selection by |exposure|, largest first
+        for a = 0 to math.min(topN, nK) - 1
+            best = a
+            if a + 1 &lt;= nK - 1   // a Pine for loop counts down when start &gt; end
+                for b = a + 1 to nK - 1
+                    if math.abs(array.get(expo, array.get(idx, b))) &gt; math.abs(array.get(expo, array.get(idx, best)))
+                        best := b
+            tmp = array.get(idx, a)
+            array.set(idx, a, array.get(idx, best))
+            array.set(idx, best, tmp)
+            j = array.get(idx, a)
+            e = array.get(expo, j)
+            if e != 0
+                col = e &gt; 0 ? color.rgb(240, 192, 80) : color.rgb(150, 70, 220)
+                K = array.get(strikes, j)
+                array.push(gl, line.new(nz(sessStart, bar_index - 1), K, bar_index + 5, K, color = color.new(col, 10 + 15 * a), width = math.max(1, 5 - a)))
+                array.push(gb, label.new(bar_index + 6, K, str.tostring(K) + "  " + (e &gt; 0 ? "+" : "−") + str.tostring(math.abs(e) / 1e9, "#.##") + "B/1%",
+                     style = label.style_label_left, color = color.new(col, 30), textcolor = color.black, size = size.small))</pre>
+    </div>
+    <ol>
+      <li>في TradingView افتح <span class="ltr">Pine Editor</span> أسفل الشارت.</li>
+      <li>الصق الكود مكان الموجود، ثم <span class="ltr">Save</span> ثم <span class="ltr">Add to chart</span>.</li>
+      <li>افتح الرمز <code>SP:SPX</code> (فيه حجم الأسهم) على فريم 3 دقائق. على <code>CBOE:SPX</code> لا يوجد حجم، فاختر <code>Equal</code> في الإعدادات.</li>
+      <li>مستويات الغاما تحتاج بيانات <span class="ltr">OPRA</span> في اشتراكك، وتظهر لآخر جلسة على الشارت فقط. بدونها يظهر الخط والنطاقات وحدها.</li>
+    </ol>
+    <p class="note">لم أتمكن من تشغيله على TradingView من عندي. إذا ظهر خطأ عند الحفظ أرسل لي نصّه وأصلحه.</p>
+  </section>
+
+  <section>
+    <h2>الإعدادات</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>الإعداد</th><th>الافتراضي</th><th>المعنى</th></tr></thead>
+        <tbody>
+          <tr><td class="ltr">Line weights</td><td class="ltr">Volume</td><td>وزن كل دقيقة بحجمها، مثل VWAP العادي. <span class="ltr">Equal</span> يعطي كل دقيقة نفس الوزن، و<span class="ltr">0DTE options flow</span> يزن بحجم عقود أوبشن اليوم.</td></tr>
+          <tr><td class="ltr">Start delay</td><td class="num">5</td><td>عدد الدقائق المستبعدة بعد 9:30. القيمة 5 طابقت شارته، والقيمة 0 تعطي VWAP العادي.</td></tr>
+          <tr><td class="ltr">Bands</td><td>مفعّل</td><td>النطاقات ±1σ و±2σ حول الخط.</td></tr>
+          <tr><td class="ltr">Gamma levels</td><td>مفعّل</td><td><span class="swatch" style="background:var(--gold)"></span>أصفر حيث تغلب عقود الكول، <span class="swatch" style="background:var(--purple)"></span>بنفسجي حيث تغلب عقود البوت. الأقوى بخط أعرض.</td></tr>
+          <tr><td class="ltr">Strikes each side</td><td class="num">9</td><td>عدد السترايكات فوق وتحت سعر الافتتاح، كل 5 نقاط. الحد 9 لأن TradingView يسمح بـ40 طلب بيانات.</td></tr>
+          <tr><td class="ltr">Gamma levels to draw</td><td class="num">5</td><td>عدد أقوى المستويات المرسومة.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>اختبار اليوم</h2>
+    <p>بعد إغلاق جلسة اليوم (23 أكتوبر) سأحفظ عقود أوبشن اليوم وأجمّد مستوياتي وخطوطي في ملف قبل أن أرى أي شارت له. إذا نشر شارتاً لليوم أرسله لي وأقارنه بالأرقام المجمّدة. هذا أول اختبار نظيف لجزء الغاما.</p>
+  </section>
+</div>
+
+<script>
+const btn = document.getElementById('copy')
+const src = document.getElementById('src')
+btn.addEventListener('click', async () => {
+  const done = (msg) => { btn.textContent = msg; btn.classList.add('done'); setTimeout(() => { btn.textContent = 'نسخ الكود'; btn.classList.remove('done') }, 2200) }
+  try {
+    await navigator.clipboard.writeText(src.textContent)
+    done('تم النسخ')
+  } catch {
+    // clipboard refused (some app views): select the code so the viewer can copy it by hand
+    const r = document.createRange(); r.selectNodeContents(src)
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r)
+    done('حدّدت الكود، انسخه يدوياً')
+  }
+})
+</script>
