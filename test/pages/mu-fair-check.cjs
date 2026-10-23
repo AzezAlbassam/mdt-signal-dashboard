@@ -1,6 +1,8 @@
 // Regression (2026-10-21): MU's fair value with its real saved docs and the TradingView row of that
 // day. The audit's Lynch gate had dropped the method for MU (a loss in FY2023, revenue +105% a year),
 // taking the fair value from 1539 to 1246; with the gate on the growth the method uses it is 1428.56.
+// 2026-10-23 (study 16 D2 C, adopted): P/S 539.96 is under ⅓ of the weighted median 1628.16, so it is
+// left out of the mean: (1377.68 × .2 + 1855.28 × .3 + 1628.16 × .3) ÷ .8 = 1650.71.
 //   node test/pages/mu-fair-check.cjs
 const path = require('path')
 const fs = require('fs')
@@ -56,7 +58,7 @@ fs.writeFileSync(tmp, html)
   await page.click('#rows tr.row')
   await page.waitForTimeout(800)
   const box = await page.$eval('#rows tr.detail .part', (t) => t.innerText.replace(/\s+/g, ' ')).catch((e) => 'ERR ' + e.message)
-  const ok = /1428\.56/.test(cell) && /1855\.28/.test(box) && !logs.length
+  const ok = /1650\.71/.test(cell) && /1855\.28/.test(box) && /P\/S[^:]*: تقييمها أكثر من 3 أضعاف/.test(box) && !logs.length
   console.log('MU CHECK:', ok ? 'ok' : 'FAILED', cell, logs)
   if (!ok) process.exitCode = 1
   await browser.close()

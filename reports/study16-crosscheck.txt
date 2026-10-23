@@ -1,0 +1,15 @@
+Study 16 — clean-room cross-check (2026-10-23)
+
+Two independent re-implementations were written from PROTOCOL-study16.md and the named engine
+helpers only, without reading scripts/study16-run.js or reports/study16.*:
+  cr1 — fully blind.
+  cr2 — blind to the script and the report, but `git log` showed it a commit message that stated the
+        D2 result, so its D2 is not an independent confirmation (recorded in its notes).
+Every reported number was compared with reports/study16.json: per decision U, stocks, counted
+years, coverage disagreements, adoption; per year n, M, IC, M of A↓X and the naive baseline; per
+challenger mean δ, mean δ*, wins, p, Holm p, ICs and guard; pooled medians, within-25% and signed
+errors; the 24-month horizon; large caps; the combination; coverage.
+  cr1: 813 values compared, 0 mismatches (relative tolerance 1e-9).
+  cr2: 813 values compared, 0 mismatches.
+Both found D1, D4, D7, D9 not testable (equity, cash and operating income empty for all 815) and
+adopted D2 C only; combination B0 0.33610 → B* 0.32928, naive 0.17794, mean IC 0.00810 → 0.00943.
