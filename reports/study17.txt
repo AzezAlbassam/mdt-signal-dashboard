@@ -1,0 +1,194 @@
+STUDY 17 — who climbs the top of the US market (PROTOCOL-study17.md)
+companies in the file: 954 (24 no longer trading); built 2026-10-23
+
+§4 TESTS — one-year outcome g1 = ln(cap Y+1 ÷ cap Y), U(Y) = the 100 largest US companies (addendum 2)
+  H_M: mean IC +0.089 over 9 counted years, sign-flip p 0.1738, Holm 0.5215 → NOT CONFIRMED
+        yearly IC: 2016 +0.147 (n 98), 2017 +0.343 (n 97), 2018 -0.043 (n 98), 2019 +0.301 (n 100), 2020 +0.180 (n 98), 2021 -0.121 (n 99), 2022 -0.490 (n 100), 2023 +0.312 (n 100), 2024 +0.171 (n 100)
+        top fifth − bottom fifth median g1: 2016 13.4%, 2017 26.2%, 2018 -2.9%, 2019 21.8%, 2020 5.7%, 2021 -25.8%, 2022 -55.3%, 2023 24.7%, 2024 7.2%
+  H_G: mean IC +0.110 over 10 counted years, sign-flip p 0.0957, Holm 0.3828 → NOT CONFIRMED
+        yearly IC: 2015 -0.084 (n 90; 8 dead without revenue), 2016 +0.423 (n 93; 5 dead without revenue), 2017 +0.223 (n 94; 4 dead without revenue), 2018 +0.232 (n 97; 1 dead without revenue), 2019 +0.368 (n 100), 2020 -0.044 (n 99), 2021 -0.397 (n 99), 2022 +0.141 (n 100), 2023 +0.018 (n 100), 2024 +0.219 (n 100)
+        top fifth − bottom fifth median g1: 2015 -4.0%, 2016 24.8%, 2017 14.5%, 2018 10.1%, 2019 28.7%, 2020 -3.5%, 2021 -41.9%, 2022 29.7%, 2023 -0.1%, 2024 21.2%
+  H_S: mean IC -0.032 over 10 counted years, sign-flip p 0.8271, Holm 1.0000 → NOT CONFIRMED
+        yearly IC: 2015 -0.051 (n 98), 2016 +0.046 (n 98), 2017 +0.012 (n 98), 2018 -0.004 (n 98), 2019 +0.021 (n 100), 2020 -0.017 (n 100), 2021 +0.054 (n 100), 2022 -0.010 (n 100), 2023 -0.206 (n 100), 2024 -0.166 (n 100)
+        top fifth − bottom fifth median g1: 2015 -1.1%, 2016 1.6%, 2017 -0.9%, 2018 1.2%, 2019 -9.8%, 2020 -5.8%, 2021 -14.1%, 2022 -5.4%, 2023 -19.5%, 2024 -12.3%
+  H_V: mean IC -0.122 over 6 counted years, sign-flip p 0.8281, Holm 1.0000 → NOT CONFIRMED
+        yearly IC: 2015 +0.228* (n 71; 8 dead without revenue), 2016 -0.148* (n 73; 5 dead without revenue), 2017 -0.181* (n 77; 4 dead without revenue), 2018 +0.026* (n 79; 1 dead without revenue), 2019 -0.331 (n 83), 2020 -0.122 (n 87), 2021 +0.469 (n 85), 2022 -0.294 (n 83), 2023 -0.240 (n 82), 2024 -0.212 (n 81)
+        top fifth − bottom fifth median g1: 2015 10.7%, 2016 -15.4%, 2017 -11.9%, 2018 -2.7%, 2019 -25.2%, 2020 -10.0%, 2021 40.6%, 2022 -46.0%, 2023 -18.6%, 2024 -9.9%
+  * = fewer than 80 companies with both values; not counted
+  left out (stopped trading within the year): 2015: Time Warner Cable, EMC Corporation | 2016: Reynolds American Inc., E. I. du Pont de Nemours and Company (old DuPont, NYSE: DD) | 2017: Time Warner Inc., Aetna | 2018: DowDuPont Inc. (NYSE: DWDP; renamed DuPont de Nemours 2019-06-03), Twenty-First Century Fox (FOXA Class A + FOX Class B) | 2019: none | 2020: none | 2021: none | 2022: none | 2023: none | 2024: none
+
+§5 the four rules on the 3-year outcome (overlapping years, no p-value)
+  M: mean IC +0.045 — 2016 -0.073, 2017 +0.533, 2018 +0.224, 2019 -0.110, 2020 +0.020, 2021 +0.004, 2022 -0.286
+  G: mean IC +0.201 — 2015 +0.277, 2016 +0.464, 2017 +0.413, 2018 +0.430, 2019 +0.156, 2020 +0.011, 2021 -0.157, 2022 +0.013
+  S: mean IC +0.006 — 2015 -0.000, 2016 -0.013, 2017 -0.008, 2018 +0.100, 2019 +0.181, 2020 +0.067, 2021 -0.203, 2022 -0.073
+  V: mean IC -0.046 — 2015 -0.118, 2016 -0.118, 2017 -0.270, 2018 -0.236, 2019 +0.053, 2020 +0.058, 2021 -0.038, 2022 -0.255
+
+§5 transition shares — ALL companies (dead ones included)
+  horizon 1 year(s):
+    from 1–10    (n  100): 1–10 84% · 11–20 15% · 21–50 1% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 11–20   (n  100): 1–10 14% · 11–20 61% · 21–50 25% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 21–50   (n  300): 1–10 0% · 11–20 8% · 21–50 71% · 51–100 20% · below 100 0% · no longer trading 0%
+    from 51–100  (n  500): 1–10 0% · 11–20 0% · 21–50 11% · 51–100 70% · below 100 17% · no longer trading 1%
+  horizon 3 year(s):
+    from 1–10    (n   80): 1–10 75% · 11–20 18% · 21–50 5% · 51–100 3% · below 100 0% · no longer trading 0%
+    from 11–20   (n   80): 1–10 18% · 11–20 40% · 21–50 35% · 51–100 6% · below 100 1% · no longer trading 0%
+    from 21–50   (n  240): 1–10 1% · 11–20 12% · 21–50 52% · 51–100 29% · below 100 5% · no longer trading 1%
+    from 51–100  (n  400): 1–10 1% · 11–20 1% · 21–50 18% · 51–100 48% · below 100 29% · no longer trading 4%
+  horizon 5 year(s):
+    from 1–10    (n   60): 1–10 68% · 11–20 18% · 21–50 8% · 51–100 5% · below 100 0% · no longer trading 0%
+    from 11–20   (n   60): 1–10 10% · 11–20 42% · 21–50 37% · 51–100 8% · below 100 3% · no longer trading 0%
+    from 21–50   (n  180): 1–10 3% · 11–20 9% · 21–50 41% · 51–100 35% · below 100 8% · no longer trading 3%
+    from 51–100  (n  300): 1–10 1% · 11–20 1% · 21–50 21% · 51–100 36% · below 100 33% · no longer trading 7%
+  horizon 10 year(s):
+    from 1–10    (n   10): 1–10 60% · 11–20 20% · 21–50 20% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 11–20   (n   10): 1–10 0% · 11–20 40% · 21–50 30% · 51–100 30% · below 100 0% · no longer trading 0%
+    from 21–50   (n   30): 1–10 0% · 11–20 7% · 21–50 33% · 51–100 23% · below 100 27% · no longer trading 10%
+    from 51–100  (n   50): 1–10 2% · 11–20 2% · 21–50 14% · 51–100 26% · below 100 42% · no longer trading 14%
+
+§5 transition shares — SURVIVORS ONLY (what survivorship would show)
+  horizon 1 year(s):
+    from 1–10    (n  100): 1–10 84% · 11–20 15% · 21–50 1% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 11–20   (n  100): 1–10 14% · 11–20 61% · 21–50 25% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 21–50   (n  300): 1–10 0% · 11–20 8% · 21–50 72% · 51–100 20% · below 100 0% · no longer trading 0%
+    from 51–100  (n  500): 1–10 0% · 11–20 0% · 21–50 11% · 51–100 71% · below 100 18% · no longer trading 0%
+  horizon 3 year(s):
+    from 1–10    (n   80): 1–10 75% · 11–20 18% · 21–50 5% · 51–100 3% · below 100 0% · no longer trading 0%
+    from 11–20   (n   80): 1–10 18% · 11–20 40% · 21–50 35% · 51–100 6% · below 100 1% · no longer trading 0%
+    from 21–50   (n  240): 1–10 1% · 11–20 12% · 21–50 53% · 51–100 29% · below 100 5% · no longer trading 0%
+    from 51–100  (n  400): 1–10 1% · 11–20 1% · 21–50 18% · 51–100 49% · below 100 31% · no longer trading 0%
+  horizon 5 year(s):
+    from 1–10    (n   60): 1–10 68% · 11–20 18% · 21–50 8% · 51–100 5% · below 100 0% · no longer trading 0%
+    from 11–20   (n   60): 1–10 10% · 11–20 42% · 21–50 37% · 51–100 8% · below 100 3% · no longer trading 0%
+    from 21–50   (n  180): 1–10 3% · 11–20 9% · 21–50 42% · 51–100 37% · below 100 9% · no longer trading 0%
+    from 51–100  (n  300): 1–10 1% · 11–20 2% · 21–50 22% · 51–100 36% · below 100 39% · no longer trading 0%
+  horizon 10 year(s):
+    from 1–10    (n   10): 1–10 60% · 11–20 20% · 21–50 20% · 51–100 0% · below 100 0% · no longer trading 0%
+    from 11–20   (n   10): 1–10 0% · 11–20 40% · 21–50 30% · 51–100 30% · below 100 0% · no longer trading 0%
+    from 21–50   (n   30): 1–10 3% · 11–20 7% · 21–50 33% · 51–100 23% · below 100 33% · no longer trading 0%
+    from 51–100  (n   50): 1–10 0% · 11–20 2% · 21–50 14% · 51–100 30% · below 100 54% · no longer trading 0%
+
+§5 top 10 at each date
+  Dec 2015: Apple Inc., Alphabet Inc., Microsoft Corporation, ExxonMobil Holdings Corporation, Berkshire Hathaway Inc., Amazon.com, Inc., GE Aerospace, Wells Fargo & Company, Meta Platforms, Inc., Johnson & Johnson
+  Dec 2016: Apple Inc., Alphabet Inc., Microsoft Corporation, Berkshire Hathaway Inc., ExxonMobil Holdings Corporation, Amazon.com, Inc., JP Morgan Chase & Co., Meta Platforms, Inc., Johnson & Johnson, GE Aerospace
+  Dec 2017: Apple Inc., Alphabet Inc., Microsoft Corporation, Amazon.com, Inc., Meta Platforms, Inc., Berkshire Hathaway Inc., JP Morgan Chase & Co., Johnson & Johnson, ExxonMobil Holdings Corporation, Bank of America Corporation
+  Dec 2018: Microsoft Corporation, Apple Inc., Amazon.com, Inc., Alphabet Inc., Berkshire Hathaway Inc., Meta Platforms, Inc., Johnson & Johnson, JP Morgan Chase & Co., Visa Inc., ExxonMobil Holdings Corporation
+  Dec 2019: Apple Inc., Microsoft Corporation, Alphabet Inc., Amazon.com, Inc., Meta Platforms, Inc., Berkshire Hathaway Inc., JP Morgan Chase & Co., Visa Inc., Johnson & Johnson, Bank of America Corporation
+  Dec 2020: Apple Inc., Microsoft Corporation, Amazon.com, Inc., Alphabet Inc., Meta Platforms, Inc., Tesla, Inc., Berkshire Hathaway Inc., Visa Inc., Johnson & Johnson, JP Morgan Chase & Co.
+  Dec 2021: Apple Inc., Microsoft Corporation, Alphabet Inc., Amazon.com, Inc., Tesla, Inc., Meta Platforms, Inc., NVIDIA Corporation, Berkshire Hathaway Inc., JP Morgan Chase & Co., UnitedHealth Group Incorporated
+  Dec 2022: Apple Inc., Microsoft Corporation, Alphabet Inc., Amazon.com, Inc., Berkshire Hathaway Inc., UnitedHealth Group Incorporated, Johnson & Johnson, ExxonMobil Holdings Corporation, Visa Inc., Tesla, Inc.
+  Dec 2023: Apple Inc., Microsoft Corporation, Alphabet Inc., Amazon.com, Inc., NVIDIA Corporation, Meta Platforms, Inc., Tesla, Inc., Berkshire Hathaway Inc., Visa Inc., Eli Lilly and Company
+  Dec 2024: Apple Inc., NVIDIA Corporation, Microsoft Corporation, Alphabet Inc., Amazon.com, Inc., Meta Platforms, Inc., Tesla, Inc., Broadcom Inc., Berkshire Hathaway Inc., Walmart Inc.
+  Dec 2025: NVIDIA Corporation, Apple Inc., Alphabet Inc., Microsoft Corporation, Amazon.com, Inc., Meta Platforms, Inc., Broadcom Inc., Tesla, Inc., Berkshire Hathaway Inc., Eli Lilly and Company
+  2026-10-23: NVIDIA Corporation, Apple Inc., Alphabet Inc., Microsoft Corporation, Amazon.com, Inc., Space Exploration Technologies Corp, Meta Platforms, Inc., Broadcom Inc., Tesla, Inc., Eli Lilly and Company
+  still in the top 10 after 5 years: 2015→2020: 7/10, 2016→2021: 7/10, 2017→2022: 7/10, 2018→2023: 7/10, 2019→2024: 6/10, 2020→2025: 7/10
+  still in the top 10 after 10 years: 2015→2025: 6/10
+
+§5 entrants to the top 10 and top 20: rank 1, 3 and 5 years earlier
+  top 10 from 2016: JP Morgan Chase & Co. (rank 7) — 1y before 11, 3y not listed / no value, 5y not listed / no value
+  top 10 from 2017: Bank of America Corporation (rank 10) — 1y before 13, 3y not listed / no value, 5y not listed / no value
+  top 10 from 2018: Visa Inc. (rank 9) — 1y before 13, 3y 17, 5y not listed / no value
+  top 10 from 2020: Tesla, Inc. (rank 6) — 1y before 88, 3y 116, 5y 148
+  top 10 from 2021: NVIDIA Corporation (rank 7) — 1y before 15, 3y 61, 5y 72
+  top 10 from 2021: UnitedHealth Group Incorporated (rank 10) — 1y before 14, 3y 14, 5y 29
+  top 10 from 2022: Johnson & Johnson (rank 7) — 1y before 12, 3y 9, 5y 8
+  top 10 from 2022: ExxonMobil Holdings Corporation (rank 8) — 1y before 27, 3y 14, 5y 9
+  top 10 from 2023: Meta Platforms, Inc. (rank 6) — 1y before 18, 3y 5, 5y 6
+  top 10 from 2023: Eli Lilly and Company (rank 10) — 1y before 17, 3y 47, 5y 40
+  top 10 from 2024: Broadcom Inc. (rank 8) — 1y before 13, 3y 19, 5y 43
+  top 10 from 2024: Walmart Inc. (rank 10) — 1y before 14, 3y 15, 5y 11
+  top 10 from 2026-10: Space Exploration Technologies Corp (rank 6) — 1y before not listed / no value, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2016: Chevron Corporation (rank 15) — 1y before 22, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2017: Home Depot, Inc. (The) (rank 17) — 1y before 24, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2017: Intel Corporation (rank 18) — 1y before 21, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2017: UnitedHealth Group Incorporated (rank 20) — 1y before 29, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2018: Cisco Systems, Inc. (rank 17) — 1y before 24, 3y 30, 5y not listed / no value
+  top 20 from 2018: Verizon Communications Inc. (rank 18) — 1y before 21, 3y 19, 5y not listed / no value
+  top 20 from 2019: Mastercard Incorporated (rank 13) — 1y before 24, 3y 35, 5y not listed / no value
+  top 20 from 2019: AT&T Inc. (rank 15) — 1y before 23, 3y 12, 5y not listed / no value
+  top 20 from 2019: Walt Disney Company (The) (rank 19) — 1y before 28, 3y 22, 5y not listed / no value
+  top 20 from 2020: Tesla, Inc. (rank 6) — 1y before 88, 3y 116, 5y 148
+  top 20 from 2020: NVIDIA Corporation (rank 15) — 1y before 39, 3y 41, 5y 231
+  top 20 from 2020: PYPL (rank 19) — 1y before 50, 3y 64, 5y 106
+  top 20 from 2020: Netflix, Inc. (rank 20) — 1y before 38, 3y 67, 5y 91
+  top 20 from 2021: Pfizer, Inc. (rank 18) — 1y before 28, 3y 13, 5y 18
+  top 20 from 2021: Broadcom Inc. (rank 19) — 1y before 31, 3y 43, 5y 67
+  top 20 from 2022: ExxonMobil Holdings Corporation (rank 8) — 1y before 27, 3y 14, 5y 9
+  top 20 from 2022: Eli Lilly and Company (rank 17) — 1y before 30, 3y 52, 5y 62
+  top 20 from 2023: Oracle Corporation (rank 20) — 1y before 27, 3y 34, 5y 27
+  top 20 from 2024: Costco Wholesale Corporation (rank 19) — 1y before 21, 3y 29, 5y 47
+  top 20 from 2025: Johnson & Johnson (rank 17) — 1y before 23, 3y 7, 5y 9
+  top 20 from 2025: Palantir Technologies Inc. (rank 18) — 1y before 49, 3y 441, 5y 175
+  top 20 from 2025: Bank of America Corporation (rank 19) — 1y before 22, 3y 22, 5y 17
+  top 20 from 2026-10: Space Exploration Technologies Corp (rank 6) — 1y before not listed / no value, 3y not listed / no value, 5y not listed / no value
+  top 20 from 2026-10: Micron Technology, Inc. (rank 12) — 1y before 102, 3y 137, 5y 90
+  top 20 from 2026-10: Advanced Micro Devices, Inc. (rank 15) — 1y before 45, 3y 77, 5y 67
+  top 20 from 2026-10: AbbVie Inc. (rank 20) — 1y before 25, 3y 21, 5y 37
+
+§5 multi-baggers within 5 years (cap Y+5 ÷ cap Y), from the top 100 at Y
+  2015→2020: ≥3× 10 of 100, ≥5× 2; Amazon.com, Inc. 5.2× (rank 6→3), Adobe Inc. 5.1× (rank 96→22), Netflix, Inc. 4.9× (rank 91→20), Salesforce, Inc. 3.9× (rank 84→29), Apple Inc. 3.8× (rank 1→1), Microsoft Corporation 3.7× (rank 3→2), Danaher Corporation 3.3× (rank 93→42), Thermo Fisher Scientific Inc 3.3× (rank 79→36), Mastercard Incorporated 3.2× (rank 39→13), NextEra Energy, Inc. 3.2× (rank 98→49)
+  2016→2021: ≥3× 19 of 100, ≥5× 4; NVIDIA Corporation 10.8× (rank 72→7), Adobe Inc. 5.3× (rank 97→22), Microsoft Corporation 5.1× (rank 3→2), Netflix, Inc. 5.1× (rank 93→21), Amazon.com, Inc. 4.7× (rank 6→4), Thermo Fisher Scientific Inc 4.7× (rank 87→26), Apple Inc. 4.7× (rank 1→1), Danaher Corporation 4.5× (rank 92→33), Abbott Laboratories 4.4× (rank 84→31), Broadcom Inc. 4.2× (rank 67→19), Alphabet Inc. 3.6× (rank 2→3), Accenture plc 3.6× (rank 63→25), Costco Wholesale Corporation 3.6× (rank 68→29), NextEra Energy, Inc. 3.3× (rank 89→48), Eli Lilly and Company 3.2× (rank 59→30), Mastercard Incorporated 3.1× (rank 35→17), NKE 3.1× (rank 55→23), UnitedHealth Group Incorporated 3.1× (rank 29→10), Charles Schwab Corporation (The) 3.1× (rank 83→55)
+  2017→2022: ≥3× 2 of 100, ≥5× 0; Eli Lilly and Company 3.6× (rank 62→17), Danaher Corporation 3.0× (rank 88→31)
+  2018→2023: ≥3× 8 of 100, ≥5× 2; Tesla, Inc. 15.3× (rank 94→7), NVIDIA Corporation 14.8× (rank 61→5), Eli Lilly and Company 4.4× (rank 40→10), Broadcom Inc. 4.3× (rank 43→13), Apple Inc. 3.9× (rank 2→1), Microsoft Corporation 3.6× (rank 1→2), T-Mobile US, Inc. 3.5× (rank 97→40), Costco Wholesale Corporation 3.3× (rank 54→21)
+  2019→2024: ≥3× 6 of 100, ≥5× 4; NVIDIA Corporation 22.9× (rank 39→2), Tesla, Inc. 19.0× (rank 88→7), Broadcom Inc. 8.3× (rank 43→8), Eli Lilly and Company 5.7× (rank 52→12), T-Mobile US, Inc. 3.8× (rank 96→28), Costco Wholesale Corporation 3.1× (rank 47→19)
+  2020→2025: ≥3× 7 of 100, ≥5× 3; NVIDIA Corporation 13.9× (rank 15→1), Broadcom Inc. 8.2× (rank 31→7), Eli Lilly and Company 6.3× (rank 47→10), Micron Technology, Inc. 3.8× (rank 90→27), GE Aerospace 3.5× (rank 81→26), Alphabet Inc. 3.2× (rank 4→3), Advanced Micro Devices, Inc. 3.2× (rank 67→24)
+
+§5 the largest company and the top 10 vs the rest (one-year g1)
+  2015: #1 Apple Inc. +0.044 vs ranks 2–100 median +0.053; top-10 median +0.095 vs 11–100 +0.050
+  2016: #1 Apple Inc. +0.333 vs ranks 2–100 median +0.148; top-10 median +0.249 vs 11–100 +0.138
+  2017: #1 Apple Inc. -0.119 vs ranks 2–100 median -0.094; top-10 median -0.107 vs 11–100 -0.092
+  2018: #1 Microsoft Corporation +0.437 vs ranks 2–100 median +0.216; top-10 median +0.273 vs 11–100 +0.216
+  2019: #1 Apple Inc. +0.533 vs ranks 2–100 median +0.085; top-10 median +0.192 vs 11–100 +0.080
+  2020: #1 Apple Inc. +0.253 vs ranks 2–100 median +0.178; top-10 median +0.201 vs 11–100 +0.173
+  2021: #1 Apple Inc. -0.345 vs ranks 2–100 median -0.213; top-10 median -0.433 vs 11–100 -0.208
+  2022: #1 Apple Inc. +0.361 vs ranks 2–100 median +0.072; top-10 median +0.281 vs 11–100 +0.070
+  2023: #1 Apple Inc. +0.237 vs ranks 2–100 median +0.107; top-10 median +0.281 vs 11–100 +0.071
+  2024: #1 Apple Inc. +0.056 vs ranks 2–100 median +0.075; top-10 median +0.127 vs 11–100 +0.069
+
+§5 "obvious in hindsight": percentiles at the start of the companies that tripled within 5 years vs everybody else in U(Y)
+  M: tripled (n 42) median percentile 0.56, in the rule's top fifth 24%; the rest (n 455) median 0.49; of all companies in the rule's top fifth, 10% tripled
+  G: tripled (n 52) median percentile 0.76, in the rule's top fifth 40%; the rest (n 521) median 0.48; of all companies in the rule's top fifth, 18% tripled
+  S: tripled (n 52) median percentile 0.61, in the rule's top fifth 37%; the rest (n 548) median 0.49; of all companies in the rule's top fifth, 16% tripled
+  V: tripled (n 49) median percentile 0.37, in the rule's top fifth 14%; the rest (n 421) median 0.51; of all companies in the rule's top fifth, 7% tripled
+
+§5 data checks
+  V1: 558 trading companies; median |gap| 3.3%; above 15%: Energy Fuels Inc. -15%, Applied Optoelectronics, Inc. -29%, Almonty Industries Inc. -28%, Altimmune, Inc. -55%, Array Technologies Inc -54%, AST SpaceMobile, Inc. Class A -34%, AXT, Inc. -34%, BIDU 22%, CELH 60%, Charter Communications, Inc. Class A -22%, Critical Metals Corp. -17%, Draganfly Inc -60%, Eos Energy Enterprises, Inc. Class A -29%, FCEL -68%, FLNC -29%, Structure Therapeutics, Inc. Sponsored ADR -17%, Globalstar, Inc. -56%, Interactive Brokers Group, Inc. -74%, JD 29%, SEALSQ Corp. -38%, Lucid Group, Inc. -42%, Lumentum Holdings Inc. -18%, LightPath Technologies, Inc. Class A -24%, Intuitive Machines, Inc. Class A -50%, Lightwave Logic, Inc. -17%, MCHP 94%, Strategy Inc -40%, Navitas Semiconductor Corporation -21%, Ondas Inc. -63%, Ouster, Inc. -22%, PLUG -18%, POET Technologies Inc. -46%, Perpetua Resources Corp. -25%, Prime Medicine, Inc. -18%, Quantum Computing Inc. -27%, Red Cat Holdings Inc -35%, Rivian Automotive, Inc. Class A -18%, Satellogic Inc. Class A -83%, Solid Power, Inc. Class A -19%, Skyworks Solutions, Inc. -34%, ACI 16%, ALB -25%, Ares Management Corporation Class A 23%, Bank of America Corporation 16%, Bloom Energy Corporation -18%, BEP -47%, Bread Financial Holdings, Inc. 24%, BW -41%, Blackstone Inc. -37%, Citigroup, Inc. 21%, CPT -20%, Salesforce, Inc. 16%, Carvana Co. -24%, Devon Energy Corporation -42%, Etsy, Inc. 27%, Fifth Third Bancorp -21%, Fluor Corporation 23%, FMC Corporation -20%, Harley-Davidson, Inc. 17%, INVH 65%, IonQ, Inc. -35%, IT 20%, LU 846%, M&T Bank Corporation 16%, NVR 15%, Occidental Petroleum Corporation 42%, PINS 21%, Planet Labs PBC Class A -15%, Ferrari N.V. -19%, Redwire Corp -60%, RKT -53%, NuScale Power Corporation Class A -62%, Simon Property Group, Inc. 153%, T1 Energy Inc. -44%, TKO -54%, United States Antimony Corporation -18%, Vivmark Residential -51%, VST 29%, Welltower Inc. 60%
+  V2: 2015: 9 of 10 in both (finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://); theirs only: JPMorgan Chase (theirs #10, ours #11); ours only: GE Aerospace (ours #7, $316B) — the list's GE value ($174.7B) is 0.598 × V4's $292.2B, i.e. on TradingView's spin-adjusted prices (addendum 3); on actual prices GE is in the top 10
+  V2: 2016: 9 of 10 in both (finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://); theirs only: Wells Fargo (theirs #10, ours #11); ours only: GE Aerospace (ours #10, $309B) — GE as in 2015 (the list's value is spin-adjusted)
+  V2: 2017: 10 of 10 in both (finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://); theirs only: none; ours only: none
+  V2: 2018: 10 of 10 in both (finhacker.cz, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://); theirs only: none; ours only: none
+  V2: 2019: 9 of 9 in both (FinHacker, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www); theirs only: none; ours only: none
+  V2: 2020: 9 of 10 in both (FinHacker, 'Largest 20 S&P 500 Companies by Market Cap (1989-2026)', https://www); theirs only: Walmart (theirs #10, ours #11); ours only: JP Morgan Chase & Co. (ours #10, $415B) — JPMorgan vs Walmart at #10: net income ÷ diluted EPS puts JPMorgan ~7% high (preferred dividends and an average count; V4: JPMorgan +9% in 2015, +6% in 2021)
+  V2: 2021: 10 of 10 in both (FinHacker top-20 S&P 500 page (ranks, plus values for Tesla, Nvidia and UnitedHe); theirs only: none; ours only: none
+  V2: 2022: 9 of 10 in both (FinHacker top-20 S&P 500 page (ranks, plus values for UnitedHealth, J&J, Exxon a); theirs only: JPMorgan Chase (theirs #10, ours #11); ours only: Tesla, Inc. (ours #10, $428B) — Tesla vs JPMorgan at #10: the diluted count puts Tesla ~10% high (options and convertibles; V4 2021: Tesla +12.5%) and the two are within 10% of each other
+  V2: 2024: 3 of 3 in both (EY market capitalisation analysis, published 3 January 2025 (as summarised in th); theirs only: none; ours only: none
+  V2: 2025: 9 of 9 in both (Wikipedia, 'List of public corporations by market capitalization', fourth-quarte); theirs only: none; ours only: none
+  V2: 2023: no published year-end top-10 list found within the search budget (unchecked)
+  V3: 24 dead companies, 85 year-ends: checker only 9, research, confirmed by the check 29, research, check found no independent number 47
+  V3: TWX: 2015 $51.4B (checker only); 2016 $75.1B (checker only); 2017 $71.3B (research, confirmed by the check)
+  V3: RAI: 2015 $65.9B (research, check found no independent number); 2016 $79.9B (research, confirmed by the check)
+  V3: ESRX: 2015 $58.4B (research, confirmed by the check); 2016 $41.6B (checker only); 2017 $42.1B (research, check found no independent number)
+  V3: CELG: 2015 $93.6B (research, check found no independent number); 2016 $90.0B (research, check found no independent number); 2017 $78.5B (research, confirmed by the check); 2018 $45.0B (research, check found no independent number)
+  V3: AGN: 2015 $123.3B (research, check found no independent number); 2016 $70.4B (research, check found no independent number); 2017 $54.0B (research, check found no independent number); 2018 $44.5B (research, check found no independent number); 2019 $63.0B (research, check found no independent number)
+  V3: WBA: 2015 $91.9B (checker only); 2016 $89.3B (checker only); 2017 $71.9B (checker only); 2018 $64.5B (checker only); 2019 $51.7B (research, confirmed by the check); 2020 $35.0B (research, confirmed by the check)
+  V3: AET: 2015 $37.8B (research, check found no independent number); 2016 $43.6B (research, check found no independent number); 2017 $59.0B (research, check found no independent number)
+  V3: MON: 2015 $43.3B (research, check found no independent number); 2016 $46.1B (research, confirmed by the check); 2017 $51.4B (research, confirmed by the check)
+  V3: RTN: 2015 $37.2B (research, check found no independent number); 2016 $41.7B (research, check found no independent number); 2017 $54.3B (research, check found no independent number); 2018 $43.2B (research, confirmed by the check); 2019 $61.2B (research, confirmed by the check)
+  V3: ATVI: 2015 $28.3B (research, confirmed by the check); 2016 $26.8B (research, confirmed by the check); 2017 $47.9B (research, confirmed by the check); 2018 $35.6B (research, confirmed by the check); 2019 $45.7B (research, confirmed by the check); 2020 $71.9B (research, confirmed by the check); 2021 $51.8B (research, confirmed by the check); 2022 $60.0B (research, confirmed by the check)
+  V3: TWC: 2015 $52.5B (checker only)
+  V3: EMC: 2015 $50.0B (research, confirmed by the check)
+  V3: BRCM: 2015 $35.2B (research, check found no independent number)
+  V3: PCP: 2015 $31.9B (research, check found no independent number)
+  V3: ALXN: 2015 $43.0B (research, check found no independent number); 2016 $27.4B (research, check found no independent number); 2017 $26.7B (research, check found no independent number); 2018 $21.8B (research, confirmed by the check); 2019 $23.9B (research, check found no independent number); 2020 $34.2B (research, confirmed by the check)
+  V3: APC: 2015 $24.7B (research, confirmed by the check); 2016 $39.0B (research, check found no independent number); 2017 $28.5B (research, check found no independent number); 2018 $21.5B (research, check found no independent number)
+  V3: PX: 2015 $29.2B (research, check found no independent number); 2016 $33.4B (research, check found no independent number); 2017 $44.3B (research, confirmed by the check)
+  V3: AABA: 2015 $31.5B (research, check found no independent number); 2016 $36.9B (research, check found no independent number); 2017 $57.6B (research, check found no independent number); 2018 $32.9B (research, check found no independent number)
+  V3: DD-old: 2015 $57.5B (research, confirmed by the check); 2016 $64.2B (research, confirmed by the check)
+  V3: DWDP: 2017 $165.9B (research, check found no independent number); 2018 $120.6B (research, check found no independent number)
+  V3: S: 2015 $14.4B (research, confirmed by the check); 2016 $33.5B (research, confirmed by the check); 2017 $23.6B (checker only); 2018 $23.7B (research, confirmed by the check); 2019 $21.3B (research, confirmed by the check)
+  V3: FOXA-old: 2015 $52.1B (research, check found no independent number); 2016 $51.3B (research, check found no independent number); 2017 $63.6B (research, check found no independent number); 2018 $89.1B (research, check found no independent number)
+  V3: VMW: 2015 $23.9B (research, check found no independent number); 2016 $32.4B (research, check found no independent number); 2017 $50.5B (research, check found no independent number); 2018 $56.2B (research, check found no independent number); 2019 $63.3B (research, check found no independent number); 2020 $58.9B (research, check found no independent number); 2021 $48.7B (research, check found no independent number); 2022 $52.2B (research, check found no independent number)
+  V3: LNKD: 2015 $29.5B (research, check found no independent number)
+  V4: 2015: 98 of 109 matched; median |gap| 2.3%; above 15%: BAC +17% (ours $204.0B, V4 $174.69B, rank 13; net income ÷ diluted EPS: preferred dividends and an average count (rule 5, kept)), GS +19% (ours $90.3B, V4 $75.6B, rank 50; as BAC), PSA +25% (ours $53.5B, V4 $42.83B, rank 83; as BAC (large preferreds)), DHR -22% (ours $49.8B, V4 $63.78B, rank 93; Fortive spin-off segment 2015 unmeasured; rule 3 used the later segment (partial correction))
+  V4: 2015: in V4's top 100 but below our 100th ($46.6B): SCHW +7% (ours $46.4B, V4 $43.47B, rank 101), TGT +3% (ours $46.0B, V4 $44.73B, rank 102), MCK +2% (ours $46.0B, V4 $45.08B, rank 103), MON 0% (ours $43.3B, V4 $43.33B, rank 108), PSX +3% (ours $44.7B, V4 $43.3B, rank 105), ALXN 0% (ours $43.0B, V4 $43.04B, rank 109); no value or no match: CELG (V4 found no value), RAI (V4 found no value), ESRX (V4 found no value), DD (V4 found no value), FOXA (V4 found no value), TWX (V4 found no value), EPD (V4 found no value), EMC (V4 found no value), PYPL (V4 found no value), GD (V4 found no value), DOW (V4 found no value)
+  V4: 2021: 103 of 104 matched; median |gap| 1.7%; above 15%: none
+  V4: 2021: in V4's top 100 but below our 100th ($93.4B): BX -2% (ours $93.2B, V4 $94.71B, rank 101), TJX +2% (ours $92.3B, V4 $90.56B, rank 102), GILD +1% (ours $91.6B, V4 $91.05B, rank 104); no value or no match: ADI (V4 found no value)

@@ -54,7 +54,7 @@ function ics(ctx, horizon) {
         const later = c.cap?.[y + horizon]
         if (!(later > 0)) { gone.push(c.name ?? c.key); continue }
         const v = rules(c.cap, ctx.funds(c), y, c.sector)?.[k]
-        if (v == null || !Number.isFinite(v)) { if (c.dead != null) deadNoValue += 1; continue }
+        if (v == null || !Number.isFinite(v)) { if (c.dead != null && (k === 'G' || k === 'V')) deadNoValue += 1; continue } // POST-HOC label fix: only G and V need revenue
         rows.push({ v, g: Math.log(later / c.cap[y]) })
       }
       const p = percentiles(rows.map((r) => r.v))
