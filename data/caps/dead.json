@@ -687,7 +687,7 @@
   "name": "Yahoo! Inc. / Altaba Inc.",
   "tvSymbol": null,
   "lastYear": 2018,
-  "us": false,
+  "us": true,
   "yearEnds": {
    "2015": {
     "cap": 31460000000,
@@ -786,7 +786,7 @@
   "name": "Sprint Corporation",
   "tvSymbol": null,
   "lastYear": 2019,
-  "us": false,
+  "us": true,
   "yearEnds": {
    "2015": {
     "cap": 14370000000,
@@ -885,7 +885,7 @@
   "name": "VMware (Class A + Class B)",
   "tvSymbol": null,
   "lastYear": 2022,
-  "us": false,
+  "us": true,
   "yearEnds": {
    "2015": {
     "cap": 23860000000,
@@ -966,7 +966,7 @@
   "name": "LinkedIn (Class A + Class B)",
   "tvSymbol": null,
   "lastYear": 2015,
-  "us": false,
+  "us": true,
   "yearEnds": {
    "2015": {
     "cap": 29500000000,

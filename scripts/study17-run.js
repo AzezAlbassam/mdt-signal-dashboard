@@ -74,6 +74,7 @@ const adj = holm(testable.map((k) => T1[k].p))
 testable.forEach((k, i) => { T1[k].holm = adj[i]; T1[k].confirmed = T1[k].meanIC > 0 && adj[i] < 0.05 })
 
 out('STUDY 17 — who climbs the top of the US market (PROTOCOL-study17.md)')
+out('POST-HOC (after the first run, 60face4): VMware, LinkedIn, Sprint and Altaba, dead non-members that §1 and addendum 2 count as US companies, had no US flag in the data; now flagged. No verdict changed.')
 out(`companies in the file: ${ALL.length} (${ALL.filter((c) => c.dead != null).length} no longer trading); built ${D.asOf}`)
 out()
 out('§4 TESTS — one-year outcome g1 = ln(cap Y+1 ÷ cap Y), U(Y) = the 100 largest US companies (addendum 2)')

@@ -24,7 +24,9 @@ for (const f of files) {
 // ---------------------------------------------------------------- dead companies
 const research = new Map() // id → firm
 const checks = new Map() // id → Map(date → check)
-const nonSp = new Set()
+// addendum 2 names the dead non-members researched as US companies (VMware also in §1); their finder
+// journal is not among the imported ones, so they are listed here. POST-HOC: missing in the first run.
+const nonSp = new Set(['VMW', 'LNKD', 'S', 'AABA'])
 const addChecks = (id, cs) => {
   const m = checks.get(id) ?? new Map()
   for (const c of cs ?? []) m.set(c.date.slice(0, 4), c)
