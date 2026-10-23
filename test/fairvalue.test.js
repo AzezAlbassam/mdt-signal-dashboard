@@ -228,6 +228,7 @@ test('blendTrimmed (study 16 D2 C): a method above 3× or below ⅓ of the weigh
   const noGraham = w.map((x, i) => (METHODS[i] === 'graham' ? 0 : x))
   const b = blendTrimmed({ pe: 10, dcf: 100, ev: 12 }, noGraham) // median 12 (cumulative .3, .55 ≥ .425)
   assert.deepEqual(b.dropped, ['dcf'])
+  assert.equal(b.med, 12)
   assert.ok(Math.abs(b.fair - (10 * 0.3 + 12 * 0.25) / 0.55) < 1e-12)
   assert.ok(Math.abs(b.coverage - 0.85) < 1e-12) // coverage still counts the dropped method's data
   const two = blendTrimmed({ pe: 10, dcf: 100 }, noGraham) // fewer than 3 valued methods: the plain blend

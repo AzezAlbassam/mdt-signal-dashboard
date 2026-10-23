@@ -360,7 +360,8 @@ export function blend(values, weights) {
  * valued methods, each one above 3× or below ⅓ of their weighted median is dropped before the weighted
  * mean (closer to the price a year later in 12 of 14 years, Holm p 0.034). Weighted median: in
  * ascending value order, the first value whose cumulative weight reaches half the total. `coverage`
- * still counts every valued method; `dropped` lists the methods left out. The studies keep `blend`.
+ * still counts every valued method; `dropped` lists the methods left out, `med` is the weighted median.
+ * The studies keep `blend`.
  */
 export function blendTrimmed(values, weights) {
   const b = blend(values, weights)
@@ -371,7 +372,7 @@ export function blendTrimmed(values, weights) {
   let c = 0
   const med = s.find((p) => (c += p[2]) >= half - 1e-12)[1]
   const kept = valued.filter(([, x]) => x <= 3 * med && x >= med / 3)
-  return { fair: kept.reduce((a, [, x, w]) => a + x * w, 0) / kept.reduce((a, [, , w]) => a + w, 0), coverage: b.coverage, dropped: valued.filter((p) => !kept.includes(p)).map(([m]) => m) }
+  return { fair: kept.reduce((a, [, x, w]) => a + x * w, 0) / kept.reduce((a, [, , w]) => a + w, 0), coverage: b.coverage, med, dropped: valued.filter((p) => !kept.includes(p)).map(([m]) => m) }
 }
 
 const one = (m) => METHODS.map((k) => (k === m ? 1 : 0))
