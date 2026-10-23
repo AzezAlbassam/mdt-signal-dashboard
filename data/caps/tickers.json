@@ -1,7 +1,7 @@
 {
  "AABA": [
   {
-   "skip": "dead, peak ~$59B, not researched (below the threshold)"
+   "dead": "AABA"
   }
  ],
  "AAP": [
@@ -31,12 +31,12 @@
  ],
  "AET": [
   {
-   "skip": "merged_into_listed, peak ~$59B, not researched (below the threshold)"
+   "dead": "AET"
   }
  ],
  "AGN": [
   {
-   "skip": "merged_into_listed, peak ~$124B, not researched (below the threshold)"
+   "dead": "AGN"
   }
  ],
  "AIV": [
@@ -51,7 +51,7 @@
  ],
  "ALXN": [
   {
-   "skip": "merged_into_listed, peak ~$43B, not researched (below the threshold)"
+   "dead": "ALXN"
   }
  ],
  "AMG": [
@@ -81,7 +81,7 @@
  ],
  "APC": [
   {
-   "skip": "merged_into_listed, peak ~$38B, not researched (below the threshold)"
+   "dead": "APC"
   }
  ],
  "ARG": [
@@ -96,7 +96,7 @@
  ],
  "ATVI": [
   {
-   "skip": "dead, peak ~$72B, not researched (below the threshold)"
+   "dead": "ATVI"
   }
  ],
  "AVB": [
@@ -161,7 +161,7 @@
  ],
  "BRCM": [
   {
-   "skip": "merged_into_listed, peak ~$35B, not researched (below the threshold)"
+   "dead": "BRCM"
   }
  ],
  "BWA": [
@@ -211,7 +211,7 @@
  ],
  "CELG": [
   {
-   "skip": "merged_into_listed, peak ~$94B, not researched (below the threshold)"
+   "dead": "CELG"
   }
  ],
  "CERN": [
@@ -386,7 +386,7 @@
  ],
  "ESRX": [
   {
-   "skip": "merged_into_listed, peak ~$57B, not researched (below the threshold)"
+   "dead": "ESRX"
   }
  ],
  "ESV": [
@@ -716,7 +716,7 @@
  ],
  "MON": [
   {
-   "skip": "dead, peak ~$51.5B, not researched (below the threshold)"
+   "dead": "MON"
   }
  ],
  "MRO": [
@@ -816,7 +816,7 @@
  ],
  "PCP": [
   {
-   "skip": "dead, peak ~$32B, not researched (below the threshold)"
+   "dead": "PCP"
   }
  ],
  "PDCO": [
@@ -866,7 +866,7 @@
  ],
  "PX": [
   {
-   "skip": "merged_into_listed, peak ~$44.4B, not researched (below the threshold)"
+   "dead": "PX"
   }
  ],
  "PXD": [
@@ -916,7 +916,7 @@
  ],
  "RTN": [
   {
-   "skip": "merged_into_listed, peak ~$61.2B, not researched (below the threshold)"
+   "dead": "RTN"
   }
  ],
  "SBNY": [
@@ -1046,7 +1046,7 @@
  ],
  "TWC": [
   {
-   "skip": "merged_into_listed, peak ~$52.9B, not researched (below the threshold)"
+   "dead": "TWC"
   }
  ],
  "TWTR": [
@@ -1056,7 +1056,7 @@
  ],
  "TWX": [
   {
-   "skip": "merged_into_listed, peak ~$74.5B, not researched (below the threshold)"
+   "dead": "TWX"
   }
  ],
  "UA": [
@@ -1116,7 +1116,7 @@
  ],
  "WBA": [
   {
-   "skip": "dead, peak ~$92.6B, not researched (below the threshold)"
+   "dead": "WBA"
   }
  ],
  "WBD": [
