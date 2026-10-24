@@ -1,0 +1,590 @@
+{
+ "NASDAQ:BIIB": {
+  "2015": {
+   "s": 0.9211,
+   "src": "measured 2015, 2016 (distribution 2017-02-01)"
+  },
+  "2016": {
+   "s": 0.9211,
+   "src": "measured 2015, 2016 (distribution 2017-02-01)"
+  }
+ },
+ "NASDAQ:CMCSA": {
+  "2015": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2016": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2017": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2018": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2019": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2020": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2021": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2022": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2023": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2024": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  },
+  "2025": {
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024 (distribution 2026-01-05)"
+  }
+ },
+ "NASDAQ:HON": {
+  "2015": {
+   "s": 0.4701,
+   "src": "measured 2015 (distribution 2016-10-03)"
+  },
+  "2016": {
+   "s": 0.4728,
+   "src": "measured 2016, 2017 (distribution 2018-10-01)"
+  },
+  "2017": {
+   "s": 0.4728,
+   "src": "measured 2016, 2017 (distribution 2018-10-01)"
+  },
+  "2018": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2019": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2020": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2021": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2022": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2023": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2024": {
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022 (distribution 2025-10-30)"
+  },
+  "2025": {
+   "s": 0.4938,
+   "src": "leftover: S of the earlier segment 2018–2024 (distribution 2026-06-29)"
+  }
+ },
+ "NASDAQ:ILMN": {
+  "2015": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2016": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2017": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2018": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2019": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2020": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2021": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2022": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  },
+  "2023": {
+   "s": 0.9718,
+   "src": "measured 2022, 2023 (distribution 2024-06-25)"
+  }
+ },
+ "NASDAQ:WDC": {
+  "2015": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2016": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2017": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2018": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2019": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2020": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2021": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2022": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2023": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  },
+  "2024": {
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024 (distribution 2025-02-24)"
+  }
+ },
+ "NYSE:BDX": {
+  "2015": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2016": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2017": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2018": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2019": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2020": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2021": {
+   "s": 0.7662,
+   "src": "measured 2017, 2019 (distribution 2022-04-01)"
+  },
+  "2022": {
+   "s": 0.7859,
+   "src": "measured 2022, 2023, 2024 (distribution 2026-02-09)"
+  },
+  "2023": {
+   "s": 0.7859,
+   "src": "measured 2022, 2023, 2024 (distribution 2026-02-09)"
+  },
+  "2024": {
+   "s": 0.7859,
+   "src": "measured 2022, 2023, 2024 (distribution 2026-02-09)"
+  },
+  "2025": {
+   "s": 0.7859,
+   "src": "measured 2022, 2023, 2024 (distribution 2026-02-09)"
+  }
+ },
+ "NYSE:DHR": {
+  "2015": {
+   "s": 0.8864,
+   "src": "leftover: S of the later segment 2016–2022 (distribution 2016-07-05)"
+  },
+  "2016": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2017": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2018": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2019": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2020": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2021": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  },
+  "2022": {
+   "s": 0.8864,
+   "src": "measured 2016, 2017 (distribution 2023-10-02)"
+  }
+ },
+ "NYSE:FDX": {
+  "2015": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2016": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2017": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2018": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2019": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2020": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2021": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2022": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2023": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2024": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  },
+  "2025": {
+   "s": 0.8053,
+   "src": "measured 2017, 2024 (distribution 2026-06-01)"
+  }
+ },
+ "NYSE:GE": {
+  "2015": {
+   "s": 0.5982,
+   "src": "measured 2015, 2016, 2017, 2018 (distribution 2019-02-25)"
+  },
+  "2016": {
+   "s": 0.5982,
+   "src": "measured 2015, 2016, 2017, 2018 (distribution 2019-02-25)"
+  },
+  "2017": {
+   "s": 0.5982,
+   "src": "measured 2015, 2016, 2017, 2018 (distribution 2019-02-25)"
+  },
+  "2018": {
+   "s": 0.5982,
+   "src": "measured 2015, 2016, 2017, 2018 (distribution 2019-02-25)"
+  },
+  "2019": {
+   "s": 0.6223,
+   "src": "measured 2019, 2020, 2021, 2022 (distribution 2023-01-04)"
+  },
+  "2020": {
+   "s": 0.6223,
+   "src": "measured 2019, 2020, 2021, 2022 (distribution 2023-01-04)"
+  },
+  "2021": {
+   "s": 0.6223,
+   "src": "measured 2019, 2020, 2021, 2022 (distribution 2023-01-04)"
+  },
+  "2022": {
+   "s": 0.6223,
+   "src": "measured 2019, 2020, 2021, 2022 (distribution 2023-01-04)"
+  },
+  "2023": {
+   "s": 0.6223,
+   "src": "leftover: S of the earlier segment 2019–2022 (distribution 2024-04-02)"
+  }
+ },
+ "NYSE:IBM": {
+  "2015": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  },
+  "2016": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  },
+  "2017": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  },
+  "2018": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  },
+  "2019": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  },
+  "2020": {
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-11-04)"
+  }
+ },
+ "NYSE:MET": {
+  "2015": {
+   "s": 0.8911,
+   "src": "measured 2016 (distribution 2017-08-07)"
+  },
+  "2016": {
+   "s": 0.8911,
+   "src": "measured 2016 (distribution 2017-08-07)"
+  }
+ },
+ "NYSE:MMM": {
+  "2015": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2016": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2017": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2018": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2019": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2020": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2021": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2022": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  },
+  "2023": {
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 (distribution 2024-04-01)"
+  }
+ },
+ "NYSE:MRK": {
+  "2015": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  },
+  "2016": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  },
+  "2017": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  },
+  "2018": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  },
+  "2019": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  },
+  "2020": {
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020 (distribution 2021-06-03)"
+  }
+ },
+ "NYSE:OXY": {
+  "2015": {
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015) (distribution 2020-08-03)"
+  },
+  "2016": {
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015) (distribution 2020-08-03)"
+  },
+  "2017": {
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015) (distribution 2020-08-03)"
+  },
+  "2018": {
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015) (distribution 2020-08-03)"
+  },
+  "2019": {
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015) (distribution 2020-08-03)"
+  }
+ },
+ "NYSE:PFE": {
+  "2015": {
+   "s": 0.9479,
+   "src": "measured 2019 (distribution 2020-11-17)"
+  },
+  "2016": {
+   "s": 0.9479,
+   "src": "measured 2019 (distribution 2020-11-17)"
+  },
+  "2017": {
+   "s": 0.9479,
+   "src": "measured 2019 (distribution 2020-11-17)"
+  },
+  "2018": {
+   "s": 0.9479,
+   "src": "measured 2019 (distribution 2020-11-17)"
+  },
+  "2019": {
+   "s": 0.9479,
+   "src": "measured 2019 (distribution 2020-11-17)"
+  }
+ },
+ "NYSE:RTX": {
+  "2015": {
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018 (distribution 2020-04-03)"
+  },
+  "2016": {
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018 (distribution 2020-04-03)"
+  },
+  "2017": {
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018 (distribution 2020-04-03)"
+  },
+  "2018": {
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018 (distribution 2020-04-03)"
+  },
+  "2019": {
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018 (distribution 2020-04-03)"
+  }
+ },
+ "NYSE:SPGI": {
+  "2015": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2016": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2017": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2018": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2019": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2020": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2021": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2022": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2023": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2024": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  },
+  "2025": {
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025 (distribution 2026-07-01)"
+  }
+ },
+ "NYSE:T": {
+  "2015": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2016": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2017": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2018": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2019": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2020": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  },
+  "2021": {
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021) (distribution 2022-04-11)"
+  }
+ }
+}

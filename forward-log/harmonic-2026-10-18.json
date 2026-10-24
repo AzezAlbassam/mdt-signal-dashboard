@@ -1,0 +1,1014 @@
+{
+  "cutoff": "2026-10-17",
+  "note": "Patterns unfilled or open at the cutoff, frozen per PROTOCOL-harmonic.md §6 before any outcome is knowable.",
+  "live": [
+    {
+      "symbol": "NASDAQ:NVDA",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1434,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:NVDA",
+      "tf": "1W",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 1447,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AAPL",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4989,
+      "reason": "open"
+    },
+    {
+      "symbol": "NASDAQ:AAPL",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4995,
+      "reason": "open"
+    },
+    {
+      "symbol": "NASDAQ:AAPL",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 2386,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "4h",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 4995,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4974,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1D",
+      "pattern": "Butterfly",
+      "side": "long",
+      "confirmedAt": 4982,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4982,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1D",
+      "pattern": "Butterfly",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1W",
+      "pattern": "Shark",
+      "side": "short",
+      "confirmedAt": 1145,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1152,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 264,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:MSFT",
+      "tf": "1h",
+      "pattern": "Gartley",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "open"
+    },
+    {
+      "symbol": "NASDAQ:MSFT",
+      "tf": "1h",
+      "pattern": "Crab",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:MSFT",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "open"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4995,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "4h",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1D",
+      "pattern": "Cypher",
+      "side": "short",
+      "confirmedAt": 4979,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1520,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1W",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 1527,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 347,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 351,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "tf": "1M",
+      "pattern": "ThreeDrives",
+      "side": "short",
+      "confirmedAt": 351,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:META",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:META",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:META",
+      "tf": "1D",
+      "pattern": "Crab",
+      "side": "short",
+      "confirmedAt": 3586,
+      "reason": "open"
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 889,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 200,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "tf": "1M",
+      "pattern": "Cypher",
+      "side": "long",
+      "confirmedAt": 203,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:TSLA",
+      "tf": "4h",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 4991,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:LLY",
+      "tf": "1W",
+      "pattern": "Shark",
+      "side": "long",
+      "confirmedAt": 2930,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:LLY",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 670,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4981,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "1h",
+      "pattern": "DeepCrab",
+      "side": "short",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1584,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:MU",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:MU",
+      "tf": "1W",
+      "pattern": "Shark",
+      "side": "short",
+      "confirmedAt": 2201,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:MU",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 506,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:WMT",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:WMT",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 637,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:JPM",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 674,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:JPM",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 685,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMD",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMD",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMD",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:AMD",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 644,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:XOM",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:XOM",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4995,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:JNJ",
+      "tf": "1h",
+      "pattern": "DeepCrab",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:JNJ",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:MA",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:MA",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1063,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:ABBV",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4979,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:ABBV",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:ABBV",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4994,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:KO",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:KO",
+      "tf": "1h",
+      "pattern": "DeepCrab",
+      "side": "short",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:KO",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:UNH",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:UNH",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4998,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:UNH",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 2191,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:UNH",
+      "tf": "1M",
+      "pattern": "Bat",
+      "side": "short",
+      "confirmedAt": 499,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:CAT",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:CAT",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 3372,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:CAT",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 3380,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:LIN",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:LIN",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 3974,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:LIN",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4995,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:SHOP",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4997,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:SHOP",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 2868,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:SHOP",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 592,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:DIS",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 3380,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:DIS",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 723,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:DIS",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 772,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:SCCO",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:SCCO",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1604,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:SCCO",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 363,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4981,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4996,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "tf": "1W",
+      "pattern": "Butterfly",
+      "side": "long",
+      "confirmedAt": 3057,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 3057,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:MCK",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1665,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:MCK",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 380,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:ENB",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4987,
+      "reason": "open"
+    },
+    {
+      "symbol": "NYSE:ENB",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:RKLB",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 307,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:BE",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 3136,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 1702,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 358,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "tf": "1W",
+      "pattern": "Bat",
+      "side": "short",
+      "confirmedAt": 359,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 359,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4981,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "tf": "1h",
+      "pattern": "Gartley",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 3299,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4980,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "tf": "1h",
+      "pattern": "Gartley",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4988,
+      "reason": "pending"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:SPY",
+      "tf": "4h",
+      "pattern": "Bat",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "open"
+    },
+    {
+      "symbol": "AMEX:SPY",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:SPY",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4989,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:SPY",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1758,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:QQQ",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4993,
+      "reason": "pending"
+    },
+    {
+      "symbol": "NASDAQ:QQQ",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 329,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:IWM",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4994,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:IWM",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4999,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:IWM",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "long",
+      "confirmedAt": 4992,
+      "reason": "open"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "tf": "1h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4985,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "tf": "4h",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4996,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "tf": "1D",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 4998,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "tf": "1W",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 1499,
+      "reason": "pending"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "tf": "1M",
+      "pattern": "ABCD",
+      "side": "short",
+      "confirmedAt": 339,
+      "reason": "pending"
+    }
+  ]
+}

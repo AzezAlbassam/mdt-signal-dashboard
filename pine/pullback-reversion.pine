@@ -1,0 +1,80 @@
+//@version=5
+// Pullback Reversion — the strategies confirmed in study 4 (PROTOCOL-study4.md), with the
+// exact rules that were tested. Use it on the WEEKLY chart for the main versions (study 4's
+// best: weekly RSI(2), 73.6% win rate on 155 unseen US stocks vs 61.4% for random entries
+// with the same exit); the daily versions are weaker (62–63%).
+//
+// Entry (signal on a bar's close, filled at the next bar's open):
+//   rsi2      RSI(2) < 10 while close > SMA 40 (weekly) / SMA 200 (daily) — first bar
+//   down3     third consecutive lower close
+//   double7   close is the lowest close of 7 bars — first bar
+//   pullback5 close is the lowest close of 5 bars — first bar
+//   vixfix    Williams Vix Fix (22, BB 20 × 2) reaches its upper band — first bar
+// Trend filter (on in the confirmed versions): close > SMA 40 weekly / SMA 200 daily.
+// Exit: the first close above SMA 5 → sell at the next open. Disaster stop: entry − 3 × ATR(14).
+// Time exit: close of the 13th bar (weekly) / 10th bar (daily).
+// Costs: 0.1% per side.
+//
+// Note: TradingView's broker emulator may fill a stop and an exit in a different order than
+// the study, which always assumed the worse case. Results here can differ slightly.
+strategy("Pullback Reversion — study 4", overlay=true, initial_capital=10000,
+     default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     calc_on_order_fills=true)
+
+entryRule = input.string("rsi2", "Entry", options=["rsi2", "down3", "double7", "pullback5", "vixfix"])
+useFilter = input.bool(true, "Trend filter (close above SMA 40 weekly / 200 daily)")
+
+wk = timeframe.isweekly
+trendMa = ta.sma(close, wk ? 40 : 200)
+maxBars = wk ? 13 : 10
+atr14 = ta.atr(14)
+sma5 = ta.sma(close, 5)
+
+// every condition computed on every bar (history-reading code must not sit in a branch)
+r2 = ta.rsi(close, 2)
+c_rsi2 = r2 < 10 and close > trendMa
+ev_rsi2 = c_rsi2 and not c_rsi2[1]
+ev_down3 = close < close[1] and close[1] < close[2] and close[2] < close[3] and not (close[3] < close[4])
+c_d7 = close <= ta.lowest(close, 7)
+ev_double7 = c_d7 and not c_d7[1]
+c_p5 = close <= ta.lowest(close, 5)
+ev_pullback5 = c_p5 and not c_p5[1]
+hc = ta.highest(close, 22)
+wvf = (hc - low) / hc * 100
+wvfUpper = ta.sma(wvf, 20) + 2 * ta.stdev(wvf, 20)
+c_vf = wvf >= wvfUpper
+ev_vixfix = c_vf and not c_vf[1]
+
+ev = switch entryRule
+    "rsi2"      => ev_rsi2
+    "down3"     => ev_down3
+    "double7"   => ev_double7
+    "pullback5" => ev_pullback5
+    "vixfix"    => ev_vixfix
+    => false
+sig = ev and (not useFilter or close > trendMa)
+
+var float atrAtSignal = na
+var int entryBar = na
+
+if sig and strategy.position_size == 0
+    atrAtSignal := atr14
+    strategy.entry("L", strategy.long)
+
+if strategy.position_size > 0
+    if na(entryBar) or strategy.position_size[1] == 0
+        entryBar := bar_index
+    strategy.exit("stop", "L", stop=strategy.position_avg_price - 3 * atrAtSignal)
+    held = bar_index - entryBar + 1
+    if held >= maxBars
+        strategy.close("L", comment="time", immediately=true)
+    else if close > sma5
+        strategy.close("L", comment="above SMA5")   // fills at the next bar's open
+else
+    entryBar := na
+
+plotshape(sig, "Signal", shape.triangleup, location.belowbar, color.new(color.teal, 0), size=size.small)
+plot(sma5, "SMA 5 (exit line)", color.new(color.orange, 20))
+plot(trendMa, "Trend MA", color.new(color.gray, 40))
+plot(strategy.position_size > 0 ? strategy.position_avg_price - 3 * atrAtSignal : na, "Disaster stop", color.red, style=plot.style_linebr)

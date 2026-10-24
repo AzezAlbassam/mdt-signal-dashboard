@@ -1,0 +1,15 @@
+Study 7 — search half (276 stocks, even positions). Check half not read.
+
+variant  mean IC  years  stock-years  eligible (≥ half of V0 stock-years)
+V0       -0.043     14         2810  yes
+V1       -0.013     14         1912  yes
+V2       -0.035     14         1469  yes
+V3       -0.007     14         2093  yes
+V4       -0.032     14         2208  yes
+V5       -0.019     14         2851  yes
+V6       -0.031     14         1881  yes
+V7       -0.028     14         2887  yes
+V8       -0.030     14         2853  yes
+V9       -0.010     14         2248  yes
+
+pick: V3 (mean IC -0.007 on the search half)

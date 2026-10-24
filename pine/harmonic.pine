@@ -1,0 +1,714 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// HARMONIC XABCD — the eleven standard patterns at their published ratios, drawn with their
+// Potential Reversal Zone, entry, stop and four targets, on any symbol and any timeframe.
+//
+//   Gartley · Bat · Alternate Bat · Butterfly · Crab · Deep Crab · Cypher · Shark · 5-0
+//   · AB=CD · Three Drives
+//
+// ─────────────────────────────────────────────────────────────────────────────────────────
+// RESULT — READ THIS BEFORE TRADING ANYTHING OFF IT
+// (PROTOCOL-harmonic.md §8 fixed what this section must say, before the test was run.)
+//
+// Tested on 40 symbols — the 20 largest US companies, the largest name in every sector they
+// miss, Rocket Lab, Bloom Energy, Hims & Hers, two Bitcoin feeds and four index ETFs —
+// across 1h, 4h, 1D, 1W and 1M. 187 series with enough history, 19,886 trades, every pattern
+// detected forward-only from confirmed pivots so that nothing repaints.
+//
+//   · THE GEOMETRY BEATS A RANDOM ENTRY, BARELY. Against a matched random entry — same
+//     direction, same stop and target distances, same holding limit, entered on a random bar
+//     — the patterns earn +0.082R per trade (p 0.0046, Holm-adjusted 0.0276, positive in
+//     both halves of the period). CONFIRMED. Read the size before the stars: 0.082R is
+//     about eight hundredths of one unit of risk per trade, before any commission or
+//     slippage, and this study models neither.
+//
+//   · THE FIBONACCI RATIOS ADD NOTHING. Multiply every published ratio by a random factor,
+//     keep the same pivots, the same zone construction, the same entry, stop and targets,
+//     and re-run: the difference is -0.000R, p 0.51. NOT CONFIRMED, and this is the sharpest
+//     test in the study. Whatever small edge exists is in buying a confirmed retracement
+//     zone with a tight stop — not in 0.618 or 0.786 or 1.272.
+//
+//   · NO SINGLE TIMEFRAME SURVIVES ON ITS OWN. 4h +0.085R, 1D +0.065R, 1W +0.116R,
+//     1M +0.070R against a random entry; after correcting for the family, none reaches
+//     significance (best Holm-adjusted p 0.13).
+//
+//   · THE BEST PATTERN FOUND BY SEARCH DID NOT SURVIVE. On half the symbols, Three Drives on
+//     4h hit its first target 68.8% of the time. Re-tested on the other half — never looked
+//     at during the search — it hit 57.6% and LOST money (-0.045R). NOT CONFIRMED. The
+//     chart table below is the same machine that produced that number, which is why it
+//     prints a sample size and a confidence interval beside every win rate.
+//
+// What the whole sample looks like: the first target is reached 31.1% of the time and the
+// MEDIAN trade is exactly -1R, usually stopped on the bar it was entered, because the far
+// edge of the zone sits close to the near edge. A high hit rate is not an edge: 5-0 reaches
+// its target 57-60% of the time on every timeframe and still averages about -0.30R, because
+// its wins are small and its losses are whole.
+//
+// Two post-hoc fixes are on the record, both found after the first run and both disclosed
+// with before/after numbers in reports/harmonic-prefix/. The second one moved a verdict: it
+// removed 314 5-0 "trades" whose first target sat on the wrong side of the entry, and H1
+// went from not confirmed to confirmed. A confirmation that arrives only after a bug fix is
+// weaker than one that arrives clean, and it is reported that way rather than polished.
+//
+// Full numbers: reports/harmonic.txt.
+// ─────────────────────────────────────────────────────────────────────────────────────────
+//
+// HOW IT WORKS, AND WHY IT DOES NOT REPAINT
+// Swings come from a zigzag whose threshold is a multiple of ATR(14), so one setting works on
+// a monthly chart and a 5-minute one. A pivot is only published on the bar that CONFIRMS it,
+// and is never revised. A pattern is registered the moment its second-to-last pivot confirms,
+// which is when X, A, B and C are all known — so the PRZ, the entry, the stop and the targets
+// are all computable before D exists, and none of them ever moves afterwards. That is what a
+// harmonic trader actually does: a limit order into the zone. Scripts that wait for D to
+// confirm are late; scripts that redraw D as price moves are repainting.
+//
+// READING THE CHART
+// The coloured box is where to buy (green) or sell (red). It is drawn from the bar the
+// pattern confirmed — not from point C, which is older than the signal — to the last bar on
+// which a touch still counts, and it stops there. So the box's two ends are the two dates
+// that matter: when the setup became knowable, and when it dies. The label on it names the
+// side, the pattern and the zone, and then says which of four things happened:
+//
+//   waiting      price has not reached the zone yet and the window is still open
+//   TRIGGERED    price reached the zone: the limit order would have filled here
+//   VOID         price broke point C first, or jumped the whole zone in one bar
+//   EXPIRED      the window closed and price never got there
+//
+// A void or expired setup turns grey and keeps its place, because how often these never
+// arrive is part of the picture; "Hide patterns once they are void" removes them. The key in
+// the bottom-left corner names every line and box on the chart.
+//
+//@version=6
+indicator("Harmonic XABCD (tested)", overlay = true, max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
+
+// ───────────────────────────────────────────────────────────────────────────── inputs
+grpD = "Detection"
+kPivot  = input.float(1.5,  "Swing size (ATR multiples)", minval = 0.2, maxval = 10, step = 0.1, group = grpD,
+     tooltip = "The tested value is 1.5. Lower finds more and smaller patterns, higher finds fewer and larger ones.")
+tolPct  = input.float(5.0,  "Ratio tolerance %",  minval = 1, maxval = 20, step = 0.5, group = grpD,
+     tooltip = "How far a leg may sit from its published ratio. The tested value is 5%. Implementations in the wild run from 1% to 15%; wider finds more patterns and means less.")
+needABCD = input.bool(false, "Require the AB=CD projection inside the zone", group = grpD,
+     tooltip = "Carney's convergence requirement in its strict form. Off by default: taking it as a hard filter makes some patterns geometrically impossible (a Bat with B at 0.382 can never satisfy both a 1.27 AB=CD and an 0.886 XA).")
+keepN   = input.int(3, "Patterns kept on the chart", minval = 1, maxval = 20, group = grpD)
+
+grpP = "Patterns"
+useGartley = input.bool(true, "Gartley",        group = grpP, inline = "p1")
+useBat     = input.bool(true, "Bat",            group = grpP, inline = "p1")
+useAltBat  = input.bool(true, "Alt Bat",        group = grpP, inline = "p1")
+useButter  = input.bool(true, "Butterfly",      group = grpP, inline = "p2")
+useCrab    = input.bool(true, "Crab",           group = grpP, inline = "p2")
+useDeep    = input.bool(true, "Deep Crab",      group = grpP, inline = "p2")
+useCypher  = input.bool(true, "Cypher",         group = grpP, inline = "p3")
+useShark   = input.bool(true, "Shark",          group = grpP, inline = "p3")
+useFiveO   = input.bool(true, "5-0",            group = grpP, inline = "p3")
+useABCD    = input.bool(false, "AB=CD",         group = grpP, inline = "p4",
+     tooltip = "Off by default: AB=CD needs only three pivots and one ratio, so it fires far more often than everything else combined (71% of all detections in the test).")
+useDrives  = input.bool(true, "Three Drives",   group = grpP, inline = "p4")
+
+grpB = "Backtest on this chart"
+btOn   = input.bool(true, "Measure every pattern on this symbol and timeframe", group = grpB,
+     tooltip = "Replays each detected pattern forward exactly as the study did: limit at the near edge of the zone, stop 0.25 ATR beyond the far edge, exit at T1, give up after the horizon. The result is what THIS symbol on THIS timeframe did — a sample of tens, not of thousands.")
+btHorizon = input.int(60, "Give up after (bars)", minval = 5, maxval = 500, group = grpB)
+showStats = input.bool(true, "Show the accuracy table", group = grpB)
+minN      = input.int(30, "Warn below this many trades", minval = 2, maxval = 200, group = grpB,
+     tooltip = "Below this the win rate is noise. In the study a cell with 32 trades read 68.8% and then 57.6% on fresh symbols.")
+
+grpS = "Display"
+showSkel  = input.bool(true,  "XABCD skeleton",   group = grpS)
+showZone  = input.bool(true,  "Potential reversal zone", group = grpS)
+showTgts  = input.bool(true,  "Entry, stop and targets", group = grpS)
+showTable = input.bool(true,  "Panel",            group = grpS)
+showLegend = input.bool(true, "Key — what every line and box means", group = grpS)
+arabic    = input.bool(true,  "Arabic text on the chart", group = grpS,
+     tooltip = "Turn this off if your browser renders the Arabic reversed or disconnected; the chart then reads BUY / SELL / waiting in English and nothing else changes.")
+hideDead  = input.bool(false, "Hide patterns once they are void", group = grpS,
+     tooltip = "A pattern is void when price breaks point C before reaching the zone, or when the window closes without a touch. Off by default: a greyed-out void pattern is the honest picture of how often these do not get there.")
+// The zone is tinted with its own direction's colour — a green box is a place to buy and a
+// red box a place to sell — so no neutral zone colour is offered.
+bullCol   = input.color(color.new(#089981, 0), "Bullish", group = grpS, inline = "c")
+bearCol   = input.color(color.new(#f23645, 0), "Bearish", group = grpS, inline = "c")
+deadCol   = color.new(#787b86, 0)
+
+TOL = tolPct / 100.0
+
+// One string, two languages. Everything the chart writes goes through here.
+L(string ar, string en) => arabic ? ar : en
+
+// ───────────────────────────────────────────────────────────────────── confirmed pivots
+// The zigzag of the backtest, one bar at a time. Only confirmed pivots are published, so the
+// still-forming swing never appears and nothing here is revised later.
+atr = ta.atr(14)
+
+var array<float> pvP = array.new<float>()   // pivot price
+var array<int>   pvB = array.new<int>()     // pivot bar_index
+var array<int>   pvK = array.new<int>()     // +1 high, -1 low
+
+var bool  started = false
+var int   zdir    = 0
+var float hiP = na
+var int   hiB = na
+var float loP = na
+var int   loB = na
+var float cdP = na
+var int   cdB = na
+
+pushPivot(float p, int b, int k) =>
+    array.push(pvP, p)
+    array.push(pvB, b)
+    array.push(pvK, k)
+    if array.size(pvP) > 8
+        array.shift(pvP)
+        array.shift(pvB)
+        array.shift(pvK)
+
+bool newPivot = false
+if not na(atr) and atr > 0 and close > 0
+    float thr = kPivot * atr / close
+    if not started
+        started := true
+        hiP := high
+        hiB := bar_index
+        loP := low
+        loB := bar_index
+    else if zdir == 0
+        if high > hiP
+            hiP := high
+            hiB := bar_index
+        if low < loP
+            loP := low
+            loB := bar_index
+        if loB < hiB and hiP >= loP * (1 + thr)
+            pushPivot(loP, loB, -1)
+            newPivot := true
+            zdir := 1
+            cdP := hiP
+            cdB := hiB
+        else if hiB < loB and loP <= hiP * (1 - thr)
+            pushPivot(hiP, hiB, 1)
+            newPivot := true
+            zdir := -1
+            cdP := loP
+            cdB := loB
+    else if zdir == 1
+        if high > cdP
+            cdP := high
+            cdB := bar_index
+        else if low <= cdP * (1 - thr)
+            pushPivot(cdP, cdB, 1)
+            newPivot := true
+            zdir := -1
+            cdP := low
+            cdB := bar_index
+    else
+        if low < cdP
+            cdP := low
+            cdB := bar_index
+        else if high >= cdP * (1 + thr)
+            pushPivot(cdP, cdB, -1)
+            newPivot := true
+            zdir := 1
+            cdP := high
+            cdB := bar_index
+
+// ─────────────────────────────────────────────────────────────────────── the ratio table
+// Published windows, PROTOCOL-harmonic.md §1.5. A single number carries the tolerance; a
+// range is used as published. Everything is evaluated in "v-space" (v = s * price, s = +1 for
+// a bullish setup), where the completion point is always a low and every rule is written once.
+lo_(float r) => r * (1 - TOL)
+hi_(float r) => r * (1 + TOL)
+inR(float x, float a, float b) => x >= a and x <= b
+
+// ──────────────────────────── backtest bookkeeping (declared before its first use)
+type Pend
+    int   pid        // index into PATS
+    int   dirn
+    float near
+    float far
+    float cPrice     // price through this kills the structure before a fill
+    float aPrice
+    int   startBar
+    int   expiry
+    bool  filled     // named 'filled', not 'open': 'open' is the bar's open price
+    float entry
+    float stop
+    float t1
+    int   entryBar
+
+var array<string> PATS = array.from("Gartley", "Bat", "Alt Bat", "Butterfly", "Crab", "Deep Crab", "Cypher", "Shark", "5-0", "AB=CD", "Three Drives")
+var array<Pend>  pend  = array.new<Pend>()
+var array<int>   btN   = array.new<int>(11, 0)
+var array<int>   btW   = array.new<int>(11, 0)
+var array<float> btR   = array.new<float>(11, 0.0)
+
+// ───────────────────────────────────────────────────────────────────────── pattern scan
+// A drawn setup, kept so its state can be written on the chart as it resolves. Without this
+// the chart shows a zone and never says whether price got there, which is the one thing a
+// reader needs to know.
+type Draw
+    box    b
+    label  l
+    string head      // the first two lines of the label; only the status line changes
+    int    startBar  // first bar a touch may count — never the confirmation bar itself
+    int    expiry    // last bar on which a touch still counts
+    float  cPrice    // price through this kills the structure before a touch
+    float  near      // the edge price reaches first
+    float  far       // the other edge; an open beyond it means the bar jumped the whole zone
+    int    dirn
+    bool   settled   // touched, broken or expired: nothing left to update
+    string state     // what the chart and the panel say about it right now
+
+var array<line> skel  = array.new<line>()
+var array<Draw> draws = array.new<Draw>()
+var array<line>  tlns = array.new<line>()
+var array<label> tlbs = array.new<label>()
+
+// live state of the newest pattern, for the panel and the alerts
+var string curName  = ""
+var int    curDir   = 0
+var float  curNear  = na
+var float  curFar   = na
+var float  curEntry = na
+var float  curStop  = na
+var float  curT1    = na
+var float  curT2    = na
+var float  curT3    = na
+var float  curT4    = na
+var int    curBar   = na
+var bool   curArmed = false
+
+trimTo(int n) =>
+    while array.size(skel) > n * 5
+        line.delete(array.shift(skel))
+    while array.size(draws) > n
+        Draw d = array.shift(draws)
+        if not na(d.b)
+            box.delete(d.b)
+        label.delete(d.l)
+
+// Draw one detected pattern: exactly `np` pivots, so a three-pivot AB=CD does not get a
+// fourth leg drawn onto it. Prices are real prices, already out of v-space.
+//
+// The zone box runs from THIS bar — the bar the structure confirmed and the setup became
+// knowable — to the last bar on which a touch still counts. It is not anchored to point C,
+// which is older than the signal, and it does not extend forever to the right: both of those
+// make the chart lie about when the setup started and when it dies.
+drawPattern(string nm, int dirn, int np, float zLo, float zHi) =>
+    col = dirn == 1 ? bullCol : bearCol
+    int n = array.size(pvP)
+    int firstB = array.get(pvB, n - np)
+    float firstP = array.get(pvP, n - np)
+    int lastB = array.get(pvB, n - 1)
+    float lastP = array.get(pvP, n - 1)
+    // the same window the backtest gives this pattern, clamped to what Pine will draw ahead
+    int expiry = bar_index + 1 + math.max(10, lastB - firstB)
+    int right  = math.min(expiry, bar_index + 480)
+    float near = dirn == 1 ? zHi : zLo
+    float far  = dirn == 1 ? zLo : zHi
+    if showSkel
+        for i = n - np to n - 2
+            array.push(skel, line.new(array.get(pvB, i), array.get(pvP, i), array.get(pvB, i + 1), array.get(pvP, i + 1), color = col, width = 2))
+        array.push(skel, line.new(firstB, firstP, lastB, lastP, color = color.new(col, 80), style = line.style_dotted))
+    box bx = na
+    if showZone
+        bx := box.new(bar_index, zHi, right, zLo, border_color = color.new(col, 30),
+             border_width = 1, bgcolor = color.new(col, 88))
+    string head = (dirn == 1 ? L("شراء", "BUY") : L("بيع", "SELL")) + " " + nm + "\n" +
+         str.tostring(zLo, format.mintick) + " – " + str.tostring(zHi, format.mintick)
+    string wait0 = L("بانتظار وصول السعر", "waiting for price")
+    label lb = label.new(bar_index, near, head + "\n" + wait0,
+         style = label.style_label_left, color = color.new(col, 15), textcolor = color.white,
+         size = size.small, textalign = text.align_left)
+    array.push(draws, Draw.new(bx, lb, head, bar_index + 1, expiry, lastP, near, far, dirn, false, wait0))
+    trimTo(keepN)
+
+// The scan runs only when a pivot has just confirmed — a few percent of bars — which is what
+// keeps a many-pattern search inside Pine's execution budget.
+if newPivot and array.size(pvP) >= 3
+    int n = array.size(pvP)
+    float s = array.get(pvK, n - 1) == 1 ? 1.0 : -1.0   // completion is always a low in v-space
+    int dirn = s == 1.0 ? 1 : -1
+
+    // last four pivots in v-space (X A B C); v3 is the pivot just confirmed
+    float v3 = s * array.get(pvP, n - 1)
+    float v2 = n >= 2 ? s * array.get(pvP, n - 2) : na
+    float v1 = n >= 3 ? s * array.get(pvP, n - 3) : na
+    float v0 = n >= 4 ? s * array.get(pvP, n - 4) : na
+    float vm1 = n >= 5 ? s * array.get(pvP, n - 5) : na
+
+    float zLo = na
+    float zHi = na
+    string nm = ""
+
+    // narrow a running zone by one projection: level = ref - [a,b] * base
+    // (kept as plain arithmetic because Pine has no closures over mutable locals)
+    if n >= 4 and not na(v0)
+        float XA = math.abs(v1 - v0)
+        float AB = math.abs(v2 - v1)
+        float BC = math.abs(v3 - v2)
+        float XC = math.abs(v3 - v0)
+        float rB = XA > 0 ? AB / XA : na
+        float rC = AB > 0 ? BC / AB : na
+        bool  bHoldsX = v2 > v0
+        bool  cBelowA = v3 < v1
+
+        // every pattern: zone = overlap of its XA window and its BC window (plus AB=CD if asked)
+        float a1 = na
+        float b1_ = na
+        float a2 = na
+        float b2_ = na
+        float a3 = na
+        float b3_ = na
+        if useGartley and bHoldsX and cBelowA and XA > 0 and AB > 0 and inR(rB, lo_(0.618), hi_(0.618)) and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(0.786) * XA, b1_ := v1 - lo_(0.786) * XA
+            a2 := v3 - 1.618 * BC,      b2_ := v3 - 1.13 * BC
+            a3 := v3 - hi_(1.0) * AB,   b3_ := v3 - lo_(1.0) * AB
+            nm := "Gartley"
+        else if useBat and bHoldsX and cBelowA and XA > 0 and AB > 0 and inR(rB, 0.382, 0.50) and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(0.886) * XA, b1_ := v1 - lo_(0.886) * XA
+            a2 := v3 - 2.618 * BC,      b2_ := v3 - 1.618 * BC
+            a3 := v3 - hi_(1.27) * AB,  b3_ := v3 - lo_(1.27) * AB
+            nm := "Bat"
+        else if useAltBat and bHoldsX and cBelowA and XA > 0 and AB > 0 and rB <= 0.382 and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(1.13) * XA,  b1_ := v1 - lo_(1.13) * XA
+            a2 := v3 - 3.618 * BC,      b2_ := v3 - 2.0 * BC
+            a3 := v3 - hi_(1.618) * AB, b3_ := v3 - lo_(1.618) * AB
+            nm := "Alt Bat"
+        else if useButter and bHoldsX and cBelowA and XA > 0 and AB > 0 and inR(rB, lo_(0.786), hi_(0.786)) and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(1.27) * XA,  b1_ := v1 - lo_(1.27) * XA
+            a2 := v3 - 2.24 * BC,       b2_ := v3 - 1.618 * BC
+            a3 := v3 - hi_(1.27) * AB,  b3_ := v3 - lo_(1.27) * AB
+            nm := "Butterfly"
+        else if useCrab and bHoldsX and cBelowA and XA > 0 and AB > 0 and inR(rB, 0.382, 0.618) and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(1.618) * XA, b1_ := v1 - lo_(1.618) * XA
+            a2 := v3 - 3.618 * BC,      b2_ := v3 - 2.618 * BC
+            a3 := v3 - hi_(1.618) * AB, b3_ := v3 - lo_(1.27) * AB
+            nm := "Crab"
+        else if useDeep and bHoldsX and cBelowA and XA > 0 and AB > 0 and inR(rB, lo_(0.886), hi_(0.886)) and inR(rC, 0.382, 0.886)
+            a1 := v1 - hi_(1.618) * XA, b1_ := v1 - lo_(1.618) * XA
+            a2 := v3 - 3.618 * BC,      b2_ := v3 - 2.24 * BC
+            a3 := v3 - hi_(1.272) * AB, b3_ := v3 - lo_(1.272) * AB
+            nm := "Deep Crab"
+        else if useCypher and bHoldsX and v3 > v1 and XA > 0 and inR(rB, 0.382, 0.618) and inR(XC / XA, 1.272, 1.414)
+            // the Cypher is the odd one: C breaks past A, and D is measured off XC, not XA
+            a1 := v3 - hi_(0.786) * XC, b1_ := v3 - lo_(0.786) * XC
+            a2 := a1, b2_ := b1_
+            a3 := a1, b3_ := b1_
+            nm := "Cypher"
+        else if useShark and v3 > v1 and XA > 0 and inR(AB / XA, 1.13, 1.618)
+            // Carney's 0-X-A-B: the zone is the overlap of the AB projection and the 0X band
+            float OX = math.abs(v1 - v0)
+            a1 := v1 - 1.13 * OX,  b1_ := v1 - 0.886 * OX
+            a2 := v3 - 2.24 * AB,  b2_ := v3 - 1.618 * AB
+            a3 := a1, b3_ := b1_
+            nm := "Shark"
+        else if useFiveO and v2 < v0 and XA > 0 and AB > 0 and inR(AB / XA, 1.13, 1.618) and inR(BC / AB, 1.618, 2.24)
+            a1 := v3 - hi_(0.5) * BC, b1_ := v3 - lo_(0.5) * BC
+            a2 := v3 - hi_(1.0) * AB, b2_ := v3 - lo_(1.0) * AB
+            a3 := a1, b3_ := b1_
+            nm := "5-0"
+
+        if nm != ""
+            float z1 = math.max(a1, a2)
+            float z2 = math.min(b1_, b2_)
+            if needABCD and nm != "Cypher" and nm != "Shark" and nm != "5-0"
+                z1 := math.max(z1, a3)
+                z2 := math.min(z2, b3_)
+            if z1 <= z2
+                zLo := z1
+                zHi := z2
+
+    // three-pivot AB=CD
+    if nm == "" and useABCD and n >= 3 and not na(v1)
+        float AB = math.abs(v2 - v1)
+        float BC = math.abs(v3 - v2)
+        float rC = AB > 0 ? BC / AB : na
+        if v3 < v1 and AB > 0 and inR(rC, 0.382, 0.886)
+            float z1 = math.max(v3 - hi_(1.0) * AB, v3 - 2.618 * BC)
+            float z2 = math.min(v3 - lo_(1.0) * AB, v3 - 1.13 * BC)
+            if z1 <= z2
+                zLo := z1
+                zHi := z2
+                nm := "AB=CD"
+
+    // five-pivot Three Drives
+    if nm == "" and useDrives and n >= 5 and not na(vm1)
+        float d1 = math.abs(v0 - vm1)
+        float r1 = math.abs(v1 - v0)
+        float d2 = math.abs(v2 - v1)
+        float r2 = math.abs(v3 - v2)
+        if d1 > 0 and r1 > 0 and d2 > 0 and inR(r1 / d1, 0.618, 0.786) and inR(d2 / r1, 1.27, 1.618) and inR(r2 / d2, 0.618, 0.786)
+            float z1 = v3 - 1.618 * r2
+            float z2 = v3 - 1.27 * r2
+            if z1 <= z2
+                zLo := z1
+                zHi := z2
+                nm := "Three Drives"
+
+    if nm != "" and not na(zLo) and not na(zHi)
+        // out of v-space
+        float pLo = s == 1.0 ? zLo : -zHi
+        float pHi = s == 1.0 ? zHi : -zLo
+        float near = s == 1.0 ? pHi : pLo        // the edge price reaches first
+        float far  = s == 1.0 ? pLo : pHi
+        // The AD leg is measured from A — the run's second-from-last-but-two pivot, which is
+        // array index n-3 for every pattern drawn here.
+        float aPrice = array.get(pvP, n - 3)
+        float ad = math.abs(aPrice - near)
+        // The AD leg can invert — the 5-0 completes at 50% of a BC leg that already
+        // overshot, so D often lands beyond A. The targets are retracements of AD, so an
+        // inverted leg would put the first target on the wrong side of the entry. There is
+        // no definable target, so there is no setup.
+        bool okTarget = dirn == 1 ? aPrice > near : aPrice < near
+        if okTarget
+            curName  := nm
+            curDir   := dirn
+            curNear  := near
+            curFar   := far
+            curEntry := near
+            curStop  := far - dirn * 0.25 * atr
+            curT1    := near + dirn * 0.382 * ad
+            curT2    := near + dirn * 0.618 * ad
+            curT3    := array.get(pvP, n - 1)
+            curT4    := aPrice
+            curBar   := bar_index
+            curArmed := true
+            int np = nm == "AB=CD" ? 3 : nm == "Three Drives" ? 5 : 4
+            if n >= np
+                drawPattern(nm, dirn, np, pLo, pHi)
+        // Registered even when the zone-edge target looks inverted: the fill-time test above
+        // is the one that decides, and a gap into the zone can make the leg valid.
+        if btOn
+            int pid = array.indexof(PATS, nm)
+            if pid >= 0
+                int npb = nm == "AB=CD" ? 3 : nm == "Three Drives" ? 5 : 4
+                int xBar = array.get(pvB, n - npb)
+                int cBar = array.get(pvB, n - 1)
+                array.push(pend, Pend.new(pid, dirn, near, far, array.get(pvP, n - 1), aPrice,
+                     bar_index + 1, bar_index + 1 + math.max(10, cBar - xBar), false, na, na, na, na))
+                if array.size(pend) > 60
+                    array.shift(pend)
+
+// ──────────────────────────────────────────────────────── backtest on this chart
+// Replays every registered pattern forward under the frozen rules, so the table below is
+// this symbol's own record rather than the study's average. It is the same machine that
+// produced the study's winner's curse, so it prints its sample size next to every number.
+
+if btOn and array.size(pend) > 0
+    for i = array.size(pend) - 1 to 0
+        Pend q = array.get(pend, i)
+        if bar_index >= q.startBar
+            if not q.filled
+                // waiting for the zone
+                bool brokeC = q.dirn == 1 ? high > q.cPrice : low < q.cPrice
+                bool touched = q.dirn == 1 ? low <= q.near : high >= q.near
+                bool gapped  = q.dirn == 1 ? open < q.far : open > q.far
+                if brokeC or bar_index > q.expiry
+                    array.remove(pend, i)
+                else if touched and gapped
+                    array.remove(pend, i)               // the bar jumped the whole zone: no entry
+                else if touched
+                    float fill = q.dirn == 1 ? math.min(q.near, open) : math.max(q.near, open)
+                    float a = nz(atr[1], atr)
+                    float st = q.far - q.dirn * 0.25 * a
+                    float risk = math.abs(fill - st)
+                    // The AD leg is measured from the ACTUAL fill, which a gap into the zone
+                    // can improve. A non-positive leg means the first target would sit on the
+                    // wrong side of the entry, so there is no trade.
+                    float span = q.dirn * (q.aPrice - fill)
+                    if risk > 0 and span > 0
+                        q.entry := fill
+                        q.stop := st
+                        q.t1 := fill + 0.382 * (q.aPrice - fill)
+                        q.filled := true
+                        q.entryBar := bar_index
+                    else
+                        array.remove(pend, i)
+            if q.filled
+                float risk = math.abs(q.entry - q.stop)
+                bool hitStop = q.dirn == 1 ? low <= q.stop : high >= q.stop
+                bool hitT1   = q.dirn == 1 ? high >= q.t1 : low <= q.t1
+                float r = na
+                bool done = false
+                if hitStop                                   // stop first: one bar can cover both
+                    r := -1.0
+                    done := true
+                else if hitT1
+                    r := math.abs(q.t1 - q.entry) / risk
+                    done := true
+                else if bar_index >= q.entryBar + btHorizon
+                    r := q.dirn * (close - q.entry) / risk
+                    done := true
+                if done
+                    array.set(btN, q.pid, array.get(btN, q.pid) + 1)
+                    if hitT1 and not hitStop
+                        array.set(btW, q.pid, array.get(btW, q.pid) + 1)
+                    array.set(btR, q.pid, array.get(btR, q.pid) + r)
+                    array.remove(pend, i)
+
+// ──────────────────────────────────────────── did the setup come alive, or die waiting?
+// The same three tests the backtest applies, written onto the chart instead of into a
+// counter, so the box stops being a mystery rectangle: it says whether price ever reached
+// it, and if not, why not. Order matters and matches the backtest exactly — a break of C or
+// a closed window kills the setup even on a bar that also touches the zone.
+if array.size(draws) > 0
+    for i = 0 to array.size(draws) - 1
+        Draw d = array.get(draws, i)
+        if not d.settled and bar_index >= d.startBar
+            bool broke   = d.dirn == 1 ? high > d.cPrice : low < d.cPrice
+            bool over    = bar_index > d.expiry
+            bool touched = d.dirn == 1 ? low <= d.near : high >= d.near
+            bool gapped  = d.dirn == 1 ? open < d.far : open > d.far
+            bool live    = touched and not gapped and not broke and not over
+            if broke or over or touched
+                d.settled := true
+                color c = live ? (d.dirn == 1 ? bullCol : bearCol) : deadCol
+                string tail = live     ? L("تفعّل — السعر دخل المنطقة", "TRIGGERED — price reached the zone")
+                     : broke           ? L("لاغٍ — كسر النقطة C قبل الوصول", "VOID — broke point C first")
+                     : over            ? L("انتهى — أقفلت النافذة بلا وصول", "EXPIRED — window closed, never reached")
+                     :                   L("لاغٍ — قفزت الشمعة فوق المنطقة كاملة", "VOID — the bar jumped the whole zone")
+                d.state := tail
+                label.set_text(d.l, d.head + "\n" + tail)
+                label.set_color(d.l, color.new(c, live ? 15 : 55))
+                if not na(d.b)
+                    box.set_bgcolor(d.b, color.new(c, live ? 85 : 94))
+                    box.set_border_color(d.b, color.new(c, live ? 30 : 70))
+                    // A dead setup's window is over: end the box where it actually ended,
+                    // rather than leaving it stretched over bars it no longer governs.
+                    if not live
+                        box.set_right(d.b, math.max(bar_index, box.get_left(d.b) + 1))
+                if hideDead and not live
+                    label.delete(d.l)
+                    if not na(d.b)
+                        box.delete(d.b)
+
+// ───────────────────────────────────────────────────────────── entry, stop and targets
+// Drawn for the newest pattern only, and only while it is still live.
+// Every one of these lines carries its own name at the right-hand end. An unlabelled
+// horizontal line is indistinguishable from any other horizontal line on the chart.
+tline(float y, color c, int w, string sty, string nm) =>
+    array.push(tlns, line.new(curBar, y, bar_index + 25, y, color = c, width = w, style = sty))
+    array.push(tlbs, label.new(bar_index + 25, y, nm + "  " + str.tostring(y, format.mintick),
+         style = label.style_label_left, color = color.new(color.black, 100), textcolor = c, size = size.tiny))
+
+if barstate.islast and showTgts and curArmed and not na(curEntry)
+    while array.size(tlns) > 0
+        line.delete(array.shift(tlns))
+    while array.size(tlbs) > 0
+        label.delete(array.shift(tlbs))
+    col = curDir == 1 ? bullCol : bearCol
+    tline(curEntry, col,                      2, line.style_solid,  L("الدخول", "entry"))
+    tline(curStop,  color.new(#f23645, 20),   1, line.style_dashed, L("الوقف", "stop"))
+    tline(curT1,    color.new(#089981, 30),   1, line.style_dotted, L("هدف ١", "T1"))
+    tline(curT2,    color.new(#089981, 45),   1, line.style_dotted, L("هدف ٢", "T2"))
+    tline(curT3,    color.new(#089981, 60),   1, line.style_dotted, L("هدف ٣", "T3"))
+    tline(curT4,    color.new(#089981, 75),   1, line.style_dotted, L("هدف ٤", "T4"))
+
+// ─────────────────────────────────────────────────────────────────────────────── panel
+var table pan = table.new(position.top_right, 2, 10, border_width = 1)
+
+row2(string k, string v, int row, color c) =>
+    table.cell(pan, 0, row, k, text_color = color.gray, text_size = size.small, text_halign = text.align_left)
+    table.cell(pan, 1, row, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+
+if barstate.islast and showTable
+    // Whether the newest pattern is still waiting matters as much as its numbers: a panel
+    // quoting an entry of 174 while price trades at 75 is reporting a setup that died months
+    // ago, and without this row it looks like a live instruction.
+    bool  alive = false
+    string st   = "—"
+    if array.size(draws) > 0
+        Draw dz = array.get(draws, array.size(draws) - 1)
+        st := dz.state
+        alive := not dz.settled
+    txt = curArmed ? curName + (curDir == 1 ? L("  شراء", "  long") : L("  بيع", "  short")) : L("لا يوجد نموذج", "no pattern yet")
+    row2(L("النموذج", "pattern"),  txt, 0, curArmed ? (curDir == 1 ? bullCol : bearCol) : color.gray)
+    row2(L("الحالة", "status"), st, 1, alive ? color.silver : deadCol)
+    row2(L("المنطقة", "zone"), curArmed ? str.tostring(math.min(curNear, curFar), format.mintick) + " – " + str.tostring(math.max(curNear, curFar), format.mintick) : "—", 2, color.silver)
+    row2(L("الدخول", "entry"),    curArmed ? str.tostring(curEntry, format.mintick) : "—", 3, color.silver)
+    row2(L("الوقف", "stop"),     curArmed ? str.tostring(curStop,  format.mintick) : "—", 4, color.new(#f23645, 0))
+    row2(L("هدف ١ · 38.2% AD", "T1 · 38.2% AD"), curArmed ? str.tostring(curT1, format.mintick) : "—", 5, color.new(#089981, 0))
+    row2(L("هدف ٢ · 61.8% AD", "T2 · 61.8% AD"), curArmed ? str.tostring(curT2, format.mintick) : "—", 6, color.new(#089981, 0))
+    row2(L("هدف ٣ · النقطة C", "T3 · point C"),  curArmed ? str.tostring(curT3, format.mintick) : "—", 7, color.new(#089981, 30))
+    row2(L("هدف ٤ · النقطة A", "T4 · point A"),  curArmed ? str.tostring(curT4, format.mintick) : "—", 8, color.new(#089981, 30))
+    row2(L("المختبَر", "tested"), L("+0.08R مقابل دخول عشوائي · النسب لا تضيف شيئاً", "+0.08R vs random · ratios add 0"), 9, color.gray)
+
+// ─────────────────────────────────────────────────────────────────────────────── the key
+// Nothing on this chart is self-explanatory, so the chart explains itself.
+var table key = table.new(position.bottom_left, 2, 8, border_width = 1, bgcolor = color.new(color.black, 30))
+
+krow(int r, string glyph, color c, string t) =>
+    table.cell(key, 0, r, glyph, text_color = c, text_size = size.small)
+    table.cell(key, 1, r, t, text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+
+if barstate.islast and showLegend
+    krow(0, "▬", color.silver,            L("أضلاع النموذج X A B C", "the pattern's legs, X A B C"))
+    krow(1, "┈", color.silver,            L("ضلع XA المرجعي", "the XA reference leg"))
+    krow(2, "▭", bullCol,                 L("منطقة الدخول — تبدأ من شمعة تأكيد النموذج وتنتهي بآخر شمعة يُحتسب فيها الوصول", "the entry zone — it starts at the bar the pattern confirmed and ends at the last bar on which a touch counts"))
+    krow(3, "▬", bullCol,                 L("خط الدخول: أمر محدد عند الحافة القريبة", "the entry: a limit order at the near edge"))
+    krow(4, "╌", color.new(#f23645, 0),   L("الوقف: 0.25 من ATR خلف الحافة البعيدة", "the stop: 0.25 ATR beyond the far edge"))
+    krow(5, "┈", color.new(#089981, 0),   L("الأهداف ١ إلى ٤ · الاختبار يخرج عند الهدف ١", "targets 1 to 4 · the backtest exits at T1"))
+    krow(6, "■", bullCol,                 L("أخضر شراء · أحمر بيع", "green is a buy, red is a sell"))
+    krow(7, "■", deadCol,                 L("رمادي: النموذج لاغٍ — السعر لم يصل قبل أن تُقفل النافذة", "grey: void — price never reached it before the window closed"))
+
+// ────────────────────────────────────────── the accuracy table for THIS symbol and frame
+// Win rate, its 95% Wilson interval, and average R per pattern. The interval is here because
+// a win rate without one is the single easiest number in trading to fool yourself with: in
+// the study a cell read 68.8% on 32 trades and 57.6% on the next 33.
+wilsonLo(int k, int n) =>
+    float z = 1.96
+    float pp = k / math.max(n, 1)
+    float den = 1 + z * z / n
+    float c = (pp + z * z / (2 * n)) / den
+    float sp = (z / den) * math.sqrt(pp * (1 - pp) / n + z * z / (4 * n * n))
+    math.max(0.0, c - sp)
+wilsonHi(int k, int n) =>
+    float z = 1.96
+    float pp = k / math.max(n, 1)
+    float den = 1 + z * z / n
+    float c = (pp + z * z / (2 * n)) / den
+    float sp = (z / den) * math.sqrt(pp * (1 - pp) / n + z * z / (4 * n * n))
+    math.min(1.0, c + sp)
+
+var table stat = table.new(position.bottom_right, 4, 14, border_width = 1)
+if barstate.islast and btOn and showStats
+    table.clear(stat, 0, 0, 3, 13)
+    table.cell(stat, 0, 0, syminfo.ticker + " · " + timeframe.period, text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 1, 0, "n",       text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 2, 0, L("نسبة النجاح (مجال ثقة ٩٥٪)", "win% (95% CI)"), text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    table.cell(stat, 3, 0, L("متوسط R", "avg R"),   text_color = color.silver, text_size = size.small, bgcolor = color.new(color.gray, 70))
+    int row = 1
+    int totN = 0
+    int totW = 0
+    float totR = 0.0
+    for i = 0 to array.size(PATS) - 1
+        int nn = array.get(btN, i)
+        if nn > 0
+            totN += nn
+            totW += array.get(btW, i)
+            totR += array.get(btR, i)
+            if row <= 12
+                float wr = array.get(btW, i) / nn
+                float ar = array.get(btR, i) / nn
+                // A thin sample is greyed out rather than coloured, so the eye does not read
+                // a 2-of-3 as a finding.
+                color c = nn < minN ? color.gray : wr >= 0.5 ? color.new(#089981, 0) : color.new(#d9a860, 0)
+                table.cell(stat, 0, row, array.get(PATS, i), text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+                table.cell(stat, 1, row, str.tostring(nn), text_color = nn < minN ? color.gray : color.silver, text_size = size.small)
+                table.cell(stat, 2, row, str.tostring(wr * 100, "#.0") + "%  [" + str.tostring(wilsonLo(array.get(btW, i), nn) * 100, "#") + "–" + str.tostring(wilsonHi(array.get(btW, i), nn) * 100, "#") + "]", text_color = c, text_size = size.small)
+                table.cell(stat, 3, row, str.tostring(ar, "#.00"), text_color = nn < minN ? color.gray : ar > 0 ? color.new(#089981, 0) : color.new(#f23645, 0), text_size = size.small)
+                row += 1
+    if totN > 0 and row <= 12
+        table.cell(stat, 0, row, L("الكل", "all"), text_color = color.white, text_size = size.small, text_halign = text.align_left)
+        table.cell(stat, 1, row, str.tostring(totN), text_color = color.white, text_size = size.small)
+        table.cell(stat, 2, row, str.tostring(totW / totN * 100, "#.0") + "%", text_color = color.white, text_size = size.small)
+        table.cell(stat, 3, row, str.tostring(totR / totN, "#.00"), text_color = totR > 0 ? color.new(#089981, 0) : color.new(#f23645, 0), text_size = size.small)
+        row += 1
+    if row <= 13
+        table.cell(stat, 0, row, L("الرمادي: أقل من " + str.tostring(minN) + " صفقة — ضجيج لا نتيجة", "grey = under " + str.tostring(minN) + " trades, i.e. noise"), text_color = color.gray, text_size = size.tiny, text_halign = text.align_left)
+        table.cell(stat, 3, row, "", text_color = color.gray, text_size = size.tiny)
+
+// ────────────────────────────────────────────────────────────────────────────── alerts
+inZone = curArmed and not na(curNear) and not na(curFar) and low <= math.max(curNear, curFar) and high >= math.min(curNear, curFar)
+alertcondition(inZone, "Price entered a harmonic PRZ", "Price has entered the potential reversal zone of a harmonic pattern. Tested result: not confirmed — see the script header.")
+if inZone and not inZone[1]
+    alert(curName + (curDir == 1 ? " long" : " short") + " zone touched on " + syminfo.ticker + " " + timeframe.period, alert.freq_once_per_bar)

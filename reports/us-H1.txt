@@ -1,0 +1,5 @@
+H1 — confirmatory test (PROTOCOL-us.md §1)
+Rule: keltner_break, Track A. Sample: 288 symbols not used in study 1 (23 excluded).
+Period II: n 13546, win 50.4% vs random 50.8%, mean R 0.031 vs random 0.043, edge -0.011 R, one-sided p 0.9140, 95% CI of mean R [0.015, 0.048]
+Period I (context only): n 12898, edge -0.032 R, p 1.0000
+Verdict: NOT CONFIRMED

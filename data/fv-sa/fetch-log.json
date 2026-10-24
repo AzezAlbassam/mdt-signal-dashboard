@@ -1,0 +1,255 @@
+{
+ "fin": {
+  "TADAWUL:2222": "ok",
+  "TADAWUL:1120": "ok",
+  "TADAWUL:1180": "ok",
+  "TADAWUL:4071": "ok",
+  "TADAWUL:1150": "ok",
+  "TADAWUL:1111": "ok",
+  "TADAWUL:4327": "ok",
+  "TADAWUL:1834": "ok",
+  "TADAWUL:1835": "ok",
+  "TADAWUL:4090": "ok",
+  "TADAWUL:2270": "ok",
+  "TADAWUL:4291": "ok",
+  "TADAWUL:4326": "ok",
+  "TADAWUL:1830": "ok",
+  "TADAWUL:4072": "ok",
+  "TADAWUL:4200": "ok",
+  "TADAWUL:6015": "ok",
+  "TADAWUL:4014": "ok",
+  "TADAWUL:4013": "ok",
+  "TADAWUL:4162": "ok",
+  "TADAWUL:4004": "ok",
+  "TADAWUL:4002": "ok",
+  "TADAWUL:4164": "ok",
+  "TADAWUL:4017": "ok",
+  "TADAWUL:4015": "ok",
+  "TADAWUL:4016": "ok",
+  "TADAWUL:2081": "ok",
+  "TADAWUL:2382": "ok",
+  "TADAWUL:1321": "ok",
+  "TADAWUL:1212": "ok",
+  "TADAWUL:2200": "ok",
+  "TADAWUL:1211": "ok",
+  "TADAWUL:1202": "ok",
+  "TADAWUL:1322": "ok",
+  "TADAWUL:1320": "ok",
+  "TADAWUL:2020": "ok",
+  "TADAWUL:1303": "ok",
+  "TADAWUL:4190": "ok",
+  "TADAWUL:4001": "ok",
+  "TADAWUL:4193": "ok",
+  "TADAWUL:4165": "ok",
+  "TADAWUL:4050": "ok",
+  "TADAWUL:7203": "ok",
+  "TADAWUL:7202": "ok",
+  "TADAWUL:8313": "ok",
+  "TADAWUL:2082": "ok",
+  "TADAWUL:4263": "ok",
+  "TADAWUL:4264": "ok",
+  "TADAWUL:7200": "ok",
+  "TADAWUL:1833": "ok",
+  "TADAWUL:7211": "ok",
+  "TADAWUL:4018": "ok",
+  "TADAWUL:6022": "ok"
+ },
+ "px": {
+  "TADAWUL:2222": "ok",
+  "TADAWUL:1120": "ok",
+  "TADAWUL:4327": "ok",
+  "TADAWUL:1111": "ok",
+  "TADAWUL:4071": "ok",
+  "TADAWUL:1150": "ok",
+  "TADAWUL:1834": "ok",
+  "TADAWUL:1180": "ok",
+  "TADAWUL:1835": "ok",
+  "TADAWUL:2270": "ok",
+  "TADAWUL:4326": "ok",
+  "TADAWUL:4291": "ok",
+  "TADAWUL:4090": "ok",
+  "TADAWUL:1830": "ok",
+  "TADAWUL:6015": "ok",
+  "TADAWUL:4014": "ok",
+  "TADAWUL:4072": "ok",
+  "TADAWUL:4200": "ok",
+  "TADAWUL:4164": "ok",
+  "TADAWUL:4013": "ok",
+  "TADAWUL:4004": "ok",
+  "TADAWUL:4162": "ok",
+  "TADAWUL:4017": "ok",
+  "TADAWUL:4002": "ok",
+  "TADAWUL:2081": "ok",
+  "TADAWUL:4015": "ok",
+  "TADAWUL:1212": "ok",
+  "TADAWUL:4016": "ok",
+  "TADAWUL:2382": "ok",
+  "TADAWUL:1322": "ok",
+  "TADAWUL:1211": "ok",
+  "TADAWUL:1321": "ok",
+  "TADAWUL:2200": "ok",
+  "TADAWUL:1320": "ok",
+  "TADAWUL:1202": "ok",
+  "TADAWUL:2020": "ok",
+  "TADAWUL:1303": "ok",
+  "TADAWUL:4190": "ok",
+  "TADAWUL:4193": "ok",
+  "TADAWUL:4165": "ok",
+  "TADAWUL:4001": "ok",
+  "TADAWUL:4050": "ok",
+  "TADAWUL:7203": "ok",
+  "TADAWUL:7202": "ok",
+  "TADAWUL:8313": "ok",
+  "TADAWUL:4263": "ok",
+  "TADAWUL:4264": "ok",
+  "TADAWUL:2082": "ok",
+  "TADAWUL:1833": "ok",
+  "TADAWUL:7200": "ok"
+ },
+ "sectorMissing": [
+  {
+   "reason": "Quote data not found",
+   "symbol": "AMEX:LEU"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:BRR"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:CREG"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:CYCN"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:GLMD"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:KHC"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:PSKY"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:QNCX"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SATS"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SKYT"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SSSS"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:UGRO"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:WBD"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:AXIA"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:CTRA"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:ET"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:LUMN"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:QBTS"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "AMEX:LEU"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:BRR"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:CREG"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:CYCN"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:GLMD"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:KHC"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:PSKY"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:QNCX"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SATS"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SKYT"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:SSSS"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:UGRO"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NASDAQ:WBD"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:AXIA"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:CTRA"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:ET"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:LUMN"
+  },
+  {
+   "reason": "Quote data not found",
+   "symbol": "NYSE:QBTS"
+  }
+ ]
+}

@@ -1,0 +1,147 @@
+Study 16 — the stock page's untested valuation choices (PROTOCOL-study16.md)
+Universe 815 stocks; balance-sheet files 815.
+With a value — stocks / stored fiscal years / B0 stock-years whose F0 has it: equity 0 / 0 / 0, cash 0 / 0 / 0, operating income 0 / 0 / 0.
+B0 stock-years (May 2012–2025, pre-revenue left out): 9428; with an outcome: 9424.
+Error e = |ln(V ÷ c1)|, c1 = the price 12 months later × SPY then ÷ SPY at the end; M = the year's median e; δ = M_A − M_X (positive: X closer);
+δ* = M of A moved as close to the price as X − M_X (positive: X carries information beyond closeness to the price).
+
+D1 P/B from ROE, very profitable financials: not testable — a column it needs is empty for every symbol (§1); A stays.
+
+D2 How methods are combined — options A B C D; comparison set 5546 stock-years on 566 stocks; 14 counted years; test by years
+   year     n    M_A  M_B  M_C  M_D   naive    δ_B  δ_C  δ_D   δ*_B δ*_C δ*_D   IC_A IC_B IC_C IC_D
+   2012   336   0.281 0.221 0.254 0.275   0.113   0.060 0.027 0.007   -0.001  0.020  0.000   0.104 0.036 0.081 0.089
+   2013   349   0.215 0.190 0.208 0.210   0.115   0.025 0.007 0.005   -0.003  0.003  0.017  -0.069-0.032-0.068-0.066
+   2014   383   0.254 0.282 0.246 0.264   0.132  -0.027 0.008-0.010   -0.013 -0.000  0.020   0.021-0.034 0.023 0.004
+   2015   386   0.251 0.259 0.251 0.252   0.144  -0.007 0.000-0.001   -0.012  0.000  0.002  -0.077-0.045-0.047-0.068
+   2016   365   0.305 0.272 0.262 0.308   0.136   0.033 0.043-0.003    0.020  0.032  0.011  -0.087-0.095-0.070-0.087
+   2017   372   0.303 0.296 0.290 0.304   0.146   0.007 0.013-0.000   -0.001  0.005  0.007  -0.019 0.006-0.014-0.009
+   2018   402   0.344 0.332 0.338 0.336   0.165   0.012 0.006 0.008   -0.006 -0.003  0.014  -0.101-0.105-0.123-0.088
+   2019   401   0.317 0.316 0.315 0.338   0.173   0.001 0.002-0.021   -0.000 -0.007  0.008  -0.069-0.059-0.079-0.068
+   2020   412   0.291 0.267 0.288 0.286   0.182   0.024 0.003 0.005    0.019 -0.013  0.014   0.111 0.045 0.122 0.107
+   2021   375   0.323 0.348 0.315 0.334   0.140  -0.024 0.008-0.011    0.015  0.007 -0.003   0.265 0.262 0.265 0.270
+   2022   431   0.314 0.304 0.308 0.306   0.162   0.010 0.006 0.008    0.020  0.006  0.011  -0.160-0.161-0.111-0.156
+   2023   427   0.318 0.315 0.324 0.313   0.176   0.002-0.006 0.005   -0.013 -0.000  0.018   0.050 0.021 0.058 0.055
+   2024   444   0.319 0.336 0.327 0.342   0.204  -0.017-0.009-0.023   -0.010 -0.006 -0.017  -0.088-0.081-0.113-0.102
+   2025   463   0.439 0.416 0.438 0.421   0.286   0.023 0.001 0.018    0.010 -0.008  0.018   0.034-0.043 0.025 0.037
+   B vs A: mean δ 0.0086, mean δ* 0.0017, better in 10 of 14 years, p 0.1007, Holm 0.2014, mean IC -0.020 vs A -0.006
+   C vs A: mean δ 0.0078, mean δ* 0.0024, better in 12 of 14 years, p 0.0112, Holm 0.0335, mean IC -0.004 vs A -0.006
+   D vs A: mean δ -0.0010, mean δ* 0.0086, better in 7 of 14 years, p 0.6176, Holm 0.6176, mean IC -0.006 vs A -0.006
+   Pooled median e: A 0.302, B 0.294, C 0.295, D 0.302, naive 0.159; within 25%: A 38.9%, B 39.9%, C 39.7%, D 38.5%; median signed: A -0.025, B -0.060, C -0.027, D -0.062
+   24 months (reported only, by years): 5082 stock-years, 13 counted years; mean δ B 0.0041 (p 0.3550), C 0.0106 (p 0.0117), D -0.0045 (p 0.7913)
+   Large caps (top 300 a year): 2952 stock-years; median e A 0.271, B 0.266, C 0.263, D 0.274
+   Stock-years where options disagree on whether a value exists: 0
+   → adopted: C
+
+D3 Which companies count as cyclical — options A B C; comparison set 1903 stock-years on 354 stocks; 11 counted years; test by years
+   year     n    M_A  M_B  M_C   naive    δ_B  δ_C   δ*_B δ*_C   IC_A IC_B IC_C
+   2015   126   0.249 0.218 0.224   0.142   0.031 0.025    0.051  0.068  -0.046-0.054 0.026
+   2016   132   0.279 0.303 0.349   0.155  -0.024-0.070    0.007 -0.047  -0.155 0.046-0.136
+   2017   141   0.317 0.292 0.333   0.157   0.024-0.017    0.025  0.005  -0.021-0.080-0.050
+   2018   163   0.378 0.338 0.385   0.159   0.041-0.007    0.021  0.021  -0.150-0.090-0.119
+   2019   173   0.335 0.299 0.327   0.173   0.036 0.009    0.016  0.027   0.098 0.125 0.100
+   2020   182   0.293 0.229 0.294   0.191   0.064-0.001    0.045  0.043   0.038 0.229 0.040
+   2021   166   0.311 0.353 0.360   0.132  -0.042-0.049   -0.055 -0.016   0.238 0.115 0.243
+   2022   201   0.313 0.323 0.364   0.166  -0.010-0.051   -0.040 -0.062  -0.168-0.025-0.186
+   2023   201   0.313 0.345 0.328   0.163  -0.032-0.015   -0.044 -0.008  -0.011-0.132-0.029
+   2024   204   0.306 0.279 0.303   0.188   0.028 0.004   -0.007  0.034  -0.002-0.096 0.024
+   2025   214   0.434 0.419 0.421   0.283   0.016 0.014    0.010  0.006  -0.069-0.129-0.091
+   B vs A: mean δ 0.0120, mean δ* 0.0026, better in 7 of 11 years, p 0.1318, Holm 0.2637, mean IC -0.008 vs A -0.023
+   C vs A: mean δ -0.0144, mean δ* 0.0065, better in 4 of 11 years, p 0.9214, Holm 0.9214, mean IC -0.016 vs A -0.023
+   Pooled median e: A 0.321, B 0.317, C 0.344, naive 0.171; within 25%: A 36.9%, B 38.7%, C 35.5%; median signed: A -0.003, B -0.011, C -0.048
+   24 months (reported only, by years): 1688 stock-years, 10 counted years; mean δ B -0.0055 (p 0.6768), C -0.0131 (p 0.9844)
+   Large caps (top 300 a year): 858 stock-years; median e A 0.281, B 0.285, C 0.304
+   Stock-years where options disagree on whether a value exists: 115
+   → adopted: A
+
+D4 Loss-makers' fair value: not testable — a column it needs is empty for every symbol (§1); A stays.
+
+D5 Methods on a multiple above 100 — options A B; comparison set 209 stock-years on 134 stocks; 11 counted years; test by years
+   year     n    M_A  M_B   naive    δ_B   δ*_B   IC_A IC_B
+   2013    10   0.621 0.550   0.256   0.071    0.117  -0.231-0.188
+   2014    13   0.367 0.834   0.173  -0.467   -0.138  -0.214-0.192
+   2015    17   0.535 0.695   0.152  -0.160    0.055   0.118 0.064
+   2017    15   0.441 0.504   0.157  -0.062    0.035   0.368 0.271
+   2018    21   0.647 0.649   0.166  -0.002    0.189  -0.061-0.164
+   2019    17   0.381 0.686   0.185  -0.306   -0.279   0.069 0.140
+   2020    16   0.757 0.781   0.251  -0.024    0.126   0.056-0.194
+   2021    32   0.600 0.756   0.145  -0.157   -0.187   0.164 0.145
+   2023    14   0.714 0.688   0.254   0.026    0.204  -0.429-0.332
+   2024    14   0.396 0.532   0.217  -0.136    0.046   0.130 0.130
+   2025    18   0.895 1.190   0.522  -0.295   -0.206  -0.166-0.304
+   B vs A: mean δ -0.1375, mean δ* -0.0034, better in 2 of 11 years, p 0.9917, Holm 0.9917, mean IC -0.057 vs A -0.018 (fails the ranking guard)
+   Pooled median e: A 0.588, B 0.695, naive 0.194; within 25%: A 27.3%, B 18.7%; median signed: A -0.350, B -0.659
+   24 months (reported only, by years): 191 stock-years, 10 counted years; mean δ B -0.0778 (p 0.8535)
+   Large caps (top 300 a year): 81 stock-years; median e A 0.615, B 0.833
+   Stock-years where options disagree on whether a value exists: 48
+   → adopted: A
+
+D6 Lynch's rule for PEG — options A B C; comparison set 1532 stock-years on 293 stocks; 14 counted years; test by years
+   year     n    M_A  M_B  M_C   naive    δ_B  δ_C   δ*_B δ*_C   IC_A IC_B IC_C
+   2012    86   0.352 0.334 0.336   0.118   0.017 0.016    0.017  0.036   0.338 0.347 0.275
+   2013    76   0.228 0.233 0.260   0.132  -0.006-0.032   -0.003 -0.016   0.083 0.079 0.079
+   2014    92   0.368 0.391 0.302   0.153  -0.023 0.066   -0.006  0.047  -0.056-0.018 0.020
+   2015    96   0.334 0.383 0.297   0.193  -0.049 0.037   -0.021 -0.018  -0.086-0.105-0.101
+   2016    92   0.360 0.381 0.301   0.167  -0.021 0.059    0.029  0.037  -0.117-0.091-0.115
+   2017    95   0.320 0.432 0.316   0.170  -0.112 0.004   -0.059 -0.018  -0.180-0.151-0.178
+   2018   104   0.459 0.487 0.435   0.192  -0.028 0.024    0.013 -0.067  -0.181-0.167-0.165
+   2019   113   0.380 0.438 0.341   0.221  -0.058 0.039   -0.041  0.006  -0.099-0.083-0.048
+   2020   113   0.353 0.369 0.311   0.170  -0.016 0.042   -0.015 -0.007   0.135 0.145 0.125
+   2021   110   0.465 0.494 0.398   0.162  -0.029 0.067   -0.007 -0.037   0.336 0.298 0.267
+   2022   136   0.424 0.456 0.408   0.183  -0.032 0.016   -0.003  0.001  -0.319-0.290-0.307
+   2023   134   0.335 0.341 0.340   0.214  -0.006-0.005   -0.003 -0.004  -0.008-0.016-0.100
+   2024   151   0.339 0.348 0.288   0.216  -0.009 0.050   -0.010 -0.024  -0.066-0.045 0.023
+   2025   134   0.575 0.582 0.560   0.479  -0.007 0.015   -0.017 -0.041   0.027 0.010-0.061
+   B vs A: mean δ -0.0270, mean δ* -0.0089, better in 1 of 14 years, p 0.9993, Holm 0.9993, mean IC -0.006 vs A -0.014
+   C vs A: mean δ 0.0284, mean δ* -0.0074, better in 12 of 14 years, p 0.0020, Holm 0.0040, mean IC -0.020 vs A -0.014
+   Pooled median e: A 0.373, B 0.413, C 0.344, naive 0.187; within 25%: A 31.9%, B 28.9%, C 33.2%; median signed: A -0.070, B -0.147, C -0.017
+   24 months (reported only, by years): 1397 stock-years, 13 counted years; mean δ B -0.0338 (p 0.9998), C 0.0177 (p 0.0680)
+   Large caps (top 300 a year): 748 stock-years; median e A 0.351, B 0.384, C 0.313
+   Stock-years where options disagree on whether a value exists: 6
+   → adopted: A
+
+D7 Graham's number: not testable — a column it needs is empty for every symbol (§1); A stays.
+
+D8 DCF discount rate — options A B; comparison set 3400 stock-years on 386 stocks; 14 counted years; test by years
+   year     n    M_A  M_B   naive    δ_B   δ*_B   IC_A IC_B
+   2012   203   0.275 0.257   0.104   0.018   -0.002   0.234 0.225
+   2013   220   0.215 0.187   0.115   0.028    0.017   0.028 0.092
+   2014   242   0.269 0.291   0.134  -0.021   -0.010  -0.002-0.022
+   2015   231   0.262 0.302   0.146  -0.040   -0.013   0.019-0.059
+   2016   238   0.327 0.322   0.131   0.005    0.038  -0.131-0.060
+   2017   237   0.312 0.310   0.177   0.002    0.026  -0.030-0.002
+   2018   253   0.406 0.399   0.173   0.007    0.000  -0.149-0.179
+   2019   237   0.324 0.335   0.173  -0.011    0.038  -0.034-0.008
+   2020   252   0.299 0.297   0.161   0.002   -0.020  -0.023 0.077
+   2021   232   0.351 0.359   0.125  -0.008    0.002   0.226 0.204
+   2022   263   0.336 0.330   0.158   0.006    0.009  -0.236-0.197
+   2023   240   0.301 0.288   0.179   0.013   -0.000  -0.006 0.045
+   2024   275   0.304 0.302   0.188   0.002   -0.020  -0.021-0.022
+   2025   277   0.464 0.436   0.342   0.028    0.025   0.012 0.028
+   B vs A: mean δ 0.0022, mean δ* 0.0066, better in 10 of 14 years, p 0.3316, Holm 0.3316, mean IC 0.009 vs A -0.008
+   Pooled median e: A 0.314, B 0.310, naive 0.157; within 25%: A 37.0%, B 36.7%; median signed: A -0.047, B -0.076
+   24 months (reported only, by years): 3122 stock-years, 13 counted years; mean δ B 0.0071 (p 0.1304)
+   Large caps (top 300 a year): 1938 stock-years; median e A 0.289, B 0.280
+   Stock-years where options disagree on whether a value exists: 0
+   → adopted: A
+
+D9 Own-history P/B for Heavy: not testable — a column it needs is empty for every symbol (§1); A stays.
+
+Combination: adopted {"D2":"C"}; applied {"D2":"C"}
+   step {"D2":"C"}: 8892 stock-years, pooled median e B0 0.336, B* 0.329
+   8892 stock-years; pooled median e B0 0.336, B* 0.329, naive (today's price) 0.178; mean IC B0 0.008, B* 0.009
+   2012  n  478  B0 0.284  B* 0.263  naive 0.135
+   2013  n  537  B0 0.220  B* 0.215  naive 0.117
+   2014  n  564  B0 0.267  B* 0.254  naive 0.131
+   2015  n  584  B0 0.272  B* 0.271  naive 0.156
+   2016  n  600  B0 0.316  B* 0.293  naive 0.141
+   2017  n  607  B0 0.309  B* 0.302  naive 0.157
+   2018  n  616  B0 0.352  B* 0.347  naive 0.180
+   2019  n  636  B0 0.372  B* 0.364  naive 0.221
+   2020  n  658  B0 0.314  B* 0.312  naive 0.208
+   2021  n  667  B0 0.371  B* 0.364  naive 0.178
+   2022  n  722  B0 0.393  B* 0.381  naive 0.186
+   2023  n  730  B0 0.392  B* 0.392  naive 0.192
+   2024  n  746  B0 0.363  B* 0.367  naive 0.220
+   2025  n  747  B0 0.455  B* 0.455  naive 0.328
+
+Known limits (§7): survivorship; price returns without dividends; today's restated fundamentals, sectors and peer margins; no analysts' forecast history; annual figures only; one date a year; total equity vs common equity; buybacks; US stocks only; the same stocks every year; closeness to the price; Holm within decisions only.

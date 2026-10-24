@@ -1,0 +1,175 @@
+// This Source Code is subject to the terms of the Mozilla Public License 2.0
+// © built from the strategies ابو نايف (@zero_en3kas) published free and publicly on X
+
+//@version=5
+indicator("Mizan Levels — الميزان الرقمي", shorttitle="MIZAN", overlay=true, max_lines_count=500, max_labels_count=500)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WHAT THIS IS
+//
+// The strategies @zero_en3kas gave away free on his account, implemented exactly as
+// he stated them. On 2025-07-09 he wrote:
+//   "جميع الاستراتيجيات بحسابي مسموح لأي مبرمج ينزلها بمؤشر مجاني"
+//   — every strategy on my account, any programmer may publish as a free indicator.
+// That is the licence this is built under. It deliberately contains nothing from his
+// paid "زيرو انعكاس" or "الميزان الهندسي" indicators, which he codes himself and sells,
+// and which he has said explicitly he keeps closed to prevent leaking.
+//
+// WHAT THIS DELIBERATELY DOES NOT DO
+//
+// His geometric rules are stated in on-screen DEGREES — "51 % 2.125 = 24" on the TASI
+// chart of 2024-10-07, and "from the peak draw the falling trend at the same angle as
+// the rising trend" in the Bitcoin lesson of 2024-09-15.
+//
+// A chart angle is atan(Δprice × pixelsPerPrice ÷ Δbars × pixelsPerBar). It is a fact
+// about the picture, not about the prices. Pine has no access to pixel geometry, so
+// there is no faithful way to draw those lines here: any version would have to invent a
+// price-per-bar convention, and would then be drawing that invention rather than his
+// method. This is also why his instructions insist on locking the price ratio and never
+// zooming — he is pinning the pixel scale so his own angles stay reproducible on his own
+// screen. It does not transfer to anyone else's.
+//
+// MEASURED RESULT — READ THIS BEFORE TRADING IT
+//
+// Scored on 2,943 SPX daily sessions (2015-2026) against a matched null model, neither
+// rule below beats randomly placed levels at any threshold tested. Rebuilding the ladder
+// with a random multiplier in place of 45 scores the same or better. Treat these lines
+// as drawing aids, not as an edge. See METHOD.md in the repository.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── inputs ───────────────────────────────────────────────────────────────────
+grpNum = "التحليل الرقمي — numeric ladder"
+useNumeric  = input.bool(true,  "Show numeric ladder",            group=grpNum)
+anchorMode  = input.string("Auto swing low", "Anchor",            options=["Auto swing low", "Manual"], group=grpNum, tooltip="He picks the wave low by eye. 'Manual' lets you enter the exact low he would have used.")
+manualLow   = input.float(4103.0, "Manual anchor low",            group=grpNum, tooltip="His own worked example: SPX low 4103 → digit sum 8 → 8 × 45 = 360.")
+swingLen    = input.int(10, "Swing lookback (bars each side)",     minval=1, group=grpNum)
+multiplier  = input.float(45.0, "Multiplier",                      group=grpNum, tooltip="45 in his formula — one eighth of 360°. Change it to see how little difference it makes.")
+rungs       = input.int(3, "Rungs",                                minval=1, maxval=20, group=grpNum)
+scaleMode   = input.string("Auto", "Step scaling",                 options=["Auto", "×1", "÷10", "÷100"], group=grpNum, tooltip="He says to divide by 10 or 100 depending on the instrument's price, without stating the cut-off. 'Auto' uses ÷1 above 1000, ÷10 above 100, ÷100 below.")
+
+grpMa = "استراتيجية متوسط ٥٠ — MA anchor"
+useMa       = input.bool(true, "Show MA-at-peak levels",           group=grpMa)
+maLen       = input.int(50, "MA length",                           minval=1, group=grpMa, tooltip="50 for his headline rule; he also posts a 144 on 5-minute option charts.")
+maSwingLen  = input.int(10, "Peak lookback (bars each side)",       minval=1, group=grpMa)
+maKeep      = input.int(5, "Keep last N levels",                    minval=1, maxval=50, group=grpMa)
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+// مجموع القاع — digit sum of the integer part. Single pass, not a digital root:
+// 4606 → 16, not 7.
+digitSum(float value) =>
+    int n = int(math.floor(math.abs(value)))
+    int total = 0
+    if n == 0
+        total := 0
+    else
+        int rest = n
+        while rest > 0
+            total += rest % 10
+            rest := int(rest / 10)
+    total
+
+// "واقسم على ١٠ او ١٠٠ حسب سعر السهم او العمله" — he names both divisors but never the
+// cut-off between them. This is the reading his own examples support.
+autoDivisor(float price) =>
+    price >= 1000 ? 1.0 : price >= 100 ? 10.0 : 100.0
+
+divisorFor(float price) =>
+    switch scaleMode
+        "×1"   => 1.0
+        "÷10"  => 10.0
+        "÷100" => 100.0
+        => autoDivisor(price)
+
+// ── numeric ladder ───────────────────────────────────────────────────────────
+// ( مجموع القاع × ٤٥ ), added to the wave low repeatedly.
+
+var line[]  numLines  = array.new_line()
+var label[] numLabels = array.new_label()
+
+pivotLow = ta.pivotlow(low, swingLen, swingLen)
+
+var float activeAnchor = na
+var int   activeBar    = na
+
+if anchorMode == "Manual"
+    if na(activeAnchor) or activeAnchor != manualLow
+        activeAnchor := manualLow
+        activeBar    := bar_index
+else if not na(pivotLow)
+    activeAnchor := pivotLow
+    activeBar    := bar_index - swingLen
+
+if useNumeric and not na(activeAnchor) and barstate.islast
+    for i = 0 to array.size(numLines) - 1
+        line.delete(array.get(numLines, i))
+    for i = 0 to array.size(numLabels) - 1
+        label.delete(array.get(numLabels, i))
+    array.clear(numLines)
+    array.clear(numLabels)
+
+    float step = (digitSum(activeAnchor) * multiplier) / divisorFor(activeAnchor)
+
+    for rung = 1 to rungs
+        float levelPrice = activeAnchor + step * rung
+        ln = line.new(activeBar, levelPrice, bar_index + 12, levelPrice,
+             xloc=xloc.bar_index, color=color.new(color.orange, 20), width=1, style=line.style_solid)
+        array.push(numLines, ln)
+        lb = label.new(bar_index + 12, levelPrice,
+             str.tostring(levelPrice, format.mintick) + "  (+" + str.tostring(step * rung, "#.##") + ")",
+             xloc=xloc.bar_index, style=label.style_label_left,
+             color=color.new(color.orange, 85), textcolor=color.orange, size=size.small)
+        array.push(numLabels, lb)
+
+    // The anchor and its arithmetic, shown so the numbers can be checked by hand.
+    anchorLbl = label.new(activeBar, activeAnchor,
+         "anchor " + str.tostring(activeAnchor, format.mintick) +
+         "  Σ=" + str.tostring(digitSum(activeAnchor)) +
+         "  step " + str.tostring(step, "#.##"),
+         xloc=xloc.bar_index, style=label.style_label_up,
+         color=color.new(color.orange, 85), textcolor=color.orange, size=size.small)
+    array.push(numLabels, anchorLbl)
+
+// ── MA-at-peak levels ────────────────────────────────────────────────────────
+// "متوسط 50 خط عمودي على القمة وخط افقي مع تقاطع متوسط خمسين"
+// Drop a vertical at the swing peak; where it cuts the MA, carry that value across.
+
+ma = ta.sma(close, maLen)
+plot(useMa ? ma : na, "MA", color=color.new(color.teal, 40), linewidth=1)
+
+pivotHigh = ta.pivothigh(high, maSwingLen, maSwingLen)
+
+var line[]  maLines  = array.new_line()
+var label[] maLabels = array.new_label()
+
+if useMa and not na(pivotHigh)
+    int   peakBar   = bar_index - maSwingLen
+    float peakMa    = ma[maSwingLen]
+
+    if not na(peakMa)
+        ln = line.new(peakBar, peakMa, bar_index + 12, peakMa,
+             xloc=xloc.bar_index, color=color.new(color.teal, 20), width=1)
+        array.push(maLines, ln)
+
+        // The vertical he draws on the peak, shown faintly for the construction.
+        vert = line.new(peakBar, high[maSwingLen], peakBar, peakMa,
+               xloc=xloc.bar_index, color=color.new(color.teal, 70), width=1, style=line.style_dotted)
+        array.push(maLines, vert)
+
+        lb = label.new(bar_index + 12, peakMa, str.tostring(peakMa, format.mintick),
+             xloc=xloc.bar_index, style=label.style_label_left,
+             color=color.new(color.teal, 85), textcolor=color.teal, size=size.small)
+        array.push(maLabels, lb)
+
+        // Two lines and one label per peak, so trim in the same proportion.
+        while array.size(maLines) > maKeep * 2
+            line.delete(array.shift(maLines))
+        while array.size(maLabels) > maKeep
+            label.delete(array.shift(maLabels))
+
+// Extend the live levels to the right edge as new bars print.
+if barstate.islast
+    for i = 0 to array.size(maLines) - 1
+        ln = array.get(maLines, i)
+        if line.get_x1(ln) != line.get_x2(ln)
+            line.set_x2(ln, bar_index + 12)
