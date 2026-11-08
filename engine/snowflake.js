@@ -5,7 +5,7 @@
 //
 // q: a TradingView row (quote columns plus *_fy_h / *_fq_h histories, newest first).
 // b: benchmarks for q's market (pages/bench.json): { pe, eg, rg, yP25, yP75, savings,
-//    industries: { [industry]: { pe, pb, eg1, roa } } }.
+//    industries / sectors: { [name]: { pe, pb, eg1, roa } } }.
 // fair: the page's fair value (null when it has none).
 
 export const SNOW_AXES = ['value', 'future', 'past', 'health', 'dividend']
@@ -19,7 +19,7 @@ export const swsGrowth = (from, to) => (fin(from) && fin(to) && (Math.abs(from) 
 export function snowflake(q, b = {}, fair = null) {
   const out = []
   const add = (axis, id, ok, value = null, approx = false) => out.push({ axis, id, status: ok == null ? 'na' : ok ? 'pass' : 'fail', value: fin(value) ? value : null, approx })
-  const ind = b.industries?.[q.industry] ?? {}
+  const ind = b.industries?.[q.industry] ?? b.sectors?.[q.sector] ?? {} // SWS: too few in the industry → a wider group
   const bank = q.sector === 'Finance' && BANKS.includes(q.industry)
   const reit = q.industry === 'Real Estate Investment Trusts'
   const close = q.close

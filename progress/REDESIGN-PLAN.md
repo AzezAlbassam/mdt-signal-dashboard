@@ -266,6 +266,28 @@ a script (§3, phase 3).
   - engine/ehs.js holds the score, the cut points and the letter.
   - Both are inlined in the page build. test/snowflake.test.js runs 7 tests on the real rows.
 
+- **2026-11-08, phase 3 (benchmarks) done:**
+  - **Inputs:** scripts/build-bench.js turns data/bench/2026-11-08-{sp500,ksa}.json into
+    pages/bench.json.
+    - The S&P 500 came in two run_screener calls (the size limit), 499 companies once share
+      classes count once.
+    - The TASI set is the Tadawul main market, 271 companies: the screener has no TASI index, so
+      Nomu (codes starting with 9) is dropped.
+  - **Method:** medians as in SWS's industry_averages.markdown; a first build with weighted
+    aggregates gave the US 33% forecast EPS growth, against the median's 11.8%.
+  - **Fallbacks:** industries need ≥ 5 members, else the engine uses the sector.
+  - **US industry benchmarks** come from the S&P 500 itself, which saves calls.
+  - **Results:**
+
+    | | US | Saudi |
+    |---|---|---|
+    | P/E | 23.2 | 16.1 |
+    | P/B | 3.64 | 1.52 |
+    | Next-FY EPS growth | 11.8% | 4.2% |
+    | Next-FY revenue growth | 7.6% | 7.4% |
+    | Yield P25 / P75 | 0.97% / 2.90% | 2.97% / 6.38% |
+    | EHS total cut points | 5 / 7 / 10 | 3 / 5 / 8 |
+
 ## 4. Honesty on the page
 
 - The snowflake and EHS are descriptive summaries, "not tested on our data", like study 14's
