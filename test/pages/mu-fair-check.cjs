@@ -21,6 +21,9 @@ fs.writeFileSync(tmp, html)
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
   const logs = []
   page.on('pageerror', (e) => logs.push(e.message))
+  // The fixture is MU's docs and quote of 2026-10-23: pin the page's clock to that day (the month key
+  // decides which saved closes and quarters count; from 2026-11 the check read $1478.63).
+  await page.clock.setFixedTime(new Date('2026-10-23T12:00:00Z'))
   await page.addInitScript(({ cache, q, row }) => {
     const store = { 'lists/us': { symbols: ['NASDAQ:MU'] }, 'lists/sa': { symbols: [] }, 'meta/favorites': { symbols: ['NASDAQ:MU'] }, 'cache/NASDAQ:MU': cache, 'q/NASDAQ:MU': q }
     window.__calls = []

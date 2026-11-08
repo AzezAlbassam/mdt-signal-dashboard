@@ -244,6 +244,28 @@ a script (§3, phase 3).
   EHS sorts the next year's returns. Only checks with history can be backtested: value, past, part
   of health, and dividends.
 
+## Progress
+
+- **2026-11-08, phase 1 (data) done:**
+  - **Last quarter:** TradingView gives the EPS estimate and actual (`earnings_per_share_forecast_fq`,
+    `earnings_per_share_fq`) and the surprise % for EPS and revenue (`eps_surprise_percent_fq`,
+    `revenue_surprise_percent_fq`, `revenue_forecast_fq`).
+  - **Next quarter:** the date (`earnings_release_next_date`), the time
+    (`earnings_release_next_time`: 1 = after the close, −1 = before the open, 0 = not given) and the
+    estimates (`*_forecast_next_fq`).
+  - **No estimate or surprise history:** neither `_fq_h` nor get-forecasts nor get-earnings-calendar
+    has it. So the "beat N of M quarters" line is built forward: the page saves each quarter's
+    estimate and actual to the db as it sees them.
+  - **Dividend history:** `dps_common_stock_prim_issue_fy_h` works (AAPL 20 years, 2222 7 years).
+  - **Fixture:** a full row for the 7 probe stocks in test/fixtures/snowflake-quotes.json, saved by
+    scripts/fixture-from-transcript.js.
+  - **MU check:** its clock is pinned to the fixture's day.
+- **2026-11-08, phase 2 (engine) done:**
+  - engine/snowflake.js holds the 30 checks: pass, fail or na, the value, and an "approx" flag.
+    Growth is measured as SWS measures it (change ÷ the mean of the absolute values).
+  - engine/ehs.js holds the score, the cut points and the letter.
+  - Both are inlined in the page build. test/snowflake.test.js runs 7 tests on the real rows.
+
 ## 4. Honesty on the page
 
 - The snowflake and EHS are descriptive summaries, "not tested on our data", like study 14's
