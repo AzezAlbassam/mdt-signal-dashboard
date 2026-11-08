@@ -74,7 +74,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 @media (prefers-reduced-motion: no-preference) { .tw { transition: border-color .2s; } }
 </style>
 
-<div class="wrap">
+<div class="wrap" dir="rtl">
   <header style="display:grid;gap:6px">
     <h1>دفتر التغريدات</h1>
     <p class="lead">تغريدة جديدة كل يومين بفكرة مختلفة، أرقامها من TradingView ومتحقق منها. انسخها وانشرها، وعلّم عليها إنها نُشرت.</p>
@@ -89,7 +89,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
   </section>
   <details class="bank" id="bank"><summary>بنك الأفكار</summary><p class="lead" style="margin-top:8px">كل تغريدة تاخذ فكرة ما انكتبت قريب، عشان ما تتكرر.</p><ul class="ideas" id="ideas"></ul></details>
 </div>
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" dir="rtl" hidden></div>
 
 <script>
 (() => {
@@ -116,6 +116,8 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
     week = ws.includes(h) ? h : ws.includes(sundayOf(today)) ? sundayOf(today) : ws.at(-1) ?? sundayOf(today)
   }
 
+  // A thread: the text's parts separated by a line of three or more dashes, posted as replies in order.
+  const parts = (t) => String(t.text ?? '').split(/\n\s*-{3,}\s*\n/).map((x) => x.trim()).filter(Boolean)
   const deco = (text) => esc(text).replace(/(^|[\s(])([$#][A-Za-z؀-ۿ_][\w.؀-ۿ]*)/g, '$1<span class="tag">$2</span>')
 
   function render() {
@@ -131,12 +133,12 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
         <div class="head"><span class="day">${fmtDay(t.date, { weekday: 'long', day: 'numeric', month: 'long' })}</span><span class="chip">${esc(FAMILY[t.family] ?? t.family ?? '')}</span>
           <span class="state ${t.status === 'posted' ? 'done' : 'draft'}">${t.status === 'posted' ? 'نُشرت' : 'جاهزة للنشر'}</span></div>
         ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
-        <div class="body" dir="rtl" id="body-${esc(t.id)}">${deco(t.text)}</div>
+        ${parts(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count">${[...x].length} حرف</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${deco(x)}</div>`).join('')}
         ${t.charts?.length ? `<div class="shots">${t.charts.map((c, i) => `<figure class="shot"><img data-shot="${esc(t.id)}|${i}" alt="${esc(c.title)}"><figcaption><span>${esc(c.title)}</span><button class="btn" type="button" data-save="${esc(t.id)}|${i}" hidden>حفظ الصورة</button><span class="hint" hidden>اضغط مطوّل على الصورة واحفظها</span></figcaption></figure>`).join('')}</div>` : ''}
         ${t.links?.length ? `<div class="links">${t.links.filter((l) => /^https:\/\/(www\.)?tradingview\.com\//.test(l.url)).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>` : ''}
-        <div class="foot"><button class="btn primary" type="button" data-copy="${esc(t.id)}">نسخ</button>
+        <div class="foot">${parts(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
           <button class="btn ${t.status === 'posted' ? 'ok' : ''}" type="button" data-post="${esc(t.id)}" aria-pressed="${t.status === 'posted'}">${t.status === 'posted' ? '✓ نشرتها' : 'علّم إنها نُشرت'}</button>
-          <span class="count">${[...(t.text ?? '')].length} حرف</span></div>
+          <span class="count">${parts(t).length > 1 ? `ثريد من ${parts(t).length} تغريدات` : `${[...(t.text ?? '')].length} حرف`}</span></div>
         ${t.facts?.length ? `<details class="src"><summary>من وين الأرقام (${t.facts.length})</summary><ul>${t.facts.map((f) => `<li>${esc(f.claim)}: <b>${esc(f.value)}</b> — ${esc(f.source)}${f.as_of ? `، ${esc(f.as_of)}` : ''}</li>`).join('')}</ul></details>` : ''}
       </article>`).join('')
       : `<div class="empty"><b>${tweets.length ? 'ما فيه تغريدات بهالأسبوع' : 'للحين ما فيه تغريدات'}</b><p class="lead">كل يومين تنضاف تغريدة جديدة هنا تلقائياً.</p></div>`
@@ -242,9 +244,10 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
   $('list').addEventListener('click', async (e) => {
     const c = e.target.closest('[data-copy]')
     if (c) {
-      const t = tweets.find((x) => x.id === c.dataset.copy)
-      try { await navigator.clipboard.writeText(t.text); toast('انتسخت') } catch {
-        const r = document.createRange(); r.selectNodeContents($(`body-${t.id}`)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('حدّدتها لك، انسخها')
+      const [id, k = '0'] = c.dataset.copy.split('|')
+      const t = tweets.find((x) => x.id === id)
+      try { await navigator.clipboard.writeText(parts(t)[+k]); toast('انتسخت') } catch {
+        const r = document.createRange(); r.selectNodeContents($(`body-${id}-${k}`)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('حدّدتها لك، انسخها')
       }
       return
     }
