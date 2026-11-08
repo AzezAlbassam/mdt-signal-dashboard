@@ -178,6 +178,10 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   result box per decision with the naive baseline, change log 47 with all 55 movers
   (reports/study16-today.txt; MU 1428.56 → 1650.71, P/S just under 1/3). Published v25.
 
+- [ ] Redesign + Simply Wall St snowflake + Earnings Hub card: plan in progress/REDESIGN-PLAN.md
+  (column probes in progress/redesign-mapping.md). Next: phase 0 (user's SWS screenshots), then
+  phase 1. Fix mu-fair-check's clock first (fails since 2026-11-01).
+
 ## Counts
 (updated as work proceeds)
 
