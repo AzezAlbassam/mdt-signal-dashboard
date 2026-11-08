@@ -1,0 +1,490 @@
+{
+ "NASDAQ:LIN": {
+  "2018": {
+   "shares": 547241630,
+   "src": "Linde plc FY2018 10-K balance sheet/equity note: 551,310,272 issued, 547,241,630 outstanding (sec.gov/Archives/edgar/data/1707925/000162828019003050/plc201810-k.htm)",
+   "note": "Only ordinary shares. The cover page shows 544,910,125, dated early 2019. The stored 334M is the 2018 weighted-average diluted count, pulled down because the Praxair/Linde AG merger closed 2018-10-31 "
+  }
+ },
+ "NASDAQ:MCHP": {
+  "2025": {
+   "shares": 541132605,
+   "src": "MCHP 10-Q for the quarter ended Dec 31 2025, balance sheet: 578,423,967 issued, 541,132,605 outstanding. The cover shows 541,135,458 at 2026-01-28 (accession 0000827054-26-000009).",
+   "note": "Common shares only. The stored 1,055.5M is about 2x too high, probably because of the 7.5% Series A mandatory convertible preferred issued in March 2025: its dividends make EPS to common smaller than "
+  }
+ },
+ "NASDAQ:MSTR": {
+  "2024": {
+   "shares": 245778250,
+   "src": "Strategy 8-K of Feb 24 2025, share table: Class A 226,138 thousand and Class B 19,640 thousand at Dec 31 2024. FY2024 10-K cover: 237,711,607 A plus 19,640,250 B at 2025-02-04 (sec.gov/Archives/edgar/data/1050446/000095017025021814/mstr-20241231.htm)",
+   "note": "Class A 226,138,000 (the 8-K rounds to thousands) plus Class B 19,640,250. The 10-for-1 split (Aug 2024) came before this date. The stored 192.55M is the weighted-average count for a loss year, depres"
+  }
+ },
+ "NASDAQ:ADI": {
+  "2021": {
+   "shares": 523176679,
+   "src": "Diluted weighted average for FY2022, the fiscal year that contains Dec 31 2021: 523.18M per tickerleague/macrotrends (matches stored FY2022 value 523,176,679).",
+   "note": "Cover-page and 10-Q counts did not surface. ADI's fiscal year ends around Oct 30. Stored 2021 (401.3M) is the FY2021 average, which includes Maxim (closed Aug 2021) for only about 2 months, so it unde"
+  }
+ },
+ "NASDAQ:CHTR": {
+  "2015": {
+   "shares": 112438828,
+   "src": "Charter FY2016 10-K balance sheet: '268,897,792 and 112,438,828 shares of Class A common stock issued and outstanding, respectively', read as Dec 31 2016 and Dec 31 2015 (sec.gov/Archives/edgar/data/0001091667/000109166717000030/chtr123116-10k.htm).",
+   "note": "Legacy Charter before the TWC/Bright House deals (closed May 2016), so there were no A/N units. The 'respectively' reading comes from a search snippet, not the full page. Stored 101.15M is about 10% l"
+  },
+  "2016": {
+   "shares": 268897792,
+   "src": "Charter FY2016 10-K balance sheet, Class A shares issued and outstanding at Dec 31 2016 (same filing as above).",
+   "note": "Class A only, plus 1 Class B share (not added). EXCLUDES Advance/Newhouse's Charter Holdings common units and convertible preferred units, which are exchangeable into Class A; their counts were not fo"
+  },
+  "2017": {
+   "shares": 238506059,
+   "src": "Charter FY2019 10-K equity roll-forward, Class A shares outstanding at Dec 31 2017 (sec.gov/Archives/edgar/data/0001091667/000109166720000024/chtr12312019-10k.htm).",
+   "note": "Class A only (plus 1 Class B share). A/N Charter Holdings units not found and not included."
+  },
+  "2021": {
+   "shares": 172741236,
+   "src": "Charter FY2024 10-K equity roll-forward, Class A shares outstanding at Dec 31 2021 (sec.gov/Archives/edgar/data/1091667/000109166725000034/chtr-20241231.htm).",
+   "note": "Class A only (plus 1 Class B share). A/N Charter Holdings units not found and not included."
+  }
+ },
+ "NYSE:BA": {
+  "2024": {
+   "shares": 750074411,
+   "src": "Boeing FY2024 10-K cover, XBRL R1 (sec.gov/Archives/edgar/data/12927/000001292725000015/R1.htm). The as-of date comes from that filing's cover date column.",
+   "note": "Common stock only. The count includes the Oct 2024 equity raise. Excluded: the Series A mandatory convertible preferred issued Oct 2024 (not common until it converts). For comparison, the FY2023 10-K "
+  },
+  "2025": {
+   "shares": 785347096,
+   "src": "Boeing FY2025 10-K cover page (sec.gov/Archives/edgar/data/12927/000162828026004357/ba-20251231.htm and R1.htm)",
+   "note": "Common stock only. The mandatory convertible preferred is excluded. The stored 901.5M looks like a diluted weighted average that counts the preferred on an if-converted basis, so it overstates the com"
+  }
+ },
+ "NYSE:BDX": {
+  "2017": {
+   "shares": 264620000,
+   "src": "Tickerleague BDX diluted weighted average: FY2018 264.62M (Macrotrends shows 265M). FY2017 was 223.59M.",
+   "note": "BDX's fiscal year ends Sep 30. I used FY2018, the fiscal year that contains 2017-12-31, because the C.R. Bard acquisition closed on 2017-12-29 and issued BDX shares to Bard holders. The Dec-31-2017 co"
+  },
+  "2018": {
+   "shares": 274770000,
+   "src": "Tickerleague BDX diluted weighted average: FY2019 274.77M (Macrotrends 275M). FY2018 was 264.62M.",
+   "note": "Uses the fiscal year that contains 2018-12-31. The basic common count at Dec 2018 is probably a few million below this diluted average, somewhere between FY2018 (264.6M) and FY2019 (274.8M). The store"
+  },
+  "2019": {
+   "shares": 274770000,
+   "src": "Tickerleague BDX diluted weighted average: FY2019 274.77M. FY2020 was 282.40M.",
+   "note": "Deliberately uses FY2019 rather than FY2020, the fiscal year that contains Dec 31. FY2020's 282.4M includes shares added after Dec 2019, when the Series A mandatory convertible preferred converted to "
+  }
+ },
+ "NYSE:BMY": {
+  "2019": {
+   "shares": 2257510796,
+   "src": "BMY FY2019 10-K cover page: 'At February 1, 2020, there were 2,257,510,796 shares of common stock outstanding' (sec.gov/Archives/edgar/data/0000014272/000001427220000082/bmy-20191231x10xk.htm)",
+   "note": "Common stock only. The count includes the shares issued for Celgene in Nov 2019, net of the post-deal accelerated buyback. The stored 1.712B is the 2019 weighted average, which counts the Celgene shar"
+  }
+ },
+ "NYSE:BSX": {
+  "2020": {
+   "shares": 1417165707,
+   "src": "Boston Scientific FY2020 10-K cover page (sec.gov/Archives/edgar/data/885725/000088572521000008/bsx-20201231.htm)",
+   "note": "Common stock only. Excluded: the 5.50% Series A mandatory convertible preferred issued May 2020 (converted to common in 2023). The stored 1.010B is an artifact of 2020's near-zero net loss divided by "
+  }
+ },
+ "NYSE:BX": {
+  "2023": {
+   "shares": 1216583462,
+   "src": "Blackstone Q4 2023 earnings release share table (8-K exhibit, sec.gov/Archives/edgar/data/1393818/000119312524014831/d701698dex991.htm)",
+   "note": "Distributable-earnings shares outstanding: 758,039,099 participating common shares plus 458,544,363 participating Blackstone Holdings partnership units (exchangeable 1:1). Both figures include unveste"
+  },
+  "2024": {
+   "shares": 1221171137,
+   "src": "Blackstone FY2024 10-K share table (sec.gov/Archives/edgar/data/1393818/000119312525042469/d912273d10k1.pdf)",
+   "note": "Parts: 731,925,965 common shares outstanding plus 36,796,276 unvested participating common, for 768,722,241 participating common, plus 452,448,896 participating Holdings partnership units. The 10-K al"
+  },
+  "2025": {
+   "shares": 1228800000,
+   "src": "Blackstone Q4 2025 earnings release share table (8-K, Jan 2026: sec.gov/Archives/edgar/data/1393818/000119312526028145/d92648dex991.htm)",
+   "note": "The snippet was rounded to 0.1M: about 783.2M participating common plus about 445.6M participating Holdings partnership units, for about 1,228.8M distributable-earnings shares outstanding. Unvested pa"
+  }
+ },
+ "NYSE:C": {
+  "2016": {
+   "shares": 2770709339,
+   "src": "Citigroup FY2016 10-K cover (sec.gov c-12312016x10k.htm)",
+   "note": "Common shares only. Macrotrends weighted-average diluted shares: 2,888M."
+  },
+  "2017": {
+   "shares": 2570000000,
+   "src": "Citigroup 424B2 prospectuses on sec.gov: 'approximately 2.570 billion shares of its common stock' as of Jan 31, 2018",
+   "note": "Rounded figure from prospectus text. The 10-K cover did not show up in search. The stored 2,292M is wrong because of the 2017 tax-reform loss and preferred dividends. Macrotrends weighted-average dilu"
+  },
+  "2018": {
+   "shares": 2352000000,
+   "src": "Citigroup 424B2 prospectuses on sec.gov (2019): 'approximately 2.352 billion shares of its common stock' as of Jan 31, 2019",
+   "note": "Rounded figure from prospectus text. Macrotrends weighted-average diluted shares: 2,493M."
+  },
+  "2019": {
+   "shares": 2106486793,
+   "src": "Citigroup FY2019 10-K cover (sec.gov c-12312019x10k.htm)",
+   "note": "Common shares only."
+  },
+  "2020": {
+   "shares": 2087317952,
+   "src": "Citigroup FY2020 10-K cover (sec.gov c-20201231.htm)",
+   "note": "Common shares only."
+  },
+  "2023": {
+   "shares": 1911366783,
+   "src": "Citigroup FY2023 10-K cover (sec.gov c-20231231.htm)",
+   "note": "Common shares only. The stored 2,238M is too high because 2023 EPS was depressed and preferred dividends distort NI/EPS."
+  },
+  "2024": {
+   "shares": 1884479551,
+   "src": "Citigroup FY2024 10-K cover (sec.gov c-20241231.htm)",
+   "note": "Common shares only."
+  },
+  "2025": {
+   "shares": 1749319009,
+   "src": "Citigroup FY2025 10-K cover (filed 2026-02-20), via filings.tools aggregator",
+   "note": "Common shares only. AlphaQuery's FY2025 common shares outstanding figure (1.75B) matches. Taken from an aggregator, not directly from sec.gov."
+  }
+ },
+ "NYSE:CCI": {
+  "2015": {
+   "shares": 333771660,
+   "src": "Crown Castle balance sheet, shares issued and outstanding at Dec 31, 2015 (comparative column in 2016 10-Q)",
+   "note": "The stored 1,021M is wrong; the real count is about 334M."
+  }
+ },
+ "NYSE:CI": {
+  "2018": {
+   "shares": 380924000,
+   "src": "Cigna 2018 10-K shareholders' equity note (thousands): 381,494 issued less 570 treasury = 380,924 outstanding (sec.gov XBRL R pages)",
+   "note": "The Express Scripts merger closed Dec 20, 2018: 243,785K shares to Old Cigna holders plus 137,337K to Express Scripts holders. The stored 250M is the full-year weighted average and misses the merger s"
+  }
+ },
+ "NYSE:CTVA": {
+  "2021": {
+   "cap": 34350196560,
+   "src": "Corteva FY2022 10-K balance sheet/XBRL: common shares outstanding 726,527,000 at Dec 31, 2021 (713,419,000 at Dec 31, 2022). https://www.sec.gov/Archives/edgar/data/1755672/000175567223000005/ctva-20221231.htm; close recalled from memory, NOT checked by search (budget ran out)",
+   "note": "One class of common stock, no exchangeable units. Year-end balance-sheet count; the FY2021 10-K cover count did not come up. Stored count 741.6M is about 2% high. Stored close 7.09 is far below the re"
+  }
+ },
+ "NYSE:CVNA": {
+  "2025": {
+   "shares": 1098500000,
+   "src": "Carvana FY2025 10-K, organizational structure section (as of Dec 31, 2025). https://www.sec.gov/Archives/edgar/data/1690820/000169082026000009/cvna-20251231.htm",
+   "note": "Before the split: 142.2M Class A shares plus 96.8M Carvana Group LLC units, which exchange into about 77.5M Class A shares (0.8 per unit). Total about 219.7M. Left out: 76.1M Class B shares, which car"
+  }
+ },
+ "NYSE:DD": {
+  "2021": {
+   "cap": 41342638540,
+   "src": "DuPont FY2023 10-K financial report (equity rollforward): 511,793 thousand shares at Dec 31, 2021. https://www.sec.gov/Archives/edgar/data/1666700/000166670024000008/dd-20231231.htm; close recalled from memory, NOT checked by search (budget ran out)",
+   "note": "One class of common stock. Stored 181.4M is wrong: net income ÷ EPS is distorted by discontinued operations (the N&B split-off in Feb 2021). The 1-for-3 reverse split was in June 2019, before this dat"
+  },
+  "2022": {
+   "cap": 31441050119.999996,
+   "src": "DuPont FY2023 10-K financial report (equity rollforward): 458,124 thousand shares at Dec 31, 2022. https://www.sec.gov/Archives/edgar/data/1666700/000166670024000008/dd-20231231.htm; close recalled from memory, NOT checked by search (budget ran out)",
+   "note": "Lower than 2021 because of 2022 buybacks, including a 38.8M-share accelerated repurchase in Nov 2022. Stored 166.5M is distorted by discontinued operations (the M&M divestiture). Stored close 86.11 is"
+  }
+ },
+ "NYSE:DOC": {
+  "2021": {
+   "shares": 539304127,
+   "src": "Healthpeak (then ticker PEAK) FY2021 10-K cover: 539,304,127 shares of $1.00 par common stock as of Feb 7, 2022; equity section shows about 539M at Dec 31, 2021. https://www.sec.gov/Archives/edgar/data/765880/000162828022002117/peak-20211231.htm",
+   "note": "Common stock only. Two things left out: DownREIT non-managing member units exchangeable into common (their count was not found within the search budget; they are small) and 9.1M unsettled ATM forward "
+  }
+ },
+ "NYSE:EQT": {
+  "2017": {
+   "cap": 15045094400,
+   "src": "EQT FY2018 10-K balance sheet: 267,871 thousand shares issued less 3,551 thousand treasury shares at Dec 31, 2017; the subtraction is ours. A Q1 2018 10-Q cover shows about 265M. https://www.sec.gov/Archives/edgar/data/33213/000003321319000006/eqt1231201810k.htm; close recalled from memory, NOT chec",
+   "note": "One class of common stock. The year-end count includes about 91.9M shares issued for the Rice Energy merger on 2017-11-13. Stored 187.7M is the full-year weighted average, which picks up those shares "
+  }
+ },
+ "NYSE:FIS": {
+  "2019": {
+   "shares": 615000000,
+   "src": "FIS FY2019 and FY2020 10-K balance sheets: 615M shares issued at Dec 31, 2019; treasury under 1M shares ($52M), per the Q3 2020 10-Q. https://www.sec.gov/Archives/edgar/data/1136893/000113689321000025/fis-20201231.htm",
+   "note": "Issued 615M less treasury under 1M, so outstanding is between 614M and 615M. The jump from 2018 comes from shares issued for the Worldpay acquisition (closed July 2019). Stored 451.0M is the 2019 weig"
+  }
+ },
+ "NYSE:GE": {
+  "2019": {
+   "shares": 1092529000,
+   "src": "GE FY2019 Form 10-K cover page, https://www.sec.gov/Archives/edgar/data/0000040545/000004054520000009/ge10-k2019.htm (8,740,232,000 voting common shares, $0.06 par, as of January 31, 2020)",
+   "note": "Single class of common stock. The count is before the reverse split. After the 1-for-8 reverse split it is 8,740.232M x 0.125 = 1,092.5M, close to the 2018 (1,065M) and 2020 (1,096M) stored counts, so"
+  },
+  "2020": {
+   "shares": 1095992750,
+   "src": "GE FY2020 10-K cover (dei EntityCommonStockSharesOutstanding) https://www.sec.gov/Archives/edgar/data/40545/000004054521000011/ge-20201231.htm",
+   "note": "Pre-reverse-split count; split-adjusted this is about 1,096M. One XBRL summary of the same filing shows 8,765,493,000, a slight discrepancy. The stored 9,573M is wrong. Same spin-off price-adjustment "
+  }
+ },
+ "NYSE:GM": {
+  "2017": {
+   "shares": 1402630363,
+   "src": "GM FY2017 10-K cover https://www.sec.gov/Archives/edgar/data/1467858/000146785818000022/gm201710k.htm",
+   "note": "Common stock only. The stored 2,687M is wrong; 2017 net income was distorted by the Opel/Vauxhall discontinued operations and the tax charge. Weighted-average diluted 2017 is about 1,492M (Macrotrends"
+  }
+ },
+ "NYSE:INVH": {
+  "2019": {
+   "shares": 545106010,
+   "src": "INVH FY2019 10-K equity note https://www.sec.gov/Archives/edgar/data/0001687229/000168722920000004/a12312019ihinc10kdocum.htm",
+   "note": "Year-end count: 541,642,725 common shares plus 3,463,285 redeemable OP Units (exchangeable 1:1) = 545,106,010. Common alone is 541,642,725. The stored 1,877.7M is badly wrong (about 3.5x)."
+  },
+  "2024": {
+   "shares": 614584487,
+   "src": "INVH FY2024 10-K Note 9 https://www.sec.gov/Archives/edgar/data/1687229/000168722925000008/invh-20241231.htm",
+   "note": "Year-end count: 612,605,478 common shares plus 1,979,009 redeemable OP Units (exchangeable 1:1) = 614,584,487. Common alone is 612,605,478. The stored 1,332.8M is badly wrong (about 2.2x)."
+  }
+ },
+ "NYSE:JCI": {
+  "2016": {
+   "shares": 938685172,
+   "src": "JCI 10-Q for quarter ended 2016-12-31 (fiscal Q1 2017) cover https://www.sec.gov/Archives/edgar/data/0000833444/000083344417000007/q1fy1710-q.htm",
+   "note": "Ordinary shares, $0.01 par, one class. The stored 667.7M reflects a FY(Sep)2016 weighted average that was depressed because the Tyco merger closed in Sep 2016. The post-merger count of about 939M is t"
+  }
+ },
+ "NYSE:KMI": {
+  "2015": {
+   "shares": 2193000000,
+   "src": "KMI FY2017 10-K EPS table (2015 diluted weighted average 2,193M) https://www.sec.gov/Archives/edgar/data/0001506307/000150630718000010/kmi-2017x10k.htm; Macrotrends https://www.macrotrends.net/stocks/charts/KMI/ticker/shares-outstanding",
+   "note": "Weighted-average diluted, rounded to millions; one class of common. Year-end 2015 was likely higher because of 2015 equity issuance (Macrotrends quarterly shows 2,187-2,193M; year-end not confirmed). "
+  },
+  "2016": {
+   "shares": 2230000000,
+   "src": "Macrotrends KMI shares outstanding https://www.macrotrends.net/stocks/charts/KMI/ticker/shares-outstanding; KMI FY2017 10-K EPS table",
+   "note": "Weighted-average diluted, rounded to millions. The stored 2,816M is too high, probably because preferred dividends distort net income ÷ EPS."
+  },
+  "2017": {
+   "shares": 2230000000,
+   "src": "KMI FY2019 10-K EPS table (2017 basic and diluted weighted average 2,230M) https://www.sec.gov/Archives/edgar/data/0001506307/000150630720000022/kmi-2019x10k.htm",
+   "note": "Weighted-average basic and diluted, rounded to millions. The stored 17,980M is wrong: 2017 EPS was near zero after the tax-reform charge, so net income ÷ EPS blows up."
+  }
+ },
+ "NYSE:SCHW": {
+  "2020": {
+   "shares": 1882343653,
+   "src": "Schwab FY2020 10-K cover (sec.gov schw-20201231.htm; content.schwab.com SEC_Form10k_2020.pdf)",
+   "note": "1,803,049,958 voting common + 79,293,695 nonvoting common (TD Bank, created for the TD Ameritrade deal in Oct 2020). The stored 1.556B is a weighted-average figure inflated by preferred dividends. The"
+  }
+ },
+ "NYSE:SPG": {
+  "2015": {
+   "shares": 310100000,
+   "src": "tickerleague.com SPG shares-outstanding (annual series; consistent with roic.ai weighted basic)",
+   "note": "Common stock only. Operating Partnership units held by limited partners (exchangeable 1:1) did not surface: the limited partners hold about 13% of the OP, which would add roughly 45-50M units, NOT inc"
+  },
+  "2018": {
+   "shares": 309630000,
+   "src": "tickerleague.com SPG shares-outstanding",
+   "note": "Common only. Limited-partner OP units not found and excluded."
+  },
+  "2025": {
+   "shares": 324953274,
+   "src": "SPG FY2025 10-K cover (sec.gov spg-20251231x10k.htm, XBRL dei)",
+   "note": "324,945,274 common + 8,000 Class B. The limited-partner OP unit count was not surfaced and is excluded. In 2025, 8,278,193 OP units were issued for additional TRG interests. The stored 819.5M is clear"
+  }
+ },
+ "NYSE:TKO": {
+  "2024": {
+   "shares": 171170709,
+   "src": "TKO FY2024 10-K cover (sec.gov tko-20241231.htm)",
+   "note": "81,553,818 Class A + 89,616,891 Class B. Class B is the non-economic voting stock paired with TKO OpCo units held by Endeavor, which are exchangeable into Class A (Up-C). The stored 577M is far off. E"
+  }
+ },
+ "NYSE:UBER": {
+  "2019": {
+   "shares": 1716681000,
+   "src": "Uber FY2020 10-K balance sheet XBRL (Financial_Report.xlsx): 1,716,681 thousand shares outstanding at 2019-12-31",
+   "note": "Single class; balance-sheet period-end count. The stored 1.248B is the 2019 weighted average, which is depressed because the IPO (May 2019) issued 180M shares and converted preferred into 905M common "
+  }
+ },
+ "NYSE:UDR": {
+  "2015": {
+   "cap": 10177631097.4,
+   "src": "UDR Q2-2016 10-Q balance sheet (common at 2015-12-31) + UDR FY2015 10-K (OP units); close TradingView stored close. UDR has had no split since, so the adjusted and unadjusted closes are the same; not independently re-verified.",
+   "note": "261,844,521 common + 9,053,299 United Dominion Realty L.P. OP units held by non-affiliated limited partners. DownREIT partnership units (non-affiliated) were not found and are NOT included. The 10-K c"
+  }
+ },
+ "NYSE:LHX": {
+  "2019": {
+   "shares": 216896195,
+   "src": "L3Harris Form 10-KT (transition period Jun 29 2019 - Jan 3 2020) cover XBRL: https://www.sec.gov/Archives/edgar/data/202058/000020205820000011/R1.htm",
+   "note": "One common class. The Harris-L3 merger closed Jun 29 2019 (1.30 Harris shares per L3 share), so the full-year average (166.0M) and the stored 447M are both misleading. Q4 CY2019 basic weighted average"
+  }
+ },
+ "NYSE:MPC": {
+  "2018": {
+   "shares": 673619190,
+   "src": "MPC FY2018 10-K cover (also XBRL R1): https://www.sec.gov/Archives/edgar/data/1510295/000151029519000014/mpc-20181231x10k.htm",
+   "note": "One common class. Andeavor acquisition closed Oct 1 2018 and issued about 239M shares, so the stored 526M (2018 weighted diluted) understates the year-end count. The Q1 2019 10-Q cover showed 662,618,"
+  },
+  "2022": {
+   "shares": 454000000,
+   "src": "GuruFocus balance-sheet shares outstanding (EOP), Dec 2022, rounded to millions: https://m.gurufocus.com/term/bs-share/MPC",
+   "note": "Period-end balance-sheet count, given only to the nearest million. The 10-K cover did not surface. Heavy buybacks after the Speedway sale mean the stored 516M (2022 weighted diluted) is well above the"
+  },
+  "2023": {
+   "shares": 368000000,
+   "src": "GuruFocus balance-sheet shares outstanding (EOP), Dec 2023, rounded to millions: https://m.gurufocus.com/term/bs-share/MPC",
+   "note": "Period-end balance-sheet count, given only to the nearest million. The 10-K cover did not surface. The stored 409M is the 2023 weighted average, which buybacks during the year push above the year-end "
+  }
+ },
+ "NYSE:OXY": {
+  "2021": {
+   "shares": 934000000,
+   "src": "GuruFocus balance-sheet shares outstanding (EOP), Dec 2021, rounded: https://m.gurufocus.com/term/bs-share/OXY",
+   "note": "Common only. Excluded: the publicly traded warrants (OXY WS, issued 2020) and the Berkshire preferred. The stored 1,466M is far too high, which is consistent with preferred dividends and warrant effec"
+  },
+  "2022": {
+   "shares": 900072447,
+   "src": "OXY FY2022 10-K cover (SEC EDGAR CIK 797468); GuruFocus EOP Dec 2022 = 900M agrees",
+   "note": "Common only; warrants and Berkshire preferred excluded. Stored 1,066M is too high. No splits."
+  },
+  "2023": {
+   "shares": 879499439,
+   "src": "OXY FY2023 10-K cover: https://www.sec.gov/Archives/edgar/data/797468/000079746824000034/oxy-20231231.htm",
+   "note": "Common only. GuruFocus EOP for Dec 2023 is 879M, which agrees. Stored 1,196.8M is too high. No splits."
+  },
+  "2024": {
+   "shares": 938500965,
+   "src": "OXY FY2024 10-K cover: https://www.sec.gov/Archives/edgar/data/797468/000079746825000029/oxy-20241231.htm (FY2025 10-K also shows 938.5M at Dec 31 2024)",
+   "note": "Common only. The rise from 2023 reflects shares issued for CrownRock (2024). Stored 1,244.9M is too high. No splits."
+  },
+  "2025": {
+   "shares": 984000000,
+   "src": "OXY FY2025 10-K equity data as summarized in search results, about 984M by mid-2025: https://www.sec.gov/Archives/edgar/data/797468/000162828026009059/oxy-20251231.htm",
+   "note": "Approximate. The year-end 2025 and Jan 2026 cover counts did not surface. The mid-2025 count rose mainly from warrant exercises (about 42M shares in Q2 2025). Other 2025 figures: Macrotrends basic wei"
+  }
+ },
+ "NYSE:RTX": {
+  "2020": {
+   "shares": 1519478134,
+   "src": "Raytheon Technologies FY2020 10-K cover: https://www.sec.gov/Archives/edgar/data/101829/000010182921000008/rtx-20201231.htm",
+   "note": "One common class. The stored 1,357.8M is the 2020 weighted average and is low because the merger closed in April 2020. The FY2021 10-K cover showed 1,492,330,987 on Jan 31 2022. No splits."
+  }
+ },
+ "NYSE:VMRK": {
+  "2015": {
+   "shares": 381000000,
+   "src": "https://www.macrotrends.net/stocks/charts/EQR/ticker/shares-outstanding",
+   "note": "Equity Residential (EQR). Macrotrends figure, rounded to millions (381M). EQR's diluted count includes OP units held by limited partners, so it covers common shares plus exchangeable units. Not split "
+  },
+  "2016": {
+   "shares": 382000000,
+   "src": "https://www.macrotrends.net/stocks/charts/EQR/ticker/shares-outstanding",
+   "note": "Macrotrends figure, rounded to millions (382M). Diluted count, which includes OP units. Stored 6.83B is clearly wrong (big gain from the 2016 Starwood portfolio sale / discontinued operations)."
+  },
+  "2017": {
+   "shares": 383000000,
+   "src": "https://www.macrotrends.net/stocks/charts/EQR/ticker/shares-outstanding",
+   "note": "Macrotrends figure, rounded to millions (383M). Diluted count, which includes OP units."
+  },
+  "2018": {
+   "shares": 383968656,
+   "src": "https://www.sec.gov/Archives/edgar/data/906107/000156459019003683/eqr-10k_20181231.htm",
+   "note": "FY2018 10-K, as of Feb 15, 2019: 369,933,743 common shares; 383,968,656 Operating Partnership units outstanding in total. EQR holds units equal to its common shares, so the total equals common plus ab"
+  }
+ },
+ "NYSE:VST": {
+  "2024": {
+   "shares": 339695490,
+   "src": "https://www.sec.gov/Archives/edgar/data/1692819/000169281925000013/Financial_Report.xlsx",
+   "note": "FY2024 10-K equity table, Dec 31, 2024: 548,752,606 issued less 209,057,116 treasury = 339,695,490 outstanding (Dec 31, 2023: 351,138,384). Single common class, no exchangeable units. The stored 380M "
+  },
+  "2025": {
+   "shares": 336954256,
+   "src": "https://www.sec.gov/Archives/edgar/data/1692819/000169281926000006/vistra-20251231.htm",
+   "note": "FY2025 10-K cover, as of Feb 18, 2026: 336,954,256 common shares. AlphaQuery gives 338.06M at the Dec 31, 2025 year-end (third party, rounded). The stored 433.9M is far too high (preferred dividends)."
+  }
+ },
+ "NYSE:WELL": {
+  "2015": {
+   "shares": 354777670,
+   "src": "https://www.sec.gov/Archives/edgar/data/0000766704/000076670416000055/Financial_Report.xlsx",
+   "note": "FY2015 10-K balance sheet: 355,594,373 issued, 354,777,670 outstanding. Common stock only. Welltower's small OP/DownREIT unit counts did not surface and are not included. No splits 2015-2025."
+  },
+  "2016": {
+   "shares": 362602173,
+   "src": "https://www.sec.gov/Archives/edgar/data/0000766704/000076670417000012/Financial_Report.xlsx",
+   "note": "FY2016 10-K balance sheet: 363,576,924 issued, 362,602,173 outstanding. Common only; OP units not included."
+  },
+  "2017": {
+   "shares": 371731551,
+   "src": "https://www.sec.gov/Archives/edgar/data/0000766704/000076670418000012/Financial_Report.xlsx",
+   "note": "FY2017 10-K balance sheet: 372,852,311 issued, 371,731,551 outstanding. Common only; OP units not included."
+  },
+  "2018": {
+   "shares": 383674603,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670420000015/Financial_Report.xlsx",
+   "note": "FY2019 10-K balance sheet, comparative column: 384,849,236 issued, 383,674,603 outstanding. Common only; OP units not included."
+  },
+  "2019": {
+   "shares": 410256615,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670420000015/Financial_Report.xlsx",
+   "note": "FY2019 10-K balance sheet: 411,550,857 issued, 410,256,615 outstanding. Common only; OP units not included."
+  },
+  "2020": {
+   "shares": 417400602,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670422000013/Financial_Report.xlsx",
+   "note": "FY2021 10-K balance sheet, comparative column: 419,124,469 issued, 417,400,602 outstanding. Common only; OP units not included."
+  },
+  "2021": {
+   "shares": 447239477,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670422000013/Financial_Report.xlsx",
+   "note": "FY2021 10-K balance sheet: 448,998,438 issued, 447,239,477 outstanding. Common only; OP units not included."
+  },
+  "2023": {
+   "shares": 564241181,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670424000008/Financial_Report.xlsx",
+   "note": "FY2023 10-K balance sheet: 566,001,632 issued, 564,241,181 outstanding. Common only; OP units not included."
+  },
+  "2024": {
+   "shares": 635289329,
+   "src": "https://www.sec.gov/Archives/edgar/data/766704/000076670425000009/Financial_Report.xlsx",
+   "note": "FY2024 10-K balance sheet: 637,056,054 issued, 635,289,329 outstanding (authorized raised to 1.4B). Common only; OP units not included. The stored 1.15B is badly wrong."
+  },
+  "2025": {
+   "shares": 679520000,
+   "src": "https://tickerleague.com/companies/WELL/financials/shares-outstanding",
+   "note": "FY2025 10-K year-end count did not surface. 679.52M is Ticker League's annual FY2025 figure, which appears to be a weighted average: its 2024 value of 608.75M is below the 635.3M year-end count. The D"
+  }
+ },
+ "NYSE:WFC": {
+  "2019": {
+   "shares": 4134400000,
+   "src": "https://www.wellsfargo.com/assets/pdf/commercial/international/taipei/2022-certified-financial-statements-for-wf-and-wf-taipei-branch.pdf",
+   "note": "Statement of changes in equity: 4,134.4M common shares outstanding at Dec 31, 2019 (reported in millions, rounded to 0.1M). FY2019 10-K cover: 4,099,887,226 at Feb 18, 2020. 2019 average common shares"
+  },
+  "2020": {
+   "shares": 4134106677,
+   "src": "https://Wellsfargo.com/assets/pdf/about/investor-relations/sec-filings/2020/10k.pdf",
+   "note": "FY2020 10-K cover: 4,134,106,677 common shares at Feb 16, 2021. The Dec 31, 2020 balance-sheet count did not surface. 2020 average common shares (basic): 4,118.0M. The stored 7.82B is distorted: 2020 "
+  }
+ },
+ "NYSE:WY": {
+  "2015": {
+   "shares": 510483000,
+   "src": "https://www.sec.gov/Archives/edgar/data/106535/000010653517000007/wy-123116x10k.htm",
+   "note": "FY2016 10-K equity note: 510,483 thousand common shares outstanding at Dec 31, 2015. The Dec 21, 2015 merger proxy gives 510,477,813. Excludes 13,799,711 mandatory convertible preference shares, which"
+  },
+  "2016": {
+   "shares": 748528000,
+   "src": "https://www.sec.gov/Archives/edgar/data/106535/000010653517000007/wy-123116x10k.htm",
+   "note": "FY2016 10-K equity note: 748,528 thousand outstanding at Dec 31, 2016. The change from 2015 is +278,887K shares issued in the Plum Creek merger (Feb 19, 2016), plus the preference-share conversion, le"
+  }
+ },
+ "NASDAQ:FISV": {
+  "2019": {
+   "shares": 679098783,
+   "src": "Fiserv FY2019 Form 10-K cover page, https://www.sec.gov/Archives/edgar/data/798354/000079835420000006/fisv1231201910-k.htm (679,098,783 shares of common stock, $0.01 par, outstanding at February 21, 2020)",
+   "note": "Single class of common stock. The count includes the shares issued for First Data, which closed in July 2019. The stored 522M is a full-year weighted average and counts those shares for only part of t"
+  }
+ }
+}

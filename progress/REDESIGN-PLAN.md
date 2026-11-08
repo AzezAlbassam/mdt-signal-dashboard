@@ -202,7 +202,7 @@ a script (§3, phase 3).
 
 - Phase 5 may ship in two publishes: v26 brings the theme, header card, snowflake and EHS; v27 brings
   the list view, the calendar and polish.
-- **Optional, only if the user asks:** a pre-registered Study 17 on whether the snowflake total or
+- **Optional, only if the user asks:** a pre-registered study (the next free number; 17 is taken) on whether the snowflake total or
   EHS sorts the next year's returns. Only checks with history can be backtested: value, past, part
   of health, and dividends.
 

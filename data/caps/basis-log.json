@@ -1,0 +1,942 @@
+{
+ "segments": [
+  {
+   "key": "NASDAQ:BIIB",
+   "years": [
+    2015,
+    2016
+   ],
+   "until": "2017-02-01",
+   "s": 0.9211,
+   "src": "measured 2015, 2016",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 306.35,
+     "s": 0.9211,
+     "src": "measure:1: tradersunion.com/currencies/price-history/biib-usd (annual table; adjustment basis not labeled). BIIB paid no dividends, and these values are not spin-adjusted for the Feb-2017 BIVV spin (a spin-adjusted series would be about 9% lower), so they read as raw closes."
+    },
+    {
+     "year": 2016,
+     "actual": 283.58,
+     "s": 0.9211,
+     "src": "measure:1: tradersunion.com/currencies/price-history/biib-usd (annual table; adjustment basis not labeled). Same reasoning as 2015: not spin-adjusted."
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:CMCSA",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "until": "2026-01-05",
+   "s": 0.9368,
+   "src": "measured 2021, 2022, 2023, 2024",
+   "measured": [
+    {
+     "year": 2021,
+     "actual": 50.33,
+     "s": 0.9368,
+     "src": "measure:1: cfgi.io/comcast-stock-history (Year-End table; the search summary describes it as unadjusted)"
+    },
+    {
+     "year": 2022,
+     "actual": 34.97,
+     "s": 0.9368,
+     "src": "measure:1: cfgi.io/comcast-stock-history (unadjusted per summary); StockScan also gives $34.97"
+    },
+    {
+     "year": 2023,
+     "actual": 43.85,
+     "s": 0.9368,
+     "src": "measure:1: cfgi.io/comcast-stock-history (unadjusted per summary)"
+    },
+    {
+     "year": 2024,
+     "actual": 37.53,
+     "s": 0.9368,
+     "src": "measure:1: cfgi.io/comcast-stock-history (unadjusted per summary)"
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:HON",
+   "years": [
+    2015
+   ],
+   "until": "2016-10-03",
+   "s": 0.4701,
+   "src": "measured 2015",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 207.14,
+     "s": 0.4701,
+     "src": "gaps:1: 1stock1 HON yearly stock returns table (year, beginning price, ending price, change, %), https://www.1stock1.com/1stock1_436.htm — \"2015 · 99.92 · 103.57 · 3.65 · 3.65%\""
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:HON",
+   "years": [
+    2016,
+    2017
+   ],
+   "until": "2018-10-01",
+   "s": 0.4728,
+   "src": "measured 2016, 2017",
+   "measured": [
+    {
+     "year": 2016,
+     "actual": 231.7,
+     "s": 0.4728,
+     "src": "gaps:1: Dataroma holding/activity history for HON (13F quarter-end reported price), https://dataroma.com/m/hist/hist.php?f=tp&s=HON — \"2016 Q4 ... $115.85\""
+    },
+    {
+     "year": 2017,
+     "actual": 306.72,
+     "s": 0.4728,
+     "src": "gaps:1: Dataroma holding/activity history for HON (13F quarter-end reported price), https://dataroma.com/m/hist/hist.php?f=tp&s=HON — \"2017 Q4 ... $153.36\""
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:HON",
+   "years": [
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+   ],
+   "until": "2025-10-30",
+   "s": 0.4938,
+   "src": "measured 2022, 2021, 2022",
+   "measured": [
+    {
+     "year": 2022,
+     "actual": 428.6,
+     "s": 0.4938,
+     "src": "measure:1: stockscan.io/stocks/HON/price-history: 'closed the year at $214.30'. The search summary labeled it 2025, but the same StockScan template's 'closed the year' value is the 2022 close for CMCSA (34.97 = CFGI 2022). Digrin's adjusted Dec-2025 value is ~$193, which rules out 2025. The page doesn't state its basis. VERIFY."
+    },
+    {
+     "year": 2021,
+     "actual": 417.02,
+     "s": 0.4938,
+     "src": "gaps:1: 1stock1 HON yearly stock returns table, https://www.1stock1.com/1stock1_436.htm — \"2021 · 212.70 · 208.51 · -4.19 · -1.97%\""
+    },
+    {
+     "year": 2022,
+     "actual": 428.6,
+     "s": 0.4938,
+     "src": "gaps:1: 1stock1 HON yearly stock returns table, https://www.1stock1.com/1stock1_436.htm — \"2022 · 208.51 · 214.30 · 5.79 · 2.78%\""
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:HON",
+   "years": [
+    2025
+   ],
+   "until": "2026-06-29",
+   "s": 0.4938,
+   "src": "leftover: S of the earlier segment 2018–2024",
+   "measured": []
+  },
+  {
+   "key": "NASDAQ:ILMN",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "until": "2024-06-25",
+   "s": 0.9718,
+   "src": "measured 2022, 2023",
+   "measured": [
+    {
+     "year": 2022,
+     "actual": 202.2,
+     "s": 0.9718,
+     "src": "measure:2: digrin.com/stocks/detail/ILMN/price, December 2022 'real' (unadjusted) column; adjusted column shows 196.69. stockscan.io also gives a 202.20 year-end close."
+    },
+    {
+     "year": 2023,
+     "actual": 139.24,
+     "s": 0.9718,
+     "src": "measure:2: digrin.com/stocks/detail/ILMN/price, December 2023 'real' column (adjusted column 135.45)"
+    }
+   ]
+  },
+  {
+   "key": "NASDAQ:WDC",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+   ],
+   "until": "2025-02-24",
+   "s": 0.7556,
+   "src": "measured 2020, 2021, 2022, 2023, 2024",
+   "measured": [
+    {
+     "year": 2020,
+     "actual": 55.39,
+     "s": 0.7556,
+     "src": "measure:2: macrotrends WDC year-end table, older snapshot from before the Sandisk spin (split and dividend adjusted). WDC suspended its dividend in 2020 with the last ex-date around April 2020, so this value equals the actual close."
+    },
+    {
+     "year": 2021,
+     "actual": 65.21,
+     "s": 0.7556,
+     "src": "measure:2: macrotrends older (pre-Sandisk-spin) snapshot; no dividends were paid after this date, so it equals the actual close"
+    },
+    {
+     "year": 2022,
+     "actual": 31.55,
+     "s": 0.7556,
+     "src": "measure:2: macrotrends older (pre-Sandisk-spin) snapshot; no dividends were paid after this date, so it equals the actual close"
+    },
+    {
+     "year": 2023,
+     "actual": 52.37,
+     "s": 0.7556,
+     "src": "measure:2: macrotrends older (pre-Sandisk-spin) snapshot; no dividends were paid after this date, so it equals the actual close"
+    },
+    {
+     "year": 2024,
+     "actual": 59.63,
+     "s": 0.7556,
+     "src": "measure:2: digrin.com/stocks/detail/WDC/price December 2024 'real' column (adjusted 44.88), which matches the macrotrends older snapshot"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:APD",
+   "years": [
+    2015
+   ],
+   "until": "2016-10-03",
+   "s": null,
+   "src": null,
+   "measured": []
+  },
+  {
+   "key": "NYSE:BDX",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021
+   ],
+   "until": "2022-04-01",
+   "s": 0.7662,
+   "src": "measured 2017, 2019",
+   "measured": [
+    {
+     "year": 2017,
+     "actual": 214.06,
+     "s": 0.7662,
+     "src": "gaps:3: Digrin BDX price history (columns adjusted | real; $214.06 is the real column), https://www.digrin.com/stocks/detail/BDX/price — \"December 2017 figure of $143.81 | $214.06\""
+    },
+    {
+     "year": 2019,
+     "actual": 271.97,
+     "s": 0.7662,
+     "src": "gaps:3: Digrin BDX price history (columns adjusted | real; $271.97 is the real column), https://www.digrin.com/stocks/detail/BDX/price — \"December 2019 at $187.36 | $271.97\""
+    }
+   ]
+  },
+  {
+   "key": "NYSE:BDX",
+   "years": [
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "until": "2026-02-09",
+   "s": 0.7859,
+   "src": "measured 2022, 2023, 2024",
+   "measured": [
+    {
+     "year": 2022,
+     "actual": 254.3,
+     "s": 0.7859,
+     "src": "measure:2: digrin.com/stocks/detail/BDX/price December 2022 'real' column (adjusted 187.04)"
+    },
+    {
+     "year": 2023,
+     "actual": 243.83,
+     "s": 0.7859,
+     "src": "measure:2: digrin.com/stocks/detail/BDX/price December 2023 'real' column (adjusted 182.05)"
+    },
+    {
+     "year": 2024,
+     "actual": 226.87,
+     "s": 0.7859,
+     "src": "measure:2: digrin.com/stocks/detail/BDX/price December 2024 'real' column (adjusted 172.26)"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:DELL",
+   "years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020
+   ],
+   "until": "2021-11-01",
+   "s": null,
+   "src": null,
+   "measured": []
+  },
+  {
+   "key": "NYSE:DHR",
+   "years": [
+    2015
+   ],
+   "until": "2016-07-05",
+   "s": 0.8864,
+   "src": "leftover: S of the later segment 2016–2022",
+   "measured": []
+  },
+  {
+   "key": "NYSE:DHR",
+   "years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "until": "2023-10-02",
+   "s": 0.8864,
+   "src": "measured 2016, 2017",
+   "measured": [
+    {
+     "year": 2016,
+     "actual": 77.84,
+     "s": 0.8864,
+     "src": "measure:3: Recalled value checked against tradersunion.com/currencies/price-history/dhr-usd/. Tradersunion shows 69.00, which is adjusted for the Veralto spin-off but not for dividends. 69.00 / 77.84 = 0.88644, the same ratio as 2017, so the recalled value matches."
+    },
+    {
+     "year": 2017,
+     "actual": 92.82,
+     "s": 0.8864,
+     "src": "measure:3: Recalled value checked against tradersunion (82.28, adjusted for the Veralto spin-off). 82.28 / 92.82 = 0.88645, the same as 2016."
+    }
+   ]
+  },
+  {
+   "key": "NYSE:FDX",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "until": "2026-06-01",
+   "s": 0.8053,
+   "src": "measured 2017, 2024",
+   "measured": [
+    {
+     "year": 2017,
+     "actual": 249.54,
+     "s": 0.8053,
+     "src": "gaps:3: CEP Research, https://www.cep-research.com/?p=63503 — \"rose from $187.70 (closing price on January 3, 2017) to $249.54 (closing price on December 29, 2017)\""
+    },
+    {
+     "year": 2024,
+     "actual": 281.33,
+     "s": 0.8053,
+     "src": "gaps:3: Digrin FDX price history (columns adjusted | real; $281.33 is the real column), https://www.digrin.com/stocks/detail/FDX/price — \"December 2024 | $218.88 | $281.33\""
+    }
+   ]
+  },
+  {
+   "key": "NYSE:GE",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018
+   ],
+   "until": "2019-02-25",
+   "s": 0.5982,
+   "src": "measured 2015, 2016, 2017, 2018",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 249.2,
+     "s": 0.5982,
+     "src": "measure:3: Recalled raw close 31.15, times 8 for the Aug 2021 1-for-8 reverse split. Checked against wallstreetnumbers.com/stocks/ge/price, which shows 149.28 adjusted for splits and spin-offs: 149.28 / 249.20 = 0.59904, the same ratio as 2016-2018."
+    },
+    {
+     "year": 2016,
+     "actual": 252.8,
+     "s": 0.5982,
+     "src": "measure:3: Recalled raw close 31.60 x 8. WallStreetNumbers shows 151.44; ratio 0.59905."
+    },
+    {
+     "year": 2017,
+     "actual": 139.6,
+     "s": 0.5982,
+     "src": "measure:3: Recalled raw close 17.45 x 8. WallStreetNumbers shows 83.63; ratio 0.59907."
+    },
+    {
+     "year": 2018,
+     "actual": 60.56,
+     "s": 0.5982,
+     "src": "measure:3: Recalled raw close 7.57 x 8. WallStreetNumbers shows 36.28; ratio 0.59908."
+    }
+   ]
+  },
+  {
+   "key": "NYSE:GE",
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "until": "2023-01-04",
+   "s": 0.6223,
+   "src": "measured 2019, 2020, 2021, 2022",
+   "measured": [
+    {
+     "year": 2019,
+     "actual": 89.28,
+     "s": 0.6223,
+     "src": "measure:3: Recalled raw close 11.16 x 8. WallStreetNumbers shows 55.62; ratio 0.62298, the same as 2020-2022."
+    },
+    {
+     "year": 2020,
+     "actual": 86.4,
+     "s": 0.6223,
+     "src": "measure:3: Recalled raw close 10.80 x 8. WallStreetNumbers shows 53.83; ratio 0.62303."
+    },
+    {
+     "year": 2021,
+     "actual": 94.47,
+     "s": 0.6223,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 58.86; ratio 0.62306."
+    },
+    {
+     "year": 2022,
+     "actual": 83.79,
+     "s": 0.6223,
+     "src": "measure:3: Recalled value (before the GE HealthCare spin-off). WallStreetNumbers shows 52.20; ratio 0.62299."
+    }
+   ]
+  },
+  {
+   "key": "NYSE:GE",
+   "years": [
+    2023
+   ],
+   "until": "2024-04-02",
+   "s": 0.6223,
+   "src": "leftover: S of the earlier segment 2019–2022",
+   "measured": []
+  },
+  {
+   "key": "NYSE:IBM",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020
+   ],
+   "until": "2021-11-04",
+   "s": 0.9552,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 137.62,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value checked against wallstreetnumbers.com/stocks/ibm/price, which shows 131.57 adjusted for the Kyndryl spin-off. 131.57 / 137.62 = 0.95604; the ratio is the same (about 0.95602) for 2015-2020."
+    },
+    {
+     "year": 2016,
+     "actual": 165.99,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 158.69; ratio 0.95602."
+    },
+    {
+     "year": 2017,
+     "actual": 153.42,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 146.67; ratio 0.95600."
+    },
+    {
+     "year": 2018,
+     "actual": 113.67,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 108.67; ratio 0.95601."
+    },
+    {
+     "year": 2019,
+     "actual": 134.04,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 128.15; ratio 0.95606."
+    },
+    {
+     "year": 2020,
+     "actual": 125.88,
+     "s": 0.9552,
+     "src": "measure:3: Recalled value. WallStreetNumbers shows 120.34; ratio 0.95599."
+    }
+   ]
+  },
+  {
+   "key": "NYSE:MET",
+   "years": [
+    2015,
+    2016
+   ],
+   "until": "2017-08-07",
+   "s": 0.8911,
+   "src": "measured 2016",
+   "measured": [
+    {
+     "year": 2016,
+     "actual": 53.89,
+     "s": 0.8911,
+     "src": "gaps:2: https://www.digrin.com/stocks/detail/MET/price — \"A Digrin price-history page lists a December 2016 row with two values, $35.68 and $53.89.\""
+    }
+   ]
+  },
+  {
+   "key": "NYSE:MMM",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "until": "2024-04-01",
+   "s": 0.8361,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 150.64,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion spin-adjusted 125.95 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2016,
+     "actual": 178.57,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 149.31 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2017,
+     "actual": 235.37,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 196.80 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2018,
+     "actual": 190.54,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 159.31 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2019,
+     "actual": 176.42,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 147.51 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2020,
+     "actual": 174.79,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 146.15 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2021,
+     "actual": 177.63,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 148.52 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2022,
+     "actual": 119.92,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 100.27 / 0.8361; equals recalled actual close"
+    },
+    {
+     "year": 2023,
+     "actual": 109.32,
+     "s": 0.8361,
+     "src": "measure:4: derived: Tradersunion 91.40 / 0.8361; equals recalled actual close"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:MRK",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020
+   ],
+   "until": "2021-06-03",
+   "s": 0.9535,
+   "src": "measured 2015, 2016, 2017, 2018, 2019, 2020",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 52.82,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion spin-adjusted 50.40 / 0.9542; equals recalled actual close"
+    },
+    {
+     "year": 2016,
+     "actual": 58.87,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion 56.17 / 0.9542; equals recalled actual close"
+    },
+    {
+     "year": 2017,
+     "actual": 56.27,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion 53.69 / 0.9542; equals recalled actual close"
+    },
+    {
+     "year": 2018,
+     "actual": 76.41,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion 72.91 / 0.9542; equals recalled actual close"
+    },
+    {
+     "year": 2019,
+     "actual": 90.95,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion 86.78 / 0.9542; equals recalled actual close"
+    },
+    {
+     "year": 2020,
+     "actual": 81.8,
+     "s": 0.9535,
+     "src": "measure:4: derived: Tradersunion 78.05 / 0.9542; equals recalled actual close"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:OXY",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "until": "2020-08-03",
+   "s": 1.0018,
+   "src": "leftover: our value ÷ V4 (2015)",
+   "measured": []
+  },
+  {
+   "key": "NYSE:PFE",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "until": "2020-11-17",
+   "s": 0.9479,
+   "src": "measured 2019",
+   "measured": [
+    {
+     "year": 2019,
+     "actual": 39.18,
+     "s": 0.9479,
+     "src": "measure:5: Digrin PFE price history, Dec 2019 'real price' 39.18 (Digrin shows both 'adjusted price' 26.61 and 'real price' columns, so it does state its basis; the row is monthly and is not labelled as the Dec 31 close)"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:RTX",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "until": "2020-04-03",
+   "s": 0.5898,
+   "src": "measured 2019, 2017, 2018",
+   "measured": [
+    {
+     "year": 2019,
+     "actual": 149.76,
+     "s": 0.5898,
+     "src": "measure:5: Digrin UTX price history, Dec 2019 'real price' 149.76 (adjusted price 149.05); Digrin states both bases, and the row is monthly, not labelled Dec 31"
+    },
+    {
+     "year": 2017,
+     "actual": 127.57,
+     "s": 0.5898,
+     "src": "gaps:1: 1stock1 UTX yearly stock returns https://www.1stock1.com/1stock1_305.htm and Dogs of the Dow UTX price history https://www.dogsofthedow.com/research/utx.htm — \"2017: about $127.57, a gain of roughly 16–19% depending on the source (Dogs of the Dow; 1stock1).\""
+    },
+    {
+     "year": 2018,
+     "actual": 106.48,
+     "s": 0.5898,
+     "src": "gaps:1: 1stock1 UTX yearly stock returns https://www.1stock1.com/1stock1_305.htm and Dogs of the Dow UTX price history https://www.dogsofthedow.com/research/utx.htm — \"2018: about $106.48, a decline of roughly 15–17% (Dogs of the Dow; 1stock1).\""
+    }
+   ]
+  },
+  {
+   "key": "NYSE:SPGI",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "until": "2026-07-01",
+   "s": 0.9459,
+   "src": "measured 2015, 2016, 2022, 2024, 2025",
+   "measured": [
+    {
+     "year": 2015,
+     "actual": 98.58,
+     "s": 0.9459,
+     "src": "measure:5: Tradersunion SPGI historical data (unadjusted-style) and Wallstreetnumbers 'Dec 31, 2015 $98.58'; the two agree. Neither states its adjustment basis"
+    },
+    {
+     "year": 2016,
+     "actual": 107.54,
+     "s": 0.9459,
+     "src": "measure:5: Tradersunion SPGI historical data (unadjusted-style); no basis stated"
+    },
+    {
+     "year": 2022,
+     "actual": 334.94,
+     "s": 0.9459,
+     "src": "measure:5: StockScan SPGI price history, 'closed the year at $334.94'; no basis stated (Digrin's monthly figure of about 325 looks adjusted)"
+    },
+    {
+     "year": 2024,
+     "actual": 498.03,
+     "s": 0.9459,
+     "src": "measure:5: Wallstreetnumbers 'Dec 31, 2024 $498.03'; no basis stated. StatMuse pages conflict (495.35 vs 464.50)"
+    },
+    {
+     "year": 2025,
+     "actual": 522.59,
+     "s": 0.9459,
+     "src": "measure:5: Wallstreetnumbers 'Dec 31, 2025 $522.59'; no basis stated. StatMuse shows 491.01, which may be adjusted for the July 2026 spin (conflict)"
+    }
+   ]
+  },
+  {
+   "key": "NYSE:T",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021
+   ],
+   "until": "2022-04-11",
+   "s": 0.7351,
+   "src": "leftover: our value ÷ V4 (2015, 2021)",
+   "measured": []
+  },
+  {
+   "key": "NYSE:TT",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "until": "2020-03-02",
+   "s": null,
+   "src": null,
+   "measured": []
+  }
+ ],
+ "rejected": [
+  {
+   "key": "NYSE:T",
+   "year": 2019,
+   "raw": 29.52,
+   "why": "source basis unknown",
+   "src": "https://www.statista.com/statistics/823874/price-of-atandt-shares/"
+  },
+  {
+   "key": "NASDAQ:CMCSA",
+   "year": 2025,
+   "raw": 26.99,
+   "why": "source basis unknown",
+   "src": "https://www.fool.com/quote/nasdaq/comcast-corporation/cmcsa/"
+  },
+  {
+   "key": "NASDAQ:HON",
+   "year": 2025,
+   "raw": 201.77,
+   "why": "source basis unknown",
+   "src": "Motley Fool HON quote page (search-result summary), https://www.fool.com/quote/nasdaq/hon/"
+  },
+  {
+   "key": "NASDAQ:CMCSA",
+   "year": 2025,
+   "raw": 28,
+   "s": 1.0001,
+   "why": "more than 2% from the segment median 0.9368",
+   "src": "measure:1: cfgi.io/comcast-stock-history (unadjusted per summary). Given as $28.00, so it may be rounded. The Dec-2025 close is before the VSNT ex-date (2026-01-05), so it still carries the VSNT entitlement and is not spin-adjusted. Macrotrends' adjusted value is 27.68."
+  }
+ ],
+ "leftovers": [
+  {
+   "key": "NASDAQ:HON",
+   "years": [
+    2025
+   ],
+   "s": 0.4938075198086794,
+   "rule": "leftover: S of the earlier segment 2018–2024"
+  },
+  {
+   "key": "NYSE:APD",
+   "years": [
+    2015
+   ],
+   "s": null,
+   "rule": "no measured segment: S stays 1"
+  },
+  {
+   "key": "NYSE:DELL",
+   "years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020
+   ],
+   "s": null,
+   "rule": "no measured segment: S stays 1"
+  },
+  {
+   "key": "NYSE:DHR",
+   "years": [
+    2015
+   ],
+   "s": 0.8864010019973678,
+   "rule": "leftover: S of the later segment 2016–2022"
+  },
+  {
+   "key": "NYSE:GE",
+   "years": [
+    2023
+   ],
+   "s": 0.6223461374550527,
+   "rule": "leftover: S of the earlier segment 2019–2022"
+  },
+  {
+   "key": "NYSE:OXY",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "s": 1.0017747055530277,
+   "rule": "leftover: our value ÷ V4 (2015)"
+  },
+  {
+   "key": "NYSE:T",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021
+   ],
+   "s": 0.7350902194845513,
+   "rule": "leftover: our value ÷ V4 (2015, 2021)"
+  },
+  {
+   "key": "NYSE:TT",
+   "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019
+   ],
+   "s": null,
+   "rule": "no measured segment: S stays 1"
+  }
+ ]
+}

@@ -1,0 +1,3826 @@
+{
+ "asOf": "2026-10-23",
+ "screens": [
+  {
+   "key": "CBOE:CBOE",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13393543168.391958,
+   "close": 124.59,
+   "shares": 107500948.45807816,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AAL",
+   "year": 2015,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 29113233965.672993,
+   "close": 42.35,
+   "shares": 687443541.1020777,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AAL",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 7630908358.158558,
+   "close": 15.77,
+   "shares": 483887657.4609105,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AAL",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11566690363.859629,
+   "close": 17.96,
+   "shares": 644025075.938732,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:ADI",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 91958764867.83,
+   "close": 175.77,
+   "shares": 401287771.65286154,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:ADI",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 85816670631.56694,
+   "close": 164.03,
+   "shares": 523176678.84878945,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AMD",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11308000000,
+   "close": 10.28,
+   "shares": 1100000000,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AMD",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 176854710820.89554,
+   "close": 143.9,
+   "shares": 1229011194.0298507,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AMD",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 101757200666.50798,
+   "close": 64.77,
+   "shares": 1571054510.8307548,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:APA",
+   "year": 2023,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 11086898641.701391,
+   "close": 35.88,
+   "shares": 308999404.7296932,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AVGO",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 40819734693.877556,
+   "close": 14.515,
+   "shares": 2812244897.9591837,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:AVGO",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 71051087790.56647,
+   "close": 17.677,
+   "shares": 4019408711.3518395,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:BKR",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9316666666.666666,
+   "close": 21.5,
+   "shares": 433333333.3333333,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:BKR",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 14276066144.473455,
+   "close": 25.63,
+   "shares": 557006092.254134,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:CHTR",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22768800266.450462,
+   "close": 202.499445,
+   "shares": 101153372.40117949,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:CHTR",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 77421052272.64,
+   "close": 287.92,
+   "shares": 220869052.62101707,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:CHTR",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 80128495581.64,
+   "close": 335.96,
+   "shares": 290261073.62863004,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:CHTR",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 15395622968.161766,
+   "tv": 19685240821,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:EVRG",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12154305921.841284,
+   "close": 56.77,
+   "shares": 214097338.76768157,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:EXE",
+   "year": 2015,
+   "why": [
+    "S3 history starts later"
+   ],
+   "cap": null,
+   "close": null,
+   "shares": 3271899.8943455955,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:EXE",
+   "year": 2016,
+   "why": [
+    "S1 jump",
+    "S3 history starts later"
+   ],
+   "cap": null,
+   "close": null,
+   "shares": 3413685.8475894243,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:EXE",
+   "year": 2017,
+   "why": [
+    "S1 jump",
+    "S3 history starts later"
+   ],
+   "cap": null,
+   "close": null,
+   "shares": 5216666.666666667,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:EXE",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26527233564.5854,
+   "close": 110.36,
+   "shares": 240370003.30360094,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FANG",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9726880625.348967,
+   "close": 92.7,
+   "shares": 104928593.58521,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FANG",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15214636810.48607,
+   "close": 92.86,
+   "shares": 163844893.5008192,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FANG",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34985135517.92957,
+   "close": 163.83,
+   "shares": 213545355.0505376,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FANG",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 43457533385.703064,
+   "close": 150.33,
+   "shares": 289080911.2333071,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FISV",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 30403119336.400387,
+   "close": 73.49,
+   "shares": 413704168.40931267,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FISV",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 78524192278.29,
+   "close": 115.63,
+   "shares": 522588951.3108614,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:FISV",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 77812726494.50706,
+   "close": 113.86,
+   "shares": 683407048.0810387,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:HSIC",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 10432096089.339373,
+   "close": 62.003572,
+   "shares": 168249920.9777684,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:HSIC",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19441866080.458065,
+   "close": 59.463695,
+   "shares": 326953548.38709676,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:HSIC",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 8666712693.151747,
+   "close": 54.779817,
+   "shares": 158209960.67131343,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:IBKR",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 36521051919.34684,
+   "tv": 139983720893.71997,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:KDP",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28142049072.860085,
+   "close": 25.64,
+   "shares": 1097583817.194231,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:KDP",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 41081022971.59669,
+   "close": 28.95,
+   "shares": 1419033608.690732,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:LIN",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 85391583945.2,
+   "close": 156.04,
+   "shares": 334126511.99682724,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:LIN",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 116065395810.46907,
+   "close": 212.9,
+   "shares": 545163907.0477645,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:LITE",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 56139488209.38903,
+   "tv": 68167225621.99999,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MAR",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24448555614.52726,
+   "close": 82.68,
+   "shares": 295700962.9236485,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MAR",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 51563616716.57336,
+   "close": 135.73,
+   "shares": 379898450.72256213,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MCHP",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 49419272351.06475,
+   "close": 90.18,
+   "shares": 548007012.0987442,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MCHP",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 5735000000,
+   "close": 57.35,
+   "shares": 100000000,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MCHP",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34480969590.6,
+   "close": 63.72,
+   "shares": 1055530059.6603947,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MCHP",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 78658100045.89261,
+   "tv": 40465004040.99999,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:MSTR",
+   "year": 2024,
+   "why": [
+    "S1 jump",
+    "S2 P/S"
+   ],
+   "cap": 71182296765,
+   "close": 289.62,
+   "shares": 192550090.77405512,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:MSTR",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 36832640411.74579,
+   "tv": 61537890760,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:MU",
+   "year": 2018,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 38996239522.832405,
+   "close": 31.73,
+   "shares": 1229002191.0757139,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:PLTR",
+   "year": 2025,
+   "why": [
+    "S2 P/S"
+   ],
+   "cap": 455958351617.9953,
+   "close": 177.75,
+   "shares": 2565166535.1223364,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:PTON",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 33528246913.580246,
+   "close": 151.72,
+   "shares": 220987654.32098764,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:REG",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19052219522.600304,
+   "close": 68.12,
+   "shares": 279686135.0939563,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:RIVN",
+   "year": 2021,
+   "why": [
+    "S2 P/S"
+   ],
+   "cap": 93378166240.85136,
+   "close": 103.69,
+   "shares": 900551318.7467583,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:SWKS",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 12778605702.025291,
+   "tv": 19375288911,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:TMUS",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 67835813524.23237,
+   "close": 78.42,
+   "shares": 865032052.0815145,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:TMUS",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 155717343785.33203,
+   "close": 134.85,
+   "shares": 1154744855.656893,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:TTWO",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 20753378730.06118,
+   "close": 177.72,
+   "shares": 116775707.46151912,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:TTWO",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16650318604.452784,
+   "close": 104.13,
+   "shares": 159899343.17154312,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:UAL",
+   "year": 2015,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 21601540832.049305,
+   "close": 57.3,
+   "shares": 376990241.39702106,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:VTRS",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26958665882.352943,
+   "close": 54.07,
+   "shares": 498588235.2941177,
+   "member": false
+  },
+  {
+   "key": "NASDAQ:VTRS",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11266199407.6999,
+   "close": 18.74,
+   "shares": 601184600.1974334,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:VTRS",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16354817601.676348,
+   "close": 13.53,
+   "shares": 1208781788.7417848,
+   "member": true
+  },
+  {
+   "key": "NASDAQ:WTW",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16874519467.71809,
+   "close": 122.28,
+   "shares": 137999014.29275507,
+   "member": true
+  },
+  {
+   "key": "NYSE:ALB",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 8208152846.1498375,
+   "tv": 10920188202,
+   "member": true
+  },
+  {
+   "key": "NYSE:ALL",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34004863718.60469,
+   "close": 135.6,
+   "shares": 250773331.2581467,
+   "member": true
+  },
+  {
+   "key": "NYSE:ALL",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21860973583.651768,
+   "close": 139.98,
+   "shares": 156172121.6148862,
+   "member": true
+  },
+  {
+   "key": "NYSE:ALL",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 52956741787.96136,
+   "close": 192.79,
+   "shares": 274686144.4471257,
+   "member": true
+  },
+  {
+   "key": "NYSE:AMCR",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12856660785.184359,
+   "close": 54.2,
+   "shares": 237207763.56428704,
+   "member": true
+  },
+  {
+   "key": "NYSE:AMCR",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18863799151.81347,
+   "close": 58.85,
+   "shares": 320540342.42673695,
+   "member": true
+  },
+  {
+   "key": "NYSE:AMCR",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13312113450.423065,
+   "close": 41.7,
+   "shares": 319235334.5425195,
+   "member": true
+  },
+  {
+   "key": "NYSE:APO",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 39089683072.78945,
+   "close": 63.79,
+   "shares": 612787005.3737177,
+   "member": false
+  },
+  {
+   "key": "NYSE:ARE",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 2951567181.6627626,
+   "close": 130.59,
+   "shares": 22601785.60121573,
+   "member": true
+  },
+  {
+   "key": "NYSE:ARE",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18851167775.63302,
+   "close": 115.24,
+   "shares": 163581809.92392415,
+   "member": true
+  },
+  {
+   "key": "NYSE:ARE",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 33151483544.38496,
+   "close": 161.58,
+   "shares": 205170711.37755266,
+   "member": true
+  },
+  {
+   "key": "NYSE:ARES",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 44407441745.53699,
+   "close": 161.63,
+   "shares": 274747520.5440635,
+   "member": true
+  },
+  {
+   "key": "NYSE:ARES",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 33986268291.300655,
+   "tv": 27703570908.000004,
+   "member": true
+  },
+  {
+   "key": "NYSE:BA",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 132763170747,
+   "close": 177,
+   "shares": 643739649.6121328,
+   "member": true
+  },
+  {
+   "key": "NYSE:BA",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 170514561483.52,
+   "close": 217.12,
+   "shares": 901533494.7538337,
+   "member": true
+  },
+  {
+   "key": "NYSE:BAC",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 408835647200.79755,
+   "tv": 353611289238,
+   "member": true
+  },
+  {
+   "key": "NYSE:BDX",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 56641650790.33333,
+   "close": 164.00435657,
+   "shares": 238782642.672629,
+   "member": true
+  },
+  {
+   "key": "NYSE:BDX",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 61907999729.5924,
+   "close": 172.63132581,
+   "shares": 518333333.3333334,
+   "member": true
+  },
+  {
+   "key": "NYSE:BDX",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 74725362746.79678,
+   "close": 208.37272241,
+   "shares": 313119000.457108,
+   "member": true
+  },
+  {
+   "key": "NYSE:BE",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 52346485947.26828,
+   "tv": 64139220906.99999,
+   "member": false
+  },
+  {
+   "key": "NYSE:BLDR",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21534875587.18861,
+   "close": 166.94,
+   "shares": 128997697.29956038,
+   "member": true
+  },
+  {
+   "key": "NYSE:BMY",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 144909617995.24,
+   "close": 64.19,
+   "shares": 1711967343.687774,
+   "member": true
+  },
+  {
+   "key": "NYSE:BMY",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 140062730118.97308,
+   "close": 62.03,
+   "shares": 2257983719.474014,
+   "member": true
+  },
+  {
+   "key": "NYSE:BSX",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 63787628680.33254,
+   "close": 45.22,
+   "shares": 1410606560.8211532,
+   "member": true
+  },
+  {
+   "key": "NYSE:BSX",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 50947107166.65,
+   "close": 35.95,
+   "shares": 1009852216.7487686,
+   "member": true
+  },
+  {
+   "key": "NYSE:BSX",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 64307423580.78602,
+   "close": 42.48,
+   "shares": 1513828238.7190683,
+   "member": true
+  },
+  {
+   "key": "NYSE:BX",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 92651022689.09735,
+   "tv": 146523639865,
+   "member": true
+  },
+  {
+   "key": "NYSE:C",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 164663256016.77,
+   "close": 59.43,
+   "shares": 3116357861.302276,
+   "member": true
+  },
+  {
+   "key": "NYSE:C",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 191233700000,
+   "close": 74.41,
+   "shares": 2291778433.4763947,
+   "member": true
+  },
+  {
+   "key": "NYSE:C",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 247658655358.8284,
+   "tv": 205502781978.99997,
+   "member": true
+  },
+  {
+   "key": "NYSE:CAH",
+   "year": 2021,
+   "why": [
+    "S2 P/S"
+   ],
+   "cap": 15138287941.48783,
+   "close": 51.49,
+   "shares": 294004426.9079011,
+   "member": true
+  },
+  {
+   "key": "NYSE:CB",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 38424387640.253876,
+   "close": 116.85,
+   "shares": 328835153.10444057,
+   "member": true
+  },
+  {
+   "key": "NYSE:CB",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 61560916794.37483,
+   "close": 132.12,
+   "shares": 465946993.5995673,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCI",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28854560007,
+   "close": 86.45,
+   "shares": 1021005571.5915956,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCI",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 32591063983.585854,
+   "close": 86.77,
+   "shares": 375602904.040404,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCI",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 39389785502.21837,
+   "close": 90.76,
+   "shares": 433999399.53964704,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCI",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 8540568385.9656725,
+   "close": 88.87,
+   "shares": 96101815.97800913,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCL",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16786553298.454687,
+   "close": 21.66,
+   "shares": 775002460.685812,
+   "member": true
+  },
+  {
+   "key": "NYSE:CCL",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22594690558.36604,
+   "close": 20.12,
+   "shares": 1122996548.6265426,
+   "member": true
+  },
+  {
+   "key": "NYSE:CI",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 72345086080,
+   "close": 189.92,
+   "shares": 250225364.14100677,
+   "member": true
+  },
+  {
+   "key": "NYSE:CI",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 77669069802.05388,
+   "close": 204.49,
+   "shares": 379818425.3609168,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNC",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9266096749.72282,
+   "close": 28.255,
+   "shares": 327945381.338624,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNC",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26430930558.207626,
+   "close": 62.87,
+   "shares": 420406084.90866274,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNC",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34765444120.567604,
+   "close": 60.03,
+   "shares": 579134501.425414,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNP",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16167418677.85939,
+   "close": 27.27,
+   "shares": 592864637.9853095,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNP",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9360259638.520508,
+   "close": 21.64,
+   "shares": 432544345.58782387,
+   "member": true
+  },
+  {
+   "key": "NYSE:CNP",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18185679207.226166,
+   "close": 27.91,
+   "shares": 651582916.7762868,
+   "member": true
+  },
+  {
+   "key": "NYSE:COF",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 71912161275.84659,
+   "close": 178.32,
+   "shares": 403275915.6339535,
+   "member": true
+  },
+  {
+   "key": "NYSE:COF",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 145986230517.22427,
+   "close": 242.36,
+   "shares": 602352824.3820113,
+   "member": true
+  },
+  {
+   "key": "NYSE:COR",
+   "year": 2018,
+   "why": [
+    "S2 P/S"
+   ],
+   "cap": 16385834262.948208,
+   "close": 74.4,
+   "shares": 220239707.83532536,
+   "member": true
+  },
+  {
+   "key": "NYSE:COTY",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 6529179545.454544,
+   "close": 18.31,
+   "shares": 356590909.09090906,
+   "member": true
+  },
+  {
+   "key": "NYSE:COTY",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12723572727.272726,
+   "close": 19.89,
+   "shares": 639696969.6969696,
+   "member": true
+  },
+  {
+   "key": "NYSE:COTY",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 32815491679.273827,
+   "close": 8.56,
+   "shares": 3833585476.5506806,
+   "member": false
+  },
+  {
+   "key": "NYSE:CPT",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 11140465833.804409,
+   "tv": 13894490777.999998,
+   "member": true
+  },
+  {
+   "key": "NYSE:CRM",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 239277522371.22125,
+   "tv": 205988664474,
+   "member": true
+  },
+  {
+   "key": "NYSE:CTVA",
+   "year": 2021,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 34350196560,
+   "close": 7.09352222,
+   "shares": 741599561.5329483,
+   "member": true
+  },
+  {
+   "key": "NYSE:CVNA",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 92717794000,
+   "close": 84.404,
+   "shares": 832593644.5943547,
+   "member": true
+  },
+  {
+   "key": "NYSE:CVNA",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 48889898810.58051,
+   "tv": 64619235554.00001,
+   "member": true
+  },
+  {
+   "key": "NYSE:D",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 46754711229.94652,
+   "close": 71.46,
+   "shares": 654278074.8663101,
+   "member": true
+  },
+  {
+   "key": "NYSE:D",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 67842658945.59054,
+   "close": 82.82,
+   "shares": 819157920.1351188,
+   "member": true
+  },
+  {
+   "key": "NYSE:DD",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22467390377.65568,
+   "close": 127.165119,
+   "shares": 176678876.6788767,
+   "member": false
+  },
+  {
+   "key": "NYSE:DD",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24566372149.975468,
+   "close": 95.48989927,
+   "shares": 257266709.23082092,
+   "member": false
+  },
+  {
+   "key": "NYSE:DD",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21875028006.90139,
+   "close": 89.22505917,
+   "shares": 245166864.6722108,
+   "member": true
+  },
+  {
+   "key": "NYSE:DD",
+   "year": 2021,
+   "why": [
+    "S1 jump",
+    "S2 P/E<4"
+   ],
+   "cap": 41342638540,
+   "close": 101.35846266,
+   "shares": 181399980.36493176,
+   "member": true
+  },
+  {
+   "key": "NYSE:DD",
+   "year": 2022,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 31441050119.999996,
+   "close": 86.11328661,
+   "shares": 166466668.36877984,
+   "member": true
+  },
+  {
+   "key": "NYSE:DLR",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19001376931.802715,
+   "close": 98.26,
+   "shares": 193378556.19583467,
+   "member": true
+  },
+  {
+   "key": "NYSE:DLR",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28562323333.333332,
+   "close": 113.9,
+   "shares": 250766666.66666666,
+   "member": true
+  },
+  {
+   "key": "NYSE:DLR",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 29494235518.54527,
+   "close": 119.74,
+   "shares": 246318987.12665167,
+   "member": true
+  },
+  {
+   "key": "NYSE:DLR",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 51328720586.18282,
+   "close": 139.51,
+   "shares": 367921443.5250722,
+   "member": true
+  },
+  {
+   "key": "NYSE:DLR",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 50920774689.23699,
+   "close": 176.87,
+   "shares": 287899444.16371906,
+   "member": true
+  },
+  {
+   "key": "NYSE:DOC",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13277839705.353935,
+   "close": 27.93,
+   "shares": 475397053.53934604,
+   "member": true
+  },
+  {
+   "key": "NYSE:DOC",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 35239562790.69768,
+   "close": 34.47,
+   "shares": 1022325581.3953489,
+   "member": true
+  },
+  {
+   "key": "NYSE:DOC",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19463485943.43,
+   "close": 36.09,
+   "shares": 3092801724.1379313,
+   "member": true
+  },
+  {
+   "key": "NYSE:DOC",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13553046741.963512,
+   "close": 25.07,
+   "shares": 540608166.8114684,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVA",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11540617246.088192,
+   "close": 75.03,
+   "shares": 153813371.26600283,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVA",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 14396010050.408592,
+   "close": 117.4,
+   "shares": 122623594.97792667,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVN",
+   "year": 2018,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 11202367903.202198,
+   "close": 22.54,
+   "shares": 496999463.3186423,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVN",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 5960339354.439981,
+   "close": 15.81,
+   "shares": 376998061.6344074,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVN",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 29292986857.82557,
+   "close": 44.05,
+   "shares": 664994026.284349,
+   "member": true
+  },
+  {
+   "key": "NYSE:DVN",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 31130758541.377163,
+   "tv": 54098000336,
+   "member": true
+  },
+  {
+   "key": "NYSE:DXC",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23785337416.360237,
+   "close": 82.08318584,
+   "shares": 289771128.8000397,
+   "member": true
+  },
+  {
+   "key": "NYSE:EQT",
+   "year": 2017,
+   "why": [
+    "S1 jump",
+    "S2 P/E<4"
+   ],
+   "cap": 15045094400,
+   "close": 30.990492,
+   "shares": 187726050.9221235,
+   "member": true
+  },
+  {
+   "key": "NYSE:EQT",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13689732645.553423,
+   "close": 33.83,
+   "shares": 404662507.9974408,
+   "member": true
+  },
+  {
+   "key": "NYSE:EQT",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15906121901.600471,
+   "close": 38.66,
+   "shares": 411436158.86188495,
+   "member": true
+  },
+  {
+   "key": "NYSE:EQT",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23721341967.871487,
+   "close": 46.11,
+   "shares": 514451137.88487285,
+   "member": true
+  },
+  {
+   "key": "NYSE:ESS",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15923165959.885386,
+   "close": 239.41,
+   "shares": 66510028.65329512,
+   "member": true
+  },
+  {
+   "key": "NYSE:EXR",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19740530993.586243,
+   "close": 147.18,
+   "shares": 134125091.68084143,
+   "member": true
+  },
+  {
+   "key": "NYSE:EXR",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27131062086.42809,
+   "close": 160.33,
+   "shares": 169220121.53950033,
+   "member": true
+  },
+  {
+   "key": "NYSE:EXR",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 31651984029.758217,
+   "close": 149.6,
+   "shares": 211577433.35399878,
+   "member": true
+  },
+  {
+   "key": "NYSE:FE",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13595220067.475342,
+   "close": 30.62,
+   "shares": 443998042.7000438,
+   "member": true
+  },
+  {
+   "key": "NYSE:FE",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 31017054193.43165,
+   "close": 37.55,
+   "shares": 826020085.0447843,
+   "member": true
+  },
+  {
+   "key": "NYSE:FE",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26465653728.294178,
+   "close": 48.6,
+   "shares": 544560776.3023493,
+   "member": true
+  },
+  {
+   "key": "NYSE:FIS",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34022470588.235294,
+   "close": 102.55,
+   "shares": 331764705.88235295,
+   "member": true
+  },
+  {
+   "key": "NYSE:FIS",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 85540350000,
+   "close": 139.09,
+   "shares": 451036779.1736038,
+   "member": true
+  },
+  {
+   "key": "NYSE:FIS",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 88693174603.1746,
+   "close": 141.46,
+   "shares": 626984126.9841269,
+   "member": true
+  },
+  {
+   "key": "NYSE:FITB",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 37996677139.05635,
+   "tv": 48273891517.99999,
+   "member": true
+  },
+  {
+   "key": "NYSE:FRT",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13284765965.834429,
+   "close": 132.81,
+   "shares": 100028356.04122001,
+   "member": true
+  },
+  {
+   "key": "NYSE:FRT",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 8951419290.68194,
+   "close": 118.04,
+   "shares": 75833779.14844069,
+   "member": true
+  },
+  {
+   "key": "NYSE:GE",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 64497277280.524704,
+   "close": 36.226297,
+   "shares": 1065034918.3967072,
+   "member": true
+  },
+  {
+   "key": "NYSE:GE",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 97548220562.95517,
+   "close": 55.563063,
+   "shares": 3216266173.7523103,
+   "member": true
+  },
+  {
+   "key": "NYSE:GE",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 94700793730.32541,
+   "close": 53.770706,
+   "shares": 9573191635.241686,
+   "member": true
+  },
+  {
+   "key": "NYSE:GE",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 95289495496.82875,
+   "close": 58.79304,
+   "shares": 1008599879.2999398,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27764837920.678658,
+   "close": 24.27,
+   "shares": 1143998266.200192,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23915508423.58604,
+   "close": 31.99,
+   "shares": 747593261.1311673,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28428548728.81356,
+   "close": 30.21,
+   "shares": 941031073.4463277,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34368823419.72777,
+   "close": 36,
+   "shares": 954689539.4368824,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 55507180851.06383,
+   "close": 37.23,
+   "shares": 1490926157.6971214,
+   "member": true
+  },
+  {
+   "key": "NYSE:GLW",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27372388642.875748,
+   "close": 31.94,
+   "shares": 856994008.856473,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 55745324873.09644,
+   "close": 34.01,
+   "shares": 1639086294.4162436,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 54739446666.66667,
+   "close": 34.84,
+   "shares": 1571166666.6666667,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 57493818579.37,
+   "close": 40.99,
+   "shares": 2686567164.1791043,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 48454459118.03179,
+   "close": 33.45,
+   "shares": 1448563800.2401133,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 49689488710.09603,
+   "close": 35.92,
+   "shares": 1383337658.9670386,
+   "member": true
+  },
+  {
+   "key": "NYSE:GM",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 50261662164.70883,
+   "close": 53.27,
+   "shares": 943526603.4298636,
+   "member": true
+  },
+  {
+   "key": "NYSE:GPN",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16415572496.478874,
+   "close": 103.13,
+   "shares": 159173591.54929578,
+   "member": true
+  },
+  {
+   "key": "NYSE:GPN",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 36354379060.30337,
+   "close": 182.56,
+   "shares": 199136607.47317797,
+   "member": true
+  },
+  {
+   "key": "NYSE:GPN",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 64738970899.74293,
+   "close": 215.42,
+   "shares": 300524421.59383035,
+   "member": true
+  },
+  {
+   "key": "NYSE:HWM",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 5788951159.545454,
+   "close": 14.21092155,
+   "shares": 407359307.35930735,
+   "member": true
+  },
+  {
+   "key": "NYSE:HWM",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 5520173237.571428,
+   "close": 20.88714198,
+   "shares": 264285714.28571427,
+   "member": true
+  },
+  {
+   "key": "NYSE:HWM",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 6410674332.406119,
+   "close": 12.9232005,
+   "shares": 496059341.6782568,
+   "member": true
+  },
+  {
+   "key": "NYSE:IFF",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11832153430.232561,
+   "close": 134.27,
+   "shares": 88122093.02325583,
+   "member": true
+  },
+  {
+   "key": "NYSE:IFF",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 14618908788.78879,
+   "close": 129.02,
+   "shares": 113307307.3073073,
+   "member": true
+  },
+  {
+   "key": "NYSE:IFF",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12367690735.42265,
+   "close": 108.84,
+   "shares": 113631851.66687477,
+   "member": true
+  },
+  {
+   "key": "NYSE:IFF",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 36607308006.165565,
+   "close": 150.65,
+   "shares": 242995738.50757095,
+   "member": true
+  },
+  {
+   "key": "NYSE:INVH",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21797992967.768944,
+   "close": 29.64,
+   "shares": 735424863.9598159,
+   "member": true
+  },
+  {
+   "key": "NYSE:INVH",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 32373547639.956093,
+   "close": 34.11,
+   "shares": 949092572.2649103,
+   "member": true
+  },
+  {
+   "key": "NYSE:INVH",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19648266049.39,
+   "close": 31.97,
+   "shares": 1332835294.117647,
+   "member": true
+  },
+  {
+   "key": "NYSE:INVH",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27127439813.736904,
+   "close": 27.79,
+   "shares": 976158323.6321305,
+   "member": true
+  },
+  {
+   "key": "NYSE:INVH",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 26873638649.592552,
+   "tv": 16259857927,
+   "member": true
+  },
+  {
+   "key": "NYSE:IP",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19062533384.204502,
+   "close": 53.82,
+   "shares": 354190512.5270253,
+   "member": true
+  },
+  {
+   "key": "NYSE:IP",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19919634098.983128,
+   "close": 39.39,
+   "shares": 505702820.48700505,
+   "member": true
+  },
+  {
+   "key": "NYSE:IQV",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21792340677.729748,
+   "close": 97.9,
+   "shares": 222597964.0217543,
+   "member": true
+  },
+  {
+   "key": "NYSE:IR",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 17438482758.62069,
+   "close": 45.56,
+   "shares": 382758620.6896552,
+   "member": true
+  },
+  {
+   "key": "NYSE:IT",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 17724789860.34649,
+   "tv": 14804645940,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 6694279306.639256,
+   "close": 16.74,
+   "shares": 399897210.6714012,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9653380655.22621,
+   "close": 17.98,
+   "shares": 536895475.8190328,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11698852560.148056,
+   "close": 17.43,
+   "shares": 671190623.0721776,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11128321015.855953,
+   "close": 17.99,
+   "shares": 618583714.0553615,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 2356134659.9427557,
+   "close": 17.84,
+   "shares": 132070328.47212757,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11504845395.854568,
+   "close": 17.48,
+   "shares": 658171933.4012911,
+   "member": true
+  },
+  {
+   "key": "NYSE:IVZ",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 4611615255.187885,
+   "close": 26.27,
+   "shares": 175546831.18339875,
+   "member": true
+  },
+  {
+   "key": "NYSE:JCI",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18901212516.18647,
+   "close": 29.88399,
+   "shares": 632486241.5021043,
+   "member": true
+  },
+  {
+   "key": "NYSE:JCI",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 38664442234.68,
+   "close": 41.19,
+   "shares": 667692307.6923077,
+   "member": true
+  },
+  {
+   "key": "NYSE:JCI",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 35903631578.947365,
+   "close": 38.11,
+   "shares": 942105263.1578947,
+   "member": true
+  },
+  {
+   "key": "NYSE:KEY",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15762734887.93299,
+   "close": 14.4,
+   "shares": 1094634367.2175686,
+   "member": true
+  },
+  {
+   "key": "NYSE:KEY",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 8618176139.912556,
+   "close": 17.14,
+   "shares": 502810743.28544664,
+   "member": true
+  },
+  {
+   "key": "NYSE:KEY",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24808148780.968655,
+   "close": 20.64,
+   "shares": 1201945192.8763883,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 17792895549.678883,
+   "close": 26.46,
+   "shares": 672445032.1118248,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21344198829.356148,
+   "close": 25.16,
+   "shares": 848338586.2224224,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 10904996386.05442,
+   "close": 18.15,
+   "shares": 600826247.1655328,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 7017163284.313725,
+   "close": 14.65,
+   "shares": 478987254.9019608,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13036430195.515022,
+   "close": 24.65,
+   "shares": 528861265.5381348,
+   "member": true
+  },
+  {
+   "key": "NYSE:KIM",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16438601379.310343,
+   "close": 21.18,
+   "shares": 776137931.0344827,
+   "member": true
+  },
+  {
+   "key": "NYSE:KKR",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 75540583341.47652,
+   "close": 82.85,
+   "shares": 911775296.81927,
+   "member": false
+  },
+  {
+   "key": "NYSE:KMI",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 32719560000,
+   "close": 14.92,
+   "shares": 2459016393.4426227,
+   "member": true
+  },
+  {
+   "key": "NYSE:KMI",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 46183300000,
+   "close": 20.71,
+   "shares": 2816000000,
+   "member": true
+  },
+  {
+   "key": "NYSE:KMI",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 40296100000,
+   "close": 18.07,
+   "shares": 17979797979.797977,
+   "member": true
+  },
+  {
+   "key": "NYSE:KMI",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 37044350834.96315,
+   "close": 15.38,
+   "shares": 2408605385.888371,
+   "member": true
+  },
+  {
+   "key": "NYSE:LEN",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15017741254.43787,
+   "close": 63.24,
+   "shares": 237472189.34911242,
+   "member": true
+  },
+  {
+   "key": "NYSE:LEN",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12103608585.301258,
+   "close": 39.15,
+   "shares": 309159861.69351876,
+   "member": true
+  },
+  {
+   "key": "NYSE:LHX",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16306029598.30867,
+   "close": 134.65,
+   "shares": 121099365.75052854,
+   "member": true
+  },
+  {
+   "key": "NYSE:LHX",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 42917250104.65,
+   "close": 197.87,
+   "shares": 447395634.89903665,
+   "member": true
+  },
+  {
+   "key": "NYSE:LHX",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 40809064248.50473,
+   "close": 189.02,
+   "shares": 215898128.49700946,
+   "member": true
+  },
+  {
+   "key": "NYSE:LNC",
+   "year": 2022,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 5254192118.288643,
+   "close": 30.72,
+   "shares": 171034899.6838751,
+   "member": true
+  },
+  {
+   "key": "NYSE:MAA",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 7706380098.910498,
+   "close": 97.92,
+   "shares": 78700777.15390623,
+   "member": true
+  },
+  {
+   "key": "NYSE:MAA",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 11543414789.915966,
+   "close": 100.56,
+   "shares": 114791316.52661064,
+   "member": true
+  },
+  {
+   "key": "NYSE:MDT",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 109735064516.12904,
+   "close": 76.92,
+   "shares": 1426612903.2258065,
+   "member": true
+  },
+  {
+   "key": "NYSE:MPC",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 39750268401.9,
+   "close": 59.01,
+   "shares": 525997009.44485456,
+   "member": true
+  },
+  {
+   "key": "NYSE:MPC",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 40005793596.81604,
+   "close": 60.25,
+   "shares": 663996574.2210131,
+   "member": true
+  },
+  {
+   "key": "NYSE:MPC",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 52841060000,
+   "close": 116.39,
+   "shares": 515999615.8811793,
+   "member": true
+  },
+  {
+   "key": "NYSE:MPC",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 54596480000.00001,
+   "close": 148.36,
+   "shares": 409084950.46071744,
+   "member": true
+  },
+  {
+   "key": "NYSE:MTB",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 20594584591.742058,
+   "close": 153.58,
+   "shares": 134096787.28833218,
+   "member": true
+  },
+  {
+   "key": "NYSE:MTB",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 25009097270.906143,
+   "close": 145.06,
+   "shares": 172405192.82301214,
+   "member": true
+  },
+  {
+   "key": "NYSE:MTB",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 37297398983.36197,
+   "tv": 32180275427.999996,
+   "member": true
+  },
+  {
+   "key": "NYSE:NCLH",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 6477754141.987417,
+   "close": 25.43,
+   "shares": 254728829.8068194,
+   "member": true
+  },
+  {
+   "key": "NYSE:NCLH",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 7579439357.423205,
+   "close": 20.74,
+   "shares": 365450306.52956635,
+   "member": true
+  },
+  {
+   "key": "NYSE:NEM",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18461953125,
+   "close": 34.65,
+   "shares": 532812500,
+   "member": true
+  },
+  {
+   "key": "NYSE:NEM",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 32022398843.930637,
+   "close": 43.45,
+   "shares": 736994219.6531792,
+   "member": true
+  },
+  {
+   "key": "NYSE:NEM",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34809244061.91621,
+   "close": 41.39,
+   "shares": 841006138.2439286,
+   "member": true
+  },
+  {
+   "key": "NYSE:NEM",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 42729200938.01407,
+   "close": 37.22,
+   "shares": 1148017220.2583039,
+   "member": true
+  },
+  {
+   "key": "NYSE:NI",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 6971250000,
+   "close": 25.35,
+   "shares": 275000000,
+   "member": true
+  },
+  {
+   "key": "NYSE:NI",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12225474552.957361,
+   "close": 27.84,
+   "shares": 439133425.03438795,
+   "member": true
+  },
+  {
+   "key": "NYSE:NI",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 2133953488.3720932,
+   "close": 22.94,
+   "shares": 93023255.81395349,
+   "member": true
+  },
+  {
+   "key": "NYSE:NI",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12719824354.127283,
+   "close": 27.61,
+   "shares": 460696282.2936358,
+   "member": true
+  },
+  {
+   "key": "NYSE:NRG",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 3860027749.2291875,
+   "close": 11.77,
+   "shares": 327954779.0339157,
+   "member": true
+  },
+  {
+   "key": "NYSE:NRG",
+   "year": 2019,
+   "why": [
+    "S2 P/E<4"
+   ],
+   "cap": 10494026425.635551,
+   "close": 39.75,
+   "shares": 264000664.7958629,
+   "member": true
+  },
+  {
+   "key": "NYSE:NRG",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 7509561822.293523,
+   "close": 31.82,
+   "shares": 236001314.33983415,
+   "member": true
+  },
+  {
+   "key": "NYSE:NRG",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 9301211257.57036,
+   "close": 51.7,
+   "shares": 179907374.42109013,
+   "member": true
+  },
+  {
+   "key": "NYSE:NRG",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 20337734941.69038,
+   "close": 90.22,
+   "shares": 225423796.7378672,
+   "member": true
+  },
+  {
+   "key": "NYSE:NVR",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 18754152950.007755,
+   "tv": 16283973212,
+   "member": true
+  },
+  {
+   "key": "NYSE:O",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 29694732333.256405,
+   "close": 71.59,
+   "shares": 414788829.90999305,
+   "member": true
+  },
+  {
+   "key": "NYSE:O",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 38830129164.90635,
+   "close": 63.43,
+   "shares": 612172933.3896635,
+   "member": true
+  },
+  {
+   "key": "NYSE:O",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 39793423993.00866,
+   "close": 57.42,
+   "shares": 693023754.6675141,
+   "member": true
+  },
+  {
+   "key": "NYSE:O",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 46945606576.1258,
+   "close": 53.41,
+   "shares": 878966608.8022057,
+   "member": true
+  },
+  {
+   "key": "NYSE:OKE",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 12192663483.34942,
+   "close": 57.41,
+   "shares": 212378740.34749034,
+   "member": true
+  },
+  {
+   "key": "NYSE:OKE",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 16054911284.07683,
+   "close": 53.45,
+   "shares": 300372521.68525404,
+   "member": true
+  },
+  {
+   "key": "NYSE:OKE",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22367391500.773968,
+   "close": 53.95,
+   "shares": 414594837.8271356,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 46850962929.97884,
+   "close": 61.38,
+   "shares": 763293628.7060744,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22589636752.13675,
+   "close": 41.21,
+   "shares": 548159105.8514135,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15046395541.0205,
+   "close": 17.31,
+   "shares": 869231400.4055749,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27076660000,
+   "close": 28.99,
+   "shares": 1466074825.6182625,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 56695563436.53,
+   "close": 62.99,
+   "shares": 1066020544.7420619,
+   "member": true
+  },
+  {
+   "key": "NYSE:OXY",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 88837014517.93027,
+   "tv": 62477336883.99999,
+   "member": true
+  },
+  {
+   "key": "NYSE:PCG",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34935023096.05591,
+   "close": 16.26,
+   "shares": 2148525405.6614947,
+   "member": true
+  },
+  {
+   "key": "NYSE:PINS",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 39295937267.658,
+   "close": 65.9,
+   "shares": 596296468.401487,
+   "member": false
+  },
+  {
+   "key": "NYSE:RTX",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 129381087682.9822,
+   "close": 88.330694,
+   "shares": 863900894.0133868,
+   "member": true
+  },
+  {
+   "key": "NYSE:RTX",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 108657881362.34001,
+   "close": 71.51,
+   "shares": 1357796041.2084732,
+   "member": true
+  },
+  {
+   "key": "NYSE:SCHW",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 99839507355.12,
+   "close": 53.04,
+   "shares": 1555691785.3437705,
+   "member": true
+  },
+  {
+   "key": "NYSE:SCHW",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 174271987258.8922,
+   "close": 84.1,
+   "shares": 2072199610.6883738,
+   "member": true
+  },
+  {
+   "key": "NYSE:SKYD",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23935227272.727272,
+   "close": 59,
+   "shares": 405681818.1818182,
+   "member": true
+  },
+  {
+   "key": "NYSE:SKYD",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 27150154576.1737,
+   "close": 43.72,
+   "shares": 621000790.8548422,
+   "member": true
+  },
+  {
+   "key": "NYSE:SKYD",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 14846387154.326496,
+   "close": 13.4,
+   "shares": 1107939339.8751116,
+   "member": true
+  },
+  {
+   "key": "NYSE:SNOW",
+   "year": 2020,
+   "why": [
+    "S2 P/S"
+   ],
+   "cap": 81020776970.73274,
+   "close": 281.4,
+   "shares": 287920316.1717582,
+   "member": false
+  },
+  {
+   "key": "NYSE:SPG",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23550886866.73121,
+   "close": 85.28,
+   "shares": 276159555.191501,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPG",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 57680346776.75606,
+   "close": 159.77,
+   "shares": 361021135.236628,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPG",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 54106359597.672966,
+   "close": 172.21,
+   "shares": 314188256.18531424,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPG",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 60152100550.14001,
+   "close": 185.11,
+   "shares": 819525032.319762,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPG",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 173772087853.08234,
+   "tv": 68605860787,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPGI",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 114107880126.31938,
+   "close": 446.3797098,
+   "shares": 241800067.16668534,
+   "member": true
+  },
+  {
+   "key": "NYSE:SPGI",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 106673901799.03004,
+   "close": 316.8063484,
+   "shares": 318500068.64225614,
+   "member": true
+  },
+  {
+   "key": "NYSE:SW",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 20952853658.574158,
+   "close": 53.86,
+   "shares": 389024390.24460006,
+   "member": true
+  },
+  {
+   "key": "NYSE:SW",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 20340379261.265377,
+   "close": 38.67,
+   "shares": 525998946.50285435,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 48884255869.050186,
+   "close": 56.32,
+   "shares": 867973293.1294422,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 69738430074.01636,
+   "close": 47.93,
+   "shares": 1455005843.3969615,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 60830088975.20436,
+   "close": 43.03,
+   "shares": 1413666952.7121627,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 36950481607.192,
+   "close": 36.92,
+   "shares": 1000825612.329144,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 3569731663.685152,
+   "close": 43.38,
+   "shares": 82289803.22003578,
+   "member": true
+  },
+  {
+   "key": "NYSE:TFC",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 68398059294.95574,
+   "close": 49.21,
+   "shares": 1389921952.752606,
+   "member": true
+  },
+  {
+   "key": "NYSE:TKO",
+   "year": 2025,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 18080854916.544914,
+   "close": 209,
+   "shares": 86511267.5432771,
+   "member": true
+  },
+  {
+   "key": "NYSE:TKO",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 15374782467.791206,
+   "tv": 33637013846.000004,
+   "member": true
+  },
+  {
+   "key": "NYSE:TRGP",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21635584703.396385,
+   "close": 73.5,
+   "shares": 294361696.64484876,
+   "member": true
+  },
+  {
+   "key": "NYSE:TRGP",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 19632629482.071712,
+   "close": 86.87,
+   "shares": 226000109.15243137,
+   "member": true
+  },
+  {
+   "key": "NYSE:UBER",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 51054092940,
+   "close": 29.74,
+   "shares": 1248348938.9180782,
+   "member": false
+  },
+  {
+   "key": "NYSE:UBER",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 89400916884.6642,
+   "close": 51,
+   "shares": 1752959154.6012588,
+   "member": false
+  },
+  {
+   "key": "NYSE:VICI",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28501671782.76269,
+   "close": 32.4,
+   "shares": 879681227.863046,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 31085790000,
+   "close": 81.59,
+   "shares": 598843771.5072263,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24585520000,
+   "close": 64.36,
+   "shares": 6833566311.096958,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24423910000,
+   "close": 63.77,
+   "shares": 522109361.48122513,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 25345770982.56,
+   "close": 66.01,
+   "shares": 636036951.0543625,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 31428019547.728638,
+   "close": 80.92,
+   "shares": 388383830.2981789,
+   "member": true
+  },
+  {
+   "key": "NYSE:VMRK",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 24253715419.98774,
+   "tv": 49189138026,
+   "member": true
+  },
+  {
+   "key": "NYSE:VST",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 61106600478.029045,
+   "tv": 47267504827,
+   "member": true
+  },
+  {
+   "key": "NYSE:WAB",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 13793935764.83397,
+   "close": 77.8,
+   "shares": 177299945.56341863,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 24268963438.890003,
+   "close": 66.93,
+   "shares": 598845982.8869874,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 23705321007.27,
+   "close": 63.77,
+   "shares": 1616493506.4935064,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26630854194.23,
+   "close": 69.41,
+   "shares": 881465177.3981603,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 38359729942.29,
+   "close": 85.77,
+   "shares": 1467851528.3842795,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2022,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 34347227087.198513,
+   "close": 65.55,
+   "shares": 523985157.6994434,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2023,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 50877627290.770004,
+   "close": 90.17,
+   "shares": 648786722.6249523,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2024,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 80065514133.87,
+   "close": 126.03,
+   "shares": 1154531117.3116584,
+   "member": true
+  },
+  {
+   "key": "NYSE:WELL",
+   "year": 2026,
+   "why": [
+    "S4 today"
+   ],
+   "model": 274085687249.78772,
+   "tv": 171104842952.00003,
+   "member": true
+  },
+  {
+   "key": "NYSE:WFC",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 222430720000,
+   "close": 53.8,
+   "shares": 4822864755.513889,
+   "member": true
+  },
+  {
+   "key": "NYSE:WFC",
+   "year": 2020,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 124767339511.86,
+   "close": 30.18,
+   "shares": 7817129629.62963,
+   "member": true
+  },
+  {
+   "key": "NYSE:WFC",
+   "year": 2021,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 209070198782.6333,
+   "close": 47.98,
+   "shares": 4357444743.281228,
+   "member": true
+  },
+  {
+   "key": "NYSE:WMB",
+   "year": 2018,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 21360937500,
+   "close": 22.05,
+   "shares": 968750000,
+   "member": true
+  },
+  {
+   "key": "NYSE:WMB",
+   "year": 2019,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 28897807080.40705,
+   "close": 23.72,
+   "shares": 1218288662.7490325,
+   "member": true
+  },
+  {
+   "key": "NYSE:WY",
+   "year": 2015,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 15304280340,
+   "close": 29.98,
+   "shares": 568539325.8426967,
+   "member": true
+  },
+  {
+   "key": "NYSE:WY",
+   "year": 2016,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 22523207520,
+   "close": 30.09,
+   "shares": 1616304689.959081,
+   "member": true
+  },
+  {
+   "key": "NYSE:WY",
+   "year": 2017,
+   "why": [
+    "S1 jump"
+   ],
+   "cap": 26678783151.326054,
+   "close": 35.26,
+   "shares": 756630265.2106085,
+   "member": true
+  }
+ ],
+ "unresolved": {},
+ "noData": {
+  "2015": [
+   "AAP→nodata:NYSE:AAP",
+   "AIV→nodata:NYSE:AIV",
+   "AMG→nodata:NYSE:AMG",
+   "AN→nodata:NYSE:AN",
+   "CTL→nodata:NASDAQ:LUMN",
+   "DOW→dead:DOW-old",
+   "FOSL→nodata:NASDAQ:FOSL",
+   "GT→nodata:NASDAQ:GT",
+   "LB→nodata:NYSE:BBWI",
+   "MAC→nodata:NYSE:MAC",
+   "MAT→nodata:NASDAQ:MAT",
+   "MHK→nodata:NYSE:MHK",
+   "MUR→nodata:NYSE:MUR",
+   "NAVI→nodata:NASDAQ:NAVI",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "OI→nodata:NYSE:OI",
+   "PBI→nodata:NYSE:PBI",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "R→nodata:NYSE:R",
+   "RHI→nodata:NYSE:RHI",
+   "RRC→nodata:NYSE:RRC",
+   "SIG→nodata:NYSE:SIG",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TDC→nodata:NYSE:TDC",
+   "THC→nodata:NYSE:THC",
+   "TRIP→nodata:NASDAQ:TRIP",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "URBN→nodata:NASDAQ:URBN",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "WYND→nodata:NYSE:TNL",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2016": [
+   "AAP→nodata:NYSE:AAP",
+   "AIV→nodata:NYSE:AIV",
+   "ALK→nodata:NYSE:ALK",
+   "AMG→nodata:NYSE:AMG",
+   "AN→nodata:NYSE:AN",
+   "AYI→nodata:NYSE:AYI",
+   "CTL→nodata:NASDAQ:LUMN",
+   "DOW→dead:DOW-old",
+   "GT→nodata:NASDAQ:GT",
+   "LB→nodata:NYSE:BBWI",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MAC→nodata:NYSE:MAC",
+   "MAT→nodata:NASDAQ:MAT",
+   "MHK→nodata:NYSE:MHK",
+   "MUR→nodata:NYSE:MUR",
+   "NAVI→nodata:NASDAQ:NAVI",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "PBI→nodata:NYSE:PBI",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "R→nodata:NYSE:R",
+   "RHI→nodata:NYSE:RHI",
+   "RRC→nodata:NYSE:RRC",
+   "SIG→nodata:NYSE:SIG",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TDC→nodata:NYSE:TDC",
+   "TRIP→nodata:NASDAQ:TRIP",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "URBN→nodata:NASDAQ:URBN",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "WYND→nodata:NYSE:TNL",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2017": [
+   "AAP→nodata:NYSE:AAP",
+   "AIV→nodata:NYSE:AIV",
+   "ALK→nodata:NYSE:ALK",
+   "AMG→nodata:NYSE:AMG",
+   "AYI→nodata:NYSE:AYI",
+   "BHF→nodata:NASDAQ:BHF",
+   "CTL→nodata:NASDAQ:LUMN",
+   "GT→nodata:NASDAQ:GT",
+   "LB→nodata:NYSE:BBWI",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MAC→nodata:NYSE:MAC",
+   "MAT→nodata:NASDAQ:MAT",
+   "MHK→nodata:NYSE:MHK",
+   "NAVI→nodata:NASDAQ:NAVI",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "RHI→nodata:NYSE:RHI",
+   "RRC→nodata:NYSE:RRC",
+   "SIG→nodata:NYSE:SIG",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TRIP→nodata:NASDAQ:TRIP",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "WYND→nodata:NYSE:TNL",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2018": [
+   "AAP→nodata:NYSE:AAP",
+   "AIV→nodata:NYSE:AIV",
+   "ALK→nodata:NYSE:ALK",
+   "AMG→nodata:NYSE:AMG",
+   "BHF→nodata:NASDAQ:BHF",
+   "CTL→nodata:NASDAQ:LUMN",
+   "GT→nodata:NASDAQ:GT",
+   "IPGP→nodata:NASDAQ:IPGP",
+   "LB→nodata:NYSE:BBWI",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MAC→nodata:NYSE:MAC",
+   "MAT→nodata:NASDAQ:MAT",
+   "MHK→nodata:NYSE:MHK",
+   "NKTR→nodata:NASDAQ:NKTR",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "RHI→nodata:NYSE:RHI",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TRIP→nodata:NASDAQ:TRIP",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2019": [
+   "AAP→nodata:NYSE:AAP",
+   "AIV→nodata:NYSE:AIV",
+   "ALK→nodata:NYSE:ALK",
+   "CTL→nodata:NASDAQ:LUMN",
+   "IPGP→nodata:NASDAQ:IPGP",
+   "LB→nodata:NYSE:BBWI",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "RHI→nodata:NYSE:RHI",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2020": [
+   "AAP→nodata:NYSE:AAP",
+   "ALK→nodata:NYSE:ALK",
+   "IPGP→nodata:NASDAQ:IPGP",
+   "LB→nodata:NYSE:BBWI",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "LUMN→nodata:NASDAQ:LUMN",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "NOV→nodata:NYSE:NOV",
+   "NWL→nodata:NASDAQ:NWL",
+   "PAYC→nodata:NYSE:PAYC",
+   "POOL→nodata:NASDAQ:POOL",
+   "PRGO→nodata:NYSE:PRGO",
+   "PVH→nodata:NYSE:PVH",
+   "RHI→nodata:NYSE:RHI",
+   "SLG→nodata:NYSE:SLG",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "UNM→nodata:NYSE:UNM",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "VNT→nodata:NYSE:VNT",
+   "WHR→nodata:NYSE:WHR",
+   "WU→nodata:NYSE:WU",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "XRX→nodata:NASDAQ:XRX",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2021": [
+   "AAP→nodata:NYSE:AAP",
+   "ALK→nodata:NYSE:ALK",
+   "BBWI→nodata:NYSE:BBWI",
+   "CZR→nodata:NASDAQ:CZR",
+   "IPGP→nodata:NASDAQ:IPGP",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "LUMN→nodata:NASDAQ:LUMN",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "MTCH→nodata:NASDAQ:MTCH",
+   "NWL→nodata:NASDAQ:NWL",
+   "PAYC→nodata:NYSE:PAYC",
+   "PENN→nodata:NASDAQ:PENN",
+   "POOL→nodata:NASDAQ:POOL",
+   "PVH→nodata:NYSE:PVH",
+   "RHI→nodata:NYSE:RHI",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX",
+   "UA→nodata:NYSE:UA",
+   "UAA→nodata:NYSE:UAA",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2022": [
+   "AAP→nodata:NYSE:AAP",
+   "ALK→nodata:NYSE:ALK",
+   "BBWI→nodata:NYSE:BBWI",
+   "CZR→nodata:NASDAQ:CZR",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "LUMN→nodata:NASDAQ:LUMN",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "MOH→nodata:NYSE:MOH",
+   "MTCH→nodata:NASDAQ:MTCH",
+   "NWL→nodata:NASDAQ:NWL",
+   "PAYC→nodata:NYSE:PAYC",
+   "POOL→nodata:NASDAQ:POOL",
+   "RHI→nodata:NYSE:RHI",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX",
+   "VFC→nodata:NYSE:VFC",
+   "VNO→nodata:NYSE:VNO",
+   "WHR→nodata:NYSE:WHR",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2023": [
+   "BBWI→nodata:NYSE:BBWI",
+   "CZR→nodata:NASDAQ:CZR",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "MOH→nodata:NYSE:MOH",
+   "MTCH→nodata:NASDAQ:MTCH",
+   "PAYC→nodata:NYSE:PAYC",
+   "POOL→nodata:NASDAQ:POOL",
+   "RHI→nodata:NYSE:RHI",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX",
+   "VFC→nodata:NYSE:VFC",
+   "WHR→nodata:NYSE:WHR",
+   "XRAY→nodata:NASDAQ:XRAY",
+   "ZION→nodata:NASDAQ:ZION"
+  ],
+  "2024": [
+   "CZR→nodata:NASDAQ:CZR",
+   "LKQ→nodata:NASDAQ:LKQ",
+   "MHK→nodata:NYSE:MHK",
+   "MKTX→nodata:NASDAQ:MKTX",
+   "MOH→nodata:NYSE:MOH",
+   "MTCH→nodata:NASDAQ:MTCH",
+   "PAYC→nodata:NYSE:PAYC",
+   "POOL→nodata:NASDAQ:POOL",
+   "TAP→nodata:NYSE:TAP",
+   "TFX→nodata:NYSE:TFX"
+  ],
+  "2025": [
+   "MOH→nodata:NYSE:MOH",
+   "MTCH→nodata:NASDAQ:MTCH",
+   "PAYC→nodata:NYSE:PAYC",
+   "POOL→nodata:NASDAQ:POOL",
+   "TAP→nodata:NYSE:TAP"
+  ],
+  "2026": [
+   "TAP→nodata:NYSE:TAP"
+  ]
+ },
+ "missingCountry": [
+  "NYSE:IR"
+ ]
+}

@@ -158,9 +158,11 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   four edges (k +2.01/+0.99/−1.01/−2.03) — post-hoc, reproduced as P3 in reports/study15.txt; equal weights match the
   line only. Addendum 2 adds H7 (A07, 09:35) / H8 for the next chart. Pine default now Volume + 5-minute delay.
   Bubble description fix (POST-HOC, description only): the line was read as 7810 bubbles from x 317 (now 891).
-- [ ] Study 15: 2026-10-23 chain + forward-log/study15-2026-10-23.json after the close (check-in trig_01NR9gPRLpesV1tuZUDTgCvA,
-  20:20 UTC). Then compare with the first vendor chart the user brings (addendum 1 §2).
-
+- [x] Study 15: ofv.html (scripts/build-ofv-page.js, Arabic, Pine with a copy button + best timeframe = 3m on SP:SPX) →
+  https://claude.ai/artifact/JWrGWTdESc1xBgTM2AdZ7N
+- [x] Study 15: 2026-10-23 frozen (forward-log/study15-2026-10-23.json, 60 contracts 7565-7710, none missing; SPX low
+  7612.07 high 7660.15) at 00:2x UTC 10-24 after a quota-deferred first attempt, before any vendor chart of 10-23 was seen.
+  Next: when the user sends his chart of 10-23 (or a later session while its chain is served), run addendum 1 + 2.
 - [x] Study 16 protocol (PROTOCOL-study16.md): the page's untested valuation choices, each decided by test —
   D1 P/B-from-ROE cap (Visa/MA), D2 blend rule, D3 cyclical rule, D4 loss-makers' revenue DCF, D5 the 100×
   rule, D6 Lynch's 10%, D7 Graham's weight, D8 CAPM vs 9%, D9 own-history P/B for Heavy. Error = median
@@ -178,6 +180,35 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
   result box per decision with the naive baseline, change log 47 with all 55 movers
   (reports/study16-today.txt; MU 1428.56 → 1650.71, P/S just under 1/3). Published v25.
 
+- [x] Study 17 protocol (PROTOCOL-study17.md, 0022845) + addendum 1 (c209633, share-count screens S1–S4,
+  sourced overrides, V4 cross-check), both before any rule value: who climbs the top of the US market
+  (ranks 2015–2026, survivorship-free) and four rules tested (M momentum, G revenue growth, S size,
+  V sales yield; one-year IC over the top 200, sign-flip, Holm). engine/caps.js (+6 tests),
+  scripts/study17-run.js committed with the protocol; dry run on synthetic data only.
+- [x] Study 17 data inputs: data/caps/sp500-history.csv (fja05680/sp500, daily S&P lists since 1996),
+  data/caps/screener-2026-10-23.json, data/caps/map.json (237 removed/missing S&P tickers classified by
+  agents), data/caps/tickers.json (scripts/caps-tickers.js), data/caps/quotes.json (scripts/caps-collect.js
+  reads TradingView answers out of the session transcripts; nothing typed by hand).
+- [x] Study 17 data (2026-10-23): 954 companies (24 dead, 85 sourced year-ends; 29 confirmed by a second
+  researcher, 9 checker-only, 47 without an independent number), 82 share-count overrides, 24 spin-off
+  basis segments (addenda 3–4). V4 median gap 2.3% (2015) / 1.7% (2021); V2 top 10 matches published lists
+  9–10 of 10 each year found (2023: none found). Known residuals: GE 2023 ~+30% (rule 3 earlier segment),
+  DHR 2015 ~−22% (partial), banks/REITs +6–25% in 2015 (pre-registered share definition), DOW-old 2015–16
+  missing. Rebuild: RAW=1 node scripts/caps-build.js; node scripts/caps-import.js wf_07b17b7c-a36
+  wf_805a89fd-428 wf_0bc58a29-bb6; node scripts/caps-tickers.js; node scripts/caps-build.js;
+  node scripts/caps-basis.js wf_5adfb09d-050 wf_3fb51fb8-792 wf_0bc58a29-bb6; node scripts/caps-build.js
+  (journals under this session's subagents/workflows/<id>/journal.jsonl). The 58 S&P tickers without
+  TradingView data all peaked at ≤ $39.6B, below every year's 100th value: no further fetch needed.
+- [x] Study 17 run (60face4) + clean-room cross-check (reports/study17-crosscheck.txt: 233 values, 0
+  mismatches, twice). POST-HOC data fix it found (efd1fd1): VMware/LinkedIn/Sprint/Altaba lacked the US flag.
+  All four rules NOT CONFIRMED: M +0.082 (p 0.19, Holm 0.56), G +0.114 (p 0.091, Holm 0.36), S −0.034,
+  V −0.122 (6 counted years). Hindsight: of the top fifth by revenue growth 18% tripled in 5 years vs ~9%
+  overall. Base rates: top 10 stays top 10 after 1 year 84%, after 5 years 68%; 51–100 → below 100 in 5
+  years 33%.
+- [x] Study 17 page caps.html (two tabs, Arabic RTL) published: https://claude.ai/artifact/Cmg4CGbsa2TMA24zEFKwmB
+  Page 2 research: workflow caps-research wf_08d41c9e-707 (28 agents); data/caps/research.json written in
+  Arabic from its synthesis (only confirmed/corrected literature claims). Headline: no theme today matches
+  the optics 2022–23 profile. Plays' market caps not filled (TradingView quota); prices not shown.
 - [ ] Redesign + Simply Wall St snowflake + Earnings Hub card: plan in progress/REDESIGN-PLAN.md
   (column probes in progress/redesign-mapping.md). Next: phase 0 (user's SWS screenshots), then
   phase 1. Fix mu-fair-check's clock first (fails since 2026-11-01).
@@ -396,3 +427,5 @@ Branch: `claude/tradingview-analysis-indicator-oc7eqv`. Protocol: `PROTOCOL-us.m
 - 2026-10-23 — Study 16 pre-registered (PROTOCOL-study16.md, with scripts/study16-run.js and
   study16-collect.js as they stand at that commit). Numbered 16: 15 is the Flow VWAP study.
 - 2026-10-23 — Study 16 run, cross-checked twice (0 mismatches), D2 C applied to the page, v25.
+- 2026-10-23 — Study 17 (who climbs the top of the US market) run, cross-checked twice, page published
+  (caps.html, artifact Cmg4CGbsa2TMA24zEFKwmB). TradingView quota for the day was used by the data fetch.

@@ -60,7 +60,7 @@ impliedVol(bool isCall, float p, float S, float K, float T) =>
     if not na(p) and p >= intrinsic + 0.01 and p >= bsPrice(isCall, S, K, T, 0.01) and p <= bsPrice(isCall, S, K, T, 3.0)
         lo = 0.01
         hi = 3.0
-        for _ = 1 to 40
+        for it = 1 to 40
             mid = 0.5 * (lo + hi)
             if bsPrice(isCall, S, K, T, mid) < p
                 lo := mid
