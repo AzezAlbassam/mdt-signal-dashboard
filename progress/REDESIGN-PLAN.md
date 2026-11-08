@@ -145,7 +145,7 @@ a script (§3, phase 3).
   better.
 - **Benchmark:** a fixed set per market, built offline into `pages/bench.json`:
   - US: the S&P 500 (EH uses its own 500 most popular stocks, which we cannot see);
-  - Tadawul: every Tadawul stock.
+  - Tadawul: the TASI constituents (the user's choice).
 - **Scoring:**
   - trim the top and bottom 5% per metric, drop negative P/E and forward P/E;
   - 3/2/1/0 points by quartile, total 0–15;
@@ -185,13 +185,29 @@ a script (§3, phase 3).
   390 px, in light and dark.
 - **Not their brand:** no SWS or EH name, logo or copied text. The Arabic wording is ours. The notes
   credit the SWS model (CC BY-NC-SA 4.0) and the EH score idea.
-- **Final colours and spacing** are set after the user's SWS screenshots arrive.
+- **From the user's SWS screenshots (AAPL, 2026-11-08):**
+  - **Colours:** near-black charcoal background (not navy), slightly lighter cards, gold/amber accent
+    for buttons, links and the active nav item; green for good, red for bad.
+  - **Type:** serif headings (company name, section titles), sans for the body, big bold numbers
+    (e.g. "37.6x P/E Ratio").
+  - **Layout:** a hero header with the price, the fair value, a small price-vs-fair-value line chart
+    and a "Fairly Valued" label; a left sidebar (right side in RTL) holding a mini snowflake and
+    numbered sections (overview, 1 valuation, 2 future growth, 3 past, 4 health, 5 dividend…).
+  - **Snowflake:** a gold/orange filled blob on dark concentric rings, with the axis names written
+    around the circle.
+  - **Overview:** Rewards (green stars) and Risk analysis.
+  - **Valuation:** red ✗ circles with a red bold lead-in ("Below Future Cash Flow Value: …"); PE / PS
+    / PB tabs; a donut of market cap against earnings and revenue.
+  - **Other blocks:** competitors as mini snowflakes; shareholder returns 7D / 1Y against industry
+    and market; a low-to-high volatility gauge; earnings and revenue as a waterfall (revenue → cost →
+    gross profit → other expenses → earnings).
+- **Tadawul benchmark:** the TASI constituents (user, 2026-11-08); the US uses the S&P 500.
 
 ## 3. Phases
 
 | # | Phase | Output | Checks |
 |---|---|---|---|
-| 0 | User | 2–3 SWS screenshots; OK the EHS benchmark (S&P 500 and all of Tadawul) | — |
+| 0 | User | SWS screenshots (5 received, more coming); benchmark OK'd: S&P 500 and TASI | — |
 | 1 | Data probe, 1–2 batch calls | Confirm the ~20 new quote columns, `dps_*_fy_h`, and the earnings estimate and surprise columns; update `redesign-mapping.md` | — |
 | 2 | Engine | `engine/snowflake.js` (30 checks → `{axis, id, status, value, threshold, note}`) and `engine/ehs.js`, both inlined by `build-stocks-page.js` | Unit tests on the 7 probe stocks' real rows |
 | 3 | Benchmarks | `scripts/build-bench.js` → `pages/bench.json`: market and industry P/E, P/B, ROA, EPS growth, forecast growth, yield P25/P75, EHS quartile cut points, for US and Tadawul (2–4 `run_screener` calls), inlined like `sector-pe.json` | Spot-check against known values |
