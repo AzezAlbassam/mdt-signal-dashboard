@@ -288,6 +288,21 @@ a script (§3, phase 3).
     | Yield P25 / P75 | 0.97% / 2.90% | 2.97% / 6.38% |
     | EHS total cut points | 5 / 7 / 10 | 3 / 5 / 8 |
 
+- **2026-11-08, phases 4–5 (data and the first UI) done, published v26:**
+  - **Data:** 26 quote columns, 5 history series loaded when a stock is opened, the benchmarks
+    inlined, and the `e/<sym>` earnings log.
+  - **UI:**
+    - a dark-first charcoal and gold theme with Amiri headings;
+    - the snowflake card: the SVG snowflake, the EHS letter with its 5 metric chips, 6 key figures,
+      rewards and risks, and all 30 checks by axis behind a "details" toggle;
+    - the earnings card: next report, last quarter against estimates, the beat count from the log;
+    - a mini snowflake and the letter in each list row.
+  - **Checks:** the harness selectors were kept; the MU check now reads `.part.fv`.
+  - **Still to do (v27):**
+    - the calendar tab;
+    - the SWS-style section charts (price-target band, EPS cone, debt history, dividends);
+    - the list view and polish.
+
 ## 4. Honesty on the page
 
 - The snowflake and EHS are descriptive summaries, "not tested on our data", like study 14's

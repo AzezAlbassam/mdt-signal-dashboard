@@ -854,7 +854,7 @@
       const f = state.fair[sym]
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${esc(sym.split(':')[1])}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
@@ -1133,7 +1133,7 @@
       weakFair(sym) ? `<b>تقدير ضعيف:</b> ${weakFair(sym)}.` : '',
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
-    return `<div class="part" style="grid-column:1/-1">
+    return `<div class="part fv" style="grid-column:1/-1">
       <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
       <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
@@ -1143,7 +1143,7 @@
   }
 
   // The digits isolated as LTR, the unit word left in the RTL sentence.
-  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e9 ? `<span class="n">${fmt(x / 1e9, 1)}</span> مليار` : `<span class="n">${fmt(x / 1e6, 0)}</span> مليون`)
+  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e12 ? `<span class="n">${fmt(x / 1e12, 2)}</span> ترليون` : Math.abs(x) >= 1e9 ? `<span class="n">${fmt(x / 1e9, 1)}</span> مليار` : `<span class="n">${fmt(x / 1e6, 0)}</span> مليون`)
 
   // Revenue DCF for a loss-maker (engine/rdcf.js), US listings only (US rates): the default value,
   // the margin and growth the price implies, and a margin × growth grid. Histories come from the
@@ -1251,10 +1251,144 @@
     return [['الكاش يكفي', m >= 120 ? 'أكثر من 10 سنين' : n < 1 ? 'أقل من شهر' : n === 1 ? 'شهر' : n === 2 ? 'شهرين' : `${n} ${n <= 10 ? 'أشهر' : 'شهر'}`, `الكاش والاستثمارات القصيرة (${big(q.cash_n_short_term_invest_fq).replace(/<[^>]+>/g, '')}) ÷ الكاش اللي تحرقه بالشهر على آخر 12 شهر. لو قليل، الشركة غالباً بتصدر أسهم أو تقترض قريب. ضعفه: الحرق يتغير، وما يحسب خطوط الائتمان.`]]
   }
 
+  // ---------------------------------------------------------------- snowflake and earnings card (redesign, progress/REDESIGN-PLAN.md)
+  const AXIS_AR = { value: 'القيمة', future: 'النمو المتوقع', past: 'الأداء السابق', health: 'الصحة المالية', dividend: 'التوزيعات' }
+  const AXIS_SHORT = { value: 'القيمة', future: 'المستقبل', past: 'الماضي', health: 'الصحة', dividend: 'التوزيعات' }
+  // SWS draws value at the top, then future, past, health and dividend clockwise.
+  const AXIS_ANGLE = { value: -90, future: -18, past: 54, health: 126, dividend: 198 }
+
+  /** The snowflake as SVG: five axes scored 0–6, a smooth closed shape, coloured red (0/30) to green (30/30). */
+  function snowSvg(sn, size = 200, labels = true) {
+    const c = size / 2
+    const R = size * (labels ? 0.34 : 0.46)
+    const pts = SNOW_AXES.map((a) => {
+      const r = R * (0.14 + 0.86 * sn.axes[a].score / 6)
+      const t = (AXIS_ANGLE[a] * Math.PI) / 180
+      return [c + r * Math.cos(t), c + r * Math.sin(t)]
+    })
+    // Closed Catmull-Rom curve through the five points, as cubic Béziers.
+    let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`
+    for (let i = 0; i < 5; i += 1) {
+      const [p0, p1, p2, p3] = [pts[(i + 4) % 5], pts[i], pts[(i + 1) % 5], pts[(i + 2) % 5]]
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]
+      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]
+      d += ` C${c1.map((x) => x.toFixed(1)).join(',')} ${c2.map((x) => x.toFixed(1)).join(',')} ${p2.map((x) => x.toFixed(1)).join(',')}`
+    }
+    const rings = [1, 2 / 3, 1 / 3].map((k) => `<circle cx="${c}" cy="${c}" r="${(R * k).toFixed(1)}" fill="none" stroke="var(--ring)" stroke-width="${labels ? 4 : 2}"/>`).join('')
+    const spokes = SNOW_AXES.map((a) => { const t = (AXIS_ANGLE[a] * Math.PI) / 180; return `<line x1="${c}" y1="${c}" x2="${(c + R * Math.cos(t)).toFixed(1)}" y2="${(c + R * Math.sin(t)).toFixed(1)}" stroke="var(--ring)" stroke-width="1"/>` }).join('')
+    const text = labels ? SNOW_AXES.map((a) => { const t = (AXIS_ANGLE[a] * Math.PI) / 180; const rr = R + size * 0.1; return `<text x="${(c + rr * Math.cos(t)).toFixed(1)}" y="${(c + rr * Math.sin(t) + 4).toFixed(1)}" text-anchor="middle" class="snow-l">${AXIS_SHORT[a]} <tspan class="n">${sn.axes[a].score}</tspan></text>` }).join('') : ''
+    return `<svg class="snow" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="الخماسية: ${SNOW_AXES.map((a) => `${AXIS_AR[a]} ${sn.axes[a].score} من 6`).join('، ')}">${rings}${spokes}<path d="${d}" fill="${snowColor(sn.total)}" fill-opacity="0.88" stroke="${snowColor(sn.total)}" stroke-width="1.5"/>${text}</svg>`
+  }
+
+  // One line per check: a coloured lead-in, then what was measured. SWS's wording, our numbers.
+  function checkLine(id, c, q, b) {
+    const ind = b?.industries?.[q.industry] ?? b?.sectors?.[q.sector] ?? {}
+    const v = c.value
+    const P = (x, d = 1) => (Number.isFinite(x) ? `<b class="n">${fmt(x * 100, d)}%</b>` : '—')
+    const X = (x, d = 1) => (Number.isFinite(x) ? `<b class="n">${fmt(x, d)}</b>` : '—')
+    const T = {
+      V1: ['أقل من القيمة العادلة بـ 20%', `السعر ${Number.isFinite(v) ? `${v < 0 ? 'أقل' : 'أعلى'} من قيمتنا العادلة بـ ${P(Math.abs(v))}` : 'بدون قيمة عادلة'}.`],
+      V2: ['أقل من القيمة العادلة بـ 40%', `الشرط: السعر أقل من القيمة العادلة بـ 40% أو أكثر.`],
+      V3: ['مكرر الربح مقابل السوق', `مكرره ${X(v)} ومتوسط السوق ${X(b?.pe)}.`],
+      V4: ['مكرر الربح مقابل القطاع', `مكرره ${X(v)} ومتوسط قطاعه ${X(ind.pe)}.`],
+      V5: ['PEG بين 0 و1', `PEG على نمو السنة الجاية المتوقع: ${X(v, 2)}.`],
+      V6: ['P/B مقابل القطاع', `السعر ÷ القيمة الدفترية ${X(v, 2)} ومتوسط قطاعه ${X(ind.pb, 2)}.`],
+      F1: ['النمو أعلى من العائد الآمن', `نمو الربح المتوقع ${P(v)} والعائد الآمن ${P(b?.savings)}.`],
+      F2: ['نمو الربح مقابل السوق', `نمو الربح المتوقع ${P(v)} والسوق ${P(b?.eg)}.`],
+      F3: ['نمو الإيراد مقابل السوق', `نمو الإيراد المتوقع ${P(v)} والسوق ${P(b?.rg)}.`],
+      F4: ['نمو ربح عالي (فوق 20%)', `نمو الربح المتوقع ${P(v)} للسنة الجاية.`],
+      F5: ['نمو إيراد عالي (فوق 20%)', `نمو الإيراد المتوقع ${P(v)} للسنة الجاية.`],
+      F6: ['عائد مستقبلي على حقوق المساهمين فوق 20%', `ربح السهم المتوقع ÷ القيمة الدفترية: ${P(v)}.`],
+      P1: ['نمو الربح مقابل القطاع', `نمو ربح السهم آخر 12 شهر ${P(v)} ووسيط قطاعه ${P(ind.eg1)}.`],
+      P2: ['الربح أعلى من قبل 5 سنين', `ربح السهم تغيّر ${P(v)} عن 5 سنين قبل.`],
+      P3: ['نمو متسارع', `نمو آخر سنة أعلى من متوسط 5 سنين (${P(v)} سنوياً).`],
+      P4: ['عائد على حقوق المساهمين فوق 20%', `العائد ${X(v)}%.`],
+      P5: ['العائد على رأس المال يتحسن', `EBITDA ÷ الأصول اليوم ${P(v)}، مقارنة بقبل 3 سنين.`],
+      P6: ['العائد على الأصول مقابل القطاع', `العائد ${X(v)}% ووسيط قطاعه ${X(ind.roa)}%.`],
+      H1: ['الأصول القصيرة تغطي الالتزامات القصيرة', `النسبة ${X(v, 2)}×.`],
+      H2: ['الأصول القصيرة تغطي الالتزامات الطويلة', `النسبة ${X(v, 2)}×.`],
+      H3: ['الدين ما زاد عن 5 سنين', `الدين ÷ الأصول اليوم ${P(v)} مقارنة بقبل 5 سنين.`],
+      H4: ['مستوى الدين (صافي الدين ÷ حقوق المساهمين تحت 40%)', `النسبة ${P(v)}.`],
+      H5: q.free_cash_flow_ttm < 0 ? ['الكاش يكفي سنة على الحرق الحالي', `يكفي ${X(v)} سنة.`] : ['التدفق التشغيلي يغطي الدين', `التدفق التشغيلي ÷ الدين ${P(v)} (المطلوب فوق 20%).`],
+      H6: q.free_cash_flow_ttm < 0 ? ['الكاش يكفي سنة لو زاد الحرق بنفس اتجاهه', `يكفي ${X(v)} سنة.`] : ['الأرباح تغطي الفوائد 5 مرات', `التغطية ${X(v)}×.`],
+      B1: ['الرافعة (الأصول ÷ حقوق المساهمين تحت 20)', `${X(v)}×.`],
+      B2: ['تغطية القروض المتعثرة', 'TradingView ما يعطي بيانات القروض.'], B3: ['نسبة القروض المتعثرة', 'TradingView ما يعطي بيانات القروض.'],
+      B4: ['التمويل من الودائع', 'TradingView ما يعطي بيانات الودائع.'], B5: ['القروض ÷ الأصول', 'TradingView ما يعطي بيانات القروض.'], B6: ['القروض ÷ الودائع', 'TradingView ما يعطي بيانات القروض والودائع.'],
+      D1: ['توزيعات ملحوظة', `العائد ${X(v, 2)}% وأقل ربع في السوق ${X(b?.yP25, 2)}%.`],
+      D2: ['توزيعات عالية', `العائد ${X(v, 2)}% وأعلى ربع في السوق ${X(b?.yP75, 2)}%.`],
+      D3: ['توزيعات مستقرة', 'تدفع من 10 سنين بدون نزول أكثر من 10% بأي سنة.'],
+      D4: ['توزيعات تنمو', `التوزيع اليوم مقارنة بقبل 10 سنين${Number.isFinite(v) ? `: ${P(v)}` : ''}.`],
+      D5: ['الأرباح تغطي التوزيعات', `نسبة التوزيع ${X(v, 0)}% (الحد ${c.limit ?? 90}%).`],
+      D6: ['التوزيعات الجاية مغطاة', `نسبة التوزيع على ربح السنة الجاية ${X(v, 0)}%.`],
+    }[id] ?? [id, '']
+    const icon = c.status === 'pass' ? '<i class="ck ok" aria-label="ناجح">✓</i>' : c.status === 'fail' ? '<i class="ck no" aria-label="ساقط">✕</i>' : '<i class="ck na" aria-label="ما فيه بيانات">!</i>'
+    const body = c.status === 'na' && !/^B[2-6]$/.test(id) ? 'ما فيه بيانات كافية.' : T[1]
+    return `<li class="${c.status}">${icon}<span><b class="lead">${T[0]}:</b> ${body}${c.approx ? ' <small class="dim">(تقريبي)</small>' : ''}</span></li>`
+  }
+
+  function snowBlock(sym) {
+    const sn = state.snow[sym]
+    const q = state.quotes[sym] || {}
+    if (!sn) return ''
+    const b = BENCH?.[sym.startsWith('TADAWUL:') ? 'sa' : 'us']
+    const e = state.ehs[sym]
+    const all = SNOW_AXES.flatMap((a) => sn.axes[a].checks)
+    const good = all.filter((c) => c.status === 'pass' && ['F4', 'F2', 'P2', 'V1', 'D3', 'H4'].includes(c.id)).slice(0, 3)
+    const bad = all.filter((c) => c.status === 'fail' && ['H4', 'H6', 'D5', 'H5', 'F1', 'P3'].includes(c.id) && !(c.id.startsWith('D') && !(q.dividends_yield > 0))).slice(0, 3)
+    const g = (x) => (Number.isFinite(x) ? pct(x / 100, 0) : '—')
+    const stat = (k, v, sub = '') => `<div class="st"><span>${k}</span><b class="n">${v}</b>${sub ? `<small class="n">${sub}</small>` : ''}</div>`
+    const letter = e?.letter ?? '—'
+    return `<div class="part snowcard" style="grid-column:1/-1">
+      <div class="snowfig">${snowSvg(sn)}<p class="dim">نجح في <b class="n">${sn.total}</b> من 30 فحص${SNOW_AXES.some((a) => sn.axes[a].judged < 6) ? ` (<b class="n">${30 - SNOW_AXES.reduce((s, a) => s + sn.axes[a].judged, 0)}</b> بدون بيانات)` : ''}</p></div>
+      <div class="snowside">
+        <div class="ehs"><span class="grade g-${letter}" title="درجة الأرباح (طريقة Earnings Hub): 5 مقاييس، كل واحد 0–3 حسب ربعه بين ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'أسهم S&P 500'}">${letter}</span>
+          <div><b>درجة الأرباح</b> <span class="n dim">${e ? `${e.total}/15` : ''}</span>
+          <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip p${e.parts[m.key].points}" title="${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ المبيعات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>
+        <div class="stats">
+          ${stat('القيمة السوقية', big(mv(q)).replace(/<[^>]+>/g, ''))}
+          ${stat('P/E', fmt(q.price_earnings_ttm))}
+          ${stat('Fwd P/E', fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy))}
+          ${stat('P/S', mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—')}
+          ${stat('الإيرادات (12 شهر)', big(q.total_revenue_ttm).replace(/<[^>]+>/g, ''), g(q.total_revenue_yoy_growth_ttm))}
+          ${stat('ربح السهم (12 شهر)', fmt(q.earnings_per_share_diluted_ttm, 2), g(q.earnings_per_share_diluted_yoy_growth_ttm))}
+        </div>
+        <div class="rr"><div><h4>المكافآت</h4>${good.length ? `<ul class="checks">${good.map((c) => checkLine(c.id, c, q, b)).join('')}</ul>` : '<p class="dim">ما فيه مكافآت بارزة من الفحوصات.</p>'}</div>
+          <div><h4>المخاطر</h4>${bad.length ? `<ul class="checks">${bad.map((c) => checkLine(c.id, c, q, b)).join('')}</ul>` : '<p class="dim">ما طلعت مخاطر من فحوصاتنا.</p>'}</div></div>
+      </div>
+      <details class="axes"><summary>الفحوصات الـ 30 بالتفصيل</summary>
+        <div class="axgrid">${SNOW_AXES.map((a) => `<section><h4>${AXIS_AR[a]} <span class="n dim">${sn.axes[a].score}/${sn.axes[a].judged}</span></h4><ul class="checks">${sn.axes[a].checks.map((c) => checkLine(c.id, c, q, b)).join('')}</ul></section>`).join('')}</div>
+        <p class="dim">الفحوصات من نموذج Simply Wall St المنشور (رخصة CC BY-NC-SA 4.0) على بيانات TradingView، والدرجة من شرح Earnings Hub. "تقريبي" يعني بياناتنا أقل من بياناتهم (مثلاً توقع سنة وحدة بدل 3). ما اختبرناها على تاريخ أسهمنا: وصف، مو إشارة شراء.</p>
+      </details>
+    </div>`
+  }
+
+  function earnBlock(sym) {
+    const q = state.quotes[sym] || {}
+    if (!Number.isFinite(q.earnings_per_share_fq) && !Number.isFinite(q.earnings_release_next_date)) return ''
+    const when = (t) => (t === 1 ? 'بعد الإغلاق' : t === -1 ? 'قبل الافتتاح' : '')
+    const day = (ts) => (Number.isFinite(ts) ? new Date(ts * 1000).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }) : '—')
+    const days = Number.isFinite(q.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - Math.floor(Date.now() / 86400000) : null
+    const beat = (x) => (Number.isFinite(x) ? `<b class="n ${x >= 0 ? 'hi' : 'lo'}">${pct(x / 100, 1)}</b>` : '—')
+    const log = Object.values(state.elog[sym]?.q ?? {})
+    const beats = log.filter((r) => Number.isFinite(r.revSurp))
+    return `<div class="part earn" style="grid-column:1/-1"><h3><span>الأرباح</span></h3>
+      <div class="ecards">
+        ${days != null && days >= 0 ? `<div class="ecard next"><h4>التقرير الجاي ${days === 0 ? 'اليوم' : `بعد <span class="n">${days}</span> ${days === 1 ? 'يوم' : days === 2 ? 'يومين' : days <= 10 ? 'أيام' : 'يوم'}`}</h4><p>${day(q.earnings_release_next_date)} ${when(q.earnings_release_next_time)}</p>
+          <div class="pair"><div><span>الإيراد المتوقع</span><b class="n">${big(q.revenue_forecast_next_fq).replace(/<[^>]+>/g, '')}</b></div><div><span>ربح السهم المتوقع</span><b class="n">${fmt(q.earnings_per_share_forecast_next_fq, 2)}</b></div></div></div>` : ''}
+        ${Number.isFinite(q.earnings_per_share_fq) ? `<div class="ecard last ${(q.eps_surprise_percent_fq ?? 0) >= 0 && (q.revenue_surprise_percent_fq ?? 0) >= 0 ? 'pos' : 'neg'}"><h4>آخر ربع</h4><p>${day(q.earnings_release_date)} ${when(q.earnings_release_time)}</p>
+          <table class="ptable"><thead><tr><th></th><th>المتوقع</th><th>الفعلي</th><th>الفرق</th></tr></thead><tbody>
+            <tr><th>الإيراد</th><td class="n">${big(q.revenue_forecast_fq).replace(/<[^>]+>/g, '')}</td><td class="n">${big(q.total_revenue_fq).replace(/<[^>]+>/g, '')}</td><td>${beat(q.revenue_surprise_percent_fq)}</td></tr>
+            <tr><th>ربح السهم</th><td class="n">${fmt(q.earnings_per_share_forecast_fq, 2)}</td><td class="n">${fmt(q.earnings_per_share_fq, 2)}</td><td>${beat(q.eps_surprise_percent_fq)}</td></tr>
+          </tbody></table></div>` : ''}
+      </div>
+      <p class="dim">${beats.length > 1 ? `الإيراد تفوّق على التوقعات <b class="n">${beats.filter((r) => r.revSurp >= 0).length}</b> مرات في <b class="n">${beats.length}</b> أرباع محفوظة.` : 'TradingView ما يعطي تاريخ التوقعات، فنحفظ كل ربع من أول ما تفتح السهم بعد تقريره، وعدد مرات التفوق يكبر مع الوقت.'}</p>
+    </div>`
+  }
+
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -1285,7 +1419,9 @@
       ...runwayTile(q),
     ]
     return `<div class="dgrid">
+      ${snowBlock(sym)}
       ${fairBlock(sym)}
+      ${earnBlock(sym)}
       ${svrBlock(sym)}
       ${projBlock(sym)}
       ${expBlock(sym)}
