@@ -1,6 +1,6 @@
 ;(() => {
   const SERVER = 'Trading view MCP'
-  const T = { batch: 'mcp-tv-get-symbol-data-batch', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news' }
+  const T = { batch: 'mcp-tv-get-symbol-data-batch', px: 'mcp-tv-get-ohlcv', search: 'mcp-tv-search-symbols', news: 'mcp-tv-get-news', docs: 'mcp-tv-get-documents', docView: 'mcp-tv-get-document-view' }
   // TradingView caps tool calls per day (shared with Claude sessions; resets 00:00 UTC), so the
   // background work is event-driven: fundamentals only when a stock's quote shows a newer fiscal
   // period (50 stocks per call); monthly prices for favourites once a month, other stocks every
@@ -83,7 +83,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -1362,9 +1362,105 @@
     </div>`
   }
 
+  // Quarterly revenue, net income and EPS, oldest first: the h/ doc's 32 quarters when loaded (labelled by
+  // the calendar quarter each period ends in), else the saved q/ doc's 16 with TradingView's own labels.
+  function quarters(sym) {
+    const h = state.hist[sym]?.h
+    if (h?.total_revenue_fq_h?.length && Number.isFinite(h.fiscal_period_end_fq)) {
+      const end = new Date(h.fiscal_period_end_fq * 1000)
+      return h.total_revenue_fq_h.map((rev, i) => {
+        const d = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - 3 * i, 15))
+        return { label: `Q${Math.floor(d.getUTCMonth() / 3) + 1} ’${String(d.getUTCFullYear()).slice(2)}`, rev, ni: h.net_income_fq_h?.[i] ?? null, eps: h.earnings_per_share_diluted_fq_h?.[i] ?? null }
+      }).reverse()
+    }
+    const fq = state.quarters[sym]?.fq
+    if (!fq?.labels?.length) return []
+    const v = (k, i) => (Number.isFinite(fq.series?.[k]?.[i]?.value) ? fq.series[k][i].value : null)
+    return fq.labels.map((l, i) => ({ label: l.replace(/^Q(\d) 20(\d\d)$/, 'Q$1 ’$2'), rev: v('revenue', i), ni: v('net_income', i), eps: v('eps', i) }))
+  }
+
+  /** Bars for one series (actuals, the next quarter's estimate hatched), drawn to one scale. */
+  function qChart(rows, key, est, cur) {
+    const W = 720
+    const H = 210
+    const pad = { l: 8, r: 58, t: 14, b: 26 }
+    const vals = rows.map((r) => r[key])
+    const all = [...vals, est].filter(Number.isFinite)
+    if (all.length < 2) return '<p class="dim">ما فيه أرقام ربعية كافية.</p>'
+    const hi = Math.max(0, ...all)
+    const lo = Math.min(0, ...all)
+    const n = rows.length + (Number.isFinite(est) ? 1 : 0)
+    const bw = (W - pad.l - pad.r) / n
+    const y = (v) => pad.t + ((hi - v) / (hi - lo || 1)) * (H - pad.t - pad.b)
+    const fmtV = (v) => { if (key === 'eps') return fmt(v, 2); const a = Math.abs(v); return a >= 1e12 ? `${fmt(v / 1e12, 2)}T` : a >= 1e9 ? `${fmt(v / 1e9, 1)}B` : a >= 1e6 ? `${fmt(v / 1e6, 0)}M` : fmt(v, 0) }
+    const bar = (v, i, cls) => (Number.isFinite(v) ? `<rect x="${(pad.l + i * bw + bw * 0.15).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${Math.max(1, Math.abs(y(v) - y(0))).toFixed(1)}" class="${cls}${v < 0 ? ' neg' : ''}"><title>${esc(rows[i]?.label ?? 'الربع الجاي (توقع)')}: ${fmtV(v)}</title></rect>` : '')
+    const ticks = [hi, (hi + lo) / 2, lo].map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" class="grid"/><text x="${W - pad.r + 6}" y="${(y(t) + 4).toFixed(1)}" class="axis">${fmtV(t)}</text>`).join('')
+    const labels = rows.map((r, i) => (i % 4 === rows.length % 4 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
+    return `<svg class="qchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${key === 'rev' ? 'الإيرادات' : key === 'eps' ? 'ربح السهم' : 'صافي الربح'} ربعياً" dir="ltr">
+      <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--accent)" stroke-width="2"/></pattern></defs>
+      ${ticks}${rows.map((r, i) => bar(r[key], i, 'act')).join('')}${Number.isFinite(est) ? bar(est, rows.length, 'est') : ''}
+      ${Number.isFinite(cur) ? `<line x1="${(pad.l + (rows.length - 1) * bw + bw * 0.1).toFixed(1)}" x2="${(pad.l + rows.length * bw - bw * 0.1).toFixed(1)}" y1="${y(cur).toFixed(1)}" y2="${y(cur).toFixed(1)}" class="estmark"><title>المتوقع للربع الأخير: ${fmtV(cur)}</title></line>` : ''}
+      ${labels}<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/></svg>`
+  }
+
+  // Net margin per quarter and over the last twelve months: rising or falling?
+  function marginView(rows) {
+    const m = rows.map((r) => (r.rev > 0 && Number.isFinite(r.ni) ? r.ni / r.rev : null))
+    const ttm = (end) => { const w = rows.slice(end - 3, end + 1); return w.length === 4 && w.every((r) => r.rev > 0 && Number.isFinite(r.ni)) ? w.reduce((a, r) => a + r.ni, 0) / w.reduce((a, r) => a + r.rev, 0) : null }
+    const last = rows.length - 1
+    const now = ttm(last)
+    const yr = ttm(last - 4)
+    const y3 = ttm(last - 12)
+    if (now == null) return ''
+    const W = 720
+    const H = 90
+    const pts = m.map((v, i) => (Number.isFinite(v) ? [8 + (i / Math.max(1, rows.length - 1)) * (W - 86), v] : null))
+    const vs = pts.filter(Boolean).map((p) => p[1])
+    const hi = Math.max(...vs)
+    const lo = Math.min(0, ...vs)
+    const y = (v) => 8 + ((hi - v) / (hi - lo || 1)) * (H - 16)
+    const path = pts.filter(Boolean).map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${y(p[1]).toFixed(1)}`).join('')
+    const dir = yr == null ? '' : now > yr + 0.005 ? '<b class="hi">يرتفع</b>' : now < yr - 0.005 ? '<b class="lo">ينزل</b>' : '<b>ثابت تقريباً</b>'
+    return `<div class="margin"><h4>هامش صافي الربح</h4>
+      <p>آخر 12 شهر <b class="n">${pct(now, 1).replace('+', '')}</b>${yr != null ? `، وقبل سنة <b class="n">${pct(yr, 1).replace('+', '')}</b>: ${dir}` : ''}${y3 != null ? `. قبل 3 سنين <b class="n">${pct(y3, 1).replace('+', '')}</b>` : ''}.</p>
+      <svg class="qchart" viewBox="0 0 ${W} ${H}" dir="ltr" role="img" aria-label="هامش صافي الربح ربعياً"><line x1="8" x2="${W - 58}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/><path d="${path}" class="mline"/>${pts.map((p, i) => (p ? `<circle cx="${p[0].toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="${i === last ? 4 : 2.2}" class="mdot"><title>${esc(rows[i].label)}: ${pct(p[1], 1).replace('+', '')}</title></circle>` : '')).join('')}<text x="${W - 70}" y="${(y(m[last] ?? now) + 4).toFixed(1)}" class="axis">${pct(m[last] ?? now, 1).replace('+', '')}</text></svg></div>`
+  }
+
+  // The company's own outlook, from the summary of its last earnings call (Quartr, through TradingView),
+  // saved in g/<sym> and asked again only after a newer report.
+  async function loadGuide(sym) {
+    if (!mcp || state.guide[sym]?.loading) return
+    if (!(sym in state.guide) && db) {
+      const snap = await db.doc(`g/${sym}`).get().catch(() => null)
+      if (snap?.exists) state.guide[sym] = snap.data()
+    }
+    const g = state.guide[sym]
+    const rep = state.quotes[sym]?.earnings_release_date
+    if (g && !g.error && !(Number.isFinite(rep) && rep > (g.reported ?? 0) + 86400)) return
+    if (g?.error && Date.now() - (g.at ?? 0) < 6e5) return
+    state.guide[sym] = { ...(g ?? {}), loading: true }
+    try {
+      const list = await call(T.docs, { symbol: sym, category: 'transcripts', event: 'earning', limit: 1 })
+      const item = list?.items?.[0]
+      const view = item?.views?.find((v) => v.type === 'summary')
+      if (!view) throw { code: 'no_doc' }
+      const doc = await call(T.docView, { view_id: view.id })
+      const kids = doc?.astDescription?.children ?? []
+      const text = (n) => (typeof n === 'string' ? n : (n?.children ?? []).map(text).join(''))
+      const at = kids.findIndex((k) => /outlook|guidance/i.test(text(k)) && text(k).length < 60)
+      const list2 = at >= 0 ? kids.slice(at + 1).find((k) => (k.children ?? []).some((c) => c.type === 'list')) : null
+      const bullets = list2 ? list2.children.filter((c) => c.type === 'list').flatMap((l) => l.children.map(text)).filter(Boolean).slice(0, 6) : []
+      state.guide[sym] = { sym, title: item.title ?? '', reported: item.reported ?? null, bullets, fetchedAt: Date.now() }
+      await save(`g/${sym}`, state.guide[sym])
+    } catch (e) {
+      state.guide[sym] = { ...(g ?? {}), sym, error: e?.code === 'no_doc' ? 'ما لقينا ملخص مكالمة أرباح لهالسهم.' : explainError(e), at: Date.now() }
+    }
+    if (state.open === sym) redraw(sym)
+  }
+
   function earnBlock(sym) {
     const q = state.quotes[sym] || {}
-    if (!Number.isFinite(q.earnings_per_share_fq) && !Number.isFinite(q.earnings_release_next_date)) return ''
+    if (!Number.isFinite(q.earnings_per_share_fq) && !Number.isFinite(q.earnings_release_next_date) && quarters(sym).length < 4) return ''
     const when = (t) => (t === 1 ? 'بعد الإغلاق' : t === -1 ? 'قبل الافتتاح' : '')
     const day = (ts) => (Number.isFinite(ts) ? new Date(ts * 1000).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }) : '—')
     const days = Number.isFinite(q.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - Math.floor(Date.now() / 86400000) : null
@@ -1381,6 +1477,25 @@
             <tr><th>ربح السهم</th><td class="n">${fmt(q.earnings_per_share_forecast_fq, 2)}</td><td class="n">${fmt(q.earnings_per_share_fq, 2)}</td><td>${beat(q.eps_surprise_percent_fq)}</td></tr>
           </tbody></table></div>` : ''}
       </div>
+      ${(() => {
+        const rows = quarters(sym)
+        if (rows.length < 4) return ''
+        const v = state.eView[sym] ?? { m: 'rev', n: 16 }
+        const shown = rows.slice(-v.n)
+        const est = v.m === 'rev' ? q.revenue_forecast_next_fq : v.m === 'eps' ? q.earnings_per_share_forecast_next_fq : null
+        const cur = v.m === 'rev' ? q.revenue_forecast_fq : v.m === 'eps' ? q.earnings_per_share_forecast_fq : null
+        const btn = (k, val, label) => `<button type="button" data-ev="${esc(sym)}|${k}|${val}" aria-pressed="${String(v[k]) === String(val)}">${label}</button>`
+        return `<div class="qhead"><div class="seg">${btn('m', 'rev', 'الإيرادات')}${btn('m', 'ni', 'صافي الربح')}${btn('m', 'eps', 'ربح السهم')}</div><div class="seg">${btn('n', 16, '4 سنين')}${rows.length > 16 ? btn('n', 32, '8 سنين') : ''}</div></div>
+          ${qChart(shown, v.m, est, cur)}
+          <p class="dim legend-q"><i class="lg act"></i> الفعلي ${est != null ? '<i class="lg est"></i> توقع الربع الجاي' : ''} ${cur != null ? '<i class="lg mk"></i> المتوقع للربع الأخير' : ''}</p>
+          ${marginView(rows)}`
+      })()}
+      ${(() => {
+        const g = state.guide[sym]
+        if (!g || g.loading) return `<div class="guide"><h4>توجيهات الشركة</h4><p class="dim">${g?.loading ? 'جاري جلب ملخص آخر مكالمة أرباح…' : '—'}</p></div>`
+        if (g.error) return `<div class="guide"><h4>توجيهات الشركة</h4><p class="dim">${esc(g.error)}</p></div>`
+        return `<div class="guide"><h4>توجيهات الشركة <span class="dim">(من ملخص مكالمة ${esc(g.title)}، بالإنجليزي كما نشرها المصدر)</span></h4>${g.bullets.length ? `<ul dir="ltr" lang="en">${g.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>` : '<p class="dim">الملخص ما فيه قسم توجيهات.</p>'}</div>`
+      })()}
       <p class="dim">${beats.length > 1 ? `الإيراد تفوّق على التوقعات <b class="n">${beats.filter((r) => r.revSurp >= 0).length}</b> مرات في <b class="n">${beats.length}</b> أرباع محفوظة.` : 'TradingView ما يعطي تاريخ التوقعات، فنحفظ كل ربع من أول ما تفتح السهم بعد تقريره، وعدد مرات التفوق يكبر مع الوقت.'}</p>
     </div>`
   }
@@ -1691,10 +1806,13 @@
     loadNews(sym)
     loadHist(sym)
     loadElog(sym)
+    loadGuide(sym)
     if (mcp && cacheRead && fundsDue(sym)) loadFunds([sym]).then(scheduleRender, () => {})
     if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
   $('rows').addEventListener('click', (e) => {
+    const ev = e.target.closest('button[data-ev]')
+    if (ev) { e.stopPropagation(); const [sym, k, val] = ev.dataset.ev.split('|'); state.eView[sym] = { ...(state.eView[sym] ?? { m: 'rev', n: 16 }), [k]: k === 'n' ? Number(val) : val }; redraw(sym); return }
     const star = e.target.closest('button[data-star]')
     if (star) { e.stopPropagation(); toggleFav(star.dataset.star); return }
     const del = e.target.closest('button[data-del]')

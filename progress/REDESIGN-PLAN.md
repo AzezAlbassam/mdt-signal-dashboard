@@ -303,6 +303,28 @@ a script (§3, phase 3).
     - the SWS-style section charts (price-target band, EPS cone, debt history, dividends);
     - the list view and polish.
 
+- **2026-11-08, v27 (the user asked for guidance, more quarters and net margin):**
+  - **Earnings section:** a quarterly bar chart of revenue, net income or EPS over 4 or 8 years, with
+    the next quarter's estimate hatched and the last quarter's estimate marked.
+  - **Net margin:** a line per quarter, plus the last twelve months against a year ago and 3 years
+    ago, labelled rising or falling.
+  - **Company guidance:** the "Outlook and guidance" bullets from the latest earnings-call summary
+    (TradingView get-documents → get-document-view, Quartr), saved in `g/<sym>` and asked again
+    after a newer report. The bullets stay in English, as the source publishes them.
+  - **Whisper numbers:** not in TradingView (Earnings Whispers' own product), so not shown.
+  - **Correctness check against the user's SWS screenshots for AAPL:**
+
+    | Check | SWS | Ours |
+    |---|---|---|
+    | Future ROE | 120.8% | 122.6% |
+    | Net debt ÷ equity | 20.9% (pass) | 25.9% (pass) |
+    | Operating cash flow ÷ debt | 181% | 169% |
+    | Interest coverage | insufficient data | na |
+    | V1 / V2 | fail | fail |
+    | Notable dividend | fail | fail |
+
+    The remaining gaps come from TradingView's debt and cash definitions.
+
 ## 4. Honesty on the page
 
 - The snowflake and EHS are descriptive summaries, "not tested on our data", like study 14's
