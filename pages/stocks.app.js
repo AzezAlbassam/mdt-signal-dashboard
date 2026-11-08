@@ -15,10 +15,18 @@
     'price_book_fq', 'return_on_invested_capital_fy', 'return_on_equity', 'piotroski_f_score_ttm', 'altman_z_score_ttm', 'price_target_1y', 'gross_margin',
     'debt_to_equity', 'net_debt_fq', 'revenue_forecast_next_fy', 'total_revenue_ttm', 'earnings_release_next_date', 'eps_surprise_percent_fq', 'revenue_surprise_percent_fq', 'industry',
     'total_revenue_fq', 'fiscal_period_end_fq', 'fiscal_period_end_fy', 'earnings_per_share_fy', 'total_revenue_fy', 'fiscal_period_fy', 'free_cash_flow_ttm',
-    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta', 'total_shares_outstanding', 'net_income_ttm', 'cash_n_short_term_invest_fq', 'oper_income_ttm', 'beta_5_year', 'total_debt_fq']
+    'piotroski_f_score_fy', 'change', 'price_52_week_high', 'price_52_week_low', 'dividends_yield', 'beta', 'total_shares_outstanding', 'net_income_ttm', 'cash_n_short_term_invest_fq', 'oper_income_ttm', 'beta_5_year', 'total_debt_fq',
+    // Snowflake and the Earnings Hub card (progress/REDESIGN-PLAN.md): balance sheet, coverage, dividends, analysts, earnings.
+    'total_current_assets_fq', 'total_current_liabilities_fq', 'total_liabilities_fq', 'total_equity_fq', 'current_ratio_fq',
+    'cash_f_operating_activities_ttm', 'interst_cover_ttm', 'effective_interest_rate_on_debt_ttm', 'total_assets_to_equity_fq', 'return_on_assets',
+    'dividend_payout_ratio_ttm', 'dividend_payout_ratio_fy', 'price_target_high', 'price_target_low', 'recommendation_total', 'Volatility.W',
+    'earnings_per_share_diluted_yoy_growth_ttm', 'total_revenue_yoy_growth_ttm', 'earnings_per_share_fq', 'earnings_per_share_forecast_fq',
+    'earnings_per_share_forecast_next_fq', 'revenue_forecast_fq', 'revenue_forecast_next_fq', 'earnings_release_next_time', 'earnings_release_date', 'earnings_release_time']
   // Revenue, net income and EPS histories for the SVR chart (newest first; 32 quarters, 20 years).
   const H_COLS = ['total_revenue_fq_h', 'net_income_fq_h', 'earnings_per_share_diluted_fq_h', 'total_revenue_fy_h', 'net_income_fy_h',
-    'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq']
+    'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq',
+    // the snowflake's histories that the saved fiscal years lack
+    'dps_common_stock_prim_issue_fy_h', 'total_assets_fy_h', 'total_debt_fy_h', 'free_cash_flow_fy_h', 'ebitda_fy_h']
   const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'أرضية الكاش (الكاش الصافي للسهم)', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
@@ -34,6 +42,7 @@
   const SECTOR_PE = /*SECTORS*/null
   // Target operating margins for the revenue DCF (scripts/build-peer-margins.js).
   const PEERS = /*PEERS*/null
+  const BENCH = /*BENCH*/null // pages/bench.json: S&P 500 and TASI benchmarks (scripts/build-bench.js)
   const SECTOR_AR = {
     'Technology Services': 'خدمات التقنية (برمجيات وإنترنت)', 'Electronic Technology': 'التقنية الإلكترونية (رقائق وأجهزة)', Finance: 'المالية (بنوك وتأمين ومدفوعات)',
     'Health Technology': 'التقنية الصحية (أدوية وأجهزة طبية)', 'Retail Trade': 'التجزئة', 'Consumer Non-Durables': 'السلع الاستهلاكية الأساسية',
@@ -74,7 +83,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
+  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -314,7 +323,7 @@
   // than throwing). Monthly prices come from loadPx when the stock is opened (older docs' px is still read).
   async function loadHist(sym) {
     const doc = state.hist[sym]
-    const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity)
+    const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity) || !('total_assets_fy_h' in (doc.h ?? {}))
     if (!mcp || doc?.loading || !stale || Date.now() - (doc?.at ?? 0) < 6e5) return
     state.hist[sym] = { ...doc, loading: true }
     try {
@@ -323,6 +332,7 @@
       if (!h?.total_revenue_fq_h) throw { code: p?.success === false ? 'server_unavailable' : 'no_history' }
       state.hist[sym] = { sym, h, px: doc?.px ?? null, fetchedAt: Date.now() }
       if (db) await db.doc(`h/${sym}`).set(state.hist[sym]).catch(() => {})
+      compute(sym)
     } catch (e) {
       state.hist[sym] = doc?.h ? { ...doc, at: Date.now() }
         : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.' : explainError(e) }
@@ -440,6 +450,30 @@
     state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
     state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
     state.rdcf[sym] = (fv?.profile === 'Unprofitable growth' || preProfit(sym)) && !sym.startsWith('TADAWUL:') ? rdcfFor(sym, funds) : null
+    // Snowflake and EHS (descriptive, not tested): histories from the saved fiscal years, the h/ doc when loaded.
+    const b = BENCH?.[sym.startsWith('TADAWUL:') ? 'sa' : 'us']
+    const nf = [...funds].reverse()
+    const hist = { earnings_per_share_diluted_fy_h: nf.map((f) => f.eps), ebitda_fy_h: nf.map((f) => f.ebitda), total_debt_fy_h: nf.map((f) => f.debt), free_cash_flow_fy_h: nf.map((f) => f.fcf) }
+    state.snow[sym] = b ? snowflake({ ...q, ...hist, ...(state.hist[sym]?.h ?? {}) }, b, state.fair[sym]?.fair ?? null) : null
+    const e = b ? ehsScore(q, b.ehs) : null
+    state.ehs[sym] = e ? { ...e, letter: ehsLetter(e.total, b.ehs) } : null
+  }
+
+  // Each quarter's estimates and actuals, kept from the first time a stock is opened after its report:
+  // TradingView has no history of them, so "beat N of M quarters" grows from here (e/<sym>).
+  async function loadElog(sym) {
+    if (!db || state.elog[sym]) return
+    const snap = await db.doc(`e/${sym}`).get().catch(() => null)
+    state.elog[sym] = snap?.exists ? snap.data() : { sym, q: {} }
+    const qt = state.quotes[sym]
+    const k = qt?.fiscal_period_end_fq
+    if (Number.isFinite(k) && Number.isFinite(qt.earnings_per_share_fq) && !state.elog[sym].q?.[k]) {
+      const row = { epsAct: qt.earnings_per_share_fq, epsEst: qt.earnings_per_share_forecast_fq ?? null, revAct: qt.total_revenue_fq ?? null,
+        revEst: qt.revenue_forecast_fq ?? null, epsSurp: qt.eps_surprise_percent_fq ?? null, revSurp: qt.revenue_surprise_percent_fq ?? null, at: qt.earnings_release_date ?? null }
+      state.elog[sym] = { ...state.elog[sym], q: { ...(state.elog[sym].q ?? {}), [k]: row } }
+      await save(`e/${sym}`, { sym, q: { [k]: row } })
+    }
+    if (state.open === sym) redraw(sym)
   }
 
   let busy = false
@@ -1519,7 +1553,8 @@
     redraw(sym)
     if (!state.open) return
     loadNews(sym)
-    if (preProfit(sym)) loadHist(sym)
+    loadHist(sym)
+    loadElog(sym)
     if (mcp && cacheRead && fundsDue(sym)) loadFunds([sym]).then(scheduleRender, () => {})
     if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
