@@ -201,13 +201,35 @@ a script (§3, phase 3).
   - **Other blocks:** competitors as mini snowflakes; shareholder returns 7D / 1Y against industry
     and market; a low-to-high volatility gauge; earnings and revenue as a waterfall (revenue → cost →
     gross profit → other expenses → earnings).
+- **From the second batch of screenshots** (10 in all):
+  - **Check rows have three marks:** a green ✓ circle (pass), a red ✗ circle (fail) and a red ⚠
+    triangle (insufficient data), each followed by a coloured bold lead-in and one sentence with the
+    number, e.g. "Debt Level: AAPL's net debt to equity ratio (20.9%) is considered satisfactory."
+  - **Chart conventions:**
+    - a "Past | Forecast" split, with the forecast years shaded gold;
+    - a hover box (date, then the values in their series colours);
+    - legend chips that toggle series;
+    - Data and ⋯ buttons under each chart.
+  - **Analyst price targets:** the price in blue, the average 1-year target in purple with a band,
+    agreement "Good" when the targets spread less than 15% from the average, and the check "target
+    lower than price". TradingView has the target average, high and low, so the band can be drawn.
+  - **EPS growth:** the actual line, then the analysts' forecast as a teal cone. We have next-FY
+    only, so the cone covers one year.
+  - **Future ROE:** a red → yellow → green half-circle gauge, company against industry.
+  - **Revenue and expenses:** a flow (Sankey) from revenue to gross profit and cost of sales, then
+    earnings and expenses. We have no segment or expense split, so ours is revenue → gross profit /
+    cost → net income / other.
+  - **Debt to equity history:** debt (red area) against equity (blue area). With no equity history,
+    ours is debt and total-assets history with today's equity, labelled as such.
+  - **Dividend stability:** yield (blue area), payments (teal bars), annual amount (purple steps) and
+    the forecast zone. We have DPS history, the current yield and the next-FY payout.
 - **Tadawul benchmark:** the TASI constituents (user, 2026-11-08); the US uses the S&P 500.
 
 ## 3. Phases
 
 | # | Phase | Output | Checks |
 |---|---|---|---|
-| 0 | User | SWS screenshots (5 received, more coming); benchmark OK'd: S&P 500 and TASI | — |
+| 0 | User | SWS screenshots (10 received, done); benchmark OK'd: S&P 500 and TASI | — |
 | 1 | Data probe, 1–2 batch calls | Confirm the ~20 new quote columns, `dps_*_fy_h`, and the earnings estimate and surprise columns; update `redesign-mapping.md` | — |
 | 2 | Engine | `engine/snowflake.js` (30 checks → `{axis, id, status, value, threshold, note}`) and `engine/ehs.js`, both inlined by `build-stocks-page.js` | Unit tests on the 7 probe stocks' real rows |
 | 3 | Benchmarks | `scripts/build-bench.js` → `pages/bench.json`: market and industry P/E, P/B, ROA, EPS growth, forecast growth, yield P25/P75, EHS quartile cut points, for US and Tadawul (2–4 `run_screener` calls), inlined like `sector-pe.json` | Spot-check against known values |
