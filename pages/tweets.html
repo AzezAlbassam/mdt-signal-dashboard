@@ -67,6 +67,8 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 .shots { display: grid; gap: 10px; }
 .shot { margin: 0; display: grid; gap: 6px; }
 .shot img { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #0e141a; object-fit: contain; }
+.shot img.photo { object-fit: cover; }
+.shot .credit { font-size: 12px; } .shot .credit a { color: inherit; }
 .shot figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
 .links a { color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; }
@@ -135,6 +137,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
         ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
         ${parts(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count">${[...x].length} حرف</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${deco(x)}</div>`).join('')}
         ${t.charts?.length ? `<div class="shots">${t.charts.map((c, i) => `<figure class="shot"><img data-shot="${esc(t.id)}|${i}" alt="${esc(c.title)}"><figcaption><span>${esc(c.title)}</span><button class="btn" type="button" data-save="${esc(t.id)}|${i}" hidden>حفظ الصورة</button><span class="hint" hidden>اضغط مطوّل على الصورة واحفظها</span></figcaption></figure>`).join('')}</div>` : ''}
+        ${t.photos?.length ? `<div class="shots">${t.photos.map((ph, i) => `<figure class="shot"><img class="photo" src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy"><figcaption><span>${esc(ph.caption)}</span>${ph.credit ? `<span class="credit">${ph.page ? `<a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>` : esc(ph.credit)}</span>` : ''}<button class="btn" type="button" data-photo="${esc(t.id)}|${i}" hidden>حفظ الصورة</button></figcaption></figure>`).join('')}</div>` : ''}
         ${t.links?.length ? `<div class="links">${t.links.filter((l) => /^https:\/\/(www\.)?tradingview\.com\//.test(l.url)).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>` : ''}
         <div class="foot">${parts(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
           <button class="btn ${t.status === 'posted' ? 'ok' : ''}" type="button" data-post="${esc(t.id)}" aria-pressed="${t.status === 'posted'}">${t.status === 'posted' ? '✓ نشرتها' : 'علّم إنها نُشرت'}</button>
@@ -156,15 +159,18 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
   const num = (v, unit = '') => (unit === '$' ? '$' : '') + (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2)).replace(/\.0+$|(\.\d*?)0+$/, '$1') + (unit === '%' ? '%' : '')
   // Numbers inside Arabic text are isolated left-to-right, so "87%" never renders as "%87".
   const iso = (s) => String(s ?? '').replace(/[-+$]?\d[\d.,]*%?/g, (m) => '\u2066' + m + '\u2069')
+  // A chart whose title has no Arabic is an English chart: left-to-right, first bar on the left.
+  const isRtl = (c) => /[\u0600-\u06FF]/.test(c.title ?? '')
   function frame(ctx, c, foot) {
+    const rtl = isRtl(c), x = rtl ? W - 48 : 48
     ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
-    ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'
-    ctx.fillStyle = C.ink; ctx.font = '800 40px "Noto Kufi Arabic"'; ctx.fillText(iso(c.title), W - 48, 78)
-    if (c.subtitle) { ctx.fillStyle = C.muted; ctx.font = '500 24px "IBM Plex Sans Arabic"'; ctx.fillText(iso(c.subtitle), W - 48, 118) }
-    ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'; ctx.fillText(iso(foot), W - 48, H - 28)
+    ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = rtl ? 'right' : 'left'; ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = C.ink; ctx.font = '800 40px "Noto Kufi Arabic"'; ctx.fillText(iso(c.title), x, 78)
+    if (c.subtitle) { ctx.fillStyle = C.muted; ctx.font = '500 24px "IBM Plex Sans Arabic"'; ctx.fillText(iso(c.subtitle), x, 118) }
+    ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'; ctx.fillText(iso(foot), x, H - 28)
   }
   function bars(ctx, c) {
-    frame(ctx, c, c.source || 'المصدر: TradingView')
+    frame(ctx, c, c.source || (isRtl(c) ? 'المصدر: TradingView' : 'Source: TradingView'))
     const top = 170, bot = H - 120, L = 60, R = W - 60, n = c.bars.length
     const max = Math.max(...c.bars.map((b) => Math.abs(b.value))), hasNeg = c.bars.some((b) => b.value < 0), hasPos = c.bars.some((b) => b.value > 0)
     const zero = hasNeg && hasPos ? top + (bot - top) * (Math.max(...c.bars.map((b) => b.value)) / (Math.max(...c.bars.map((b) => b.value)) - Math.min(...c.bars.map((b) => b.value)))) : hasNeg ? top : bot
@@ -172,13 +178,13 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
     const slot = (R - L) / n, bw = Math.min(90, slot * 0.62)
     ctx.strokeStyle = C.grid; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L, zero); ctx.lineTo(R, zero); ctx.stroke()
     c.bars.forEach((b, i) => {
-      const x = R - slot * (i + 0.5), h = b.value * span // first bar on the right (RTL reading order)
+      const x = isRtl(c) ? R - slot * (i + 0.5) : L + slot * (i + 0.5), h = b.value * span // first bar where reading starts
       ctx.fillStyle = b.value >= 0 ? C.up : C.down
       const y0 = Math.min(zero, zero - h), hh = Math.max(2, Math.abs(h))
       ctx.beginPath(); ctx.roundRect(x - bw / 2, y0, bw, hh, b.value >= 0 ? [6, 6, 0, 0] : [0, 0, 6, 6]); ctx.fill()
       ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillStyle = C.ink; ctx.font = `600 ${n > 10 ? 19 : 24}px "IBM Plex Mono"`
       ctx.fillText(num(b.value, c.unit), x, b.value >= 0 ? zero - h - 12 : zero - h + 32)
-      ctx.direction = 'rtl'; ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'
+      ctx.direction = isRtl(c) ? 'rtl' : 'ltr'; ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'
       ctx.fillText(b.label, x, b.value >= 0 ? zero + 30 : zero - 14)
     })
   }
@@ -188,7 +194,9 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
     if (v.length < 2) throw new Error('no bars')
     const day = (s) => new Date(s * 1000).toISOString().slice(0, 10)
     const last = day(t.at(-1))
-    frame(ctx, c, `المصدر: TradingView · ${c.symbol} · ${fmtDay(day(t[0]), { month: 'short', year: 'numeric' })} – ${fmtDay(last, { day: 'numeric', month: 'short', year: 'numeric' })}`)
+    const en = (iso, o) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', ...o })
+    frame(ctx, c, isRtl(c) ? `المصدر: TradingView · ${c.symbol} · ${fmtDay(day(t[0]), { month: 'short', year: 'numeric' })} – ${fmtDay(last, { day: 'numeric', month: 'short', year: 'numeric' })}`
+      : `Source: TradingView · ${c.symbol} · ${en(day(t[0]), { month: 'short', year: 'numeric' })} – ${en(last, { month: 'short', day: 'numeric', year: 'numeric' })}`)
     const top = 160, bot = H - 100, L = 120, R = W - 60
     const step = ((r) => { const e = 10 ** Math.floor(Math.log10(r)); return [1, 2, 2.5, 5, 10].find((m) => m * e >= r) * e })((Math.max(...v) - Math.min(...v)) / 4)
     const lo = Math.floor(Math.min(...v) / step) * step, hi = Math.ceil(Math.max(...v) / step) * step
@@ -225,6 +233,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
     return pending.get(key)
   }
   function drawShots(list) {
+    document.querySelectorAll('[data-photo]').forEach((b) => { b.hidden = !downloads })
     for (const t of list) (t.charts ?? []).forEach((c, i) => {
       drawOne(t, i).then((s) => {
         const img = document.querySelector(`img[data-shot="${CSS.escape(t.id + '|' + i)}"]`)
@@ -251,6 +260,17 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
       try { await navigator.clipboard.writeText(parts(t)[+k]); toast('انتسخت') } catch {
         const r = document.createRange(); r.selectNodeContents($(`body-${id}-${k}`)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('حدّدتها لك، انسخها')
       }
+      return
+    }
+    const ph = e.target.closest('[data-photo]')
+    if (ph && downloads) {
+      const [id, i] = ph.dataset.photo.split('|')
+      const p = tweets.find((x) => x.id === id)?.photos?.[+i]
+      try {
+        const blob = await (await fetch(p.src)).blob()
+        const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+        await downloads.save({ filename: `${id}-photo-${+i + 1}.${ext}`, data: blob }); toast('انحفظت')
+      } catch (err) { if (err?.code !== 'declined') toast('ما انحفظت. اضغط مطوّل على الصورة واحفظها.') }
       return
     }
     const sv = e.target.closest('[data-save]')
