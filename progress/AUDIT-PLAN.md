@@ -323,9 +323,9 @@ home-made ones; text delivered so that line breaks survive copying.
    fair-value moves). Test changes: the MU check expects 1627.23 (1.3), the browser check's failed-batch
    scenario clears `stocks.bgAt` first (1.5). **Open for step 2:** 1.2 annualises what is left of the
    forecast year over as little as a quarter, which multiplies a small mismatch between the forecast and
-   the twelve months by up to 4: KO's forecast year is 2% under its twelve months, so its DCF starts at
-   −7.6% (77.39 → 58.26) while analysts expect +4% for the year; NVO −20% (clamped), FSLR −13%. Weigh
-   this with the DCF fade-start change below (e.g. blend toward forecast ÷ last year by the time left).
+   the twelve months by up to 4: KO (saved data, half a year left) −2.9% against +3.0% for the year, DCF
+   77.39 → 58.26 (live after its Q3: −7.6%); NVO −20% (clamped), FSLR −13%. Weigh this with the DCF
+   fade-start change below (e.g. blend toward forecast ÷ last year by the time left). → done in v29.
 2. **v29 — the two "by reasoning" fixes of 2.2 that remove plainly wrong numbers, labelled untested:**
    - REITs (industry "Real Estate Investment Trusts"): no P/B-from-ROE leg; weights EV/EBITDA 0.5,
      P/S 0.25, 5-year-average P/E 0.25 (Study 18's option C, provisional until it reports); the score's
@@ -336,6 +336,13 @@ home-made ones; text delivered so that line breaks survive copying.
    - DCF fade start `min(g1, clamp(3-year revenue growth), 25%)`; no DCF row for Heavy/cyclical.
    - The Lynch line shows the P/E it implies. One discount rate on the panel.
    - Not now: the Saudi discount rate (needs a cited source first; raise it with the numbers when found).
+   **Done 2026-11-10 (v29, published), all labelled untested:** REIT weights and debt check (`scoreAt`
+   `opts.debt`), P/B-from-ROE only at P/B ≤ 4 (every stock), DCF fade start from the 3-year revenue growth
+   and no DCF row for Heavy, Lynch row shows its P/E, "السعر يفترض نمو" says it uses a fixed 9%, and the
+   1.2 rate blended by the time left (KO 0.0% instead of −2.9%). Per-stock diff `reports/v29-today.txt`
+   (233 changed; the change log carries the 225 fair-value moves). **Seen, for Study 18 (E4):** a lower
+   DCF moves the weighted median and can flip which method the ⅓/3× rule drops (WDC 331 → 98, its 3-year
+   revenue growth negative from the SanDisk spin-off; MPWR 650 → 261).
 3. **Tweets page, small items (5.1, 5.2, 5.5)** in `pages/tweets.html`: feedback buttons, idea inbox,
    280-character mark and post/thread switch. Independent of the dashboard; do it right after step 2.
 4. **v30 — Phase 3 items 1–5** (the phone list and panel), then **additions 1, 2 (display), 3, 4, 5** as

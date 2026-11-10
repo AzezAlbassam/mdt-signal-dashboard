@@ -97,3 +97,12 @@ test('live: twelve months with no year-ago twelve months are compared with the l
   assert.ok(at(0.98) < at(1.02), 'twelve months below the last fiscal year lose the revenue and EPS checks')
   assert.ok(at(1) > at(0.98), 'twelve months that are the fiscal year compare with the year before it')
 })
+
+test('opts.debt keeps the debt checks for a financial (REITs on the live page, audit 2.2)', () => {
+  const f = funds().map((x) => ({ ...x, debt: 6 * x.ebitda }))
+  const plain = scoreAt(f, closes(), 'Finance', '2021-10', true)
+  const reit = scoreAt(f, closes(), 'Finance', '2021-10', true, { debt: true })
+  assert.equal(plain.detail.d1, null)
+  assert.equal(reit.detail.d1, 0) // debt 6× EBITDA
+  assert.ok(reit.parts.D < plain.parts.D)
+})

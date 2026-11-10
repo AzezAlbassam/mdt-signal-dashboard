@@ -49,7 +49,7 @@ export function impliedGrowth(fcfPS, price, r = 0.09, gT = 0.025) {
  * loans, so implied growth, cash conversion and the two FCF checks said nothing), and months
  * with a multiple above MULT_MAX are left out of the price history.
  */
-export function scoreAt(funds, closes, sector, month, live = false) {
+export function scoreAt(funds, closes, sector, month, live = false, opts = {}) {
   const close = closes.get(month)
   const fy = lastUsableFiscalYear(month)
   const useFy = live ? Infinity : fy
@@ -66,6 +66,9 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   const S = stateFn(funds, month, live)
   const st = S(month)
   const fin = sector === 'Finance'
+  // POST-HOC (2026-11-10, audit 2.2, live page only, untested): opts.debt keeps the debt checks for a financial
+  // whose debt is real borrowing (REITs: O got safety 2/2 at debt 6.1× EBITDA because Finance skipped them).
+  const debtCk = !fin || !!opts.debt
   const mcap = pos(st?.shares) ? close * st.shares : null
   if (!num(f0.rev) || f0.rev <= 0 || (mcap != null && f0.rev < 0.01 * mcap)) return { total: null, reason: 'pre-revenue' }
 
@@ -126,12 +129,12 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   const losses = ni5.filter((x) => x < 0).length
   const d2 = ni5.length ? Math.max(0, 1 - losses / 3) : null
   let d1 = null
-  if (!fin) {
+  if (debtCk) {
     const debt = f0.debt ?? 0
     d1 = debt === 0 ? 1 : pos(f0.ebitda) ? lin(debt / f0.ebitda, 4, 1) : 0
   }
   Object.assign(detail, { d1, d2, losses })
-  const D = d2 == null ? null : fin ? 2 * d2 : d1 + d2
+  const D = d2 == null ? null : debtCk ? d1 + d2 : 2 * d2
 
   // E. Direction (partial Piotroski)
   const checks = []
@@ -143,7 +146,7 @@ export function scoreAt(funds, closes, sector, month, live = false) {
     if (num(f0.eps) && num(f1.eps)) checks.push(f0.eps > f1.eps)
     if (num(f0.ebitda) && num(f1.ebitda) && pos(f1.rev)) checks.push(f0.ebitda / f0.rev > f1.ebitda / f1.rev)
     if (num(f0.gp) && num(f1.gp) && pos(f1.rev)) checks.push(f0.gp / f0.rev > f1.gp / f1.rev)
-    if (!fin) {
+    if (debtCk) {
       if (num(f0.ebitda) && num(f1.ebitda)) {
         if (pos(f0.ebitda) && pos(f1.ebitda) && num(f0.debt) && num(f1.debt)) checks.push(f0.debt / f0.ebitda < f1.debt / f1.ebitda)
       } else if (num(f0.debt) && num(f1.debt)) checks.push(f0.debt < f1.debt)

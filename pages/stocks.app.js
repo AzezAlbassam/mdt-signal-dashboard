@@ -455,10 +455,19 @@
   // no value, as the engine's own rule (fixed 2026-10-21: MU, a loss in FY2023, had lost the method
   // while growing revenue 105% a year); the DCF starts from analysts' growth for the forecast year
   // and discounts at a CAPM rate (see liveDcf).
-  function liveFairValues(fv, q, funds, g = null) {
+  // POST-HOC (2026-11-10, audit 2.2, live only, untested: no history of forecasts or book values to test on):
+  // REITs are valued on EV/EBITDA 50%, P/S 25% and the 5-year-average P/E 25% (Study 18's option C until it
+  // reports), never on P/B from ROE: ROE after depreciation is not a REIT's return (O: ROE 3.45% gave 0.15×
+  // book, 6.08 at a 59.50 price). Other financials keep that leg only at 0 < P/B ≤ 4; above it the leg's own
+  // cap of 4× book binds and it measures nothing (V 59% and MA 52% of price): they are valued on their own
+  // P/E history, the configuration the studies tested.
+  const REIT = 'Real Estate Investment Trusts'
+  const REIT_W = METHODS.map((m) => ({ ev: 0.5, ps: 0.25, pen: 0.25 })[m] ?? 0)
+  function liveFairValues(fv, q, funds, g = null, revG3 = null) {
     const v = { ...fv.values }
     if (!(g >= 0.1)) v.peg = null
-    const d = liveDcf(q, fv.values.dcf)
+    const reit = fv.profile === 'Financial' && q.industry === REIT
+    const d = liveDcf(q, fv.values.dcf, revG3)
     if (d) v.dcf = d.value
     const close = q.close
     const bvps = q.price_book_fq > 0 ? close / q.price_book_fq : null
@@ -466,7 +475,7 @@
     const roe = Number.isFinite(q.return_on_equity) ? q.return_on_equity / 100 : null
     const shares = allShares(q)
     if (eps > 0 && bvps > 0) v.graham = Math.sqrt(22.5 * eps * bvps)
-    if (bvps > 0 && roe != null) {
+    if (bvps > 0 && roe != null && !reit && q.price_book_fq <= 4) {
       const x = bvps * Math.min(4, (roe - PARAMS.termGrowth) / (PARAMS.discount - PARAMS.termGrowth))
       v.pbj = x > 0 ? x : null
     }
@@ -477,11 +486,11 @@
     }
     // POST-HOC (2026-10-22, display only; the blend is the same): PEG outside Lynch's rule gets no weight,
     // like Graham, and coverage is over the weights left (KO showed 85% with every method there).
-    const weights = WEIGHTS[fv.profile].map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
+    const weights = (reit ? REIT_W : WEIGHTS[fv.profile]).map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
     // POST-HOC (2026-10-23, study 16 D2 C): a method above 3× or below ⅓ of the methods' weighted median is left out.
     const b = blendTrimmed(v, weights)
     const used = METHODS.filter((m, i) => weights[i] > 0 && v[m] > 0).map((m) => v[m])
-    return { values: v, weights, profile: fv.profile, fair: b?.fair ?? null, dropped: b?.dropped ?? [], med: b?.med ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
+    return { values: v, weights, profile: fv.profile, reit, lynchPE: g >= 0.1 ? 100 * Math.min(PARAMS.maxGrowth, g) : null, fair: b?.fair ?? null, dropped: b?.dropped ?? [], med: b?.med ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
@@ -492,7 +501,10 @@
   // The 5-year beta, as Yahoo and Damodaran use (TradingView's plain 'beta' is the 1-year one: KO
   // −0.11, MU 3.01 against 2.23 over 5 years; fixed 2026-10-21).
   const beta5 = (q) => (Number.isFinite(q?.beta_5_year) ? q.beta_5_year : Number.isFinite(q?.beta) ? q.beta : null)
-  function liveDcf(q, fallback) {
+  // POST-HOC (2026-11-10, audit 2.2, untested): years 2–10 fade from min(year 1, 3-year revenue growth held
+  // within −5%…25%, 25%), not from one forecast year: XOM's +34.2% rebound year was carried for a decade
+  // (DCF 715.84 at a 164.73 price).
+  function liveDcf(q, fallback, revG3 = null) {
     const shares = allShares(q) // free cash flow is the whole company's (TKO: on Class A only, DCF 1207 vs 466)
     const fcf0 = shares && Number.isFinite(q.free_cash_flow_ttm) ? q.free_cash_flow_ttm / shares : null
     if (!(fcf0 > 0)) return null
@@ -501,7 +513,7 @@
     if (g1 == null) return fallback > 0 ? { value: fallback, g1: null, r: PARAMS.discount, beta: null } : null
     const r = beta5(q) != null ? Math.min(0.13, Math.max(0.07, 0.045 + beta5(q) * 0.042)) : PARAMS.discount
     const gT = PARAMS.termGrowth
-    const G = Math.min(g1, 0.25)
+    const G = Math.min(g1, 0.25, Number.isFinite(revG3) ? Math.max(-0.05, Math.min(0.25, revG3)) : Infinity)
     let cf = fcf0 * (1 + g1)
     let pv = cf / (1 + r)
     for (let t = 2; t <= 10; t += 1) {
@@ -509,7 +521,7 @@
       pv += cf / (1 + r) ** t
     }
     pv += (cf * (1 + gT)) / (r - gT) / (1 + r) ** 10
-    return { value: pv, g1, r, beta: beta5(q) }
+    return { value: pv, g1, G, r, beta: beta5(q) }
   }
 
   // POST-HOC (2026-11-10, audit 1.2): the growth still ahead of the last twelve months, a year's worth.
@@ -527,7 +539,14 @@
     const yr = 365.25 * 86400
     const span = (q.fiscal_period_end_fy + yr - q.fiscal_period_end_fq) / yr
     if (span < 0.125) return a
-    return (q.revenue_forecast_next_fy / q.total_revenue_ttm) ** (1 / Math.max(0.25, span)) - 1
+    // POST-HOC (2026-11-10, audit 2.2 follow-up of 1.2, untested): with less than a year left the annualised
+    // rest is weighted by the share of the year left and the forecast year's own growth fills the rest. Over a
+    // quarter the annualising multiplied a small gap between the forecast and the twelve months by 4: KO (saved
+    // 2026-11-10, Q2, half a year left) −2.9% against +3.0% for the year, DCF 58.26; now 0.0%, 67.13 (after its
+    // Q3, live: −7.6%). Under steady growth both rates are the same, so the step-free year stays.
+    const t = Math.min(1, Math.max(0.25, span))
+    const ann = (q.revenue_forecast_next_fy / q.total_revenue_ttm) ** (1 / Math.max(0.25, span)) - 1
+    return t * ann + (1 - t) * a
   }
 
   // Monthly closes from the saved history, this month at the quote's price.
@@ -558,7 +577,7 @@
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
     // Today and the recent history from the last twelve months when quarterly results are saved.
     const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares, d.fyEnd ?? q.fiscal_period_end_fy)
-    const s = scoreAt(funds, closes, q.sector, month, live)
+    const s = scoreAt(funds, closes, q.sector, month, live, { debt: q.industry === REIT })
     state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
     const fv = fairValuesAt(funds, closes, q.sector, month, live)
     // POST-HOC (2026-10-22): a method whose multiple today is above MULT_MAX (earnings or EBITDA near
@@ -566,7 +585,7 @@
     const now = multiplesAt(live.state(month), q.close)
     const capped = fv ? ['pe', 'pen', 'ev'].filter((k) => fv.values[k] > 0 && !(now[k] <= MULT_MAX)) : []
     for (const k of capped) fv.values[k] = null
-    state.fair[sym] = fv ? { ...liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG), capped } : null
+    state.fair[sym] = fv ? { ...liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG, s.detail?.revG), capped } : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
     state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
     state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: revAhead(q), revNow: q.total_revenue_ttm, live })
@@ -1208,7 +1227,7 @@
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>وش ينتظره السوق</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
       <p>${flagTxt}</p>
-      ${fin || !e ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً · الشركة حققت <b class="n">${pct(e?.revG)}</b> (${gYears(sym)}) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
+      ${fin || !e ? '' : `<p>السعر يفترض نمو <b class="n">${pct(e?.gStar)}</b> سنوياً (بخصم ثابت 9%، مو خصم الـ DCF اللي فوق) · الشركة حققت <b class="n">${pct(e?.revG)}</b> (${gYears(sym)}) و<b class="n">${pct(e?.yoy)}</b> آخر سنة · الفرق <b class="n">${pct(e?.gap)}</b></p>`}
       <p>توقع المحللين لسنة ${fyNext(q) ?? 'التوقع'} المالية: ${fin ? '' : `الإيرادات <b class="n ${a.rev < 0 ? 'lo' : ''}">${pct(a.rev)}</b> · `}ربح السهم المعدّل <b class="n ${a.eps < 0 ? 'lo' : ''}">${pct(a.eps)}</b> مقارنة بسنة ${fyNext(q) ? fyNext(q) - 1 : 'آخر سنة'} المعلنة. آخر تقرير: الربح جا ${Number.isFinite(q.eps_surprise_percent_fq) ? `${q.eps_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} من توقع المحللين بـ <b class="n">${pct(Math.abs(q.eps_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}، والإيرادات ${Number.isFinite(q.revenue_surprise_percent_fq) ? `${q.revenue_surprise_percent_fq >= 0 ? 'أعلى' : 'أقل'} بـ <b class="n">${pct(Math.abs(q.revenue_surprise_percent_fq) / 100).replace('+', '')}</b>` : '<b class="n">—</b>'}.</p>
       <p class="dim">جربنا الأحمر والأخضر على 819 سهم من 2012 لين 2025: الأحمر ما نزل أكثر من غيره، والأخضر ما طلع أكثر من غيره، في المتوسط. فخذها كتنبيه تسأل عنه، مو قرار شراء أو بيع.</p>
       <h3 style="margin-top:6px"><span>آخر الأخبار</span></h3>${newsHtml}
@@ -1260,10 +1279,13 @@
       const v = f.values[m]
       if (!(w > 0) && !(v > 0)) return ''
       if (m === 'dcf' && q.sector === 'Finance' && !(w > 0)) return '' // a bank's FCF moves with deposits (GS: $13,117 against $891)
+      if (m === 'dcf' && f.profile === 'Heavy / cyclical' && !(w > 0)) return '' // audit 2.2: no weight, and one cycle year carried for ten
+      if (m === 'pbj' && f.reit) return ''
       if (m === 'pb' && !(v > 0)) return `<div class="off"><span>${METHOD_NAMES[m]}</span><b>ما فيه تاريخ للقيمة الدفترية</b></div>`
       const gone = f.dropped?.includes(m)
       const used = w > 0 && v > 0 && !gone
-      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}${gone ? ' · انشالت' : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
+      const pe = m === 'peg' && f.lynchPE ? ` <small class="dim">= مكرر <span class="n">${fmt(f.lynchPE, 1)}</span></small>` : '' // audit 2: why the rule is low
+      return `<div class="${used ? '' : 'off'}"><span>${METHOD_NAMES[m]}${pe}${w > 0 ? ` · ${Math.round(w * 100)}%` : ''}${gone ? ' · انشالت' : ''}</span><b class="n">${v > 0 ? fmt(v, dp(q)) : '—'}</b></div>`
     }).join('')
     const pre = f.profile === 'Pre-revenue'
     const d = f.dcf
@@ -1271,7 +1293,8 @@
     const noQ = !state.scores[sym]?.period && state.scores[sym]?.f0?.year
     const notes = [
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
-      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
+      f.reit ? 'صندوق عقاري: بـ EV/EBITDA و P/S ومتوسط ربح 5 سنين، بدون P/B من العائد على حقوق المساهمين (العائد بعد الاستهلاك ما يمثل دخل الصندوق). ما اختبرناها على الماضي.' : '',
+      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، ${d.G < Math.min(d.g1, 0.25) - 1e-9 ? `وبعدها من <b class="n">${pct(d.G)}</b> (نمو مبيعاتها آخر 3 سنين) ` : ''}يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
       f.dropped?.length ? `${f.dropped.map((m) => `${METHOD_NAMES[m]} (${f.values[m] > f.med ? 'أكثر من 3 أضعافه' : 'أقل من ثلثه'})`).join(' و')}: بعيدة عن الوسيط الموزون لطرق السهم (<b class="n">${fmt(f.med, dp(q))}</b>)، فانشالت من المتوسط. دراسة 16: كذا صارت القيمة أقرب للسعر بعد سنة في 12 من 14 سنة.` : '',
@@ -1280,7 +1303,7 @@
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
     return `<div class="part fv" style="grid-column:1/-1">
-      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
+      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
       <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
       <div class="fair-list">${rows}</div>
@@ -1709,7 +1732,7 @@
       ${issuanceBlock(sym)}
       ${ideasBlock(sym)}
       ${part('السعر', p.A, `<p>أرخص من ${cheaper == null ? '<b class="n">—</b> من شهوره' : cheaper <= 0 ? '<b>أغلى من كل شهوره</b>' : cheaper >= 1 ? '<b>أرخص من كل شهوره</b>' : `<b class="n">${pct(cheaper).replace('+', '')}</b> من شهوره`} في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
-        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : Number.isFinite(d.gStar) ? `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`
+        <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : Number.isFinite(d.gStar) ? `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً (بخصم ثابت 9%، مو خصم الـ DCF)، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`
           : `${Number.isFinite(d.revG) ? `الشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}. ` : ''}النمو اللي يفترضه السعر ما ينحسب: ${f0.fcf < 0 ? 'التدفق النقدي الحر سالب' : 'بيانات التدفق النقدي ناقصة'}.`}</p>`)}
       ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : !last3.length ? '—' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
