@@ -1,0 +1,21 @@
+// Builds /tmp/claude-0/-home-user-mdt-signal-dashboard/54968d20-8dbc-546c-8282-8a92848f6362/scratchpad/audit-page/stocks.html from pages/stocks.template.html by inlining engine/fairvalue.js,
+// engine/score.js and the page logic pages/stocks.app.js, so the page computes the score with exactly the tested code. Each
+// module runs in its own scope and hands its exports to the page, like an ES module would.
+//   node scripts/build-stocks-page.js
+import fs from 'node:fs'
+
+function inline(file) {
+  const src = fs.readFileSync(file, 'utf8')
+  const names = [...src.matchAll(/^export (?:const|function|async function) ([A-Za-z_$][\w$]*)/gm)].map((m) => m[1])
+  const body = src
+    .split('\n')
+    .filter((l) => !/^import .* from /.test(l))
+    .map((l) => l.replace(/^export (const|function|async function)/, '$1'))
+    .join('\n')
+  return `// ---- ${file}\nconst { ${names.join(', ')} } = (() => {\n${body}\nreturn { ${names.join(', ')} }\n})();\n`
+}
+
+const engine = ['engine/fairvalue.js', 'engine/score.js', 'engine/expectations.js', 'engine/projection.js', 'engine/svr.js', 'engine/ranks.js', 'engine/rdcf.js', 'engine/snowflake.js', 'engine/ehs.js'].map(inline).join('\n')
+const page = fs.readFileSync('pages/stocks.template.html', 'utf8').replace('/*ENGINE*/', () => engine).replace('/*APP*/', () => fs.readFileSync('pages/stocks.app.js', 'utf8').replace('/*SECTORS*/null', () => fs.readFileSync('pages/sector-pe.json', 'utf8')).replace('/*PEERS*/null', () => fs.readFileSync('pages/peer-margins.json', 'utf8')).replace('/*BENCH*/null', () => fs.readFileSync('pages/bench.json', 'utf8')))
+fs.writeFileSync('/tmp/claude-0/-home-user-mdt-signal-dashboard/54968d20-8dbc-546c-8282-8a92848f6362/scratchpad/audit-page/stocks.html', page)
+console.log(`/tmp/claude-0/-home-user-mdt-signal-dashboard/54968d20-8dbc-546c-8282-8a92848f6362/scratchpad/audit-page/stocks.html: ${page.length} bytes`)

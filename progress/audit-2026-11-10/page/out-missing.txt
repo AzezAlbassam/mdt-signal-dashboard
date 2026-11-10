@@ -1,0 +1,1 @@
+missing | first: ما فيه بيانات مالية سنوية لهذا السهم | after pressing refresh: ما فيه بيانات مالية سنوية لهذا السهم | saved doc: {"sym":"NASDAQ:AAA","fundsAt":1794320888003,"missing":true,"fyEnd":1767139200,"pxTried":true,"pxAt":1794320888004,"px":"[px]"} | fundsDue: [ false, false ] {"quotes":2,"funds":1,"get-ohlcv":1,"total":4}
