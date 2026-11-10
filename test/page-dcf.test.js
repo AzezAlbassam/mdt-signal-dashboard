@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { pageFns } from './lib/page-fns.js'
 
-const P = pageFns(['beta5', 'analysts', 'revAhead', 'liveDcf', 'REIT', 'REIT_W', 'liveFairValues'])
+const P = pageFns(['beta5', 'analysts', 'revAhead', 'liveDcf', 'REIT', 'REIT_W', 'LIGHT_FIN', 'liveFairValues'])
 const YR = 365.25 * 86400
 const fyEnd = Date.UTC(2025, 11, 31) / 1000
 const base = { close: 100, market_cap_basic: 100e9, total_shares_outstanding: 1e9, currency: 'USD', description: '', sector: 'X', beta_5_year: 1,
@@ -60,7 +60,12 @@ test('REITs: EV/EBITDA, P/S and 5-year P/E, no P/B from ROE; other financials ke
   assert.ok(Math.abs(reit.fair - (0.5 * 60 + 0.25 * 55 + 0.25 * 58)) < 1e-9, `REIT fair ${reit.fair}`)
   const bank = P.liveFairValues(fv, { ...q, industry: 'Major Banks', return_on_equity: 15 }, [])
   assert.ok(bank.values.pbj > 0, 'P/B 1.4: the leg stays')
-  const visa = P.liveFairValues(fv, { ...q, industry: 'Finance/Rental/Leasing', return_on_equity: 50, price_book_fq: 15 }, [])
-  assert.equal(visa.values.pbj, null, 'P/B 15: the leg is capped at 4× book and says nothing')
-  assert.equal(visa.fair, 50, 'valued on its own P/E history')
+  const ins = P.liveFairValues(fv, { ...q, industry: 'Life/Health Insurance', return_on_equity: 50, price_book_fq: 15 }, [])
+  assert.equal(ins.values.pbj, null, 'P/B 15: the leg is capped at 4× book and says nothing')
+  assert.equal(ins.fair, 50, 'valued on its own P/E history')
+  // Study 18 E1 C (adopted): a lender or asset manager is weighted like a REIT
+  const lender = P.liveFairValues(fv, { ...q, industry: 'Finance/Rental/Leasing' }, [])
+  assert.equal(lender.light, true)
+  assert.ok(Math.abs(lender.fair - (0.5 * 60 + 0.25 * 55 + 0.25 * 58)) < 1e-9, `lender fair ${lender.fair}`)
+  assert.equal(bank.light, false, 'banks keep P/E and P/B')
 })

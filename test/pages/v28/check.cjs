@@ -190,7 +190,7 @@ const CASES = {
       const panel = await page.evaluate(() => { const d = document.querySelector('#rows tr.detail'); return { bars: d.querySelectorAll('.part.range .rbar').length, analysts: /12 محلل/.test(d.innerText), track: d.querySelector('.part.track')?.innerText.replace(/\s+/g, ' ') ?? '' } })
       return { soon, panel }
     })
-    const ok = !r.soon.hidden && r.soon.items === 1 && /بعد 3 أيام/.test(r.soon.text) && r.panel.bars === 2 && r.panel.analysts && /قبل سنة/.test(r.panel.track) && /مشى صوب القيمة/.test(r.panel.track)
+    const ok = !r.soon.hidden && r.soon.items === 1 && /بعد (يومين|3 أيام)/.test(r.soon.text) && !/\d يومين/.test(r.soon.text) && r.panel.bars === 2 && r.panel.analysts && /قبل سنة/.test(r.panel.track) && /مشى صوب القيمة/.test(r.panel.track)
     return [ok, JSON.stringify(r).slice(0, 600)]
   },
 }

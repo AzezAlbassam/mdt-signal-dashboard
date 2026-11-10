@@ -465,10 +465,16 @@
   // P/E history, the configuration the studies tested.
   const REIT = 'Real Estate Investment Trusts'
   const REIT_W = METHODS.map((m) => ({ ev: 0.5, ps: 0.25, pen: 0.25 })[m] ?? 0)
+  // POST-HOC (2026-11-10, Study 18 E1, adopted: PROTOCOL-study18.md, reports/study18.txt): the same weights for
+  // the whole group of capital-light financials (REITs, lenders, brokers, insurance brokers, investment
+  // managers): closer to the price a year later in 13 of 14 years (median error 0.229 against 0.271 on P/E
+  // alone, Holm p 0.0005, and not only by sitting nearer the price). Banks and insurers keep P/E and P/B.
+  const LIGHT_FIN = new Set([REIT, 'Finance/Rental/Leasing', 'Investment Banks/Brokers', 'Insurance Brokers/Services', 'Investment Managers'])
   function liveFairValues(fv, q, funds, g = null, revG3 = null) {
     const v = { ...fv.values }
     if (!(g >= 0.1)) v.peg = null
     const reit = fv.profile === 'Financial' && q.industry === REIT
+    const light = fv.profile === 'Financial' && LIGHT_FIN.has(q.industry)
     const d = liveDcf(q, fv.values.dcf, revG3)
     if (d) v.dcf = d.value
     const close = q.close
@@ -488,11 +494,11 @@
     }
     // POST-HOC (2026-10-22, display only; the blend is the same): PEG outside Lynch's rule gets no weight,
     // like Graham, and coverage is over the weights left (KO showed 85% with every method there).
-    const weights = (reit ? REIT_W : WEIGHTS[fv.profile]).map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
+    const weights = (light ? REIT_W : WEIGHTS[fv.profile]).map((w, i) => (METHODS[i] === 'graham' || (METHODS[i] === 'peg' && !(g >= 0.1)) ? 0 : w))
     // POST-HOC (2026-10-23, study 16 D2 C): a method above 3× or below ⅓ of the methods' weighted median is left out.
     const b = blendTrimmed(v, weights)
     const used = METHODS.filter((m, i) => weights[i] > 0 && v[m] > 0).map((m) => v[m])
-    return { values: v, weights, profile: fv.profile, reit, lynchPE: g >= 0.1 ? 100 * Math.min(PARAMS.maxGrowth, g) : null, fair: b?.fair ?? null, dropped: b?.dropped ?? [], med: b?.med ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
+    return { values: v, weights, profile: fv.profile, reit, light, lynchPE: g >= 0.1 ? 100 * Math.min(PARAMS.maxGrowth, g) : null, fair: b?.fair ?? null, dropped: b?.dropped ?? [], med: b?.med ?? null, coverage: b ? b.coverage / weights.reduce((a, w) => a + w, 0) : 0, dcf: d,
       low: used.length ? Math.min(...used) : null, high: used.length ? Math.max(...used) : null }
   }
 
@@ -1438,7 +1444,7 @@
     $('soonSum').innerHTML = `تقارير الأرباح خلال 14 يوم <span class="n dim">${rows.length}</span>`
     const surp = (x) => (Number.isFinite(x) ? `<span class="${x >= 0 ? 'hi' : 'lo'} n">${pct(x / 100, 0)}</span>` : '—')
     $('soonList').innerHTML = rows.slice(0, 40).map(({ sym, q, d }) => `<li><button class="btn" type="button" data-goto="${esc(sym)}">${esc(sym.split(':')[1])}</button>
-      <span>${d === 0 ? 'اليوم' : d === 1 ? 'بكرة' : `بعد <span class="n">${d}</span> ${d === 2 ? 'يومين' : d <= 10 ? 'أيام' : 'يوم'}`} <span class="dim n">${dateOf(q.earnings_release_next_date)}</span></span>
+      <span>${d === 0 ? 'اليوم' : d === 1 ? 'بكرة' : d === 2 ? 'بعد يومين' : `بعد <span class="n">${d}</span> ${d <= 10 ? 'أيام' : 'يوم'}`} <span class="dim n">${dateOf(q.earnings_release_next_date)}</span></span>
       <span>ربح السهم المتوقع <b class="n">${fmt(q.earnings_per_share_forecast_next_fq, 2)}</b></span>
       <span>الإيراد المتوقع <b class="n">${big(q.revenue_forecast_next_fq).replace(/<[^>]+>/g, '')}</b></span>
       <span>آخر مرة: الربح ${surp(q.eps_surprise_percent_fq)} · الإيراد ${surp(q.revenue_surprise_percent_fq)}</span></li>`).join('') + (rows.length > 40 ? `<li class="dim">و <span class="n">${rows.length - 40}</span> غيرها</li>` : '')
@@ -1488,7 +1494,7 @@
     const notes = [
       cycleNote(sym),
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
-      f.reit ? 'صندوق عقاري: بـ EV/EBITDA و P/S ومتوسط ربح 5 سنين، بدون P/B من العائد على حقوق المساهمين (العائد بعد الاستهلاك ما يمثل دخل الصندوق). ما اختبرناها على الماضي.' : '',
+      f.light ? `${f.reit ? 'صندوق عقاري' : 'شركة مالية خفيفة الأصول (تمويل، وساطة، إدارة أصول)'}: بـ EV/EBITDA (نص الوزن) و P/S ومتوسط ربح 5 سنين، بدل مكرر الربح وحده. دراسة 18: كذا كانت القيمة أقرب للسعر بعد سنة في 13 من 14 سنة (الخطأ الوسيط 0.229 بدل 0.271).${f.reit ? ' وبدون P/B من العائد على حقوق المساهمين: العائد بعد الاستهلاك ما يمثل دخل الصندوق.' : ''}` : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، ${d.G < Math.min(d.g1, 0.25) - 1e-9 ? `وبعدها من <b class="n">${pct(d.G)}</b> (نمو مبيعاتها آخر 3 سنين) ` : ''}يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
@@ -1498,7 +1504,7 @@
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
     return `<div class="part fv" style="grid-column:1/-1">
-      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
+      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : f.light ? 'مالية خفيفة الأصول' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
       <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b> (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>).`}</p>
       ${pre ? '' : `<details data-k="fvhow"${state.ctxOpen.has('fvhow') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد.</p></details>`}
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
@@ -1860,7 +1866,7 @@
     const beats = log.filter((r) => Number.isFinite(r.revSurp))
     return `<div class="part earn" style="grid-column:1/-1"><h3><span>الأرباح</span></h3>
       <div class="ecards">
-        ${days != null && days >= 0 ? `<div class="ecard next"><h4>التقرير الجاي ${days === 0 ? 'اليوم' : `بعد <span class="n">${days}</span> ${days === 1 ? 'يوم' : days === 2 ? 'يومين' : days <= 10 ? 'أيام' : 'يوم'}`}</h4><p>${day(q.earnings_release_next_date)} ${when(q.earnings_release_next_time)}</p>
+        ${days != null && days >= 0 ? `<div class="ecard next"><h4>التقرير الجاي ${days === 0 ? 'اليوم' : days === 1 ? 'بكرة' : days === 2 ? 'بعد يومين' : `بعد <span class="n">${days}</span> ${days <= 10 ? 'أيام' : 'يوم'}`}</h4><p>${day(q.earnings_release_next_date)} ${when(q.earnings_release_next_time)}</p>
           <div class="pair"><div><span>الإيراد المتوقع</span><b class="n">${big(q.revenue_forecast_next_fq).replace(/<[^>]+>/g, '')}</b></div><div><span>ربح السهم المتوقع</span><b class="n">${fmt(q.earnings_per_share_forecast_next_fq, 2)}</b></div></div></div>` : ''}
         ${Number.isFinite(q.earnings_per_share_fq) ? `<div class="ecard last ${!Number.isFinite(q.eps_surprise_percent_fq) && !Number.isFinite(q.revenue_surprise_percent_fq) ? '' : (q.eps_surprise_percent_fq ?? 0) >= 0 && (q.revenue_surprise_percent_fq ?? 0) >= 0 ? 'pos' : 'neg'}"><h4>آخر ربع</h4><p>${day(q.earnings_release_date)} ${when(q.earnings_release_time)}</p>
           <table class="ptable"><thead><tr><th></th><th>المتوقع</th><th>الفعلي</th><th>الفرق</th></tr></thead><tbody>

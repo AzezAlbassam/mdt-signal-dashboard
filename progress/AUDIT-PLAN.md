@@ -369,6 +369,11 @@ home-made ones; text delivered so that line breaks survive copying.
 5. **Study 18** (E1–E4): protocol and scripts committed before any result, run on the saved data
    (`data/fv`, `data/fv8`; no new TradingView calls beyond one batch for industries), then apply what
    passes as v32 and say what did not.
+   **Done 2026-11-10:** protocol and runner committed first (759a772), then run (`reports/study18.txt`).
+   E1 C adopted (13 of 14 years, Holm p 0.0005, δ* > 0, guard and large caps pass; pooled e 0.229 vs 0.271)
+   and applied to the whole group as v32 (published); E2, E3, E4: A stays (E2 B fails the ranking guard,
+   C p 0.45; E3 B and E4 B/C worse). The balance-sheet columns were empty in the saved data, as in Study 16,
+   so financials had P/E only in the backtest. v32 per-stock diff: `reports/v32-today.txt` (32 changed).
 6. Then Phase 3 items 6–8, additions 6–12, tweets items 4 and 6.
 
 **Why Study 18 is run rather than skipped:** Study 16 showed that a change which looks obviously right
