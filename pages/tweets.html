@@ -154,12 +154,14 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
   const shots = new Map() // id|i|spec → object URL
   const pending = new Map()
   const num = (v, unit = '') => (unit === '$' ? '$' : '') + (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2)).replace(/\.0+$|(\.\d*?)0+$/, '$1') + (unit === '%' ? '%' : '')
+  // Numbers inside Arabic text are isolated left-to-right, so "87%" never renders as "%87".
+  const iso = (s) => String(s ?? '').replace(/[-+$]?\d[\d.,]*%?/g, (m) => '\u2066' + m + '\u2069')
   function frame(ctx, c, foot) {
     ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'
-    ctx.fillStyle = C.ink; ctx.font = '800 40px "Noto Kufi Arabic"'; ctx.fillText(c.title, W - 48, 78)
-    if (c.subtitle) { ctx.fillStyle = C.muted; ctx.font = '500 24px "IBM Plex Sans Arabic"'; ctx.fillText(c.subtitle, W - 48, 118) }
-    ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'; ctx.fillText(foot, W - 48, H - 28)
+    ctx.fillStyle = C.ink; ctx.font = '800 40px "Noto Kufi Arabic"'; ctx.fillText(iso(c.title), W - 48, 78)
+    if (c.subtitle) { ctx.fillStyle = C.muted; ctx.font = '500 24px "IBM Plex Sans Arabic"'; ctx.fillText(iso(c.subtitle), W - 48, 118) }
+    ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'; ctx.fillText(iso(foot), W - 48, H - 28)
   }
   function bars(ctx, c) {
     frame(ctx, c, c.source || 'المصدر: TradingView')
@@ -174,7 +176,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
       ctx.fillStyle = b.value >= 0 ? C.up : C.down
       const y0 = Math.min(zero, zero - h), hh = Math.max(2, Math.abs(h))
       ctx.beginPath(); ctx.roundRect(x - bw / 2, y0, bw, hh, b.value >= 0 ? [6, 6, 0, 0] : [0, 0, 6, 6]); ctx.fill()
-      ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillStyle = C.ink; ctx.font = '600 24px "IBM Plex Mono"'
+      ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillStyle = C.ink; ctx.font = `600 ${n > 10 ? 19 : 24}px "IBM Plex Mono"`
       ctx.fillText(num(b.value, c.unit), x, b.value >= 0 ? zero - h - 12 : zero - h + 32)
       ctx.direction = 'rtl'; ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'
       ctx.fillText(b.label, x, b.value >= 0 ? zero + 30 : zero - 14)
