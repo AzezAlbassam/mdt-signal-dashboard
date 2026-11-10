@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id)
   const state = { snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
-    open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
+    open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '', limit: 60, focusSym: null }
   let db = null
   let mcp = null
 
@@ -110,6 +110,7 @@
 
   function notice(text, bad = false) {
     const n = $('notice')
+    clearTimeout(toastT)
     n.hidden = !text
     n.className = bad ? 'notice bad' : 'notice'
     n.textContent = text || ''
@@ -550,6 +551,16 @@
   }
 
   // Monthly closes from the saved history, this month at the quote's price.
+  // v30 (audit 3.1): months of saved closes, counted once per saved price history. weakFair asks for it per
+  // row and per sort comparison, and closesOf built a Map of 240 months each time (sorting by upside: 3.5 s).
+  const pxMonths = new WeakMap()
+  function closesN(sym) {
+    const px = state.cache[sym]?.px
+    let ms = px ? pxMonths.get(px) : null
+    if (px && !ms) { ms = new Set(); px.t.forEach((t, i) => { if (Number.isFinite(px.c[i])) ms.add(monthKey(t)) }); pxMonths.set(px, ms) }
+    const now = Number.isFinite(state.quotes[sym]?.close) && !ms?.has(monthKey(Math.floor(Date.now() / 1000)))
+    return (ms?.size ?? 0) + (now ? 1 : 0)
+  }
   function closesOf(sym) {
     const d = state.cache[sym]
     const closes = new Map()
@@ -746,11 +757,19 @@
     return true
   }
   // After a delete or an un-star: one tap brings it back.
-  function undoNotice(kind, sym) {
+  // v30 (audit 3.5): undo and "added" messages sit at the bottom of the screen, where the tap was, not at the
+  // top of a page scrolled 20 screens down; they go after 6 seconds unless they hold an undo.
+  let toastT = null
+  function toastNotice(html, keep = false) {
     const n = $('notice')
     n.hidden = false
-    n.className = 'notice'
-    n.innerHTML = `${kind === 'fav' ? 'شلت' : 'حذفت'} <b class="n">${esc(sym.split(':')[1])}</b> ${kind === 'fav' ? 'من المفضلة' : 'من القائمة'}. <button class="btn" type="button" data-undo="${kind}|${esc(sym)}">تراجع</button>`
+    n.className = 'notice float'
+    n.innerHTML = html
+    clearTimeout(toastT)
+    if (!keep) toastT = setTimeout(() => { if (n.classList.contains('float') && !n.querySelector('[data-undo]')) n.hidden = true }, 6000)
+  }
+  function undoNotice(kind, sym) {
+    toastNotice(`${kind === 'fav' ? 'شلت' : 'حذفت'} <b class="n">${esc(sym.split(':')[1])}</b> ${kind === 'fav' ? 'من المفضلة' : 'من القائمة'}. <button class="btn" type="button" data-undo="${kind}|${esc(sym)}">تراجع</button> <button class="x" type="button" data-hide aria-label="سكّر">×</button>`, true)
   }
 
   async function addSymbol(sym) {
@@ -768,7 +787,9 @@
     }
     state.lists[m] = [...state.lists[m], sym]
     if (m !== state.market) setMarket(m)
+    state.focusSym = sym // drawn and scrolled to (audit 3.5)
     render()
+    toastNotice(`أضفت <b class="n">${esc(sym.split(':')[1])}</b>.`)
     await editSaved(m, sym, true)
     try {
       await loadQuotes([sym])
@@ -839,7 +860,7 @@
     if (f.low > 0 && f.high / f.low > 3) return f.dropped?.length ? 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)، وانشالت البعيدة منها' : 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)'
     // POST-HOC (2026-11-10, audit 1.6): built from a fraction of its methods (a stock without saved monthly
     // prices showed $81.38 on 35% of its weights against $94.00 with them, not dimmed).
-    if (closesOf(sym).size < 12) return 'أسعار السهم الشهرية المحفوظة أقل من سنة، فالطرق اللي تقارن بتاريخه ناقصة'
+    if (closesN(sym) < 12) return 'أسعار السهم الشهرية المحفوظة أقل من سنة، فالطرق اللي تقارن بتاريخه ناقصة'
     if (f.coverage < 0.6) return `مبنية على ${Math.round(100 * f.coverage)}% بس من أوزان طرقها`
     return null
   }
@@ -892,14 +913,15 @@
     // The big-companies tab is grouped by sector (largest sector first); the sort applies inside.
     const sectorCap = {}
     if (state.market === 'big') for (const s of syms) { const q = state.quotes[s]; if (q?.sector) sectorCap[q.sector] = (sectorCap[q.sector] ?? 0) + (q.market_cap_basic ?? 0) }
+    const val = new Map(syms.map((s) => [s, sortValue(s, key)])) // once per stock, not per comparison (audit 3.1)
     return syms.sort((a, b) => {
       if (state.market === 'big') {
         const sa = state.quotes[a]?.sector ?? ''
         const sb = state.quotes[b]?.sector ?? ''
         if (sa !== sb) return (sectorCap[sb] ?? 0) - (sectorCap[sa] ?? 0) || (sa < sb ? -1 : 1)
       }
-      const x = sortValue(a, key)
-      const y = sortValue(b, key)
+      const x = val.get(a)
+      const y = val.get(b)
       if (x == null && y == null) return 0
       if (x == null) return 1
       if (y == null) return -1
@@ -953,6 +975,23 @@
   // render(dirty) redraws only those stocks' rows (and the open panel) while the drawn order still
   // holds: a whole table of 703 rows costs ~300 ms (2 s on a phone), and a refresh drew it once per
   // quote batch. Anything else draws the whole table.
+  // v30 (audit 3.1): the list draws 60 stocks and 60 more as the end comes into view (or all on request): 703
+  // rows were 38,000 elements, and sorting or starring rebuilt all of them (3.7 s and 7.4 s on a slow phone).
+  // localStorage stocks.rows = "all" draws every row (the measuring harness uses it).
+  const PAGE = 60
+  const ALL_ROWS = (() => { try { return localStorage.getItem('stocks.rows') === 'all' } catch { return false } })()
+  let viewKey = ''
+  let moreIO = null
+  const moreRow = (n, total) => (n < total ? `<tr class="more"><td colspan="14"><button class="btn" type="button" data-more>اعرض ${Math.min(PAGE, total - n)} كمان</button> <button class="btn" type="button" data-all>اعرض الكل (${total})</button></td></tr>` : '')
+  function watchMore() {
+    moreIO?.disconnect()
+    const m = $('rows').querySelector('tr.more')
+    if (!m || typeof IntersectionObserver !== 'function') return
+    // scrolling adds 10 at a time, well before the end shows, again each frame while the end is near: 60 at once
+    // was a 200 ms frame on a slow phone. (content-visibility on the cards was tried: sorting faster, scrolling slower.)
+    moreIO = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { moreIO.disconnect(); state.limit += 10; render() } }, { rootMargin: '1500px 0px' })
+    moreIO.observe(m)
+  }
   function render(only) {
     for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
     for (const m of ['us', 'sa', 'big', 'sectors', 'fav']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
@@ -984,22 +1023,35 @@
       body.innerHTML = '<tr><td colspan="14" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
+    const vk = `${state.market}|${state.filter}|${state.sort.key}${state.sort.dir}|${state.group}|${state.underCap}`
+    if (vk !== viewKey) { viewKey = vk; state.limit = PAGE }
+    for (const x of [state.open, state.focusSym]) { const i = x ? syms.indexOf(x) : -1; if (i >= state.limit) state.limit = i + 1 } // the open or just-added stock is always drawn
+    const drawn = ALL_ROWS || state.market === 'big' ? syms : syms.slice(0, state.limit)
     // Keyboard focus stays on the row or button it was on (the star's render rebuilt it, and focus fell to the page).
     const a = document.activeElement
     const fk = body.contains(a) && ['sym', 'star', 'del'].find((k) => a.dataset[k])
     const backP = panelFocus()
     const refocus = () => { if (fk) body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true }); else backP() }
     const rows = body.querySelectorAll('tr.row')
-    if (only && state.market !== 'big' && rows.length === syms.length && syms.every((s, i) => rows[i].dataset.sym === s)) {
+    const same = (n) => [...rows].slice(0, n).every((r, i) => r.dataset.sym === drawn[i])
+    if (only && state.market !== 'big' && rows.length === drawn.length && same(drawn.length)) {
       if (state.open) only.add(state.open)
-      for (const sym of only) { const i = syms.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
+      for (const sym of only) { const i = drawn.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
       only.clear()
+      refocus()
+      return
+    }
+    // more rows of the same order: add them, keep the ones drawn
+    if (state.market !== 'big' && rows.length && rows.length < drawn.length && same(rows.length) && !only?.size) {
+      body.querySelector('tr.more')?.remove()
+      body.insertAdjacentHTML('beforeend', drawn.slice(rows.length).map((sym) => rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')).join('') + moreRow(drawn.length, syms.length))
+      watchMore()
       refocus()
       return
     }
     dirty.clear()
     let lastSector = null
-    body.innerHTML = syms.map((sym) => {
+    body.innerHTML = drawn.map((sym) => {
       const q = state.quotes[sym]
       let head = ''
       if (state.market === 'big' && (q?.sector ?? '') !== lastSector) {
@@ -1008,29 +1060,33 @@
         head = `<tr class="grp"><td colspan="14">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
       }
       return head + rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
-    }).join('')
+    }).join('') + moreRow(drawn.length, syms.length)
+    watchMore()
     refocus()
+    if (state.focusSym) { const r = body.querySelector(`tr.row[data-sym="${CSS.escape(state.focusSym)}"]`); state.focusSym = null; r?.scrollIntoView({ block: 'center' }); r?.classList.add('flash') }
 
     // Once a stock has an error (TradingView does not know it, or its fetch failed), the cells it
-    // can never fill show '—', not a loading skeleton.
+    // can never fill show '—', not a loading skeleton. Ratio cells: hidden on phone cards (they are in the
+    // panel), and on tablet cards when empty (audit 3.1: "SVR —" on every profitable stock).
+    function rc(label, html, attrs = '') { return `<td class="n c-ratio${html === '—' ? ' nil' : ''}" data-label="${label}"${attrs}>${html}</td>` }
     function rowHtml(sym) {
       const q = state.quotes[sym]
       const s = state.scores[sym]
       const f = state.fair[sym]
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح" data-tip="درجة الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
-        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}${f?.fair && weakFair(sym) ? ` <button class="ib" type="button" data-tip="${esc(`تقدير ضعيف: ${weakFair(sym)}.`)}" aria-label="ليش ضعيف؟">ⓘ</button>` : ''}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
         <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
         <td class="c-wide c-exp">${expCell(sym)}</td>
         <td class="n c-more">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
         <td class="n c-more" title="نمو الإيراد السنوي، ${gYears(sym)}">${s?.detail ? pct(s.detail.revG) : '—'}${s?.detail?.revG != null && gYears(sym) !== 'آخر 3 سنوات' ? ` <small class="dim">(${gYears(sym)})</small>` : ''}</td>
-        <td class="n" data-label="مكرر الربح P/E">${fmt(peNow(sym))}</td>
-        <td class="n" data-label="المكرر المتوقع Fwd P/E" title="${fyNext(q) ? `على توقع ربح سنة ${fyNext(q)} المالية` : ''}">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
-        <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${svrShown(sym) == null ? '—' : `${fmtSvr(svrShown(sym))}×`}</td>
+        ${rc('مكرر الربح P/E', fmt(peNow(sym)))}
+        ${rc('المكرر المتوقع Fwd P/E', fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy), fyNext(q) ? ` title="على توقع ربح سنة ${fyNext(q)} المالية"` : '')}
+        ${rc('PEG', pegCell(sym))}
+        ${rc('SVR', svrShown(sym) == null ? '—' : `${fmtSvr(svrShown(sym))}×`)}
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -1044,6 +1100,23 @@
     return () => k >= 0 && $('rows').querySelector('tr.detail')?.querySelectorAll(PF)[k]?.focus({ preventScroll: true })
   }
 
+  // v30 (audit 3.2): a panel refreshed by its loaders (news, history, earnings log, guidance: 4 rebuilds in the
+  // 2.5 s after opening) replaces only the blocks whose markup changed, so scroll, open sections and focus stay.
+  function patch(tr, html) {
+    const t = document.createElement('template')
+    t.innerHTML = `<table><tbody><tr class="detail">${html}</tr></tbody></table>`
+    const fresh = t.content.querySelector('tr.detail')
+    const same = (a, b) => a.cloneNode(false).outerHTML === b.cloneNode(false).outerHTML
+    const walk = (o, n, depth) => {
+      if (o.outerHTML === n.outerHTML) return
+      if (depth > 0 && same(o, n) && o.children.length === n.children.length && o.children.length && o.childNodes.length === o.children.length && n.childNodes.length === n.children.length) {
+        const oc = [...o.children]; const nc = [...n.children]
+        oc.forEach((c, i) => walk(c, nc[i], depth - 1))
+      } else o.replaceWith(n.cloneNode(true))
+    }
+    walk(tr.firstElementChild, fresh.firstElementChild, 3)
+  }
+
   // One stock's panel opened, closed or refreshed in place.
   function redraw(sym) {
     const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
@@ -1053,7 +1126,7 @@
     if (state.open !== sym) return d?.remove()
     const html = `<td colspan="14">${detail(sym)}</td>`
     const back = panelFocus()
-    if (d) d.innerHTML = html
+    if (d) patch(d, html)
     else tr.insertAdjacentHTML('afterend', `<tr class="detail">${html}</tr>`)
     back()
   }
@@ -1148,15 +1221,18 @@
     const on = !state.lists.fav.includes(sym)
     state.lists.fav = on ? [...state.lists.fav, sym] : state.lists.fav.filter((s) => s !== sym)
     if (!on) undoNotice('fav', sym)
-    editSaved('fav', sym, on).then(render)
-    render()
+    else toastNotice(`أضفت <b class="n">${esc(sym.split(':')[1])}</b> للمفضلة.`)
+    // v30 (audit 3.1): outside the favourites tab only this stock's row changes (it rebuilt the table 2–3 times)
+    const one = () => (state.market === 'fav' ? undefined : new Set([sym]))
+    editSaved('fav', sym, on).then(() => render(one()))
+    render(one())
   }
 
   const pegCell = (sym) => {
     const p = peg(sym)
     if (!p) return '—'
-    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية">(تاريخي)</small>'
-      : p.jump ? ` <small class="dim" dir="rtl" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
+    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية" data-tip="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية">(تاريخي)</small>'
+      : p.jump ? ` <small class="dim" dir="rtl" data-tip="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر، فالـPEG هنا يبيّن السهم أرخص من حقيقته." title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
     return `${fmt(p.v, 2)}${note}`
   }
 
@@ -1164,12 +1240,12 @@
     const e = state.exp[sym]
     const q = state.quotes[sym]
     const chips = []
-    if (e?.flag === 'red') chips.push('<span class="chip red" title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
-    if (e?.flag === 'green') chips.push('<span class="chip green" title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
+    if (e?.flag === 'red') chips.push('<span class="chip red" data-tip="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع." title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
+    if (e?.flag === 'green') chips.push('<span class="chip green" data-tip="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء." title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
     // Calendar days in the viewer's time zone, the date dateOf prints (whole 24 hours said 'tomorrow' on the day itself).
     const days = Number.isFinite(q?.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - dayNo(Date.now()) : null
-    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
-    if (q && analysts(q).falling) chips.push('<span class="chip amber" title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
+    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" data-tip="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير." title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
+    if (q && analysts(q).falling) chips.push('<span class="chip amber" data-tip="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة." title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
     return chips.join(' ') || '<span class="dim">—</span>'
   }
 
@@ -1304,7 +1380,8 @@
     ].filter(Boolean)
     return `<div class="part fv" style="grid-column:1/-1">
       <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
-      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
+      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b> (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>).`}</p>
+      ${pre ? '' : `<details data-k="fvhow"${state.ctxOpen.has('fvhow') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد.</p></details>`}
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
       <div class="fair-list">${rows}</div>
       ${rdcfBlock(sym)}
@@ -1551,8 +1628,14 @@
   }
 
   /** Bars for one series (actuals, the next quarter's estimate hatched), drawn to one scale. */
+  // v30 (audit 3.3): the earnings charts are drawn at the panel's width (a fixed 720 viewBox shrank its axis text
+  // to 4.8 px on a phone), and the quarter labels keep at least 56 px apart.
+  // read once and after a resize: reading it while a panel is being built forced a layout of the whole list
+  let cw = null
+  addEventListener('resize', () => { cw = null }, { passive: true })
+  const chartW = () => (cw ??= Math.round(Math.min(720, Math.max(300, (document.querySelector('.wrap')?.clientWidth ?? 720) - 64))))
   function qChart(rows, key, est, cur) {
-    const W = 720
+    const W = chartW()
     const H = 210
     const pad = { l: 8, r: 58, t: 14, b: 26 }
     const vals = rows.map((r) => r[key])
@@ -1566,7 +1649,8 @@
     const fmtV = (v) => { if (key === 'eps') return fmt(v, 2); const a = Math.abs(v); return a >= 1e12 ? `${fmt(v / 1e12, 2)}T` : a >= 1e9 ? `${fmt(v / 1e9, 1)}B` : a >= 1e6 ? `${fmt(v / 1e6, 0)}M` : fmt(v, 0) }
     const bar = (v, i, cls) => (Number.isFinite(v) ? `<rect x="${(pad.l + i * bw + bw * 0.15).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${Math.max(1, Math.abs(y(v) - y(0))).toFixed(1)}" class="${cls}${v < 0 ? ' neg' : ''}"><title>${esc(rows[i]?.label ?? 'الربع الجاي (توقع)')}: ${fmtV(v)}</title></rect>` : '')
     const ticks = [hi, (hi + lo) / 2, lo].map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" class="grid"/><text x="${W - pad.r + 6}" y="${(y(t) + 4).toFixed(1)}" class="axis">${fmtV(t)}</text>`).join('')
-    const labels = rows.map((r, i) => ((rows.length - 1 - i) % 4 === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
+    const stride = 4 * Math.max(1, Math.ceil(56 / (4 * bw)))
+    const labels = rows.map((r, i) => ((rows.length - 1 - i) % stride === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
     return `<svg class="qchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${key === 'rev' ? 'الإيرادات' : key === 'eps' ? 'ربح السهم' : 'صافي الربح'} ربعياً" dir="ltr">
       <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--accent)" stroke-width="2"/></pattern></defs>
       ${ticks}${rows.map((r, i) => bar(r[key], i, 'act')).join('')}${Number.isFinite(est) ? bar(est, rows.length, 'est') : ''}
@@ -1583,7 +1667,7 @@
     const yr = ttm(last - 4)
     const y3 = ttm(last - 12)
     if (now == null) return ''
-    const W = 720
+    const W = chartW()
     const H = 90
     const pts = m.map((v, i) => (Number.isFinite(v) ? [8 + (i / Math.max(1, rows.length - 1)) * (W - 86), v] : null))
     const vs = pts.filter(Boolean).map((p) => p[1])
@@ -1689,10 +1773,12 @@
     </div>`
   }
 
+  // v30 (audit 3.2): a bar that stays at the top while the panel (4,000–6,000 px on a phone) scrolls by, to close it.
+  const pbar = (sym) => `<div class="pbar"><b class="n">${esc(sym.split(':')[1])}</b><span dir="auto" title="${esc(state.quotes[sym]?.description ?? '')}">${esc(state.quotes[sym]?.description ?? '')}</span><button class="btn" type="button" data-close="${esc(sym)}">إغلاق ✕</button></div>`
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -1722,7 +1808,7 @@
       ...industryTile(sym),
       ...runwayTile(q),
     ]
-    return `<div class="dgrid">
+    return `${pbar(sym)}<div class="dgrid">
       ${snowBlock(sym)}
       ${fairBlock(sym)}
       ${earnBlock(sym)}
@@ -1952,6 +2038,7 @@
     if (b) addSymbol(b.dataset.add)
   })
   $('notice').addEventListener('click', (e) => {
+    if (e.target.closest('button[data-hide]')) { notice(''); return }
     const b = e.target.closest('button[data-undo]')
     if (!b) return
     const [kind, sym] = b.dataset.undo.split('|')
@@ -1961,13 +2048,25 @@
   })
   document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
-  $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
+  let filterT = null // v30 (audit 3.1): one redraw per pause in typing, not per character
+  $('filter').addEventListener('input', (e) => { clearTimeout(filterT); filterT = setTimeout(() => { state.filter = e.target.value; render() }, 140) })
   $('underCap').addEventListener('change', (e) => { state.underCap = e.target.checked; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
   const tip = $('tip')
   const canHover = matchMedia('(hover: hover)').matches
+  // v30 (audit 3.4): explanations that lived only in title= (weak estimates, chips, grades) open on a tap on phones
+  function showTip(el, html) {
+    tip.innerHTML = html
+    tip.hidden = !html
+    if (!html) return
+    const r = el.getBoundingClientRect()
+    const top = r.bottom + 8 + tip.offsetHeight > innerHeight ? r.top - 8 - tip.offsetHeight : r.bottom + 8
+    tip.style.top = `${Math.max(8, top)}px`
+    tip.style.left = `${Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), innerWidth - tip.offsetWidth - 8)}px`
+  }
+  document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip], #tip')) tip.hidden = true })
   $('rows').addEventListener('mouseover', (e) => {
     const el = canHover && e.target.closest('.score')
     if (!el) { tip.hidden = true; return }
@@ -1992,6 +2091,10 @@
     if (was && was !== sym) redraw(was)
     redraw(sym)
     if (!state.open) return
+    // v30 (audit 3.2): closing a panel above moves the tapped row off screen (4,502 px on a phone): bring it back
+    const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
+    const top = tr?.getBoundingClientRect().top
+    if (tr && (top < 0 || top > innerHeight - 120)) tr.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
     loadNews(sym)
     loadHist(sym)
     loadElog(sym)
@@ -2000,6 +2103,12 @@
     if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
   $('rows').addEventListener('click', (e) => {
+    if (e.target.closest('button[data-more]')) { state.limit += PAGE; render(); return }
+    if (e.target.closest('button[data-all]')) { state.limit = Infinity; render(); return }
+    const cl = e.target.closest('button[data-close]')
+    if (cl) { e.stopPropagation(); const sym = cl.dataset.close; toggle(sym); const r = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`); if (r && r.getBoundingClientRect().top < 0) r.scrollIntoView({ block: 'start' }); r?.focus({ preventScroll: true }); return }
+    const tp = e.target.closest('[data-tip]')
+    if (tp && !canHover) { e.stopPropagation(); showTip(tp, esc(tp.dataset.tip)); return }
     const ev = e.target.closest('button[data-ev]')
     if (ev) { e.stopPropagation(); const [sym, k, val] = ev.dataset.ev.split('|'); state.eView[sym] = { ...(state.eView[sym] ?? { m: 'rev', n: 16 }), [k]: k === 'n' ? Number(val) : val }; redraw(sym); return }
     const star = e.target.closest('button[data-star]')
@@ -2054,7 +2163,7 @@
       state.lists.fav = [...syms]
       if (!snap.metadata?.fromCache) saved.fav = [...syms]
       if (changed && state.market === 'fav' && cacheRead) refresh()
-      else scheduleRender(true)
+      else if (changed || state.market === 'fav') scheduleRender(true) // v30: the echo of our own star write changes nothing on screen
     }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
     for (const m of ['us', 'sa']) {
       db.doc(`lists/${m}`).onSnapshot((snap) => {

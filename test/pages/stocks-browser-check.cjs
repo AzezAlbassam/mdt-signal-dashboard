@@ -116,7 +116,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
   await page.selectOption('#group', '')
-  await page.fill('#filter', 'jpm')
+  await page.fill('#filter', 'jpm'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   console.log('FILTER jpm:', await rows())
   await page.click('#rows tr.row')
   await page.waitForTimeout(200)
@@ -131,7 +131,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('VALUE CHECK:', okV ? 'ok' : 'FAILED', JSON.stringify({ pe, fcfJpm }))
   if (!okV) process.exitCode = 1
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-forecast.png'), fullPage: true })
-  await page.fill('#filter', 'aapl')
+  await page.fill('#filter', 'aapl'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row')
   await page.waitForTimeout(500)
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
@@ -155,7 +155,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.click('#rows .ctx details:nth-child(2) summary')
   console.log('CTX TAP:', await page.$eval('#rows .ctx details:nth-child(2)', (d) => d.open + ' ' + d.querySelector('p').innerText.slice(0, 60)))
   await (await page.$('#rows .ctx')).screenshot({ path: path.join(os.tmpdir(), 'stocks-ctx.png') })
-  await page.fill('#filter', '')
+  await page.fill('#filter', ''); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row[data-sym="NASDAQ:AAPL"] button[data-star]')
   await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')
   await page.waitForTimeout(200)
@@ -172,7 +172,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.click('#rows tr.row[data-sym="NASDAQ:META"] button[data-star]')
   console.log('FAV after unstar:', await page.evaluate(() => window.__store['meta/favorites']))
   console.log('LATEST IDEAS:', (await page.$eval('#latestIdeas', (t) => t.innerText)).replace(/\s+/g, ' '))
-  await page.fill('#filter', '')
+  await page.fill('#filter', ''); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#tab-sa')
   await page.waitForTimeout(1200)
   console.log('SA ROWS:', await rows())
@@ -212,7 +212,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.click('#tab-us')
   await page.waitForTimeout(800)
   await page.selectOption('#group', '').catch(() => {})
-  await page.fill('#filter', '')
+  await page.fill('#filter', ''); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.waitForTimeout(200)
   await page.evaluate(() => { window.__store['lists/us'] = { symbols: [...window.__store['lists/us'].symbols, 'NYSE:XYZ'] } }) // another tab adds XYZ; no snapshot reaches this page
   await page.click('#rows tr.row[data-sym="NYSE:JPM"] button[data-del]')
@@ -300,7 +300,12 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.waitForTimeout(400)
   const tile = await page.evaluate((f) => ({ open: document.querySelector('#rows .ctx details:nth-child(3)')?.open, starFull: f, resizeFull: window.__full - f }), full0)
   await page.setViewportSize(vp)
-  const okR = open1.full === 0 && open1.focus === 'NASDAQ:META' && open1.panels === 1 && tile.open === true && tile.starFull > 0 && tile.resizeFull === 0
+  // v30 (audit 3.1): a star patches its own row (it rebuilt the table); a sort still rebuilds it, and the tile stays open
+  await page.selectOption('#sortSel', { index: 2 }); await page.waitForTimeout(300)
+  tile.sortFull = await page.evaluate((f) => window.__full - f, full0)
+  tile.openAfterSort = await page.evaluate(() => document.querySelector('#rows .ctx details:nth-child(3)')?.open)
+  await page.selectOption('#sortSel', { index: 0 }); await page.waitForTimeout(300)
+  const okR = open1.full === 0 && open1.focus === 'NASDAQ:META' && open1.panels === 1 && tile.open === true && tile.starFull === 0 && tile.resizeFull === 0 && tile.sortFull > 0 && tile.openAfterSort === true
   console.log('REDRAW CHECK:', okR ? 'ok' : 'FAILED', JSON.stringify({ open1, tile }))
   if (!okR) process.exitCode = 1
   await page.evaluate(() => { window.__newsFail = 1 })
@@ -363,11 +368,11 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.keyboard.press('Escape')
   await page.waitForTimeout(200)
   key.closed = await page.evaluate(() => !document.querySelector('#rows tr.detail') && document.activeElement?.dataset?.sym)
-  await page.fill('#filter', 'nas')
+  await page.fill('#filter', 'nas'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   const fNas = (await rows()).length
-  await page.fill('#filter', 'nasdaq:')
+  await page.fill('#filter', 'nasdaq:'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   const fColon = (await rows()).length
-  await page.fill('#filter', '')
+  await page.fill('#filter', ''); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   const okU = key.starred && key.focus === 'NASDAQ:META' && key.panels === 0 && key.panelFocus && key.closed === 'NASDAQ:META' && fNas === 0 && fColon === 3
     && fits.every((f) => f.out === 0 && f.n > 0 && f.tabs && f.w.split('/')[0] <= Number(f.w.split('/')[1]))
   console.log('UI CHECK:', okU ? 'ok' : 'FAILED', JSON.stringify({ key, fNas, fColon, fits }))

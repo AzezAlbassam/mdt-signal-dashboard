@@ -352,6 +352,13 @@ home-made ones; text delivered so that line breaks survive copying.
    for all of it and is versioned in `progress/TWEETS-ROUTINE.md`. Check: `test/pages/tweets-check.cjs`.
 4. **v30 — Phase 3 items 1–5** (the phone list and panel), then **additions 1, 2 (display), 3, 4, 5** as
    v31. The cycle warning (addition 1) is descriptive, so it does not wait for Study 18.
+   **v30 done 2026-11-10 (published):** Phase 3 items 1–5. At 390 px, CPU ×4 (`ui/perf.cjs`, reports
+   `v30-perf-before.txt` / `-after.txt`): sort by upside 5.9 s → 0.18 s, by score 3.7 → 0.35, star 7.4 → 0.08,
+   back to the US tab 3.2 → 0.25, DOM 38,256 → 9,390, panel rebuilds after opening 4 → 1; fast scrolling p50
+   31 → 41 ms, max 79 → 82 (rows are added while scrolling). Values unchanged on the snapshot (0 of 1,049).
+   Not done from Phase 3: 6 (boot), 7 (consistency), 8 (own tab); `content-visibility` was tried and left out
+   (sorting faster, scrolling slower). The probe falls back to the first drawn row for LCID/MSFT (not drawn
+   until scrolled to); `measure.cjs` sets `stocks.rows = all` and treats a deliberate "…" with a title as fine.
 5. **Study 18** (E1–E4): protocol and scripts committed before any result, run on the saved data
    (`data/fv`, `data/fv8`; no new TradingView calls beyond one batch for industries), then apply what
    passes as v32 and say what did not.

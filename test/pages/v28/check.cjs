@@ -148,6 +148,33 @@ const CASES = {
     const ok = r.writes === 1 && e && near(e.fair, r.fair, 1e-5) && e.close === 100 && r.doc.m2026_10?.NASDAQ_AAA?.fair === 1 && r.doc[r.mk].NYSE_ZZZ?.fair === 2
     return [ok, `writes ${r.writes}, this month ${JSON.stringify(e)}, kept ${JSON.stringify(Object.keys(r.doc?.[r.mk] ?? {}))} and ${Object.keys(r.doc ?? {}).join(', ')}`]
   },
+  // v30 (audit 3.1, 3.2): a long list draws 60 rows and more on request; a star patches its row only; an open
+  // panel is not rebuilt by its loaders (news, history, earnings log, guidance).
+  async list() {
+    const r = await run((G, St, M, s) => {
+      const us = Array.from({ length: 130 }, (_, i) => `NASDAQ:L${String(i).padStart(3, '0')}`)
+      St['lists/us'] = { symbols: us }; St['meta/favorites'] = { symbols: [] }
+      for (const u of us) { M.quotes[u] = G.quote(u); M.hist[u] = G.histRow(); M.px[u] = G.px(); St['cache/' + u] = { sym: u, fin: G.fin(), fyEnd: G.fyEnd, fundsAt: Date.now(), px: G.px(), pxAt: Date.now(), extra: {} }; St['q/' + u] = { sym: u, fq: G.fq(), fqEnd: G.fqEnd } }
+    }, async ({ page }) => {
+      const out = {}
+      out.first = await page.$$eval('#rows tr.row', (x) => x.length)
+      await page.click('#rows button[data-more]'); await page.waitForTimeout(300)
+      out.more = await page.$$eval('#rows tr.row', (x) => x.length)
+      await page.evaluate(() => { window.__rebuilds = 0; new MutationObserver((ms) => { for (const m of ms) if (m.removedNodes.length > 1) window.__rebuilds += 1 }).observe(document.getElementById('rows'), { childList: true }) })
+      await page.click('#rows tr.row[data-sym="NASDAQ:L005"] button[data-star]'); await page.waitForTimeout(400)
+      out.starRebuilds = await page.evaluate(() => window.__rebuilds)
+      await page.click('#rows tr.row[data-sym="NASDAQ:L001"]'); await page.waitForTimeout(150)
+      await page.evaluate(() => { window.__panel = 0; const d = document.querySelector('#rows tr.detail'); new MutationObserver((ms) => { for (const m of ms) if ([...m.removedNodes].some((n) => n.nodeType === 1 && (n.matches?.('.dgrid') || n.parentElement === null && n.tagName === 'TD'))) window.__panel += 1 }).observe(d, { childList: true }) })
+      await page.waitForTimeout(2500)
+      out.panelRebuilds = await page.evaluate(() => window.__panel)
+      out.bar = await page.$$eval('#rows tr.detail .pbar button[data-close]', (x) => x.length)
+      await page.click('#rows button[data-all]'); await page.waitForTimeout(400)
+      out.all = await page.$$eval('#rows tr.row', (x) => x.length)
+      return out
+    })
+    const ok = r.first === 60 && r.more === 120 && r.starRebuilds === 0 && r.panelRebuilds === 0 && r.bar === 1 && r.all === 130
+    return [ok, JSON.stringify(r)]
+  },
 }
 
 ;(async () => {

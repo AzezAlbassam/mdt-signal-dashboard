@@ -208,7 +208,7 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
   .tbl { overflow: visible; background: none; border: 0; border-radius: 0; }
   .tbl > table > thead { display: none; }
   .tbl > table, .tbl > table > tbody { display: block; }
-  .tbl > table > tbody { display: grid; gap: 10px; }
+  .tbl > table > tbody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; } /* a column that shrinks: an auto one took the panel bar's one-line name and overflowed by 9 px */
   tr.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; position: relative; }
   tr.row:hover { background: var(--panel); }
   tr.row[aria-expanded="true"] { border-color: var(--accent); }
@@ -222,6 +222,36 @@ tr.grp td { background: var(--soft); font-weight: 600; padding: 8px 12px; font-s
   .tbl > table > tbody > tr:not(.row):not(.detail) td { display: block; border: 0; padding: 12px 0; }
   .tbl tr.detail, .tbl tr.detail > td { display: block; }
   .tbl tr.detail > td { padding: 4px 0 8px; background: none; border: 0; }
+  tr.row td.nil { display: none; }
+  .c-stock { padding-inline-start: 48px !important; }
+  .star, .x { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .x { padding: 0; }
+}
+/* v30 (audit 3.1–3.5): the windowed list, the panel's close bar, tap explanations, messages at the bottom. */
+tr.more td { text-align: center; padding: 14px 8px !important; }
+tr.more .btn { margin: 4px; }
+tr.row { scroll-margin-top: 12px; }
+tr.row.flash { animation: flash 1.6s ease-out 1; }
+@keyframes flash { from { box-shadow: 0 0 0 3px var(--accent); } to { box-shadow: 0 0 0 3px transparent; } }
+@media (prefers-reduced-motion: reduce) { tr.row.flash { animation: none; outline: 2px solid var(--accent); } }
+.pbar { position: sticky; top: 0; z-index: 4; display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 14px -10px rgba(0,0,0,.6); }
+.pbar span { flex: 1; min-width: 0; color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pbar .btn { min-height: 40px; }
+.ib { background: none; border: 0; color: var(--muted); font-size: 15px; min-width: 32px; min-height: 32px; padding: 0; margin-block: -8px; cursor: pointer; }
+@media (hover: hover) { .ib { display: none; } }
+[data-tip] { cursor: help; }
+.notice.float { position: fixed; z-index: 30; inset-inline: 12px; bottom: max(12px, env(safe-area-inset-bottom, 0px)); margin: 0 auto; max-width: 560px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; box-shadow: 0 10px 30px -10px rgba(0,0,0,.6); }
+.notice.float .x { margin-inline-start: auto; }
+/* Phones: a two-line card (name; price, fair value, gap, score), about 6 stocks a screen instead of 2.4. */
+@media (max-width: 760px) {
+  tr.row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 8px; padding: 10px 12px; }
+  tr.row .c-wide:not(.c-exp) { grid-column: auto; }
+  tr.row .c-ratio { display: none !important; }
+  tr.row td[data-label]::before { font-size: 10.5px; margin-bottom: 0; }
+  .c-stock { display: flex !important; align-items: center; gap: 6px; }
+  .c-stock > b { flex: none; display: inline-flex; align-items: center; }
+  .c-stock > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 13px; }
+  tr.row .score .segs { display: none; }
 }
 /* Tablets and half-screen windows: denser cards, about 5 stocks per screen instead of 2.7. */
 @media (min-width: 761px) and (max-width: 1239px) {
@@ -357,6 +387,9 @@ details.axes > summary { cursor: pointer; color: var(--accent); font-weight: 600
       <dt><span class="hi n">7+</span> <span class="md n">4–7</span> <span class="lo">تحت <span class="n">4</span></span></dt><dd>الدرجة من 10: أخضر قوية، برتقالي متوسطة، أحمر ضعيفة.</dd>
       <dt><span class="segs" aria-hidden="true"><i><b style="height:100%;background:var(--seg-a)"></b></i><i><b style="height:100%;background:var(--seg-b)"></b></i><i><b style="height:100%;background:var(--seg-c)"></b></i><i><b style="height:100%;background:var(--seg-d)"></b></i><i><b style="height:100%;background:var(--seg-e)"></b></i></span></dt><dd>أجزاء الدرجة الخمسة بالترتيب: السعر، الجودة، النمو، الأمان، الاتجاه. كل عمود ممتلي = 2 من 2.</dd>
       <dt><span class="hi n">+20%</span> <span class="lo n">-20%</span></dt><dd>الفرق: أخضر = السعر أقل من القيمة العادلة (أرخص)، أحمر = أعلى منها (أغلى).</dd>
+      <dt><span class="grade sm g-A">A</span> <span class="grade sm g-D">D</span></dt><dd>درجة الأرباح (طريقة Earnings Hub): من A الأفضل لـ D الأضعف، 5 مقاييس للأرباح مقارنة بـ S&amp;P 500 أو أسهم تاسي. تفاصيلها داخل السهم.</dd>
+      <dt>الخماسية الصغيرة جنب الرمز</dt><dd>شكل فحوصات Simply Wall St الثلاثين (القيمة، النمو المتوقع، الأداء السابق، الصحة المالية، التوزيعات): كل ما كبرت وصارت خضراء كان أحسن. تكبر داخل السهم.</dd>
+      <dt><span class="dim n">$43.79</span> <span class="ib" aria-hidden="true">ⓘ</span></dt><dd>رقم باهت = تقدير ضعيف (بيانات ناقصة أو بعيد كثير عن السعر). على الجوال اضغط ⓘ أو أي شارة تشوف السبب.</dd>
       <dt><span class="chip red">سعره أعلى من أدائه</span></dt><dd>السوق متحمس عليه زيادة: سعره الحالي يفترض إن الشركة بتنمو أسرع بكثير من اللي تسويه فعلاً، ونموها قاعد يبطّي. لو طلعت نتايجها أقل من المتوقع ممكن ينزل بقوة. <b>يعني: انتبه وراجع قبل تشتري.</b></dd>
       <dt><span class="chip green">سعره أقل من أدائه</span></dt><dd>السوق مستهين فيه: مسعّره كأن الشركة بتنمو أبطأ بكثير من اللي تسويه فعلاً، ونموها مستمر. <b>يعني: ممكن تكون فرصة، تستاهل تدرسها.</b></dd>
       <dt><span class="chip amber">المحللين متوقعين نزول</span></dt><dd>المحللين متوقعين إن إيرادات الشركة تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، السنة المالية الجاية.</dd>
@@ -435,6 +468,8 @@ details.axes > summary { cursor: pointer; color: var(--accent); font-weight: 600
       <p><b>تغييرات 10 نوفمبر (الثاني) بالمنطق، ما اختبرناها على الماضي لأن ما فيه تاريخ توقعات ولا قيم دفترية:</b> 61) صناديق العقار (ريت): صارت تتقيّم بـ EV/EBITDA (نص الوزن) و P/S ومتوسط ربح 5 سنين (ربع ربع)، بدون P/B من العائد على حقوق المساهمين: العائد بعد الاستهلاك ما يمثل دخل الصندوق (ريالتي إنكم O: عائدها 3.45% فطلعت قيمتها 39.88 والسعر 56.38، صارت 62.50). وفحص الديون في الدرجة صار ينطبق عليها (كانت تاخذ الأمان كامل وديونها 6 أضعاف EBITDA). 62) باقي المالية: P/B من العائد على حقوق المساهمين بس لما المكرر الدفتري 4 أو أقل؛ فوقها الطريقة ما تقيس شي (فيزا كانت 59% من سعرها وماستركارد 52%)، فتتقيّم على تاريخ مكررها. 63) DCF: بعد أول سنة يهدأ النمو من الأقل بين نمو أول سنة ونمو مبيعاتها آخر 3 سنين (بين <span dir="ltr">−5%</span> و25%)، بدل ما تنسحب سنة انتعاش وحدة عشر سنين (إكسون: <span dir="ltr">+34%</span> عشر سنين، DCF 715.84 والسعر 164.73). والـ DCF ما يطلع للشركات الدورية لأن ما له وزن عندها. 64) نمو أول سنة في DCF لما يكون باقي أقل من سنة على السنة المتوقعة: الجزء الباقي محسوب بالسنة ياخذ وزن بقدر الوقت الباقي، والباقي من نمو السنة المتوقعة كلها؛ قبل كان فرق صغير بين التوقع وآخر 12 شهر يتضاعف لين 4 مرات (كوكاكولا على بياناتك المحفوظة: <span dir="ltr">−2.9%</span> والمحللين متوقعين <span dir="ltr">+3.0%</span> للسنة، صار <span dir="ltr">0.0%</span> وDCF من 58.26 لـ 67.13؛ وعلى أرقام اليوم بعد ربعها الثالث كان بيطلع <span dir="ltr">−7.6%</span>). 65) قاعدة Lynch تبين المكرر اللي تعطيه ("= مكرر 25" بالكثير)، عشان تعرف ليش رقمها أقل أحياناً. 66) "السعر يفترض نمو" مكتوب إنه بخصم ثابت 9%، والـ DCF بخصم حسب بيتا السهم، عشان ما يختلط الرقمين.</p>
       <p>على نفس نسخة بياناتك المحفوظة: المفضلة تغيّرت لـ 25 سهم (7 أكثر من 10%)، الأمريكي لـ 189 (63)، والسعودي لـ 36 (20). صارت لـ 7 أسهم قيمة ما كانت لها (6 صناديق ريت سعودية و SQFT)، وراحت من سهم واحد: أفيرم (AFRM)، قيمتها كانت من P/B من العائد بس ومكررها الدفتري فوق 4. انتبه: نزول DCF يحرك الوسيط، فممكن تنشال طريقة ثانية كانت داخلة (ويسترن ديجيتال: 331 صارت 98 لأن P/E مقارنة بتاريخه صار أكثر من 3 أضعاف الوسيط، ونمو مبيعاتها آخر 3 سنين سالب بسبب فصل SanDisk). هذا بالضبط اللي بتختبره دراسة 18 (كيف نتعامل مع الطريقة البعيدة). القائمة كاملة في <span dir="ltr">reports/v29-today.txt</span>.</p>
       <details><summary>كل سهم تغيّرت قيمته العادلة (225)</summary><table class="ptable"><thead><tr><th>السهم</th><th>قبل</th><th>بعد</th><th>التغيّر</th><th>الطرق اللي تغيّرت</th></tr></thead><tbody><tr><th>★ <span class="n">BWXT</span></th><td class="n">135.52</td><td class="n">102.23</td><td class="n" dir="ltr">-24.6%</td><td>DCF، Lynch</td></tr><tr><th>★ <span class="n">DELL</span></th><td class="n">413.15</td><td class="n">321.14</td><td class="n" dir="ltr">-22.3%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th>★ <span class="n">FSLR</span></th><td class="n">338.84</td><td class="n">265.44</td><td class="n" dir="ltr">-21.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">MAMA</span></th><td class="n">9.6</td><td class="n">11.4</td><td class="n" dir="ltr">+18.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">MRVL</span></th><td class="n">64.25</td><td class="n">55.68</td><td class="n" dir="ltr">-13.3%</td><td>DCF</td></tr><tr><th>★ <span class="n">AMD</span></th><td class="n">155.19</td><td class="n">136.93</td><td class="n" dir="ltr">-11.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">BE</span></th><td class="n">39.68</td><td class="n">35.42</td><td class="n" dir="ltr">-10.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">PANW</span></th><td class="n">211.4</td><td class="n">190.95</td><td class="n" dir="ltr">-9.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">TSM</span></th><td class="n">344.93</td><td class="n">315</td><td class="n" dir="ltr">-8.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">ASML</span></th><td class="n">1459.37</td><td class="n">1346.04</td><td class="n" dir="ltr">-7.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">AAPL</span></th><td class="n">240.67</td><td class="n">222.4</td><td class="n" dir="ltr">-7.6%</td><td>DCF</td></tr><tr><th>★ <span class="n">QCOM</span></th><td class="n">125.55</td><td class="n">132.29</td><td class="n" dir="ltr">+5.4%</td><td>DCF</td></tr><tr><th>★ <span class="n">ARM</span></th><td class="n">26.04</td><td class="n">24.78</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">GOOGL</span></th><td class="n">353.32</td><td class="n">336.3</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">RMBS</span></th><td class="n">64.4</td><td class="n">62.02</td><td class="n" dir="ltr">-3.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">APP</span></th><td class="n">301.77</td><td class="n">291.96</td><td class="n" dir="ltr">-3.3%</td><td>DCF</td></tr><tr><th>★ <span class="n">META</span></th><td class="n">628.22</td><td class="n">608.78</td><td class="n" dir="ltr">-3.1%</td><td>DCF</td></tr><tr><th>★ <span class="n">UNH</span></th><td class="n">467.22</td><td class="n">480.36</td><td class="n" dir="ltr">+2.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">LLY</span></th><td class="n">1181.48</td><td class="n">1213.09</td><td class="n" dir="ltr">+2.7%</td><td>DCF</td></tr><tr><th>★ <span class="n">CLS</span></th><td class="n">175.52</td><td class="n">172.02</td><td class="n" dir="ltr">-2.0%</td><td>DCF</td></tr><tr><th>★ <span class="n">MSFT</span></th><td class="n">443.32</td><td class="n">438.55</td><td class="n" dir="ltr">-1.1%</td><td>DCF</td></tr><tr><th>★ <span class="n">CRM</span></th><td class="n">359.83</td><td class="n">356.19</td><td class="n" dir="ltr">-1.0%</td><td>DCF</td></tr><tr><th>★ <span class="n">CRWD</span></th><td class="n">85.97</td><td class="n">86.75</td><td class="n" dir="ltr">+0.9%</td><td>DCF</td></tr><tr><th>★ <span class="n">AVGO</span></th><td class="n">273.12</td><td class="n">271.05</td><td class="n" dir="ltr">-0.8%</td><td>DCF</td></tr><tr><th>★ <span class="n">RDDT</span></th><td class="n">152.79</td><td class="n">153.87</td><td class="n" dir="ltr">+0.7%</td><td>DCF</td></tr><tr><th><span class="n">DLR</span></th><td class="n">51.97</td><td class="n">187.46</td><td class="n" dir="ltr">+260.7%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">4338</span></th><td class="n">2.37</td><td class="n">6.8</td><td class="n" dir="ltr">+186.9%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">4339</span></th><td class="n">2.1</td><td class="n">5.8</td><td class="n" dir="ltr">+176.2%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">4348</span></th><td class="n">3.48</td><td class="n">8.9</td><td class="n" dir="ltr">+155.7%</td><td>P/B</td></tr><tr><th><span class="n">CELH</span></th><td class="n">38.33</td><td class="n">97.96</td><td class="n" dir="ltr">+155.6%</td><td>DCF، P/S</td></tr><tr><th><span class="n">MA</span></th><td class="n">369.23</td><td class="n">712.91</td><td class="n" dir="ltr">+93.1%</td><td>P/B</td></tr><tr><th><span class="n">1182</span></th><td class="n">9.9</td><td class="n">18.78</td><td class="n" dir="ltr">+89.7%</td><td>P/B · صار ضعيف</td></tr><tr><th><span class="n">4340</span></th><td class="n">5.59</td><td class="n">10.04</td><td class="n" dir="ltr">+79.6%</td><td>P/B</td></tr><tr><th><span class="n">DAVE</span></th><td class="n">281.68</td><td class="n">498.17</td><td class="n" dir="ltr">+76.9%</td><td>P/B</td></tr><tr><th><span class="n">BX</span></th><td class="n">104.53</td><td class="n">180.08</td><td class="n" dir="ltr">+72.3%</td><td>P/B</td></tr><tr><th><span class="n">WDC</span></th><td class="n">331.41</td><td class="n">98.13</td><td class="n" dir="ltr">-70.4%</td><td>P/E، DCF، P/S</td></tr><tr><th><span class="n">4342</span></th><td class="n">6.53</td><td class="n">11.04</td><td class="n" dir="ltr">+69.1%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">V</span></th><td class="n">214.86</td><td class="n">355.5</td><td class="n" dir="ltr">+65.5%</td><td>P/B</td></tr><tr><th><span class="n">SKM</span></th><td class="n">15.44</td><td class="n">25.25</td><td class="n" dir="ltr">+63.5%</td><td>DCF</td></tr><tr><th><span class="n">MPWR</span></th><td class="n">650.35</td><td class="n">261.18</td><td class="n" dir="ltr">-59.8%</td><td>P/E، DCF، P/S</td></tr><tr><th><span class="n">HPE</span></th><td class="n">27.07</td><td class="n">43.1</td><td class="n" dir="ltr">+59.2%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">CAVA</span></th><td class="n">27.45</td><td class="n">43.14</td><td class="n" dir="ltr">+57.2%</td><td>DCF، P/S</td></tr><tr><th><span class="n">O</span></th><td class="n">39.88</td><td class="n">62.5</td><td class="n" dir="ltr">+56.7%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">HOOD</span></th><td class="n">77.57</td><td class="n">120.96</td><td class="n" dir="ltr">+55.9%</td><td>P/B</td></tr><tr><th><span class="n">4347</span></th><td class="n">8.05</td><td class="n">12.55</td><td class="n" dir="ltr">+55.9%</td><td>P/B</td></tr><tr><th><span class="n">4331</span></th><td class="n">14.02</td><td class="n">20.27</td><td class="n" dir="ltr">+44.6%</td><td>P/B، P/E 5 سنين</td></tr><tr><th><span class="n">6015</span></th><td class="n">2.78</td><td class="n">3.99</td><td class="n" dir="ltr">+43.5%</td><td>DCF</td></tr><tr><th><span class="n">TSEM</span></th><td class="n">91.03</td><td class="n">53.16</td><td class="n" dir="ltr">-41.6%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">NU</span></th><td class="n">17.85</td><td class="n">24.74</td><td class="n" dir="ltr">+38.6%</td><td>P/B · صار ضعيف</td></tr><tr><th><span class="n">4344</span></th><td class="n">13.62</td><td class="n">8.41</td><td class="n" dir="ltr">-38.3%</td><td>P/B · ما عاد ضعيف</td></tr><tr><th><span class="n">MCHP</span></th><td class="n">60.25</td><td class="n">37.23</td><td class="n" dir="ltr">-38.2%</td><td>DCF</td></tr><tr><th><span class="n">STM</span></th><td class="n">8.7</td><td class="n">5.39</td><td class="n" dir="ltr">-38.0%</td><td>DCF</td></tr><tr><th><span class="n">4349</span></th><td class="n">5.78</td><td class="n">7.93</td><td class="n" dir="ltr">+37.2%</td><td>P/B</td></tr><tr><th><span class="n">NDAQ</span></th><td class="n">72.6</td><td class="n">99.12</td><td class="n" dir="ltr">+36.5%</td><td>P/B · صار ضعيف</td></tr><tr><th><span class="n">VST</span></th><td class="n">180.64</td><td class="n">114.98</td><td class="n" dir="ltr">-36.3%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">TXN</span></th><td class="n">243.49</td><td class="n">160.65</td><td class="n" dir="ltr">-34.0%</td><td>DCF</td></tr><tr><th><span class="n">HLI</span></th><td class="n">118.55</td><td class="n">158.56</td><td class="n" dir="ltr">+33.7%</td><td>P/B · صار ضعيف</td></tr><tr><th><span class="n">KEYS</span></th><td class="n">291.03</td><td class="n">197.76</td><td class="n" dir="ltr">-32.0%</td><td>DCF</td></tr><tr><th><span class="n">ONTO</span></th><td class="n">160.97</td><td class="n">110.73</td><td class="n" dir="ltr">-31.2%</td><td>DCF</td></tr><tr><th><span class="n">ISRG</span></th><td class="n">299.29</td><td class="n">390.33</td><td class="n" dir="ltr">+30.4%</td><td>DCF، P/E</td></tr><tr><th><span class="n">ADI</span></th><td class="n">386.8</td><td class="n">270.85</td><td class="n" dir="ltr">-30.0%</td><td>DCF</td></tr><tr><th><span class="n">HUM</span></th><td class="n">543.32</td><td class="n">389.25</td><td class="n" dir="ltr">-28.4%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">NOVT</span></th><td class="n">115.49</td><td class="n">148.17</td><td class="n" dir="ltr">+28.3%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">FORM</span></th><td class="n">61.35</td><td class="n">44.44</td><td class="n" dir="ltr">-27.6%</td><td>DCF</td></tr><tr><th><span class="n">4014</span></th><td class="n">54.68</td><td class="n">39.64</td><td class="n" dir="ltr">-27.5%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">4333</span></th><td class="n">8.64</td><td class="n">11.01</td><td class="n" dir="ltr">+27.4%</td><td>P/B</td></tr><tr><th><span class="n">CWEN</span></th><td class="n">30.7</td><td class="n">39.11</td><td class="n" dir="ltr">+27.4%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">GLW</span></th><td class="n">99.47</td><td class="n">72.52</td><td class="n" dir="ltr">-27.1%</td><td>DCF</td></tr><tr><th><span class="n">FLEX</span></th><td class="n">43.8</td><td class="n">32.56</td><td class="n" dir="ltr">-25.7%</td><td>DCF</td></tr><tr><th><span class="n">AXP</span></th><td class="n">271.11</td><td class="n">339.07</td><td class="n" dir="ltr">+25.1%</td><td>P/B · صار ضعيف</td></tr><tr><th><span class="n">HIMX</span></th><td class="n">4.14</td><td class="n">3.11</td><td class="n" dir="ltr">-24.9%</td><td>DCF</td></tr><tr><th><span class="n">CIEN</span></th><td class="n">163.09</td><td class="n">126.61</td><td class="n" dir="ltr">-22.4%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">BMRN</span></th><td class="n">196.71</td><td class="n">155.03</td><td class="n" dir="ltr">-21.2%</td><td>DCF</td></tr><tr><th><span class="n">6001</span></th><td class="n">43.67</td><td class="n">34.64</td><td class="n" dir="ltr">-20.7%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">TPL</span></th><td class="n">421.03</td><td class="n">335.09</td><td class="n" dir="ltr">-20.4%</td><td>DCF</td></tr><tr><th><span class="n">4072</span></th><td class="n">41.01</td><td class="n">32.66</td><td class="n" dir="ltr">-20.4%</td><td>DCF</td></tr><tr><th><span class="n">ON</span></th><td class="n">52.19</td><td class="n">42.14</td><td class="n" dir="ltr">-19.3%</td><td>DCF</td></tr><tr><th><span class="n">TER</span></th><td class="n">177.03</td><td class="n">144.07</td><td class="n" dir="ltr">-18.6%</td><td>DCF</td></tr><tr><th><span class="n">DGII</span></th><td class="n">46.74</td><td class="n">55.41</td><td class="n" dir="ltr">+18.5%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">NVT</span></th><td class="n">111.7</td><td class="n">91.12</td><td class="n" dir="ltr">-18.4%</td><td>DCF</td></tr><tr><th><span class="n">REGN</span></th><td class="n">762.16</td><td class="n">901.38</td><td class="n" dir="ltr">+18.3%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">AEIS</span></th><td class="n">118.08</td><td class="n">139.54</td><td class="n" dir="ltr">+18.2%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">NEE</span></th><td class="n">102.58</td><td class="n">83.98</td><td class="n" dir="ltr">-18.1%</td><td>DCF</td></tr><tr><th><span class="n">6014</span></th><td class="n">67.24</td><td class="n">79.07</td><td class="n" dir="ltr">+17.6%</td><td>DCF</td></tr><tr><th><span class="n">CSCO</span></th><td class="n">80.34</td><td class="n">66.34</td><td class="n" dir="ltr">-17.4%</td><td>DCF</td></tr><tr><th><span class="n">COCO</span></th><td class="n">87.46</td><td class="n">72.3</td><td class="n" dir="ltr">-17.3%</td><td>DCF</td></tr><tr><th><span class="n">ALGM</span></th><td class="n">21.13</td><td class="n">17.71</td><td class="n" dir="ltr">-16.2%</td><td>DCF</td></tr><tr><th><span class="n">4324</span></th><td class="n">2.98</td><td class="n">3.46</td><td class="n" dir="ltr">+16.1%</td><td>P/B</td></tr><tr><th><span class="n">Q</span></th><td class="n">104.05</td><td class="n">88.05</td><td class="n" dir="ltr">-15.4%</td><td>DCF</td></tr><tr><th><span class="n">6017</span></th><td class="n">29.73</td><td class="n">25.16</td><td class="n" dir="ltr">-15.4%</td><td>DCF</td></tr><tr><th><span class="n">KLAC</span></th><td class="n">89.59</td><td class="n">76.92</td><td class="n" dir="ltr">-14.1%</td><td>DCF</td></tr><tr><th><span class="n">HPQ</span></th><td class="n">46.19</td><td class="n">39.68</td><td class="n" dir="ltr">-14.1%</td><td>DCF</td></tr><tr><th><span class="n">RH</span></th><td class="n">167.95</td><td class="n">144.32</td><td class="n" dir="ltr">-14.1%</td><td>DCF</td></tr><tr><th><span class="n">ABBV</span></th><td class="n">238.57</td><td class="n">206.02</td><td class="n" dir="ltr">-13.6%</td><td>DCF</td></tr><tr><th><span class="n">LMT</span></th><td class="n">860.08</td><td class="n">746.36</td><td class="n" dir="ltr">-13.2%</td><td>DCF</td></tr><tr><th><span class="n">MTSI</span></th><td class="n">84.88</td><td class="n">73.69</td><td class="n" dir="ltr">-13.2%</td><td>DCF</td></tr><tr><th><span class="n">MITK</span></th><td class="n">16.75</td><td class="n">18.83</td><td class="n" dir="ltr">+12.4%</td><td>DCF</td></tr><tr><th><span class="n">GFS</span></th><td class="n">33.1</td><td class="n">29.1</td><td class="n" dir="ltr">-12.1%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">1834</span></th><td class="n">8.98</td><td class="n">7.95</td><td class="n" dir="ltr">-11.5%</td><td>DCF</td></tr><tr><th><span class="n">2083</span></th><td class="n">50.2</td><td class="n">55.64</td><td class="n" dir="ltr">+10.8%</td><td>DCF</td></tr><tr><th><span class="n">TWLO</span></th><td class="n">153.06</td><td class="n">136.49</td><td class="n" dir="ltr">-10.8%</td><td>DCF</td></tr><tr><th><span class="n">RGEN</span></th><td class="n">90.68</td><td class="n">81.66</td><td class="n" dir="ltr">-9.9%</td><td>DCF</td></tr><tr><th><span class="n">GME</span></th><td class="n">41.53</td><td class="n">45.63</td><td class="n" dir="ltr">+9.9%</td><td>DCF</td></tr><tr><th><span class="n">4192</span></th><td class="n">6.91</td><td class="n">7.56</td><td class="n" dir="ltr">+9.4%</td><td>DCF</td></tr><tr><th><span class="n">FICO</span></th><td class="n">1881.67</td><td class="n">1706.75</td><td class="n" dir="ltr">-9.3%</td><td>DCF</td></tr><tr><th><span class="n">CALX</span></th><td class="n">42.35</td><td class="n">38.57</td><td class="n" dir="ltr">-8.9%</td><td>DCF</td></tr><tr><th><span class="n">LOW</span></th><td class="n">226.78</td><td class="n">206.65</td><td class="n" dir="ltr">-8.9%</td><td>DCF</td></tr><tr><th><span class="n">IOT</span></th><td class="n">13.68</td><td class="n">14.86</td><td class="n" dir="ltr">+8.6%</td><td>DCF</td></tr><tr><th><span class="n">HWM</span></th><td class="n">156.7</td><td class="n">143.19</td><td class="n" dir="ltr">-8.6%</td><td>DCF</td></tr><tr><th><span class="n">NRG</span></th><td class="n">45.5</td><td class="n">41.67</td><td class="n" dir="ltr">-8.4%</td><td>DCF</td></tr><tr><th><span class="n">BB</span></th><td class="n">2.75</td><td class="n">2.52</td><td class="n" dir="ltr">-8.4%</td><td>DCF</td></tr><tr><th><span class="n">STX</span></th><td class="n">292.53</td><td class="n">268.47</td><td class="n" dir="ltr">-8.2%</td><td>DCF</td></tr><tr><th><span class="n">2270</span></th><td class="n">273.09</td><td class="n">250.72</td><td class="n" dir="ltr">-8.2%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">1833</span></th><td class="n">147.78</td><td class="n">159.6</td><td class="n" dir="ltr">+8.0%</td><td>DCF</td></tr><tr><th><span class="n">PTGX</span></th><td class="n">91.37</td><td class="n">84.08</td><td class="n" dir="ltr">-8.0%</td><td>DCF</td></tr><tr><th><span class="n">BBY</span></th><td class="n">94.53</td><td class="n">87.15</td><td class="n" dir="ltr">-7.8%</td><td>DCF</td></tr><tr><th><span class="n">FAST</span></th><td class="n">41.02</td><td class="n">37.95</td><td class="n" dir="ltr">-7.5%</td><td>DCF</td></tr><tr><th><span class="n">TGT</span></th><td class="n">166.32</td><td class="n">154.34</td><td class="n" dir="ltr">-7.2%</td><td>DCF</td></tr><tr><th><span class="n">TTD</span></th><td class="n">19.45</td><td class="n">20.81</td><td class="n" dir="ltr">+7.0%</td><td>DCF</td></tr><tr><th><span class="n">DOCN</span></th><td class="n">54.04</td><td class="n">50.28</td><td class="n" dir="ltr">-7.0%</td><td>DCF</td></tr><tr><th><span class="n">RTX</span></th><td class="n">149.83</td><td class="n">159.75</td><td class="n" dir="ltr">+6.6%</td><td>DCF</td></tr><tr><th><span class="n">EL</span></th><td class="n">88.56</td><td class="n">82.71</td><td class="n" dir="ltr">-6.6%</td><td>DCF</td></tr><tr><th><span class="n">PGY</span></th><td class="n">39.48</td><td class="n">36.94</td><td class="n" dir="ltr">-6.4%</td><td>DCF</td></tr><tr><th><span class="n">CMCSA</span></th><td class="n">49.95</td><td class="n">53.15</td><td class="n" dir="ltr">+6.4%</td><td>DCF</td></tr><tr><th><span class="n">KMB</span></th><td class="n">116.35</td><td class="n">109.17</td><td class="n" dir="ltr">-6.2%</td><td>DCF</td></tr><tr><th><span class="n">VZ</span></th><td class="n">69.11</td><td class="n">65.39</td><td class="n" dir="ltr">-5.4%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">SBUX</span></th><td class="n">57.67</td><td class="n">60.71</td><td class="n" dir="ltr">+5.3%</td><td>DCF</td></tr><tr><th><span class="n">DPZ</span></th><td class="n">479.92</td><td class="n">455.25</td><td class="n" dir="ltr">-5.1%</td><td>DCF</td></tr><tr><th><span class="n">FLO</span></th><td class="n">20.81</td><td class="n">21.86</td><td class="n" dir="ltr">+5.0%</td><td>DCF</td></tr><tr><th><span class="n">TMO</span></th><td class="n">523.06</td><td class="n">497.16</td><td class="n" dir="ltr">-5.0%</td><td>DCF</td></tr><tr><th><span class="n">IRDM</span></th><td class="n">45.94</td><td class="n">43.67</td><td class="n" dir="ltr">-4.9%</td><td>DCF</td></tr><tr><th><span class="n">VRT</span></th><td class="n">185.75</td><td class="n">176.77</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th><span class="n">AKAM</span></th><td class="n">110.56</td><td class="n">105.22</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th><span class="n">EGHT</span></th><td class="n">2.9</td><td class="n">2.76</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th><span class="n">GOOG</span></th><td class="n">353.06</td><td class="n">336.06</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th><span class="n">KR</span></th><td class="n">63.83</td><td class="n">60.76</td><td class="n" dir="ltr">-4.8%</td><td>DCF</td></tr><tr><th><span class="n">MSI</span></th><td class="n">380.94</td><td class="n">363.74</td><td class="n" dir="ltr">-4.5%</td><td>DCF</td></tr><tr><th><span class="n">AMTM</span></th><td class="n">25.8</td><td class="n">26.96</td><td class="n" dir="ltr">+4.5%</td><td>DCF</td></tr><tr><th><span class="n">8313</span></th><td class="n">235.13</td><td class="n">245.01</td><td class="n" dir="ltr">+4.2%</td><td>DCF</td></tr><tr><th><span class="n">KO</span></th><td class="n">77.6</td><td class="n">80.73</td><td class="n" dir="ltr">+4.0%</td><td>DCF</td></tr><tr><th><span class="n">SPOT</span></th><td class="n">308.74</td><td class="n">321.1</td><td class="n" dir="ltr">+4.0%</td><td>DCF</td></tr><tr><th><span class="n">T</span></th><td class="n">39.39</td><td class="n">37.84</td><td class="n" dir="ltr">-3.9%</td><td>DCF</td></tr><tr><th><span class="n">CVS</span></th><td class="n">120.39</td><td class="n">125.07</td><td class="n" dir="ltr">+3.9%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">MDB</span></th><td class="n">284.1</td><td class="n">294.64</td><td class="n" dir="ltr">+3.7%</td><td>DCF</td></tr><tr><th><span class="n">7211</span></th><td class="n">29.51</td><td class="n">28.42</td><td class="n" dir="ltr">-3.7%</td><td>DCF</td></tr><tr><th><span class="n">DIS</span></th><td class="n">160.04</td><td class="n">154.31</td><td class="n" dir="ltr">-3.6%</td><td>DCF · صار ضعيف</td></tr><tr><th><span class="n">CACI</span></th><td class="n">730.89</td><td class="n">705.24</td><td class="n" dir="ltr">-3.5%</td><td>DCF</td></tr><tr><th><span class="n">NOMD</span></th><td class="n">15.14</td><td class="n">15.67</td><td class="n" dir="ltr">+3.5%</td><td>DCF</td></tr><tr><th><span class="n">MNDY</span></th><td class="n">292.79</td><td class="n">302.82</td><td class="n" dir="ltr">+3.4%</td><td>DCF</td></tr><tr><th><span class="n">ROST</span></th><td class="n">214.16</td><td class="n">206.97</td><td class="n" dir="ltr">-3.4%</td><td>DCF</td></tr><tr><th><span class="n">JNJ</span></th><td class="n">202.08</td><td class="n">195.35</td><td class="n" dir="ltr">-3.3%</td><td>DCF</td></tr><tr><th><span class="n">HUBS</span></th><td class="n">553.81</td><td class="n">572.19</td><td class="n" dir="ltr">+3.3%</td><td>DCF</td></tr><tr><th><span class="n">GD</span></th><td class="n">451.97</td><td class="n">466.85</td><td class="n" dir="ltr">+3.3%</td><td>DCF</td></tr><tr><th><span class="n">DUOL</span></th><td class="n">229.67</td><td class="n">237.13</td><td class="n" dir="ltr">+3.2%</td><td>DCF</td></tr><tr><th><span class="n">EXPE</span></th><td class="n">451.86</td><td class="n">466.27</td><td class="n" dir="ltr">+3.2%</td><td>DCF</td></tr><tr><th><span class="n">LGND</span></th><td class="n">215</td><td class="n">221.45</td><td class="n" dir="ltr">+3.0%</td><td>DCF</td></tr><tr><th><span class="n">4332</span></th><td class="n">6.18</td><td class="n">6.36</td><td class="n" dir="ltr">+2.9%</td><td>P/B، P/E 5 سنين</td></tr><tr><th><span class="n">4016</span></th><td class="n">64.62</td><td class="n">66.5</td><td class="n" dir="ltr">+2.9%</td><td>DCF</td></tr><tr><th><span class="n">SFM</span></th><td class="n">97.57</td><td class="n">94.76</td><td class="n" dir="ltr">-2.9%</td><td>DCF</td></tr><tr><th><span class="n">4161</span></th><td class="n">7.84</td><td class="n">8.06</td><td class="n" dir="ltr">+2.8%</td><td>DCF</td></tr><tr><th><span class="n">COO</span></th><td class="n">98.6</td><td class="n">101.3</td><td class="n" dir="ltr">+2.7%</td><td>DCF</td></tr><tr><th><span class="n">ADMA</span></th><td class="n">14.67</td><td class="n">14.27</td><td class="n" dir="ltr">-2.7%</td><td>DCF</td></tr><tr><th><span class="n">APH</span></th><td class="n">71.04</td><td class="n">69.11</td><td class="n" dir="ltr">-2.7%</td><td>DCF</td></tr><tr><th><span class="n">PATH</span></th><td class="n">14.5</td><td class="n">14.87</td><td class="n" dir="ltr">+2.6%</td><td>DCF</td></tr><tr><th><span class="n">NOK</span></th><td class="n">2.83</td><td class="n">2.76</td><td class="n" dir="ltr">-2.5%</td><td>DCF</td></tr><tr><th><span class="n">SNPS</span></th><td class="n">417.99</td><td class="n">427.91</td><td class="n" dir="ltr">+2.4%</td><td>DCF</td></tr><tr><th><span class="n">BMY</span></th><td class="n">97.37</td><td class="n">95.09</td><td class="n" dir="ltr">-2.3%</td><td>DCF</td></tr><tr><th><span class="n">CDNS</span></th><td class="n">294.63</td><td class="n">287.78</td><td class="n" dir="ltr">-2.3%</td><td>DCF</td></tr><tr><th><span class="n">OGN</span></th><td class="n">18.57</td><td class="n">18.14</td><td class="n" dir="ltr">-2.3%</td><td>DCF</td></tr><tr><th><span class="n">LHX</span></th><td class="n">285.69</td><td class="n">292.29</td><td class="n" dir="ltr">+2.3%</td><td>DCF</td></tr><tr><th><span class="n">CRCL</span></th><td class="n">62.88</td><td class="n">64.32</td><td class="n" dir="ltr">+2.3%</td><td>DCF</td></tr><tr><th><span class="n">OPRA</span></th><td class="n">35.8</td><td class="n">36.6</td><td class="n" dir="ltr">+2.2%</td><td>DCF</td></tr><tr><th><span class="n">WEN</span></th><td class="n">18.01</td><td class="n">18.41</td><td class="n" dir="ltr">+2.2%</td><td>DCF</td></tr><tr><th><span class="n">ARQT</span></th><td class="n">7.71</td><td class="n">7.88</td><td class="n" dir="ltr">+2.2%</td><td>DCF</td></tr><tr><th><span class="n">EBAY</span></th><td class="n">91.51</td><td class="n">89.51</td><td class="n" dir="ltr">-2.2%</td><td>DCF</td></tr><tr><th><span class="n">ELF</span></th><td class="n">127.22</td><td class="n">129.95</td><td class="n" dir="ltr">+2.1%</td><td>DCF</td></tr><tr><th><span class="n">FISV</span></th><td class="n">131.98</td><td class="n">134.81</td><td class="n" dir="ltr">+2.1%</td><td>DCF</td></tr><tr><th><span class="n">NXT</span></th><td class="n">82.8</td><td class="n">81.06</td><td class="n" dir="ltr">-2.1%</td><td>DCF</td></tr><tr><th><span class="n">MNST</span></th><td class="n">41.47</td><td class="n">40.61</td><td class="n" dir="ltr">-2.1%</td><td>DCF</td></tr><tr><th><span class="n">ONON</span></th><td class="n">49.89</td><td class="n">50.92</td><td class="n" dir="ltr">+2.1%</td><td>DCF</td></tr><tr><th><span class="n">SHOP</span></th><td class="n">42.58</td><td class="n">41.75</td><td class="n" dir="ltr">-1.9%</td><td>DCF</td></tr><tr><th><span class="n">NFLX</span></th><td class="n">82.53</td><td class="n">84.07</td><td class="n" dir="ltr">+1.9%</td><td>DCF · ما عاد ضعيف</td></tr><tr><th><span class="n">AMGN</span></th><td class="n">423.16</td><td class="n">431</td><td class="n" dir="ltr">+1.9%</td><td>DCF</td></tr><tr><th><span class="n">MOG.A</span></th><td class="n">232.49</td><td class="n">236.63</td><td class="n" dir="ltr">+1.8%</td><td>DCF</td></tr><tr><th><span class="n">BSX</span></th><td class="n">87.03</td><td class="n">88.56</td><td class="n" dir="ltr">+1.8%</td><td>DCF</td></tr><tr><th><span class="n">WDAY</span></th><td class="n">278.38</td><td class="n">282.97</td><td class="n" dir="ltr">+1.6%</td><td>DCF</td></tr><tr><th><span class="n">NSSC</span></th><td class="n">43.79</td><td class="n">43.07</td><td class="n" dir="ltr">-1.6%</td><td>DCF</td></tr><tr><th><span class="n">ABNB</span></th><td class="n">185.52</td><td class="n">182.51</td><td class="n" dir="ltr">-1.6%</td><td>DCF</td></tr><tr><th><span class="n">4001</span></th><td class="n">8.07</td><td class="n">7.94</td><td class="n" dir="ltr">-1.6%</td><td>DCF</td></tr><tr><th><span class="n">MRK</span></th><td class="n">119.81</td><td class="n">121.7</td><td class="n" dir="ltr">+1.6%</td><td>DCF</td></tr><tr><th><span class="n">TMUS</span></th><td class="n">301.08</td><td class="n">296.4</td><td class="n" dir="ltr">-1.6%</td><td>DCF</td></tr><tr><th><span class="n">1831</span></th><td class="n">12.92</td><td class="n">13.12</td><td class="n" dir="ltr">+1.5%</td><td>DCF</td></tr><tr><th><span class="n">PTON</span></th><td class="n">7.9</td><td class="n">7.78</td><td class="n" dir="ltr">-1.5%</td><td>DCF</td></tr><tr><th><span class="n">CL</span></th><td class="n">97.58</td><td class="n">99.05</td><td class="n" dir="ltr">+1.5%</td><td>DCF</td></tr><tr><th><span class="n">PYPL</span></th><td class="n">105.83</td><td class="n">107.41</td><td class="n" dir="ltr">+1.5%</td><td>DCF</td></tr><tr><th><span class="n">4163</span></th><td class="n">82.57</td><td class="n">81.36</td><td class="n" dir="ltr">-1.5%</td><td>DCF</td></tr><tr><th><span class="n">GLBE</span></th><td class="n">84.66</td><td class="n">83.43</td><td class="n" dir="ltr">-1.5%</td><td>DCF</td></tr><tr><th><span class="n">TENB</span></th><td class="n">51.29</td><td class="n">52.02</td><td class="n" dir="ltr">+1.4%</td><td>DCF</td></tr><tr><th><span class="n">UTHR</span></th><td class="n">553.5</td><td class="n">545.82</td><td class="n" dir="ltr">-1.4%</td><td>DCF</td></tr><tr><th><span class="n">CCL</span></th><td class="n">36.77</td><td class="n">37.28</td><td class="n" dir="ltr">+1.4%</td><td>DCF</td></tr><tr><th><span class="n">1830</span></th><td class="n">141.86</td><td class="n">139.94</td><td class="n" dir="ltr">-1.4%</td><td>DCF</td></tr><tr><th><span class="n">7203</span></th><td class="n">907.16</td><td class="n">918.47</td><td class="n" dir="ltr">+1.2%</td><td>DCF</td></tr><tr><th><span class="n">4190</span></th><td class="n">24.38</td><td class="n">24.09</td><td class="n" dir="ltr">-1.2%</td><td>DCF</td></tr><tr><th><span class="n">HD</span></th><td class="n">302.65</td><td class="n">299.06</td><td class="n" dir="ltr">-1.2%</td><td>DCF</td></tr><tr><th><span class="n">ROKU</span></th><td class="n">68.26</td><td class="n">67.46</td><td class="n" dir="ltr">-1.2%</td><td>DCF</td></tr><tr><th><span class="n">AMPH</span></th><td class="n">45.71</td><td class="n">45.18</td><td class="n" dir="ltr">-1.2%</td><td>DCF</td></tr><tr><th><span class="n">YELP</span></th><td class="n">69.54</td><td class="n">70.32</td><td class="n" dir="ltr">+1.1%</td><td>DCF</td></tr><tr><th><span class="n">STZ</span></th><td class="n">239.91</td><td class="n">242.47</td><td class="n" dir="ltr">+1.1%</td><td>DCF</td></tr><tr><th><span class="n">FIVE</span></th><td class="n">260.3</td><td class="n">263.07</td><td class="n" dir="ltr">+1.1%</td><td>DCF</td></tr><tr><th><span class="n">MCD</span></th><td class="n">306.26</td><td class="n">309.5</td><td class="n" dir="ltr">+1.1%</td><td>DCF</td></tr><tr><th><span class="n">ADBE</span></th><td class="n">516.44</td><td class="n">521.88</td><td class="n" dir="ltr">+1.1%</td><td>DCF</td></tr><tr><th><span class="n">NOW</span></th><td class="n">178.77</td><td class="n">180.61</td><td class="n" dir="ltr">+1.0%</td><td>DCF</td></tr><tr><th><span class="n">4008</span></th><td class="n">27.28</td><td class="n">27</td><td class="n" dir="ltr">-1.0%</td><td>DCF</td></tr><tr><th><span class="n">DRS</span></th><td class="n">39.17</td><td class="n">38.79</td><td class="n" dir="ltr">-1.0%</td><td>DCF</td></tr><tr><th><span class="n">BKNG</span></th><td class="n">252.66</td><td class="n">255</td><td class="n" dir="ltr">+0.9%</td><td>DCF</td></tr><tr><th><span class="n">4013</span></th><td class="n">101.07</td><td class="n">101.92</td><td class="n" dir="ltr">+0.8%</td><td>DCF</td></tr><tr><th><span class="n">SEZL</span></th><td class="n">161.58</td><td class="n">162.84</td><td class="n" dir="ltr">+0.8%</td><td>DCF</td></tr><tr><th><span class="n">OKTA</span></th><td class="n">143.83</td><td class="n">144.91</td><td class="n" dir="ltr">+0.8%</td><td>DCF</td></tr><tr><th><span class="n">COST</span></th><td class="n">829.96</td><td class="n">823.73</td><td class="n" dir="ltr">-0.8%</td><td>DCF</td></tr><tr><th><span class="n">CROX</span></th><td class="n">138.91</td><td class="n">137.91</td><td class="n" dir="ltr">-0.7%</td><td>DCF</td></tr><tr><th><span class="n">VRTX</span></th><td class="n">501.63</td><td class="n">505.08</td><td class="n" dir="ltr">+0.7%</td><td>DCF</td></tr><tr><th><span class="n">DDOG</span></th><td class="n">154.02</td><td class="n">154.91</td><td class="n" dir="ltr">+0.6%</td><td>DCF</td></tr><tr><th><span class="n">TJX</span></th><td class="n">151.13</td><td class="n">151.98</td><td class="n" dir="ltr">+0.6%</td><td>DCF</td></tr><tr><th><span class="n">VEEV</span></th><td class="n">264.57</td><td class="n">266.05</td><td class="n" dir="ltr">+0.6%</td><td>DCF</td></tr><tr><th><span class="n">TOST</span></th><td class="n">29.94</td><td class="n">30.09</td><td class="n" dir="ltr">+0.5%</td><td>DCF</td></tr></tbody></table></details>
+      <p><b>تحسينات 10 نوفمبر (الثالث) للجوال، ما تغيّر فيها ولا رقم:</b> 67) القائمة ترسم أول 60 سهم وتكمل وأنت تنزل (أو "اعرض الكل")، والبطاقة على الجوال صارت سطرين: الاسم، وتحته السعر والقيمة العادلة والفرق والدرجة (5 أسهم بالشاشة بدل 2.4)، والمكررات داخل السهم. 68) الترتيب صار يحسب قيمة كل سهم مرة وحدة، والنجمة تعدّل صف السهم بس، والبحث ينتظر توقف الكتابة. 69) تفاصيل السهم: شريط فوق فيه "إغلاق" يمشي معك، والسهم اللي تفتحه يجي قدامك لو كان طاير فوق، والأجزاء اللي توصل متأخرة (الأخبار، التوجيهات) تتبدل لحالها بدل ما تنرسم التفاصيل كلها 4 مرات، وشرح طريقة القيمة العادلة صار ورا "كيف ينحسب؟". 70) رسوم الأرباح صارت بعرض الشاشة (كانت كتابة محاورها 4.8 بكسل على الجوال). 71) الشرح اللي كان يطلع بس لما تمرر الماوس: على الجوال اضغط ⓘ جنب التقدير الضعيف أو اضغط على أي شارة أو حرف درجة الأرباح، والمفتاح فوق صار يشرح الحرف والخماسية الصغيرة والأرقام الباهتة. 72) "تراجع" و"أضفت" صارت تطلع تحت الشاشة جنب إصبعك، والسهم اللي تضيفه تروح له الصفحة، وزر النجمة والحذف صاروا 44 بكسل.</p>
+      <p>القياس على 703 سهم، بعرض جوال ومعالج أبطأ 4 مرات (يشبه جوال متوسط): الترتيب حسب الفرق من 5.9 ثانية لـ 0.18، حسب الدرجة من 3.7 لـ 0.35، النجمة من 7.4 لـ 0.08، مسح البحث من 3.7 لـ 0.01 (والرسم بعد التوقف يكلف مثل الترتيب)، الرجوع للتبويب الأمريكي من 3.2 لـ 0.25، وعناصر الصفحة من 38,256 لـ 9,390. التمرير السريع جداً صار أثقل شوي (أبطأ إطار 82 ملي ثانية بدل 79، والوسط 41 بدل 31) لأن الصفوف تنضاف وأنت تنزل؛ بالمعالج العادي 17 ملي ثانية. وعلى بياناتك المحفوظة ما تغيّرت ولا قيمة عادلة ولا درجة.</p>
       <p class="dim">أعدنا اختبار الدرجة بعد التصحيحات اللي تمس الاختبار (3 و7 و8 وشيل التدفق النقدي للبنوك): النتيجة نفسها (الارتباط <span dir="ltr">+0.03</span>، مؤكد؛ أعلى خُمس ما تفوّق). ونتائج القيمة العادلة والتنبيهات بعد التصحيح بعد ما تغيّرت: ما تنبأت.</p>
     </details>
     <h2>توقع السعر لـ 5 سنوات</h2>
@@ -1962,7 +1997,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
 
   const $ = (id) => document.getElementById(id)
   const state = { snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
-    open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
+    open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '', limit: 60, focusSym: null }
   let db = null
   let mcp = null
 
@@ -1985,6 +2020,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
 
   function notice(text, bad = false) {
     const n = $('notice')
+    clearTimeout(toastT)
     n.hidden = !text
     n.className = bad ? 'notice bad' : 'notice'
     n.textContent = text || ''
@@ -2425,6 +2461,16 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
   }
 
   // Monthly closes from the saved history, this month at the quote's price.
+  // v30 (audit 3.1): months of saved closes, counted once per saved price history. weakFair asks for it per
+  // row and per sort comparison, and closesOf built a Map of 240 months each time (sorting by upside: 3.5 s).
+  const pxMonths = new WeakMap()
+  function closesN(sym) {
+    const px = state.cache[sym]?.px
+    let ms = px ? pxMonths.get(px) : null
+    if (px && !ms) { ms = new Set(); px.t.forEach((t, i) => { if (Number.isFinite(px.c[i])) ms.add(monthKey(t)) }); pxMonths.set(px, ms) }
+    const now = Number.isFinite(state.quotes[sym]?.close) && !ms?.has(monthKey(Math.floor(Date.now() / 1000)))
+    return (ms?.size ?? 0) + (now ? 1 : 0)
+  }
   function closesOf(sym) {
     const d = state.cache[sym]
     const closes = new Map()
@@ -2621,11 +2667,19 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     return true
   }
   // After a delete or an un-star: one tap brings it back.
-  function undoNotice(kind, sym) {
+  // v30 (audit 3.5): undo and "added" messages sit at the bottom of the screen, where the tap was, not at the
+  // top of a page scrolled 20 screens down; they go after 6 seconds unless they hold an undo.
+  let toastT = null
+  function toastNotice(html, keep = false) {
     const n = $('notice')
     n.hidden = false
-    n.className = 'notice'
-    n.innerHTML = `${kind === 'fav' ? 'شلت' : 'حذفت'} <b class="n">${esc(sym.split(':')[1])}</b> ${kind === 'fav' ? 'من المفضلة' : 'من القائمة'}. <button class="btn" type="button" data-undo="${kind}|${esc(sym)}">تراجع</button>`
+    n.className = 'notice float'
+    n.innerHTML = html
+    clearTimeout(toastT)
+    if (!keep) toastT = setTimeout(() => { if (n.classList.contains('float') && !n.querySelector('[data-undo]')) n.hidden = true }, 6000)
+  }
+  function undoNotice(kind, sym) {
+    toastNotice(`${kind === 'fav' ? 'شلت' : 'حذفت'} <b class="n">${esc(sym.split(':')[1])}</b> ${kind === 'fav' ? 'من المفضلة' : 'من القائمة'}. <button class="btn" type="button" data-undo="${kind}|${esc(sym)}">تراجع</button> <button class="x" type="button" data-hide aria-label="سكّر">×</button>`, true)
   }
 
   async function addSymbol(sym) {
@@ -2643,7 +2697,9 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     }
     state.lists[m] = [...state.lists[m], sym]
     if (m !== state.market) setMarket(m)
+    state.focusSym = sym // drawn and scrolled to (audit 3.5)
     render()
+    toastNotice(`أضفت <b class="n">${esc(sym.split(':')[1])}</b>.`)
     await editSaved(m, sym, true)
     try {
       await loadQuotes([sym])
@@ -2714,7 +2770,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     if (f.low > 0 && f.high / f.low > 3) return f.dropped?.length ? 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)، وانشالت البعيدة منها' : 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)'
     // POST-HOC (2026-11-10, audit 1.6): built from a fraction of its methods (a stock without saved monthly
     // prices showed $81.38 on 35% of its weights against $94.00 with them, not dimmed).
-    if (closesOf(sym).size < 12) return 'أسعار السهم الشهرية المحفوظة أقل من سنة، فالطرق اللي تقارن بتاريخه ناقصة'
+    if (closesN(sym) < 12) return 'أسعار السهم الشهرية المحفوظة أقل من سنة، فالطرق اللي تقارن بتاريخه ناقصة'
     if (f.coverage < 0.6) return `مبنية على ${Math.round(100 * f.coverage)}% بس من أوزان طرقها`
     return null
   }
@@ -2767,14 +2823,15 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     // The big-companies tab is grouped by sector (largest sector first); the sort applies inside.
     const sectorCap = {}
     if (state.market === 'big') for (const s of syms) { const q = state.quotes[s]; if (q?.sector) sectorCap[q.sector] = (sectorCap[q.sector] ?? 0) + (q.market_cap_basic ?? 0) }
+    const val = new Map(syms.map((s) => [s, sortValue(s, key)])) // once per stock, not per comparison (audit 3.1)
     return syms.sort((a, b) => {
       if (state.market === 'big') {
         const sa = state.quotes[a]?.sector ?? ''
         const sb = state.quotes[b]?.sector ?? ''
         if (sa !== sb) return (sectorCap[sb] ?? 0) - (sectorCap[sa] ?? 0) || (sa < sb ? -1 : 1)
       }
-      const x = sortValue(a, key)
-      const y = sortValue(b, key)
+      const x = val.get(a)
+      const y = val.get(b)
       if (x == null && y == null) return 0
       if (x == null) return 1
       if (y == null) return -1
@@ -2828,6 +2885,23 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
   // render(dirty) redraws only those stocks' rows (and the open panel) while the drawn order still
   // holds: a whole table of 703 rows costs ~300 ms (2 s on a phone), and a refresh drew it once per
   // quote batch. Anything else draws the whole table.
+  // v30 (audit 3.1): the list draws 60 stocks and 60 more as the end comes into view (or all on request): 703
+  // rows were 38,000 elements, and sorting or starring rebuilt all of them (3.7 s and 7.4 s on a slow phone).
+  // localStorage stocks.rows = "all" draws every row (the measuring harness uses it).
+  const PAGE = 60
+  const ALL_ROWS = (() => { try { return localStorage.getItem('stocks.rows') === 'all' } catch { return false } })()
+  let viewKey = ''
+  let moreIO = null
+  const moreRow = (n, total) => (n < total ? `<tr class="more"><td colspan="14"><button class="btn" type="button" data-more>اعرض ${Math.min(PAGE, total - n)} كمان</button> <button class="btn" type="button" data-all>اعرض الكل (${total})</button></td></tr>` : '')
+  function watchMore() {
+    moreIO?.disconnect()
+    const m = $('rows').querySelector('tr.more')
+    if (!m || typeof IntersectionObserver !== 'function') return
+    // scrolling adds 10 at a time, well before the end shows, again each frame while the end is near: 60 at once
+    // was a 200 ms frame on a slow phone. (content-visibility on the cards was tried: sorting faster, scrolling slower.)
+    moreIO = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { moreIO.disconnect(); state.limit += 10; render() } }, { rootMargin: '1500px 0px' })
+    moreIO.observe(m)
+  }
   function render(only) {
     for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
     for (const m of ['us', 'sa', 'big', 'sectors', 'fav']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
@@ -2859,22 +2933,35 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
       body.innerHTML = '<tr><td colspan="14" class="dim">ما فيه أسهم تطابق الفلترة.</td></tr>'
       return
     }
+    const vk = `${state.market}|${state.filter}|${state.sort.key}${state.sort.dir}|${state.group}|${state.underCap}`
+    if (vk !== viewKey) { viewKey = vk; state.limit = PAGE }
+    for (const x of [state.open, state.focusSym]) { const i = x ? syms.indexOf(x) : -1; if (i >= state.limit) state.limit = i + 1 } // the open or just-added stock is always drawn
+    const drawn = ALL_ROWS || state.market === 'big' ? syms : syms.slice(0, state.limit)
     // Keyboard focus stays on the row or button it was on (the star's render rebuilt it, and focus fell to the page).
     const a = document.activeElement
     const fk = body.contains(a) && ['sym', 'star', 'del'].find((k) => a.dataset[k])
     const backP = panelFocus()
     const refocus = () => { if (fk) body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true }); else backP() }
     const rows = body.querySelectorAll('tr.row')
-    if (only && state.market !== 'big' && rows.length === syms.length && syms.every((s, i) => rows[i].dataset.sym === s)) {
+    const same = (n) => [...rows].slice(0, n).every((r, i) => r.dataset.sym === drawn[i])
+    if (only && state.market !== 'big' && rows.length === drawn.length && same(drawn.length)) {
       if (state.open) only.add(state.open)
-      for (const sym of only) { const i = syms.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
+      for (const sym of only) { const i = drawn.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
       only.clear()
+      refocus()
+      return
+    }
+    // more rows of the same order: add them, keep the ones drawn
+    if (state.market !== 'big' && rows.length && rows.length < drawn.length && same(rows.length) && !only?.size) {
+      body.querySelector('tr.more')?.remove()
+      body.insertAdjacentHTML('beforeend', drawn.slice(rows.length).map((sym) => rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')).join('') + moreRow(drawn.length, syms.length))
+      watchMore()
       refocus()
       return
     }
     dirty.clear()
     let lastSector = null
-    body.innerHTML = syms.map((sym) => {
+    body.innerHTML = drawn.map((sym) => {
       const q = state.quotes[sym]
       let head = ''
       if (state.market === 'big' && (q?.sector ?? '') !== lastSector) {
@@ -2883,29 +2970,33 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
         head = `<tr class="grp"><td colspan="14">${esc(lastSector ? nameAr(lastSector) : 'جاري التحميل…')} <span class="dim n">${n}</span></td></tr>`
       }
       return head + rowHtml(sym) + (state.open === sym ? `<tr class="detail"><td colspan="14">${detail(sym)}</td></tr>` : '')
-    }).join('')
+    }).join('') + moreRow(drawn.length, syms.length)
+    watchMore()
     refocus()
+    if (state.focusSym) { const r = body.querySelector(`tr.row[data-sym="${CSS.escape(state.focusSym)}"]`); state.focusSym = null; r?.scrollIntoView({ block: 'center' }); r?.classList.add('flash') }
 
     // Once a stock has an error (TradingView does not know it, or its fetch failed), the cells it
-    // can never fill show '—', not a loading skeleton.
+    // can never fill show '—', not a loading skeleton. Ratio cells: hidden on phone cards (they are in the
+    // panel), and on tablet cards when empty (audit 3.1: "SVR —" on every profitable stock).
+    function rc(label, html, attrs = '') { return `<td class="n c-ratio${html === '—' ? ' nil' : ''}" data-label="${label}"${attrs}>${html}</td>` }
     function rowHtml(sym) {
       const q = state.quotes[sym]
       const s = state.scores[sym]
       const f = state.fair[sym]
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح" data-tip="درجة الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
-        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}${f?.fair && weakFair(sym) ? ` <button class="ib" type="button" data-tip="${esc(`تقدير ضعيف: ${weakFair(sym)}.`)}" aria-label="ليش ضعيف؟">ⓘ</button>` : ''}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
         <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
         <td class="c-wide c-exp">${expCell(sym)}</td>
         <td class="n c-more">${s?.detail ? pct(s.detail.gStar) : '—'}</td>
         <td class="n c-more" title="نمو الإيراد السنوي، ${gYears(sym)}">${s?.detail ? pct(s.detail.revG) : '—'}${s?.detail?.revG != null && gYears(sym) !== 'آخر 3 سنوات' ? ` <small class="dim">(${gYears(sym)})</small>` : ''}</td>
-        <td class="n" data-label="مكرر الربح P/E">${fmt(peNow(sym))}</td>
-        <td class="n" data-label="المكرر المتوقع Fwd P/E" title="${fyNext(q) ? `على توقع ربح سنة ${fyNext(q)} المالية` : ''}">${fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy)}</td>
-        <td class="n" data-label="PEG">${pegCell(sym)}</td>
-        <td class="n" data-label="SVR">${svrShown(sym) == null ? '—' : `${fmtSvr(svrShown(sym))}×`}</td>
+        ${rc('مكرر الربح P/E', fmt(peNow(sym)))}
+        ${rc('المكرر المتوقع Fwd P/E', fmt(q?.non_gaap_price_to_earnings_per_share_forecast_next_fy), fyNext(q) ? ` title="على توقع ربح سنة ${fyNext(q)} المالية"` : '')}
+        ${rc('PEG', pegCell(sym))}
+        ${rc('SVR', svrShown(sym) == null ? '—' : `${fmtSvr(svrShown(sym))}×`)}
         <td class="n c-more">${fmt(q?.altman_z_score_ttm)}</td>
         <td class="c-del"><button class="x" type="button" data-del="${esc(sym)}" aria-label="احذف ${esc(sym)}">×</button></td>
       </tr>`
@@ -2919,6 +3010,23 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     return () => k >= 0 && $('rows').querySelector('tr.detail')?.querySelectorAll(PF)[k]?.focus({ preventScroll: true })
   }
 
+  // v30 (audit 3.2): a panel refreshed by its loaders (news, history, earnings log, guidance: 4 rebuilds in the
+  // 2.5 s after opening) replaces only the blocks whose markup changed, so scroll, open sections and focus stay.
+  function patch(tr, html) {
+    const t = document.createElement('template')
+    t.innerHTML = `<table><tbody><tr class="detail">${html}</tr></tbody></table>`
+    const fresh = t.content.querySelector('tr.detail')
+    const same = (a, b) => a.cloneNode(false).outerHTML === b.cloneNode(false).outerHTML
+    const walk = (o, n, depth) => {
+      if (o.outerHTML === n.outerHTML) return
+      if (depth > 0 && same(o, n) && o.children.length === n.children.length && o.children.length && o.childNodes.length === o.children.length && n.childNodes.length === n.children.length) {
+        const oc = [...o.children]; const nc = [...n.children]
+        oc.forEach((c, i) => walk(c, nc[i], depth - 1))
+      } else o.replaceWith(n.cloneNode(true))
+    }
+    walk(tr.firstElementChild, fresh.firstElementChild, 3)
+  }
+
   // One stock's panel opened, closed or refreshed in place.
   function redraw(sym) {
     const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
@@ -2928,7 +3036,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     if (state.open !== sym) return d?.remove()
     const html = `<td colspan="14">${detail(sym)}</td>`
     const back = panelFocus()
-    if (d) d.innerHTML = html
+    if (d) patch(d, html)
     else tr.insertAdjacentHTML('afterend', `<tr class="detail">${html}</tr>`)
     back()
   }
@@ -3023,15 +3131,18 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     const on = !state.lists.fav.includes(sym)
     state.lists.fav = on ? [...state.lists.fav, sym] : state.lists.fav.filter((s) => s !== sym)
     if (!on) undoNotice('fav', sym)
-    editSaved('fav', sym, on).then(render)
-    render()
+    else toastNotice(`أضفت <b class="n">${esc(sym.split(':')[1])}</b> للمفضلة.`)
+    // v30 (audit 3.1): outside the favourites tab only this stock's row changes (it rebuilt the table 2–3 times)
+    const one = () => (state.market === 'fav' ? undefined : new Set([sym]))
+    editSaved('fav', sym, on).then(() => render(one()))
+    render(one())
   }
 
   const pegCell = (sym) => {
     const p = peg(sym)
     if (!p) return '—'
-    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية">(تاريخي)</small>'
-      : p.jump ? ` <small class="dim" dir="rtl" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
+    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية" data-tip="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية">(تاريخي)</small>'
+      : p.jump ? ` <small class="dim" dir="rtl" data-tip="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر، فالـPEG هنا يبيّن السهم أرخص من حقيقته." title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
     return `${fmt(p.v, 2)}${note}`
   }
 
@@ -3039,12 +3150,12 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     const e = state.exp[sym]
     const q = state.quotes[sym]
     const chips = []
-    if (e?.flag === 'red') chips.push('<span class="chip red" title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
-    if (e?.flag === 'green') chips.push('<span class="chip green" title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
+    if (e?.flag === 'red') chips.push('<span class="chip red" data-tip="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع." title="سعره يفترض نمو أسرع بكثير من اللي تسويه الشركة فعلاً، ونموها قاعد يبطّي. انتبه وراجع قبل تشتري، مو إشارة بيع.">سعره أعلى من أدائه</span>')
+    if (e?.flag === 'green') chips.push('<span class="chip green" data-tip="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء." title="السوق مسعّره كأنه بينمو أبطأ بكثير من اللي يسويه فعلاً، ونموه مستمر. يستاهل تدرسه، مو إشارة شراء.">سعره أقل من أدائه</span>')
     // Calendar days in the viewer's time zone, the date dateOf prints (whole 24 hours said 'tomorrow' on the day itself).
     const days = Number.isFinite(q?.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - dayNo(Date.now()) : null
-    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
-    if (q && analysts(q).falling) chips.push('<span class="chip amber" title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
+    if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" data-tip="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير." title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
+    if (q && analysts(q).falling) chips.push('<span class="chip amber" data-tip="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة." title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
     return chips.join(' ') || '<span class="dim">—</span>'
   }
 
@@ -3179,7 +3290,8 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     ].filter(Boolean)
     return `<div class="part fv" style="grid-column:1/-1">
       <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
-      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>). أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b>.`}</p>
+      <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b> (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>).`}</p>
+      ${pre ? '' : `<details data-k="fvhow"${state.ctxOpen.has('fvhow') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد.</p></details>`}
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
       <div class="fair-list">${rows}</div>
       ${rdcfBlock(sym)}
@@ -3426,8 +3538,14 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
   }
 
   /** Bars for one series (actuals, the next quarter's estimate hatched), drawn to one scale. */
+  // v30 (audit 3.3): the earnings charts are drawn at the panel's width (a fixed 720 viewBox shrank its axis text
+  // to 4.8 px on a phone), and the quarter labels keep at least 56 px apart.
+  // read once and after a resize: reading it while a panel is being built forced a layout of the whole list
+  let cw = null
+  addEventListener('resize', () => { cw = null }, { passive: true })
+  const chartW = () => (cw ??= Math.round(Math.min(720, Math.max(300, (document.querySelector('.wrap')?.clientWidth ?? 720) - 64))))
   function qChart(rows, key, est, cur) {
-    const W = 720
+    const W = chartW()
     const H = 210
     const pad = { l: 8, r: 58, t: 14, b: 26 }
     const vals = rows.map((r) => r[key])
@@ -3441,7 +3559,8 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     const fmtV = (v) => { if (key === 'eps') return fmt(v, 2); const a = Math.abs(v); return a >= 1e12 ? `${fmt(v / 1e12, 2)}T` : a >= 1e9 ? `${fmt(v / 1e9, 1)}B` : a >= 1e6 ? `${fmt(v / 1e6, 0)}M` : fmt(v, 0) }
     const bar = (v, i, cls) => (Number.isFinite(v) ? `<rect x="${(pad.l + i * bw + bw * 0.15).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${Math.max(1, Math.abs(y(v) - y(0))).toFixed(1)}" class="${cls}${v < 0 ? ' neg' : ''}"><title>${esc(rows[i]?.label ?? 'الربع الجاي (توقع)')}: ${fmtV(v)}</title></rect>` : '')
     const ticks = [hi, (hi + lo) / 2, lo].map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" class="grid"/><text x="${W - pad.r + 6}" y="${(y(t) + 4).toFixed(1)}" class="axis">${fmtV(t)}</text>`).join('')
-    const labels = rows.map((r, i) => ((rows.length - 1 - i) % 4 === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
+    const stride = 4 * Math.max(1, Math.ceil(56 / (4 * bw)))
+    const labels = rows.map((r, i) => ((rows.length - 1 - i) % stride === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
     return `<svg class="qchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${key === 'rev' ? 'الإيرادات' : key === 'eps' ? 'ربح السهم' : 'صافي الربح'} ربعياً" dir="ltr">
       <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--accent)" stroke-width="2"/></pattern></defs>
       ${ticks}${rows.map((r, i) => bar(r[key], i, 'act')).join('')}${Number.isFinite(est) ? bar(est, rows.length, 'est') : ''}
@@ -3458,7 +3577,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     const yr = ttm(last - 4)
     const y3 = ttm(last - 12)
     if (now == null) return ''
-    const W = 720
+    const W = chartW()
     const H = 90
     const pts = m.map((v, i) => (Number.isFinite(v) ? [8 + (i / Math.max(1, rows.length - 1)) * (W - 86), v] : null))
     const vs = pts.filter(Boolean).map((p) => p[1])
@@ -3564,10 +3683,12 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     </div>`
   }
 
+  // v30 (audit 3.2): a bar that stays at the top while the panel (4,000–6,000 px on a phone) scrolls by, to close it.
+  const pbar = (sym) => `<div class="pbar"><b class="n">${esc(sym.split(':')[1])}</b><span dir="auto" title="${esc(state.quotes[sym]?.description ?? '')}">${esc(state.quotes[sym]?.description ?? '')}</span><button class="btn" type="button" data-close="${esc(sym)}">إغلاق ✕</button></div>`
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -3597,7 +3718,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
       ...industryTile(sym),
       ...runwayTile(q),
     ]
-    return `<div class="dgrid">
+    return `${pbar(sym)}<div class="dgrid">
       ${snowBlock(sym)}
       ${fairBlock(sym)}
       ${earnBlock(sym)}
@@ -3827,6 +3948,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     if (b) addSymbol(b.dataset.add)
   })
   $('notice').addEventListener('click', (e) => {
+    if (e.target.closest('button[data-hide]')) { notice(''); return }
     const b = e.target.closest('button[data-undo]')
     if (!b) return
     const [kind, sym] = b.dataset.undo.split('|')
@@ -3836,13 +3958,25 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
   })
   document.addEventListener('click', (e) => { if (!e.target.closest('.add')) $('results').hidden = true })
   $('refresh').addEventListener('click', () => refresh({ fresh: true }))
-  $('filter').addEventListener('input', (e) => { state.filter = e.target.value; render() })
+  let filterT = null // v30 (audit 3.1): one redraw per pause in typing, not per character
+  $('filter').addEventListener('input', (e) => { clearTimeout(filterT); filterT = setTimeout(() => { state.filter = e.target.value; render() }, 140) })
   $('underCap').addEventListener('change', (e) => { state.underCap = e.target.checked; render() })
   $('group').addEventListener('change', (e) => { state.group = e.target.value; render() })
   // Phones hide the table header, so sorting there goes through this menu.
   $('sortSel').addEventListener('change', (e) => { const [key, dir] = e.target.value.split(':'); state.sort = { key, dir: Number(dir) }; render() })
   const tip = $('tip')
   const canHover = matchMedia('(hover: hover)').matches
+  // v30 (audit 3.4): explanations that lived only in title= (weak estimates, chips, grades) open on a tap on phones
+  function showTip(el, html) {
+    tip.innerHTML = html
+    tip.hidden = !html
+    if (!html) return
+    const r = el.getBoundingClientRect()
+    const top = r.bottom + 8 + tip.offsetHeight > innerHeight ? r.top - 8 - tip.offsetHeight : r.bottom + 8
+    tip.style.top = `${Math.max(8, top)}px`
+    tip.style.left = `${Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), innerWidth - tip.offsetWidth - 8)}px`
+  }
+  document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip], #tip')) tip.hidden = true })
   $('rows').addEventListener('mouseover', (e) => {
     const el = canHover && e.target.closest('.score')
     if (!el) { tip.hidden = true; return }
@@ -3867,6 +4001,10 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     if (was && was !== sym) redraw(was)
     redraw(sym)
     if (!state.open) return
+    // v30 (audit 3.2): closing a panel above moves the tapped row off screen (4,502 px on a phone): bring it back
+    const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
+    const top = tr?.getBoundingClientRect().top
+    if (tr && (top < 0 || top > innerHeight - 120)) tr.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
     loadNews(sym)
     loadHist(sym)
     loadElog(sym)
@@ -3875,6 +4013,12 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
     if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
   $('rows').addEventListener('click', (e) => {
+    if (e.target.closest('button[data-more]')) { state.limit += PAGE; render(); return }
+    if (e.target.closest('button[data-all]')) { state.limit = Infinity; render(); return }
+    const cl = e.target.closest('button[data-close]')
+    if (cl) { e.stopPropagation(); const sym = cl.dataset.close; toggle(sym); const r = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`); if (r && r.getBoundingClientRect().top < 0) r.scrollIntoView({ block: 'start' }); r?.focus({ preventScroll: true }); return }
+    const tp = e.target.closest('[data-tip]')
+    if (tp && !canHover) { e.stopPropagation(); showTip(tp, esc(tp.dataset.tip)); return }
     const ev = e.target.closest('button[data-ev]')
     if (ev) { e.stopPropagation(); const [sym, k, val] = ev.dataset.ev.split('|'); state.eView[sym] = { ...(state.eView[sym] ?? { m: 'rev', n: 16 }), [k]: k === 'n' ? Number(val) : val }; redraw(sym); return }
     const star = e.target.closest('button[data-star]')
@@ -3929,7 +4073,7 @@ return { EHS_METRICS, ehsScore, ehsCuts, ehsLetter }
       state.lists.fav = [...syms]
       if (!snap.metadata?.fromCache) saved.fav = [...syms]
       if (changed && state.market === 'fav' && cacheRead) refresh()
-      else scheduleRender(true)
+      else if (changed || state.market === 'fav') scheduleRender(true) // v30: the echo of our own star write changes nothing on screen
     }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
     for (const m of ['us', 'sa']) {
       db.doc(`lists/${m}`).onSnapshot((snap) => {

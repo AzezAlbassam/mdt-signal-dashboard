@@ -170,7 +170,8 @@ function fake(ORIGIN) {
         const why = []
         if (!inScroll && r.width > 0 && (r.right > vw + 1 || r.left < -1)) why.push('viewport')
         if (p && r.width > 0 && (r.right > p.right + 1 || r.left < p.left - 1)) why.push('parent')
-        if ((ox === 'hidden' || ox === 'clip') && el.tagName !== 'svg' && el.scrollWidth > el.clientWidth + 1) why.push('clipped')
+        // v30: a name shortened on purpose with "…" (text-overflow: ellipsis, full text in its title) is not clipped
+        if ((ox === 'hidden' || ox === 'clip') && el.tagName !== 'svg' && el.scrollWidth > el.clientWidth + 1 && !(getComputedStyle(el).textOverflow === 'ellipsis' && el.title)) why.push('clipped')
         if (scroller && el.scrollWidth > el.clientWidth + 1) { scrollers.push({ el: name(el), scroll: el.scrollWidth, client: el.clientWidth }); if (strict) why.push('scrolls') }
         if (why.length) { bad = true; out.push({ el: name(el), why, sym: symOf(el), w: Math.round(r.width), pw: p ? Math.round(p.width) : null, vw, text: t(el).slice(0, 60) }) }
       }
@@ -259,6 +260,7 @@ async function open(browser, width) {
     return route.abort()
   })
   await ctx.addInitScript(fake, ORIGIN)
+  await ctx.addInitScript(() => { try { localStorage.setItem("stocks.rows", "all") } catch {} }) // v30: the list draws 60 rows by default; measuring needs all
   const page = await ctx.newPage()
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') logs.push({ phase, type: m.type(), text: m.text().slice(0, 300) }) })
   page.on('pageerror', (e) => logs.push({ phase, type: 'pageerror', text: String(e.message).slice(0, 300) }))
