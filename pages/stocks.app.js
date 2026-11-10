@@ -30,7 +30,7 @@
   // POST-HOC (2026-11-10, audit 1.8): the snowflake's dividend and asset histories come with the fundamentals (cache
   // doc `extra`), so its total no longer depends on whether the stock was ever opened (the h/ doc).
   const SNOW_FY = ['dps_common_stock_prim_issue_fy_h', 'total_assets_fy_h']
-  const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
+  const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو الإيرادات لو فيه خسارة، بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'أرضية الكاش (الكاش الصافي للسهم)', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
     'Unprofitable growth': 'تنمو وتخسر', 'Pre-revenue': 'بدون إيرادات' }
@@ -256,7 +256,7 @@
         const known = new Set([...Object.keys(p?.data ?? {}), ...(p?.missing ?? []).map((m) => m.symbol)])
         lost.push(...chunk.filter((sym) => !known.has(sym)))
         if (p?.data) saveSnap(p.data)
-        chunk.forEach(computeSafe)
+        if (cacheRead) chunk.forEach(computeSafe) // quotes asked during the boot's reads are computed once those are in (v30, audit 3.6)
         scheduleRender()
       } catch (e) {
         firstError ??= e
@@ -286,7 +286,8 @@
       if (snap.size < 150) break
     }
   }
-  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters), loadCollection('h', state.hist), loadSnaps(), loadFvlog()])
+  // v33 (audit 3.6): h/ (quarterly histories for the panel's charts) is read when a stock is opened, not at boot.
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters), loadSnaps(), loadFvlog()])
   async function loadSnaps() {
     if (!db) return
     const snap = await db.collection('qsnap').limit(64).get()
@@ -427,6 +428,13 @@
   // or empty answer, not before 10 minutes (the batch tool reports 429/5xx as success: false rather
   // than throwing). Monthly prices come from loadPx when the stock is opened (older docs' px is still read).
   async function loadHist(sym) {
+    if (!(sym in state.hist) && db) {
+      state.hist[sym] = { sym, loading: true }
+      const snap = await db.doc(`h/${sym}`).get().catch(() => null)
+      if (snap?.exists) state.hist[sym] = snap.data()
+      else delete state.hist[sym]
+      if (state.hist[sym]?.h && state.open === sym) redraw(sym) // the panel's charts; the values do not read h
+    }
     const doc = state.hist[sym]
     const stale = !doc || doc.error || state.quotes[sym]?.fiscal_period_end_fq > (doc.h?.fiscal_period_end_fq ?? -Infinity) || !('total_assets_fy_h' in (doc.h ?? {}))
     if (!mcp || doc?.loading || !stale || Date.now() - (doc?.at ?? 0) < 6e5) return
@@ -440,7 +448,7 @@
       compute(sym)
     } catch (e) {
       state.hist[sym] = doc?.h ? { ...doc, at: Date.now() }
-        : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.' : explainError(e) }
+        : { sym, at: Date.now(), error: e?.code === 'no_history' ? 'TradingView ما عنده تاريخ إيرادات ربعية لهذا السهم.' : explainError(e) }
     }
     if (state.open === sym) redraw(sym)
   }
@@ -653,7 +661,7 @@
     else if (new Date(lastRefresh).toDateString() !== new Date().toDateString()) $('status').textContent = `آخر تحديث للأسعار: ${new Date(lastRefresh).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`
   })
   async function refresh(opts = {}) {
-    if (!mcp || !cacheRead || state.market === 'sectors') return
+    if (!mcp || !cacheRead || state.market === 'sectors' || state.market === 'about') return
     if (busy) { again = true; return }
     busy = true
     try { await doRefresh(opts) } finally { busy = false }
@@ -1002,7 +1010,7 @@
   }
   function render(only) {
     for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
-    for (const m of ['us', 'sa', 'big', 'sectors', 'fav']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
+    for (const m of ['us', 'sa', 'big', 'sectors', 'fav', 'about']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
     document.querySelector('.wrap').dataset.view = state.market
     const caps = state.market === 'sa' ? [listSvr('sa')] : state.market === 'fav' ? [listSvr('us'), listSvr('sa')] : [listSvr('us')]
     $('underCap').disabled = !caps.some(Boolean)
@@ -1010,7 +1018,9 @@
     $('underCap').parentElement.title = $('underCap').disabled ? 'يحتاج متوسط SVR لقائمتك (20 سهم أو أكثر بإيرادات فوق 10 مليون)، ويتحسب بعد ما تتحمل أسعار القائمة' : 'يخلي بس الأسهم الخسرانة اللي الـ SVR حقها تحت سقف Nanalyze (3 أضعاف متوسط قائمتك)'
     $('sectorsView').hidden = state.market !== 'sectors'
     if (state.market === 'sectors') { renderSectors(); return }
+    if (state.market === 'about') return
     const sortVal = `${state.sort.key}:${state.sort.dir}`
+    for (const b of document.querySelectorAll('thead button[data-sort]')) b.closest('th')?.setAttribute('aria-sort', b.dataset.sort === state.sort.key ? (state.sort.dir > 0 ? 'ascending' : 'descending') : 'none')
     if ([...$('sortSel').options].some((o) => o.value === sortVal)) $('sortSel').value = sortVal
     const body = $('rows')
     const syms = visible()
@@ -1044,6 +1054,7 @@
     const refocus = () => { if (fk) body.querySelector(`[data-${fk}="${CSS.escape(a.dataset[fk])}"]`)?.focus({ preventScroll: true }); else backP() }
     const rows = body.querySelectorAll('tr.row')
     const same = (n) => [...rows].slice(0, n).every((r, i) => r.dataset.sym === drawn[i])
+    if (only && only.size > 40) only = undefined // one full draw beats 40+ row patches
     if (only && state.market !== 'big' && rows.length === drawn.length && same(drawn.length)) {
       if (state.open) only.add(state.open)
       for (const sym of only) { const i = drawn.indexOf(sym); if (i >= 0) { rows[i].outerHTML = rowHtml(sym); if (sym === state.open) redraw(sym) } }
@@ -1085,7 +1096,7 @@
       const f = state.fair[sym]
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح" data-tip="درجة الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="تصنيف الأرباح" data-tip="تصنيف الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}${f?.fair && weakFair(sym) ? ` <button class="ib" type="button" data-tip="${esc(`تقدير ضعيف: ${weakFair(sym)}.`)}" aria-label="ليش ضعيف؟">ⓘ</button>` : ''}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
@@ -1264,7 +1275,8 @@
   const dayNo = (ms) => { const d = new Date(ms); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 }
   // A report's day is its UTC date, the exchange's own (every TradingView report time falls 06:00–23:59
   // UTC), so a US after-close report stays on its US date for a viewer in Riyadh; today is the viewer's.
-  const dateOf = (sec) => (Number.isFinite(sec) && Math.abs(sec) < 8.64e12 ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
+  // v33 (audit 3.7): one date format on the page, "13 نوفمبر 2026" (it printed 2026-11-13 here, Arabic elsewhere)
+  const dateOf = (sec) => (Number.isFinite(sec) && Math.abs(sec) < 8.64e12 ? new Date(sec * 1000).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' }) : '—')
 
   // Study 14's confirmed rank, T3 (PROTOCOL-study14.md §3, §7): −ln(diluted shares of the last fiscal
   // year ÷ the year before), shares = net income ÷ EPS, both years with |EPS| ≥ 0.25 of the same
@@ -1462,11 +1474,11 @@
     if (!(q.close > 0)) return ''
     const out = []
     const [lo, hi] = [q.price_52_week_low, q.price_52_week_high]
-    if (lo > 0 && hi > 0) out.push(`<h4>مدى 52 أسبوع</h4>${rangeBar(lo, hi, [{ v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${fmt(lo, dp(q))}</span><span>${fmt(hi, dp(q))}</span></p>
+    if (lo > 0 && hi > 0) out.push(`<h4>مدى 52 أسبوع</h4>${rangeBar(lo, hi, [{ v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${money(q, lo)}</span><span>${money(q, hi)}</span></p>
       <p>السعر <b class="n">${pct(q.close / hi - 1)}</b> عن أعلى سعر بسنة، و <b class="n">${pct(q.close / lo - 1)}</b> عن أدناه.</p>`)
     const [tl, tm, th] = [q.price_target_low, q.price_target_1y, q.price_target_high]
-    if (tl > 0 && th > 0 && tm > 0) out.push(`<h4>هدف المحللين${q.recommendation_total > 0 ? ` <span class="dim">(<span class="n">${q.recommendation_total}</span> ${q.recommendation_total >= 3 && q.recommendation_total <= 10 ? 'محللين' : 'محلل'})</span>` : ''}</h4>${rangeBar(tl, th, [{ v: tm, cls: 'mean' }, { v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${fmt(tl, dp(q))}</span><span>${fmt(th, dp(q))}</span></p>
-      <p>أقل هدف <b class="n">${fmt(tl, dp(q))}</b>، متوسطهم <b class="n">${fmt(tm, dp(q))}</b> (<span class="n">${pct(tm / q.close - 1)}</span> عن السعر)، وأعلى هدف <b class="n">${fmt(th, dp(q))}</b>. مرجع، مو قيمة عادلة.</p>`)
+    if (tl > 0 && th > 0 && tm > 0) out.push(`<h4>هدف المحللين${q.recommendation_total > 0 ? ` <span class="dim">(<span class="n">${q.recommendation_total}</span> ${q.recommendation_total >= 3 && q.recommendation_total <= 10 ? 'محللين' : 'محلل'})</span>` : ''}</h4>${rangeBar(tl, th, [{ v: tm, cls: 'mean' }, { v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${money(q, tl)}</span><span>${money(q, th)}</span></p>
+      <p>أقل هدف <b class="n">${money(q, tl)}</b>، متوسطهم <b class="n">${money(q, tm)}</b> (<span class="n">${pct(tm / q.close - 1)}</span> عن السعر)، وأعلى هدف <b class="n">${money(q, th)}</b>. مرجع، مو قيمة عادلة.</p>`)
     return out.length ? `<div class="part range"><h3><span>السعر بين حدوده</span><span class="dim"><i class="key px"></i> السعر${tm > 0 ? ' <i class="key mean"></i> متوسط الهدف' : ''}</span></h3>${out.join('')}</div>` : ''
   }
 
@@ -1495,7 +1507,7 @@
       cycleNote(sym),
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       f.light ? `${f.reit ? 'صندوق عقاري' : 'شركة مالية خفيفة الأصول (تمويل، وساطة، إدارة أصول)'}: بـ EV/EBITDA (نص الوزن) و P/S ومتوسط ربح 5 سنين، بدل مكرر الربح وحده. دراسة 18: كذا كانت القيمة أقرب للسعر بعد سنة في 13 من 14 سنة (الخطأ الوسيط 0.229 بدل 0.271).${f.reit ? ' وبدون P/B من العائد على حقوق المساهمين: العائد بعد الاستهلاك ما يمثل دخل الصندوق.' : ''}` : '',
-      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، ${d.G < Math.min(d.g1, 0.25) - 1e-9 ? `وبعدها من <b class="n">${pct(d.G)}</b> (نمو مبيعاتها آخر 3 سنين) ` : ''}يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
+      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لإيرادات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، ${d.G < Math.min(d.g1, 0.25) - 1e-9 ? `وبعدها من <b class="n">${pct(d.G)}</b> (نمو إيراداتها آخر 3 سنين) ` : ''}يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
       f.dropped?.length ? `${f.dropped.map((m) => `${METHOD_NAMES[m]} (${f.values[m] > f.med ? 'أكثر من 3 أضعافه' : 'أقل من ثلثه'})`).join(' و')}: بعيدة عن الوسيط الموزون لطرق السهم (<b class="n">${fmt(f.med, dp(q))}</b>)، فانشالت من المتوسط. دراسة 16: كذا صارت القيمة أقرب للسعر بعد سنة في 12 من 14 سنة.` : '',
@@ -1504,7 +1516,7 @@
       Number.isFinite(q.price_target_1y) ? `للمقارنة: متوسط هدف المحللين <b class="n">${fmt(q.price_target_1y, dp(q))}</b>.` : '',
     ].filter(Boolean)
     return `<div class="part fv" style="grid-column:1/-1">
-      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : f.light ? 'مالية خفيفة الأصول' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? fmt(f.fair, dp(q)) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
+      <h3><span>${pre ? 'أرضية الكاش' : 'القيمة العادلة'} · ${f.reit ? 'صندوق عقاري (ريت)' : f.light ? 'مالية خفيفة الأصول' : esc(PROFILE_AR[f.profile] || f.profile)}</span><span class="n ${weakFair(sym) ? 'dim' : ''}">${f.fair ? money(q, f.fair) : '—'} <span class="${upside(sym) == null ? 'dim' : upside(sym) >= 0 ? 'hi' : 'lo'}">${pct(upside(sym))}</span></span></h3>
       <p>${pre ? 'الشركة بدون إيرادات، فما فيه قيمة عادلة. الرقم هو الكاش الصافي للسهم: أرضية، مو هدف.' : `أقل وأعلى تقييم: <b class="n">${fmt(f.low, dp(q))} – ${fmt(f.high, dp(q))}</b>، والسعر <b class="n">${fmt(q.close, dp(q))}</b> (تغطية البيانات <b class="n">${Math.round(f.coverage * 100)}%</b>).`}</p>
       ${pre ? '' : `<details data-k="fvhow"${state.ctxOpen.has('fvhow') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">متوسط موزون للطرق المناسبة لنوع الشركة. الطرق اللي بدون بيانات تنشال وتتوزع أوزانها على الباقي، ولما يكون فيه 3 طرق أو أكثر، اللي تقييمها أكثر من 3 أضعاف وسيطها الموزون أو أقل من ثلثه تنشال بعد.</p></details>`}
       ${notes.length ? `<p class="dim">${notes.join(' ')}</p>` : ''}
@@ -1545,7 +1557,7 @@
     const fromAn = d.growthFrom === 'analysts'
     const head = d.raw < 0 ? `<b class="lo">أقل من صفر</b>: بهذا الهامش أرباحها ما تغطي الحرق والديون` : `<span class="n"><b>${money(q, d.value)}</b> <span class="${d.value >= q.close ? 'hi' : 'lo'}">${pct(d.value / q.close - 1)}</span></span>`
     const implied = d.implied != null ? `السعر اليوم <b class="n">${money(q, q.close)}</b> يفترض إنها توصل لهامش تشغيلي <b class="n">${pct(d.implied, 1).replace('+', '')}</b> (${mWord}: <span class="n">${pct(d.m, 1).replace('+', '')}</span>).`
-      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. ${mAt} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو مبيعات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
+      : d.tooHigh ? `حتى هامش 60% ما يبرر السعر اليوم${d.impliedG != null ? `. ${mAt} (<span class="n">${pct(d.m, 1).replace('+', '')}</span>) السعر يفترض نمو إيرادات <b class="n">${pct(d.impliedG, 0).replace('+', '')}</b> بالسنة لين السنة الخامسة` : ''}.` : 'السعر أقل من القيمة حتى بهامش سالب.'
     const cell = (v) => `<td class="n ${v > q.close ? 'hi' : ''}">${v > 0 ? fmt(v, dp(q)) : '<span class="dim">0</span>'}</td>`
     const grid = `<div class="gridwrap"><table class="ptable"><thead><tr><th>الهامش ↓ · النمو ←</th>${d.gs.map((g) => `<th class="n">${pct(g, Math.abs(g * 100 - Math.round(g * 100)) > 1e-6 ? 1 : 0).replace('+', '')}${Math.abs(g - d.G) < 1e-9 ? '*' : ''}</th>`).join('')}</tr></thead><tbody>
       ${d.ms.map((m, i) => `<tr><th class="n">${pct(m, 1).replace('+', '')}${Math.abs(m - d.m) < 1e-9 ? '*' : ''}</th>${d.grid[i].map(cell).join('')}</tr>`).join('')}</tbody></table></div>`
@@ -1560,9 +1572,9 @@
       <p>بهامش تشغيلي <b class="n">${pct(d.m, 1).replace('+', '')}</b>، ${peer}${Number.isFinite(d.gm5) && d.m > d.gm5 ? `، وهذا أعلى من أعلى هامش ربح إجمالي حققته آخر 5 سنين (<span class="n">${pct(d.gm5, 0).replace('+', '')}</span>)، فالقيمة متفائلة` : ''}: ${head}.</p>
       <p>${implied}</p>
       ${grid}
-      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو المبيعات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : `نمو مبيعاتها آخر 3 سنين، ${q.revenue_forecast_next_fy > 0 ? 'توقع المحللين فوق 10 أضعاف مبيعاتها فما اعتمدناه' : 'ما فيه توقع للمحللين'}`}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
+      <p class="dim">قيمة السهم حسب هامش التشغيل اللي توصل له (الصفوف) ونمو الإيرادات من السنة الثانية للخامسة (الأعمدة). * = الافتراض الأساسي (النمو من ${fromAn ? 'توقع المحللين' : `نمو إيراداتها آخر 3 سنين، ${q.revenue_forecast_next_fy > 0 ? 'توقع المحللين فوق 10 أضعاف إيراداتها فما اعتمدناه' : 'ما فيه توقع للمحللين'}`}، بين 2.5% و30%). الأخضر فوق سعر اليوم.</p>
       <p class="dim">${flags.join(' ')}</p>
-      <details data-k="rdcf"${state.ctxOpen.has('rdcf') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">نتوقع مبيعات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو مبيعاتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل مبيعات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار مبيعات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
+      <details data-k="rdcf"${state.ctxOpen.has('rdcf') ? ' open' : ''}><summary>كيف ينحسب؟</summary><p class="dim">نتوقع إيرادات الشركة 10 سنين: ${fromAn ? 'السنة الحالية من توقعات المحللين، بعدها نموهم' : 'السنة الحالية بنمو إيراداتها آخر 3 سنين، بعدها نفس النمو'} (بين 2.5% و30%) لين السنة الخامسة، ثم يهدأ لين 2.5%. كل إيرادات جديدة تربح بهامش الشركات الرابحة الكبيرة في صناعتها، وخسارة اليوم تنكمش لين تختفي خلال 7 سنين. نخصم الاستثمار اللي يحتاجه النمو (كل 1.5 دولار إيرادات إضافية تحتاج دولار) والضريبة بعد ما تخلص الخسائر المرحّلة، ونرجّع كل هذا لليوم بعائد مطلوب بين 9% و13% حسب تذبذب السهم (بيتا)، ينزل لين 8.7% بالسنة العاشرة. بعدين نطرح الديون ونضيف الكاش، ونحسب احتمال إن الشركة تفلس قبل ما تربح. طريقة Damodaran للشركات الصغيرة اللي تخسر. ما اختبرناها على أسعار سابقة، فخذها كمرجع: أهم رقم فيها الهامش اللي يفترضه السعر.</p></details>
     </div>`
   }
 
@@ -1580,7 +1592,8 @@
     } else {
       const cell = (x, cls = '') => `<td class="n ${cls}">${x}</td>`
       const row = (label, xs, f = (x) => fmt(x, dp(q)), cls = () => '') => `<tr><th>${label}</th>${xs.map((x) => cell(f(x), cls(x))).join('')}</tr>`
-      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fmt(r.bear, dp(q)))}${cell(fmt(r.base, dp(q)))}${cell(fmt(r.bull, dp(q)))}</tr>`).join('')
+      const fy = (x) => fmt(x, x >= 10 ? 0 : dp(q)) // audit 3.7: no cents on a five-year scenario
+      const years = p.rows.map((r) => `<tr><th class="n">${y0 + r.t}</th>${cell(fy(r.bear))}${cell(fy(r.base))}${cell(fy(r.bull))}</tr>`).join('')
       const multName = (b) => (b === 'pe' ? 'P/E' : 'P/S')
       body = `<table class="ptable"><thead><tr><th></th><th>متشائم</th><th>أساسي</th><th>متفائل</th></tr></thead><tbody>
           <tr class="now"><th>اليوم</th>${cell(fmt(p.price, dp(q))).repeat(3)}</tr>${years}
@@ -1592,7 +1605,7 @@
           ${p.margin ? row('هامش صافي الربح', p.margin, (x) => pct(x, 1)) : ''}
           ${row('المكرر بالسنة الخامسة', p.exitMult.map((x, i) => [x, p.basis[i]]), ([x, b]) => `${multName(b)} ${fmt(x, 1)}`)}
         </tbody></table>
-        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : `نمو الإيرادات ${gYears(sym)}`}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = المبيعات للسهم × مكرر المبيعات.'} المكرر يتحرك من مكرر اليوم إلى ${p.own == null ? `مكرر عام (<b class="n">${fmt(p.normal, 1)}</b>) لأن تاريخ السهم ما يكفي` : p.own > p.normal ? `متوسط السهم آخر 5 سنوات (<b class="n">${fmt(p.own, 1)}</b>، حدّيناه بـ <b class="n">${fmt(p.normal, 1)}</b> لأن النمو يهدأ مع الوقت)` : p.own < p.normal ? `<b class="n">${fmt(p.normal, 1)}</b> (متوسط السهم <b class="n">${fmt(p.own, 1)}</b> أقل من الحد الأدنى)` : `متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>)`} × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على المبيعات.' : ''}</p>
+        <p>النمو الأساسي من ${p.growthFrom === 'analysts' ? 'توقع المحللين لإيرادات السنة الجاية' : `نمو الإيرادات ${gYears(sym)}`}، ويهدأ تدريجياً. ${p.margin ? 'الهامش: أقل ومتوسط وأعلى هامش في آخر 3 سنوات.' : 'الشركة ما تربح، فالسعر = الإيرادات للسهم × مكرر الإيرادات.'} المكرر يتحرك من مكرر اليوم إلى ${p.own == null ? `مكرر عام (<b class="n">${fmt(p.normal, 1)}</b>) لأن تاريخ السهم ما يكفي` : p.own > p.normal ? `متوسط السهم آخر 5 سنوات (<b class="n">${fmt(p.own, 1)}</b>، حدّيناه بـ <b class="n">${fmt(p.normal, 1)}</b> لأن النمو يهدأ مع الوقت)` : p.own < p.normal ? `<b class="n">${fmt(p.normal, 1)}</b> (متوسط السهم <b class="n">${fmt(p.own, 1)}</b> أقل من الحد الأدنى)` : `متوسط السهم نفسه آخر 5 سنوات (<b class="n">${fmt(p.normal, 1)}</b>)`} × 0.75 / 1 / 1.25.${p.basis.includes('ps') && p.margin ? ' السيناريو اللي هامشه صفر أو سالب مسعّر على الإيرادات.' : ''}</p>
         <p class="dim">"قيمتها اليوم" = سعر ${y0 + 5} مخصوم 9% سنوياً: لو أعلى من سعر اليوم، السيناريو يعطي أكثر من 9% بالسنة. عدد الأسهم ثابت (ما حسبنا إعادة الشراء ولا الإصدار)، والتوزيعات مو داخلة.${p.kind === 'sales' && q.free_cash_flow_ttm < 0 ? ' <b>انتبه:</b> الشركة تحرق كاش، والسيناريو ما يحسب الأسهم الجديدة اللي غالباً بتصدرها لتمويل الحرق، فممكن يطلع أعلى من الواقع.' : ''}</p>`
     }
     return `<details class="part proj" style="grid-column:1/-1"${state.projOpen ? ' open' : ''}><summary><span>توقع السعر لـ 5 سنوات</span><span class="dim">اضغط للعرض</span></summary>
@@ -1713,9 +1726,9 @@
     return `<div class="part snowcard" style="grid-column:1/-1">
       <div class="snowfig">${snowSvg(sn)}<p class="dim">نجح في <b class="n">${sn.total}</b> من 30 فحص${SNOW_AXES.some((a) => sn.axes[a].judged < 6) ? ` (<b class="n">${30 - SNOW_AXES.reduce((s, a) => s + sn.axes[a].judged, 0)}</b> بدون بيانات)` : ''}</p></div>
       <div class="snowside">
-        <div class="ehs"><span class="grade g-${letter}" title="درجة الأرباح (طريقة Earnings Hub): 5 مقاييس، كل واحد 0–3 حسب ربعه بين ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'أسهم S&P 500'}">${letter}</span>
-          <div><b>درجة الأرباح</b> <span class="n dim">${e ? `${e.total}/15` : ''}</span>
-          <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip ${e.parts[m.key].value == null ? 'pna' : `p${e.parts[m.key].points}`}" title="${e.parts[m.key].value == null ? 'ما فيه بيانات، وتنحسب 0 في المجموع زي ما تحسبها Earnings Hub · ' : ''}${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ المبيعات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>
+        <div class="ehs"><span class="grade g-${letter}" title="تصنيف الأرباح (طريقة Earnings Hub): 5 مقاييس، كل واحد 0–3 حسب ربعه بين ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'أسهم S&P 500'}">${letter}</span>
+          <div><b>تصنيف الأرباح</b> <span class="n dim">${e ? `${e.total}/15` : ''}</span>
+          <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip ${e.parts[m.key].value == null ? 'pna' : `p${e.parts[m.key].points}`}" title="${e.parts[m.key].value == null ? 'ما فيه بيانات، وتنحسب 0 في المجموع زي ما تحسبها Earnings Hub · ' : ''}${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ الإيرادات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>
         <div class="stats">
           ${stat('القيمة السوقية', big(mv(q)).replace(/<[^>]+>/g, ''))}
           ${stat('P/E', fmt(peNow(sym)))}
@@ -1903,7 +1916,7 @@
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${rangeBlock(sym)}${trackBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${rangeBlock(sym)}${trackBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف إيراداته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -1921,7 +1934,7 @@
       ['PEG', pegCell(sym), `المكرر المتوقع ÷ نمو ربح السهم المتوقع لسنة ${fyNext(q) ?? 'التوقع'} المالية مقارنة بآخر سنة معلنة (توقع سنة وحدة، مو 5 سنين مثل Yahoo وfinviz). الشائع: تحت 1 رخيص مقارنة بنموه، فوق 2 غالي. ضعفه: كله على رقم النمو.`],
       ['EV/EBITDA', fmt(q.enterprise_value_ebitda_ttm), 'يحسب الدين. ضعفه: قبل الإنفاق الرأسمالي، فيجامل الشركات اللي تصرف كثير.'],
       ['FCF yield', q.sector !== 'Finance' && mv(q) > 0 && Number.isFinite(q.free_cash_flow_ttm) ? pct(q.free_cash_flow_ttm / mv(q), 1) : '—', 'التدفق النقدي الحر لآخر 12 شهر ÷ القيمة السوقية (سالب = الشركة تحرق كاش). ضعفه: ينزل مؤقتاً وقت الإنفاق الكبير. ما يطلع للبنوك والمالية لأن تدفقها يتحرك مع الودائع والقروض.'],
-      ['P/S', q.sector !== 'Finance' && mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ مبيعات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "مبيعاتها" إجمالي دخل العمولات.'],
+      ['P/S', q.sector !== 'Finance' && mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—', 'القيمة السوقية ÷ إيرادات آخر 12 شهر. للشركات اللي ما تربح. ضعفه: يتجاهل الهامش. ما يطلع للبنوك لأن "إيراداتها" إجمالي دخل العمولات.'],
       ['P/B · ROE', `${fmt(q.price_book_fq)} · ${Number.isFinite(q.return_on_equity) ? `${fmt(q.return_on_equity, 0)}%` : '—'}`, 'للبنوك والتأمين. ضعفه: ما له معنى لشركات أصولها غير ملموسة.'],
       ['ROIC (آخر سنة مالية)', q.sector !== 'Finance' && Number.isFinite(q.return_on_invested_capital_fy) ? `${fmt(q.return_on_invested_capital_fy, 1)}%` : '—', 'العائد على رأس المال المستثمر لآخر سنة مالية: هل النمو مربح فعلاً؟ ما يطلع للبنوك.'],
       ['Altman Z', q.sector !== 'Finance' ? fmt(q.altman_z_score_ttm) : '—', 'خطر الإفلاس: فوق 3 آمن، تحت 1.8 خطر. ما يصلح للبنوك.'],
@@ -2041,15 +2054,15 @@
     if (!preProfit(sym)) return ''
     const now = svrNow(q)
     const hd = state.hist[sym]
-    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (مبيعات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
-    if (!hd || hd.loading) return box('<p class="dim">جاري تحميل تاريخ المبيعات…</p>')
+    const box = (body) => `<div class="part svr" style="grid-column:1/-1"><h3><span>SVR: القيمة السوقية ÷ (إيرادات آخر ربع × 4)</span><span class="n">${fmtSvr(now)}</span></h3>${body}</div>`
+    if (!hd || hd.loading) return box('<p class="dim">جاري تحميل تاريخ الإيرادات…</p>')
     if (hd.error) return box(`<p class="dim">${esc(hd.error)}</p>`)
     // The saved closes (the score's), and older months from the prices fetched with the history.
     const closes = closesOf(sym)
     ;(hd.px?.t ?? []).forEach((t, i) => { if (!closes.has(monthKey(t)) && Number.isFinite(hd.px.c[i])) closes.set(monthKey(t), hd.px.c[i]) })
     const r = svrHistory(hd.h, closes)
-    if (!r) return box('<p class="dim">TradingView ما عنده تاريخ مبيعات ربعية لهذا السهم.</p>')
-    if (!r.points.length) return box('<p class="dim">ما فيه أسعار شهرية محفوظة لهذا السهم للحين، أو مبيعاته أقل من 10 مليون بالسنة (Nanalyze ما يحسبونه تحتها).</p>')
+    if (!r) return box('<p class="dim">TradingView ما عنده تاريخ إيرادات ربعية لهذا السهم.</p>')
+    if (!r.points.length) return box('<p class="dim">ما فيه أسعار شهرية محفوظة لهذا السهم للحين، أو إيراداته أقل من 10 مليون بالسنة (Nanalyze ما يحسبونه تحتها).</p>')
     const month = monthKey(Math.floor(Date.now() / 1000))
     const months = []
     for (let m = r.points[0].m; m <= month; m = addMonths(m, 1)) months.push(m)
@@ -2078,9 +2091,9 @@
     const vsAvg = now != null && r.avg4 ? now / r.avg4 - 1 : null
     const fyTo = fy.length ? qs[0]?.m.slice(0, 4) : null
     return box(`<div class="chart" dir="ltr">${chart}<div class="ctip" dir="rtl" hidden></div></div>
-      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (مبيعات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ مبيعات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
+      <p>كل نقطة = نهاية ربع: القيمة السوقية وقتها ÷ (إيرادات ذاك الربع × 4)، مثل رسمات Nanalyze.${fyTo ? ` قبل <span class="n">${fyTo}</span> (الخط المتقطع الخفيف): نهاية كل سنة مالية ÷ إيرادات السنة كاملة، لأن تاريخ الأرباع في TradingView يبدأ من <span class="n">${fyTo}</span>. هذا الجزء تقريبي، ويطلع أعلى شوي للشركات اللي تنمو.` : ''}</p>
       <p>${r.avg4 != null ? `<b class="lo">الخط الأحمر المتقطع</b> = متوسط آخر 4 أرباع (<b class="n">${fmt(r.avg4, 1)}</b>)${vsAvg != null ? `، واليوم ${vsAvg >= 0 ? 'أعلى منه' : 'أقل منه'} بـ <b class="n">${pct(Math.abs(vsAvg))}</b>`.replace('+', '') : ''}. ` : ''}${cap ? `${capIn ? '<b class="hi">الأخضر المتقطع</b> = سقف Nanalyze' : '<b class="hi">سقف Nanalyze</b> (مكتوب فوق الرسمة، لأنه بعيد كثير فوق خط السهم)'}: ما يشترون سهم الـ SVR حقه فوق 3 أضعاف متوسط قائمتهم. متوسط قائمتك هنا <b class="n">${fmt(L.mean, 1)}</b> (${L.n} سهم)، فالسقف <b class="n">${fmt(cap, 1)}</b>${now != null ? `، والسهم اليوم <b>${now > cap ? 'فوقه' : 'تحته'}</b>` : ''}.` : ''}</p>
-      <p class="dim">يطلع بس للشركات اللي ما صارت تربح للحين (خسرانة في آخر 12 شهر وفي آخر 3 سنين مالية)، مثل ما يستخدمه Nanalyze: للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "المبيعات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. مبيعات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
+      <p class="dim">يطلع بس للشركات اللي ما صارت تربح للحين (خسرانة في آخر 12 شهر وفي آخر 3 سنين مالية)، مثل ما يستخدمه Nanalyze: للرابحة مكرر الربح أنسب.${q.sector === 'Finance' ? ' للبنوك: "الإيرادات" في TradingView هي دخل العمولات الإجمالي، فالرقم ما يعني الكثير.' : ''} الشركات الموسمية (مثل أبل في ربع ديسمبر) يتذبذب رقمها من ربع لربع. إيرادات الربع تطلع بعد نهايته بأسابيع، فالنقطة وصف للتاريخ مو اللي كان المستثمر يشوفه ذاك اليوم. ما اختبرناه كإشارة شراء أو بيع.</p>`)
   }
 
   function renderSectors() {
@@ -2154,6 +2167,7 @@
 
   // ---------------------------------------------------------------- events
 
+  document.querySelector('header .linkbtn')?.addEventListener('click', () => { if (state.market !== 'about') setMarket('about'); $('tab-about').scrollIntoView({ block: 'start' }) })
   document.querySelector('.tabs').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-m]')
     if (b && b.dataset.m !== state.market) setMarket(b.dataset.m)
@@ -2278,17 +2292,21 @@
   async function boot() {
     render()
     ;[db, mcp] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('mcp') ?? null])
-    if (!mcp) {
-      $('status').textContent = ''
-      notice('الصفحة تحتاج ربط TradingView من claude.ai عشان تجيب الأرقام. افتحها من claude.ai وهي مسجّلة دخول.', true)
-    }
+    if (!mcp) $('status').textContent = ''
+    // one notice, not two that overwrite each other (audit 3.6)
+    if (!mcp && !db) notice('افتح الصفحة من claude.ai وأنت مسجّل دخول: بدونها ما فيه أرقام من TradingView ولا حفظ لقائمتك.', true)
+    else if (!mcp) notice('الصفحة تحتاج ربط TradingView من claude.ai عشان تجيب الأرقام. افتحها من claude.ai وهي مسجّلة دخول.', true)
     if (!db) {
       saved.us = saved.sa = saved.fav = []
       cacheRead = true // nothing saved to wait for, and nothing a fetch could overwrite
       render()
-      notice('الحفظ غير متاح في هذا العرض، فالقائمة ما بتنحفظ.', true)
+      if (mcp) notice('الحفظ غير متاح في هذا العرض، فالقائمة ما بتنحفظ.', true)
       return
     }
+    // v33 (audit 3.6): the open tab's prices are asked as soon as its saved list arrives, while the saved
+    // histories are still being read (the first price came at 4.4 s, 3.1 s of it waiting on those reads).
+    let early = false
+    const earlyQuotes = (m, syms) => { if (!early && !cacheRead && mcp && m === state.market && syms.length) { early = true; loadQuotes(syms).then(() => scheduleRender(true), () => {}) } }
     $('status').textContent = 'جاري قراءة البيانات المحفوظة…'
     // The lists first: edits wait for them (see editSaved), and the cache load below can take a while.
     db.doc('meta/favorites').onSnapshot((snap) => {
@@ -2296,6 +2314,7 @@
       const changed = JSON.stringify(syms) !== JSON.stringify(state.lists.fav)
       state.lists.fav = [...syms]
       if (!snap.metadata?.fromCache) saved.fav = [...syms]
+      earlyQuotes('fav', syms)
       if (changed && state.market === 'fav' && cacheRead) refresh()
       else if (changed || state.market === 'fav') scheduleRender(true) // v30: the echo of our own star write changes nothing on screen
     }, () => notice('ما قدرت أقرأ المفضلة المحفوظة، فالنجمة موقفة لين تفتح الصفحة من جديد.', true))
@@ -2305,6 +2324,7 @@
         const changed = JSON.stringify(syms) !== JSON.stringify(state.lists[m])
         state.lists[m] = [...syms]
         if (!snap.metadata?.fromCache) saved[m] = [...syms]
+        earlyQuotes(m, syms)
         if (changed && m === state.market && cacheRead) refresh()
         else scheduleRender(true)
       }, () => notice('ما قدرت أقرأ القائمة المحفوظة، فالإضافة والحذف موقفة لين تفتح الصفحة من جديد.', true))
@@ -2312,6 +2332,11 @@
     // One retry: a failed page of the saved histories would make every stock look unsaved.
     cacheOk = await loadCacheFromDb().then(() => true, () => loadCacheFromDb().then(() => true, () => false))
     cacheRead = true
+    // prices that came in during the reads: computed in slices of 40 (the open tab first), then drawn once
+    const todo = [...new Set([...(state.lists[state.market] ?? []), ...Object.keys(state.quotes)])].filter((s) => state.quotes[s])
+    for (let i = 0; i < todo.length; i += 40) { todo.slice(i, i + 40).forEach(computeSafe); await new Promise((ok) => setTimeout(ok, 0)) }
+    dirty.clear()
+    scheduleRender(true)
     // Lists that arrived during the cache load were only drawn; fetch for the open tab now.
     if (state.lists[state.market]?.length) refresh()
     try {
