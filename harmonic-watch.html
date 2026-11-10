@@ -1,0 +1,362 @@
+<title>مراقبة الهارمونيك الشهري</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Same tokens as the other two harmonic pages, so the three read as one system.
+   No letter-spacing anywhere — Arabic letters join. */
+:root{
+  --paper:#f7f5f1; --ink:#15181c; --muted:#5d6570; --rule:#ddd8d0; --card:#fffdfa;
+  --accent:#9a6a2f; --pos:#1f7a52; --neg:#a8322c; --chip:#efe9e0;
+  --ar:'IBM Plex Sans Arabic',system-ui,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121417; --ink:#e9e6e1; --muted:#9aa3ad; --rule:#2a2f36; --card:#181b20;
+  --accent:#d9a860; --pos:#4cb98a; --neg:#e4685f; --chip:#232830; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121417; --ink:#e9e6e1; --muted:#9aa3ad; --rule:#2a2f36; --card:#181b20;
+  --accent:#d9a860; --pos:#4cb98a; --neg:#e4685f; --chip:#232830; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ar);line-height:1.75}
+.wrap{max-width:1000px;margin:0 auto;padding-block:44px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:30px}
+h1{font-size:clamp(26px,5.5vw,38px);font-weight:700;margin:0;text-wrap:balance;line-height:1.25}
+h2{font-size:clamp(18px,3vw,22px);font-weight:600;margin:0 0 6px;text-wrap:balance}
+p{margin:0 0 10px;max-width:64ch}
+.sub{color:var(--muted);font-weight:300;font-size:clamp(15px,2.2vw,17px)}
+.eyebrow{font-size:12px;font-weight:500;color:var(--accent)}
+section{display:grid;gap:8px}
+hr{border:0;border-top:1px solid var(--rule);margin:0}
+.note{font-size:13.5px;color:var(--muted);max-width:68ch}
+code{font:.9em var(--mono);background:var(--chip);padding:1px 5px;border-radius:3px;direction:ltr;unicode-bidi:isolate}
+ul{margin:0;padding-inline-start:20px;display:grid;gap:7px;max-width:68ch}
+li::marker{color:var(--muted)}
+
+.warn{background:color-mix(in srgb,var(--neg) 7%,var(--card));
+  border:1px solid color-mix(in srgb,var(--neg) 26%,var(--rule));border-radius:4px;padding:16px 18px}
+.warn .num{font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th{font-weight:600;font-size:12px;color:var(--muted);background:var(--chip)}
+tr:last-child td{border-bottom:0}
+tr.ok td.rr{font-weight:700;color:var(--pos)}
+td.n{font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+td.sym{font-family:var(--mono);font-weight:700;color:var(--accent);direction:ltr;unicode-bidi:isolate}
+td.long{color:var(--pos);font-weight:600} td.short{color:var(--neg);font-weight:600}
+td.pos{color:var(--pos)} td.neg{color:var(--neg)}
+td.zone{font-weight:600}
+td.dist{color:var(--muted)}
+.flag{color:var(--neg);font-weight:700}
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+
+<header>
+  <div class="eyebrow">فريم شهري · <span dir="ltr">325</span> سلسلة · الدراسة ١٢</div>
+  <h1>مناطق شهرية جاهزة، والسعر لم يصل بعد</h1>
+  <p class="sub">كل صف هنا نموذج اكتملت نقاطه <span dir="ltr">X A B C</span> على الشارت الشهري، فصارت
+  منطقته ووقفه وأهدافه أرقاماً ثابتة. الشيء الوحيد المفتوح هو: هل يصل السعر إلى المنطقة أم لا.
+  لا شيء هنا تنبؤ بأنه سيصل.</p>
+</header>
+
+<div class="warn">
+<strong>اقرأ هذا قبل الجدول.</strong> الفريم الشهري هو <strong>أضعف خانة في الدراسة كلها</strong>:
+على <span class="num">484</span> صفقة شهرية، متوسط العائد
+<span class="num">+0.011R</span> للصفقة — أي صفر عملياً — ونسبة الوصول للهدف الأول
+<span class="num">28.9%</span> بمجال ثقة
+<span class="num">[25–33%]</span>.
+وبما أن الخسارة <span class="num">−1R</span> بحكم التصميم، فالصفقة تحتاج عائداً/مخاطرة فوق
+<strong><span class="num">2.46</span></strong> لمجرد أن تتعادل قبل العمولة والانزلاق.
+الصفوف التي تحتها هذا الحد معلّمة بـ<span class="flag">!</span> — وهي الأكثرية.
+</div>
+
+<section>
+  <h2>العشرة الأقرب</h2>
+  <p class="note">أسهم فقط، ونماذج المؤشر الافتراضية (<span dir="ltr">AB=CD</span> مطفأ)، والأقرب أولاً.
+  «المسافة» كم يجب أن يتحرك السعر ليلمس الحافة القريبة: سالب يعني نزولاً، وموجب صعوداً.
+  «أشهر» كم شمعة شهرية بقيت قبل أن تُقفل نافذة الدخول.</p>
+  <div class="scroll"><table>
+  <tr><th>الرمز</th><th>النموذج</th><th>الاتجاه</th><th>السعر</th><th>المنطقة</th><th>المسافة</th>
+      <th>الوقف</th><th>هدف ١</th><th>هدف ٤</th><th>عائد/مخاطرة</th><th>أشهر</th></tr>
+  <tr>
+    <td class="sym">CTAS</td>
+    <td>Cypher</td>
+    <td class="short">بيع</td>
+    <td class="n">195.96</td>
+    <td class="n zone">212.00 – 217.35</td>
+    <td class="n dist">+8.2%</td>
+    <td class="n neg">222.12</td>
+    <td class="n pos">199.92</td>
+    <td class="n pos">180.39</td>
+    <td class="n rr">1.19 <span class="flag">!</span></td>
+    <td class="n">10</td>
+  </tr>
+  <tr>
+    <td class="sym">EPD</td>
+    <td>5-0</td>
+    <td class="long">شراء</td>
+    <td class="n">37.26</td>
+    <td class="n zone">33.66 – 33.74</td>
+    <td class="n dist">−9.4%</td>
+    <td class="n neg">32.99</td>
+    <td class="n pos">34.04</td>
+    <td class="n pos">34.53</td>
+    <td class="n rr">0.40 <span class="flag">!</span></td>
+    <td class="n">18</td>
+  </tr>
+  <tr>
+    <td class="sym">DLR</td>
+    <td>Butterfly</td>
+    <td class="short">بيع</td>
+    <td class="n">184.65</td>
+    <td class="n zone">212.05 – 220.69</td>
+    <td class="n dist">+14.8%</td>
+    <td class="n neg">225.64</td>
+    <td class="n pos">180.69</td>
+    <td class="n pos">129.95</td>
+    <td class="n rr">2.31 <span class="flag">!</span></td>
+    <td class="n">7</td>
+  </tr>
+  <tr>
+    <td class="sym">AMZN</td>
+    <td>Three Drives</td>
+    <td class="short">بيع</td>
+    <td class="n">250.00</td>
+    <td class="n zone">292.71 – 310.94</td>
+    <td class="n dist">+17.1%</td>
+    <td class="n neg">318.64</td>
+    <td class="n pos">279.68</td>
+    <td class="n pos">258.60</td>
+    <td class="n rr">0.50 <span class="flag">!</span></td>
+    <td class="n">15</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">ORLY</td>
+    <td>Bat</td>
+    <td class="long">شراء</td>
+    <td class="n">85.14</td>
+    <td class="n zone">70.32 – 70.38</td>
+    <td class="n dist">−17.3%</td>
+    <td class="n neg">68.12</td>
+    <td class="n pos">85.02</td>
+    <td class="n pos">108.72</td>
+    <td class="n rr">6.49</td>
+    <td class="n">14</td>
+  </tr>
+  <tr>
+    <td class="sym">CB</td>
+    <td>Shark</td>
+    <td class="long">شراء</td>
+    <td class="n">334.21</td>
+    <td class="n zone">253.50 – 273.20</td>
+    <td class="n dist">−18.3%</td>
+    <td class="n neg">247.52</td>
+    <td class="n pos">300.88</td>
+    <td class="n pos">345.67</td>
+    <td class="n rr">1.08 <span class="flag">!</span></td>
+    <td class="n">12</td>
+  </tr>
+  <tr>
+    <td class="sym">RSG</td>
+    <td>Shark</td>
+    <td class="short">بيع</td>
+    <td class="n">214.74</td>
+    <td class="n zone">256.29 – 266.20</td>
+    <td class="n dist">+19.3%</td>
+    <td class="n neg">270.61</td>
+    <td class="n pos">235.33</td>
+    <td class="n pos">201.42</td>
+    <td class="n rr">1.46 <span class="flag">!</span></td>
+    <td class="n">10</td>
+  </tr>
+  <tr>
+    <td class="sym">SHW</td>
+    <td>Butterfly</td>
+    <td class="long">شراء</td>
+    <td class="n">321.16</td>
+    <td class="n zone">242.63 – 257.65</td>
+    <td class="n dist">−19.8%</td>
+    <td class="n neg">233.15</td>
+    <td class="n pos">312.19</td>
+    <td class="n pos">400.42</td>
+    <td class="n rr">2.23 <span class="flag">!</span></td>
+    <td class="n">5</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">SPGI</td>
+    <td>Shark</td>
+    <td class="long">شراء</td>
+    <td class="n">396.13</td>
+    <td class="n zone">296.86 – 315.22</td>
+    <td class="n dist">−20.4%</td>
+    <td class="n neg">284.57</td>
+    <td class="n pos">391.86</td>
+    <td class="n pos">515.86</td>
+    <td class="n rr">2.50</td>
+    <td class="n">11</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">ET</td>
+    <td>Crab</td>
+    <td class="short">بيع</td>
+    <td class="n">20.74</td>
+    <td class="n zone">25.13 – 25.18</td>
+    <td class="n dist">+21.2%</td>
+    <td class="n neg">25.58</td>
+    <td class="n pos">21.11</td>
+    <td class="n pos">14.60</td>
+    <td class="n rr">8.95</td>
+    <td class="n">6</td>
+  </tr>
+  </table></div>
+  <p class="note">القيم بعملة السهم. «هدف ٤» هو النقطة <span dir="ltr">A</span>، أبعد هدف في النموذج؛
+  الدراسة قاست الخروج عند <strong>هدف ١</strong> وعليه كل الأرقام أعلاه.
+  أسعار 2026-10-06 و2026-10-16 حسب مصدر كل رمز.</p>
+</section>
+
+<section>
+  <h2>ولو شغّلت <span dir="ltr">AB=CD</span></h2>
+  <p class="note">مطفأ افتراضياً لأنه ثلاث نقاط ونسبة واحدة، فيشكّل ٧١٪ من كل الاكتشافات. لكنه هو
+  الذي فيه أقرب المناطق، فإن شغّلته سترى هذه:</p>
+  <div class="scroll"><table>
+  <tr><th>الرمز</th><th>النموذج</th><th>الاتجاه</th><th>السعر</th><th>المنطقة</th><th>المسافة</th>
+      <th>الوقف</th><th>هدف ١</th><th>هدف ٤</th><th>عائد/مخاطرة</th><th>أشهر</th></tr>
+  <tr>
+    <td class="sym">UPS</td>
+    <td>AB=CD</td>
+    <td class="long">شراء</td>
+    <td class="n">93.11</td>
+    <td class="n zone">88.44 – 90.67</td>
+    <td class="n dist">−2.6%</td>
+    <td class="n neg">85.01</td>
+    <td class="n pos">102.79</td>
+    <td class="n pos">122.41</td>
+    <td class="n rr">2.14 <span class="flag">!</span></td>
+    <td class="n">11</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">FAST</td>
+    <td>AB=CD</td>
+    <td class="short">بيع</td>
+    <td class="n">50.81</td>
+    <td class="n zone">53.48 – 55.00</td>
+    <td class="n dist">+5.2%</td>
+    <td class="n neg">56.12</td>
+    <td class="n pos">46.56</td>
+    <td class="n pos">35.36</td>
+    <td class="n rr">2.62</td>
+    <td class="n">3</td>
+  </tr>
+  <tr>
+    <td class="sym">TDG</td>
+    <td>AB=CD</td>
+    <td class="long">شراء</td>
+    <td class="n">1,103</td>
+    <td class="n zone">1,005 – 1,039</td>
+    <td class="n dist">−5.8%</td>
+    <td class="n neg">968.16</td>
+    <td class="n pos">1,201</td>
+    <td class="n pos">1,463</td>
+    <td class="n rr">2.27 <span class="flag">!</span></td>
+    <td class="n">11</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">LLY</td>
+    <td>AB=CD</td>
+    <td class="short">بيع</td>
+    <td class="n">1,257</td>
+    <td class="n zone">1,335 – 1,386</td>
+    <td class="n dist">+6.2%</td>
+    <td class="n neg">1,420</td>
+    <td class="n pos">1,063</td>
+    <td class="n pos">623.78</td>
+    <td class="n rr">3.20</td>
+    <td class="n">7</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">MCK</td>
+    <td>AB=CD</td>
+    <td class="short">بيع</td>
+    <td class="n">1,005</td>
+    <td class="n zone">1,068 – 1,104</td>
+    <td class="n dist">+6.2%</td>
+    <td class="n neg">1,126</td>
+    <td class="n pos">903.10</td>
+    <td class="n pos">637.00</td>
+    <td class="n rr">2.82</td>
+    <td class="n">9</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">MET</td>
+    <td>AB=CD</td>
+    <td class="short">بيع</td>
+    <td class="n">97.16</td>
+    <td class="n zone">103.30 – 107.31</td>
+    <td class="n dist">+6.3%</td>
+    <td class="n neg">109.38</td>
+    <td class="n pos">82.54</td>
+    <td class="n pos">48.95</td>
+    <td class="n rr">3.42</td>
+    <td class="n">8</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">WAB</td>
+    <td>AB=CD</td>
+    <td class="short">بيع</td>
+    <td class="n">291.16</td>
+    <td class="n zone">310.71 – 318.91</td>
+    <td class="n dist">+6.7%</td>
+    <td class="n neg">324.81</td>
+    <td class="n pos">262.41</td>
+    <td class="n pos">184.26</td>
+    <td class="n rr">3.42</td>
+    <td class="n">6</td>
+  </tr>
+  <tr class="ok">
+    <td class="sym">SOJE</td>
+    <td>AB=CD</td>
+    <td class="long">شراء</td>
+    <td class="n">15.98</td>
+    <td class="n zone">14.11 – 14.65</td>
+    <td class="n dist">−8.3%</td>
+    <td class="n neg">13.86</td>
+    <td class="n pos">17.59</td>
+    <td class="n pos">22.35</td>
+    <td class="n rr">3.72</td>
+    <td class="n">3</td>
+  </tr>
+  </table></div>
+</section>
+
+<hr>
+
+<section>
+  <h2>كيف بُني الجدول</h2>
+  <ul>
+    <li><strong>العيّنة:</strong> <span dir="ltr">325</span> سلسلة شهرية — ٣٢٧ رمزاً أمريكياً
+    بتاريخ يومي يعود إلى <span dir="ltr">2006</span> حُوِّل إلى شهري، زائد الأربعين رمزاً التي قيست في
+    الدراسة. الأخيرة تفوز عند التكرار لأنها الأحدث.</li>
+    <li><strong>«قريب التكوين» له معنى واحد هنا:</strong> النقاط الأربع مؤكَّدة والمنطقة محسوبة.
+    نموذج «نسبه قريبة من الصحيحة» ليس في الجدول — ذاك نموذج غير موجود، وإدخاله هو التحريف
+    الذي بُنيت الدراسة كلها لتجنّبه.</li>
+    <li><strong>الشهر الجاري لا يُحتسب شمعة:</strong> المسح يقرأ الأشهر المكتملة فقط. لكن أيام الشهر
+    المفتوح لم تُهمَل — كل نموذج أُعيد تشغيله عليها يومياً، فظهر
+    <span dir="ltr">3</span> وصل السعر إلى منطقته فعلاً و<span dir="ltr">4</span> لغا،
+    وكلها خارج الجدول.</li>
+    <li><strong>ما استُبعد:</strong> المؤشرات والصناديق (أنت طلبت أسهماً)، وأي نموذج تُقفل نافذته هذا الشهر.</li>
+  </ul>
+  <p class="note">لو فتحت الرمز على TradingView ووضعت المؤشر على الشهري، يفترض أن يرسم البوكس نفسه.
+  إن اختلف الرقم قليلاً فالسبب عمق التاريخ أو تعديل التجزئة عند مزوّدك — الشارت عندك هو المرجع.</p>
+</section>
+
+<p class="note">تحليل لاحق وصفي (<span dir="ltr">post-hoc</span>): البروتوكول
+<code>PROTOCOL-harmonic.md</code> لا يسجّل أي مسح مسبق، وهذا هو المؤشر مصوَّباً على قائمة رموز.
+الأرقام كاملة <code>reports/harmonic-pending-1M.json</code> · بحث وقياس، وليست نصيحة استثمارية.</p>
+
+</div>

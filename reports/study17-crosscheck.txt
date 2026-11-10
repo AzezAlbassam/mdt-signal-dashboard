@@ -1,0 +1,28 @@
+Study 17 — clean-room cross-check (2026-10-23)
+
+Two independent re-implementations were written from PROTOCOL-study17.md, addenda 1–4 and
+data/caps/companies.json only, without reading scripts/, engine/, test/, reports/ or git history:
+  cr1 — Python, standard library only (own Spearman with average ranks, exact sign-flip, Holm).
+  cr2 — Node, no packages (same, written separately).
+Compared with reports/study17.json, per rule and year: n, yearly IC (one-year and three-year);
+per rule: mean IC, sign-flip p, Holm p; transition counts and shares at horizons 1, 3, 5, 10;
+multi-baggers ≥3× and ≥5× per start year.
+
+Both found the same data gap: VMware, LinkedIn, Sprint and Altaba (dead non-members that §1 and
+addendum 2 count as US companies) had no US flag in the data file, so the first run (60face4)
+left them out of U(Y) (VMware would be in U(2018), Altaba in U(2017)). The flag was added POST-HOC
+(scripts/caps-import.js); both implementations had also run with it ("variant" files).
+  First run vs cr1/cr2 as the file stood: all four tests agree to 4 decimals
+  (M +0.0887 p 0.1738, G +0.1099 p 0.0957, S −0.0322 p 0.8271, V −0.1217 p 0.8281).
+  Corrected run vs cr1 variant: 233 values compared, 0 mismatches (tolerance 1e-5 on ICs and p).
+  Corrected run vs cr2 variant: 233 values compared, 0 mismatches.
+No verdict changes: M +0.0825 (p 0.1855, Holm 0.5566), G +0.1135 (p 0.0908, Holm 0.3633),
+S −0.0336 (p 0.8418), V −0.1217 (p 0.8281, 6 counted years) — all NOT CONFIRMED.
+Multi-baggers (≥3×/≥5×): 2015 10/2, 2016 19/4, 2017 2/0, 2018 8/2, 2019 6/4, 2020 7/3 (all three agree).
+
+Interpretations both made independently and that match the run: a year counts at n ≥ 80; the
+three-year mean IC uses the same counted years; g1 and cap(Y+h) are used whether or not the company
+is still a US company; dead companies have no revenue and drop out of G and V; transitions start at
+2015…2025−h (2026 never used); "no longer trading" = no cap at Y+h.
+Programs and outputs (scratchpad, not committed): cleanroom/study17.py → a.json, a-alt-us.json;
+cleanroom/run.js → b.json, b-variant.json.

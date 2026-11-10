@@ -1,0 +1,59 @@
+Study 6 addendum 2 — weekly MOD divergence (regular MODW, hidden HIDW), held 8 or 13 weeks
+US: 311 symbols, weekly bars to the week before 2026-10-06, split 2018-01-01. Long only, 0.10%/side.
+Beats random entries = edge > 0, Holm p < 0.05 (8 tests, 4,000 draws), edge > 0 in both periods.
+Passed: 0 of 8.
+
+does not      weekly|MODW|H8|F0
+    n  1612  win 60.9% (random 57.6%)  mean +2.89%  median +2.46%  edge +0.75%  vs SPY +1.17%  p 0.0145  Holm 0.0870
+    I: n 749 win 61.4% edge +0.67%   II: n 863 win 60.5% edge +0.82%
+does not      weekly|MODW|H13|F0
+    n  1535  win 62.3% (random 59.8%)  mean +3.88%  median +3.94%  edge +0.28%  vs SPY +1.30%  p 0.2427  Holm 0.9258
+    I: n 725 win 60.4% edge -0.92%   II: n 810 win 64.1% edge +1.36%
+does not      weekly|MODW|H8|F1
+    n   614  win 62.9% (random 57.2%)  mean +2.76%  median +2.36%  edge +1.05%  vs SPY +1.15%  p 0.0120  Holm 0.0840
+    I: n 260 win 58.8% edge -0.59%   II: n 354 win 65.8% edge +2.25%
+does not      weekly|MODW|H13|F1
+    n   605  win 63.5% (random 59.5%)  mean +4.62%  median +4.25%  edge +1.50%  vs SPY +1.73%  p 0.0077  Holm 0.0620
+    I: n 260 win 58.5% edge -1.03%   II: n 345 win 67.2% edge +3.40%
+does not      weekly|HIDW|H8|F0
+    n  3266  win 59.3% (random 59.4%)  mean +2.14%  median +2.20%  edge -0.22%  vs SPY +0.66%  p 0.8483  Holm 1.0000
+    I: n 1680 win 60.9% edge +0.17%   II: n 1586 win 57.6% edge -0.64%
+does not      weekly|HIDW|H13|F0
+    n  3058  win 62.1% (random 62.0%)  mean +3.91%  median +3.74%  edge -0.04%  vs SPY +1.11%  p 0.5471  Holm 1.0000
+    I: n 1583 win 65.0% edge +0.81%   II: n 1475 win 59.0% edge -0.94%
+does not      weekly|HIDW|H8|F1
+    n  2683  win 59.4% (random 58.7%)  mean +2.14%  median +2.05%  edge +0.16%  vs SPY +0.76%  p 0.2314  Holm 0.9258
+    I: n 1383 win 60.9% edge +0.25%   II: n 1300 win 57.8% edge +0.06%
+does not      weekly|HIDW|H13|F1
+    n  2496  win 62.9% (random 61.5%)  mean +3.99%  median +3.86%  edge +0.48%  vs SPY +1.25%  p 0.0477  Holm 0.2387
+    I: n 1296 win 65.6% edge +0.99%   II: n 1200 win 60.0% edge -0.06%
+
+Signals in the last 6 completed weeks (last week 2026-09-28):
+  2026-09-21  HIDW  NYSE:MO        close 68.82  above SMA40 (67.71)  last close 67.35
+  2026-09-08  HIDW  NYSE:OKE       close 96.62  above SMA40 (86.29)  last close 87.88
+  2026-09-08  HIDW  NYSE:TRGP      close 290.25  above SMA40 (243.96)  last close 281.74
+  2026-09-08  MODW  NYSE:CI        close 280.76  above SMA40 (280.12)  last close 270.53
+  2026-09-08  HIDW  NASDAQ:WDC     close 447.18  above SMA40 (388.05)  last close 415.29
+  2026-08-31  MODW  NASDAQ:COIN    close 184.64  below SMA40 (188.68)  last close 183.00
+  2026-08-31  HIDW  NYSE:COHR      close 281.86  above SMA40 (280.98)  last close 337.04
+  2026-08-31  HIDW  NYSE:FDX       close 322.52  above SMA40 (295.65)  last close 290.36
+  2026-08-31  MODW  NASDAQ:WBD     close 28.25  above SMA40 (27.49)  last close 30.94
+  2026-08-31  HIDW  NYSE:BE        close 252.87  above SMA40 (193.18)  last close 289.15
+  2026-08-31  HIDW  NYSE:PWR       close 624.41  above SMA40 (592.84)  last close 676.56
+  2026-08-31  MODW  NYSE:UBER      close 75.76  above SMA40 (75.74)  last close 68.11
+  2026-08-31  HIDW  NYSE:GLW       close 154.30  above SMA40 (145.85)  last close 164.19
+  2026-08-31  HIDW  NASDAQ:STX     close 849.28  above SMA40 (609.41)  last close 848.99
+  2026-08-31  HIDW  NYSE:C         close 137.72  above SMA40 (124.20)  last close 128.50
+  2026-08-31  HIDW  NYSE:PG        close 146.44  below SMA40 (147.80)  last close 144.91
+  2026-08-31  HIDW  NASDAQ:LRCX    close 307.65  above SMA40 (265.98)  last close 347.49
+  2026-08-31  MODW  NYSE:ORCL      close 158.78  below SMA40 (166.66)  last close 142.30
+  2026-08-31  HIDW  NASDAQ:INTC    close 95.80  above SMA40 (76.10)  last close 119.33
+  2026-08-31  MODW  NASDAQ:TSLA    close 354.08  below SMA40 (398.53)  last close 370.59
+  2026-08-24  HIDW  NYSE:TEVA      close 36.44  above SMA40 (32.62)  last close 39.53
+  2026-08-24  MODW  NYSE:TEL       close 202.66  below SMA40 (216.18)  last close 220.36
+  2026-08-24  MODW  NASDAQ:CMCSA   close 27.06  above SMA40 (26.91)  last close 21.57
+  2026-08-24  MODW  NYSE:LOW       close 208.05  below SMA40 (237.52)  last close 180.80
+  2026-08-24  MODW  NYSE:LMT       close 563.85  above SMA40 (560.98)  last close 505.41
+  2026-08-24  MODW  NYSE:IBM       close 235.59  below SMA40 (263.00)  last close 222.64
+  2026-08-24  HIDW  NASDAQ:GOOGL   close 346.59  above SMA40 (336.33)  last close 343.50
+  2026-08-24  HIDW  AMEX:XLB       close 53.18  above SMA40 (50.20)  last close 48.86

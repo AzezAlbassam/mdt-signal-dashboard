@@ -1,0 +1,148 @@
+Study 6 addendum 1 — FLT / MOD entries held 3, 6, 12 months or until Cross Down (≤ 24 months)
+Crypto: 24 pairs, split 2022-01-01; US: 311 symbols, split 2018-01-01. Daily signals, long only, 0.10%/side.
+Beats random entries = edge > 0, Holm p < 0.05 (40 tests, 4,000 draws), edge > 0 in both periods.
+Passed: 0 of 40.
+
+── CRYPTO ────────────────────────────────────────────────────────────────────────────────
+does not      OL M3    FLT Open Long
+    n   340  win 50.0% (random 45.4%)  mean +37.63%  median +0.04%  edge +14.64%  held 91.4 bars  p 0.0745  Holm 1.0000
+    I: n 108 win 69.4% edge +53.25%   II: n 232 win 40.9% edge -3.33%
+    BTC only: n 25 win 56.0% mean +27.97% edge +7.49%
+does not      OL M6    FLT Open Long
+    n   219  win 48.9% (random 48.1%)  mean +143.08%  median -0.78%  edge +71.97%  held 182.6 bars  p 0.0520  Holm 1.0000
+    I: n 83 win 61.4% edge +181.18%   II: n 136 win 41.2% edge +5.32%
+    BTC only: n 16 win 56.3% mean +61.23% edge +16.43%
+does not      OL M12   FLT Open Long
+    n   128  win 46.9% (random 49.1%)  mean +276.45%  median -3.64%  edge +62.40%  held 365.2 bars  p 0.2117  Holm 1.0000
+    I: n 56 win 51.8% edge +145.91%   II: n 72 win 43.1% edge -2.55%
+    BTC only: n 9 win 55.6% mean +92.81% edge -32.67%
+does not      OL XD    FLT Open Long
+    n   216  win 40.7% (random 47.0%)  mean +165.01%  median -3.86%  edge +61.22%  held 176.2 bars  p 0.0960  Holm 1.0000
+    I: n 93 win 43.0% edge +153.70%   II: n 123 win 39.0% edge -8.71%
+    BTC only: n 13 win 46.2% mean +191.88% edge -65.91%
+does not      CU M3    FLT Cross Up
+    n   178  win 48.9% (random 47.1%)  mean +50.88%  median -2.02%  edge +20.93%  held 91.5 bars  p 0.0887  Holm 1.0000
+    I: n 73 win 56.2% edge +50.37%   II: n 105 win 43.8% edge +0.47%
+    BTC only: n 13 win 69.2% mean +25.58% edge +3.00%
+does not      CU M6    FLT Cross Up
+    n   149  win 47.0% (random 48.0%)  mean +158.56%  median -5.36%  edge +75.65%  held 182.5 bars  p 0.0927  Holm 1.0000
+    I: n 62 win 45.2% edge +172.72%   II: n 87 win 48.3% edge +6.47%
+    BTC only: n 11 win 63.6% mean +27.43% edge -17.87%
+does not      CU M12   FLT Cross Up
+    n   103  win 46.6% (random 49.1%)  mean +486.63%  median -5.35%  edge +258.39%  held 365.0 bars  p 0.0272  Holm 1.0000
+    I: n 47 win 44.7% edge +562.44%   II: n 56 win 48.2% edge +3.20%
+    BTC only: n 7 win 57.1% mean +27.88% edge -102.93%
+does not      CU XD    FLT Cross Up
+    n   234  win 30.3% (random 47.2%)  mean +127.97%  median -11.15%  edge +26.76%  held 104.8 bars  p 0.2457  Holm 1.0000
+    I: n 98 win 31.6% edge +73.92%   II: n 136 win 29.4% edge -7.23%
+    BTC only: n 15 win 53.3% mean +160.62% edge -87.88%
+does not      BC M3    FLT Breakout cluster
+    n   165  win 57.0% (random 50.1%)  mean +55.46%  median +6.56%  edge +19.16%  held 91.3 bars  p 0.0977  Holm 1.0000
+    I: n 80 win 66.3% edge +34.53%   II: n 85 win 48.2% edge +4.70%
+    BTC only: n 18 win 83.3% mean +66.41% edge +43.15%
+does not      BC M6    FLT Breakout cluster
+    n   128  win 56.3% (random 52.1%)  mean +66.39%  median +8.77%  edge -24.62%  held 182.6 bars  p 0.6301  Holm 1.0000
+    I: n 61 win 68.9% edge -49.18%   II: n 67 win 44.8% edge -2.26%
+    BTC only: n 12 win 83.3% mean +90.41% edge +40.06%
+does not      BC M12   FLT Breakout cluster
+    n    86  win 59.3% (random 52.5%)  mean +187.00%  median +26.73%  edge -44.48%  held 365.0 bars  p 0.6088  Holm 1.0000
+    I: n 42 win 59.5% edge -100.11%   II: n 44 win 59.1% edge +8.61%
+    BTC only: n 8 win 75.0% mean +269.37% edge +134.56%
+does not      BC XD    FLT Breakout cluster
+    n   122  win 41.0% (random 48.0%)  mean +161.04%  median -9.31%  edge +51.34%  held 151.8 bars  p 0.1870  Holm 1.0000
+    I: n 55 win 50.9% edge +120.73%   II: n 67 win 32.8% edge -5.63%
+    BTC only: n 10 win 70.0% mean +227.32% edge -33.25%
+does not      MOD M3   MOD bullish divergence
+    n   298  win 45.0% (random 44.5%)  mean +18.97%  median -4.77%  edge -2.74%  held 91.3 bars  p 0.5489  Holm 1.0000
+    I: n 90 win 61.1% edge -6.26%   II: n 208 win 38.0% edge -1.22%
+    BTC only: n 18 win 66.7% mean +20.58% edge +2.37%
+does not      MOD M6   MOD bullish divergence
+    n   200  win 50.5% (random 46.7%)  mean +65.37%  median +0.46%  edge +5.18%  held 182.5 bars  p 0.3117  Holm 1.0000
+    I: n 68 win 54.4% edge -0.85%   II: n 132 win 48.5% edge +8.29%
+    BTC only: n 14 win 64.3% mean +42.24% edge -0.17%
+does not      MOD M12  MOD bullish divergence
+    n   116  win 55.2% (random 48.3%)  mean +270.13%  median +15.51%  edge +83.93%  held 365.2 bars  p 0.1652  Holm 1.0000
+    I: n 51 win 60.8% edge +182.92%   II: n 65 win 50.8% edge +6.27%
+    BTC only: n 8 win 75.0% mean +100.89% edge -33.92%
+does not      MOD XD   MOD bullish divergence
+    n   181  win 50.8% (random 47.2%)  mean +134.36%  median +1.01%  edge +40.67%  held 202.1 bars  p 0.1632  Holm 1.0000
+    I: n 78 win 50.0% edge +103.62%   II: n 103 win 51.5% edge -7.01%
+    BTC only: n 11 win 45.5% mean +174.08% edge -63.44%
+does not      DB M3    Breakout after divergence
+    n    85  win 51.8% (random 48.3%)  mean +52.36%  median +3.35%  edge +19.55%  held 91.5 bars  p 0.1420  Holm 1.0000
+    I: n 38 win 63.2% edge +48.70%   II: n 47 win 42.6% edge -4.02%
+    BTC only: n 7 win 57.1% mean +21.85% edge +2.02%
+does not      DB M6    Breakout after divergence
+    n    74  win 52.7% (random 49.6%)  mean +207.34%  median +5.50%  edge +111.92%  held 182.5 bars  p 0.1005  Holm 1.0000
+    I: n 32 win 56.3% edge +241.43%   II: n 42 win 50.0% edge +13.25%
+    BTC only: n 7 win 85.7% mean +55.12% edge +12.70%
+does not      DB M12   Breakout after divergence
+    n    55  win 50.9% (random 48.5%)  mean +197.66%  median +2.69%  edge -30.00%  held 365.3 bars  p 0.4881  Holm 1.0000
+    I: n 25 win 64.0% edge -52.39%   II: n 30 win 40.0% edge -11.35%
+    BTC only: n 5 win 100.0% mean +156.36% edge +38.34%
+does not      DB XD    Breakout after divergence
+    n    82  win 35.4% (random 47.7%)  mean +120.09%  median -8.02%  edge +24.89%  held 123.6 bars  p 0.2999  Holm 1.0000
+    I: n 37 win 35.1% edge +64.32%   II: n 45 win 35.6% edge -7.54%
+    BTC only: n 6 win 33.3% mean +289.16% edge +101.00%
+
+── US ────────────────────────────────────────────────────────────────────────────────
+does not      OL M3    FLT Open Long
+    n  9165  win 59.1% (random 60.7%)  mean +2.95%  median +2.93%  edge -0.81%  held 63.0 bars  p 1.0000  Holm 1.0000
+    I: n 4617 win 59.5% edge -1.03%   II: n 4548 win 58.7% edge -0.58%
+does not      OL M6    FLT Open Long
+    n  6287  win 63.9% (random 64.6%)  mean +7.80%  median +6.20%  edge -0.20%  held 125.8 bars  p 0.7341  Holm 1.0000
+    I: n 3252 win 65.2% edge +0.44%   II: n 3035 win 62.5% edge -0.89%
+does not      OL M12   FLT Open Long
+    n  3933  win 67.3% (random 68.6%)  mean +16.10%  median +11.87%  edge -1.28%  held 251.5 bars  p 0.9653  Holm 1.0000
+    I: n 2121 win 67.2% edge -1.89%   II: n 1812 win 67.3% edge -0.56%
+does not      OL XD    FLT Open Long
+    n  5642  win 40.7% (random 46.6%)  mean +11.15%  median -2.36%  edge -0.55%  held 171.7 bars  p 0.7768  Holm 1.0000
+    I: n 2884 win 44.5% edge -1.16%   II: n 2758 win 36.8% edge +0.09%
+does not      CU M3    FLT Cross Up
+    n  4786  win 59.8% (random 60.2%)  mean +3.12%  median +2.95%  edge -0.56%  held 62.9 bars  p 0.9870  Holm 1.0000
+    I: n 2342 win 60.3% edge -0.71%   II: n 2444 win 59.4% edge -0.42%
+does not      CU M6    FLT Cross Up
+    n  3832  win 62.2% (random 63.8%)  mean +7.24%  median +5.40%  edge -0.50%  held 125.7 bars  p 0.8928  Holm 1.0000
+    I: n 1926 win 62.5% edge -0.84%   II: n 1906 win 61.9% edge -0.17%
+does not      CU M12   FLT Cross Up
+    n  2825  win 67.0% (random 68.2%)  mean +15.99%  median +10.83%  edge -0.99%  held 251.4 bars  p 0.8823  Holm 1.0000
+    I: n 1490 win 65.2% edge -4.25%   II: n 1335 win 69.1% edge +2.65%
+does not      CU XD    FLT Cross Up
+    n  5876  win 32.7% (random 46.1%)  mean +9.37%  median -3.86%  edge -1.44%  held 134.1 bars  p 0.9883  Holm 1.0000
+    I: n 2969 win 35.7% edge -2.18%   II: n 2907 win 29.6% edge -0.67%
+does not      BC M3    FLT Breakout cluster
+    n  7681  win 60.3% (random 61.8%)  mean +3.07%  median +2.66%  edge -0.93%  held 62.9 bars  p 1.0000  Holm 1.0000
+    I: n 3878 win 62.3% edge -0.55%   II: n 3803 win 58.3% edge -1.32%
+does not      BC M6    FLT Breakout cluster
+    n  5427  win 64.4% (random 65.6%)  mean +7.06%  median +5.47%  edge -1.31%  held 125.7 bars  p 0.9998  Holm 1.0000
+    I: n 2776 win 66.5% edge -0.81%   II: n 2651 win 62.2% edge -1.83%
+does not      BC M12   FLT Breakout cluster
+    n  3453  win 70.2% (random 69.6%)  mean +16.56%  median +11.68%  edge -1.49%  held 251.3 bars  p 0.9795  Holm 1.0000
+    I: n 1844 win 71.7% edge -2.22%   II: n 1609 win 68.4% edge -0.65%
+does not      BC XD    FLT Breakout cluster
+    n  3932  win 39.8% (random 46.9%)  mean +12.04%  median -3.63%  edge +0.13%  held 184.3 bars  p 0.4319  Holm 1.0000
+    I: n 1998 win 45.3% edge +0.41%   II: n 1934 win 34.0% edge -0.16%
+does not      MOD M3   MOD bullish divergence
+    n  6457  win 60.8% (random 60.5%)  mean +3.71%  median +3.55%  edge -0.01%  held 63.0 bars  p 0.5316  Holm 1.0000
+    I: n 3246 win 60.9% edge -0.72%   II: n 3211 win 60.6% edge +0.70%
+does not      MOD M6   MOD bullish divergence
+    n  4889  win 64.7% (random 64.2%)  mean +8.31%  median +6.75%  edge +0.36%  held 125.8 bars  p 0.1662  Holm 1.0000
+    I: n 2493 win 63.8% edge -0.68%   II: n 2396 win 65.7% edge +1.44%
+does not      MOD M12  MOD bullish divergence
+    n  3268  win 67.1% (random 68.3%)  mean +16.50%  median +12.29%  edge -0.74%  held 251.6 bars  p 0.8270  Holm 1.0000
+    I: n 1745 win 66.9% edge -0.65%   II: n 1523 win 67.4% edge -0.84%
+does not      MOD XD   MOD bullish divergence
+    n  4134  win 52.4% (random 46.9%)  mean +13.30%  median +0.68%  edge +1.44%  held 195.6 bars  p 0.0467  Holm 1.0000
+    I: n 2112 win 54.5% edge +0.58%   II: n 2022 win 50.1% edge +2.33%
+does not      DB M3    Breakout after divergence
+    n  3650  win 60.5% (random 61.3%)  mean +3.03%  median +2.90%  edge -0.78%  held 63.0 bars  p 0.9988  Holm 1.0000
+    I: n 1812 win 63.0% edge -0.48%   II: n 1838 win 58.1% edge -1.08%
+does not      DB M6    Breakout after divergence
+    n  3023  win 65.7% (random 65.1%)  mean +7.54%  median +6.23%  edge -0.48%  held 125.8 bars  p 0.8613  Holm 1.0000
+    I: n 1529 win 67.0% edge -0.42%   II: n 1494 win 64.4% edge -0.55%
+does not      DB M12   Breakout after divergence
+    n  2306  win 68.3% (random 69.1%)  mean +15.52%  median +11.63%  edge -1.85%  held 251.5 bars  p 0.9853  Holm 1.0000
+    I: n 1203 win 68.9% edge -2.10%   II: n 1103 win 67.6% edge -1.59%
+does not      DB XD    Breakout after divergence
+    n  2755  win 40.5% (random 47.1%)  mean +11.01%  median -2.85%  edge -0.88%  held 176.1 bars  p 0.7998  Holm 1.0000
+    I: n 1393 win 43.9% edge -0.19%   II: n 1362 win 37.0% edge -1.58%

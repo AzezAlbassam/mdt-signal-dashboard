@@ -1,0 +1,5907 @@
+{
+ "AMEX:BATL": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:BCI": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:COPX": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:CPER": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:CTM": {
+  "industry": "Chemicals: Major Diversified",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:DIA": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:DNN": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:EQX": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:GBTC": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GDLC": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GDX": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GLD": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GLNK": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GSOL": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:GXRP": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:IE": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:IWM": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:IYR": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:JAGU": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:KULR": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:LIT": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:NLR": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:REMX": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:REPX": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:SPY": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:TGEN": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:TMDE": {
+  "industry": "Wholesale Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:UEC": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:UMAC": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:URA": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:URNM": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:USO": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:UUUU": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:VNQ": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:VZLA": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "AMEX:XMMO": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:XOP": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "AMEX:XRP": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:AAL": {
+  "industry": "Airlines",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AAOI": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AAPL": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ABCL": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ABNB": {
+  "industry": "Hotels/Resorts/Cruise lines",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ACLS": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADBE": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADI": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADMA": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADP": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADSK": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ADUR": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AEHR": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AEI": {
+  "industry": "Real Estate Development",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AEIS": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AENT": {
+  "industry": "Electronics Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AFRM": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AIXI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:AKAM": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALAB": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALGM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALM": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALMU": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALOY": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ALT": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMAT": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMBA": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMD": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMGN": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMKR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMPH": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMSC": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMTX": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AMZN": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ANL": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:ANNA": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:APA": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:APLD": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:APP": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ARAI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ARM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:ARQT": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ARRY": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ASML": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:ASPI": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ASST": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ASTS": {
+  "industry": "Specialty Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AVAV": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AVGO": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AXGN": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AXON": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:AXTI": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BBGI": {
+  "industry": "Broadcasting",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BCYC": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:BEAM": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BENF": {
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BGIN": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BIDU": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:BIOA": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BKNG": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BKR": {
+  "industry": "Contract Drilling",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BLRX": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:BMRN": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BSP": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BTBT": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BTDR": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BTGD": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:BTQ": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BULL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BYND": {
+  "industry": "Food: Major Diversified",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:BZ": {
+  "industry": "Commercial Printing/Forms",
+  "sector": "Commercial Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:CAR": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CBRS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CDNS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CDZI": {
+  "industry": "Real Estate Development",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CEG": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CELH": {
+  "industry": "Beverages: Non-Alcoholic",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CENX": {
+  "industry": "Aluminum",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CEPL": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CGEN": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CHRD": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CHTR": {
+  "industry": "Cable/Satellite TV",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CIFR": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CLIK": {
+  "industry": "Personnel Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CLSK": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CMCSA": {
+  "industry": "Cable/Satellite TV",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CME": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:COCO": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:COIN": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:COO": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:COPP": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:CORZ": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:COST": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CPB": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CPRT": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CRDO": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CRML": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CROX": {
+  "industry": "Apparel/Footwear",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CRSP": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CRWD": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CRWV": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CSCO": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CSIQ": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CSX": {
+  "industry": "Railroads",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CUE": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CVV": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:CYPH": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DASH": {
+  "industry": "Air Freight/Couriers",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DAVE": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DDOG": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DGII": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DJT": {
+  "industry": "Advertising/Marketing Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DKI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DLO": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DOCU": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DPRO": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DPZ": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DRS": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DUOL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:DVLT": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:EBAY": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:EGHT": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:EH": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:ELAB": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ENPH": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ENTG": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ENVX": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:EOSE": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ERAS": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ERII": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ESTA": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ETHA": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:EXPE": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:EXPO": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FANG": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FAST": {
+  "industry": "Wholesale Distributors",
+  "sector": "Distribution Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FCEL": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FIGR": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FISV": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FIVE": {
+  "industry": "Discount Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FLEX": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FLNC": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FLY": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FORM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FROG": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FRVO": {
+  "industry": "Alternative Power Generation",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FSLR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FSLY": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FTNT": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FUFU": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FUSE": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:FUTU": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:FWDI": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GALT": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GDS": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:GFS": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GH": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GILD": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GLBE": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GLXY": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GOOG": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GOOGL": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GPCR": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:GRAB": {
+  "industry": "Air Freight/Couriers",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GSAT": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:GTLB": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HGX": {
+  "industry": null,
+  "sector": null,
+  "type": "index",
+  "typespecs": [
+   "main"
+  ]
+ },
+ "NASDAQ:HIMX": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:HIVE": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HON": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HOOD": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HPK": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HTO": {
+  "industry": "Water Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HTZ": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HUBC": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HUT": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:HYMC": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IBIT": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:IBKR": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IBRX": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ICHR": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IESC": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:INDV": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:INKT": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:INOD": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:INTC": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:INTU": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IOVA": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IPWR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IPX": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:IRDM": {
+  "industry": "Specialty Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:IREN": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ISPC": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ISRG": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:JD": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:KDK": {
+  "industry": "Auto Parts: OEM",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KEEL": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KLAC": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KLIC": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KLRA": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KMB": {
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:KSMH": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:KSPI": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:KTOS": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LAES": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LASR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LCID": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LFMD": {
+  "industry": "Medical/Nursing Services",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LGND": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LHAI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LIFE": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LIN": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LITE": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LNKS": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LPTH": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LRCX": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LULU": {
+  "industry": "Apparel/Footwear",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LUNR": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LWLG": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:LYFT": {
+  "industry": "Other Transportation",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MAMA": {
+  "industry": "Food: Meat/Fish/Dairy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MARA": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MBLY": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MCHP": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MDB": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MELI": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:META": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:METC": {
+  "industry": "Coal",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MITK": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MNDY": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MNST": {
+  "industry": "Beverages: Non-Alcoholic",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MPWR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MRKR": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MRNA": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MRVL": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MSFT": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MSTR": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MTSI": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MU": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:MVST": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NAUT": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NAVN": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NBIS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NDAQ": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NDX": {
+  "industry": null,
+  "sector": null,
+  "type": "index",
+  "typespecs": [
+   "main",
+   "synthetic"
+  ]
+ },
+ "NASDAQ:NFLX": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NNE": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NOVT": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NSSC": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NUAI": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NVAX": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NVDA": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NVTS": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:NXT": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OKTA": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OMEX": {
+  "industry": "Agricultural Commodities/Milling",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ON": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ONCO": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ONDS": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OPEN": {
+  "industry": "Real Estate Development",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OPRA": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:OPTX": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ORBS": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ORGO": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OSPN": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:OUST": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PANW": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PDD": {
+  "industry": "Department Stores",
+  "sector": "Retail Trade",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:PEP": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PFSA": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PGY": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PLTR": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PLUG": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:POET": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:POWL": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PPTA": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PRME": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PSIX": {
+  "industry": "Auto Parts: OEM",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PTGX": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PTON": {
+  "industry": "Other Consumer Services",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PUBM": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PURR": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:PYPL": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:QCOM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:QDEL": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:QFIN": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:QNT": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:QQQ": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:QQQA": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:QS": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:QUBT": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RAYA": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RCAT": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:REGN": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RGEN": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RGTI": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RIOT": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RIVN": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RKLB": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RMBS": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ROKU": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ROST": {
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RR": {
+  "industry": "Electronics/Appliances",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RUN": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RXRX": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RXT": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RYTM": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:RZLV": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SAFX": {
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SATL": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SBET": {
+  "industry": "Advertising/Marketing Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SBUX": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SCWO": {
+  "industry": "Environmental Services",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SEDG": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SERV": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SEZL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SFM": {
+  "industry": "Food Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SGML": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SHAZ": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SHLS": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SHMD": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SHOP": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SIDU": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SIMO": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:SKHY": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:SKYQ": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SLDP": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SLNH": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SMCI": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SMH": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:SMMT": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SMX": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SNDK": {
+  "industry": "Computer Peripherals",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SNPS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SOFI": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SOHU": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:SOLS": {
+  "industry": "Chemicals: Major Diversified",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SOLZ": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "fund",
+  "typespecs": [
+   "etf"
+  ]
+ },
+ "NASDAQ:SOUN": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SPCX": {
+  "industry": "Specialty Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SQFT": {
+  "industry": "Real Estate Investment Trusts",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SSRM": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:STI": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:STNE": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:STRC": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "preferred"
+  ]
+ },
+ "NASDAQ:STRF": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "preferred"
+  ]
+ },
+ "NASDAQ:STRK": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "preferred"
+  ]
+ },
+ "NASDAQ:STRL": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:STX": {
+  "industry": "Computer Peripherals",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SWMR": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:SYM": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TARS": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TEAM": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TECX": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TEM": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TENB": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TER": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TLN": {
+  "industry": "Alternative Power Generation",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TLRY": {
+  "industry": "Agricultural Commodities/Milling",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TLS": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TMC": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TMDX": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TMUS": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TOYO": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TRON": {
+  "industry": "Recreational Products",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TSEM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TSLA": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TTD": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TTMI": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TTWO": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TWST": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TXG": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TXN": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:TYGO": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UAL": {
+  "industry": "Airlines",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UCAR": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UCTT": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UPST": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UPXI": {
+  "industry": "Pharmaceuticals: Other",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UROY": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:USAR": {
+  "industry": "Metal Fabrication",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:UTHR": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VANI": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VIAV": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VIR": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VKTX": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VNET": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NASDAQ:VRTX": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:VSAT": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WDAY": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WDC": {
+  "industry": "Computer Peripherals",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WEN": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WIX": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WMT": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:WULF": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:XE": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:Z": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ZENA": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ZM": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ZNTL": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NASDAQ:ZS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AA": {
+  "industry": "Aluminum",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ABBV": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ABT": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ACHR": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ACI": {
+  "industry": "Food Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ACN": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ADCT": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AEM": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AG": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AGI": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AGX": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ALB": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AMBQ": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AMC": {
+  "industry": "Movies/Entertainment",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AMPX": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AMRC": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AMTM": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ANET": {
+  "industry": "Computer Peripherals",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:APD": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:APH": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AR": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ASAN": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ATI": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AU": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AVEX": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:AXP": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:B": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BA": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BABA": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:BAC": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BAX": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BB": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BBAI": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BBY": {
+  "industry": "Electronics/Appliance Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BE": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BEP": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BETA": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BFLY": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BKSY": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BLK": {
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BLSH": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BMNR": {
+  "industry": "Financial Conglomerates",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BMY": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BP": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:BRK.A": {
+  "industry": "Property/Casualty Insurance",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BRK.B": {
+  "industry": "Property/Casualty Insurance",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BROS": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BSX": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BTU": {
+  "industry": "Coal",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BURL": {
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BW": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BWXT": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:BX": {
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:C": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CACI": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CALX": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CARR": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CAT": {
+  "industry": "Trucks/Construction/Farm Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CAVA": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CCJ": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CCL": {
+  "industry": "Hotels/Resorts/Cruise lines",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CDE": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CF": {
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CIEN": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CL": {
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CLF": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CLS": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CMG": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:COF": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:COHR": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CPNG": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CRCL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CRM": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CVNA": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CVS": {
+  "industry": "Drugstore Chains",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CVX": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:CWEN": {
+  "industry": "Alternative Power Generation",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:D": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DAL": {
+  "industry": "Airlines",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DE": {
+  "industry": "Trucks/Construction/Farm Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DECK": {
+  "industry": "Apparel/Footwear",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DELL": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DG": {
+  "industry": "Discount Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DIS": {
+  "industry": "Movies/Entertainment",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DLR": {
+  "industry": "Real Estate Investment Trusts",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DOCN": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DOW": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:DQ": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:DVN": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:EL": {
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ELAN": {
+  "industry": "Biotechnology",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ELF": {
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:EOG": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:EQT": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ERO": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ESTC": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ETN": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:EXK": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:F": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FCX": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FDX": {
+  "industry": "Air Freight/Couriers",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FICO": {
+  "industry": "Financial Publishing/Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FIG": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FIX": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FLO": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FN": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FRO": {
+  "industry": "Marine Shipping",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:FUBO": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GD": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GE": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GEV": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GFL": {
+  "industry": "Environmental Services",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GIS": {
+  "industry": "Food: Major Diversified",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GLOB": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GLW": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GM": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GME": {
+  "industry": "Electronics/Appliance Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GRMN": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:GS": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HAL": {
+  "industry": "Oilfield Services/Equipment",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HAWK": {
+  "industry": "Data Processing Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HD": {
+  "industry": "Home Improvement Chains",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HII": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HIMS": {
+  "industry": "Medical/Nursing Services",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HL": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HLI": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HMC": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:HP": {
+  "industry": "Contract Drilling",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HPE": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HPQ": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HUBB": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HUBS": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HUM": {
+  "industry": "Managed Health Care",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:HWM": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:IBM": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:IMAX": {
+  "industry": "Electronics/Appliances",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:INFQ": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:IONQ": {
+  "industry": "Computer Processing Hardware",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:IOT": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:JBL": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:JCI": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:JKS": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:JNJ": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:JOBY": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:JPM": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KEYS": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KGC": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KLAR": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KMI": {
+  "industry": "Oil & Gas Pipelines",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KO": {
+  "industry": "Beverages: Non-Alcoholic",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KR": {
+  "industry": "Food Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:KRMN": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LAC": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LEN": {
+  "industry": "Homebuilding",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LEU": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LHX": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LII": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LLY": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LMND": {
+  "industry": "Multi-Line Insurance",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LMT": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LNG": {
+  "industry": "Oil & Gas Pipelines",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LOW": {
+  "industry": "Home Improvement Chains",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LU": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:LUV": {
+  "industry": "Airlines",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LW": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:LYB": {
+  "industry": "Chemicals: Specialty",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MA": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MCD": {
+  "industry": "Restaurants",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MGY": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MMM": {
+  "industry": "Industrial Conglomerates",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MOD": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MOG.A": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MOS": {
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MP": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MPC": {
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MRK": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MS": {
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MSI": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MTDR": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MTZ": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:MUX": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NCLH": {
+  "industry": "Hotels/Resorts/Cruise lines",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NEE": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NEM": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NET": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NIO": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:NKE": {
+  "industry": "Apparel/Footwear",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NOK": {
+  "industry": "Telecommunications Equipment",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:NOMD": {
+  "industry": "Food: Specialty/Candy",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NOW": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NRG": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NRGV": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NTR": {
+  "industry": "Chemicals: Agricultural",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NU": {
+  "industry": "Regional Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NUE": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NVO": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:NVT": {
+  "industry": "Electronic Components",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:NXE": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:O": {
+  "industry": "Real Estate Investment Trusts",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OGN": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OKLO": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OLN": {
+  "industry": "Industrial Specialties",
+  "sector": "Process Industries",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ONON": {
+  "industry": "Apparel/Footwear",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ONTO": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ORA": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ORCL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OSCR": {
+  "industry": "Managed Health Care",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OWL": {
+  "industry": "Investment Managers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OWLT": {
+  "industry": "Electronics/Appliances",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:OXY": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PAAS": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PATH": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PBR": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:PCG": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PFE": {
+  "industry": "Pharmaceuticals: Major",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PG": {
+  "industry": "Household/Personal Care",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PHM": {
+  "industry": "Homebuilding",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PINS": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PL": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PM": {
+  "industry": "Tobacco",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PR": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PRI": {
+  "industry": "Life/Health Insurance",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PSX": {
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:PWR": {
+  "industry": "Engineering & Construction",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:Q": {
+  "industry": "Electronic Equipment/Instruments",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RACE": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RBLX": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RBRK": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RCL": {
+  "industry": "Hotels/Resorts/Cruise lines",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RDDT": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RDW": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RH": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RIG": {
+  "industry": "Contract Drilling",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RIO": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:RKT": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RRX": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:RTX": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:S": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SCCO": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SCHW": {
+  "industry": "Investment Banks/Brokers",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SE": {
+  "industry": "Internet Retail",
+  "sector": "Retail Trade",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:SEI": {
+  "industry": "Oilfield Services/Equipment",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SKM": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:SLB": {
+  "industry": "Contract Drilling",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SMR": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SNAP": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SNOW": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SPCE": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SPGI": {
+  "industry": "Financial Publishing/Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SPIR": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SPOT": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:STM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:STZ": {
+  "industry": "Beverages: Alcoholic",
+  "sector": "Consumer Non-Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:SU": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:T": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TE": {
+  "industry": "Electrical Products",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TGT": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TIMB": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:TJX": {
+  "industry": "Apparel/Footwear Retail",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TKO": {
+  "industry": "Movies/Entertainment",
+  "sector": "Consumer Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TMO": {
+  "industry": "Medical Specialties",
+  "sector": "Health Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TOL": {
+  "industry": "Homebuilding",
+  "sector": "Consumer Durables",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TOST": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TPL": {
+  "industry": "Investment Trusts/Mutual Funds",
+  "sector": "Miscellaneous",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TSM": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:TT": {
+  "industry": "Industrial Machinery",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:TWLO": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:U": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:UAMY": {
+  "industry": "Other Metals/Minerals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:UBER": {
+  "industry": "Other Transportation",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:UNH": {
+  "industry": "Managed Health Care",
+  "sector": "Health Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:UNP": {
+  "industry": "Railroads",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:UPS": {
+  "industry": "Air Freight/Couriers",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:V": {
+  "industry": "Finance/Rental/Leasing",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VALE": {
+  "industry": "Steel",
+  "sector": "Non-Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:VEEV": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VG": {
+  "industry": "Oil & Gas Pipelines",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VIST": {
+  "industry": "Oil & Gas Production",
+  "sector": "Energy Minerals",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:VLO": {
+  "industry": "Oil Refining/Marketing",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VOYG": {
+  "industry": "Information Technology Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VRT": {
+  "industry": "Electronic Production Equipment",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VST": {
+  "industry": "Electric Utilities",
+  "sector": "Utilities",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:VZ": {
+  "industry": "Wireless Telecommunications",
+  "sector": "Communications",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:W": {
+  "industry": "Specialty Stores",
+  "sector": "Retail Trade",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:WFC": {
+  "industry": "Major Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:WM": {
+  "industry": "Environmental Services",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:WMB": {
+  "industry": "Oil & Gas Pipelines",
+  "sector": "Industrial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:WOLF": {
+  "industry": "Semiconductors",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:WPM": {
+  "industry": "Precious Metals",
+  "sector": "Non-Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:XOM": {
+  "industry": "Integrated Oil",
+  "sector": "Energy Minerals",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:XPEV": {
+  "industry": "Motor Vehicles",
+  "sector": "Consumer Durables",
+  "type": "dr",
+  "typespecs": [
+   ""
+  ]
+ },
+ "NYSE:XXI": {
+  "industry": "Regional Banks",
+  "sector": "Finance",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:XYZ": {
+  "industry": "Miscellaneous Commercial Services",
+  "sector": "Commercial Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:YELP": {
+  "industry": "Internet Software/Services",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:YETI": {
+  "industry": "Miscellaneous Manufacturing",
+  "sector": "Producer Manufacturing",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:YSS": {
+  "industry": "Aerospace & Defense",
+  "sector": "Electronic Technology",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ZETA": {
+  "industry": "Packaged Software",
+  "sector": "Technology Services",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ },
+ "NYSE:ZIM": {
+  "industry": "Marine Shipping",
+  "sector": "Transportation",
+  "type": "stock",
+  "typespecs": [
+   "common"
+  ]
+ }
+}

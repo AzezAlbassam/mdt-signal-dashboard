@@ -1,0 +1,135 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>html,body{margin:0;background:#0b1117}canvas{display:block}</style></head><body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+// A 26-second clip drawn frame by frame: draw(f) paints frame f of FRAMES (25 fps). Data: monthly closes
+// from TradingView (series.json, injected as window.DATA), rebased to 100 at Dec 1999.
+const W = 1280, H = 720, FPS = 25, FRAMES = 21 * FPS
+const C = { bg: '#0b1117', panel: '#121b24', grid: '#223040', ink: '#eef3f7', muted: '#8fa0b0', us: '#4da3ff', hk: '#ff5d5d', gold: '#f2b53a' }
+const ctx = document.getElementById('c').getContext('2d')
+const D = window.DATA
+const n = D.SPX.length
+const us = D.SPX.map((v) => (v / D.SPX[0]) * 100), hk = D.HSI.map((v) => (v / D.HSI[0]) * 100)
+const year = (i) => 1999 + Math.floor((11 + i) / 12)
+const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(1 - x, 3))
+const seg = (f, a, b) => ease((f / FPS - a) / (b - a)) // progress of a scene window [a,b] seconds
+const iso = (s) => String(s).replace(/[-+$]?\d[\d.,]*(?:[–-]\d[\d.,]*)?%?/g, (m) => '⁦' + m + '⁩')
+function text(s, x, y, font, color, align = 'right', dir = 'rtl', alpha = 1) {
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = dir
+  ctx.fillText(dir === 'rtl' ? iso(s) : s, x, y); ctx.restore()
+}
+function brand(alpha = 0.9) {
+  text('@AzizzUnited', 36, H - 28, '600 22px "IBM Plex Mono"', C.ink, 'left', 'ltr', alpha)
+  text('Data: TradingView', W - 36, H - 28, '500 16px "IBM Plex Mono"', C.muted, 'right', 'ltr', 0.8)
+}
+
+// Scene 1 (0-3s): the question
+function intro(f) {
+  const a = seg(f, 0, 0.8), b = seg(f, 2.4, 3)
+  const alpha = a * (1 - b)
+  text('أمريكا ولا الصين؟', W / 2, 300, '800 72px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', alpha)
+  text('مين يقود الخمس سنين الجاية؟ 🤔', W / 2, 380, '600 34px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', alpha)
+}
+
+// Scene 2 (3-16s): the race, month by month, with the two eras shaded
+const L = 110, R = W - 60, T = 140, B = H - 110
+const maxV = 560
+const X = (i) => L + (R - L) * i / (n - 1), Y = (v) => B - (B - T) * v / maxV
+function race(f) {
+  const p = seg(f, 0.3, 10.5), fade = 1 - seg(f, 12, 12.6)
+  if (f / FPS >= 12.6) return
+  const k = Math.max(1, Math.round(p * (n - 1)))
+  ctx.save(); ctx.globalAlpha = Math.min(1, seg(f, -0.01, 0.4)) * fade
+  text('100 دولار من نهاية 1999… وين وصلت؟', W - 60, 72, '800 36px "Noto Kufi Arabic"', C.ink)
+  text('مؤشر S&P 500 الأمريكي ضد مؤشر هانغ سنغ (هونغ كونغ)، بدون التوزيعات', W - 60, 108, '500 20px "IBM Plex Sans Arabic"', C.muted)
+  // era bands: Dec 1999 - Dec 2009 (index 0..120) and after
+  const e = 120
+  if (k > 0) { ctx.fillStyle = 'rgba(255,93,93,0.07)'; ctx.fillRect(X(0), T, X(Math.min(k, e)) - X(0), B - T) }
+  if (k > e) { ctx.fillStyle = 'rgba(77,163,255,0.07)'; ctx.fillRect(X(e), T, X(k) - X(e), B - T) }
+  // Period returns, not "whose line is higher": both lines are rebased to Dec 1999.
+  if (k >= 30) { text('2000–2009', (X(0) + X(e)) / 2, T + 30, '600 22px "IBM Plex Sans Arabic"', C.hk, 'center'); text('هونغ كونغ طلع 29% · أمريكا نزل 24%', (X(0) + X(e)) / 2, T + 58, '600 18px "IBM Plex Sans Arabic"', C.hk, 'center') }
+  if (k >= 170) { text('2010–2026', (X(e) + X(n - 1)) / 2, T + 30, '600 22px "IBM Plex Sans Arabic"', C.us, 'center'); text('أمريكا طلعت 577% · هونغ كونغ 12%', (X(e) + X(n - 1)) / 2, T + 58, '600 18px "IBM Plex Sans Arabic"', C.us, 'center') }
+  // grid
+  ctx.font = '500 16px "IBM Plex Mono"'; ctx.textAlign = 'right'; ctx.direction = 'ltr'
+  for (const v of [0, 100, 200, 300, 400, 500]) {
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(L, Y(v)); ctx.lineTo(R, Y(v)); ctx.stroke()
+    ctx.fillStyle = C.muted; ctx.fillText('$' + v, L - 12, Y(v) + 5)
+  }
+  ctx.textAlign = 'center'
+  for (let i = 0; i < n; i++) if ((11 + i) % 12 === 0 && year(i) % 5 === 0) { ctx.fillStyle = C.muted; ctx.fillText(String(year(i)), X(i), B + 28) }
+  // lines
+  for (const [s, col] of [[hk, C.hk], [us, C.us]]) {
+    ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath()
+    for (let i = 0; i <= k; i++) (i ? ctx.lineTo(X(i), Y(s[i])) : ctx.moveTo(X(i), Y(s[i])))
+    ctx.stroke()
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X(k), Y(s[k]), 7, 0, 7); ctx.fill()
+  }
+  ctx.font = '600 24px "IBM Plex Mono"'; ctx.direction = 'ltr'; ctx.textAlign = 'right'
+  const up = us[k] >= hk[k]
+  ctx.fillStyle = C.us; ctx.fillText('$' + Math.round(us[k]), X(k) - 14, Y(us[k]) + (up ? -14 : 30))
+  ctx.fillStyle = C.hk; ctx.fillText('$' + Math.round(hk[k]), X(k) - 14, Y(hk[k]) + (up ? 34 : -14))
+  // legend
+  ctx.font = '600 22px "IBM Plex Mono"'; ctx.direction = 'ltr'; ctx.textAlign = 'left'
+  ctx.fillStyle = C.us; ctx.fillRect(L + 20, T + 92, 20, 6); ctx.fillStyle = C.ink; ctx.fillText('SPX  S&P 500', L + 50, T + 100)
+  ctx.fillStyle = C.hk; ctx.fillRect(L + 20, T + 126, 20, 6); ctx.fillStyle = C.ink; ctx.fillText('HSI  Hang Seng', L + 50, T + 134)
+  ctx.restore()
+}
+
+// Scene 3 (16.6-21s): the 5-year scoreboard
+function score(f) {
+  if (f / FPS < 12.6 || f / FPS > 17.2) return
+  const a = seg(f, 12.6, 13.2) * (1 - seg(f, 16.6, 17.2))
+  text('مين فاز بكل 5 سنين؟', W / 2, 120, '800 40px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', a)
+  text('كل فترة 5 سنوات تنتهي في ديسمبر، من 2004 إلى 2025', W / 2, 160, '500 22px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', a)
+  const years = []; for (let y = 2004; y <= 2025; y++) years.push(y)
+  const w = 46, gap = 8, x0 = (W - (years.length * (w + gap) - gap)) / 2
+  const show = Math.floor(seg(f, 13.2, 15.4) * years.length + 0.0001)
+  ctx.save(); ctx.globalAlpha = a
+  years.forEach((y, i) => {
+    if (i >= show) return
+    const hkWon = y <= 2011
+    ctx.fillStyle = hkWon ? C.hk : C.us
+    ctx.beginPath(); ctx.roundRect(x0 + i * (w + gap), 250, w, 150, 8); ctx.fill()
+    ctx.font = '600 15px "IBM Plex Mono"'; ctx.textAlign = 'center'; ctx.direction = 'ltr'; ctx.fillStyle = C.muted
+    ctx.fillText(String(y), x0 + i * (w + gap) + w / 2, 428)
+  })
+  ctx.restore()
+  const b = seg(f, 15.4, 15.9) * a
+  text('هونغ كونغ: 8 مرات ورا بعض', x0 + 4 * (w + gap), 480, '800 30px "Noto Kufi Arabic"', C.hk, 'center', 'rtl', b)
+  text('أمريكا: 14 مرة ورا بعض… للحين', x0 + 15 * (w + gap), 480, '800 30px "Noto Kufi Arabic"', C.us, 'center', 'rtl', b)
+}
+
+// Scene 4 (21.2-24s): valuation
+function value(f) {
+  if (f / FPS < 17.2) return
+  const a = seg(f, 17.2, 17.7), g = seg(f, 17.6, 18.8)
+  text('والسعر اليوم؟', W / 2, 120, '800 40px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', a)
+  text('وسيط مكرر الأرباح لأكبر الشركات (آخر 12 شهر)', W / 2, 160, '500 22px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', a)
+  ctx.save(); ctx.globalAlpha = a
+  const bars = [['أكبر 50 شركة أمريكية', 29.0, C.us], ['أكبر الشركات في هونغ كونغ', 12.7, C.hk]]
+  bars.forEach(([name, v, col], i) => {
+    const y = 250 + i * 150, len = (v / 32) * 700 * g
+    ctx.fillStyle = col; ctx.beginPath(); ctx.roundRect(W - 120 - len, y, len, 80, 10); ctx.fill()
+    ctx.restore(); ctx.save(); ctx.globalAlpha = a
+    text(name, W - 120, y - 14, '600 24px "IBM Plex Sans Arabic"', C.ink)
+    text((v * g).toFixed(1), W - 140 - len, y + 54, '600 34px "IBM Plex Mono"', C.ink, 'right', 'ltr')
+  })
+  ctx.restore()
+  text('أسعار بدون توزيعات، إلى 9 نوفمبر 2026 · المكررات 10 نوفمبر 2026 · مو توصية', W / 2, 600, '500 20px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', seg(f, 18.6, 19.2))
+}
+
+// Scene 5 (24-26s): the point
+function outro(f) {
+  if (f / FPS < 24) return
+  const a = seg(f, 24, 24.6)
+  text('القيادة تتبدل… بس التوقيت محد يعرفه', W / 2, 300, '800 44px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', a)
+  text('أسعار بدون توزيعات، إلى 9 نوفمبر 2026 · مو توصية', W / 2, 370, '500 24px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', a)
+}
+
+window.draw = (f) => {
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
+  race(f); score(f); value(f); brand()
+}
+window.FRAMES = FRAMES
+</script></body></html>

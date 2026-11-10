@@ -1,0 +1,10 @@
+const { open, shot, close } = require('./lib.cjs')
+;(async () => {
+  const p = await open({ w: 390, h: 844 })
+  console.log('status:', await p.textContent('#status'), '| rows:', await p.$$eval('#rows tr.row', (r) => r.length), '| notice:', await p.$eval('#notice', (n) => (n.hidden ? '(hidden)' : n.textContent)))
+  console.log('fonts:', await p.evaluate(() => [...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family + ' ' + f.weight).join(', ')))
+  console.log('marks', await p.evaluate(() => window.__marks), 'calls', await p.evaluate(() => window.__calls.length))
+  console.log('logs', p.logs.slice(0, 8), 'blocked', p.blocked.slice(0, 5))
+  await shot(p, 'smoke-390')
+  await close()
+})()

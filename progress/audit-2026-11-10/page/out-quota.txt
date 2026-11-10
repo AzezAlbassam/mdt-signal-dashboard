@@ -1,0 +1,1 @@
+quota | notice: "وصلنا حد TradingView اليومي لعدد الطلبات. يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية)." | rows: ["NASDAQ:AAA: price=SKELETON fair=SKELETON score=SKELETON","NASDAQ:BBB: price=SKELETON fair=SKELETON score=SKELETON"]

@@ -1,0 +1,732 @@
+Study 5 SEARCH — 156 US symbols (even positions), 624 weekly strategies. Key = weekly|entry|exit|filter.
+Shortlist rule: win ≥ 60% overall and ≥ 55% each period; edge > 0 both periods; ≥ 200 trades; p < 0.001.
+Passed win/edge/trades: 89; also p < 0.001: 13; shortlisted: 10
+
+SHORTLIST
+weekly|rsi_30|H52|F0           n   515  win  75.5% (rand 67.3%; I 72.4%, II 78.7%)  mean 29.4% median 20.0%  edge 12.7% (I 4.7%, II 20.6%)  vs SPY 9.4%  p 0.0005
+weekly|wavetrend|H52|F0        n   383  win  76.2% (rand 65.6%; I 77.2%, II 74.8%)  mean 25.6% median 18.0%  edge 8.8% (I 12.4%, II 3.7%)  vs SPY 9.4%  p 0.0005
+weekly|crsi|H52|F0             n  1030  win  73.4% (rand 69.7%; I 78.0%, II 69.1%)  mean 23.2% median 15.4%  edge 5.2% (I 4.9%, II 5.6%)  vs SPY 7.2%  p 0.0010
+weekly|rsi_30|H26|F0           n   578  win  65.6% (rand 63.3%; I 59.7%, II 71.0%)  mean 11.4% median 8.6%  edge 3.7% (I 1.6%, II 5.7%)  vs SPY 2.4%  p 0.0010
+weekly|rsi2|H26|F1             n  1777  win  69.6% (rand 65.5%; I 68.2%, II 70.9%)  mean 9.7% median 7.8%  edge 2.2% (I 0.5%, II 4.0%)  vs SPY 3.1%  p 0.0005
+weekly|crsi|H13|F0             n  1596  win  63.1% (rand 60.4%; I 61.6%, II 64.3%)  mean 6.0% median 4.2%  edge 2.2% (I 1.7%, II 2.5%)  vs SPY 1.6%  p 0.0005
+weekly|down3|H13|F0            n  4771  win  64.4% (rand 60.9%; I 64.0%, II 64.8%)  mean 5.4% median 4.5%  edge 1.5% (I 0.9%, II 2.2%)  vs SPY 1.7%  p 0.0005
+weekly|rsi2|H13|F1             n  2097  win  63.2% (rand 60.7%; I 64.4%, II 62.1%)  mean 4.7% median 3.8%  edge 1.3% (I 0.8%, II 1.8%)  vs SPY 1.3%  p 0.0005
+weekly|down3|H13|F1            n  2423  win  63.2% (rand 60.6%; I 62.9%, II 63.5%)  mean 4.8% median 3.9%  edge 1.3% (I 0.4%, II 2.1%)  vs SPY 1.3%  p 0.0005
+weekly|ma_cross|H13|F1         n  1768  win  61.2% (rand 58.6%; I 62.5%, II 60.0%)  mean 4.0% median 3.2%  edge 1.1% (I 0.8%, II 1.3%)  vs SPY 0.7%  p 0.0005
+
+All that passed win/edge/trades
+weekly|rsi_30|H52|F0           n   515  win  75.5% (rand 67.3%; I 72.4%, II 78.7%)  mean 29.4% median 20.0%  edge 12.7% (I 4.7%, II 20.6%)  vs SPY 9.4%  p 0.0005
+weekly|wavetrend|H52|F0        n   383  win  76.2% (rand 65.6%; I 77.2%, II 74.8%)  mean 25.6% median 18.0%  edge 8.8% (I 12.4%, II 3.7%)  vs SPY 9.4%  p 0.0005
+weekly|crsi|H52|F0             n  1030  win  73.4% (rand 69.7%; I 78.0%, II 69.1%)  mean 23.2% median 15.4%  edge 5.2% (I 4.9%, II 5.6%)  vs SPY 7.2%  p 0.0010
+weekly|tsmom|H52|F1            n  1040  win  70.3% (rand 66.8%; I 69.9%, II 70.8%)  mean 17.8% median 11.7%  edge 3.8% (I 0.1%, II 7.8%)  vs SPY 4.8%  p 0.0035
+weekly|ma_cross|H52|F1         n  1255  win  69.2% (rand 67.9%; I 70.9%, II 67.3%)  mean 18.4% median 11.8%  edge 3.7% (I 0.2%, II 7.5%)  vs SPY 5.3%  p 0.0015
+weekly|rsi_30|H26|F0           n   578  win  65.6% (rand 63.3%; I 59.7%, II 71.0%)  mean 11.4% median 8.6%  edge 3.7% (I 1.6%, II 5.7%)  vs SPY 2.4%  p 0.0010
+weekly|macd_zero|H52|F1        n  1288  win  70.6% (rand 67.8%; I 71.6%, II 69.5%)  mean 18.1% median 12.0%  edge 3.4% (I 0.2%, II 6.7%)  vs SPY 4.5%  p 0.0035
+weekly|trix|H52|F1             n   972  win  71.5% (rand 66.9%; I 72.3%, II 70.6%)  mean 17.5% median 13.1%  edge 3.3% (I 0.2%, II 6.7%)  vs SPY 4.4%  p 0.0085
+weekly|crsi|H26|F0             n  1360  win  67.9% (rand 64.7%; I 66.7%, II 68.9%)  mean 11.3% median 8.2%  edge 2.9% (I 2.3%, II 3.4%)  vs SPY 2.7%  p 0.0015
+weekly|uo|H52|F0               n   329  win  65.7% (rand 65.8%; I 64.3%, II 66.9%)  mean 20.8% median 13.4%  edge 2.7% (I 3.4%, II 2.2%)  vs SPY 7.2%  p 0.1449
+weekly|eom|H52|F1              n  1565  win  70.5% (rand 68.9%; I 72.6%, II 68.4%)  mean 17.9% median 12.7%  edge 2.6% (I 1.5%, II 3.6%)  vs SPY 5.5%  p 0.0100
+weekly|rsi2|H26|F1             n  1777  win  69.6% (rand 65.5%; I 68.2%, II 70.9%)  mean 9.7% median 7.8%  edge 2.2% (I 0.5%, II 4.0%)  vs SPY 3.1%  p 0.0005
+weekly|ema_9_21|H52|F1         n  1396  win  69.3% (rand 67.9%; I 70.7%, II 68.0%)  mean 17.2% median 11.9%  edge 2.2% (I 0.3%, II 4.1%)  vs SPY 3.9%  p 0.0245
+weekly|crsi|H13|F0             n  1596  win  63.1% (rand 60.4%; I 61.6%, II 64.3%)  mean 6.0% median 4.2%  edge 2.2% (I 1.7%, II 2.5%)  vs SPY 1.6%  p 0.0005
+weekly|vortex|H52|F1           n  1549  win  69.9% (rand 69.0%; I 72.4%, II 67.2%)  mean 17.6% median 12.7%  edge 2.1% (I 1.3%, II 3.1%)  vs SPY 5.1%  p 0.0150
+weekly|ao|H52|F1               n  1373  win  69.3% (rand 68.2%; I 72.8%, II 65.8%)  mean 17.0% median 12.0%  edge 2.0% (I 0.8%, II 3.3%)  vs SPY 4.3%  p 0.0255
+weekly|adx_di|H52|F1           n   990  win  69.9% (rand 69.3%; I 71.4%, II 68.4%)  mean 18.0% median 12.3%  edge 2.0% (I 0.0%, II 4.0%)  vs SPY 5.4%  p 0.0485
+weekly|willr|H52|F1            n  1135  win  68.9% (rand 68.7%; I 71.8%, II 65.8%)  mean 17.3% median 12.8%  edge 1.9% (I 0.9%, II 3.0%)  vs SPY 4.7%  p 0.0375
+weekly|trix|H26|F1             n  1148  win  67.2% (rand 62.5%; I 65.9%, II 68.4%)  mean 8.4% median 7.0%  edge 1.9% (I 1.4%, II 2.4%)  vs SPY 1.4%  p 0.0025
+weekly|price_ma|H52|F1         n  1642  win  68.5% (rand 67.8%; I 69.9%, II 67.1%)  mean 16.8% median 12.0%  edge 1.9% (I 0.9%, II 2.9%)  vs SPY 4.1%  p 0.0250
+weekly|rsi2|H52|F1             n  1286  win  70.5% (rand 69.8%; I 74.5%, II 65.8%)  mean 17.8% median 12.3%  edge 1.7% (I 0.9%, II 2.6%)  vs SPY 6.0%  p 0.0580
+weekly|ma_cross|H26|F1         n  1612  win  64.1% (rand 63.2%; I 66.6%, II 61.7%)  mean 8.1% median 6.3%  edge 1.6% (I 1.7%, II 1.4%)  vs SPY 1.5%  p 0.0030
+weekly|down3|H13|F0            n  4771  win  64.4% (rand 60.9%; I 64.0%, II 64.8%)  mean 5.4% median 4.5%  edge 1.5% (I 0.9%, II 2.2%)  vs SPY 1.7%  p 0.0005
+weekly|tk_cross|H52|F1         n  1385  win  69.7% (rand 68.6%; I 71.8%, II 67.5%)  mean 16.6% median 12.0%  edge 1.5% (I 0.4%, II 2.6%)  vs SPY 4.1%  p 0.0840
+weekly|rs_spy|H52|F1           n  1198  win  70.4% (rand 68.5%; I 73.6%, II 66.8%)  mean 16.0% median 12.1%  edge 1.5% (I 1.9%, II 1.0%)  vs SPY 4.0%  p 0.0955
+weekly|adx_di|H26|F1           n  1217  win  67.3% (rand 65.2%; I 67.8%, II 66.9%)  mean 8.9% median 7.6%  edge 1.4% (I 0.9%, II 1.9%)  vs SPY 2.9%  p 0.0165
+weekly|chosc|H52|F1            n  1535  win  69.8% (rand 69.1%; I 71.4%, II 68.1%)  mean 17.3% median 12.7%  edge 1.4% (I 0.1%, II 2.8%)  vs SPY 4.9%  p 0.0805
+weekly|mfi|H26|F0              n   466  win  65.0% (rand 62.7%; I 65.9%, II 63.8%)  mean 9.2% median 8.0%  edge 1.4% (I 1.6%, II 1.0%)  vs SPY 4.3%  p 0.1379
+weekly|macd_zero|H26|F1        n  1705  win  64.2% (rand 63.1%; I 65.6%, II 62.9%)  mean 7.9% median 6.1%  edge 1.3% (I 1.1%, II 1.5%)  vs SPY 1.5%  p 0.0080
+weekly|ema_20_50|H26|F1        n  1010  win  65.0% (rand 62.2%; I 63.7%, II 66.2%)  mean 7.9% median 6.5%  edge 1.3% (I 0.3%, II 2.4%)  vs SPY 1.0%  p 0.0300
+weekly|rsi2|H13|F1             n  2097  win  63.2% (rand 60.7%; I 64.4%, II 62.1%)  mean 4.7% median 3.8%  edge 1.3% (I 0.8%, II 1.8%)  vs SPY 1.3%  p 0.0005
+weekly|rsi_50|H52|F1           n  1646  win  68.2% (rand 68.4%; I 70.0%, II 66.3%)  mean 16.2% median 12.8%  edge 1.3% (I 0.6%, II 2.1%)  vs SPY 4.1%  p 0.0695
+weekly|ssl|H26|F1              n  2426  win  67.8% (rand 65.1%; I 67.6%, II 68.0%)  mean 8.5% median 6.7%  edge 1.3% (I 0.2%, II 2.4%)  vs SPY 2.9%  p 0.0020
+weekly|price_ma|H26|F1         n  2434  win  64.6% (rand 63.3%; I 65.1%, II 64.1%)  mean 8.1% median 6.4%  edge 1.3% (I 0.9%, II 1.6%)  vs SPY 2.1%  p 0.0060
+weekly|down3|H13|F1            n  2423  win  63.2% (rand 60.6%; I 62.9%, II 63.5%)  mean 4.8% median 3.9%  edge 1.3% (I 0.4%, II 2.1%)  vs SPY 1.3%  p 0.0005
+weekly|ssl|H52|F1              n  1588  win  70.6% (rand 69.3%; I 72.5%, II 68.5%)  mean 16.5% median 12.7%  edge 1.2% (I 0.5%, II 2.0%)  vs SPY 4.4%  p 0.0910
+weekly|cci|H26|F0              n  2542  win  65.7% (rand 64.6%; I 66.2%, II 65.2%)  mean 9.2% median 7.2%  edge 1.2% (I 0.2%, II 2.1%)  vs SPY 2.7%  p 0.0115
+weekly|tsmom|H13|F1            n  1562  win  62.2% (rand 58.3%; I 62.2%, II 62.3%)  mean 3.9% median 3.7%  edge 1.1% (I 0.3%, II 1.8%)  vs SPY 0.4%  p 0.0015
+weekly|hi52|H52|F1             n  1281  win  70.1% (rand 69.2%; I 72.7%, II 67.4%)  mean 16.7% median 11.7%  edge 1.1% (I 0.3%, II 1.9%)  vs SPY 5.0%  p 0.1464
+weekly|eom|H26|F1              n  2355  win  65.7% (rand 64.7%; I 67.5%, II 64.1%)  mean 8.2% median 7.0%  edge 1.1% (I 0.5%, II 1.6%)  vs SPY 2.5%  p 0.0070
+weekly|ma_cross|H13|F1         n  1768  win  61.2% (rand 58.6%; I 62.5%, II 60.0%)  mean 4.0% median 3.2%  edge 1.1% (I 0.8%, II 1.3%)  vs SPY 0.7%  p 0.0005
+weekly|vortex|H26|F1           n  2344  win  66.6% (rand 64.8%; I 68.0%, II 65.3%)  mean 8.2% median 6.7%  edge 1.0% (I 0.5%, II 1.4%)  vs SPY 2.4%  p 0.0170
+weekly|trix|H13|F1             n  1188  win  60.9% (rand 58.5%; I 60.2%, II 61.7%)  mean 3.9% median 3.6%  edge 1.0% (I 0.6%, II 1.4%)  vs SPY 0.5%  p 0.0095
+weekly|bb_break|H52|F1         n  1630  win  69.8% (rand 69.4%; I 72.9%, II 66.3%)  mean 17.1% median 11.8%  edge 1.0% (I 0.2%, II 1.8%)  vs SPY 5.4%  p 0.1639
+weekly|ibs|H52|F1              n  1938  win  70.4% (rand 69.4%; I 73.3%, II 67.2%)  mean 16.7% median 12.8%  edge 0.9% (I 0.2%, II 1.7%)  vs SPY 5.2%  p 0.1359
+weekly|tsmom|H26|F1            n  1256  win  65.3% (rand 62.5%; I 67.2%, II 63.3%)  mean 7.3% median 6.5%  edge 0.9% (I 0.9%, II 0.9%)  vs SPY 0.8%  p 0.0645
+weekly|fisher|H26|F0           n  3286  win  65.7% (rand 65.2%; I 65.6%, II 65.8%)  mean 9.1% median 7.1%  edge 0.9% (I 0.1%, II 1.7%)  vs SPY 3.1%  p 0.0185
+weekly|kama|H26|F1             n  2844  win  66.4% (rand 64.9%; I 67.4%, II 65.3%)  mean 8.2% median 6.7%  edge 0.9% (I 0.2%, II 1.6%)  vs SPY 2.5%  p 0.0145
+weekly|alligator|H13|F1        n  2752  win  61.5% (rand 59.5%; I 63.6%, II 59.4%)  mean 4.0% median 3.5%  edge 0.9% (I 0.8%, II 1.0%)  vs SPY 1.0%  p 0.0005
+weekly|aroon|H52|F1            n  1523  win  68.5% (rand 68.8%; I 71.7%, II 65.1%)  mean 16.0% median 12.5%  edge 0.9% (I 0.7%, II 1.0%)  vs SPY 3.8%  p 0.1769
+weekly|mcginley|H26|F1         n  1907  win  67.1% (rand 64.7%; I 68.5%, II 65.7%)  mean 6.8% median 6.5%  edge 0.9% (I 0.1%, II 1.6%)  vs SPY 1.0%  p 0.0220
+weekly|macd_zero|H13|F1        n  1981  win  61.9% (rand 58.6%; I 64.6%, II 59.6%)  mean 3.8% median 3.6%  edge 0.9% (I 0.6%, II 1.1%)  vs SPY 0.6%  p 0.0065
+weekly|down3|H52|F1            n  1377  win  70.7% (rand 69.4%; I 73.1%, II 68.1%)  mean 16.8% median 12.5%  edge 0.8% (I 0.3%, II 1.4%)  vs SPY 4.7%  p 0.2124
+weekly|alligator|H26|F1        n  2248  win  66.0% (rand 64.4%; I 67.9%, II 63.9%)  mean 7.8% median 6.6%  edge 0.8% (I 0.9%, II 0.7%)  vs SPY 1.6%  p 0.0415
+weekly|double7|H26|F1          n  2603  win  67.6% (rand 65.3%; I 67.5%, II 67.7%)  mean 8.1% median 7.2%  edge 0.8% (I 0.1%, II 1.5%)  vs SPY 1.8%  p 0.0340
+weekly|cci|H26|F1              n  1021  win  67.3% (rand 64.8%; I 69.2%, II 65.6%)  mean 7.8% median 7.2%  edge 0.8% (I 0.3%, II 1.2%)  vs SPY 2.3%  p 0.1154
+weekly|momentum|H26|F1         n  2717  win  67.4% (rand 65.1%; I 67.3%, II 67.4%)  mean 8.0% median 6.6%  edge 0.8% (I 0.0%, II 1.5%)  vs SPY 2.3%  p 0.0400
+weekly|ao|H13|F1               n  2227  win  62.0% (rand 58.8%; I 64.4%, II 59.9%)  mean 3.8% median 3.6%  edge 0.7% (I 0.8%, II 0.7%)  vs SPY 0.9%  p 0.0095
+weekly|double7|H13|F0          n  6221  win  62.4% (rand 61.1%; I 63.9%, II 60.9%)  mean 4.6% median 3.9%  edge 0.7% (I 0.8%, II 0.7%)  vs SPY 1.3%  p 0.0005
+weekly|rsi2|H13|F0             n  2097  win  63.2% (rand 62.0%; I 64.4%, II 62.1%)  mean 4.7% median 3.8%  edge 0.7% (I 0.4%, II 1.0%)  vs SPY 1.3%  p 0.0195
+weekly|double7|H13|F1          n  3507  win  62.0% (rand 60.7%; I 63.7%, II 60.3%)  mean 4.1% median 3.4%  edge 0.7% (I 0.7%, II 0.7%)  vs SPY 0.8%  p 0.0015
+weekly|pullback5|H13|F1        n  4500  win  61.9% (rand 60.8%; I 64.1%, II 59.6%)  mean 4.1% median 3.4%  edge 0.7% (I 0.6%, II 0.8%)  vs SPY 0.9%  p 0.0015
+weekly|tsi|H52|F1              n  1449  win  69.0% (rand 69.7%; I 74.1%, II 64.0%)  mean 16.6% median 12.1%  edge 0.7% (I 0.9%, II 0.5%)  vs SPY 4.6%  p 0.2314
+weekly|pvt|H52|F1              n  1591  win  69.4% (rand 69.3%; I 71.9%, II 66.8%)  mean 15.8% median 11.8%  edge 0.6% (I 0.1%, II 1.1%)  vs SPY 3.8%  p 0.2514
+weekly|ibs|H26|F1              n  3283  win  65.7% (rand 65.3%; I 67.8%, II 63.5%)  mean 8.0% median 6.4%  edge 0.6% (I 0.4%, II 0.7%)  vs SPY 2.2%  p 0.0695
+weekly|dpo|H52|F1              n  1499  win  68.0% (rand 68.2%; I 69.3%, II 66.7%)  mean 15.4% median 12.0%  edge 0.6% (I 0.2%, II 1.0%)  vs SPY 2.9%  p 0.2564
+weekly|supertrend|H13|F1       n  1766  win  61.7% (rand 59.3%; I 62.5%, II 60.9%)  mean 3.8% median 3.6%  edge 0.6% (I 0.3%, II 0.8%)  vs SPY 0.7%  p 0.0510
+weekly|pullback5|H13|F0        n  7186  win  62.3% (rand 61.2%; I 64.1%, II 60.5%)  mean 4.4% median 3.7%  edge 0.6% (I 0.6%, II 0.6%)  vs SPY 1.3%  p 0.0010
+weekly|tk_cross|H13|F1         n  2243  win  62.0% (rand 59.2%; I 63.6%, II 60.6%)  mean 3.6% median 3.1%  edge 0.6% (I 0.2%, II 0.9%)  vs SPY 0.9%  p 0.0315
+weekly|donchian20|H52|F1       n  1824  win  68.9% (rand 69.4%; I 72.1%, II 65.1%)  mean 16.6% median 11.6%  edge 0.5% (I 0.1%, II 1.0%)  vs SPY 5.0%  p 0.2679
+weekly|ma_cross|H26|F0         n  1704  win  64.6% (rand 64.9%; I 67.0%, II 62.3%)  mean 8.4% median 6.6%  edge 0.5% (I 0.5%, II 0.6%)  vs SPY 1.6%  p 0.1929
+weekly|pullback5|H26|F1        n  3017  win  66.3% (rand 65.4%; I 67.7%, II 64.8%)  mean 7.9% median 6.9%  edge 0.5% (I 0.0%, II 1.0%)  vs SPY 1.9%  p 0.1054
+weekly|ema_9_21|H13|F1         n  2342  win  61.8% (rand 58.6%; I 64.1%, II 59.8%)  mean 3.5% median 3.4%  edge 0.5% (I 0.2%, II 0.7%)  vs SPY 0.5%  p 0.0550
+weekly|ut_bot|H52|F1           n  1755  win  70.9% (rand 69.5%; I 73.8%, II 67.6%)  mean 16.2% median 12.3%  edge 0.4% (I 0.3%, II 0.6%)  vs SPY 4.6%  p 0.2999
+weekly|pullback5|H52|F1        n  1839  win  69.4% (rand 69.4%; I 73.5%, II 64.6%)  mean 16.2% median 12.4%  edge 0.4% (I 0.3%, II 0.6%)  vs SPY 4.5%  p 0.3003
+weekly|chandelier|H13|F1       n  2064  win  61.5% (rand 59.1%; I 64.6%, II 59.0%)  mean 3.7% median 3.8%  edge 0.4% (I 0.3%, II 0.5%)  vs SPY 0.8%  p 0.1019
+weekly|macdh|H52|F1            n  1493  win  69.9% (rand 70.2%; I 74.1%, II 65.0%)  mean 16.4% median 11.8%  edge 0.4% (I 0.2%, II 0.7%)  vs SPY 4.5%  p 0.3368
+weekly|ma_cross|H13|F0         n  1890  win  61.4% (rand 60.7%; I 62.8%, II 60.0%)  mean 4.1% median 3.3%  edge 0.4% (I 0.5%, II 0.3%)  vs SPY 0.7%  p 0.1334
+weekly|momentum|H13|F1         n  3900  win  61.2% (rand 60.2%; I 63.5%, II 59.0%)  mean 3.6% median 3.4%  edge 0.4% (I 0.1%, II 0.7%)  vs SPY 0.9%  p 0.0310
+weekly|trix|H13|F0             n  1224  win  61.1% (rand 60.5%; I 60.7%, II 61.5%)  mean 4.0% median 3.6%  edge 0.4% (I 0.2%, II 0.6%)  vs SPY 0.6%  p 0.2069
+weekly|double7|H52|F1          n  1666  win  70.0% (rand 69.4%; I 73.6%, II 65.7%)  mean 16.1% median 11.5%  edge 0.3% (I 0.0%, II 0.7%)  vs SPY 4.7%  p 0.3408
+weekly|cmf|H26|F0              n  2719  win  65.0% (rand 65.2%; I 67.3%, II 62.7%)  mean 8.5% median 6.8%  edge 0.3% (I 0.2%, II 0.5%)  vs SPY 2.4%  p 0.2454
+weekly|alligator|H13|F0        n  3194  win  62.4% (rand 61.0%; I 63.5%, II 61.4%)  mean 4.1% median 3.8%  edge 0.3% (I 0.3%, II 0.3%)  vs SPY 1.0%  p 0.1304
+weekly|coppock|H26|F1          n  1393  win  65.5% (rand 64.5%; I 66.6%, II 64.5%)  mean 7.2% median 6.8%  edge 0.3% (I 0.0%, II 0.5%)  vs SPY 1.9%  p 0.2854
+weekly|eom|H52|F0              n  1891  win  70.7% (rand 70.4%; I 72.5%, II 68.8%)  mean 18.1% median 13.4%  edge 0.3% (I 0.1%, II 0.4%)  vs SPY 5.7%  p 0.3963
+weekly|qqe|H52|F1              n  1418  win  67.9% (rand 69.5%; I 72.7%, II 62.9%)  mean 16.1% median 11.0%  edge 0.3% (I 0.0%, II 0.5%)  vs SPY 4.3%  p 0.3933
+weekly|vortex|H13|F0           n  4181  win  62.0% (rand 60.9%; I 62.7%, II 61.3%)  mean 4.0% median 3.5%  edge 0.2% (I 0.4%, II 0.1%)  vs SPY 1.0%  p 0.1819
+weekly|adx_di|H26|F0           n  1541  win  66.7% (rand 65.7%; I 68.6%, II 64.9%)  mean 8.7% median 7.5%  edge 0.1% (I 0.2%, II 0.0%)  vs SPY 2.5%  p 0.3983
+weekly|macd_zero|H13|F0        n  2030  win  62.0% (rand 60.7%; I 64.8%, II 59.6%)  mean 3.8% median 3.7%  edge 0.1% (I 0.1%, II 0.1%)  vs SPY 0.6%  p 0.4218
+
+Every strategy by edge
+weekly|mfi|H13|F1              n    38  win  71.1% (rand 59.1%; I 69.6%, II 73.3%)  mean 7.7% median 7.1%  edge 4.6% (I 2.7%, II 7.4%)  vs SPY 3.6%
+weekly|uo|H13|F1               n    20  win  70.0% (rand 62.8%; I 69.2%, II 71.4%)  mean 7.9% median 8.5%  edge 3.6% (I -2.2%, II 14.3%)  vs SPY 2.7%
+weekly|crsi|H13|F0             n  1596  win  63.1% (rand 60.4%; I 61.6%, II 64.3%)  mean 6.0% median 4.2%  edge 2.2% (I 1.7%, II 2.5%)  vs SPY 1.6%  p 0.0005
+weekly|down3|H13|F0            n  4771  win  64.4% (rand 60.9%; I 64.0%, II 64.8%)  mean 5.4% median 4.5%  edge 1.5% (I 0.9%, II 2.2%)  vs SPY 1.7%  p 0.0005
+weekly|rsi2|H13|F1             n  2097  win  63.2% (rand 60.7%; I 64.4%, II 62.1%)  mean 4.7% median 3.8%  edge 1.3% (I 0.8%, II 1.8%)  vs SPY 1.3%  p 0.0005
+weekly|stoch|H13|F1            n   227  win  63.9% (rand 58.3%; I 64.4%, II 63.5%)  mean 4.9% median 4.7%  edge 1.3% (I -0.5%, II 2.5%)  vs SPY 1.5%
+weekly|tsmom|H13|F1            n  1562  win  62.2% (rand 58.3%; I 62.2%, II 62.3%)  mean 3.9% median 3.7%  edge 1.1% (I 0.3%, II 1.8%)  vs SPY 0.4%  p 0.0015
+weekly|ma_cross|H13|F1         n  1768  win  61.2% (rand 58.6%; I 62.5%, II 60.0%)  mean 4.0% median 3.2%  edge 1.1% (I 0.8%, II 1.3%)  vs SPY 0.7%  p 0.0005
+weekly|trix|H13|F1             n  1188  win  60.9% (rand 58.5%; I 60.2%, II 61.7%)  mean 3.9% median 3.6%  edge 1.0% (I 0.6%, II 1.4%)  vs SPY 0.5%  p 0.0095
+weekly|bb_revert|H13|F1        n   249  win  65.5% (rand 59.9%; I 64.2%, II 66.4%)  mean 4.4% median 5.2%  edge 0.9% (I -0.9%, II 2.4%)  vs SPY 1.1%
+weekly|macd_zero|H13|F1        n  1981  win  61.9% (rand 58.6%; I 64.6%, II 59.6%)  mean 3.8% median 3.6%  edge 0.9% (I 0.6%, II 1.1%)  vs SPY 0.6%  p 0.0065
+weekly|ao|H13|F1               n  2227  win  62.0% (rand 58.8%; I 64.4%, II 59.9%)  mean 3.8% median 3.6%  edge 0.7% (I 0.8%, II 0.7%)  vs SPY 0.9%  p 0.0095
+weekly|supertrend|H13|F1       n  1766  win  61.7% (rand 59.3%; I 62.5%, II 60.9%)  mean 3.8% median 3.6%  edge 0.6% (I 0.3%, II 0.8%)  vs SPY 0.7%  p 0.0510
+weekly|rsi_50|H13|F1           n  3295  win  60.0% (rand 59.2%; I 61.4%, II 58.7%)  mean 3.6% median 3.3%  edge 0.5% (I -0.4%, II 1.4%)  vs SPY 0.9%
+weekly|ema_20_50|H13|F1        n  1095  win  60.8% (rand 58.3%; I 59.2%, II 62.4%)  mean 3.5% median 3.0%  edge 0.5% (I -0.4%, II 1.4%)  vs SPY 0.1%
+weekly|price_ma|H13|F1         n  3256  win  60.4% (rand 58.7%; I 62.1%, II 58.9%)  mean 3.5% median 3.1%  edge 0.5% (I -0.1%, II 1.0%)  vs SPY 0.7%
+weekly|cci|H13|F1              n  1080  win  61.9% (rand 59.6%; I 61.5%, II 62.1%)  mean 3.7% median 3.9%  edge 0.5% (I -1.1%, II 1.8%)  vs SPY 1.3%
+weekly|vortex|H13|F1           n  3076  win  62.4% (rand 59.7%; I 61.7%, II 62.9%)  mean 3.6% median 3.5%  edge 0.5% (I -0.4%, II 1.3%)  vs SPY 1.0%
+weekly|momentum|H13|F1         n  3900  win  61.2% (rand 60.2%; I 63.5%, II 59.0%)  mean 3.6% median 3.4%  edge 0.4% (I 0.1%, II 0.7%)  vs SPY 0.9%  p 0.0310
+weekly|cmf|H13|F1              n  2319  win  62.3% (rand 59.9%; I 62.0%, II 62.5%)  mean 3.8% median 3.5%  edge 0.4% (I -0.4%, II 1.2%)  vs SPY 0.9%
+weekly|willr|H13|F1            n  1679  win  61.6% (rand 59.7%; I 64.4%, II 59.0%)  mean 3.6% median 3.5%  edge 0.3% (I -0.6%, II 1.1%)  vs SPY 0.9%
+weekly|adx_di|H13|F1           n  1353  win  62.5% (rand 60.4%; I 61.5%, II 63.3%)  mean 3.7% median 3.6%  edge 0.3% (I -0.7%, II 1.2%)  vs SPY 0.9%
+weekly|dpo|H13|F1              n  2717  win  60.9% (rand 58.8%; I 61.8%, II 60.1%)  mean 3.2% median 3.4%  edge 0.2% (I -0.5%, II 0.8%)  vs SPY 0.5%
+weekly|aroon|H13|F1            n  2982  win  61.4% (rand 60.0%; I 61.7%, II 61.1%)  mean 3.3% median 3.2%  edge 0.2% (I -0.6%, II 0.9%)  vs SPY 0.9%
+weekly|coppock|H13|F1          n  1606  win  61.0% (rand 59.2%; I 60.8%, II 61.1%)  mean 3.2% median 3.7%  edge 0.2% (I -1.3%, II 1.4%)  vs SPY 0.6%
+weekly|obv|H13|F1              n  3528  win  60.7% (rand 60.2%; I 61.7%, II 59.7%)  mean 3.3% median 3.1%  edge 0.1% (I -0.3%, II 0.5%)  vs SPY 0.7%
+weekly|fisher|H13|F1           n  2629  win  60.8% (rand 60.1%; I 62.1%, II 59.5%)  mean 3.3% median 3.0%  edge 0.1% (I -0.7%, II 0.8%)  vs SPY 1.0%
+weekly|smi|H13|F1              n   496  win  62.7% (rand 58.8%; I 62.2%, II 63.1%)  mean 3.6% median 4.5%  edge -0.0% (I -1.7%, II 1.4%)  vs SPY 1.2%
+weekly|tsi|H13|F1              n  2891  win  61.8% (rand 60.7%; I 64.1%, II 59.7%)  mean 3.4% median 3.4%  edge -0.0% (I -0.2%, II 0.2%)  vs SPY 1.1%
+weekly|psar|H13|F1             n  3998  win  60.2% (rand 60.7%; I 61.4%, II 59.1%)  mean 3.4% median 2.9%  edge -0.0% (I -0.8%, II 0.7%)  vs SPY 0.9%
+weekly|stochrsi|H13|F1         n  1793  win  60.2% (rand 60.8%; I 61.1%, II 59.3%)  mean 3.4% median 2.9%  edge -0.1% (I -0.7%, II 0.6%)  vs SPY 0.8%
+weekly|ichimoku|H13|F1         n  1882  win  58.5% (rand 58.5%; I 59.2%, II 57.8%)  mean 2.8% median 2.7%  edge -0.1% (I -0.7%, II 0.4%)  vs SPY 0.0%
+weekly|hma|H13|F1              n  5230  win  60.4% (rand 60.7%; I 63.1%, II 57.6%)  mean 3.3% median 3.0%  edge -0.1% (I 0.1%, II -0.3%)  vs SPY 0.6%
+weekly|bb_break|H13|F1         n  3411  win  59.8% (rand 60.9%; I 63.9%, II 55.6%)  mean 3.3% median 2.8%  edge -0.3% (I 0.1%, II -0.6%)  vs SPY 0.8%
+weekly|macd_signal|H13|F1      n  3162  win  60.7% (rand 60.9%; I 62.3%, II 59.2%)  mean 3.1% median 3.0%  edge -0.3% (I -0.7%, II 0.2%)  vs SPY 0.8%
+weekly|donchian20|H13|F1       n  4334  win  59.7% (rand 61.2%; I 63.4%, II 55.9%)  mean 3.1% median 2.5%  edge -0.4% (I -0.0%, II -0.9%)  vs SPY 0.5%
+weekly|kst|H13|F1              n  2563  win  61.1% (rand 60.6%; I 61.7%, II 60.6%)  mean 2.9% median 2.8%  edge -0.5% (I -0.6%, II -0.3%)  vs SPY 0.7%
+weekly|tv_rating|H13|F1        n  5517  win  59.4% (rand 60.9%; I 61.6%, II 57.4%)  mean 2.9% median 2.6%  edge -0.5% (I -0.8%, II -0.2%)  vs SPY 0.6%
+weekly|keltner_break|H13|F1    n  2916  win  58.9% (rand 61.3%; I 62.6%, II 55.2%)  mean 3.2% median 2.3%  edge -0.5% (I -0.2%, II -0.8%)  vs SPY 0.9%
+weekly|donchian55|H13|F1       n  3258  win  59.3% (rand 61.8%; I 62.7%, II 56.1%)  mean 3.0% median 2.3%  edge -0.6% (I -0.3%, II -1.0%)  vs SPY 0.8%
+weekly|rsi_30|H13|F1           n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|down3|H13|F1            n  2423  win  63.2% (rand 60.6%; I 62.9%, II 63.5%)  mean 4.8% median 3.9%  edge 1.3% (I 0.4%, II 2.1%)  vs SPY 1.3%  p 0.0005
+weekly|crsi|H13|F1             n   368  win  61.1% (rand 60.5%; I 65.0%, II 58.3%)  mean 4.6% median 3.3%  edge 1.1% (I -0.0%, II 1.9%)  vs SPY 1.3%
+weekly|stoch|H13|F0            n  1931  win  63.3% (rand 59.6%; I 59.7%, II 66.3%)  mean 4.8% median 4.5%  edge 1.0% (I -1.1%, II 2.7%)  vs SPY 2.2%
+weekly|rsi_30|H13|F0           n   672  win  59.5% (rand 59.8%; I 50.7%, II 68.4%)  mean 4.6% median 3.6%  edge 1.0% (I -1.4%, II 3.4%)  vs SPY 1.5%
+weekly|alligator|H13|F1        n  2752  win  61.5% (rand 59.5%; I 63.6%, II 59.4%)  mean 4.0% median 3.5%  edge 0.9% (I 0.8%, II 1.0%)  vs SPY 1.0%  p 0.0005
+weekly|envelope|H13|F1         n   239  win  56.5% (rand 59.4%; I 45.8%, II 62.2%)  mean 7.2% median 4.0%  edge 0.8% (I -6.1%, II 4.5%)  vs SPY 3.9%
+weekly|double7|H13|F0          n  6221  win  62.4% (rand 61.1%; I 63.9%, II 60.9%)  mean 4.6% median 3.9%  edge 0.7% (I 0.8%, II 0.7%)  vs SPY 1.3%  p 0.0005
+weekly|rsi2|H13|F0             n  2097  win  63.2% (rand 62.0%; I 64.4%, II 62.1%)  mean 4.7% median 3.8%  edge 0.7% (I 0.4%, II 1.0%)  vs SPY 1.3%  p 0.0195
+weekly|double7|H13|F1          n  3507  win  62.0% (rand 60.7%; I 63.7%, II 60.3%)  mean 4.1% median 3.4%  edge 0.7% (I 0.7%, II 0.7%)  vs SPY 0.8%  p 0.0015
+weekly|pullback5|H13|F1        n  4500  win  61.9% (rand 60.8%; I 64.1%, II 59.6%)  mean 4.1% median 3.4%  edge 0.7% (I 0.6%, II 0.8%)  vs SPY 0.9%  p 0.0015
+weekly|bb_revert|H13|F0        n  2146  win  63.0% (rand 60.4%; I 59.8%, II 65.9%)  mean 4.3% median 4.1%  edge 0.7% (I -1.2%, II 2.4%)  vs SPY 0.9%
+weekly|uo|H13|F0               n   407  win  62.2% (rand 58.8%; I 54.7%, II 68.1%)  mean 4.6% median 5.2%  edge 0.6% (I -2.9%, II 3.5%)  vs SPY 1.5%
+weekly|eom|H13|F1              n  3124  win  61.2% (rand 59.8%; I 61.2%, II 61.3%)  mean 3.8% median 3.3%  edge 0.6% (I -0.5%, II 1.5%)  vs SPY 1.1%
+weekly|pullback5|H13|F0        n  7186  win  62.3% (rand 61.2%; I 64.1%, II 60.5%)  mean 4.4% median 3.7%  edge 0.6% (I 0.6%, II 0.6%)  vs SPY 1.3%  p 0.0010
+weekly|tk_cross|H13|F1         n  2243  win  62.0% (rand 59.2%; I 63.6%, II 60.6%)  mean 3.6% median 3.1%  edge 0.6% (I 0.2%, II 0.9%)  vs SPY 0.9%  p 0.0315
+weekly|vixfix|H13|F1           n  1814  win  63.1% (rand 61.7%; I 63.8%, II 62.4%)  mean 4.2% median 3.6%  edge 0.5% (I -0.1%, II 1.1%)  vs SPY 0.8%
+weekly|ema_9_21|H13|F1         n  2342  win  61.8% (rand 58.6%; I 64.1%, II 59.8%)  mean 3.5% median 3.4%  edge 0.5% (I 0.2%, II 0.7%)  vs SPY 0.5%  p 0.0550
+weekly|adl|H13|F1              n  2930  win  61.3% (rand 60.2%; I 61.3%, II 61.3%)  mean 3.8% median 3.4%  edge 0.4% (I -0.6%, II 1.4%)  vs SPY 1.0%
+weekly|chandelier|H13|F1       n  2064  win  61.5% (rand 59.1%; I 64.6%, II 59.0%)  mean 3.7% median 3.8%  edge 0.4% (I 0.3%, II 0.5%)  vs SPY 0.8%  p 0.1019
+weekly|ma_cross|H13|F0         n  1890  win  61.4% (rand 60.7%; I 62.8%, II 60.0%)  mean 4.1% median 3.3%  edge 0.4% (I 0.5%, II 0.3%)  vs SPY 0.7%  p 0.1334
+weekly|trix|H13|F0             n  1224  win  61.1% (rand 60.5%; I 60.7%, II 61.5%)  mean 4.0% median 3.6%  edge 0.4% (I 0.2%, II 0.6%)  vs SPY 0.6%  p 0.2069
+weekly|envelope|H13|F0         n  2009  win  60.1% (rand 59.8%; I 54.7%, II 64.5%)  mean 4.6% median 3.9%  edge 0.4% (I -1.9%, II 2.2%)  vs SPY 1.8%
+weekly|chosc|H13|F1            n  3103  win  60.9% (rand 60.1%; I 61.2%, II 60.7%)  mean 3.7% median 3.2%  edge 0.4% (I -0.6%, II 1.3%)  vs SPY 1.0%
+weekly|vixfix|H13|F0           n  3265  win  62.6% (rand 61.6%; I 62.2%, II 63.0%)  mean 4.3% median 3.9%  edge 0.4% (I -0.5%, II 1.2%)  vs SPY 0.8%
+weekly|rs_spy|H13|F1           n  2034  win  61.1% (rand 59.6%; I 64.6%, II 57.6%)  mean 3.3% median 2.9%  edge 0.3% (I 0.8%, II -0.1%)  vs SPY 0.5%
+weekly|tsmom|H13|F0            n  2303  win  62.3% (rand 60.4%; I 62.9%, II 61.7%)  mean 3.9% median 3.8%  edge 0.3% (I -0.3%, II 0.9%)  vs SPY 0.4%
+weekly|alligator|H13|F0        n  3194  win  62.4% (rand 61.0%; I 63.5%, II 61.4%)  mean 4.1% median 3.8%  edge 0.3% (I 0.3%, II 0.3%)  vs SPY 1.0%  p 0.1304
+weekly|willr|H13|F0            n  4145  win  61.1% (rand 60.5%; I 61.5%, II 60.7%)  mean 4.1% median 3.7%  edge 0.3% (I -0.6%, II 1.1%)  vs SPY 1.3%
+weekly|stochrsi|H13|F0         n  3643  win  61.1% (rand 61.0%; I 59.0%, II 63.1%)  mean 4.2% median 3.4%  edge 0.3% (I -1.4%, II 1.8%)  vs SPY 1.3%
+weekly|hi52|H13|F1             n  2010  win  62.7% (rand 60.0%; I 65.6%, II 60.2%)  mean 3.5% median 3.3%  edge 0.3% (I 0.7%, II -0.0%)  vs SPY 0.7%
+weekly|ssl|H13|F1              n  3387  win  61.3% (rand 60.3%; I 62.3%, II 60.3%)  mean 3.5% median 3.4%  edge 0.2% (I -0.5%, II 0.9%)  vs SPY 1.0%
+weekly|ao|H13|F0               n  2519  win  62.3% (rand 60.7%; I 64.7%, II 60.2%)  mean 4.0% median 3.8%  edge 0.2% (I 0.6%, II -0.1%)  vs SPY 0.9%
+weekly|vortex|H13|F0           n  4181  win  62.0% (rand 60.9%; I 62.7%, II 61.3%)  mean 4.0% median 3.5%  edge 0.2% (I 0.4%, II 0.1%)  vs SPY 1.0%  p 0.1819
+weekly|smi|H13|F0              n  2388  win  62.1% (rand 59.9%; I 61.6%, II 62.6%)  mean 4.0% median 4.0%  edge 0.2% (I -1.3%, II 1.5%)  vs SPY 1.7%
+weekly|ibs|H13|F1              n  5194  win  60.8% (rand 60.7%; I 64.0%, II 57.6%)  mean 3.6% median 3.2%  edge 0.2% (I 0.5%, II -0.1%)  vs SPY 0.7%
+weekly|efi|H13|F1              n  4064  win  61.5% (rand 60.2%; I 63.4%, II 59.9%)  mean 3.4% median 3.5%  edge 0.2% (I -0.2%, II 0.5%)  vs SPY 0.6%
+weekly|kama|H13|F1             n  4145  win  60.6% (rand 60.1%; I 61.4%, II 59.9%)  mean 3.5% median 3.1%  edge 0.2% (I -0.4%, II 0.7%)  vs SPY 0.9%
+weekly|cmf|H13|F0              n  3634  win  61.6% (rand 60.8%; I 62.1%, II 61.2%)  mean 3.9% median 3.7%  edge 0.1% (I -0.0%, II 0.3%)  vs SPY 1.0%
+weekly|rvi_vol|H13|F1          n  4035  win  59.7% (rand 60.1%; I 60.9%, II 58.4%)  mean 3.4% median 3.0%  edge 0.1% (I -0.2%, II 0.4%)  vs SPY 0.8%
+weekly|eom|H13|F0              n  4260  win  61.2% (rand 61.0%; I 62.8%, II 59.7%)  mean 3.9% median 3.4%  edge 0.1% (I 0.3%, II -0.1%)  vs SPY 1.1%
+weekly|bbp|H13|F1              n  3928  win  60.5% (rand 60.1%; I 62.1%, II 58.9%)  mean 3.3% median 3.4%  edge 0.1% (I -0.4%, II 0.6%)  vs SPY 0.8%
+weekly|tk_cross|H13|F0         n  2836  win  62.0% (rand 60.8%; I 64.4%, II 59.7%)  mean 3.9% median 3.3%  edge 0.1% (I 0.6%, II -0.3%)  vs SPY 0.9%
+weekly|mcginley|H13|F1         n  2461  win  60.1% (rand 59.6%; I 62.8%, II 57.4%)  mean 2.6% median 2.8%  edge 0.1% (I -0.3%, II 0.5%)  vs SPY 0.2%
+weekly|ac|H13|F1               n  4098  win  61.6% (rand 60.9%; I 64.0%, II 59.4%)  mean 3.5% median 3.2%  edge 0.1% (I -0.1%, II 0.3%)  vs SPY 0.9%
+weekly|smio|H13|F1             n  4301  win  60.8% (rand 60.8%; I 63.6%, II 58.1%)  mean 3.5% median 3.0%  edge 0.1% (I -0.2%, II 0.4%)  vs SPY 0.8%
+weekly|macd_zero|H13|F0        n  2030  win  62.0% (rand 60.7%; I 64.8%, II 59.6%)  mean 3.8% median 3.7%  edge 0.1% (I 0.1%, II 0.1%)  vs SPY 0.6%  p 0.4218
+weekly|adl|H13|F0              n  4556  win  61.8% (rand 61.1%; I 61.3%, II 62.3%)  mean 3.9% median 3.6%  edge 0.1% (I -0.8%, II 0.9%)  vs SPY 1.1%
+weekly|pvt|H13|F1              n  3210  win  61.2% (rand 60.0%; I 62.1%, II 60.3%)  mean 3.1% median 3.4%  edge 0.1% (I -0.5%, II 0.5%)  vs SPY 0.5%
+weekly|qqe|H13|F1              n  2725  win  61.9% (rand 60.6%; I 63.8%, II 60.1%)  mean 3.4% median 3.5%  edge 0.1% (I -0.3%, II 0.4%)  vs SPY 1.2%
+weekly|aroon|H13|F0            n  4024  win  62.0% (rand 61.1%; I 63.7%, II 60.4%)  mean 3.8% median 3.5%  edge 0.0% (I 0.2%, II -0.2%)  vs SPY 1.0%
+weekly|cci|H13|F0              n  3393  win  61.1% (rand 60.2%; I 60.9%, II 61.2%)  mean 3.7% median 3.6%  edge 0.0% (I -1.0%, II 0.9%)  vs SPY 1.3%
+weekly|fisher|H13|F0           n  4903  win  61.3% (rand 60.8%; I 61.8%, II 60.9%)  mean 3.8% median 3.4%  edge 0.0% (I -0.6%, II 0.6%)  vs SPY 1.2%
+weekly|ema_9_21|H13|F0         n  2522  win  62.3% (rand 60.7%; I 64.9%, II 60.0%)  mean 3.8% median 3.6%  edge -0.0% (I 0.2%, II -0.1%)  vs SPY 0.7%
+weekly|ibs|H13|F0              n  7710  win  60.8% (rand 61.3%; I 62.8%, II 58.7%)  mean 3.9% median 3.4%  edge -0.0% (I 0.2%, II -0.3%)  vs SPY 0.9%
+weekly|wavetrend|H13|F0        n   509  win  55.8% (rand 58.8%; I 54.8%, II 57.2%)  mean 3.4% median 2.4%  edge -0.0% (I 0.3%, II -0.5%)  vs SPY 2.2%
+weekly|bop|H13|F1              n  3059  win  60.3% (rand 60.0%; I 58.8%, II 61.9%)  mean 3.2% median 3.0%  edge -0.1% (I -1.2%, II 1.2%)  vs SPY 0.8%
+weekly|mcginley|H13|F0         n  4311  win  59.7% (rand 60.8%; I 60.6%, II 58.9%)  mean 3.2% median 3.0%  edge -0.1% (I -0.6%, II 0.4%)  vs SPY 0.8%
+weekly|cmo|H13|F0              n  2645  win  60.8% (rand 60.3%; I 57.7%, II 63.6%)  mean 3.6% median 3.7%  edge -0.1% (I -1.7%, II 1.4%)  vs SPY 1.0%
+weekly|ema_20_50|H13|F0        n  1134  win  60.8% (rand 60.3%; I 59.5%, II 62.2%)  mean 3.5% median 3.0%  edge -0.1% (I -0.8%, II 0.6%)  vs SPY 0.1%
+weekly|rvi_vol|H13|F0          n  5820  win  60.1% (rand 61.0%; I 60.9%, II 59.2%)  mean 3.7% median 3.2%  edge -0.1% (I -0.5%, II 0.2%)  vs SPY 0.9%
+weekly|stc|H13|F1              n  3014  win  61.0% (rand 60.9%; I 62.2%, II 59.9%)  mean 3.1% median 3.3%  edge -0.1% (I -0.7%, II 0.3%)  vs SPY 0.8%
+weekly|alma|H13|F1             n  5821  win  60.1% (rand 60.6%; I 61.9%, II 58.2%)  mean 3.2% median 2.8%  edge -0.2% (I -0.3%, II -0.0%)  vs SPY 0.6%
+weekly|squeeze|H13|F1          n  1735  win  59.2% (rand 60.8%; I 62.5%, II 55.5%)  mean 3.1% median 2.6%  edge -0.2% (I 0.3%, II -0.7%)  vs SPY 0.6%
+weekly|klinger|H13|F1          n  4678  win  59.8% (rand 60.7%; I 61.9%, II 57.7%)  mean 3.2% median 2.9%  edge -0.2% (I -0.3%, II 0.0%)  vs SPY 0.6%
+weekly|price_ma|H13|F0         n  3256  win  60.4% (rand 60.6%; I 62.1%, II 58.9%)  mean 3.5% median 3.1%  edge -0.2% (I -0.7%, II 0.1%)  vs SPY 0.7%
+weekly|hma|H13|F0              n  7355  win  60.6% (rand 61.3%; I 62.2%, II 59.1%)  mean 3.6% median 3.3%  edge -0.3% (I -0.4%, II -0.1%)  vs SPY 1.0%
+weekly|dpo|H13|F0              n  3100  win  61.0% (rand 60.7%; I 63.1%, II 59.2%)  mean 3.4% median 3.5%  edge -0.3% (I -0.3%, II -0.2%)  vs SPY 0.6%
+weekly|bop|H13|F0              n  4450  win  60.4% (rand 61.0%; I 60.0%, II 60.8%)  mean 3.5% median 3.2%  edge -0.3% (I -0.6%, II -0.0%)  vs SPY 0.9%
+weekly|smio|H13|F0             n  6320  win  60.5% (rand 61.4%; I 62.2%, II 58.7%)  mean 3.6% median 3.1%  edge -0.3% (I -0.5%, II -0.1%)  vs SPY 1.0%
+weekly|momentum|H13|F0         n  5489  win  60.6% (rand 61.1%; I 61.8%, II 59.3%)  mean 3.5% median 3.3%  edge -0.3% (I -0.5%, II -0.0%)  vs SPY 1.0%
+weekly|chosc|H13|F0            n  4813  win  61.2% (rand 61.1%; I 61.0%, II 61.3%)  mean 3.5% median 3.4%  edge -0.3% (I -1.1%, II 0.5%)  vs SPY 1.0%
+weekly|supertrend|H13|F0       n  1880  win  61.1% (rand 61.0%; I 62.3%, II 59.9%)  mean 3.6% median 3.5%  edge -0.3% (I -0.3%, II -0.3%)  vs SPY 0.4%
+weekly|ut_bot|H13|F1           n  4180  win  59.7% (rand 60.4%; I 61.6%, II 57.8%)  mean 3.1% median 2.9%  edge -0.3% (I -0.4%, II -0.2%)  vs SPY 0.6%
+weekly|chandelier|H13|F0       n  2347  win  60.7% (rand 60.9%; I 63.3%, II 58.6%)  mean 3.6% median 3.6%  edge -0.3% (I -0.3%, II -0.3%)  vs SPY 0.4%
+weekly|obv|H13|F0              n  5026  win  60.4% (rand 61.1%; I 61.8%, II 59.1%)  mean 3.5% median 3.3%  edge -0.3% (I -0.2%, II -0.4%)  vs SPY 0.8%
+weekly|lsma|H13|F1             n  4450  win  60.0% (rand 60.9%; I 61.9%, II 58.0%)  mean 3.1% median 2.8%  edge -0.3% (I -0.6%, II -0.0%)  vs SPY 0.7%
+weekly|impulse|H13|F1          n  5851  win  59.0% (rand 60.5%; I 61.9%, II 56.0%)  mean 3.0% median 2.6%  edge -0.3% (I -0.4%, II -0.3%)  vs SPY 0.5%
+weekly|ac|H13|F0               n  5971  win  61.7% (rand 61.4%; I 63.1%, II 60.3%)  mean 3.5% median 3.4%  edge -0.4% (I -0.5%, II -0.2%)  vs SPY 1.0%
+weekly|alma|H13|F0             n  8060  win  60.3% (rand 61.3%; I 61.5%, II 59.0%)  mean 3.5% median 3.1%  edge -0.4% (I -0.6%, II -0.2%)  vs SPY 0.9%
+weekly|rs_spy|H13|F0           n  2543  win  61.4% (rand 61.4%; I 63.6%, II 59.1%)  mean 3.4% median 3.1%  edge -0.4% (I -0.4%, II -0.3%)  vs SPY 0.5%
+weekly|heikin|H13|F1           n  4466  win  60.1% (rand 60.6%; I 62.0%, II 58.0%)  mean 3.0% median 2.6%  edge -0.4% (I -0.6%, II -0.2%)  vs SPY 0.6%
+weekly|hi52|H13|F0             n  2010  win  62.7% (rand 61.7%; I 65.6%, II 60.2%)  mean 3.5% median 3.3%  edge -0.4% (I 0.1%, II -0.9%)  vs SPY 0.7%
+weekly|coppock|H13|F0          n  3564  win  60.4% (rand 60.4%; I 59.2%, II 61.6%)  mean 3.3% median 3.7%  edge -0.4% (I -1.6%, II 0.7%)  vs SPY 1.0%
+weekly|heikin|H13|F0           n  6726  win  60.4% (rand 61.2%; I 60.7%, II 60.2%)  mean 3.4% median 2.9%  edge -0.4% (I -1.0%, II 0.1%)  vs SPY 0.9%
+weekly|lsma|H13|F0             n  6463  win  60.6% (rand 61.5%; I 61.2%, II 60.0%)  mean 3.4% median 3.1%  edge -0.4% (I -1.0%, II 0.1%)  vs SPY 1.1%
+weekly|macdh|H13|F0            n  5210  win  60.5% (rand 61.2%; I 59.9%, II 61.0%)  mean 3.3% median 3.3%  edge -0.5% (I -1.3%, II 0.3%)  vs SPY 0.9%
+weekly|rvgi|H13|F1             n  4961  win  60.1% (rand 60.7%; I 62.6%, II 57.7%)  mean 3.0% median 2.7%  edge -0.5% (I -0.5%, II -0.5%)  vs SPY 0.5%
+weekly|adx_di|H13|F0           n  1744  win  61.8% (rand 61.4%; I 62.3%, II 61.2%)  mean 3.5% median 3.5%  edge -0.5% (I -0.8%, II -0.2%)  vs SPY 0.7%
+weekly|rsi_50|H13|F0           n  4356  win  59.8% (rand 60.8%; I 61.9%, II 57.9%)  mean 3.2% median 3.2%  edge -0.5% (I -0.8%, II -0.3%)  vs SPY 0.6%
+weekly|klinger|H13|F0          n  6730  win  60.1% (rand 61.4%; I 61.0%, II 59.2%)  mean 3.3% median 3.0%  edge -0.5% (I -0.6%, II -0.5%)  vs SPY 0.8%
+weekly|rvgi|H13|F0             n  7169  win  60.5% (rand 61.3%; I 62.0%, II 59.0%)  mean 3.4% median 3.0%  edge -0.5% (I -0.6%, II -0.5%)  vs SPY 0.8%
+weekly|bbp|H13|F0              n  5461  win  59.7% (rand 61.1%; I 60.8%, II 58.6%)  mean 3.2% median 3.1%  edge -0.5% (I -0.8%, II -0.3%)  vs SPY 0.7%
+weekly|efi|H13|F0              n  5514  win  60.6% (rand 61.2%; I 61.8%, II 59.4%)  mean 3.2% median 3.2%  edge -0.6% (I -0.6%, II -0.6%)  vs SPY 0.6%
+weekly|macdh|H13|F1            n  2999  win  59.8% (rand 61.0%; I 61.7%, II 57.9%)  mean 2.8% median 2.9%  edge -0.6% (I -0.9%, II -0.2%)  vs SPY 0.6%
+weekly|ut_bot|H13|F0           n  6008  win  59.9% (rand 61.2%; I 60.8%, II 59.1%)  mean 3.2% median 3.0%  edge -0.7% (I -1.0%, II -0.3%)  vs SPY 0.8%
+weekly|squeeze|H13|F0          n  1826  win  59.0% (rand 62.1%; I 62.8%, II 54.6%)  mean 3.1% median 2.6%  edge -0.7% (I 0.2%, II -1.7%)  vs SPY 0.5%
+weekly|ssl|H13|F0              n  4886  win  60.2% (rand 61.2%; I 60.9%, II 59.5%)  mean 3.1% median 3.2%  edge -0.7% (I -1.2%, II -0.2%)  vs SPY 0.8%
+weekly|kama|H13|F0             n  5569  win  59.9% (rand 61.2%; I 60.2%, II 59.7%)  mean 3.1% median 3.0%  edge -0.7% (I -1.3%, II -0.2%)  vs SPY 0.8%
+weekly|pvt|H13|F0              n  4493  win  59.7% (rand 61.1%; I 60.6%, II 58.9%)  mean 3.0% median 3.1%  edge -0.7% (I -0.8%, II -0.7%)  vs SPY 0.4%
+weekly|ichimoku|H13|F0         n  2330  win  59.7% (rand 60.8%; I 59.8%, II 59.5%)  mean 3.0% median 2.8%  edge -0.7% (I -1.4%, II -0.1%)  vs SPY 0.2%
+weekly|bb_break|H13|F0         n  3449  win  59.9% (rand 62.1%; I 64.3%, II 55.3%)  mean 3.3% median 2.8%  edge -0.8% (I -0.2%, II -1.4%)  vs SPY 0.8%
+weekly|impulse|H13|F0          n  7363  win  59.0% (rand 61.5%; I 61.2%, II 56.9%)  mean 3.1% median 2.7%  edge -0.8% (I -0.7%, II -0.9%)  vs SPY 0.7%
+weekly|psar|H13|F0             n  5540  win  59.6% (rand 61.4%; I 60.8%, II 58.4%)  mean 3.0% median 2.8%  edge -0.8% (I -1.2%, II -0.5%)  vs SPY 0.7%
+weekly|qqe|H13|F0              n  4002  win  60.3% (rand 61.4%; I 61.2%, II 59.5%)  mean 3.0% median 3.1%  edge -0.9% (I -1.1%, II -0.6%)  vs SPY 0.9%
+weekly|kst|H13|F0              n  3655  win  60.2% (rand 61.3%; I 62.4%, II 58.2%)  mean 3.0% median 2.8%  edge -0.9% (I -0.2%, II -1.5%)  vs SPY 0.7%
+weekly|tsi|H13|F0              n  4067  win  59.8% (rand 61.4%; I 61.1%, II 58.6%)  mean 3.0% median 3.0%  edge -0.9% (I -1.0%, II -0.9%)  vs SPY 0.9%
+weekly|stc|H13|F0              n  4390  win  59.8% (rand 61.5%; I 59.9%, II 59.7%)  mean 2.9% median 3.1%  edge -0.9% (I -1.3%, II -0.6%)  vs SPY 0.7%
+weekly|macd_signal|H13|F0      n  4562  win  59.6% (rand 61.5%; I 60.0%, II 59.2%)  mean 2.8% median 2.9%  edge -1.0% (I -1.4%, II -0.7%)  vs SPY 0.7%
+weekly|donchian20|H13|F0       n  4351  win  59.5% (rand 62.4%; I 63.1%, II 55.8%)  mean 3.1% median 2.5%  edge -1.0% (I -0.4%, II -1.6%)  vs SPY 0.5%
+weekly|keltner_break|H13|F0    n  2916  win  58.9% (rand 62.3%; I 62.6%, II 55.2%)  mean 3.2% median 2.3%  edge -1.0% (I -0.6%, II -1.5%)  vs SPY 0.9%
+weekly|cmo|H13|F1              n   709  win  58.1% (rand 60.1%; I 59.2%, II 56.9%)  mean 2.2% median 2.5%  edge -1.2% (I -1.7%, II -0.5%)  vs SPY -0.1%
+weekly|tv_rating|H13|F0        n  5579  win  59.5% (rand 62.3%; I 61.8%, II 57.3%)  mean 2.9% median 2.6%  edge -1.2% (I -1.2%, II -1.1%)  vs SPY 0.7%
+weekly|donchian55|H13|F0       n  3258  win  59.3% (rand 62.9%; I 62.7%, II 56.1%)  mean 3.0% median 2.3%  edge -1.2% (I -0.6%, II -1.7%)  vs SPY 0.8%
+weekly|mfi|H13|F0              n   492  win  59.8% (rand 59.3%; I 58.5%, II 61.4%)  mean 2.4% median 3.2%  edge -1.3% (I -2.0%, II -0.3%)  vs SPY 1.3%
+weekly|wavetrend|H13|F1        n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|mfi|H26|F1              n    37  win  83.8% (rand 65.3%; I 91.3%, II 71.4%)  mean 15.1% median 12.4%  edge 8.1% (I 8.4%, II 7.8%)  vs SPY 8.6%
+weekly|envelope|H26|F1         n   230  win  68.3% (rand 63.5%; I 59.3%, II 73.2%)  mean 17.3% median 11.3%  edge 3.8% (I -0.2%, II 5.9%)  vs SPY 9.9%
+weekly|rsi_30|H26|F0           n   578  win  65.6% (rand 63.3%; I 59.7%, II 71.0%)  mean 11.4% median 8.6%  edge 3.7% (I 1.6%, II 5.7%)  vs SPY 2.4%  p 0.0010
+weekly|crsi|H26|F0             n  1360  win  67.9% (rand 64.7%; I 66.7%, II 68.9%)  mean 11.3% median 8.2%  edge 2.9% (I 2.3%, II 3.4%)  vs SPY 2.7%  p 0.0015
+weekly|wavetrend|H26|F0        n   433  win  62.1% (rand 62.2%; I 66.3%, II 56.7%)  mean 10.3% median 8.1%  edge 2.6% (I 7.4%, II -3.6%)  vs SPY 3.3%
+weekly|rsi2|H26|F1             n  1777  win  69.6% (rand 65.5%; I 68.2%, II 70.9%)  mean 9.7% median 7.8%  edge 2.2% (I 0.5%, II 4.0%)  vs SPY 3.1%  p 0.0005
+weekly|trix|H26|F1             n  1148  win  67.2% (rand 62.5%; I 65.9%, II 68.4%)  mean 8.4% median 7.0%  edge 1.9% (I 1.4%, II 2.4%)  vs SPY 1.4%  p 0.0025
+weekly|envelope|H26|F0         n  1608  win  66.9% (rand 63.9%; I 63.6%, II 69.5%)  mean 10.9% median 9.2%  edge 1.8% (I -0.6%, II 3.7%)  vs SPY 3.7%
+weekly|down3|H26|F1            n  1946  win  67.5% (rand 65.2%; I 66.0%, II 69.0%)  mean 9.1% median 7.4%  edge 1.6% (I -0.2%, II 3.3%)  vs SPY 2.9%
+weekly|ma_cross|H26|F1         n  1612  win  64.1% (rand 63.2%; I 66.6%, II 61.7%)  mean 8.1% median 6.3%  edge 1.6% (I 1.7%, II 1.4%)  vs SPY 1.5%  p 0.0030
+weekly|stoch|H26|F0            n  1610  win  64.3% (rand 63.6%; I 62.9%, II 65.4%)  mean 9.7% median 7.0%  edge 1.5% (I -0.1%, II 2.8%)  vs SPY 3.7%
+weekly|smi|H26|F0              n  1891  win  65.3% (rand 64.1%; I 64.0%, II 66.5%)  mean 9.7% median 7.0%  edge 1.5% (I -0.3%, II 3.1%)  vs SPY 3.8%
+weekly|bb_revert|H26|F0        n  1787  win  66.4% (rand 64.4%; I 63.7%, II 68.8%)  mean 9.3% median 7.3%  edge 1.4% (I -0.8%, II 3.4%)  vs SPY 2.2%
+weekly|adx_di|H26|F1           n  1217  win  67.3% (rand 65.2%; I 67.8%, II 66.9%)  mean 8.9% median 7.6%  edge 1.4% (I 0.9%, II 1.9%)  vs SPY 2.9%  p 0.0165
+weekly|mfi|H26|F0              n   466  win  65.0% (rand 62.7%; I 65.9%, II 63.8%)  mean 9.2% median 8.0%  edge 1.4% (I 1.6%, II 1.0%)  vs SPY 4.3%  p 0.1379
+weekly|down3|H26|F0            n  3255  win  67.6% (rand 65.2%; I 65.4%, II 69.7%)  mean 9.7% median 8.0%  edge 1.4% (I -0.6%, II 3.2%)  vs SPY 3.3%
+weekly|macd_zero|H26|F1        n  1705  win  64.2% (rand 63.1%; I 65.6%, II 62.9%)  mean 7.9% median 6.1%  edge 1.3% (I 1.1%, II 1.5%)  vs SPY 1.5%  p 0.0080
+weekly|ema_20_50|H26|F1        n  1010  win  65.0% (rand 62.2%; I 63.7%, II 66.2%)  mean 7.9% median 6.5%  edge 1.3% (I 0.3%, II 2.4%)  vs SPY 1.0%  p 0.0300
+weekly|ssl|H26|F1              n  2426  win  67.8% (rand 65.1%; I 67.6%, II 68.0%)  mean 8.5% median 6.7%  edge 1.3% (I 0.2%, II 2.4%)  vs SPY 2.9%  p 0.0020
+weekly|price_ma|H26|F1         n  2434  win  64.6% (rand 63.3%; I 65.1%, II 64.1%)  mean 8.1% median 6.4%  edge 1.3% (I 0.9%, II 1.6%)  vs SPY 2.1%  p 0.0060
+weekly|rsi_50|H26|F1           n  2498  win  66.1% (rand 64.1%; I 65.9%, II 66.4%)  mean 8.2% median 6.9%  edge 1.2% (I -0.1%, II 2.5%)  vs SPY 2.3%
+weekly|willr|H26|F1            n  1514  win  67.6% (rand 64.7%; I 67.5%, II 67.8%)  mean 8.4% median 7.3%  edge 1.2% (I -0.2%, II 2.4%)  vs SPY 2.5%
+weekly|cci|H26|F0              n  2542  win  65.7% (rand 64.6%; I 66.2%, II 65.2%)  mean 9.2% median 7.2%  edge 1.2% (I 0.2%, II 2.1%)  vs SPY 2.7%  p 0.0115
+weekly|bb_revert|H26|F1        n   243  win  71.6% (rand 64.9%; I 66.4%, II 75.7%)  mean 8.9% median 7.7%  edge 1.2% (I -1.4%, II 3.2%)  vs SPY 2.1%
+weekly|willr|H26|F0            n  2973  win  66.8% (rand 64.9%; I 65.5%, II 68.0%)  mean 9.3% median 7.7%  edge 1.1% (I -0.4%, II 2.6%)  vs SPY 2.9%
+weekly|cmo|H26|F0              n  2059  win  65.1% (rand 64.5%; I 63.7%, II 66.5%)  mean 9.2% median 7.0%  edge 1.1% (I -0.6%, II 2.7%)  vs SPY 2.8%
+weekly|eom|H26|F1              n  2355  win  65.7% (rand 64.7%; I 67.5%, II 64.1%)  mean 8.2% median 7.0%  edge 1.1% (I 0.5%, II 1.6%)  vs SPY 2.5%  p 0.0070
+weekly|rsi2|H26|F0             n  1777  win  69.6% (rand 66.6%; I 68.2%, II 70.9%)  mean 9.7% median 7.8%  edge 1.1% (I -0.8%, II 3.1%)  vs SPY 3.1%
+weekly|vortex|H26|F1           n  2344  win  66.6% (rand 64.8%; I 68.0%, II 65.3%)  mean 8.2% median 6.7%  edge 1.0% (I 0.5%, II 1.4%)  vs SPY 2.4%  p 0.0170
+weekly|stoch|H26|F1            n   215  win  63.7% (rand 64.1%; I 64.4%, II 63.2%)  mean 9.0% median 6.3%  edge 1.0% (I -0.5%, II 2.0%)  vs SPY 3.2%
+weekly|bbp|H26|F1              n  2729  win  67.0% (rand 65.0%; I 67.0%, II 67.0%)  mean 8.0% median 7.1%  edge 0.9% (I -0.2%, II 2.1%)  vs SPY 2.4%
+weekly|tsmom|H26|F1            n  1256  win  65.3% (rand 62.5%; I 67.2%, II 63.3%)  mean 7.3% median 6.5%  edge 0.9% (I 0.9%, II 0.9%)  vs SPY 0.8%  p 0.0645
+weekly|adl|H26|F1              n  2242  win  66.3% (rand 64.9%; I 66.2%, II 66.4%)  mean 8.4% median 6.5%  edge 0.9% (I -0.4%, II 2.2%)  vs SPY 2.8%
+weekly|fisher|H26|F0           n  3286  win  65.7% (rand 65.2%; I 65.6%, II 65.8%)  mean 9.1% median 7.1%  edge 0.9% (I 0.1%, II 1.7%)  vs SPY 3.1%  p 0.0185
+weekly|kama|H26|F1             n  2844  win  66.4% (rand 64.9%; I 67.4%, II 65.3%)  mean 8.2% median 6.7%  edge 0.9% (I 0.2%, II 1.6%)  vs SPY 2.5%  p 0.0145
+weekly|mcginley|H26|F1         n  1907  win  67.1% (rand 64.7%; I 68.5%, II 65.7%)  mean 6.8% median 6.5%  edge 0.9% (I 0.1%, II 1.6%)  vs SPY 1.0%  p 0.0220
+weekly|alligator|H26|F1        n  2248  win  66.0% (rand 64.4%; I 67.9%, II 63.9%)  mean 7.8% median 6.6%  edge 0.8% (I 0.9%, II 0.7%)  vs SPY 1.6%  p 0.0415
+weekly|vixfix|H26|F1           n  1550  win  69.5% (rand 66.3%; I 67.1%, II 72.1%)  mean 8.6% median 7.3%  edge 0.8% (I -1.1%, II 2.8%)  vs SPY 2.4%
+weekly|efi|H26|F1              n  2820  win  66.3% (rand 65.1%; I 67.3%, II 65.2%)  mean 8.0% median 6.5%  edge 0.8% (I -0.0%, II 1.6%)  vs SPY 2.4%
+weekly|trix|H26|F0             n  1177  win  67.3% (rand 64.5%; I 66.2%, II 68.4%)  mean 8.7% median 7.2%  edge 0.8% (I -0.2%, II 1.8%)  vs SPY 1.7%
+weekly|double7|H26|F1          n  2603  win  67.6% (rand 65.3%; I 67.5%, II 67.7%)  mean 8.1% median 7.2%  edge 0.8% (I 0.1%, II 1.5%)  vs SPY 1.8%  p 0.0340
+weekly|cci|H26|F1              n  1021  win  67.3% (rand 64.8%; I 69.2%, II 65.6%)  mean 7.8% median 7.2%  edge 0.8% (I 0.3%, II 1.2%)  vs SPY 2.3%  p 0.1154
+weekly|ichimoku|H26|F1         n  1510  win  63.4% (rand 63.0%; I 63.5%, II 63.4%)  mean 7.4% median 5.7%  edge 0.8% (I -0.4%, II 1.9%)  vs SPY 1.5%
+weekly|momentum|H26|F1         n  2717  win  67.4% (rand 65.1%; I 67.3%, II 67.4%)  mean 8.0% median 6.6%  edge 0.8% (I 0.0%, II 1.5%)  vs SPY 2.3%  p 0.0400
+weekly|chosc|H26|F1            n  2312  win  66.3% (rand 65.0%; I 66.6%, II 66.0%)  mean 8.1% median 6.7%  edge 0.7% (I -0.2%, II 1.7%)  vs SPY 2.5%
+weekly|cmf|H26|F1              n  1872  win  65.9% (rand 64.6%; I 67.3%, II 64.6%)  mean 8.0% median 6.3%  edge 0.7% (I -0.7%, II 2.1%)  vs SPY 2.3%
+weekly|bop|H26|F1              n  2336  win  65.6% (rand 65.0%; I 65.2%, II 66.1%)  mean 7.9% median 6.8%  edge 0.7% (I -0.5%, II 2.0%)  vs SPY 2.4%
+weekly|psar|H26|F1             n  2681  win  67.7% (rand 65.3%; I 67.8%, II 67.6%)  mean 8.0% median 6.7%  edge 0.7% (I -0.6%, II 2.0%)  vs SPY 2.4%
+weekly|adl|H26|F0              n  3180  win  65.5% (rand 65.5%; I 65.8%, II 65.3%)  mean 8.9% median 6.8%  edge 0.6% (I -0.3%, II 1.6%)  vs SPY 3.0%
+weekly|ibs|H26|F1              n  3283  win  65.7% (rand 65.3%; I 67.8%, II 63.5%)  mean 8.0% median 6.4%  edge 0.6% (I 0.4%, II 0.7%)  vs SPY 2.2%  p 0.0695
+weekly|uo|H26|F0               n   378  win  62.2% (rand 62.1%; I 60.1%, II 63.9%)  mean 9.0% median 6.2%  edge 0.5% (I -0.6%, II 1.5%)  vs SPY 2.9%
+weekly|smio|H26|F1             n  2837  win  67.2% (rand 65.5%; I 68.9%, II 65.3%)  mean 8.0% median 6.7%  edge 0.5% (I -0.1%, II 1.2%)  vs SPY 2.4%
+weekly|rs_spy|H26|F1           n  1595  win  66.1% (rand 64.4%; I 70.5%, II 61.7%)  mean 7.1% median 6.3%  edge 0.5% (I 1.7%, II -0.6%)  vs SPY 1.1%
+weekly|ema_9_21|H26|F1         n  1939  win  63.3% (rand 63.2%; I 66.7%, II 60.3%)  mean 7.3% median 5.9%  edge 0.5% (I 1.3%, II -0.1%)  vs SPY 1.4%
+weekly|ma_cross|H26|F0         n  1704  win  64.6% (rand 64.9%; I 67.0%, II 62.3%)  mean 8.4% median 6.6%  edge 0.5% (I 0.5%, II 0.6%)  vs SPY 1.6%  p 0.1929
+weekly|smi|H26|F1              n   456  win  65.6% (rand 64.2%; I 64.5%, II 66.5%)  mean 8.5% median 6.7%  edge 0.5% (I -1.5%, II 2.3%)  vs SPY 3.5%
+weekly|pullback5|H26|F1        n  3017  win  66.3% (rand 65.4%; I 67.7%, II 64.8%)  mean 7.9% median 6.9%  edge 0.5% (I 0.0%, II 1.0%)  vs SPY 1.9%  p 0.1054
+weekly|supertrend|H26|F1       n  1627  win  64.8% (rand 63.9%; I 68.5%, II 61.3%)  mean 7.7% median 6.1%  edge 0.5% (I 1.4%, II -0.4%)  vs SPY 1.6%
+weekly|fisher|H26|F1           n  2073  win  65.6% (rand 65.1%; I 66.5%, II 64.6%)  mean 7.8% median 6.5%  edge 0.5% (I -0.3%, II 1.2%)  vs SPY 2.6%
+weekly|rvi_vol|H26|F1          n  2783  win  66.5% (rand 64.9%; I 66.8%, II 66.2%)  mean 7.7% median 6.6%  edge 0.4% (I -0.3%, II 1.3%)  vs SPY 2.1%
+weekly|crsi|H26|F1             n   359  win  65.2% (rand 65.8%; I 63.9%, II 66.2%)  mean 8.2% median 5.7%  edge 0.4% (I -1.3%, II 1.7%)  vs SPY 1.8%
+weekly|stochrsi|H26|F0         n  2783  win  65.6% (rand 65.4%; I 63.8%, II 67.3%)  mean 8.8% median 7.3%  edge 0.4% (I -2.0%, II 2.7%)  vs SPY 2.6%
+weekly|chosc|H26|F0            n  3263  win  66.0% (rand 65.5%; I 66.2%, II 65.7%)  mean 8.6% median 7.2%  edge 0.4% (I -0.5%, II 1.3%)  vs SPY 2.7%
+weekly|chandelier|H26|F1       n  1768  win  63.9% (rand 63.7%; I 66.9%, II 61.1%)  mean 7.5% median 5.4%  edge 0.3% (I 1.1%, II -0.4%)  vs SPY 1.3%
+weekly|cmf|H26|F0              n  2719  win  65.0% (rand 65.2%; I 67.3%, II 62.7%)  mean 8.5% median 6.8%  edge 0.3% (I 0.2%, II 0.5%)  vs SPY 2.4%  p 0.2454
+weekly|ao|H26|F1               n  1879  win  63.4% (rand 63.4%; I 67.0%, II 60.1%)  mean 7.1% median 5.7%  edge 0.3% (I 1.2%, II -0.5%)  vs SPY 1.5%
+weekly|coppock|H26|F1          n  1393  win  65.5% (rand 64.5%; I 66.6%, II 64.5%)  mean 7.2% median 6.8%  edge 0.3% (I 0.0%, II 0.5%)  vs SPY 1.9%  p 0.2854
+weekly|mcginley|H26|F0         n  2857  win  65.6% (rand 65.4%; I 65.9%, II 65.4%)  mean 7.5% median 6.5%  edge 0.3% (I -0.5%, II 1.0%)  vs SPY 1.8%
+weekly|obv|H26|F1              n  2583  win  65.3% (rand 64.9%; I 66.3%, II 64.2%)  mean 7.5% median 6.2%  edge 0.3% (I -0.5%, II 1.0%)  vs SPY 1.9%
+weekly|coppock|H26|F0          n  2657  win  64.7% (rand 64.8%; I 65.1%, II 64.4%)  mean 8.3% median 7.0%  edge 0.2% (I -0.4%, II 0.8%)  vs SPY 2.7%
+weekly|klinger|H26|F1          n  3024  win  65.5% (rand 65.2%; I 66.7%, II 64.4%)  mean 7.5% median 6.1%  edge 0.2% (I -0.5%, II 1.0%)  vs SPY 2.0%
+weekly|smio|H26|F0             n  3863  win  66.4% (rand 65.7%; I 67.7%, II 65.0%)  mean 8.6% median 7.0%  edge 0.2% (I -0.1%, II 0.6%)  vs SPY 2.8%
+weekly|lsma|H26|F0             n  3900  win  65.5% (rand 65.8%; I 66.6%, II 64.4%)  mean 8.6% median 6.6%  edge 0.2% (I -0.5%, II 1.0%)  vs SPY 2.9%
+weekly|lsma|H26|F1             n  2874  win  66.3% (rand 65.6%; I 68.1%, II 64.4%)  mean 7.6% median 6.3%  edge 0.2% (I -0.3%, II 0.6%)  vs SPY 2.1%
+weekly|ut_bot|H26|F1           n  2846  win  65.9% (rand 65.1%; I 67.1%, II 64.7%)  mean 7.5% median 6.6%  edge 0.2% (I -0.3%, II 0.6%)  vs SPY 2.0%
+weekly|stochrsi|H26|F1         n  1555  win  65.0% (rand 65.7%; I 64.5%, II 65.4%)  mean 7.8% median 6.5%  edge 0.1% (I -1.0%, II 1.3%)  vs SPY 2.0%
+weekly|hma|H26|F1              n  3290  win  65.8% (rand 65.3%; I 67.1%, II 64.5%)  mean 7.5% median 6.2%  edge 0.1% (I -0.3%, II 0.6%)  vs SPY 2.0%
+weekly|ema_20_50|H26|F0        n  1038  win  65.0% (rand 64.1%; I 63.7%, II 66.4%)  mean 8.0% median 6.5%  edge 0.1% (I -1.1%, II 1.4%)  vs SPY 1.1%
+weekly|double7|H26|F0          n  3864  win  66.2% (rand 65.5%; I 65.7%, II 66.7%)  mean 8.4% median 7.2%  edge 0.1% (I -0.7%, II 1.0%)  vs SPY 2.3%
+weekly|adx_di|H26|F0           n  1541  win  66.7% (rand 65.7%; I 68.6%, II 64.9%)  mean 8.7% median 7.5%  edge 0.1% (I 0.2%, II 0.0%)  vs SPY 2.5%  p 0.3983
+weekly|vortex|H26|F0           n  3010  win  65.1% (rand 65.3%; I 67.2%, II 63.2%)  mean 8.3% median 6.6%  edge 0.1% (I 0.6%, II -0.4%)  vs SPY 2.4%
+weekly|uo|H26|F1               n    20  win  75.0% (rand 67.5%; I 69.2%, II 85.7%)  mean 9.6% median 11.8%  edge 0.1% (I -6.3%, II 12.1%)  vs SPY 2.5%
+weekly|dpo|H26|F1              n  2166  win  64.0% (rand 63.7%; I 64.7%, II 63.3%)  mean 6.9% median 5.7%  edge 0.1% (I -0.5%, II 0.6%)  vs SPY 1.4%
+weekly|tsmom|H26|F0            n  1785  win  66.6% (rand 64.4%; I 68.1%, II 65.1%)  mean 7.8% median 7.2%  edge 0.1% (I -0.6%, II 0.7%)  vs SPY 1.1%
+weekly|price_ma|H26|F0         n  2434  win  64.6% (rand 64.9%; I 65.1%, II 64.1%)  mean 8.1% median 6.4%  edge 0.1% (I -0.6%, II 0.7%)  vs SPY 2.1%
+weekly|heikin|H26|F1           n  2984  win  66.2% (rand 65.3%; I 68.1%, II 64.1%)  mean 7.4% median 6.6%  edge 0.1% (I -0.3%, II 0.5%)  vs SPY 1.8%
+weekly|aroon|H26|F1            n  2253  win  63.2% (rand 64.8%; I 66.0%, II 60.6%)  mean 7.1% median 5.4%  edge 0.0% (I -0.0%, II 0.1%)  vs SPY 2.0%
+weekly|pvt|H26|F1              n  2400  win  65.5% (rand 65.0%; I 66.0%, II 65.0%)  mean 7.0% median 6.1%  edge 0.0% (I -0.6%, II 0.6%)  vs SPY 1.6%
+weekly|rvi_vol|H26|F0          n  3705  win  65.8% (rand 65.5%; I 65.9%, II 65.8%)  mean 8.3% median 7.0%  edge 0.0% (I -0.8%, II 0.9%)  vs SPY 2.3%
+weekly|bop|H26|F0              n  3151  win  65.6% (rand 65.4%; I 66.9%, II 64.3%)  mean 8.2% median 7.1%  edge -0.0% (I -0.1%, II 0.0%)  vs SPY 2.2%
+weekly|heikin|H26|F0           n  4033  win  66.4% (rand 65.6%; I 67.2%, II 65.5%)  mean 8.2% median 6.8%  edge -0.0% (I -0.6%, II 0.6%)  vs SPY 2.4%
+weekly|hma|H26|F0              n  4244  win  65.6% (rand 65.7%; I 66.8%, II 64.3%)  mean 8.3% median 6.5%  edge -0.0% (I -0.5%, II 0.5%)  vs SPY 2.5%
+weekly|eom|H26|F0              n  3036  win  64.8% (rand 65.4%; I 66.5%, II 63.0%)  mean 8.1% median 6.7%  edge -0.0% (I 0.4%, II -0.4%)  vs SPY 2.4%
+weekly|klinger|H26|F0          n  4028  win  65.6% (rand 65.7%; I 66.8%, II 64.4%)  mean 8.2% median 6.5%  edge -0.1% (I -0.4%, II 0.3%)  vs SPY 2.4%
+weekly|macd_zero|H26|F0        n  1746  win  63.9% (rand 64.9%; I 65.0%, II 62.9%)  mean 7.8% median 6.1%  edge -0.1% (I -0.5%, II 0.4%)  vs SPY 1.5%
+weekly|ac|H26|F1               n  2728  win  66.2% (rand 65.6%; I 67.1%, II 65.2%)  mean 7.4% median 6.2%  edge -0.1% (I -0.5%, II 0.4%)  vs SPY 2.0%
+weekly|macdh|H26|F1            n  2258  win  66.2% (rand 65.9%; I 65.2%, II 67.1%)  mean 7.4% median 6.5%  edge -0.1% (I -1.2%, II 1.0%)  vs SPY 2.0%
+weekly|stc|H26|F1              n  2177  win  65.8% (rand 65.6%; I 67.2%, II 64.5%)  mean 7.3% median 6.0%  edge -0.1% (I -0.3%, II 0.1%)  vs SPY 2.2%
+weekly|macdh|H26|F0            n  3487  win  66.0% (rand 65.6%; I 64.5%, II 67.5%)  mean 8.1% median 6.9%  edge -0.1% (I -1.8%, II 1.5%)  vs SPY 2.2%
+weekly|ichimoku|H26|F0         n  1802  win  64.3% (rand 65.1%; I 63.5%, II 65.1%)  mean 7.7% median 6.4%  edge -0.2% (I -2.1%, II 1.5%)  vs SPY 1.7%
+weekly|pullback5|H26|F0        n  4199  win  65.5% (rand 65.6%; I 66.5%, II 64.4%)  mean 8.0% median 6.8%  edge -0.3% (I -0.7%, II 0.2%)  vs SPY 2.2%
+weekly|hi52|H26|F1             n  1763  win  64.8% (rand 64.7%; I 68.7%, II 61.1%)  mean 6.7% median 5.9%  edge -0.3% (I 0.6%, II -1.2%)  vs SPY 1.2%
+weekly|impulse|H26|F1          n  3544  win  64.6% (rand 65.2%; I 66.3%, II 62.9%)  mean 7.0% median 5.9%  edge -0.3% (I -0.5%, II -0.1%)  vs SPY 1.7%
+weekly|tk_cross|H26|F1         n  1947  win  63.1% (rand 64.0%; I 67.4%, II 59.2%)  mean 6.6% median 5.2%  edge -0.3% (I 0.6%, II -1.1%)  vs SPY 1.0%
+weekly|ssl|H26|F0              n  3259  win  65.4% (rand 65.6%; I 66.5%, II 64.4%)  mean 7.9% median 6.4%  edge -0.3% (I -0.7%, II -0.0%)  vs SPY 2.6%
+weekly|ut_bot|H26|F0           n  3777  win  65.6% (rand 65.6%; I 66.3%, II 64.9%)  mean 8.0% median 6.7%  edge -0.3% (I -1.0%, II 0.4%)  vs SPY 2.3%
+weekly|rsi_50|H26|F0           n  3018  win  64.7% (rand 65.1%; I 65.8%, II 63.7%)  mean 7.7% median 6.3%  edge -0.3% (I -0.7%, II 0.0%)  vs SPY 2.0%
+weekly|alligator|H26|F0        n  2494  win  66.0% (rand 65.6%; I 67.1%, II 65.0%)  mean 7.8% median 6.5%  edge -0.3% (I -0.9%, II 0.2%)  vs SPY 1.9%
+weekly|bbp|H26|F0              n  3505  win  65.9% (rand 65.6%; I 66.1%, II 65.7%)  mean 7.8% median 6.8%  edge -0.4% (I -1.0%, II 0.3%)  vs SPY 2.3%
+weekly|ema_9_21|H26|F0         n  2082  win  63.4% (rand 64.9%; I 66.5%, II 60.5%)  mean 7.7% median 5.9%  edge -0.4% (I 0.1%, II -0.9%)  vs SPY 1.6%
+weekly|dpo|H26|F0              n  2438  win  64.3% (rand 64.9%; I 65.2%, II 63.4%)  mean 7.7% median 6.1%  edge -0.4% (I -0.6%, II -0.2%)  vs SPY 1.7%
+weekly|alma|H26|F1             n  3562  win  64.9% (rand 65.2%; I 66.1%, II 63.7%)  mean 7.0% median 6.1%  edge -0.4% (I -0.6%, II -0.2%)  vs SPY 1.7%
+weekly|vixfix|H26|F0           n  2597  win  66.8% (rand 65.8%; I 63.1%, II 70.3%)  mean 8.0% median 7.0%  edge -0.4% (I -3.4%, II 2.5%)  vs SPY 1.9%
+weekly|momentum|H26|F0         n  3525  win  65.7% (rand 65.6%; I 66.5%, II 65.0%)  mean 7.8% median 6.5%  edge -0.4% (I -0.7%, II -0.1%)  vs SPY 2.2%
+weekly|cmo|H26|F1              n   667  win  64.3% (rand 65.4%; I 64.0%, II 64.6%)  mean 7.1% median 5.1%  edge -0.4% (I -1.7%, II 1.0%)  vs SPY 1.9%
+weekly|ao|H26|F0               n  2099  win  63.5% (rand 65.0%; I 66.7%, II 60.4%)  mean 7.6% median 5.9%  edge -0.5% (I 0.3%, II -1.2%)  vs SPY 1.7%
+weekly|kama|H26|F0             n  3560  win  65.1% (rand 65.6%; I 66.7%, II 63.4%)  mean 7.9% median 6.4%  edge -0.5% (I -1.1%, II 0.2%)  vs SPY 2.4%
+weekly|ac|H26|F0               n  3703  win  65.4% (rand 65.8%; I 66.7%, II 64.1%)  mean 7.9% median 6.8%  edge -0.5% (I -0.3%, II -0.6%)  vs SPY 2.5%
+weekly|obv|H26|F0              n  3429  win  65.9% (rand 65.6%; I 66.9%, II 64.8%)  mean 7.8% median 6.3%  edge -0.5% (I -0.7%, II -0.3%)  vs SPY 2.0%
+weekly|rvgi|H26|F0             n  4075  win  64.8% (rand 65.7%; I 65.8%, II 63.8%)  mean 7.9% median 6.6%  edge -0.5% (I -0.8%, II -0.1%)  vs SPY 2.4%
+weekly|ibs|H26|F0              n  4393  win  64.6% (rand 65.6%; I 65.4%, II 63.7%)  mean 7.8% median 6.6%  edge -0.5% (I -1.1%, II 0.1%)  vs SPY 2.4%
+weekly|alma|H26|F0             n  4508  win  65.1% (rand 65.7%; I 66.3%, II 63.8%)  mean 7.8% median 6.7%  edge -0.5% (I -0.9%, II -0.2%)  vs SPY 2.1%
+weekly|rs_spy|H26|F0           n  1936  win  65.8% (rand 65.9%; I 68.9%, II 62.6%)  mean 7.5% median 6.3%  edge -0.6% (I -0.4%, II -0.9%)  vs SPY 1.5%
+weekly|macd_signal|H26|F1      n  2271  win  65.0% (rand 65.7%; I 66.5%, II 63.7%)  mean 6.8% median 5.6%  edge -0.6% (I -0.9%, II -0.4%)  vs SPY 1.9%
+weekly|bb_break|H26|F1         n  2519  win  63.5% (rand 65.3%; I 67.6%, II 59.2%)  mean 7.0% median 5.4%  edge -0.7% (I 0.2%, II -1.6%)  vs SPY 1.7%
+weekly|chandelier|H26|F0       n  1957  win  64.4% (rand 65.2%; I 67.4%, II 61.8%)  mean 7.6% median 5.7%  edge -0.7% (I -0.2%, II -1.1%)  vs SPY 1.0%
+weekly|tsi|H26|F1              n  2171  win  64.2% (rand 65.7%; I 68.0%, II 60.5%)  mean 6.8% median 5.7%  edge -0.7% (I -0.3%, II -1.0%)  vs SPY 2.0%
+weekly|tk_cross|H26|F0         n  2377  win  62.9% (rand 65.2%; I 66.6%, II 59.3%)  mean 7.4% median 5.6%  edge -0.7% (I 0.1%, II -1.4%)  vs SPY 1.6%
+weekly|aroon|H26|F0            n  2885  win  62.8% (rand 65.4%; I 65.5%, II 60.0%)  mean 7.4% median 5.4%  edge -0.7% (I -0.0%, II -1.3%)  vs SPY 2.0%
+weekly|efi|H26|F0              n  3582  win  65.1% (rand 65.7%; I 66.6%, II 63.6%)  mean 7.5% median 6.0%  edge -0.7% (I -0.8%, II -0.6%)  vs SPY 2.1%
+weekly|supertrend|H26|F0       n  1725  win  64.7% (rand 65.4%; I 68.6%, II 61.1%)  mean 7.6% median 6.2%  edge -0.8% (I -0.0%, II -1.5%)  vs SPY 1.4%
+weekly|psar|H26|F0             n  3515  win  65.7% (rand 65.8%; I 67.0%, II 64.4%)  mean 7.6% median 6.4%  edge -0.8% (I -1.2%, II -0.4%)  vs SPY 2.3%
+weekly|rvgi|H26|F1             n  3097  win  63.5% (rand 65.3%; I 65.1%, II 61.8%)  mean 6.6% median 5.4%  edge -0.8% (I -0.8%, II -0.7%)  vs SPY 1.5%
+weekly|donchian20|H26|F1       n  2957  win  63.4% (rand 65.6%; I 66.6%, II 60.0%)  mean 6.8% median 5.2%  edge -0.8% (I -0.0%, II -1.6%)  vs SPY 1.4%
+weekly|squeeze|H26|F1          n  1530  win  63.7% (rand 65.3%; I 67.0%, II 60.0%)  mean 6.3% median 5.1%  edge -0.8% (I 0.4%, II -2.2%)  vs SPY 0.9%
+weekly|keltner_break|H26|F1    n  2151  win  64.1% (rand 65.8%; I 68.7%, II 59.3%)  mean 7.1% median 5.0%  edge -0.8% (I -0.2%, II -1.5%)  vs SPY 1.9%
+weekly|tv_rating|H26|F1        n  3337  win  64.3% (rand 65.5%; I 66.8%, II 61.8%)  mean 6.5% median 5.3%  edge -0.9% (I -1.3%, II -0.6%)  vs SPY 1.4%
+weekly|pvt|H26|F0              n  3160  win  64.4% (rand 65.5%; I 65.8%, II 62.9%)  mean 6.9% median 5.7%  edge -1.1% (I -0.8%, II -1.3%)  vs SPY 1.6%
+weekly|impulse|H26|F0          n  4238  win  64.6% (rand 65.8%; I 66.1%, II 63.0%)  mean 7.2% median 6.2%  edge -1.2% (I -1.3%, II -1.0%)  vs SPY 1.8%
+weekly|donchian55|H26|F1       n  2225  win  64.9% (rand 66.5%; I 68.6%, II 61.2%)  mean 6.6% median 5.4%  edge -1.3% (I -0.7%, II -1.9%)  vs SPY 1.6%
+weekly|stc|H26|F0              n  3064  win  64.6% (rand 65.7%; I 66.5%, II 62.7%)  mean 6.9% median 5.9%  edge -1.4% (I -1.0%, II -1.7%)  vs SPY 2.0%
+weekly|qqe|H26|F0              n  2914  win  63.5% (rand 65.7%; I 66.8%, II 60.1%)  mean 6.9% median 5.5%  edge -1.5% (I -0.7%, II -2.4%)  vs SPY 1.9%
+weekly|hi52|H26|F0             n  1763  win  64.8% (rand 66.2%; I 68.7%, II 61.1%)  mean 6.7% median 5.9%  edge -1.6% (I -0.9%, II -2.2%)  vs SPY 1.2%
+weekly|tsi|H26|F0              n  2992  win  63.6% (rand 65.7%; I 67.4%, II 59.7%)  mean 6.6% median 5.4%  edge -1.6% (I -0.8%, II -2.5%)  vs SPY 1.9%
+weekly|bb_break|H26|F0         n  2549  win  63.4% (rand 66.5%; I 67.6%, II 59.0%)  mean 7.1% median 5.5%  edge -1.6% (I -0.8%, II -2.5%)  vs SPY 1.8%
+weekly|squeeze|H26|F0          n  1606  win  63.4% (rand 66.5%; I 67.0%, II 59.2%)  mean 6.5% median 5.1%  edge -1.7% (I -0.2%, II -3.5%)  vs SPY 0.9%
+weekly|macd_signal|H26|F0      n  3180  win  63.8% (rand 65.7%; I 66.0%, II 61.6%)  mean 6.4% median 5.5%  edge -1.9% (I -1.4%, II -2.3%)  vs SPY 1.6%
+weekly|donchian20|H26|F0       n  2969  win  63.5% (rand 66.7%; I 66.9%, II 59.9%)  mean 6.8% median 5.2%  edge -1.9% (I -1.3%, II -2.5%)  vs SPY 1.4%
+weekly|keltner_break|H26|F0    n  2151  win  64.1% (rand 66.9%; I 68.7%, II 59.3%)  mean 7.1% median 5.0%  edge -1.9% (I -1.4%, II -2.4%)  vs SPY 1.9%
+weekly|kst|H26|F0              n  2793  win  62.6% (rand 65.6%; I 66.7%, II 58.6%)  mean 6.4% median 4.9%  edge -2.0% (I -0.5%, II -3.3%)  vs SPY 1.4%
+weekly|tv_rating|H26|F0        n  3365  win  64.7% (rand 66.8%; I 67.2%, II 62.3%)  mean 6.6% median 5.5%  edge -2.0% (I -2.5%, II -1.5%)  vs SPY 1.5%
+weekly|donchian55|H26|F0       n  2225  win  64.9% (rand 67.6%; I 68.6%, II 61.2%)  mean 6.6% median 5.4%  edge -2.4% (I -1.9%, II -2.8%)  vs SPY 1.6%
+weekly|rsi_30|H26|F1           n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|wavetrend|H26|F1        n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|rsi_30|H52|F0           n   515  win  75.5% (rand 67.3%; I 72.4%, II 78.7%)  mean 29.4% median 20.0%  edge 12.7% (I 4.7%, II 20.6%)  vs SPY 9.4%  p 0.0005
+weekly|mfi|H52|F1              n    36  win  75.0% (rand 71.7%; I 82.6%, II 61.5%)  mean 26.4% median 20.6%  edge 11.2% (I 8.2%, II 16.5%)  vs SPY 13.4%
+weekly|wavetrend|H52|F0        n   383  win  76.2% (rand 65.6%; I 77.2%, II 74.8%)  mean 25.6% median 18.0%  edge 8.8% (I 12.4%, II 3.7%)  vs SPY 9.4%  p 0.0005
+weekly|crsi|H52|F0             n  1030  win  73.4% (rand 69.7%; I 78.0%, II 69.1%)  mean 23.2% median 15.4%  edge 5.2% (I 4.9%, II 5.6%)  vs SPY 7.2%  p 0.0010
+weekly|ema_20_50|H52|F1        n   848  win  71.1% (rand 66.0%; I 71.0%, II 71.3%)  mean 18.7% median 12.5%  edge 4.2% (I -0.1%, II 8.7%)  vs SPY 5.4%
+weekly|tsmom|H52|F1            n  1040  win  70.3% (rand 66.8%; I 69.9%, II 70.8%)  mean 17.8% median 11.7%  edge 3.8% (I 0.1%, II 7.8%)  vs SPY 4.8%  p 0.0035
+weekly|ma_cross|H52|F1         n  1255  win  69.2% (rand 67.9%; I 70.9%, II 67.3%)  mean 18.4% median 11.8%  edge 3.7% (I 0.2%, II 7.5%)  vs SPY 5.3%  p 0.0015
+weekly|macd_zero|H52|F1        n  1288  win  70.6% (rand 67.8%; I 71.6%, II 69.5%)  mean 18.1% median 12.0%  edge 3.4% (I 0.2%, II 6.7%)  vs SPY 4.5%  p 0.0035
+weekly|trix|H52|F1             n   972  win  71.5% (rand 66.9%; I 72.3%, II 70.6%)  mean 17.5% median 13.1%  edge 3.3% (I 0.2%, II 6.7%)  vs SPY 4.4%  p 0.0085
+weekly|envelope|H52|F1         n   195  win  67.2% (rand 66.7%; I 65.3%, II 68.3%)  mean 31.1% median 18.3%  edge 3.0% (I -0.1%, II 4.9%)  vs SPY 15.3%
+weekly|bb_revert|H52|F0        n  1321  win  70.6% (rand 69.7%; I 70.6%, II 70.5%)  mean 20.1% median 14.1%  edge 2.9% (I -0.8%, II 6.6%)  vs SPY 5.4%
+weekly|uo|H52|F0               n   329  win  65.7% (rand 65.8%; I 64.3%, II 66.9%)  mean 20.8% median 13.4%  edge 2.7% (I 3.4%, II 2.2%)  vs SPY 7.2%  p 0.1449
+weekly|envelope|H52|F0         n  1174  win  69.5% (rand 68.6%; I 65.7%, II 72.7%)  mean 22.0% median 14.8%  edge 2.6% (I -3.6%, II 7.8%)  vs SPY 7.2%
+weekly|eom|H52|F1              n  1565  win  70.5% (rand 68.9%; I 72.6%, II 68.4%)  mean 17.9% median 12.7%  edge 2.6% (I 1.5%, II 3.6%)  vs SPY 5.5%  p 0.0100
+weekly|smi|H52|F0              n  1336  win  68.4% (rand 69.3%; I 68.2%, II 68.6%)  mean 20.4% median 12.7%  edge 2.5% (I -1.9%, II 6.9%)  vs SPY 7.9%
+weekly|stoch|H52|F0            n  1174  win  67.5% (rand 68.6%; I 67.4%, II 67.7%)  mean 20.5% median 12.7%  edge 2.4% (I -1.7%, II 6.3%)  vs SPY 8.1%
+weekly|ema_9_21|H52|F1         n  1396  win  69.3% (rand 67.9%; I 70.7%, II 68.0%)  mean 17.2% median 11.9%  edge 2.2% (I 0.3%, II 4.1%)  vs SPY 3.9%  p 0.0245
+weekly|vortex|H52|F1           n  1549  win  69.9% (rand 69.0%; I 72.4%, II 67.2%)  mean 17.6% median 12.7%  edge 2.1% (I 1.3%, II 3.1%)  vs SPY 5.1%  p 0.0150
+weekly|ao|H52|F1               n  1373  win  69.3% (rand 68.2%; I 72.8%, II 65.8%)  mean 17.0% median 12.0%  edge 2.0% (I 0.8%, II 3.3%)  vs SPY 4.3%  p 0.0255
+weekly|adx_di|H52|F1           n   990  win  69.9% (rand 69.3%; I 71.4%, II 68.4%)  mean 18.0% median 12.3%  edge 2.0% (I 0.0%, II 4.0%)  vs SPY 5.4%  p 0.0485
+weekly|willr|H52|F1            n  1135  win  68.9% (rand 68.7%; I 71.8%, II 65.8%)  mean 17.3% median 12.8%  edge 1.9% (I 0.9%, II 3.0%)  vs SPY 4.7%  p 0.0375
+weekly|price_ma|H52|F1         n  1642  win  68.5% (rand 67.8%; I 69.9%, II 67.1%)  mean 16.8% median 12.0%  edge 1.9% (I 0.9%, II 2.9%)  vs SPY 4.1%  p 0.0250
+weekly|cmf|H52|F1              n  1320  win  70.8% (rand 68.7%; I 70.6%, II 71.2%)  mean 17.1% median 13.8%  edge 1.8% (I -0.1%, II 4.0%)  vs SPY 4.4%
+weekly|rsi2|H52|F1             n  1286  win  70.5% (rand 69.8%; I 74.5%, II 65.8%)  mean 17.8% median 12.3%  edge 1.7% (I 0.9%, II 2.6%)  vs SPY 6.0%  p 0.0580
+weekly|ichimoku|H52|F1         n  1193  win  69.8% (rand 67.8%; I 69.3%, II 70.4%)  mean 16.1% median 11.6%  edge 1.5% (I -1.3%, II 4.5%)  vs SPY 3.6%
+weekly|tk_cross|H52|F1         n  1385  win  69.7% (rand 68.6%; I 71.8%, II 67.5%)  mean 16.6% median 12.0%  edge 1.5% (I 0.4%, II 2.6%)  vs SPY 4.1%  p 0.0840
+weekly|bop|H52|F1              n  1552  win  70.2% (rand 69.2%; I 69.6%, II 70.9%)  mean 17.0% median 12.2%  edge 1.5% (I -0.2%, II 3.4%)  vs SPY 4.8%
+weekly|rs_spy|H52|F1           n  1198  win  70.4% (rand 68.5%; I 73.6%, II 66.8%)  mean 16.0% median 12.1%  edge 1.5% (I 1.9%, II 1.0%)  vs SPY 4.0%  p 0.0955
+weekly|chosc|H52|F1            n  1535  win  69.8% (rand 69.1%; I 71.4%, II 68.1%)  mean 17.3% median 12.7%  edge 1.4% (I 0.1%, II 2.8%)  vs SPY 4.9%  p 0.0805
+weekly|alligator|H52|F1        n  1555  win  70.2% (rand 68.7%; I 72.9%, II 67.3%)  mean 16.4% median 12.0%  edge 1.3% (I -0.6%, II 3.5%)  vs SPY 4.4%
+weekly|rsi_50|H52|F1           n  1646  win  68.2% (rand 68.4%; I 70.0%, II 66.3%)  mean 16.2% median 12.8%  edge 1.3% (I 0.6%, II 2.1%)  vs SPY 4.1%  p 0.0695
+weekly|supertrend|H52|F1       n  1265  win  68.2% (rand 68.6%; I 69.9%, II 66.5%)  mean 17.0% median 11.0%  edge 1.3% (I -0.3%, II 3.0%)  vs SPY 4.6%
+weekly|stoch|H52|F1            n   196  win  69.9% (rand 67.9%; I 77.3%, II 63.9%)  mean 19.3% median 14.6%  edge 1.2% (I 3.9%, II -0.9%)  vs SPY 6.4%
+weekly|cmo|H52|F0              n  1436  win  67.3% (rand 69.7%; I 67.0%, II 67.7%)  mean 19.1% median 12.5%  edge 1.2% (I -3.1%, II 5.8%)  vs SPY 6.2%
+weekly|ssl|H52|F1              n  1588  win  70.6% (rand 69.3%; I 72.5%, II 68.5%)  mean 16.5% median 12.7%  edge 1.2% (I 0.5%, II 2.0%)  vs SPY 4.4%  p 0.0910
+weekly|ema_20_50|H52|F0        n   867  win  71.0% (rand 69.0%; I 70.6%, II 71.5%)  mean 18.7% median 12.0%  edge 1.1% (I -3.3%, II 5.8%)  vs SPY 5.5%
+weekly|hi52|H52|F1             n  1281  win  70.1% (rand 69.2%; I 72.7%, II 67.4%)  mean 16.7% median 11.7%  edge 1.1% (I 0.3%, II 1.9%)  vs SPY 5.0%  p 0.1464
+weekly|cci|H52|F0              n  1671  win  68.8% (rand 69.9%; I 70.1%, II 67.4%)  mean 18.8% median 13.4%  edge 1.1% (I -0.7%, II 3.0%)  vs SPY 6.0%
+weekly|tsmom|H52|F0            n  1272  win  71.1% (rand 69.4%; I 69.9%, II 72.5%)  mean 18.0% median 12.9%  edge 1.0% (I -2.7%, II 5.0%)  vs SPY 4.2%
+weekly|mfi|H52|F0              n   421  win  67.5% (rand 67.5%; I 70.7%, II 62.9%)  mean 17.8% median 11.8%  edge 1.0% (I 1.9%, II -0.3%)  vs SPY 5.4%
+weekly|ma_cross|H52|F0         n  1309  win  69.0% (rand 70.3%; I 70.6%, II 67.3%)  mean 18.4% median 11.9%  edge 1.0% (I -2.4%, II 4.4%)  vs SPY 5.4%
+weekly|bb_break|H52|F1         n  1630  win  69.8% (rand 69.4%; I 72.9%, II 66.3%)  mean 17.1% median 11.8%  edge 1.0% (I 0.2%, II 1.8%)  vs SPY 5.4%  p 0.1639
+weekly|ibs|H52|F1              n  1938  win  70.4% (rand 69.4%; I 73.3%, II 67.2%)  mean 16.7% median 12.8%  edge 0.9% (I 0.2%, II 1.7%)  vs SPY 5.2%  p 0.1359
+weekly|adl|H52|F1              n  1503  win  70.6% (rand 69.1%; I 70.7%, II 70.4%)  mean 16.7% median 13.6%  edge 0.9% (I -0.3%, II 2.2%)  vs SPY 4.4%
+weekly|aroon|H52|F1            n  1523  win  68.5% (rand 68.8%; I 71.7%, II 65.1%)  mean 16.0% median 12.5%  edge 0.9% (I 0.7%, II 1.0%)  vs SPY 3.8%  p 0.1769
+weekly|bbp|H52|F1              n  1745  win  70.1% (rand 69.1%; I 72.4%, II 67.6%)  mean 16.0% median 12.5%  edge 0.8% (I -0.7%, II 2.5%)  vs SPY 4.1%
+weekly|down3|H52|F1            n  1377  win  70.7% (rand 69.4%; I 73.1%, II 68.1%)  mean 16.8% median 12.5%  edge 0.8% (I 0.3%, II 1.4%)  vs SPY 4.7%  p 0.2124
+weekly|tsi|H52|F1              n  1449  win  69.0% (rand 69.7%; I 74.1%, II 64.0%)  mean 16.6% median 12.1%  edge 0.7% (I 0.9%, II 0.5%)  vs SPY 4.6%  p 0.2314
+weekly|chosc|H52|F0            n  1955  win  68.7% (rand 70.5%; I 68.4%, II 69.0%)  mean 18.8% median 12.5%  edge 0.6% (I -2.1%, II 3.6%)  vs SPY 6.6%
+weekly|kst|H52|F1              n  1363  win  69.6% (rand 69.6%; I 71.9%, II 67.2%)  mean 16.7% median 11.6%  edge 0.6% (I -0.4%, II 1.6%)  vs SPY 4.6%
+weekly|psar|H52|F1             n  1713  win  70.5% (rand 69.5%; I 72.3%, II 68.3%)  mean 16.2% median 11.9%  edge 0.6% (I -0.6%, II 2.0%)  vs SPY 4.4%
+weekly|pvt|H52|F1              n  1591  win  69.4% (rand 69.3%; I 71.9%, II 66.8%)  mean 15.8% median 11.8%  edge 0.6% (I 0.1%, II 1.1%)  vs SPY 3.8%  p 0.2514
+weekly|dpo|H52|F1              n  1499  win  68.0% (rand 68.2%; I 69.3%, II 66.7%)  mean 15.4% median 12.0%  edge 0.6% (I 0.2%, II 1.0%)  vs SPY 2.9%  p 0.2564
+weekly|donchian20|H52|F1       n  1824  win  68.9% (rand 69.4%; I 72.1%, II 65.1%)  mean 16.6% median 11.6%  edge 0.5% (I 0.1%, II 1.0%)  vs SPY 5.0%  p 0.2679
+weekly|coppock|H52|F1          n  1058  win  68.4% (rand 68.7%; I 70.1%, II 66.7%)  mean 15.4% median 12.7%  edge 0.5% (I -0.1%, II 1.1%)  vs SPY 3.1%
+weekly|rvi_vol|H52|F1          n  1766  win  68.9% (rand 69.0%; I 71.1%, II 66.3%)  mean 15.9% median 12.5%  edge 0.5% (I -0.3%, II 1.4%)  vs SPY 4.2%
+weekly|adl|H52|F0              n  1920  win  70.4% (rand 70.5%; I 69.3%, II 71.5%)  mean 18.7% median 12.7%  edge 0.5% (I -1.7%, II 2.8%)  vs SPY 6.3%
+weekly|trix|H52|F0             n   997  win  71.6% (rand 69.8%; I 72.3%, II 70.9%)  mean 17.7% median 13.1%  edge 0.5% (I -2.9%, II 4.0%)  vs SPY 4.7%
+weekly|ut_bot|H52|F1           n  1755  win  70.9% (rand 69.5%; I 73.8%, II 67.6%)  mean 16.2% median 12.3%  edge 0.4% (I 0.3%, II 0.6%)  vs SPY 4.6%  p 0.2999
+weekly|pullback5|H52|F1        n  1839  win  69.4% (rand 69.4%; I 73.5%, II 64.6%)  mean 16.2% median 12.4%  edge 0.4% (I 0.3%, II 0.6%)  vs SPY 4.5%  p 0.3003
+weekly|cci|H52|F1              n   805  win  69.2% (rand 68.9%; I 72.8%, II 65.6%)  mean 15.7% median 13.2%  edge 0.4% (I 1.6%, II -0.7%)  vs SPY 3.0%
+weekly|momentum|H52|F1         n  1728  win  70.7% (rand 69.1%; I 72.6%, II 68.6%)  mean 15.7% median 12.7%  edge 0.4% (I -0.4%, II 1.4%)  vs SPY 3.8%
+weekly|macdh|H52|F1            n  1493  win  69.9% (rand 70.2%; I 74.1%, II 65.0%)  mean 16.4% median 11.8%  edge 0.4% (I 0.2%, II 0.7%)  vs SPY 4.5%  p 0.3368
+weekly|mcginley|H52|F1         n  1288  win  69.3% (rand 69.4%; I 73.6%, II 64.6%)  mean 13.5% median 12.6%  edge 0.4% (I 1.5%, II -0.8%)  vs SPY 1.5%
+weekly|stochrsi|H52|F0         n  1793  win  67.8% (rand 70.8%; I 68.4%, II 67.1%)  mean 18.8% median 13.1%  edge 0.4% (I -2.6%, II 3.7%)  vs SPY 6.3%
+weekly|double7|H52|F1          n  1666  win  70.0% (rand 69.4%; I 73.6%, II 65.7%)  mean 16.1% median 11.5%  edge 0.3% (I 0.0%, II 0.7%)  vs SPY 4.7%  p 0.3408
+weekly|impulse|H52|F1          n  2060  win  68.5% (rand 69.2%; I 70.0%, II 66.8%)  mean 15.8% median 12.0%  edge 0.3% (I -0.8%, II 1.5%)  vs SPY 4.5%
+weekly|macd_zero|H52|F0        n  1312  win  70.2% (rand 70.3%; I 71.4%, II 68.9%)  mean 17.8% median 11.7%  edge 0.3% (I -3.1%, II 3.8%)  vs SPY 4.4%
+weekly|keltner_break|H52|F1    n  1448  win  70.2% (rand 69.9%; I 74.7%, II 65.2%)  mean 17.0% median 11.5%  edge 0.3% (I -0.2%, II 0.8%)  vs SPY 5.4%
+weekly|smio|H52|F1             n  1780  win  69.9% (rand 69.6%; I 72.9%, II 66.5%)  mean 16.0% median 12.1%  edge 0.3% (I -0.3%, II 1.0%)  vs SPY 4.5%
+weekly|eom|H52|F0              n  1891  win  70.7% (rand 70.4%; I 72.5%, II 68.8%)  mean 18.1% median 13.4%  edge 0.3% (I 0.1%, II 0.4%)  vs SPY 5.7%  p 0.3963
+weekly|qqe|H52|F1              n  1418  win  67.9% (rand 69.5%; I 72.7%, II 62.9%)  mean 16.1% median 11.0%  edge 0.3% (I 0.0%, II 0.5%)  vs SPY 4.3%  p 0.3933
+weekly|cmo|H52|F1              n   570  win  68.6% (rand 70.1%; I 71.7%, II 64.7%)  mean 16.8% median 11.8%  edge 0.2% (I -0.2%, II 0.8%)  vs SPY 4.8%
+weekly|klinger|H52|F1          n  1850  win  69.8% (rand 69.3%; I 72.7%, II 66.5%)  mean 15.7% median 11.6%  edge 0.2% (I -0.9%, II 1.4%)  vs SPY 4.2%
+weekly|kama|H52|F1             n  1794  win  69.3% (rand 69.1%; I 72.2%, II 66.1%)  mean 15.7% median 12.3%  edge 0.2% (I -0.2%, II 0.5%)  vs SPY 4.2%
+weekly|bop|H52|F0              n  1901  win  69.7% (rand 70.5%; I 70.6%, II 68.7%)  mean 18.2% median 12.7%  edge 0.1% (I -0.6%, II 1.0%)  vs SPY 5.6%
+weekly|ema_9_21|H52|F0         n  1478  win  70.0% (rand 70.3%; I 70.8%, II 69.1%)  mean 17.9% median 12.2%  edge 0.1% (I -2.4%, II 2.8%)  vs SPY 4.7%
+weekly|stc|H52|F1              n  1462  win  68.3% (rand 69.8%; I 72.2%, II 64.3%)  mean 15.8% median 11.3%  edge 0.1% (I 0.5%, II -0.2%)  vs SPY 3.9%
+weekly|hma|H52|F1              n  1971  win  70.7% (rand 69.5%; I 72.4%, II 68.9%)  mean 15.8% median 12.8%  edge 0.1% (I -0.3%, II 0.6%)  vs SPY 4.1%
+weekly|chandelier|H52|F1       n  1337  win  67.3% (rand 68.1%; I 69.4%, II 65.2%)  mean 15.5% median 11.3%  edge 0.1% (I -0.9%, II 1.0%)  vs SPY 2.8%
+weekly|donchian55|H52|F1       n  1459  win  70.8% (rand 70.8%; I 74.4%, II 66.7%)  mean 16.6% median 11.7%  edge 0.1% (I -0.7%, II 0.9%)  vs SPY 5.3%
+weekly|ac|H52|F1               n  1726  win  69.9% (rand 69.7%; I 73.1%, II 66.5%)  mean 15.8% median 12.3%  edge 0.0% (I -0.4%, II 0.5%)  vs SPY 4.1%
+weekly|adx_di|H52|F0           n  1222  win  70.6% (rand 70.5%; I 72.6%, II 68.6%)  mean 18.5% median 12.3%  edge 0.0% (I -1.2%, II 1.3%)  vs SPY 5.6%
+weekly|cmf|H52|F0              n  1748  win  70.1% (rand 70.5%; I 70.8%, II 69.3%)  mean 17.8% median 13.0%  edge -0.0% (I -2.1%, II 2.3%)  vs SPY 5.3%
+weekly|lsma|H52|F1             n  1795  win  69.9% (rand 69.7%; I 71.8%, II 67.6%)  mean 15.7% median 11.8%  edge -0.0% (I -0.6%, II 0.6%)  vs SPY 4.4%
+weekly|vortex|H52|F0           n  1890  win  70.0% (rand 70.5%; I 72.8%, II 67.0%)  mean 17.8% median 13.2%  edge -0.1% (I -0.5%, II 0.3%)  vs SPY 5.1%
+weekly|stochrsi|H52|F1         n  1143  win  67.7% (rand 70.0%; I 72.5%, II 62.2%)  mean 16.0% median 11.6%  edge -0.1% (I 0.1%, II -0.4%)  vs SPY 4.0%
+weekly|coppock|H52|F0          n  1714  win  68.4% (rand 70.1%; I 69.6%, II 67.2%)  mean 17.6% median 12.3%  edge -0.1% (I -1.1%, II 0.9%)  vs SPY 5.3%
+weekly|macd_signal|H52|F1      n  1498  win  68.2% (rand 69.8%; I 71.3%, II 65.0%)  mean 15.5% median 11.8%  edge -0.2% (I -0.4%, II 0.1%)  vs SPY 4.0%
+weekly|rvgi|H52|F1             n  1886  win  68.8% (rand 69.5%; I 73.3%, II 63.6%)  mean 15.6% median 11.7%  edge -0.2% (I -0.1%, II -0.4%)  vs SPY 4.0%
+weekly|alma|H52|F1             n  2059  win  69.5% (rand 69.2%; I 70.6%, II 68.4%)  mean 15.3% median 12.3%  edge -0.3% (I -1.4%, II 0.9%)  vs SPY 4.0%
+weekly|down3|H52|F0            n  1949  win  70.0% (rand 70.4%; I 69.6%, II 70.5%)  mean 17.7% median 12.6%  edge -0.3% (I -3.0%, II 2.7%)  vs SPY 6.3%
+weekly|efi|H52|F1              n  1773  win  69.1% (rand 69.1%; I 72.3%, II 65.7%)  mean 14.8% median 11.7%  edge -0.3% (I -0.4%, II -0.2%)  vs SPY 3.3%
+weekly|ao|H52|F0               n  1498  win  69.0% (rand 70.3%; I 71.6%, II 66.2%)  mean 17.4% median 12.5%  edge -0.4% (I -1.9%, II 1.0%)  vs SPY 4.6%
+weekly|heikin|H52|F1           n  1829  win  70.3% (rand 69.2%; I 73.5%, II 66.6%)  mean 15.0% median 12.1%  edge -0.5% (I -0.9%, II -0.1%)  vs SPY 3.5%
+weekly|tk_cross|H52|F0         n  1625  win  69.2% (rand 70.4%; I 70.4%, II 67.9%)  mean 17.4% median 11.8%  edge -0.6% (I -2.0%, II 0.9%)  vs SPY 5.1%
+weekly|willr|H52|F0            n  1821  win  67.6% (rand 70.2%; I 67.6%, II 67.6%)  mean 17.2% median 12.5%  edge -0.6% (I -2.7%, II 1.7%)  vs SPY 5.6%
+weekly|supertrend|H52|F0       n  1329  win  68.9% (rand 70.7%; I 69.6%, II 68.3%)  mean 17.7% median 11.8%  edge -0.6% (I -2.8%, II 1.7%)  vs SPY 5.0%
+weekly|squeeze|H52|F1          n  1148  win  70.2% (rand 69.9%; I 73.9%, II 65.6%)  mean 14.6% median 11.9%  edge -0.6% (I -0.5%, II -0.8%)  vs SPY 2.9%
+weekly|dpo|H52|F0              n  1641  win  67.9% (rand 70.2%; I 68.5%, II 67.3%)  mean 17.0% median 12.3%  edge -0.6% (I -1.7%, II 0.5%)  vs SPY 4.5%
+weekly|qqe|H52|F0              n  1830  win  68.4% (rand 70.8%; I 71.6%, II 65.0%)  mean 17.7% median 12.1%  edge -0.7% (I -0.2%, II -1.2%)  vs SPY 5.1%
+weekly|stc|H52|F0              n  1891  win  68.3% (rand 70.8%; I 70.3%, II 66.2%)  mean 17.4% median 12.1%  edge -0.9% (I -0.9%, II -0.8%)  vs SPY 5.4%
+weekly|tv_rating|H52|F1        n  1933  win  69.2% (rand 69.9%; I 71.4%, II 66.7%)  mean 14.9% median 10.9%  edge -0.9% (I -1.7%, II -0.1%)  vs SPY 4.0%
+weekly|price_ma|H52|F0         n  1642  win  68.5% (rand 70.2%; I 69.9%, II 67.1%)  mean 16.8% median 12.0%  edge -1.0% (I -2.0%, II 0.1%)  vs SPY 4.1%
+weekly|aroon|H52|F0            n  1828  win  69.1% (rand 70.6%; I 72.1%, II 65.9%)  mean 16.9% median 13.1%  edge -1.0% (I -0.1%, II -2.0%)  vs SPY 4.4%
+weekly|rsi2|H52|F0             n  1286  win  70.5% (rand 72.0%; I 74.5%, II 65.8%)  mean 17.8% median 12.3%  edge -1.0% (I -1.8%, II -0.2%)  vs SPY 6.0%
+weekly|ac|H52|F0               n  2128  win  67.6% (rand 70.8%; I 68.2%, II 66.9%)  mean 17.1% median 11.6%  edge -1.0% (I -2.5%, II 0.6%)  vs SPY 5.7%
+weekly|ssl|H52|F0              n  1951  win  68.2% (rand 70.6%; I 69.4%, II 67.0%)  mean 16.9% median 12.0%  edge -1.1% (I -1.8%, II -0.2%)  vs SPY 5.0%
+weekly|rsi_50|H52|F0           n  1884  win  68.2% (rand 70.3%; I 69.4%, II 66.8%)  mean 16.5% median 12.2%  edge -1.1% (I -1.7%, II -0.5%)  vs SPY 4.4%
+weekly|kst|H52|F0              n  1771  win  70.6% (rand 70.8%; I 72.6%, II 68.6%)  mean 17.1% median 12.8%  edge -1.2% (I -0.6%, II -1.8%)  vs SPY 4.7%
+weekly|rvi_vol|H52|F0          n  2120  win  67.8% (rand 70.6%; I 68.4%, II 67.0%)  mean 16.7% median 12.0%  edge -1.2% (I -3.1%, II 0.9%)  vs SPY 5.1%
+weekly|rs_spy|H52|F0           n  1373  win  69.6% (rand 71.2%; I 72.3%, II 66.5%)  mean 16.4% median 12.3%  edge -1.2% (I -1.1%, II -1.4%)  vs SPY 4.0%
+weekly|ibs|H52|F0              n  2332  win  68.2% (rand 70.7%; I 69.5%, II 66.8%)  mean 16.8% median 12.5%  edge -1.2% (I -3.2%, II 1.0%)  vs SPY 5.4%
+weekly|bb_break|H52|F0         n  1641  win  70.0% (rand 71.5%; I 73.5%, II 66.1%)  mean 17.5% median 12.1%  edge -1.4% (I -1.6%, II -1.1%)  vs SPY 5.6%
+weekly|ichimoku|H52|F0         n  1345  win  69.0% (rand 70.6%; I 67.3%, II 70.7%)  mean 16.3% median 12.2%  edge -1.4% (I -4.6%, II 2.0%)  vs SPY 3.5%
+weekly|momentum|H52|F0         n  2058  win  68.9% (rand 70.7%; I 69.4%, II 68.2%)  mean 16.5% median 12.2%  edge -1.4% (I -2.9%, II 0.2%)  vs SPY 5.0%
+weekly|alligator|H52|F0        n  1648  win  69.7% (rand 70.7%; I 70.3%, II 69.1%)  mean 16.3% median 12.2%  edge -1.5% (I -3.8%, II 1.1%)  vs SPY 4.4%
+weekly|smio|H52|F0             n  2177  win  68.1% (rand 70.7%; I 69.0%, II 67.1%)  mean 16.7% median 11.4%  edge -1.5% (I -3.1%, II 0.3%)  vs SPY 5.7%
+weekly|obv|H52|F0              n  2016  win  69.2% (rand 70.6%; I 69.7%, II 68.6%)  mean 16.5% median 12.0%  edge -1.5% (I -3.6%, II 0.7%)  vs SPY 5.1%
+weekly|pullback5|H52|F0        n  2282  win  68.6% (rand 70.7%; I 70.1%, II 66.8%)  mean 16.6% median 12.6%  edge -1.6% (I -2.7%, II -0.2%)  vs SPY 5.1%
+weekly|vixfix|H52|F0           n  1724  win  68.7% (rand 71.0%; I 71.0%, II 65.9%)  mean 16.3% median 11.5%  edge -1.7% (I -2.1%, II -1.1%)  vs SPY 4.3%
+weekly|double7|H52|F0          n  2165  win  68.7% (rand 70.7%; I 70.0%, II 67.1%)  mean 16.2% median 12.6%  edge -1.7% (I -3.6%, II 0.5%)  vs SPY 5.3%
+weekly|chandelier|H52|F0       n  1463  win  68.1% (rand 70.3%; I 69.1%, II 67.2%)  mean 16.3% median 12.3%  edge -1.7% (I -3.7%, II 0.2%)  vs SPY 2.9%
+weekly|macd_signal|H52|F0      n  1934  win  66.8% (rand 70.7%; I 68.4%, II 65.1%)  mean 16.4% median 11.3%  edge -1.7% (I -2.0%, II -1.4%)  vs SPY 4.8%
+weekly|hi52|H52|F0             n  1281  win  70.1% (rand 71.6%; I 72.7%, II 67.4%)  mean 16.7% median 11.7%  edge -1.8% (I -2.6%, II -0.9%)  vs SPY 5.0%
+weekly|alma|H52|F0             n  2386  win  68.4% (rand 70.7%; I 69.7%, II 66.9%)  mean 16.3% median 12.1%  edge -1.8% (I -3.7%, II 0.4%)  vs SPY 5.0%
+weekly|tsi|H52|F0              n  1855  win  68.4% (rand 70.8%; I 72.0%, II 64.6%)  mean 16.3% median 12.1%  edge -1.9% (I -1.0%, II -2.9%)  vs SPY 4.4%
+weekly|mcginley|H52|F0         n  1732  win  66.9% (rand 70.8%; I 68.4%, II 65.2%)  mean 14.2% median 11.1%  edge -2.0% (I -2.4%, II -1.5%)  vs SPY 2.8%
+weekly|pvt|H52|F0              n  1915  win  67.4% (rand 70.6%; I 68.0%, II 66.8%)  mean 15.7% median 11.4%  edge -2.0% (I -3.0%, II -0.8%)  vs SPY 4.0%
+weekly|fisher|H52|F0           n  1959  win  66.7% (rand 70.3%; I 67.2%, II 66.2%)  mean 15.7% median 11.5%  edge -2.1% (I -3.5%, II -0.5%)  vs SPY 4.8%
+weekly|bbp|H52|F0              n  2067  win  68.1% (rand 70.6%; I 69.7%, II 66.3%)  mean 15.7% median 11.9%  edge -2.1% (I -3.2%, II -0.9%)  vs SPY 3.9%
+weekly|ut_bot|H52|F0           n  2127  win  68.3% (rand 70.8%; I 68.1%, II 68.6%)  mean 16.1% median 11.7%  edge -2.1% (I -3.8%, II -0.3%)  vs SPY 4.9%
+weekly|kama|H52|F0             n  2075  win  68.0% (rand 70.6%; I 69.8%, II 66.2%)  mean 15.9% median 11.4%  edge -2.2% (I -2.8%, II -1.4%)  vs SPY 4.6%
+weekly|donchian20|H52|F0       n  1833  win  68.7% (rand 71.6%; I 72.0%, II 64.9%)  mean 16.6% median 11.4%  edge -2.2% (I -2.5%, II -1.8%)  vs SPY 4.9%
+weekly|macdh|H52|F0            n  2032  win  67.6% (rand 70.7%; I 68.8%, II 66.2%)  mean 15.7% median 11.3%  edge -2.2% (I -3.6%, II -0.6%)  vs SPY 4.8%
+weekly|efi|H52|F0              n  2087  win  68.0% (rand 70.7%; I 69.2%, II 66.7%)  mean 15.5% median 11.6%  edge -2.3% (I -3.1%, II -1.3%)  vs SPY 4.2%
+weekly|klinger|H52|F0          n  2234  win  67.8% (rand 70.8%; I 68.9%, II 66.5%)  mean 15.8% median 11.6%  edge -2.4% (I -3.8%, II -0.8%)  vs SPY 5.0%
+weekly|keltner_break|H52|F0    n  1448  win  70.2% (rand 72.0%; I 74.7%, II 65.2%)  mean 17.0% median 11.5%  edge -2.5% (I -2.9%, II -2.0%)  vs SPY 5.4%
+weekly|psar|H52|F0             n  2050  win  68.5% (rand 70.8%; I 69.7%, II 67.2%)  mean 15.5% median 11.0%  edge -2.6% (I -2.7%, II -2.5%)  vs SPY 4.4%
+weekly|lsma|H52|F0             n  2197  win  68.2% (rand 70.8%; I 68.9%, II 67.5%)  mean 15.4% median 10.9%  edge -2.6% (I -3.9%, II -1.1%)  vs SPY 4.4%
+weekly|donchian55|H52|F0       n  1459  win  70.8% (rand 72.8%; I 74.4%, II 66.7%)  mean 16.6% median 11.7%  edge -2.6% (I -3.3%, II -1.9%)  vs SPY 5.3%
+weekly|squeeze|H52|F0          n  1206  win  69.8% (rand 72.0%; I 73.7%, II 65.0%)  mean 15.1% median 12.0%  edge -2.8% (I -1.8%, II -4.0%)  vs SPY 3.2%
+weekly|hma|H52|F0              n  2301  win  68.1% (rand 70.7%; I 68.9%, II 67.2%)  mean 15.4% median 11.9%  edge -2.8% (I -3.8%, II -1.6%)  vs SPY 4.3%
+weekly|heikin|H52|F0           n  2217  win  67.9% (rand 70.7%; I 68.1%, II 67.8%)  mean 15.1% median 11.2%  edge -3.1% (I -5.1%, II -0.7%)  vs SPY 4.0%
+weekly|rvgi|H52|F0             n  2252  win  67.2% (rand 70.8%; I 69.3%, II 64.9%)  mean 15.0% median 10.9%  edge -3.2% (I -3.8%, II -2.4%)  vs SPY 4.1%
+weekly|impulse|H52|F0          n  2298  win  68.8% (rand 70.9%; I 69.7%, II 67.7%)  mean 15.0% median 11.7%  edge -3.2% (I -3.7%, II -2.6%)  vs SPY 3.9%
+weekly|tv_rating|H52|F0        n  1942  win  69.4% (rand 72.2%; I 71.3%, II 67.2%)  mean 15.1% median 10.9%  edge -3.4% (I -4.3%, II -2.5%)  vs SPY 4.1%
+weekly|rsi_30|H52|F1           n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|fisher|H52|F1           n  1437  win  69.3% (rand 69.4%; I 72.1%, II 66.2%)  mean 15.8% median 12.6%  edge 0.1% (I 0.3%, II -0.1%)  vs SPY 4.3%
+weekly|smi|H52|F1              n   408  win  67.4% (rand 68.1%; I 71.7%, II 63.3%)  mean 16.9% median 12.9%  edge -0.3% (I 0.9%, II -1.5%)  vs SPY 5.1%
+weekly|obv|H52|F1              n  1684  win  69.7% (rand 69.2%; I 73.0%, II 65.9%)  mean 15.0% median 12.0%  edge -0.5% (I -0.9%, II -0.1%)  vs SPY 3.4%
+weekly|uo|H52|F1               n    20  win  80.0% (rand 75.0%; I 69.2%, II 100.0%)  mean 20.9% median 28.0%  edge -1.2% (I -9.2%, II 13.8%)  vs SPY 5.9%
+weekly|wavetrend|H52|F1        n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|uo|T|F1                 n    20  win  60.0% (rand 43.2%; I 61.5%, II 57.1%)  mean 27.5% median 2.1%  edge 15.3% (I -3.1%, II 49.6%)  vs SPY 16.7%
+weekly|keltner_break|T|F0      n  1540  win  45.7% (rand 42.3%; I 52.5%, II 38.8%)  mean 8.6% median -1.6%  edge 5.1% (I 5.7%, II 4.5%)  vs SPY 1.6%
+weekly|trix|T|F0               n  1208  win  42.0% (rand 41.5%; I 47.3%, II 36.4%)  mean 7.8% median -2.7%  edge 4.9% (I 4.1%, II 5.8%)  vs SPY 1.1%
+weekly|ma_cross|T|F0           n  1924  win  38.8% (rand 41.4%; I 44.3%, II 33.5%)  mean 7.2% median -2.8%  edge 4.4% (I 4.5%, II 4.3%)  vs SPY 1.3%
+weekly|bb_break|T|F0           n  2057  win  41.8% (rand 42.1%; I 49.7%, II 33.7%)  mean 7.8% median -2.6%  edge 4.3% (I 5.2%, II 3.5%)  vs SPY 1.7%
+weekly|donchian20|T|F0         n  2256  win  41.8% (rand 42.2%; I 48.9%, II 34.5%)  mean 7.7% median -3.2%  edge 4.2% (I 4.8%, II 3.7%)  vs SPY 1.3%
+weekly|keltner_break|T|F1      n  1540  win  45.7% (rand 38.0%; I 52.5%, II 38.8%)  mean 8.6% median -1.6%  edge 4.1% (I 4.2%, II 4.1%)  vs SPY 1.6%
+weekly|macd_zero|T|F0          n  2196  win  36.1% (rand 41.3%; I 40.5%, II 32.1%)  mean 6.9% median -2.8%  edge 4.1% (I 3.9%, II 4.3%)  vs SPY 1.3%
+weekly|trix|T|F1               n  1168  win  42.1% (rand 37.0%; I 47.3%, II 36.7%)  mean 8.0% median -2.9%  edge 4.1% (I 2.7%, II 5.6%)  vs SPY 1.2%
+weekly|ma_cross|T|F1           n  1767  win  38.7% (rand 36.6%; I 44.3%, II 33.1%)  mean 7.6% median -3.1%  edge 4.0% (I 3.4%, II 4.6%)  vs SPY 1.4%
+weekly|supertrend|T|F0         n  1780  win  38.8% (rand 41.7%; I 46.4%, II 31.9%)  mean 7.0% median -3.3%  edge 3.9% (I 4.8%, II 3.2%)  vs SPY 1.2%
+weekly|hi52|T|F0               n  1630  win  43.9% (rand 41.9%; I 50.5%, II 37.5%)  mean 6.9% median -2.5%  edge 3.8% (I 5.3%, II 2.3%)  vs SPY 0.6%
+weekly|bb_break|T|F1           n  1993  win  41.9% (rand 37.7%; I 49.7%, II 34.1%)  mean 8.0% median -2.8%  edge 3.7% (I 4.1%, II 3.3%)  vs SPY 1.7%
+weekly|ema_20_50|T|F0          n  1181  win  39.1% (rand 41.5%; I 41.9%, II 36.3%)  mean 6.7% median -3.1%  edge 3.7% (I 2.4%, II 4.9%)  vs SPY 0.4%
+weekly|supertrend|T|F1         n  1664  win  39.8% (rand 37.1%; I 47.2%, II 32.9%)  mean 7.6% median -3.4%  edge 3.6% (I 3.9%, II 3.4%)  vs SPY 1.4%
+weekly|donchian55|T|F0         n  1570  win  43.9% (rand 42.5%; I 50.4%, II 37.6%)  mean 7.3% median -2.5%  edge 3.6% (I 4.6%, II 2.5%)  vs SPY 1.0%
+weekly|macd_zero|T|F1          n  2133  win  36.3% (rand 36.4%; I 40.7%, II 32.4%)  mean 7.1% median -2.9%  edge 3.5% (I 2.5%, II 4.3%)  vs SPY 1.3%
+weekly|donchian20|T|F1         n  2225  win  41.8% (rand 37.7%; I 49.3%, II 34.4%)  mean 7.8% median -3.3%  edge 3.4% (I 3.5%, II 3.4%)  vs SPY 1.3%
+weekly|mfi|T|F1                n    39  win  41.0% (rand 36.9%; I 43.5%, II 37.5%)  mean 5.8% median -2.5%  edge 3.2% (I 3.5%, II 2.7%)  vs SPY 0.4%
+weekly|ema_9_21|T|F0           n  2790  win  32.5% (rand 41.2%; I 36.8%, II 28.7%)  mean 5.7% median -2.8%  edge 3.0% (I 2.6%, II 3.4%)  vs SPY 1.1%
+weekly|alligator|T|F1          n  2400  win  38.9% (rand 37.0%; I 44.3%, II 33.6%)  mean 6.6% median -2.8%  edge 3.0% (I 2.5%, II 3.4%)  vs SPY 0.7%
+weekly|hi52|T|F1               n  1630  win  43.9% (rand 37.5%; I 50.5%, II 37.5%)  mean 6.9% median -2.5%  edge 2.9% (I 3.9%, II 2.0%)  vs SPY 0.6%
+weekly|ema_20_50|T|F1          n  1126  win  39.6% (rand 36.6%; I 42.9%, II 36.4%)  mean 7.0% median -3.3%  edge 2.9% (I 1.0%, II 4.8%)  vs SPY 0.5%
+weekly|ao|T|F0                 n  2711  win  34.0% (rand 41.4%; I 39.3%, II 29.3%)  mean 5.6% median -2.9%  edge 2.8% (I 2.5%, II 3.0%)  vs SPY 1.1%
+weekly|donchian55|T|F1         n  1570  win  43.9% (rand 38.4%; I 50.4%, II 37.6%)  mean 7.3% median -2.5%  edge 2.6% (I 3.1%, II 2.2%)  vs SPY 1.0%
+weekly|psar|T|F1               n  2564  win  37.3% (rand 37.1%; I 41.9%, II 33.0%)  mean 6.6% median -2.5%  edge 2.6% (I 1.3%, II 3.8%)  vs SPY 1.6%
+weekly|tsmom|T|F1              n  1583  win  37.4% (rand 35.8%; I 42.8%, II 32.4%)  mean 5.9% median -2.5%  edge 2.5% (I 1.5%, II 3.5%)  vs SPY 0.4%
+weekly|ema_9_21|T|F1           n  2544  win  32.9% (rand 36.1%; I 37.4%, II 28.9%)  mean 5.8% median -3.0%  edge 2.5% (I 1.4%, II 3.5%)  vs SPY 1.1%
+weekly|eom|T|F1                n  2631  win  35.0% (rand 36.6%; I 39.6%, II 31.1%)  mean 6.1% median -2.6%  edge 2.5% (I 1.4%, II 3.4%)  vs SPY 1.6%
+weekly|alligator|T|F0          n  3033  win  39.8% (rand 41.4%; I 44.1%, II 35.9%)  mean 5.3% median -1.8%  edge 2.5% (I 2.5%, II 2.4%)  vs SPY 0.6%
+weekly|ssl|T|F1                n  2605  win  36.4% (rand 36.9%; I 42.1%, II 31.3%)  mean 6.1% median -2.4%  edge 2.3% (I 1.7%, II 2.9%)  vs SPY 1.3%
+weekly|smio|T|F1               n  2830  win  36.9% (rand 36.8%; I 42.5%, II 31.6%)  mean 6.0% median -2.4%  edge 2.3% (I 1.7%, II 2.9%)  vs SPY 1.1%
+weekly|tk_cross|T|F1           n  2053  win  35.6% (rand 36.9%; I 41.0%, II 30.7%)  mean 5.9% median -3.2%  edge 2.2% (I 1.7%, II 2.7%)  vs SPY 0.7%
+weekly|vortex|T|F1             n  2685  win  35.2% (rand 36.8%; I 39.5%, II 31.4%)  mean 6.0% median -2.7%  edge 2.2% (I 1.5%, II 2.8%)  vs SPY 1.4%
+weekly|chandelier|T|F0         n  2367  win  36.3% (rand 41.5%; I 42.1%, II 31.7%)  mean 5.1% median -3.1%  edge 2.2% (I 3.1%, II 1.4%)  vs SPY 0.6%
+weekly|rs_spy|T|F1             n  1690  win  38.2% (rand 37.1%; I 45.4%, II 30.9%)  mean 5.7% median -2.7%  edge 2.2% (I 2.8%, II 1.5%)  vs SPY 0.5%
+weekly|chandelier|T|F1         n  1970  win  35.9% (rand 36.7%; I 42.7%, II 30.1%)  mean 6.0% median -3.6%  edge 2.1% (I 2.2%, II 2.1%)  vs SPY 0.9%
+weekly|ibs|T|F1                n  2765  win  36.2% (rand 37.1%; I 41.9%, II 31.0%)  mean 6.1% median -2.6%  edge 2.1% (I 2.2%, II 2.1%)  vs SPY 1.0%
+weekly|hma|T|F1                n  3248  win  35.7% (rand 36.9%; I 40.2%, II 31.4%)  mean 5.8% median -2.6%  edge 2.1% (I 1.5%, II 2.6%)  vs SPY 0.9%
+weekly|chosc|T|F1              n  2461  win  35.2% (rand 37.0%; I 37.9%, II 32.7%)  mean 6.0% median -2.6%  edge 2.1% (I 0.5%, II 3.5%)  vs SPY 1.1%
+weekly|aroon|T|F1              n  2328  win  36.3% (rand 37.2%; I 39.5%, II 33.3%)  mean 6.0% median -3.0%  edge 2.0% (I 1.2%, II 2.9%)  vs SPY 1.0%
+weekly|ac|T|F1                 n  2612  win  36.6% (rand 37.1%; I 43.1%, II 30.9%)  mean 5.9% median -2.4%  edge 2.0% (I 1.8%, II 2.1%)  vs SPY 0.9%
+weekly|pullback5|T|F1          n  2402  win  37.4% (rand 37.3%; I 43.1%, II 31.9%)  mean 6.0% median -2.6%  edge 2.0% (I 2.2%, II 1.8%)  vs SPY 0.9%
+weekly|rvgi|T|F1               n  2877  win  36.4% (rand 36.9%; I 42.0%, II 30.9%)  mean 5.8% median -2.7%  edge 2.0% (I 1.4%, II 2.6%)  vs SPY 0.9%
+weekly|lsma|T|F1               n  2868  win  36.5% (rand 37.1%; I 41.3%, II 31.9%)  mean 5.7% median -2.5%  edge 2.0% (I 1.4%, II 2.5%)  vs SPY 1.0%
+weekly|cmf|T|F1                n  2092  win  34.8% (rand 37.1%; I 37.6%, II 32.2%)  mean 5.5% median -2.7%  edge 2.0% (I 0.4%, II 3.5%)  vs SPY 0.7%
+weekly|rsi2|T|F0               n  1516  win  36.4% (rand 42.5%; I 39.7%, II 33.0%)  mean 5.5% median -2.2%  edge 1.9% (I 1.6%, II 2.3%)  vs SPY 1.1%
+weekly|tk_cross|T|F0           n  2754  win  36.6% (rand 41.6%; I 40.2%, II 33.2%)  mean 4.8% median -2.2%  edge 1.9% (I 2.1%, II 1.7%)  vs SPY 0.7%
+weekly|momentum|T|F1           n  2981  win  35.0% (rand 36.7%; I 39.9%, II 30.6%)  mean 5.5% median -2.5%  edge 1.9% (I 1.0%, II 2.7%)  vs SPY 1.0%
+weekly|down3|T|F1              n  1670  win  38.7% (rand 38.1%; I 41.4%, II 35.9%)  mean 6.5% median -2.2%  edge 1.8% (I 1.3%, II 2.4%)  vs SPY 1.4%
+weekly|klinger|T|F1            n  3053  win  35.3% (rand 36.7%; I 39.9%, II 31.2%)  mean 5.4% median -2.6%  edge 1.8% (I 1.2%, II 2.3%)  vs SPY 0.8%
+weekly|ichimoku|T|F1           n  2226  win  32.5% (rand 35.9%; I 37.9%, II 27.6%)  mean 5.0% median -2.9%  edge 1.8% (I 0.5%, II 3.0%)  vs SPY 0.3%
+weekly|adl|T|F1                n  2472  win  34.0% (rand 37.2%; I 36.8%, II 31.4%)  mean 5.8% median -2.5%  edge 1.7% (I 0.5%, II 2.8%)  vs SPY 1.0%
+weekly|ao|T|F1                 n  2296  win  33.8% (rand 36.4%; I 39.7%, II 28.8%)  mean 5.2% median -3.3%  edge 1.7% (I 1.9%, II 1.5%)  vs SPY 0.3%
+weekly|heikin|T|F1             n  3038  win  35.1% (rand 36.9%; I 39.7%, II 30.6%)  mean 5.3% median -2.7%  edge 1.6% (I 1.0%, II 2.2%)  vs SPY 0.9%
+weekly|tsi|T|F1                n  2187  win  34.5% (rand 37.3%; I 38.6%, II 30.7%)  mean 5.6% median -2.7%  edge 1.6% (I 0.9%, II 2.2%)  vs SPY 0.9%
+weekly|obv|T|F1                n  2835  win  32.9% (rand 36.9%; I 36.7%, II 29.3%)  mean 5.3% median -2.7%  edge 1.6% (I 0.6%, II 2.5%)  vs SPY 1.0%
+weekly|price_ma|T|F0           n  5269  win  28.3% (rand 41.2%; I 32.1%, II 24.9%)  mean 4.2% median -2.5%  edge 1.6% (I 1.1%, II 2.0%)  vs SPY 0.6%
+weekly|tv_rating|T|F0          n  3430  win  32.2% (rand 41.7%; I 36.1%, II 28.8%)  mean 4.6% median -2.9%  edge 1.5% (I 1.3%, II 1.7%)  vs SPY 0.5%
+weekly|kst|T|F1                n  1922  win  36.1% (rand 37.5%; I 41.5%, II 31.1%)  mean 5.7% median -3.1%  edge 1.5% (I 1.0%, II 2.0%)  vs SPY 0.8%
+weekly|impulse|T|F1            n  3775  win  33.2% (rand 36.7%; I 37.9%, II 28.9%)  mean 5.2% median -2.7%  edge 1.5% (I 0.7%, II 2.3%)  vs SPY 0.8%
+weekly|bbp|T|F1                n  3196  win  33.8% (rand 36.6%; I 38.0%, II 29.9%)  mean 5.0% median -2.5%  edge 1.5% (I 0.5%, II 2.4%)  vs SPY 0.8%
+weekly|ut_bot|T|F1             n  2969  win  35.1% (rand 36.8%; I 40.2%, II 30.4%)  mean 5.2% median -2.7%  edge 1.5% (I 1.2%, II 1.8%)  vs SPY 0.8%
+weekly|qqe|T|F1                n  2041  win  35.0% (rand 37.5%; I 40.3%, II 30.2%)  mean 5.6% median -2.9%  edge 1.4% (I 1.5%, II 1.4%)  vs SPY 1.0%
+weekly|ichimoku|T|F0           n  3063  win  34.8% (rand 41.0%; I 38.4%, II 31.5%)  mean 4.0% median -2.0%  edge 1.4% (I 0.6%, II 2.2%)  vs SPY 0.1%
+weekly|macd_signal|T|F1        n  2306  win  35.0% (rand 37.2%; I 39.5%, II 30.9%)  mean 5.3% median -2.8%  edge 1.4% (I 0.8%, II 1.9%)  vs SPY 0.7%
+weekly|adx_di|T|F1             n  1239  win  36.6% (rand 38.4%; I 39.9%, II 33.6%)  mean 6.0% median -3.0%  edge 1.4% (I -0.7%, II 3.2%)  vs SPY 1.1%
+weekly|alma|T|F1               n  3778  win  32.7% (rand 36.7%; I 36.9%, II 28.7%)  mean 5.0% median -2.7%  edge 1.4% (I 0.6%, II 2.0%)  vs SPY 0.8%
+weekly|stc|T|F1                n  2188  win  36.1% (rand 37.6%; I 40.2%, II 32.3%)  mean 5.4% median -2.6%  edge 1.3% (I 0.3%, II 2.2%)  vs SPY 0.9%
+weekly|kama|T|F1               n  3544  win  32.4% (rand 36.4%; I 37.5%, II 28.0%)  mean 4.8% median -2.6%  edge 1.3% (I 0.6%, II 1.9%)  vs SPY 0.8%
+weekly|rvi_vol|T|F1            n  3065  win  32.9% (rand 37.0%; I 36.1%, II 29.8%)  mean 5.1% median -2.6%  edge 1.3% (I 0.3%, II 2.2%)  vs SPY 0.8%
+weekly|double7|T|F1            n  2062  win  37.5% (rand 37.5%; I 42.0%, II 32.9%)  mean 5.4% median -2.6%  edge 1.3% (I 0.9%, II 1.6%)  vs SPY 0.6%
+weekly|squeeze|T|F0            n  1537  win  38.0% (rand 42.5%; I 45.6%, II 29.5%)  mean 4.8% median -3.3%  edge 1.3% (I 2.3%, II 0.1%)  vs SPY 0.0%
+weekly|rs_spy|T|F0             n  2682  win  41.1% (rand 41.7%; I 44.2%, II 37.8%)  mean 4.0% median -1.4%  edge 1.1% (I 1.0%, II 1.2%)  vs SPY 0.2%
+weekly|aroon|T|F0              n  3600  win  38.8% (rand 41.6%; I 39.4%, II 38.3%)  mean 4.2% median -1.8%  edge 1.1% (I -0.0%, II 2.1%)  vs SPY 0.8%
+weekly|bop|T|F1                n  2585  win  35.0% (rand 37.2%; I 37.4%, II 32.5%)  mean 5.1% median -2.5%  edge 1.0% (I -0.3%, II 2.4%)  vs SPY 1.0%
+weekly|rsi_50|T|F1             n  3760  win  30.8% (rand 36.3%; I 34.5%, II 27.5%)  mean 4.4% median -2.6%  edge 1.0% (I -0.2%, II 2.1%)  vs SPY 0.7%
+weekly|rsi2|T|F1               n  1516  win  36.4% (rand 38.3%; I 39.7%, II 33.0%)  mean 5.5% median -2.2%  edge 1.0% (I -0.0%, II 2.0%)  vs SPY 1.1%
+weekly|fisher|T|F1             n  2265  win  34.7% (rand 37.2%; I 39.6%, II 30.2%)  mean 4.8% median -2.5%  edge 0.9% (I 0.1%, II 1.7%)  vs SPY 1.0%
+weekly|tv_rating|T|F1          n  3287  win  32.3% (rand 37.0%; I 36.4%, II 28.6%)  mean 4.7% median -3.1%  edge 0.9% (I 0.0%, II 1.8%)  vs SPY 0.4%
+weekly|tsmom|T|F0              n  2957  win  42.1% (rand 40.9%; I 45.4%, II 39.2%)  mean 3.5% median -1.0%  edge 0.9% (I 0.0%, II 1.7%)  vs SPY -0.0%
+weekly|efi|T|F1                n  3273  win  33.2% (rand 36.7%; I 37.9%, II 28.9%)  mean 4.6% median -2.7%  edge 0.9% (I 0.6%, II 1.2%)  vs SPY 0.5%
+weekly|psar|T|F0               n  4356  win  40.0% (rand 41.7%; I 41.9%, II 38.2%)  mean 4.0% median -1.3%  edge 0.9% (I -0.1%, II 1.8%)  vs SPY 0.8%
+weekly|pvt|T|F1                n  2870  win  33.4% (rand 36.6%; I 37.8%, II 29.5%)  mean 4.4% median -2.7%  edge 0.9% (I 0.4%, II 1.3%)  vs SPY 0.4%
+weekly|ssl|T|F0                n  4477  win  39.5% (rand 41.5%; I 43.6%, II 35.5%)  mean 3.8% median -1.2%  edge 0.8% (I 0.3%, II 1.4%)  vs SPY 0.6%
+weekly|price_ma|T|F1           n  5269  win  28.3% (rand 36.2%; I 32.1%, II 24.9%)  mean 4.2% median -2.5%  edge 0.8% (I -0.4%, II 1.9%)  vs SPY 0.6%
+weekly|dpo|T|F0                n  4260  win  29.8% (rand 41.3%; I 34.3%, II 25.7%)  mean 3.5% median -2.6%  edge 0.8% (I 0.8%, II 0.8%)  vs SPY 0.1%
+weekly|vortex|T|F0             n  4678  win  38.8% (rand 41.5%; I 40.9%, II 36.7%)  mean 3.6% median -1.5%  edge 0.6% (I -0.1%, II 1.3%)  vs SPY 0.8%
+weekly|qqe|T|F0                n  3362  win  39.1% (rand 41.8%; I 41.2%, II 37.1%)  mean 3.7% median -1.4%  edge 0.5% (I 0.2%, II 0.8%)  vs SPY 0.5%
+weekly|adx_di|T|F0             n  1743  win  37.5% (rand 42.4%; I 41.1%, II 34.2%)  mean 4.0% median -2.2%  edge 0.5% (I -0.9%, II 1.7%)  vs SPY 0.4%
+weekly|rsi_50|T|F0             n  6004  win  32.5% (rand 41.4%; I 35.5%, II 29.8%)  mean 3.1% median -1.8%  edge 0.4% (I -0.4%, II 1.2%)  vs SPY 0.4%
+weekly|tsi|T|F0                n  3600  win  38.6% (rand 41.8%; I 41.6%, II 35.7%)  mean 3.5% median -1.5%  edge 0.4% (I -0.2%, II 0.9%)  vs SPY 0.4%
+weekly|eom|T|F0                n  4631  win  38.6% (rand 41.6%; I 41.0%, II 36.2%)  mean 3.4% median -1.6%  edge 0.4% (I -0.4%, II 1.2%)  vs SPY 0.7%
+weekly|kst|T|F0                n  3104  win  39.9% (rand 41.8%; I 42.6%, II 37.2%)  mean 3.6% median -1.6%  edge 0.4% (I -0.0%, II 0.7%)  vs SPY 0.4%
+weekly|macd_signal|T|F0        n  4009  win  39.8% (rand 41.7%; I 42.4%, II 37.4%)  mean 3.4% median -1.3%  edge 0.3% (I -0.3%, II 0.8%)  vs SPY 0.4%
+weekly|stc|T|F0                n  3786  win  39.9% (rand 41.8%; I 43.0%, II 37.0%)  mean 3.4% median -1.3%  edge 0.2% (I -0.7%, II 1.1%)  vs SPY 0.3%
+weekly|momentum|T|F0           n  6007  win  40.2% (rand 41.4%; I 42.7%, II 37.9%)  mean 3.1% median -1.1%  edge 0.2% (I -0.4%, II 0.8%)  vs SPY 0.3%
+weekly|ac|T|F0                 n  5319  win  42.8% (rand 41.6%; I 47.4%, II 38.5%)  mean 3.2% median -0.9%  edge 0.2% (I -0.1%, II 0.4%)  vs SPY 0.2%
+weekly|cmf|T|F0                n  4716  win  41.8% (rand 41.6%; I 43.0%, II 40.5%)  mean 3.0% median -1.0%  edge 0.2% (I -1.1%, II 1.4%)  vs SPY 0.4%
+weekly|smio|T|F0               n  6200  win  42.9% (rand 41.5%; I 45.2%, II 40.7%)  mean 3.0% median -0.9%  edge 0.1% (I -0.5%, II 0.6%)  vs SPY 0.3%
+weekly|chosc|T|F0              n  5285  win  42.1% (rand 41.6%; I 43.6%, II 40.7%)  mean 3.1% median -0.9%  edge 0.1% (I -0.9%, II 1.0%)  vs SPY 0.3%
+weekly|impulse|T|F0            n  7344  win  38.7% (rand 41.4%; I 41.8%, II 35.8%)  mean 3.0% median -1.3%  edge 0.0% (I -0.7%, II 0.7%)  vs SPY 0.4%
+weekly|bbp|T|F0                n  6134  win  38.5% (rand 41.4%; I 40.9%, II 36.2%)  mean 2.9% median -1.3%  edge 0.0% (I -0.7%, II 0.7%)  vs SPY 0.3%
+weekly|lsma|T|F0               n  6664  win  42.9% (rand 41.5%; I 44.6%, II 41.3%)  mean 2.8% median -0.8%  edge -0.1% (I -0.8%, II 0.7%)  vs SPY 0.3%
+weekly|kama|T|F0               n  6285  win  36.4% (rand 41.5%; I 39.8%, II 33.1%)  mean 2.8% median -1.6%  edge -0.1% (I -0.6%, II 0.4%)  vs SPY 0.2%
+weekly|efi|T|F0                n  6108  win  37.9% (rand 41.4%; I 42.4%, II 33.7%)  mean 2.7% median -1.5%  edge -0.2% (I -0.4%, II 0.0%)  vs SPY 0.1%
+weekly|ut_bot|T|F0             n  5947  win  40.4% (rand 41.5%; I 42.2%, II 38.8%)  mean 2.8% median -1.2%  edge -0.2% (I -0.8%, II 0.3%)  vs SPY 0.1%
+weekly|bop|T|F0                n  5465  win  40.6% (rand 41.5%; I 42.1%, II 39.3%)  mean 2.7% median -1.0%  edge -0.2% (I -0.9%, II 0.4%)  vs SPY 0.4%
+weekly|rvgi|T|F0               n  6762  win  44.2% (rand 41.5%; I 46.2%, II 42.3%)  mean 2.9% median -0.7%  edge -0.2% (I -1.0%, II 0.5%)  vs SPY 0.1%
+weekly|obv|T|F0                n  6140  win  39.5% (rand 41.5%; I 41.9%, II 37.3%)  mean 2.7% median -1.2%  edge -0.3% (I -1.0%, II 0.3%)  vs SPY 0.2%
+weekly|adl|T|F0                n  5756  win  41.0% (rand 41.7%; I 41.9%, II 40.1%)  mean 2.7% median -1.0%  edge -0.3% (I -1.3%, II 0.5%)  vs SPY 0.2%
+weekly|pvt|T|F0                n  5113  win  37.2% (rand 41.4%; I 41.1%, II 33.6%)  mean 2.6% median -1.6%  edge -0.4% (I -0.7%, II -0.1%)  vs SPY -0.0%
+weekly|hma|T|F0                n  7808  win  43.3% (rand 41.5%; I 43.2%, II 43.3%)  mean 2.7% median -0.8%  edge -0.4% (I -1.3%, II 0.5%)  vs SPY 0.3%
+weekly|rvi_vol|T|F0            n  7665  win  40.9% (rand 41.5%; I 41.3%, II 40.5%)  mean 2.4% median -1.0%  edge -0.6% (I -1.5%, II 0.3%)  vs SPY 0.2%
+weekly|coppock|T|F0            n  4816  win  45.2% (rand 41.4%; I 45.3%, II 45.2%)  mean 2.3% median -0.5%  edge -0.6% (I -1.8%, II 0.5%)  vs SPY 0.2%
+weekly|heikin|T|F0             n  7815  win  43.6% (rand 41.5%; I 42.8%, II 44.4%)  mean 2.4% median -0.8%  edge -0.6% (I -1.7%, II 0.4%)  vs SPY 0.1%
+weekly|klinger|T|F0            n  7802  win  43.3% (rand 41.5%; I 44.5%, II 42.1%)  mean 2.3% median -0.8%  edge -0.7% (I -1.5%, II 0.1%)  vs SPY 0.0%
+weekly|mcginley|T|F0           n  6615  win  40.1% (rand 41.3%; I 42.9%, II 37.5%)  mean 1.6% median -1.0%  edge -0.7% (I -1.4%, II -0.1%)  vs SPY -0.3%
+weekly|vixfix|T|F0             n  3160  win  48.0% (rand 42.1%; I 48.8%, II 47.1%)  mean 2.4% median -0.3%  edge -0.9% (I -1.4%, II -0.5%)  vs SPY 0.5%
+weekly|down3|T|F0              n  5302  win  48.1% (rand 41.7%; I 46.5%, II 49.7%)  mean 2.3% median -0.2%  edge -0.9% (I -1.6%, II -0.4%)  vs SPY 0.1%
+weekly|fisher|T|F0             n  6260  win  43.4% (rand 41.6%; I 44.6%, II 42.3%)  mean 2.1% median -0.8%  edge -1.0% (I -2.1%, II -0.0%)  vs SPY 0.0%
+weekly|alma|T|F0               n 10711  win  42.1% (rand 41.5%; I 42.6%, II 41.5%)  mean 1.9% median -0.8%  edge -1.0% (I -1.8%, II -0.3%)  vs SPY 0.1%
+weekly|pullback5|T|F0          n  9184  win  47.3% (rand 41.6%; I 47.2%, II 47.4%)  mean 1.9% median -0.3%  edge -1.3% (I -2.0%, II -0.6%)  vs SPY 0.2%
+weekly|double7|T|F0            n  8204  win  48.1% (rand 41.7%; I 47.8%, II 48.3%)  mean 1.9% median -0.2%  edge -1.3% (I -2.1%, II -0.5%)  vs SPY 0.3%
+weekly|ibs|T|F0                n 10438  win  46.2% (rand 41.6%; I 48.0%, II 44.6%)  mean 1.8% median -0.4%  edge -1.3% (I -2.0%, II -0.6%)  vs SPY 0.1%
+weekly|macdh|T|F0              n  7196  win  43.7% (rand 41.6%; I 44.5%, II 43.0%)  mean 1.6% median -0.6%  edge -1.4% (I -2.5%, II -0.4%)  vs SPY -0.2%
+weekly|stochrsi|T|F0           n  4429  win  45.4% (rand 41.9%; I 43.7%, II 47.1%)  mean 1.9% median -0.6%  edge -1.4% (I -2.7%, II -0.2%)  vs SPY -0.2%
+weekly|cci|T|F0                n  4973  win  45.5% (rand 41.5%; I 45.1%, II 45.9%)  mean 1.6% median -0.4%  edge -1.4% (I -3.1%, II 0.0%)  vs SPY -0.0%
+weekly|willr|T|F0              n  6852  win  43.9% (rand 41.6%; I 43.5%, II 44.3%)  mean 1.1% median -0.6%  edge -1.8% (I -3.0%, II -0.8%)  vs SPY -0.3%
+weekly|envelope|T|F0           n  3095  win  48.3% (rand 41.6%; I 46.5%, II 49.8%)  mean 1.5% median -0.2%  edge -2.0% (I -4.0%, II -0.4%)  vs SPY 0.3%
+weekly|cmo|T|F0                n  3617  win  45.1% (rand 41.7%; I 42.9%, II 47.3%)  mean 0.9% median -0.5%  edge -2.3% (I -3.7%, II -0.8%)  vs SPY -0.4%
+weekly|smi|T|F0                n  3087  win  46.9% (rand 41.6%; I 46.0%, II 47.8%)  mean 0.9% median -0.3%  edge -2.4% (I -3.7%, II -1.2%)  vs SPY -0.4%
+weekly|stoch|T|F0              n  2817  win  49.7% (rand 41.5%; I 46.2%, II 52.6%)  mean 0.8% median -0.1%  edge -2.7% (I -4.2%, II -1.4%)  vs SPY -0.2%
+weekly|bb_revert|T|F0          n  2908  win  47.0% (rand 41.7%; I 46.3%, II 47.6%)  mean 0.2% median -0.3%  edge -2.7% (I -4.0%, II -1.5%)  vs SPY -1.0%
+weekly|crsi|T|F0               n  1880  win  44.3% (rand 41.7%; I 41.0%, II 46.8%)  mean 0.3% median -0.6%  edge -2.9% (I -4.3%, II -1.8%)  vs SPY -1.2%
+weekly|mfi|T|F0                n   592  win  49.0% (rand 41.5%; I 46.2%, II 52.8%)  mean 0.3% median -0.1%  edge -3.1% (I -3.5%, II -2.5%)  vs SPY -0.8%
+weekly|uo|T|F0                 n   486  win  51.6% (rand 41.8%; I 45.4%, II 56.7%)  mean 1.2% median 0.2%  edge -3.6% (I -4.4%, II -3.0%)  vs SPY -0.2%
+weekly|wavetrend|T|F0          n   625  win  50.7% (rand 42.7%; I 46.9%, II 55.8%)  mean -0.4% median 0.1%  edge -4.5% (I -5.3%, II -3.4%)  vs SPY -0.8%
+weekly|rsi_30|T|F0             n   902  win  46.7% (rand 42.7%; I 44.1%, II 49.6%)  mean -0.7% median -0.3%  edge -4.7% (I -4.8%, II -4.7%)  vs SPY -1.7%
+weekly|rsi_30|T|F1             n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|coppock|T|F1            n  1606  win  34.0% (rand 37.2%; I 36.0%, II 32.1%)  mean 4.6% median -2.4%  edge 0.7% (I -0.5%, II 1.9%)  vs SPY 0.6%
+weekly|squeeze|T|F1            n  1430  win  38.1% (rand 38.3%; I 45.8%, II 29.7%)  mean 5.1% median -3.7%  edge 0.7% (I 1.3%, II 0.1%)  vs SPY 0.1%
+weekly|smi|T|F1                n   486  win  33.7% (rand 36.9%; I 32.1%, II 35.1%)  mean 5.0% median -2.4%  edge 0.7% (I -2.4%, II 3.4%)  vs SPY 1.7%
+weekly|dpo|T|F1                n  3430  win  29.1% (rand 36.2%; I 32.6%, II 26.1%)  mean 3.9% median -2.9%  edge 0.6% (I -0.2%, II 1.4%)  vs SPY 0.2%
+weekly|mcginley|T|F1           n  2633  win  31.4% (rand 36.4%; I 36.1%, II 27.0%)  mean 3.2% median -2.4%  edge 0.6% (I 0.2%, II 1.0%)  vs SPY -0.1%
+weekly|envelope|T|F1           n   263  win  29.7% (rand 36.1%; I 24.4%, II 32.4%)  mean 8.4% median -3.3%  edge 0.4% (I -3.4%, II 2.4%)  vs SPY 4.4%
+weekly|cci|T|F1                n  1153  win  33.4% (rand 37.3%; I 35.6%, II 31.5%)  mean 4.3% median -2.2%  edge 0.4% (I -1.5%, II 2.0%)  vs SPY 0.8%
+weekly|macdh|T|F1              n  2331  win  34.2% (rand 37.7%; I 38.0%, II 30.5%)  mean 4.4% median -2.4%  edge 0.2% (I -0.7%, II 1.1%)  vs SPY 0.7%
+weekly|willr|T|F1              n  1670  win  34.0% (rand 37.5%; I 38.0%, II 30.3%)  mean 4.2% median -2.4%  edge 0.1% (I -1.2%, II 1.3%)  vs SPY 0.7%
+weekly|stochrsi|T|F1           n  1499  win  34.6% (rand 38.5%; I 38.9%, II 30.2%)  mean 4.4% median -2.6%  edge -0.2% (I -1.7%, II 1.4%)  vs SPY 0.7%
+weekly|cmo|T|F1                n   700  win  31.7% (rand 38.7%; I 35.0%, II 28.0%)  mean 4.0% median -2.8%  edge -0.4% (I -2.8%, II 2.2%)  vs SPY 0.7%
+weekly|stoch|T|F1              n   228  win  30.3% (rand 36.9%; I 34.8%, II 27.2%)  mean 3.6% median -2.7%  edge -1.0% (I -4.0%, II 1.1%)  vs SPY 0.8%
+weekly|wavetrend|T|F1          n     0  win      — (rand —; I —, II —)  mean — median —  edge — (I —, II —)  vs SPY —
+weekly|vixfix|T|F1             n  1247  win  39.0% (rand 39.2%; I 42.2%, II 35.5%)  mean 4.9% median -2.2%  edge -0.1% (I -0.3%, II 0.2%)  vs SPY 0.7%
+weekly|qqe|H26|F1              n  2077  win  64.4% (rand 65.5%; I 68.2%, II 60.8%)  mean 6.8% median 5.3%  edge -0.8% (I -0.0%, II -1.6%)  vs SPY 2.0%
+weekly|vixfix|H52|F1           n  1132  win  70.1% (rand 70.7%; I 76.2%, II 62.4%)  mean 15.5% median 11.2%  edge -0.9% (I 0.7%, II -2.8%)  vs SPY 3.8%
+weekly|kst|H26|F1              n  2007  win  63.5% (rand 65.5%; I 68.3%, II 59.2%)  mean 6.2% median 5.1%  edge -1.4% (I -0.7%, II -2.1%)  vs SPY 1.2%
+weekly|bb_revert|H52|F1        n   220  win  74.1% (rand 69.4%; I 69.0%, II 78.3%)  mean 15.7% median 12.8%  edge -1.5% (I -3.5%, II 0.1%)  vs SPY 1.6%
+weekly|bb_revert|T|F1          n   255  win  31.0% (rand 37.6%; I 38.6%, II 24.8%)  mean 2.3% median -2.3%  edge -2.2% (I -5.1%, II 0.2%)  vs SPY -0.9%
+weekly|crsi|H52|F1             n   319  win  70.5% (rand 71.1%; I 78.6%, II 63.8%)  mean 13.8% median 11.4%  edge -3.2% (I -1.5%, II -4.7%)  vs SPY 2.3%
+weekly|crsi|T|F1               n   354  win  31.6% (rand 39.0%; I 35.3%, II 28.8%)  mean 2.0% median -2.7%  edge -3.3% (I -4.6%, II -2.3%)  vs SPY -1.2%

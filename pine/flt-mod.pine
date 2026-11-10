@@ -1,0 +1,218 @@
+//@version=5
+// FLT + MOD — study 6 (PROTOCOL-study6.md). Two open indicators in one script, so it fits
+// a free TradingView plan:
+//   FLT (Four-Line Trend)            — four EMA lines, shaded clouds, Open/Close Long,
+//                                       Cross Up, breakouts and breakout clusters
+//   MOD (Multi-Oscillator Divergence) — regular divergence on RSI, MACD, OBV and MFI;
+//                                       a signal needs 2 of the 4
+// They are built from the PUBLIC description of TBO and TBT Divergence (The Better
+// Traders). They are NOT those products: their code is closed and was never seen here.
+//
+// Works on any timeframe (every rule counts bars, not days). The backtest was run on the
+// DAILY chart only; results on other timeframes are untested.
+// The signal rules are exactly the ones the backtest (engine/study6.js) uses, so the
+// lengths have no inputs on purpose. Only colours and display options can be changed.
+//
+// Study 6 result (reports/study6.txt, long only, daily, vs random entries with the same exit):
+//   crypto (24 pairs): BC breakout cluster held 20 bars beat random entries — win 58.6% vs
+//   50.6%, positive before and after 2022. US (311): MOD divergence exited at Close Long beat
+//   random entries by a small margin (+1.75% per trade). Open Long and Cross Up did not beat
+//   random entries in either market.
+//
+// L52 (long-term, from study 5 — reports/study5-confirm.txt): weekly RSI(14) crosses back
+//   above 30; buy at the next week's open and hold 52 weeks. 539 trades on unseen US stocks:
+//   win 75.9% vs 65.3% for random entries, median +19%. Before 2018 the edge was small
+//   (+2.6%); crypto had only 7 such trades. The mark sits on the first bar of the entry week,
+//   on any chart timeframe up to weekly.
+//
+// Signals are decided on a bar's close; the backtest buys at the next bar's open.
+// MOD is known 5 bars after the pivot low (the pivot needs 5 bars on its right), so the
+// label sits on the bar where it became known, never earlier.
+indicator("FLT + MOD (study 6)", shorttitle="FLT+MOD", overlay=true, max_labels_count=500, max_lines_count=500)
+
+// ── display options (signals do not depend on these) ──────────────────────────────────
+showBearish = input.bool(true, "Bearish divergences (not tested)", group="Display")
+showHidden  = input.bool(false, "Hidden divergences (not tested)", group="Display")
+showLevels  = input.bool(true, "Last pivot high/low levels (not tested)", group="Display")
+showDots    = input.bool(true, "Single breakout / breakdown dots", group="Display")
+bullCol  = input.color(#26A69A, "Bullish (cloud, Open Long, divergence)", group="Colours")
+bearCol  = input.color(#C94F4F, "Bearish (cloud, divergence)", group="Colours")
+fastCol  = input.color(#64B5F6, "Fast line EMA 20", group="Colours")
+slowCol  = input.color(#B39DDB, "Slow line EMA 200", group="Colours")
+clusCol  = input.color(#F2F2F2, "Breakout cluster", group="Colours")
+closeCol = input.color(#FF8A65, "Close Long", group="Colours")
+dbCol    = input.color(#FFD54F, "Breakout after divergence", group="Colours")
+showL52  = input.bool(true, "L52: weekly RSI(14) back above 30 (study 5)", group="Long-term")
+l52Col   = input.color(#ECEFF1, "L52 label", group="Long-term")
+
+// ── FLT ───────────────────────────────────────────────────────────────────────────────
+fast    = ta.ema(close, 20)
+midFast = ta.ema(close, 50)
+midSlow = ta.ema(close, 100)
+slow    = ta.ema(close, 200)
+
+openLong  = ta.crossover(fast, midFast)
+closeLong = ta.crossunder(fast, midFast)
+crossUp   = ta.crossover(fast, slow)
+crossDown = ta.crossunder(fast, slow) // display only
+
+prevHigh  = ta.highest(high, 20)[1]
+prevLow   = ta.lowest(low, 20)[1]
+topLine   = math.max(math.max(fast, midFast), math.max(midSlow, slow))
+botLine   = math.min(math.min(fast, midFast), math.min(midSlow, slow))
+breakout  = close > prevHigh and close > topLine
+breakdown = close < prevLow and close < botLine // display only
+
+var int lastCluster = na
+cluster = math.sum(breakout ? 1 : 0, 5) >= 3 and (na(lastCluster) or bar_index - lastCluster > 20)
+if cluster
+    lastCluster := bar_index
+var int lastDown = na
+downCluster = math.sum(breakdown ? 1 : 0, 5) >= 3 and (na(lastDown) or bar_index - lastDown > 20) // display only
+if downCluster
+    lastDown := bar_index
+
+// ── MOD ───────────────────────────────────────────────────────────────────────────────
+rsiV = ta.rsi(close, 14)
+[macdLine, sigLine, histLine] = ta.macd(close, 12, 26, 9)
+obvV = ta.obv
+mfiV = ta.mfi(hlc3, 14)
+
+K = 5
+pivLow  = true
+pivHigh = true
+for j = 1 to K
+    pivLow  := pivLow  and low[K]  < low[K + j]  and low[K]  < low[K - j]
+    pivHigh := pivHigh and high[K] > high[K + j] and high[K] > high[K - j]
+
+// how many of the 4 oscillators are higher (up = true) or lower than at the earlier pivot
+count4(a2, b2, c2, d2, a1, b1, c1, d1, up) =>
+    int n = 0
+    if up
+        n := (a2 > a1 ? 1 : 0) + (b2 > b1 ? 1 : 0) + (c2 > c1 ? 1 : 0) + (d2 > d1 ? 1 : 0)
+    else
+        n := (a2 < a1 ? 1 : 0) + (b2 < b1 ? 1 : 0) + (c2 < c1 ? 1 : 0) + (d2 < d1 ? 1 : 0)
+    n
+
+// previous pivot low / high: bar, price and the four oscillators at that bar
+var int   pl1  = na
+var float pl1p = na
+var float pl1r = na
+var float pl1m = na
+var float pl1o = na
+var float pl1f = na
+var int   ph1  = na
+var float ph1p = na
+var float ph1r = na
+var float ph1m = na
+var float ph1o = na
+var float ph1f = na
+
+// oscillators at the candidate pivot (K bars back), compared on every bar
+rK = rsiV[K]
+mK = macdLine[K]
+oK = obvV[K]
+fK = mfiV[K]
+lowUp   = count4(rK, mK, oK, fK, pl1r, pl1m, pl1o, pl1f, true)
+lowDn   = count4(rK, mK, oK, fK, pl1r, pl1m, pl1o, pl1f, false)
+highUp  = count4(rK, mK, oK, fK, ph1r, ph1m, ph1o, ph1f, true)
+highDn  = count4(rK, mK, oK, fK, ph1r, ph1m, ph1o, ph1f, false)
+p2      = bar_index - K
+nearLow  = not na(pl1) and p2 - pl1 <= 60
+nearHigh = not na(ph1) and p2 - ph1 <= 60
+
+modBull = pivLow and nearLow and low[K] < pl1p and lowUp >= 2
+hidBull = pivLow and nearLow and low[K] > pl1p and lowDn >= 2
+modBear = pivHigh and nearHigh and high[K] > ph1p and highDn >= 2
+hidBear = pivHigh and nearHigh and high[K] < ph1p and highUp >= 2
+
+if modBull or (showHidden and hidBull)
+    line.new(pl1, pl1p, p2, low[K], color=modBull ? bullCol : color.new(bullCol, 50), width=2, style=modBull ? line.style_solid : line.style_dotted)
+if (showBearish and modBear) or (showHidden and hidBear)
+    line.new(ph1, ph1p, p2, high[K], color=modBear ? bearCol : color.new(bearCol, 50), width=2, style=modBear ? line.style_solid : line.style_dotted)
+if pivLow
+    pl1  := p2
+    pl1p := low[K]
+    pl1r := rK
+    pl1m := mK
+    pl1o := oK
+    pl1f := fK
+if pivHigh
+    ph1  := p2
+    ph1p := high[K]
+    ph1r := rK
+    ph1m := mK
+    ph1o := oK
+    ph1f := fK
+
+// DB: the first breakout 1..20 bars after a MOD bullish signal (one per MOD signal)
+var int  lastMod = na
+var bool used = true
+db = false
+if breakout and not used and not na(lastMod) and bar_index - lastMod >= 1 and bar_index - lastMod <= 20
+    db := true
+    used := true
+if modBull
+    lastMod := bar_index
+    used := false
+
+// ── L52: last completed week's RSI(14) cross above 30, marked on the entry week ────────
+wkCross = request.security(syminfo.tickerid, "W", ta.crossover(ta.rsi(close, 14), 30)[1], lookahead=barmerge.lookahead_on)
+l52 = showL52 and wkCross and timeframe.change("W")
+
+// ── shaded clouds (display only) ──────────────────────────────────────────────────────
+// Strength = how many neighbouring lines are stacked in order: +3 all up, −3 all down.
+// The stronger the stack, the more solid the shade.
+strength = (fast > midFast ? 1 : -1) + (midFast > midSlow ? 1 : -1) + (midSlow > slow ? 1 : -1)
+shade    = math.abs(strength) == 3 ? 55 : 76
+mainCol  = not na(slow) ? color.new(midFast > midSlow ? bullCol : bearCol, shade) : na
+ribbCol  = not na(slow) ? color.new(fast > midFast ? bullCol : bearCol, shade + 12) : na
+
+pFast = plot(fast, "Fast EMA 20", fastCol, 2)
+pMidF = plot(midFast, "Mid Fast EMA 50", color.new(midFast > midSlow ? bullCol : bearCol, 55), 1)
+pMidS = plot(midSlow, "Mid Slow EMA 100", color.new(midFast > midSlow ? bullCol : bearCol, 55), 1)
+plot(slow, "Slow EMA 200", slowCol, 2)
+fill(pMidF, pMidS, mainCol, title="Cloud EMA 50–100")
+fill(pFast, pMidF, ribbCol, title="Ribbon EMA 20–50")
+
+var float lastPH = na
+var float lastPL = na
+if pivHigh
+    lastPH := high[K]
+if pivLow
+    lastPL := low[K]
+plot(showLevels ? lastPH : na, "Resistance (last pivot high)", color.new(bearCol, 40), 1, plot.style_circles)
+plot(showLevels ? lastPL : na, "Support (last pivot low)", color.new(bullCol, 40), 1, plot.style_circles)
+
+// ── signals ───────────────────────────────────────────────────────────────────────────
+plotshape(showDots and breakout and not cluster, "Breakout", shape.circle, location.abovebar, color.new(clusCol, 35), size=size.tiny)
+plotshape(cluster, "Breakout cluster (BC)", shape.diamond, location.abovebar, clusCol, size=size.small, text="BC", textcolor=clusCol)
+plotshape(showDots and breakdown and not downCluster, "Breakdown (not tested)", shape.circle, location.belowbar, color.new(bearCol, 35), size=size.tiny)
+plotshape(downCluster, "Breakdown cluster (not tested)", shape.diamond, location.belowbar, bearCol, size=size.small, text="BD", textcolor=bearCol)
+plotshape(openLong, "Open Long (OL)", shape.triangleup, location.belowbar, bullCol, size=size.small, text="OL", textcolor=bullCol)
+plotshape(closeLong, "Close Long", shape.xcross, location.abovebar, closeCol, size=size.small, text="CL", textcolor=closeCol)
+plotshape(crossUp, "Cross Up (CU)", shape.arrowup, location.belowbar, fastCol, size=size.normal, text="CU", textcolor=fastCol)
+plotshape(crossDown, "Cross Down (not tested)", shape.arrowdown, location.abovebar, slowCol, size=size.normal, text="CD", textcolor=slowCol)
+plotshape(modBull, "MOD bullish divergence", shape.labelup, location.belowbar, bullCol, text="DIV", textcolor=#1E1E1E)
+plotshape(showBearish and modBear, "MOD bearish divergence (not tested)", shape.labeldown, location.abovebar, bearCol, text="DIV", textcolor=#FFFFFF)
+plotshape(db, "DB: breakout after divergence", shape.flag, location.belowbar, dbCol, size=size.small, text="DB", textcolor=dbCol)
+plotshape(l52, "L52: long-term entry (study 5)", shape.labelup, location.belowbar, l52Col, text="L52", textcolor=#1E1E1E)
+
+// Numeric copies for "Export chart data", so scripts/study6-verify.js can compare them
+// bar by bar with the backtest.
+plot(openLong ? 1 : 0, "OL", display=display.data_window)
+plot(closeLong ? 1 : 0, "CL", display=display.data_window)
+plot(crossUp ? 1 : 0, "CU", display=display.data_window)
+plot(breakout ? 1 : 0, "BO", display=display.data_window)
+plot(cluster ? 1 : 0, "BC", display=display.data_window)
+plot(modBull ? 1 : 0, "MOD", display=display.data_window)
+plot(db ? 1 : 0, "DB", display=display.data_window)
+
+alertcondition(openLong, "FLT Open Long", "FLT Open Long on {{ticker}}")
+alertcondition(closeLong, "FLT Close Long", "FLT Close Long on {{ticker}}")
+alertcondition(crossUp, "FLT Cross Up", "FLT Cross Up on {{ticker}}")
+alertcondition(cluster, "FLT Breakout cluster", "FLT breakout cluster on {{ticker}}")
+alertcondition(downCluster, "FLT Breakdown cluster", "FLT breakdown cluster on {{ticker}}")
+alertcondition(modBull, "MOD bullish divergence", "MOD bullish divergence on {{ticker}}")
+alertcondition(db, "DB breakout after divergence", "Breakout after MOD divergence on {{ticker}}")
+alertcondition(l52, "L52 long-term entry", "Weekly RSI(14) back above 30 on {{ticker}} (L52)")

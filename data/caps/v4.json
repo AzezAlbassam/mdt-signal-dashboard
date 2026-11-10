@@ -1,0 +1,1294 @@
+{
+ "2015": {
+  "rows": [
+   {
+    "company": "Apple",
+    "ticker": "AAPL",
+    "yearEndMcapBn": 583.61,
+    "source": "companiesmarketcap.com/apple/marketcap/ end-of-year table, 2015 row ($583.61B, -9.25%)"
+   },
+   {
+    "company": "Alphabet",
+    "ticker": "GOOG",
+    "yearEndMcapBn": 528.16,
+    "source": "companiesmarketcap.com/alphabet-google/marketcap/ end-of-year table, 2015 ($528.16B, +46.92%); the site's figure covers the whole company (all share classes)"
+   },
+   {
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "yearEndMcapBn": 439.67,
+    "source": "companiesmarketcap.com/microsoft/marketcap/ end-of-year table, 2015 ($439.67B, +15.18%)"
+   },
+   {
+    "company": "ExxonMobil",
+    "ticker": "XOM",
+    "yearEndMcapBn": 323.96,
+    "source": "companiesmarketcap.com/exxon-mobil/marketcap/ end-of-year table, 2015 ($323.96B, -16.59%)"
+   },
+   {
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK",
+    "yearEndMcapBn": 325.28,
+    "source": "companiesmarketcap.com/berkshire-hathaway/marketcap/ end-of-year table, 2015 ($325.28B); combined company value"
+   },
+   {
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "yearEndMcapBn": 318.34,
+    "source": "companiesmarketcap.com/amazon/marketcap/ end-of-year table, 2015 ($318.34B, +120.59%)"
+   },
+   {
+    "company": "Wells Fargo",
+    "ticker": "WFC",
+    "yearEndMcapBn": 276.8,
+    "source": "companiesmarketcap.com/wells-fargo/marketcap/ end-of-year table, 2015 ($276.80B)"
+   },
+   {
+    "company": "Facebook",
+    "ticker": "FB",
+    "yearEndMcapBn": 296.6,
+    "source": "companiesmarketcap.com/meta-platforms/marketcap/ end-of-year table, 2015 ($296.60B, +36.85%)"
+   },
+   {
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "yearEndMcapBn": 284.22,
+    "source": "companiesmarketcap.com/johnson-and-johnson/marketcap/ end-of-year table, 2015 ($284.22B, -2.34%)"
+   },
+   {
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "yearEndMcapBn": 241.89,
+    "source": "companiesmarketcap.com/jp-morgan-chase/marketcap/ end-of-year table, 2015 ($241.89B)"
+   },
+   {
+    "company": "Procter & Gamble",
+    "ticker": "PG",
+    "yearEndMcapBn": 214.76,
+    "source": "companiesmarketcap.com/procter-and-gamble/marketcap/ end-of-year table, 2015 ($214.76B)"
+   },
+   {
+    "company": "Bank of America",
+    "ticker": "BAC",
+    "yearEndMcapBn": 174.69,
+    "source": "companiesmarketcap.com/bank-of-america/marketcap/ end-of-year table, 2015 ($174.69B)"
+   },
+   {
+    "company": "Walmart",
+    "ticker": "WMT",
+    "yearEndMcapBn": 196.27,
+    "source": "companiesmarketcap.com/walmart/marketcap/ end-of-year table, 2015 ($196.27B, -29.09%)"
+   },
+   {
+    "company": "Pfizer",
+    "ticker": "PFE",
+    "yearEndMcapBn": 199.32,
+    "source": "companiesmarketcap.com/pfizer/marketcap/ end-of-year table, 2015 ($199.32B, +1.72%)"
+   },
+   {
+    "company": "Visa",
+    "ticker": "V",
+    "yearEndMcapBn": 186.08,
+    "source": "companiesmarketcap.com/visa/marketcap/ end-of-year table, 2015 ($186.08B, +15.51%)"
+   },
+   {
+    "company": "Coca-Cola",
+    "ticker": "KO",
+    "yearEndMcapBn": 185.75,
+    "source": "companiesmarketcap.com/coca-cola/marketcap/ end-of-year table, 2015 ($185.75B, +0.77%)"
+   },
+   {
+    "company": "Verizon",
+    "ticker": "VZ",
+    "yearEndMcapBn": 188.26,
+    "source": "companiesmarketcap.com/verizon/marketcap/ end-of-year table, 2015 ($188.26B, -3.14%)"
+   },
+   {
+    "company": "General Electric",
+    "ticker": "GE",
+    "yearEndMcapBn": 292.16,
+    "source": "companiesmarketcap.com/general-electric/marketcap/ end-of-year table, 2015 ($292.16B, +14.96%)"
+   },
+   {
+    "company": "Walt Disney",
+    "ticker": "DIS",
+    "yearEndMcapBn": 173.71,
+    "source": "companiesmarketcap.com/walt-disney/marketcap/ end-of-year table, 2015 ($173.71B, +8.49%); the GBP page shows £117.22B"
+   },
+   {
+    "company": "Home Depot",
+    "ticker": "HD",
+    "yearEndMcapBn": 167.67,
+    "source": "companiesmarketcap.com/home-depot/marketcap/ end-of-year table, 2015 ($167.67B, +21.21%)"
+   },
+   {
+    "company": "Chevron",
+    "ticker": "CVX",
+    "yearEndMcapBn": 169.37,
+    "source": "companiesmarketcap.com/chevron/marketcap/ end-of-year table, 2015 ($169.37B, -19.67%)"
+   },
+   {
+    "company": "Intel",
+    "ticker": "INTC",
+    "yearEndMcapBn": 162.77,
+    "source": "companiesmarketcap.com/intel/marketcap/ end-of-year table, 2015 ($162.77B, -5.53%)"
+   },
+   {
+    "company": "Citigroup",
+    "ticker": "C",
+    "yearEndMcapBn": 152.83,
+    "source": "companiesmarketcap.com/citigroup/marketcap/ end-of-year table, 2015 ($152.83B, -6.6%)"
+   },
+   {
+    "company": "Oracle",
+    "ticker": "ORCL",
+    "yearEndMcapBn": 153.47,
+    "source": "companiesmarketcap.com/oracle/marketcap/ end-of-year table, 2015 ($153.47B, -22.29%)"
+   },
+   {
+    "company": "Gilead Sciences",
+    "ticker": "GILD",
+    "yearEndMcapBn": 143.89,
+    "source": "companiesmarketcap.com/gilead-sciences/marketcap/ end-of-year table, 2015 ($143.89B, +1.84%)"
+   },
+   {
+    "company": "PepsiCo",
+    "ticker": "PEP",
+    "yearEndMcapBn": 144.68,
+    "source": "companiesmarketcap.com/pepsico/marketcap/ end-of-year table, 2015 ($144.68B, +2.83%)"
+   },
+   {
+    "company": "AT&T",
+    "ticker": "T",
+    "yearEndMcapBn": 211.44,
+    "source": "companiesmarketcap.com/att/marketcap/ end-of-year table, 2015 ($211.44B)"
+   },
+   {
+    "company": "Merck",
+    "ticker": "MRK",
+    "yearEndMcapBn": 146.89,
+    "source": "companiesmarketcap.com/merck/marketcap/ end-of-year table, 2015 ($146.89B, -8.86%)"
+   },
+   {
+    "company": "Cisco",
+    "ticker": "CSCO",
+    "yearEndMcapBn": 137.84,
+    "source": "companiesmarketcap.com/cisco/marketcap/ end-of-year table, 2015 ($137.84B, -3.09%)"
+   },
+   {
+    "company": "Philip Morris International",
+    "ticker": "PM",
+    "yearEndMcapBn": 136.2,
+    "source": "companiesmarketcap.com/philip-morris/marketcap/ end-of-year table, 2015 ($136.20B, +8.1%)"
+   },
+   {
+    "company": "Comcast",
+    "ticker": "CMCSA",
+    "yearEndMcapBn": 137.55,
+    "source": "companiesmarketcap.com/comcast/marketcap/ end-of-year table, 2015 ($137.55B, +11.02%)"
+   },
+   {
+    "company": "IBM",
+    "ticker": "IBM",
+    "yearEndMcapBn": 132.9,
+    "source": "companiesmarketcap.com/ibm/marketcap/ end-of-year table, 2015 ($132.90B)"
+   },
+   {
+    "company": "Amgen",
+    "ticker": "AMGN",
+    "yearEndMcapBn": 122.39,
+    "source": "companiesmarketcap.com/amgen/marketcap/ end-of-year table, 2015 ($122.39B)"
+   },
+   {
+    "company": "Allergan",
+    "ticker": "AGN",
+    "yearEndMcapBn": 123.28,
+    "source": "companiesmarketcap.com/allergan/marketcap/ end-of-year table, 2015 ($123.28B); the page's 2015 % change looked unusually large (Actavis-Allergan merger year)"
+   },
+   {
+    "company": "Bristol-Myers Squibb",
+    "ticker": "BMY",
+    "yearEndMcapBn": 114.26,
+    "source": "companiesmarketcap.com/bristol-myers-squibb/marketcap/ end-of-year table, 2015 ($114.26B)"
+   },
+   {
+    "company": "Altria",
+    "ticker": "MO",
+    "yearEndMcapBn": 114.09,
+    "source": "companiesmarketcap.com/altria-group/marketcap/ end-of-year table, 2015 ($114.09B, +17.13%)"
+   },
+   {
+    "company": "UnitedHealth",
+    "ticker": "UNH",
+    "yearEndMcapBn": 112.11,
+    "source": "companiesmarketcap.com/united-health/marketcap/ end-of-year table, 2015 ($112.11B, +16.25%)"
+   },
+   {
+    "company": "McDonald's",
+    "ticker": "MCD",
+    "yearEndMcapBn": 107.12,
+    "source": "companiesmarketcap.com/mcdonald/marketcap/ end-of-year table, 2015 ($107.12B, +18.74%)"
+   },
+   {
+    "company": "Mastercard",
+    "ticker": "MA",
+    "yearEndMcapBn": 108.65,
+    "source": "companiesmarketcap.com/mastercard/marketcap/ end-of-year table, 2015 ($108.65B, +9.41%)"
+   },
+   {
+    "company": "CVS Health",
+    "ticker": "CVS",
+    "yearEndMcapBn": 107.64,
+    "source": "companiesmarketcap.com/cvs-health/marketcap/ end-of-year table, 2015 ($107.64B, -1.96%)"
+   },
+   {
+    "company": "Medtronic",
+    "ticker": "MDT",
+    "yearEndMcapBn": 108.16,
+    "source": "companiesmarketcap.com/medtronic/marketcap/ end-of-year table, 2015 ($108.16B)"
+   },
+   {
+    "company": "Nike",
+    "ticker": "NKE",
+    "yearEndMcapBn": 106.68,
+    "source": "companiesmarketcap.com/nike/marketcap/ end-of-year table, 2015 ($106.68B, +28.43%)"
+   },
+   {
+    "company": "Boeing",
+    "ticker": "BA",
+    "yearEndMcapBn": 96.38,
+    "source": "companiesmarketcap.com/boeing/marketcap/ end-of-year table, 2015 ($96.38B, +4.93%)"
+   },
+   {
+    "company": "AbbVie",
+    "ticker": "ABBV",
+    "yearEndMcapBn": 95.37,
+    "source": "companiesmarketcap.com/abbvie/marketcap/ end-of-year table, 2015 ($95.37B, -8.42%)"
+   },
+   {
+    "company": "Kraft Heinz",
+    "ticker": "KHC",
+    "yearEndMcapBn": 88.29,
+    "source": "companiesmarketcap.com/kraft-heinz/marketcap/ end-of-year table, 2015 ($88.29B)"
+   },
+   {
+    "company": "Celgene",
+    "ticker": "CELG",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND: three searches (companiesmarketcap, macrotrends) gave no 2015 year-end figure. Macrotrends shows 825M shares outstanding for 2015, but no price, so no number is reported"
+   },
+   {
+    "company": "Walgreens Boots Alliance",
+    "ticker": "WBA",
+    "yearEndMcapBn": 91.86,
+    "source": "companiesmarketcap.com/walgreens-boots-alliance/marketcap/ end-of-year table, 2015 ($91.86B, +27.48%)"
+   },
+   {
+    "company": "Starbucks",
+    "ticker": "SBUX",
+    "yearEndMcapBn": 89.18,
+    "source": "companiesmarketcap.com/starbucks/marketcap/ end-of-year table, 2015 ($89.18B, +44.84%)"
+   },
+   {
+    "company": "Goldman Sachs",
+    "ticker": "GS",
+    "yearEndMcapBn": 75.6,
+    "source": "companiesmarketcap.com/goldman-sachs/marketcap/ end-of-year table, 2015 ($75.60B, -9.35%)"
+   },
+   {
+    "company": "Eli Lilly",
+    "ticker": "LLY",
+    "yearEndMcapBn": 93.12,
+    "source": "companiesmarketcap.com/eli-lilly/marketcap/ end-of-year table, 2015 ($93.12B, +21.54%)"
+   },
+   {
+    "company": "Schlumberger",
+    "ticker": "SLB",
+    "yearEndMcapBn": 87.63,
+    "source": "companiesmarketcap.com/schlumberger/marketcap/ end-of-year table, 2015 ($87.63B)"
+   },
+   {
+    "company": "UPS",
+    "ticker": "UPS",
+    "yearEndMcapBn": 85.25,
+    "source": "companiesmarketcap.com/ups/marketcap/ end-of-year table, 2015 ($85.25B)"
+   },
+   {
+    "company": "AIG",
+    "ticker": "AIG",
+    "yearEndMcapBn": 73.98,
+    "source": "companiesmarketcap.com/aig/marketcap/ end-of-year table, 2015 ($73.98B, -3.99%)"
+   },
+   {
+    "company": "Qualcomm",
+    "ticker": "QCOM",
+    "yearEndMcapBn": 74.72,
+    "source": "companiesmarketcap.com/qualcomm/marketcap/ end-of-year table, 2015 ($74.72B, -39.22%)"
+   },
+   {
+    "company": "3M",
+    "ticker": "MMM",
+    "yearEndMcapBn": 91.78,
+    "source": "companiesmarketcap.com/3m/marketcap/ end-of-year table, 2015 ($91.78B)"
+   },
+   {
+    "company": "U.S. Bancorp",
+    "ticker": "USB",
+    "yearEndMcapBn": 74.46,
+    "source": "companiesmarketcap.com/us-bancorp/marketcap/ end-of-year table, 2015 ($74.46B)"
+   },
+   {
+    "company": "Mondelez",
+    "ticker": "MDLZ",
+    "yearEndMcapBn": 70.84,
+    "source": "companiesmarketcap.com/mondelez/marketcap/ end-of-year table, 2015 ($70.84B)"
+   },
+   {
+    "company": "Costco",
+    "ticker": "COST",
+    "yearEndMcapBn": 71.02,
+    "source": "companiesmarketcap.com/costco/marketcap/ end-of-year table, 2015 ($71.02B)"
+   },
+   {
+    "company": "American Express",
+    "ticker": "AXP",
+    "yearEndMcapBn": 67.39,
+    "source": "companiesmarketcap.com/american-express/marketcap/ end-of-year table, 2015 ($67.39B, -29.19%)"
+   },
+   {
+    "company": "Lowe's",
+    "ticker": "LOW",
+    "yearEndMcapBn": 69.58,
+    "source": "companiesmarketcap.com/lowes-companies/marketcap/ end-of-year table, 2015 ($69.58B, +3.96%)"
+   },
+   {
+    "company": "Lockheed Martin",
+    "ticker": "LMT",
+    "yearEndMcapBn": 66.23,
+    "source": "companiesmarketcap.com/lockheed-martin/marketcap/ end-of-year table, 2015 ($66.23B, +8.84%)"
+   },
+   {
+    "company": "Union Pacific",
+    "ticker": "UNP",
+    "yearEndMcapBn": 66.4,
+    "source": "companiesmarketcap.com/union-pacific-corporation/marketcap/ end-of-year table, 2015 ($66.40B, shown as -36.9%)"
+   },
+   {
+    "company": "Abbott Laboratories",
+    "ticker": "ABT",
+    "yearEndMcapBn": 66.13,
+    "source": "companiesmarketcap.com/abbott-laboratories/marketcap/ end-of-year table, 2015 ($66.13B, -2.58%)"
+   },
+   {
+    "company": "Morgan Stanley",
+    "ticker": "MS",
+    "yearEndMcapBn": 61.07,
+    "source": "companiesmarketcap.com/morgan-stanley/marketcap/ end-of-year table, 2015 ($61.07B, -19.32%)"
+   },
+   {
+    "company": "Accenture",
+    "ticker": "ACN",
+    "yearEndMcapBn": 68.02,
+    "source": "companiesmarketcap.com/accenture/marketcap/ end-of-year table, 2015 ($68.02B, +16.22%)"
+   },
+   {
+    "company": "Reynolds American",
+    "ticker": "RAI",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND: no 2015 year-end market cap found (companiesmarketcap or macrotrends). Only SEC 10-K equity data turned up, which is not market cap"
+   },
+   {
+    "company": "Priceline",
+    "ticker": "PCLN/BKNG",
+    "yearEndMcapBn": 63.25,
+    "source": "companiesmarketcap.com/booking-holdings/marketcap/ end-of-year table, 2015 ($63.25B, +6.82%)"
+   },
+   {
+    "company": "Biogen",
+    "ticker": "BIIB",
+    "yearEndMcapBn": 66.96,
+    "source": "companiesmarketcap.com/biogen/marketcap/ end-of-year table, 2015 ($66.96B, -15.89%)"
+   },
+   {
+    "company": "Regeneron",
+    "ticker": "REGN",
+    "yearEndMcapBn": 56.81,
+    "source": "companiesmarketcap.com/regeneron-pharmaceuticals/marketcap/ end-of-year table, 2015 ($56.81B, +35.19%)"
+   },
+   {
+    "company": "Colgate-Palmolive",
+    "ticker": "CL",
+    "yearEndMcapBn": 59.47,
+    "source": "companiesmarketcap.com/colgate-palmolive/marketcap/ end-of-year table, 2015 ($59.47B, -5.2%)"
+   },
+   {
+    "company": "Simon Property Group",
+    "ticker": "SPG",
+    "yearEndMcapBn": 60.16,
+    "source": "companiesmarketcap.com/simon-property/marketcap/ end-of-year table, 2015 ($60.16B, +6.3%)"
+   },
+   {
+    "company": "Express Scripts",
+    "ticker": "ESRX",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND: no 2015 year-end figure in companiesmarketcap or macrotrends search results"
+   },
+   {
+    "company": "ConocoPhillips",
+    "ticker": "COP",
+    "yearEndMcapBn": 57.7,
+    "source": "companiesmarketcap.com/conocophillips/marketcap/ end-of-year table, 2015 ($57.70B, -32.14%)"
+   },
+   {
+    "company": "BlackRock",
+    "ticker": "BLK",
+    "yearEndMcapBn": 56.38,
+    "source": "companiesmarketcap.com/blackrock/marketcap/ end-of-year table, 2015 ($56.38B, -5.52%)"
+   },
+   {
+    "company": "DuPont",
+    "ticker": "DD",
+    "yearEndMcapBn": null,
+    "source": "NOT SEARCHED SUCCESSFULLY: no figure seen for pre-merger E.I. du Pont. The current DD page's history may not be the same entity"
+   },
+   {
+    "company": "Texas Instruments",
+    "ticker": "TXN",
+    "yearEndMcapBn": 55.42,
+    "source": "companiesmarketcap.com/texas-instruments/marketcap/ end-of-year table, 2015 ($55.42B, -0.95%)"
+   },
+   {
+    "company": "Thermo Fisher",
+    "ticker": "TMO",
+    "yearEndMcapBn": 56.68,
+    "source": "companiesmarketcap.com/thermo-fisher-scientific/marketcap/ end-of-year table, 2015 ($56.68B, +12.98%)"
+   },
+   {
+    "company": "Ford",
+    "ticker": "F",
+    "yearEndMcapBn": 56.79,
+    "source": "companiesmarketcap.com/ford/marketcap/ end-of-year table, 2015 ($56.79B, -8.6%)"
+   },
+   {
+    "company": "General Motors",
+    "ticker": "GM",
+    "yearEndMcapBn": 51.01,
+    "source": "companiesmarketcap.com/general-motors/marketcap/ end-of-year table, 2015 ($51.01B, -8.67%)"
+   },
+   {
+    "company": "Public Storage",
+    "ticker": "PSA",
+    "yearEndMcapBn": 42.83,
+    "source": "companiesmarketcap.com/public-storage/marketcap/ end-of-year table, 2015 ($42.83B, +34.37%)"
+   },
+   {
+    "company": "Salesforce",
+    "ticker": "CRM",
+    "yearEndMcapBn": 52.05,
+    "source": "companiesmarketcap.com/salesforce/marketcap/ end-of-year table, 2015 ($52.05B, +39.1%)"
+   },
+   {
+    "company": "PNC",
+    "ticker": "PNC",
+    "yearEndMcapBn": 48.03,
+    "source": "companiesmarketcap.com/pnc-financial-services/marketcap/ end-of-year table, 2015 ($48.03B, +0.68%)"
+   },
+   {
+    "company": "Time Warner Cable",
+    "ticker": "TWC",
+    "yearEndMcapBn": 52.55,
+    "source": "companiesmarketcap.com/time-warner-cable/marketcap/ end-of-year table, 2015 ($52.55B, +23.23%)"
+   },
+   {
+    "company": "Twenty-First Century Fox",
+    "ticker": "FOXA",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND in companiesmarketcap results. Also note FOXA+FOX dual class"
+   },
+   {
+    "company": "Occidental",
+    "ticker": "OXY",
+    "yearEndMcapBn": 51.63,
+    "source": "companiesmarketcap.com/occidental-petroleum/marketcap/ end-of-year table, 2015 ($51.63B, -16.88%)"
+   },
+   {
+    "company": "Time Warner",
+    "ticker": "TWX",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND: search returned only Time Warner Cable"
+   },
+   {
+    "company": "Enterprise Products Partners",
+    "ticker": "EPD",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND in three companiesmarketcap searches"
+   },
+   {
+    "company": "Netflix",
+    "ticker": "NFLX",
+    "yearEndMcapBn": 48.94,
+    "source": "companiesmarketcap.com/netflix/marketcap/ end-of-year table, 2015 ($48.94B, +137.17%)"
+   },
+   {
+    "company": "United Technologies",
+    "ticker": "UTX",
+    "yearEndMcapBn": 80.53,
+    "source": "companiesmarketcap.com/raytheon-technologies/marketcap/ (RTX) end-of-year table, 2015 ($80.53B, -22.99%). RTX is legally the renamed UTX, so this row is UTX's 2015 value. The search summary's claim that it is 'Raytheon pre-merger' looks wrong: Raytheon was about $38B. Verify"
+   },
+   {
+    "company": "EMC",
+    "ticker": "EMC",
+    "yearEndMcapBn": null,
+    "source": "NOT FOUND in companiesmarketcap or macrotrends results"
+   },
+   {
+    "company": "MetLife",
+    "ticker": "MET",
+    "yearEndMcapBn": 52.93,
+    "source": "companiesmarketcap.com/metlife/marketcap/ end-of-year table, 2015 ($52.93B, -13.54%)"
+   },
+   {
+    "company": "Duke Energy",
+    "ticker": "DUK",
+    "yearEndMcapBn": 49.11,
+    "source": "companiesmarketcap.com/duke-energy/marketcap/ end-of-year table, 2015 ($49.11B, -16.84%)"
+   },
+   {
+    "company": "TJX",
+    "ticker": "TJX",
+    "yearEndMcapBn": 47.47,
+    "source": "companiesmarketcap.com/tjx-companies/marketcap/ end-of-year table, 2015 ($47.47B)"
+   },
+   {
+    "company": "Adobe",
+    "ticker": "ADBE",
+    "yearEndMcapBn": 46.76,
+    "source": "companiesmarketcap.com/adobe/marketcap/ end-of-year table, 2015 ($46.76B)"
+   },
+   {
+    "company": "BNY Mellon",
+    "ticker": "BK",
+    "yearEndMcapBn": 44.73,
+    "source": "companiesmarketcap.com/bny-mellon/marketcap/ end-of-year table, 2015 ($44.73B, -1.39%)"
+   },
+   {
+    "company": "NextEra Energy",
+    "ticker": "NEE",
+    "yearEndMcapBn": 47.89,
+    "source": "companiesmarketcap.com/nextera-energy/marketcap/ end-of-year table, 2015 ($47.89B, +1.71%)"
+   },
+   {
+    "company": "American Tower",
+    "ticker": "AMT",
+    "yearEndMcapBn": 41.09,
+    "source": "companiesmarketcap.com/american-tower/marketcap/ end-of-year table, 2015 ($41.09B, +4.8%)"
+   },
+   {
+    "company": "Kimberly-Clark",
+    "ticker": "KMB",
+    "yearEndMcapBn": 45.94,
+    "source": "companiesmarketcap.com/kimberly-clark/marketcap/ end-of-year table, 2015 ($45.94B)"
+   },
+   {
+    "company": "Charles Schwab",
+    "ticker": "SCHW",
+    "yearEndMcapBn": 43.47,
+    "source": "companiesmarketcap.com/charles-schwab/marketcap/ end-of-year table, 2015 ($43.47B, +9.88%)"
+   },
+   {
+    "company": "Target",
+    "ticker": "TGT",
+    "yearEndMcapBn": 44.73,
+    "source": "companiesmarketcap.com/target/marketcap/ end-of-year table, 2015 ($44.73B); the GBP page shows £30.18B"
+   }
+  ],
+  "missing": [
+   {
+    "company": "Honeywell",
+    "ticker": "HON",
+    "yearEndMcapBn": 79.82,
+    "source": "companiesmarketcap.com/honeywell/marketcap/ end-of-year table, 2015 ($79.82B). Clearly inside the top 100 (above ~45 of our names)"
+   },
+   {
+    "company": "Danaher",
+    "ticker": "DHR",
+    "yearEndMcapBn": 63.78,
+    "source": "companiesmarketcap.com/danaher/marketcap/ end-of-year table, 2015 ($63.78B). Clearly inside the top 100"
+   },
+   {
+    "company": "McKesson",
+    "ticker": "MCK",
+    "yearEndMcapBn": 45.08,
+    "source": "companiesmarketcap.com/mckesson/marketcap/ end-of-year table, 2015 ($45.08B, -6.38%). Above our TGT/BK ($44.73B), SCHW, PSA and AMT, so inside the top 100"
+   },
+   {
+    "company": "Monsanto",
+    "ticker": "MON",
+    "yearEndMcapBn": 43.33,
+    "source": "companiesmarketcap.com/monsanto/marketcap/ end-of-year table, 2015 ($43.33B, -25.07%). BORDERLINE: below SCHW 43.47 but above PSA 42.83 and AMT 41.09. Likely just outside the top 100 once HON, DHR and MCK are added"
+   },
+   {
+    "company": "Phillips 66",
+    "ticker": "PSX",
+    "yearEndMcapBn": 43.3,
+    "source": "companiesmarketcap.com/phillips-66/marketcap/ end-of-year table, 2015 ($43.30B). BORDERLINE: above our PSA and AMT"
+   },
+   {
+    "company": "Alexion Pharmaceuticals",
+    "ticker": "ALXN",
+    "yearEndMcapBn": 43.04,
+    "source": "companiesmarketcap.com/alexion-pharmaceuticals/marketcap/ end-of-year table, 2015 ($43.04B, +16.86%). BORDERLINE: above our PSA and AMT"
+   },
+   {
+    "company": "PayPal",
+    "ticker": "PYPL",
+    "yearEndMcapBn": null,
+    "source": "companiesmarketcap.com/aud/paypal/marketcap/ shows only A$60.82B for 2015, with no USD figure. Not converted. Possibly borderline"
+   },
+   {
+    "company": "General Dynamics",
+    "ticker": "GD",
+    "yearEndMcapBn": null,
+    "source": "companiesmarketcap.com/cad/general-dynamics/marketcap/ shows only C$59.63B for 2015, with no USD figure. Not converted. Possibly borderline"
+   },
+   {
+    "company": "Dow Chemical",
+    "ticker": "DOW",
+    "yearEndMcapBn": null,
+    "source": "Unverified candidate: searched but no 2015 figure returned. Worth an individual check, since it plausibly exceeds the ~$44B cutoff"
+   }
+  ],
+  "searchesUsed": 39
+ },
+ "2021": {
+  "rows": [
+   {
+    "company": "Apple",
+    "ticker": "AAPL",
+    "yearEndMcapBn": 2901,
+    "source": "companiesmarketcap.com/apple/marketcap (end-of-year table, 2021: $2.901T). Second sources: Dow Jones Market Data via press reports $2.913T at end of 2021; Becker's Hospital Review $2.96T for Dec 31 2021 (it may label this enterprise value)"
+   },
+   {
+    "company": "Microsoft",
+    "ticker": "MSFT",
+    "yearEndMcapBn": 2522,
+    "source": "companiesmarketcap.com/microsoft/marketcap (2021: $2.522T). Becker's gives $2.46T for Dec 31 2021, possibly enterprise value; CNBC gives ~$2.5T as of 12/23"
+   },
+   {
+    "company": "Alphabet",
+    "ticker": "GOOG",
+    "yearEndMcapBn": 1917,
+    "source": "companiesmarketcap.com/alphabet-google/marketcap (2021: $1.917T, all share classes). Becker's gives $1.8T"
+   },
+   {
+    "company": "Amazon",
+    "ticker": "AMZN",
+    "yearEndMcapBn": 1691,
+    "source": "companiesmarketcap.com/amazon/marketcap (2021: $1.691T). Becker's gives $1.73T"
+   },
+   {
+    "company": "Tesla",
+    "ticker": "TSLA",
+    "yearEndMcapBn": 1061,
+    "source": "companiesmarketcap.com/tesla/marketcap (2021: $1.061T). Becker's gives $1.1T"
+   },
+   {
+    "company": "Meta",
+    "ticker": "FB",
+    "yearEndMcapBn": 921.93,
+    "source": "companiesmarketcap.com/meta-platforms/marketcap (2021: $921.93B)"
+   },
+   {
+    "company": "NVIDIA",
+    "ticker": "NVDA",
+    "yearEndMcapBn": 735.27,
+    "source": "companiesmarketcap.com/nvidia/marketcap (2021: $735.27B)"
+   },
+   {
+    "company": "Berkshire Hathaway",
+    "ticker": "BRK",
+    "yearEndMcapBn": 669.12,
+    "source": "companiesmarketcap.com/berkshire-hathaway/marketcap (2021: $669.12B)"
+   },
+   {
+    "company": "JPMorgan Chase",
+    "ticker": "JPM",
+    "yearEndMcapBn": 466.19,
+    "source": "companiesmarketcap.com/jp-morgan-chase/marketcap (2021: $466.19B)"
+   },
+   {
+    "company": "UnitedHealth",
+    "ticker": "UNH",
+    "yearEndMcapBn": 472.94,
+    "source": "companiesmarketcap.com/united-health/marketcap (2021: $472.94B)"
+   },
+   {
+    "company": "Visa",
+    "ticker": "V",
+    "yearEndMcapBn": 469.42,
+    "source": "companiesmarketcap.com/visa/marketcap (2021: $469.42B)"
+   },
+   {
+    "company": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "yearEndMcapBn": 450.35,
+    "source": "companiesmarketcap.com/johnson-and-johnson/marketcap (2021: $450.35B)"
+   },
+   {
+    "company": "Home Depot",
+    "ticker": "HD",
+    "yearEndMcapBn": 433.36,
+    "source": "companiesmarketcap.com/home-depot/marketcap (2021: $433.36B)"
+   },
+   {
+    "company": "Procter & Gamble",
+    "ticker": "PG",
+    "yearEndMcapBn": 392.11,
+    "source": "companiesmarketcap.com/procter-and-gamble/marketcap (2021: $392.11B)"
+   },
+   {
+    "company": "Walmart",
+    "ticker": "WMT",
+    "yearEndMcapBn": 401.35,
+    "source": "companiesmarketcap.com/walmart/marketcap (2021: $401.35B)"
+   },
+   {
+    "company": "Bank of America",
+    "ticker": "BAC",
+    "yearEndMcapBn": 359.38,
+    "source": "companiesmarketcap.com/bank-of-america/marketcap (2021: $359.38B)"
+   },
+   {
+    "company": "Mastercard",
+    "ticker": "MA",
+    "yearEndMcapBn": 352.07,
+    "source": "companiesmarketcap.com/mastercard/marketcap (2021: $352.07B)"
+   },
+   {
+    "company": "Pfizer",
+    "ticker": "PFE",
+    "yearEndMcapBn": 331.43,
+    "source": "companiesmarketcap.com/pfizer/marketcap (2021: $331.43B)"
+   },
+   {
+    "company": "Broadcom",
+    "ticker": "AVGO",
+    "yearEndMcapBn": 274.73,
+    "source": "companiesmarketcap.com/broadcom/marketcap (2021: $274.73B)"
+   },
+   {
+    "company": "Walt Disney",
+    "ticker": "DIS",
+    "yearEndMcapBn": 281.53,
+    "source": "companiesmarketcap.com/walt-disney/marketcap (2021: $281.53B)"
+   },
+   {
+    "company": "Netflix",
+    "ticker": "NFLX",
+    "yearEndMcapBn": 267.46,
+    "source": "companiesmarketcap.com/netflix/marketcap (2021: $267.46B)"
+   },
+   {
+    "company": "Adobe",
+    "ticker": "ADBE",
+    "yearEndMcapBn": 269.35,
+    "source": "companiesmarketcap.com/adobe/marketcap (2021: $269.35B)"
+   },
+   {
+    "company": "Nike",
+    "ticker": "NKE",
+    "yearEndMcapBn": 263.55,
+    "source": "companiesmarketcap.com/nike/marketcap (2021: $263.55B)"
+   },
+   {
+    "company": "Cisco",
+    "ticker": "CSCO",
+    "yearEndMcapBn": 267.26,
+    "source": "companiesmarketcap.com/cisco/marketcap (2021: $267.26B)"
+   },
+   {
+    "company": "Accenture",
+    "ticker": "ACN",
+    "yearEndMcapBn": 261.99,
+    "source": "companiesmarketcap.com/accenture/marketcap (2021: $261.99B; the INR page shows ₹19.500T)"
+   },
+   {
+    "company": "Thermo Fisher",
+    "ticker": "TMO",
+    "yearEndMcapBn": 262.92,
+    "source": "companiesmarketcap.com/thermo-fisher-scientific/marketcap (2021: $262.92B)"
+   },
+   {
+    "company": "ExxonMobil",
+    "ticker": "XOM",
+    "yearEndMcapBn": 259.38,
+    "source": "companiesmarketcap.com/exxon-mobil/marketcap (2021: $259.38B)"
+   },
+   {
+    "company": "Coca-Cola",
+    "ticker": "KO",
+    "yearEndMcapBn": 255.75,
+    "source": "companiesmarketcap.com/coca-cola/marketcap (2021: $255.75B)"
+   },
+   {
+    "company": "Costco",
+    "ticker": "COST",
+    "yearEndMcapBn": 251.73,
+    "source": "companiesmarketcap.com/costco/marketcap (2021: $251.73B)"
+   },
+   {
+    "company": "Eli Lilly",
+    "ticker": "LLY",
+    "yearEndMcapBn": 264.22,
+    "source": "companiesmarketcap.com/eli-lilly/marketcap (2021: $264.22B)"
+   },
+   {
+    "company": "Abbott",
+    "ticker": "ABT",
+    "yearEndMcapBn": 248.86,
+    "source": "companiesmarketcap.com/abbott-laboratories/marketcap (2021: $248.86B)"
+   },
+   {
+    "company": "Salesforce",
+    "ticker": "CRM",
+    "yearEndMcapBn": 250.31,
+    "source": "companiesmarketcap.com/salesforce/marketcap (2021: $250.31B)"
+   },
+   {
+    "company": "Oracle",
+    "ticker": "ORCL",
+    "yearEndMcapBn": 232.88,
+    "source": "companiesmarketcap.com/oracle/marketcap (2021: $232.88B)"
+   },
+   {
+    "company": "PepsiCo",
+    "ticker": "PEP",
+    "yearEndMcapBn": 240.18,
+    "source": "companiesmarketcap.com/pepsico/marketcap (2021: $240.18B)"
+   },
+   {
+    "company": "AbbVie",
+    "ticker": "ABBV",
+    "yearEndMcapBn": 239.37,
+    "source": "companiesmarketcap.com/abbvie/marketcap (2021: $239.37B)"
+   },
+   {
+    "company": "Chevron",
+    "ticker": "CVX",
+    "yearEndMcapBn": 226.21,
+    "source": "companiesmarketcap.com/chevron/marketcap (2021: $226.21B)"
+   },
+   {
+    "company": "PayPal",
+    "ticker": "PYPL",
+    "yearEndMcapBn": 220.26,
+    "source": "companiesmarketcap.com/paypal/marketcap (2021: $220.26B)"
+   },
+   {
+    "company": "Comcast",
+    "ticker": "CMCSA",
+    "yearEndMcapBn": 229.95,
+    "source": "companiesmarketcap.com/comcast/marketcap (2021: $229.95B)"
+   },
+   {
+    "company": "Danaher",
+    "ticker": "DHR",
+    "yearEndMcapBn": 235.1,
+    "source": "companiesmarketcap.com/danaher/marketcap (2021: $235.10B)"
+   },
+   {
+    "company": "Verizon",
+    "ticker": "VZ",
+    "yearEndMcapBn": 218.11,
+    "source": "companiesmarketcap.com/verizon/marketcap (2021: $218.11B)"
+   },
+   {
+    "company": "Intel",
+    "ticker": "INTC",
+    "yearEndMcapBn": 209.6,
+    "source": "companiesmarketcap.com/intel/marketcap (2021: $209.60B)"
+   },
+   {
+    "company": "Qualcomm",
+    "ticker": "QCOM",
+    "yearEndMcapBn": 205.72,
+    "source": "companiesmarketcap.com/qualcomm/marketcap (2021: $205.72B)"
+   },
+   {
+    "company": "Wells Fargo",
+    "ticker": "WFC",
+    "yearEndMcapBn": 186.44,
+    "source": "companiesmarketcap.com/wells-fargo/marketcap (2021: $186.44B)"
+   },
+   {
+    "company": "McDonald's",
+    "ticker": "MCD",
+    "yearEndMcapBn": 200.31,
+    "source": "companiesmarketcap.com/mcdonald/marketcap (2021: $200.31B; the AUD page shows A$276.30B)"
+   },
+   {
+    "company": "Merck",
+    "ticker": "MRK",
+    "yearEndMcapBn": 193.58,
+    "source": "companiesmarketcap.com/merck/marketcap (2021: $193.58B; not Merck KGaA)"
+   },
+   {
+    "company": "UPS",
+    "ticker": "UPS",
+    "yearEndMcapBn": 186.29,
+    "source": "companiesmarketcap.com/ups/marketcap (2021: $186.29B)"
+   },
+   {
+    "company": "NextEra Energy",
+    "ticker": "NEE",
+    "yearEndMcapBn": 183.18,
+    "source": "companiesmarketcap.com/nextera-energy/marketcap (2021: $183.18B)"
+   },
+   {
+    "company": "Morgan Stanley",
+    "ticker": "MS",
+    "yearEndMcapBn": 173.93,
+    "source": "companiesmarketcap.com/morgan-stanley/marketcap (2021: $173.93B)"
+   },
+   {
+    "company": "Linde",
+    "ticker": "LIN",
+    "yearEndMcapBn": 177.56,
+    "source": "companiesmarketcap.com/linde/marketcap (2021: $177.56B)"
+   },
+   {
+    "company": "Lowe's",
+    "ticker": "LOW",
+    "yearEndMcapBn": 174.15,
+    "source": "companiesmarketcap.com/lowes-companies/marketcap (2021: $174.15B)"
+   },
+   {
+    "company": "AMD",
+    "ticker": "AMD",
+    "yearEndMcapBn": 173.77,
+    "source": "companiesmarketcap.com/amd/marketcap (2021: $173.77B)"
+   },
+   {
+    "company": "Texas Instruments",
+    "ticker": "TXN",
+    "yearEndMcapBn": 174.14,
+    "source": "companiesmarketcap.com/texas-instruments/marketcap (2021: $174.14B)"
+   },
+   {
+    "company": "Intuit",
+    "ticker": "INTU",
+    "yearEndMcapBn": 182.13,
+    "source": "companiesmarketcap.com/intuit/marketcap (2021: $182.13B)"
+   },
+   {
+    "company": "Charles Schwab",
+    "ticker": "SCHW",
+    "yearEndMcapBn": 158.99,
+    "source": "companiesmarketcap.com/charles-schwab/marketcap (2021: $158.99B)"
+   },
+   {
+    "company": "Union Pacific",
+    "ticker": "UNP",
+    "yearEndMcapBn": 161.95,
+    "source": "companiesmarketcap.com/union-pacific-corporation/marketcap (2021: $161.95B)"
+   },
+   {
+    "company": "Philip Morris International",
+    "ticker": "PM",
+    "yearEndMcapBn": 147.89,
+    "source": "companiesmarketcap.com/philip-morris/marketcap (2021: $147.89B)"
+   },
+   {
+    "company": "T-Mobile US",
+    "ticker": "TMUS",
+    "yearEndMcapBn": 144.86,
+    "source": "companiesmarketcap.com/t-mobile-us/marketcap (2021: $144.86B)"
+   },
+   {
+    "company": "Applied Materials",
+    "ticker": "AMAT",
+    "yearEndMcapBn": 139.53,
+    "source": "companiesmarketcap.com/applied-materials/marketcap (2021: $139.53B)"
+   },
+   {
+    "company": "BlackRock",
+    "ticker": "BLK",
+    "yearEndMcapBn": 138.87,
+    "source": "companiesmarketcap.com/blackrock/marketcap (2021: $138.87B)"
+   },
+   {
+    "company": "Bristol-Myers Squibb",
+    "ticker": "BMY",
+    "yearEndMcapBn": 138.39,
+    "source": "companiesmarketcap.com/bristol-myers-squibb/marketcap (2021: $138.39B)"
+   },
+   {
+    "company": "Medtronic",
+    "ticker": "MDT",
+    "yearEndMcapBn": 139.09,
+    "source": "companiesmarketcap.com/medtronic/marketcap (2021: $139.09B)"
+   },
+   {
+    "company": "Goldman Sachs",
+    "ticker": "GS",
+    "yearEndMcapBn": 127.61,
+    "source": "companiesmarketcap.com/goldman-sachs/marketcap (2021: $127.61B)"
+   },
+   {
+    "company": "Starbucks",
+    "ticker": "SBUX",
+    "yearEndMcapBn": 137.22,
+    "source": "companiesmarketcap.com/starbucks/marketcap (2021: $137.22B)"
+   },
+   {
+    "company": "CVS Health",
+    "ticker": "CVS",
+    "yearEndMcapBn": 136.17,
+    "source": "companiesmarketcap.com/cvs-health/marketcap (2021: $136.17B)"
+   },
+   {
+    "company": "AT&T",
+    "ticker": "T",
+    "yearEndMcapBn": 175.66,
+    "source": "companiesmarketcap.com/att/marketcap (2021: $175.66B, before the WarnerMedia spin of Apr 2022; AUD page A$242.30B)"
+   },
+   {
+    "company": "Estee Lauder",
+    "ticker": "EL",
+    "yearEndMcapBn": 133.25,
+    "source": "companiesmarketcap.com/estee-lauder/marketcap (2021: $133.25B)"
+   },
+   {
+    "company": "American Tower",
+    "ticker": "AMT",
+    "yearEndMcapBn": 133.2,
+    "source": "companiesmarketcap.com/american-tower/marketcap (2021: $133.20B; AUD page A$183.74B)"
+   },
+   {
+    "company": "ServiceNow",
+    "ticker": "NOW",
+    "yearEndMcapBn": 129.17,
+    "source": "companiesmarketcap.com/servicenow/marketcap (2021: $129.17B)"
+   },
+   {
+    "company": "Intuitive Surgical",
+    "ticker": "ISRG",
+    "yearEndMcapBn": 128.35,
+    "source": "companiesmarketcap.com/intuitive-surgical/marketcap (2021: $128.35B)"
+   },
+   {
+    "company": "American Express",
+    "ticker": "AXP",
+    "yearEndMcapBn": 124.49,
+    "source": "companiesmarketcap.com/american-express/marketcap (2021: $124.49B)"
+   },
+   {
+    "company": "Raytheon Technologies",
+    "ticker": "RTX",
+    "yearEndMcapBn": 128.81,
+    "source": "companiesmarketcap.com/raytheon-technologies/marketcap (2021: $128.81B)"
+   },
+   {
+    "company": "Citigroup",
+    "ticker": "C",
+    "yearEndMcapBn": 119.82,
+    "source": "companiesmarketcap.com/citigroup/marketcap (2021: $119.82B)"
+   },
+   {
+    "company": "Prologis",
+    "ticker": "PLD",
+    "yearEndMcapBn": 124.47,
+    "source": "companiesmarketcap.com/prologis/marketcap (2021: $124.47B; EUR page €109.90B, consistent at ~1.13 USD/EUR)"
+   },
+   {
+    "company": "Amgen",
+    "ticker": "AMGN",
+    "yearEndMcapBn": 126.71,
+    "source": "companiesmarketcap.com/amgen/marketcap (2021: $126.71B)"
+   },
+   {
+    "company": "IBM",
+    "ticker": "IBM",
+    "yearEndMcapBn": 119.86,
+    "source": "companiesmarketcap.com/ibm/marketcap (2021: $119.86B, after the Kyndryl spin of Nov 2021)"
+   },
+   {
+    "company": "Boeing",
+    "ticker": "BA",
+    "yearEndMcapBn": 118.56,
+    "source": "companiesmarketcap.com/boeing/marketcap (2021: $118.56B; CAD page C$151.09B, AUD page A$163.53B)"
+   },
+   {
+    "company": "Zoetis",
+    "ticker": "ZTS",
+    "yearEndMcapBn": 115.45,
+    "source": "companiesmarketcap.com/zoetis/marketcap (2021: $115.45B)"
+   },
+   {
+    "company": "Anthem",
+    "ticker": "ANTM",
+    "yearEndMcapBn": 112.5,
+    "source": "companiesmarketcap.com/anthem/marketcap (2021: $112.50B; now Elevance Health)"
+   },
+   {
+    "company": "Target",
+    "ticker": "TGT",
+    "yearEndMcapBn": 110.88,
+    "source": "companiesmarketcap.com/target/marketcap (2021: $110.88B)"
+   },
+   {
+    "company": "Caterpillar",
+    "ticker": "CAT",
+    "yearEndMcapBn": 111.83,
+    "source": "companiesmarketcap.com/caterpillar/marketcap (2021: $111.83B)"
+   },
+   {
+    "company": "Charter Communications",
+    "ticker": "CHTR",
+    "yearEndMcapBn": 112.62,
+    "source": "companiesmarketcap.com/charter-communications/marketcap (2021: $112.62B; likely Class A shares only, excluding Advance/Newhouse units)"
+   },
+   {
+    "company": "Moderna",
+    "ticker": "MRNA",
+    "yearEndMcapBn": 102.97,
+    "source": "companiesmarketcap.com/moderna/marketcap (2021: $102.97B)"
+   },
+   {
+    "company": "S&P Global",
+    "ticker": "SPGI",
+    "yearEndMcapBn": 113.73,
+    "source": "companiesmarketcap.com/sp-global/marketcap (2021: $113.73B, before the IHS Markit merger of Feb 2022)"
+   },
+   {
+    "company": "Deere",
+    "ticker": "DE",
+    "yearEndMcapBn": 105.67,
+    "source": "companiesmarketcap.com/deere-company/marketcap (2021: $105.67B)"
+   },
+   {
+    "company": "Micron",
+    "ticker": "MU",
+    "yearEndMcapBn": 104.32,
+    "source": "companiesmarketcap.com/micron-technology/marketcap (2021: $104.32B)"
+   },
+   {
+    "company": "ADP",
+    "ticker": "ADP",
+    "yearEndMcapBn": 103.66,
+    "source": "companiesmarketcap.com/automatic-data-processing/marketcap (2021: $103.66B)"
+   },
+   {
+    "company": "Lam Research",
+    "ticker": "LRCX",
+    "yearEndMcapBn": 100.87,
+    "source": "companiesmarketcap.com/lam-research/marketcap (2021: $100.87B)"
+   },
+   {
+    "company": "Airbnb",
+    "ticker": "ABNB",
+    "yearEndMcapBn": 105.78,
+    "source": "companiesmarketcap.com/airbnb/marketcap (2021: $105.78B)"
+   },
+   {
+    "company": "Stryker",
+    "ticker": "SYK",
+    "yearEndMcapBn": 100.88,
+    "source": "companiesmarketcap.com/stryker-corporation/marketcap (2021: $100.88B)"
+   },
+   {
+    "company": "Snowflake",
+    "ticker": "SNOW",
+    "yearEndMcapBn": 103.75,
+    "source": "companiesmarketcap.com/snowflake/marketcap (2021: $103.75B)"
+   },
+   {
+    "company": "Booking Holdings",
+    "ticker": "BKNG",
+    "yearEndMcapBn": 98.52,
+    "source": "companiesmarketcap.com/booking-holdings/marketcap (2021: $98.52B)"
+   },
+   {
+    "company": "Lockheed Martin",
+    "ticker": "LMT",
+    "yearEndMcapBn": 96.31,
+    "source": "companiesmarketcap.com/lockheed-martin/marketcap (2021: $96.31B)"
+   },
+   {
+    "company": "ConocoPhillips",
+    "ticker": "COP",
+    "yearEndMcapBn": 95.2,
+    "source": "companiesmarketcap.com/conocophillips/marketcap (2021: $95.20B)"
+   },
+   {
+    "company": "Atlassian",
+    "ticker": "TEAM",
+    "yearEndMcapBn": 96.65,
+    "source": "companiesmarketcap.com/atlassian/marketcap (2021: $96.65B)"
+   },
+   {
+    "company": "Sherwin-Williams",
+    "ticker": "SHW",
+    "yearEndMcapBn": 92.33,
+    "source": "companiesmarketcap.com/sherwin-williams/marketcap (2021: $92.33B; INR page ₹6.872T)"
+   },
+   {
+    "company": "Mondelez",
+    "ticker": "MDLZ",
+    "yearEndMcapBn": 92.5,
+    "source": "companiesmarketcap.com/mondelez/marketcap (2021: $92.50B)"
+   },
+   {
+    "company": "Rivian",
+    "ticker": "RIVN",
+    "yearEndMcapBn": 93.35,
+    "source": "companiesmarketcap.com/rivian/marketcap (2021: $93.35B)"
+   },
+   {
+    "company": "Blackstone",
+    "ticker": "BX",
+    "yearEndMcapBn": 94.71,
+    "source": "companiesmarketcap.com/blackstone-group/marketcap (2021: $94.71B; GBP page £70.17B, AUD page A$130.64B)"
+   },
+   {
+    "company": "TJX",
+    "ticker": "TJX",
+    "yearEndMcapBn": 90.56,
+    "source": "companiesmarketcap.com/tjx-companies/marketcap (2021: $90.56B)"
+   },
+   {
+    "company": "Analog Devices",
+    "ticker": "ADI",
+    "yearEndMcapBn": null,
+    "source": "NULL ON PURPOSE. A companiesmarketcap.com/analog-devices/marketcap summary gave 2021 = $92.33B, and the INR page ₹6.872T, but both are identical to the cent to Sherwin-Williams' figures. That points to a possible mix-up in the search summary or the site, so no number was taken. A cross-check from another source is still needed."
+   }
+  ],
+  "missing": [
+   {
+    "company": "Honeywell",
+    "ticker": "HON",
+    "yearEndMcapBn": 143.5,
+    "source": "companiesmarketcap.com/honeywell/marketcap (2021 ≈ $143.5B; the same page also shows $144.07B). Clearly inside the year-end top 100 (around #58)"
+   },
+   {
+    "company": "General Electric",
+    "ticker": "GE",
+    "yearEndMcapBn": 103.74,
+    "source": "companiesmarketcap.com/general-electric/marketcap (2021: $103.74B, before the HealthCare/Vernova spins)"
+   },
+   {
+    "company": "3M",
+    "ticker": "MMM",
+    "yearEndMcapBn": 101.57,
+    "source": "companiesmarketcap.com/3m/marketcap (2021: $101.57B)"
+   },
+   {
+    "company": "Gilead Sciences",
+    "ticker": "GILD",
+    "yearEndMcapBn": 91.05,
+    "source": "companiesmarketcap.com/gilead-sciences/marketcap (2021: $91.05B). Above TJX ($90.56B) on the same source, so it is borderline top-100. Checked and below the cutoff: Crown Castle CCI $90.21B, Marsh & McLennan $87.52B, Altria $86.40B. Caveat: no single year-end top-100 ranking page was found. Membership is inferred from per-company year-end values on one site."
+   }
+  ],
+  "searchesUsed": 33
+ }
+}

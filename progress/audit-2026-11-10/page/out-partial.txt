@@ -1,0 +1,1 @@
+partial | notice: "" | status: آخر تحديث للأسعار: 05:28 م | rows: ["TADAWUL:1111: price=SKELETON score=SKELETON","TADAWUL:2222: price=SKELETON score=SKELETON","NASDAQ:AAA: price=$100.00 +0.5% score=7.7"]

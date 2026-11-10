@@ -1,0 +1,323 @@
+Live audit of the stock page's fair value, data fetched 2026-11-10 14:27 UTC from TradingView (get-symbol-data-batch: data/quotes.json, data/hist.json; get-ohlcv: data/daily, data/monthly → data/px).
+Monthly closes: daily bars reduced to month-end closes (identical to interval M where both were fetched: NVDA 74 months, 1120 61 months, worst diff 0.000%).
+
+##### 1. PAGE PIPELINE (pipeline.mjs: engine imported, compute()/liveFairValues()/liveDcf() copied) #####
+NASDAQ:AAPL     350.69 fair   208.20 up -41% tgt 339.72 | Growth / tech | pe:285.61×0.2 peg:121.55×0.3 dcf:207.48×0.3 ps:261.85×0.2 | dropped  capped  | score 7.28  | weak: null
+NASDAQ:COST    1066.18 fair   837.03 up -21% tgt 1083.15 | Mature / profitable | pe:1030.08×0.3 dcf:524.63×0.3 ev:980.25×0.25 | dropped  capped  | score 6.35  | weak: null
+NASDAQ:MSFT     545.18 fair   454.97 up -17% tgt 639.49 | Growth / tech | pe:657.40×0.2 peg:437.12×0.3 dcf:272.73×0.3 ps:552.68×0.2 | dropped  capped  | score 7.38  | weak: null
+NASDAQ:MU       733.15 fair  1475.31 up 101% tgt 1631.56 | Growth / tech | pe:1594.11×0.2 peg:1855.28×0.3 dcf:1628.16×0.3 ps:557.29×0.2 | dropped  capped  | score 8.40  | weak: more than 60% from the price
+NASDAQ:NVDA     178.67 fair   258.22 up 45% tgt 331.66 | Growth / tech | pe:390.14×0.2 peg:197.77×0.3 dcf:164.64×0.3 ps:357.34×0.2 | dropped  capped  | score 9.47  | weak: null
+NASDAQ:RIVN      14.01 fair    14.71 up 5% tgt 17.70 | Unprofitable growth | ps:14.71×1 | dropped  capped  | score 3.88  | weak: null
+NASDAQ:TSLA     378.05 fair        — up — tgt 423.70 | Heavy / cyclical | ev:—×0.4 pb:—×0.3 pen:—×0.3 | dropped  capped pe,ev | score 4.44  | weak: null
+NYSE:JPM        342.08 fair   308.36 up -10% tgt 375.04 | Financial | pe:302.58×0.5 pbj:314.15×0.5 | dropped  capped  | score 8.63  | weak: null
+NYSE:KO          96.03 fair    86.40 up -10% tgt 99.05 | Mature / profitable | pe:90.99×0.3 dcf:82.16×0.3 ev:85.98×0.25 | dropped  capped  | score 6.35  | weak: null
+NYSE:O           59.50 fair    42.48 up -29% tgt 63.01 | Financial | pe:78.87×0.5 pbj:6.08×0.5 | dropped  capped  | score 8.38  | weak: methods >3x apart
+NYSE:TSM        388.62 fair   339.66 up -13% tgt 554.22 | Growth / tech | pe:418.72×0.2 peg:269.84×0.3 dcf:359.47×0.3 ps:335.60×0.2 | dropped  capped  | score 8.33  | weak: null
+NYSE:XOM        164.73 fair   181.57 up 10% tgt 184.83 | Heavy / cyclical | ev:168.29×0.4 pb:—×0.3 pen:199.28×0.3 | dropped  capped  | score 6.62  | weak: null
+TADAWUL:1120     63.85 fair    73.54 up 15% tgt 71.89 | Financial | pe:85.88×0.5 pbj:61.20×0.5 | dropped  capped  | score 9.52  | weak: null
+TADAWUL:2222     25.60 fair    29.43 up 15% tgt 30.35 | Heavy / cyclical | ev:27.64×0.4 pb:—×0.3 pen:31.82×0.3 | dropped  capped  | score 6.41  | weak: null
+
+
+NASDAQ:AAPL | Growth / tech | price 350.69 USD | fair 208.20 | upside -40.6% | analyst target 339.72 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.2,"peg":0.3,"dcf":0.3,"ps":0.2} dropped: [] capped: [] weighted median: 207.48
+  values (all, weighted or not): pe=285.61 peg=121.55 dcf=207.48 graham=39.47 ev=289.27 ps=261.85 pbj=30.85 pen=281.31
+  state today: eps 8.974 epsNorm(5y) 6.955 epsG(3y) 0.135 revG(3y) 0.077 shares 14.728B (quote count 14.532B) revPS 32.51 fcfPS 9.24 debt 85.8B ebitda 171.5B FY 2026
+  multiples today: pe=39.08 pen=50.42 ps=10.79 ev=30.62 | 60-month medians (n): pe=31.82(60) pen=40.45(60) ps=8.05(60) ev=25.34(60)
+  DCF: FCF/share 9.36 g1 0.101 r 0.0901 beta 1.07 value 207.48 | analysts: rev 0.101 eps 0.050 | peNow 39.08 | PEG 7.49
+  score 7.28 {"A":0.22,"B":2,"C":1.06,"D":2,"E":2}
+
+NASDAQ:COST | Mature / profitable | price 1066.18 USD | fair 837.03 | upside -21.5% | analyst target 1083.15 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.3,"dcf":0.3,"ev":0.25} dropped: [] capped: [] weighted median: 980.25
+  values (all, weighted or not): pe=1030.08 peg=282.53 dcf=524.63 graham=194.23 ev=980.25 ps=945.42 pbj=321.87 cash=25.09 pen=1030.86
+  state today: eps 20.759 epsNorm(5y) 16.566 epsG(3y) 0.136 revG(3y) 0.078 shares 0.444B (quote count 0.443B) revPS 682.13 fcfPS 21.11 debt 10.2B ebitda 14.4B FY 2026
+  multiples today: pe=51.36 pen=64.36 ps=1.56 ev=33.71 | 60-month medians (n): pe=49.62(60) pen=62.23(60) ps=1.39(60) ev=31.05(60)
+  DCF: FCF/share 21.17 g1 0.087 r 0.0802 beta 0.84 value 524.63 | analysts: rev 0.087 eps 0.098 | peNow 51.36 | PEG 4.76
+  score 6.35 {"A":0.38,"B":1.16,"C":1.07,"D":2,"E":1.75}
+
+NASDAQ:MSFT | Growth / tech | price 545.18 USD | fair 454.97 | upside -16.5% | analyst target 639.49 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.2,"peg":0.3,"dcf":0.3,"ps":0.2} dropped: [] capped: [] weighted median: 437.12
+  values (all, weighted or not): pe=657.40 peg=437.12 dcf=272.73 graham=165.21 ev=628.04 ps=552.68 pbj=253.40 pen=562.99
+  state today: eps 19.148 epsNorm(5y) 12.544 epsG(3y) 0.228 revG(3y) 0.161 shares 7.449B (quote count 7.426B) revPS 46.51 fcfPS 8.05 debt 133.9B ebitda 205.3B FY 2026
+  multiples today: pe=28.47 pen=43.46 ps=11.72 ev=20.43 | 60-month medians (n): pe=34.33(60) pen=44.88(60) ps=11.88(60) ev=23.44(60)
+  DCF: FCF/share 8.07 g1 0.193 r 0.0889 beta 1.04 value 272.73 | analysts: rev 0.193 eps 0.161 | peNow 28.47 | PEG 1.69
+  score 7.38 {"A":0.5,"B":1.82,"C":1.81,"D":2,"E":1.25}
+
+NASDAQ:MU | Growth / tech | price 733.15 USD | fair 1475.31 | upside 101.2% | analyst target 1631.56 | coverage 1.00 | period Q3 2026 | weak: more than 60% from the price
+  weights: {"pe":0.2,"peg":0.3,"dcf":0.3,"ps":0.2} dropped: [] capped: [] weighted median: 1628.16
+  values (all, weighted or not): pe=1594.11 peg=1855.28 dcf=1628.16 graham=451.99 ev=1393.99 ps=557.29 pbj=489.40 cash=33.84 pen=546.87
+  state today: eps 74.211 epsNorm(5y) 17.006 epsG(3y) — revG(3y) 1.046 shares 1.145B (quote count 1.131B) revPS 116.33 fcfPS 51.50 debt 5.2B ebitda 109.4B FY 2026
+  multiples today: pe=9.88 pen=43.11 ps=6.30 ev=7.72 | 60-month medians (n): pe=21.48(39) pen=32.16(56) ps=4.79(60) ev=14.64(58)
+  DCF: FCF/share 52.11 g1 0.600 r 0.1300 beta 2.37 value 1628.16 | analysts: rev 1.088 eps 1.325 | peNow 9.88 | PEG 0.03
+  score 8.40 {"A":1.68,"B":1.81,"C":1.5,"D":1.67,"E":1.75}
+
+NASDAQ:NVDA | Growth / tech | price 178.67 USD | fair 258.22 | upside 44.5% | analyst target 331.66 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.2,"peg":0.3,"dcf":0.3,"ps":0.2} dropped: [] capped: [] weighted median: 197.77
+  values (all, weighted or not): pe=390.14 peg=197.77 dcf=164.64 graham=41.08 ev=371.64 ps=357.34 pbj=37.93 cash=2.51
+  state today: eps 7.911 epsNorm(5y) 1.918 epsG(3y) 2.041 revG(3y) 1.000 shares 24.382B (quote count 24.100B) revPS 12.43 fcfPS 5.21 debt 38.9B ebitda 201.3B FY 2025
+  multiples today: pe=22.59 pen=93.17 ps=14.38 ev=21.84 | 60-month medians (n): pe=49.32(42) pen=—(9) ps=28.76(60) ev=45.22(47)
+  DCF: FCF/share 5.27 g1 0.600 r 0.1300 beta 2.21 value 164.64 | analysts: rev 0.899 eps 0.948 | peNow 22.59 | PEG 0.20
+  score 9.47 {"A":1.97,"B":2,"C":2,"D":2,"E":1.5}
+
+NASDAQ:RIVN | Unprofitable growth | price 14.01 USD | fair 14.71 | upside 5.0% | analyst target 17.70 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"ps":1} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): ps=14.71 cash=0.05
+  state today: eps -2.251 epsNorm(5y) -5.219 epsG(3y) — revG(3y) 0.481 shares 1.321B (quote count 1.460B) revPS 4.91 fcfPS -3.17 debt 5.4B ebitda -2.6B FY 2025
+  multiples today: pe=— pen=— ps=2.86 ev=— | 60-month medians (n): pe=—(0) pen=—(0) ps=3.00(43) ev=—(0)
+  DCF: none | analysts: rev 0.430 eps — | peNow — | PEG —
+  score 3.88 {"A":1.23,"B":0,"C":1.5,"D":0,"E":1.14}
+  revenue DCF: value 0.00 raw -0.17 margin 0.067 (industry Motor Vehicles n=10) G 0.300 r0 0.114 pFail 0.23 runway 1.3y gap 12.8B dilution 0.63 implied margin 0.178 growth from analysts
+
+NASDAQ:TSLA | Heavy / cyclical | price 378.05 USD | fair — | upside — | analyst target 423.70 | coverage 0.00 | period Q3 2026 | weak: null
+  weights: {"ev":0.4,"pb":0.3,"pen":0.3} dropped: [] capped: ["pe","ev"] weighted median: —
+  values (all, weighted or not): dcf=14.62 graham=21.49 ps=326.99 pbj=4.53 cash=7.46
+  state today: eps 0.815 epsNorm(5y) 2.534 epsG(3y) -0.333 revG(3y) 0.052 shares 3.953B (quote count 3.953B) revPS 26.20 fcfPS 0.84 debt 16.4B ebitda 10.3B FY 2025
+  multiples today: pe=464.08 pen=149.19 ps=14.43 ev=146.22 | 60-month medians (n): pe=64.70(20) pen=—(1) ps=12.48(60) ev=65.07(36)
+  DCF: FCF/share 0.84 g1 0.134 r 0.1180 beta 1.74 value 14.62 | analysts: rev 0.134 eps 0.011 | peNow 415.85 | PEG 203.14
+  score 4.44 {"A":0.11,"B":1.02,"C":0.26,"D":1.8,"E":1.25}
+
+NYSE:JPM | Financial | price 342.08 USD | fair 308.36 | upside -9.9% | analyst target 375.04 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.5,"pbj":0.5} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): pe=302.58 peg=436.70 dcf=1855.63 graham=266.37 ps=328.66 pbj=314.15 pen=290.30
+  state today: eps 23.836 epsNorm(5y) 16.690 epsG(3y) 0.183 revG(3y) 0.210 shares 2.756B (quote count 2.656B) revPS 109.78 fcfPS 55.83 debt 1272.6B ebitda — FY 2025
+  multiples today: pe=14.35 pen=20.50 ps=3.12 ev=— | 60-month medians (n): pe=12.69(60) pen=17.39(60) ps=2.99(60) ev=—(0)
+  DCF: FCF/share — g1 — r 0.0900 beta — value 1855.63 | analysts: rev — eps 0.233 | peNow 14.35 | PEG 0.59
+  score 8.63 {"A":0.72,"B":2,"C":1.92,"D":2,"E":2}
+
+NYSE:KO | Mature / profitable | price 96.03 USD | fair 86.40 | upside -10.0% | analyst target 99.05 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.3,"dcf":0.3,"ev":0.25} dropped: [] capped: [] weighted median: 85.98
+  values (all, weighted or not): pe=90.99 peg=38.93 dcf=82.16 graham=25.75 ev=85.98 ps=79.55 pbj=34.75 pen=82.29
+  state today: eps 3.392 epsNorm(5y) 2.483 epsG(3y) 0.115 revG(3y) 0.041 shares 4.313B (quote count 4.302B) revPS 11.93 fcfPS 3.31 debt 41.6B ebitda 17.5B FY 2025
+  multiples today: pe=28.31 pen=38.68 ps=8.05 ev=26.02 | 60-month medians (n): pe=26.83(60) pen=33.14(60) ps=6.67(60) ev=23.55(60)
+  DCF: FCF/share 3.32 g1 0.042 r 0.0700 beta 0.28 value 82.16 | analysts: rev 0.042 eps 0.113 | peNow 28.32 | PEG 2.54
+  score 6.35 {"A":0.56,"B":1.72,"C":0.78,"D":1.54,"E":1.75}
+
+NYSE:O | Financial | price 59.5 USD | fair 42.48 | upside -28.6% | analyst target 63.01 | coverage 1.00 | period Q3 2026 | weak: methods >3x apart
+  weights: {"pe":0.5,"pbj":0.5} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): pe=78.87 dcf=135.28 graham=36.80 ev=66.50 ps=64.59 pbj=6.08 pen=57.97
+  state today: eps 1.449 epsNorm(5y) 1.137 epsG(3y) -0.065 revG(3y) 0.199 shares 0.936B (quote count 0.951B) revPS 6.65 fcfPS 4.25 debt 33.4B ebitda 5.4B FY 2025
+  multiples today: pe=41.06 pen=52.31 ps=8.94 ev=16.37 | 60-month medians (n): pe=54.42(60) pen=50.97(60) ps=9.71(60) ev=17.57(60)
+  DCF: FCF/share — g1 — r 0.0900 beta — value 135.28 | analysts: rev — eps 0.311 | peNow 41.06 | PEG 1.24
+  score 8.38 {"A":1.78,"B":2,"C":0.99,"D":2,"E":1.6}
+
+NYSE:TSM | Growth / tech | price 388.62 USD | fair 339.66 | upside -12.6% | analyst target 554.22 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.2,"peg":0.3,"dcf":0.3,"ps":0.2} dropped: [] capped: [] weighted median: 335.60
+  values (all, weighted or not): pe=418.72 peg=269.84 dcf=359.47 ev=363.29 ps=335.60 cash=18.38 pen=264.98
+  state today: eps 15.538 epsNorm(5y) 6.711 epsG(3y) 0.174 revG(3y) 0.172 shares 5.186B (quote count 5.186B) revPS 30.16 fcfPS 9.62 debt 30.9B ebitda 114.0B FY 2025
+  multiples today: pe=25.01 pen=57.91 ps=12.88 ev=17.95 | 60-month medians (n): pe=26.95(60) pen=39.48(60) ps=11.13(60) ev=16.80(60)
+  DCF: FCF/share 9.62 g1 0.411 r 0.1056 beta 1.44 value 359.47 | analysts: rev 0.411 eps 0.637 | peNow 25.01 | PEG 0.36
+  score 8.33 {"A":1.05,"B":1.8,"C":1.73,"D":2,"E":1.75}
+
+NYSE:XOM | Heavy / cyclical | price 164.73 USD | fair 181.57 | upside 10.2% | analyst target 184.83 | coverage 0.70 | period Q3 2026 | weak: null
+  weights: {"ev":0.4,"pb":0.3,"pen":0.3} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): pe=154.65 dcf=715.84 graham=119.45 ev=168.29 ps=138.23 pbj=129.67 pen=199.28
+  state today: eps 9.732 epsNorm(5y) 8.414 epsG(3y) -0.203 revG(3y) -0.068 shares 4.174B (quote count 4.079B) revPS 94.36 fcfPS 10.29 debt 34.3B ebitda 83.9B FY 2025
+  multiples today: pe=16.93 pen=19.58 ps=1.75 ev=8.61 | 60-month medians (n): pe=15.89(55) pen=23.69(60) ps=1.46(60) ev=8.78(60)
+  DCF: FCF/share 10.53 g1 0.342 r 0.0700 beta 0.15 value 715.84 | analysts: rev 0.342 eps 0.931 | peNow 16.93 | PEG 0.13
+  score 6.62 {"A":0.91,"B":1.71,"C":0,"D":2,"E":2}
+
+TADAWUL:1120 | Financial | price 63.85 SAR | fair 73.54 | upside 15.2% | analyst target 71.89 | coverage 1.00 | period Q3 2026 | weak: null
+  weights: {"pe":0.5,"pbj":0.5} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): pe=85.88 peg=48.55 dcf=111.25 graham=43.79 ps=82.20 pbj=61.20 pen=82.86
+  state today: eps 4.273 epsNorm(5y) 2.987 epsG(3y) 0.114 revG(3y) 0.229 shares 6.000B (quote count 6.000B) revPS 12.49 fcfPS 3.11 debt 212.1B ebitda — FY 2025
+  multiples today: pe=14.94 pen=21.38 ps=5.11 ev=— | 60-month medians (n): pe=20.10(60) pen=27.74(60) ps=6.58(60) ev=—(0)
+  DCF: FCF/share — g1 — r 0.0900 beta — value 111.25 | analysts: rev — eps 0.125 | peNow 14.94 | PEG 1.16
+  score 9.52 {"A":1.95,"B":2,"C":1.57,"D":2,"E":2}
+
+TADAWUL:2222 | Heavy / cyclical | price 25.6 SAR | fair 29.43 | upside 15.0% | analyst target 30.35 | coverage 0.70 | period Q3 2026 | weak: null
+  weights: {"ev":0.4,"pb":0.3,"pen":0.3} dropped: [] capped: [] weighted median: —
+  values (all, weighted or not): pe=30.30 dcf=63.45 graham=20.33 ev=27.64 ps=29.49 pbj=32.73 pen=31.82
+  state today: eps 1.854 epsNorm(5y) 1.808 epsG(3y) -0.165 revG(3y) -0.097 shares 241.898B (quote count 241.898B) revPS 7.99 fcfPS 1.32 debt 360.0B ebitda 911.9B FY 2025
+  multiples today: pe=13.81 pen=14.16 ps=3.20 ev=7.19 | 60-month medians (n): pe=16.34(60) pen=17.60(60) ps=3.69(60) ev=7.73(60)
+  DCF: FCF/share 1.32 g1 0.187 r 0.0700 beta 0.58 value 63.45 | analysts: rev 0.187 eps 0.392 | peNow 13.81 | PEG 0.33
+  score 6.41 {"A":0.91,"B":2,"C":0,"D":2,"E":1.5}
+
+##### 2. INDEPENDENT RECOMPUTATION vs PAGE (handcheck.mjs) #####
+=== A. page vs hand (mismatch > 1%)
+NASDAQ:AAPL: 
+   shares: page 14.728B hand 14.532B (1.3%)
+   fcfPS(engine): page 9.238 hand 9.362 (-1.3%)
+   now.ps: page 10.786 hand 10.643 (1.3%)
+   now.ev: page 30.619 hand 30.219 (1.3%)
+   value.ps: page 261.847 hand 265.373 (-1.3%)
+NASDAQ:COST: all within 1%
+NASDAQ:MSFT: all within 1%
+NASDAQ:MU: 
+   shares: page 1.145B hand 1.131B (1.2%)
+   fcfPS(engine): page 51.498 hand 52.114 (-1.2%)
+   now.ps: page 6.303 hand 6.228 (1.2%)
+   now.ev: page 7.720 hand 7.629 (1.2%)
+   value.ps: page 557.294 hand 563.965 (-1.2%)
+NASDAQ:NVDA: 
+   shares: page 24.382B hand 24.100B (1.2%)
+   fcfPS(engine): page 5.209 hand 5.270 (-1.2%)
+   now.ps: page 14.379 hand 14.213 (1.2%)
+   now.ev: page 21.838 hand 21.587 (1.2%)
+   value.ps: page 357.344 hand 361.526 (-1.2%)
+NASDAQ:RIVN: 
+   shares: page 1.321B hand 1.456B (-9.3%)
+   fcfPS(engine): page -3.174 hand -2.880 (10.2%)
+   now.ps: page 2.856 hand 3.147 (-9.3%)
+   median.ps: page 2.999 hand 3.089 (-2.9%)
+   value.ps: page 14.711 hand 13.752 (7.0%)
+   FAIR: page 14.711 hand 13.752 (7.0%)
+NASDAQ:TSLA: all within 1%
+NYSE:JPM: 
+   shares: page 2.756B hand 2.656B (3.8%)
+   fcfPS(engine): page 55.833 hand 57.945 (-3.6%)
+   now.ps: page 3.116 hand 3.003 (3.8%)
+   dcf.g1: page null hand 0.210 (n/a)
+   dcf.fcf0: page undefined hand 57.945 (n/a)
+NYSE:KO: all within 1%
+NYSE:O: 
+   shares: page 0.936B hand 0.951B (-1.6%)
+   fcfPS(engine): page 4.251 hand 4.182 (1.7%)
+   now.ps: page 8.942 hand 9.090 (-1.6%)
+   now.ev: page 16.370 hand 16.539 (-1.0%)
+   dcf.g1: page null hand 0.199 (n/a)
+   dcf.fcf0: page undefined hand 4.182 (n/a)
+NYSE:TSM: all within 1%
+NYSE:XOM: 
+   shares: page 4.174B hand 4.079B (2.3%)
+   fcfPS(engine): page 10.294 hand 10.532 (-2.3%)
+   now.ps: page 1.746 hand 1.706 (2.3%)
+   now.ev: page 8.607 hand 8.421 (2.2%)
+   value.ev: page 168.294 hand 172.200 (-2.3%)
+   FAIR: page 181.574 hand 183.806 (-1.2%)
+TADAWUL:1120: 
+   dcf.g1: page null hand 0.229 (n/a)
+   dcf.fcf0: page undefined hand 3.112 (n/a)
+TADAWUL:2222: all within 1%
+
+=== B. TradingView ratios vs the page’s own (diff > 5% flagged *)
+NASDAQ:AAPL   P/E 39.08/39.08 | peNow 39.08 | P/S 10.79/10.46 | EV/EBITDA 30.62/29.89 (net of cash 29.89) | P/FCF 37.46/37.71
+NASDAQ:COST   P/E 51.36/51.36 | peNow 51.36 | P/S 1.56/1.54 | EV/EBITDA 33.71/32.13 (net of cash 32.13) | P/FCF 50.36/50.50
+NASDAQ:MSFT   P/E 28.47/28.47 | peNow 28.47 | P/S 11.72/11.40 | EV/EBITDA 20.43/20.06 (net of cash 20.06) | P/FCF 67.53/67.71
+NASDAQ:MU     P/E 9.88/9.88 | peNow 9.88 | P/S 6.30/5.94* | EV/EBITDA 7.72/7.23* (net of cash 7.23) | P/FCF 14.07/14.26
+NASDAQ:NVDA   P/E 22.59/22.59 | peNow 22.59 | P/S 14.38/14.96 | EV/EBITDA 21.84/21.09 (net of cash 21.09) | P/FCF 33.90/34.16
+NASDAQ:RIVN   P/E —/— | peNow — | P/S 2.86/3.04* | EV/EBITDA —/— (net of cash —) | P/FCF —/—
+NASDAQ:TSLA   P/E 464.08/415.85* | peNow 415.85 | P/S 14.43/12.25* | EV/EBITDA 146.22/141.84 (net of cash 141.78) | P/FCF 452.42/405.29*
+NYSE:JPM      P/E 14.35/14.35 | peNow 14.35 | P/S 3.12/4.40* | EV/EBITDA —/— (net of cash —) | P/FCF —/5.96
+NYSE:KO       P/E 28.31/28.32 | peNow 28.32 | P/S 8.05/8.02 | EV/EBITDA 26.02/25.13 (net of cash 25.01) | P/FCF 28.93/29.01
+NYSE:O        P/E 41.06/41.06 | peNow 41.06 | P/S 8.94/8.97 | EV/EBITDA 16.37/17.06 (net of cash 16.47) | P/FCF —/14.15
+NYSE:TSM      P/E 25.01/25.01 | peNow 25.01 | P/S 12.88/12.45 | EV/EBITDA 17.95/14.69* (net of cash 16.84) | P/FCF 40.41/40.41
+NYSE:XOM      P/E 16.93/16.93 | peNow 16.93 | P/S 1.75/1.74 | EV/EBITDA 8.61/8.36 (net of cash 8.28) | P/FCF 15.64/15.87
+TADAWUL:1120  P/E 14.94/14.94 | peNow 14.94 | P/S 5.11/7.53* | EV/EBITDA —/— (net of cash —) | P/FCF —/20.52
+TADAWUL:2222  P/E 13.81/11.41* | peNow 13.81 | P/S 3.20/2.70* | EV/EBITDA 7.19/7.29 (net of cash 6.91) | P/FCF 19.37/16.00*
+
+=== C. plumbing: quote TTM vs sum of the last four quarters; shares
+NASDAQ:AAPL   fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 14.532B mcap/px 14.532B mcap/prev 14.532B ni/eps 14.728B page 14.532B 
+NASDAQ:COST   fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 0.443B mcap/px 0.443B mcap/prev 0.443B ni/eps 0.444B page 0.443B 
+NASDAQ:MSFT   fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 7.426B mcap/px 7.426B mcap/prev 7.426B ni/eps 7.449B page 7.426B 
+NASDAQ:MU     fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 1.131B mcap/px 1.131B mcap/prev 1.131B ni/eps 1.145B page 1.131B 
+NASDAQ:NVDA   fcf 0.0% eps -0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 24.100B mcap/px 24.100B mcap/prev 24.100B ni/eps 24.382B page 24.100B 
+NASDAQ:RIVN   fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 1.456B mcap/px 1.460B mcap/prev 1.460B ni/eps 1.321B page 1.460B 
+NASDAQ:TSLA   fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 3.953B mcap/px 3.953B mcap/prev 3.953B ni/eps 3.542B page 3.953B EPS restated on today's count: 0.909 → 0.815
+NYSE:JPM      fcf 0.0% eps -0.0% rev 0.0% ni 0.0% ebitda n/a | shares: reported 2.656B mcap/px 2.656B mcap/prev 2.656B ni/eps 2.756B page 2.656B 
+NYSE:KO       fcf 0.0% eps -0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 4.302B mcap/px 4.302B mcap/prev 4.302B ni/eps 4.313B page 4.302B 
+NYSE:O        fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 0.951B mcap/px 0.951B mcap/prev 0.951B ni/eps 0.936B page 0.951B 
+NYSE:TSM      fcf 0.0% eps -0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 5.186B mcap/px 4.549B mcap/prev 4.549B ni/eps 5.186B page 5.186B 
+NYSE:XOM      fcf 0.0% eps -0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 4.079B mcap/px 4.079B mcap/prev 4.079B ni/eps 4.174B page 4.079B 
+TADAWUL:1120  fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda n/a | shares: reported 6.000B mcap/px 5.850B mcap/prev 6.000B ni/eps 6.000B page 6.000B 
+TADAWUL:2222  fcf 0.0% eps 0.0% rev 0.0% ni 0.0% ebitda 0.0% | shares: reported 241.824B mcap/px 246.622B mcap/prev 241.898B ni/eps 199.864B page 241.898B EPS restated on today's count: 2.244 → 1.855
+
+##### 3. SENSITIVITY OF THE HISTORY MEDIANS (variants.mjs) #####
+symbol         page    base    next(Δ)        dated(Δ)       dated32(Δ)     shares(Δ)   | lag d | median P/E base→dated→dated32 | P/S | EV
+NASDAQ:AAPL    208.20  208.20   208.47(+0%)   208.20(+0%)   208.70(+0%)   208.90(+0%) |  34 | 31.8→31.8→32.1 | 8.05→8.05→8.06 | 25.3→25.3→25.3
+NASDAQ:COST    837.03  837.03   840.21(+0%)   821.91(-2%)   820.23(-2%)   837.88(+0%) |  25 | 49.6→47.9→47.7 | 1.39→1.36→1.36 | 31.0→30.8→30.8
+NASDAQ:MSFT    454.97  454.97   455.17(+0%)   451.37(-1%)   448.68(-1%)   455.31(+0%) |  29 | 34.3→33.6→32.9 | 11.88→11.78→11.78 | 23.4→23.2→22.8
+NASDAQ:MU     1475.31 1475.31  1471.62(-0%)  1424.34(-3%)  1661.87(+13%)  1476.65(+0%) |  31 | 21.5→18.1→19.2 | 4.79→4.74→4.38 | 14.6→11.1→10.9
+NASDAQ:NVDA    258.22  258.22   266.12(+3%)   249.55(-3%)   252.30(-2%)   259.06(+0%) |  27 | 49.3→47.9→50.5 | 28.76→26.15→25.63 | 45.2→43.5→45.2
+NASDAQ:RIVN     14.71   14.71    14.42(-2%)    15.16(+3%)    16.05(+9%)    13.71(-7%) |  30 | —→—→— | 3.00→3.09→3.27 | —→—→—
+NASDAQ:TSLA         —       —        —(—)        —(—)        —(—)        —(—) |  22 | 64.7→66.1→64.2 | 12.48→12.48→11.65 | 65.1→64.8→57.1
+NYSE:JPM       308.36  308.36   311.93(+1%)   305.82(-1%)   299.35(-3%)   308.36(+0%) |  20 | 12.7→12.5→11.9 | 2.99→2.99→2.78 | —→—→—
+NYSE:KO         86.40   86.40    87.04(+1%)    86.22(-0%)    85.01(-2%)    86.47(+0%) |  27 | 26.8→26.8→26.5 | 6.67→6.67→6.46 | 23.5→23.5→22.8
+NYSE:O          42.48   42.48    42.13(-1%)    42.48(+0%)    41.19(-3%)    41.83(-2%) |  34 | 54.4→54.4→52.6 | 9.71→9.71→9.71 | 17.6→17.6→17.4
+NYSE:TSM       339.66  339.66   348.57(+3%)   337.39(-1%)   332.41(-2%)   339.65(-0%) |  20 | 26.9→26.3→26.1 | 11.13→11.10→10.38 | 16.8→16.8→15.7
+NYSE:XOM       181.57  181.57   180.98(-0%)   181.57(+0%)   173.15(-5%)   183.81(+1%) |  30 | 15.9→15.9→14.1 | 1.46→1.47→1.36 | 8.8→8.8→8.1
+TADAWUL:1120    73.54   73.54    73.54(+0%)    73.20(-0%)    72.47(-1%)    73.54(-0%) |  21 | 20.1→19.9→19.6 | 6.58→6.54→6.49 | —→—→—
+TADAWUL:2222    29.43   29.43    29.32(-0%)    29.43(+0%)    29.00(-1%)    29.43(+0%) |  34 | 16.3→16.3→15.8 | 3.69→3.69→3.63 | 7.7→7.7→7.5
+
+##### 4. DCF GROWTH ALTERNATIVES, TRIM LINE (dcf-alt.mjs) #####
+symbol        qtrs of forecast FY reported | g1 page | F÷TTM−1 | 3y rev CAGR | DCF page → F÷TTM → fade from min(g1, 3y CAGR, 25%) | weight | fair page → F÷TTM → fade3y
+NASDAQ:AAPL   0 | 10.1% | 10.1% | 7.7% | 207.48 (page 207.48) → 207.48 → 190.76 | 0.3 | 208.20 → 208.20 → 203.18  (price 350.69)
+NASDAQ:COST   0 | 8.7% | 8.7% | 7.8% | 524.63 (page 524.63) → 524.63 → 506.34 | 0.3 | 837.03 → 837.03 → 830.58  (price 1066.18)
+NASDAQ:MSFT   1 | 19.3% | 14.2% | 16.1% | 272.73 (page 272.73) → 219.37 → 244.58 | 0.3 | 454.97 → 438.96 → 446.53  (price 545.18)
+NASDAQ:MU     0 | 108.8% (cap 60) | 108.8% | 104.6% | 1628.16 (page 1628.16) → 1628.16 → 1628.16 | 0.3 | 1475.31 → 1475.31 → 1475.31  (price 733.15)
+NASDAQ:NVDA   2 | 89.9% (cap 60) | 35.3% | 100.0% | 164.64 (page 164.64) → 139.25 → 164.64 | 0.3 | 258.22 → 250.60 → 258.22  (price 178.67)
+NASDAQ:TSLA   3 | 13.4% | 3.8% | 5.2% | 14.62 (page 14.62) → 9.75 → 11.15 | 0 | — → — → —  (price 378.05)
+NYSE:KO       3 | 4.2% | -2.0% | 4.1% | 82.16 (page 82.16) → 60.95 → 81.87 | 0.3 | 86.40 → 78.91 → 86.30  (price 96.03)
+NYSE:TSM      3 | 41.1% | 10.3% | 17.2% | 359.47 (page 359.47) → 171.87 → 277.62 | 0.3 | 339.66 → 283.38 → 315.10  (price 388.62)
+NYSE:XOM      3 | 34.2% | 10.4% | -6.8% | 715.84 (page 715.84) → 347.44 → 235.06 | 0 | 181.57 → 181.57 → 181.57  (price 164.73)
+TADAWUL:2222  3 | 18.7% | 2.6% | -9.7% | 63.45 (page 63.45) → 30.30 → 26.08 | 0 | 29.43 → 29.43 → 29.43  (price 25.6)
+
+MU trim line: weighted median 1628.16, ⅓ = 542.72, P/S value 557.29 (2.7% above the line); fair with P/S 1475.31, without 1704.82
+AAPL without the Lynch method: 245.33; O with P/E only 78.87; O price÷FCF 14.2
+
+##### 5. DATA PLUMBING (plumbing.mjs) #####
+A. fiscal-year sums: Σ of the 4 quarters ending at each fiscal year end vs the annual array (worst |diff| over the years covered), repeats and holes in the first 16 quarters
+NASDAQ:AAPL   FY 2026 ends 2026-09-30 fq 2026-09-30 d=0 | rev 0.1% (8y) ni 0.0% (8y) eps 0.3% (8y) fcf 0.0% (8y) ebitda 1.6% (8y) | repeats none | holes none
+NASDAQ:COST   FY 2026 ends 2026-08-31 fq 2026-08-31 d=0 | rev 0.0% (8y) ni 0.0% (8y) eps 0.0% (8y) fcf 0.0% (8y) ebitda 1.5% (8y) | repeats none | holes none
+NASDAQ:MSFT   FY 2026 ends 2026-06-30 fq 2026-09-30 d=1 | rev 0.0% (7y) ni 0.0% (7y) eps 0.1% (7y) fcf 0.0% (7y) ebitda 2.5% (7y) | repeats none | holes none
+NASDAQ:MU     FY 2026 ends 2026-08-31 fq 2026-08-31 d=0 | rev 0.0% (8y) ni 0.0% (8y) eps 3.1% (8y) fcf 0.0% (8y) ebitda 10.2% (8y) | repeats none | holes none
+NASDAQ:NVDA   FY 2025 ends 2026-01-31 fq 2026-07-31 d=2 | rev 0.0% (7y) ni 0.0% (7y) eps 0.1% (7y) fcf 0.0% (7y) ebitda 1.4% (7y) | repeats none | holes none
+NASDAQ:RIVN   FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.0% (5y) ni 0.0% (5y) eps 0.8% (5y) fcf 0.0% (5y) ebitda 1.9% (5y) | repeats none | holes none
+NASDAQ:TSLA   FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.0% (7y) ni 2.7% (7y) eps 2.7% (7y) fcf 0.0% (7y) ebitda 1.2% (7y) | repeats none | holes none
+NYSE:JPM      FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 2.8% (7y) ni 0.0% (7y) eps 0.1% (7y) fcf 0.0% (7y) ebitda no array | repeats none | holes none
+NYSE:KO       FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.1% (7y) ni 0.0% (7y) eps 0.0% (7y) fcf 0.8% (7y) ebitda 9.2% (7y) | repeats none | holes none
+NYSE:O        FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.9% (7y) ni 0.0% (7y) eps 8.8% (7y) fcf 0.0% (7y) ebitda 5.1% (7y) | repeats none | holes none
+NYSE:TSM      FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.2% (7y) ni 0.4% (7y) eps 0.4% (7y) fcf 1.3% (7y) ebitda 0.2% (7y) | repeats none | holes none
+NYSE:XOM      FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.2% (7y) ni 0.0% (7y) eps 0.2% (7y) fcf 0.0% (7y) ebitda 1.6% (7y) | repeats none | holes none
+TADAWUL:1120  FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 8.9% (7y) ni 1.6% (7y) eps 10.5% (7y) fcf 1.8% (7y) ebitda no array | repeats none | holes none
+TADAWUL:2222  FY 2025 ends 2025-12-31 fq 2026-09-30 d=3 | rev 0.4% (7y) ni 0.0% (7y) eps 4.2% (7y) fcf 0.0% (6y) ebitda 0.1% (7y) | repeats none | holes none
+
+B. share count implied by each quarter (net income ÷ diluted EPS, billions), newest first, 12 quarters; today reported
+NASDAQ:AAPL   14.63 14.71 14.73 14.81 14.86 14.95 15.06 15.15 15.24 15.35 15.46 15.58 | reported 14.53
+NASDAQ:COST   0.44 0.44 0.44 0.44 0.44 0.44 0.44 0.44 0.44 0.44 0.44 0.44 | reported 0.44
+NASDAQ:MSFT   7.45 7.44 7.44 7.46 7.47 7.46 7.46 7.47 7.47 7.47 7.47 7.47 | reported 7.43
+NASDAQ:MU     1.15 1.14 1.14 1.14 1.13 1.12 1.12 1.12 1.13 1.12 1.11 1.10 | reported 1.13
+NASDAQ:NVDA   24.29 24.39 24.43 24.48 24.53 24.61 24.70 24.77 24.85 24.89 24.90 24.94 | reported 24.10
+NASDAQ:RIVN   1.45 1.32 1.25 1.23 1.22 1.15 1.14 1.06 1.01 1.00 0.98 0.96 | reported 1.46
+NASDAQ:TSLA   3.54 3.55 3.54 3.54 3.53 3.52 3.52 3.52 3.50 3.48 3.48 3.49 | reported 3.95
+NYSE:JPM      2.74 2.73 2.77 2.80 2.82 2.85 2.87 2.90 2.93 2.95 3.00 3.05 | reported 2.66
+NYSE:KO       4.31 4.31 4.31 4.31 4.31 4.31 4.31 4.32 4.32 4.32 4.32 4.33 | reported 4.30
+NYSE:O        0.95 0.93 0.93 0.92 0.92 0.90 0.89 0.88 0.90 0.88 0.85 0.73 | reported 0.95
+NYSE:TSM      5.19 5.19 5.19 5.19 5.19 5.19 5.19 5.19 5.19 5.19 5.19 5.19 | reported 5.19
+NYSE:XOM      4.14 4.17 4.20 4.24 4.28 4.33 4.37 4.41 4.46 4.32 4.00 4.01 | reported 4.08
+TADAWUL:1120  6.00 6.00 6.00 6.00 6.00 6.00 6.00 6.00 6.00 6.00 6.00 6.00 | reported 6.00
+TADAWUL:2222  199.84 199.81 199.92 199.91 241.83 241.83 241.85 241.86 241.94 241.93 241.94 241.93 | reported 241.82
+
+C. P/E by month around known splits / bonus issues (page series)
+NASDAQ:NVDA 2024-02: 79.11 ÷ 0.757 [Q4 2023] = 104.5
+   2024-03: 90.36 ÷ 0.757 [Q4 2023] = 119.3
+   2024-04: 86.40 ÷ 0.757 [Q4 2023] = 114.1
+   2024-05: 109.63 ÷ 1.194 [Q1 2024] = 91.9
+   2024-06: 123.54 ÷ 1.194 [Q1 2024] = 103.5
+   2024-07: 117.02 ÷ 1.194 [Q1 2024] = 98.0
+   2024-08: 119.37 ÷ 1.709 [Q2 2024] = 69.8
+   2024-09: 121.44 ÷ 1.709 [Q2 2024] = 71.0
+TADAWUL:1120 2025-12: 65.00 ÷ 3.755 [Q3 2025] = 17.3
+   2026-01: 71.47 ÷ 3.755 [Q3 2025] = 19.0
+   2026-02: 67.33 ÷ 3.903 [Q4 2025] = 17.3
+   2026-03: 71.07 ÷ 3.903 [Q4 2025] = 18.2
+   2026-04: 68.55 ÷ 3.903 [Q4 2025] = 17.6
+   2026-05: 67.25 ÷ 4.020 [Q1 2026] = 16.7
+   2026-06: 65.90 ÷ 4.020 [Q1 2026] = 16.4
+   2026-07: 62.55 ÷ 4.020 [Q1 2026] = 15.6
+TADAWUL:2222 2025-06: 24.32 ÷ 1.597 [Q1 2025] = 15.2
+   2025-07: 24.30 ÷ 1.597 [Q1 2025] = 15.2
+   2025-08: 23.80 ÷ 1.512 [Q2 2025] = 15.7
+   2025-09: 24.62 ÷ 1.512 [Q2 2025] = 16.3
+   2025-10: 25.90 ÷ 1.512 [Q2 2025] = 17.1
+   2025-11: 24.54 ÷ 1.511 [Q3 2025] = 16.2
+   2025-12: 23.83 ÷ 1.511 [Q3 2025] = 15.8
+   2026-01: 25.80 ÷ 1.511 [Q3 2025] = 17.1
+   2026-02: 24.96 ÷ 1.499 [Q4 2025] = 16.6
+   2026-03: 27.40 ÷ 1.499 [Q4 2025] = 18.3
+   2026-04: 27.76 ÷ 1.499 [Q4 2025] = 18.5
+   2026-05: 27.54 ÷ 1.705 [Q1 2026] = 16.2
+   2026-06: 26.12 ÷ 1.705 [Q1 2026] = 15.3
+   2026-07: 26.48 ÷ 1.705 [Q1 2026] = 15.5
+   2026-08: 26.06 ÷ 1.959 [Q2 2026] = 13.3
+   2026-09: 25.22 ÷ 1.959 [Q2 2026] = 12.9
+   2026-10: 25.92 ÷ 1.959 [Q2 2026] = 13.2
+   2026-11: 25.60 ÷ 1.854 [Q3 2026] = 13.8

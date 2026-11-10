@@ -1,0 +1,32 @@
+Track C — weekly in/out rules vs buy-and-hold; cost 0.10% per switch; medians across symbols
+Primary: median ΔSharpe (rule − buy & hold), period II. p from 1,000 circular shifts of each rule's own in/out sequence.
+
+rank id              verdict    ΔSharpe  p      pHolm  beat%  ΔCAGR    ΔMaxDD   ruleDD   b&hDD    expo  sw/yr trades win%   | I: ΔSharpe
+  1  psar            No edge    -0.101 0.1469 1.0000   33%   -4.2%    7.4%  -37.9%  -47.8%   54%   4.5    649  46.7% |  -0.126 (30 sym)
+  2  macd_zero       No edge    -0.109 0.4376 1.0000   30%   -3.2%    6.7%  -39.3%  -47.8%   62%   1.7    239  35.1% |  -0.084 (30 sym)
+  3  ema_20_50       No edge    -0.111 0.6913 1.0000   18%   -3.8%    3.5%  -43.7%  -47.8%   65%   0.9    137  34.3% |  -0.088 (30 sym)
+  4  price_ma        No edge    -0.113 0.3427 1.0000   27%   -3.0%    9.0%  -39.2%  -47.8%   60%   4.1    586  27.1% |  -0.055 (30 sym)
+  5  vortex          No edge    -0.120 0.2867 1.0000   30%   -4.1%    8.9%  -40.5%  -47.8%   59%   4.9    698  38.4% |  -0.051 (30 sym)
+  6  aroon           No edge    -0.125 0.3646 1.0000   27%   -4.0%   10.1%  -38.0%  -47.8%   56%   3.5    498  43.6% |  -0.080 (30 sym)
+  7  rsi_50          No edge    -0.132 0.4306 1.0000   30%   -3.9%    7.8%  -42.2%  -47.8%   60%   5.6    806  28.8% |  -0.091 (30 sym)
+  8  ma_cross        No edge    -0.141 0.7203 1.0000   27%   -4.1%    4.8%  -44.3%  -47.8%   61%   1.6    228  38.6% |  -0.081 (30 sym)
+  9  tsmom           No edge    -0.147 0.8132 1.0000   21%   -4.2%    3.8%  -39.8%  -47.8%   64%   2.5    360  32.8% |  -0.127 (30 sym)
+ 10  obv             No edge    -0.153 0.4595 1.0000   27%   -4.4%    5.1%  -40.5%  -47.8%   57%   7.0   1004  31.2% |  -0.095 (30 sym)
+ 11  supertrend      No edge    -0.153 0.6693 1.0000   33%   -4.4%    9.1%  -42.0%  -47.8%   57%   1.6    222  44.1% |  -0.090 (30 sym)
+ 12  ichimoku        No edge    -0.159 0.7403 1.0000   21%   -3.2%    9.6%  -39.0%  -47.8%   56%   2.8    395  24.3% |  -0.075 (30 sym)
+ 13  cmf             No edge    -0.174 0.8951 1.0000   15%   -7.2%    3.1%  -44.7%  -47.8%   63%   4.8    696  38.8% |  -0.051 (30 sym)
+ 14  tv_rating       No edge    -0.178 0.6683 1.0000   15%   -5.9%    8.4%  -42.8%  -47.8%   56%   7.4   1056  31.4% |  -0.152 (30 sym)
+ 15  hma             No edge    -0.205 0.6304 1.0000   21%   -5.9%    5.5%  -44.2%  -47.8%   54%  10.8   1537  42.2% |  -0.183 (30 sym)
+ 16  macd_signal     No edge    -0.218 0.8392 1.0000   27%   -5.7%   11.3%  -41.4%  -47.8%   53%   4.2    599  41.6% |  -0.074 (30 sym)
+ 17  donchian20      No edge    -0.230 0.9171 1.0000   15%   -5.3%   11.9%  -34.8%  -47.8%   47%   1.7    251  46.6% |  -0.058 (30 sym)
+ 18  adx_di          No edge    -0.258 0.9920 1.0000   24%   -7.4%    8.0%  -39.8%  -47.8%   56%   4.7    676  33.1% |  -0.069 (30 sym)
+ 19  donchian55      No edge    -0.295 0.9970 1.0000   12%   -7.3%    6.8%  -38.9%  -47.8%   45%   0.9    137  44.5% |  -0.096 (30 sym)
+
+Buy & hold, period II: median Sharpe 0.458, median CAGR 7.4%, median max drawdown -47.8% over 33 symbols
+
+Selection test — five best by period I ΔSharpe, and where they finished in period II:
+  cmf             I -0.051 → II -0.174, rank 13 of 19, No edge
+  vortex          I -0.051 → II -0.120, rank 5 of 19, No edge
+  price_ma        I -0.055 → II -0.113, rank 4 of 19, No edge
+  donchian20      I -0.058 → II -0.230, rank 17 of 19, No edge
+  adx_di          I -0.069 → II -0.258, rank 18 of 19, No edge

@@ -1,0 +1,136 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// Bitcoin MVRV Z-Score, computed only from what was known at each bar.
+//
+//   MVRV = market cap / realized cap
+//   Z    = (market cap − realized cap) / standard deviation of market cap so far
+//
+// Realized cap is Coin Metrics' on-chain series: every coin valued at the price on the day
+// it last moved, i.e. the network's total cost basis. Market cap is this chart's close ×
+// coins issued so far (halving schedule with block-height anchors read off Coin Metrics'
+// supply; within 0.8% of it 99% of the time since 2010).
+//
+// Z < 0 is the same statement as MVRV < 1: the average holder is under water. That line
+// does not depend on the standard deviation. Everything above zero does — and because the
+// deviation grows as Bitcoin grows, each cycle's peak Z since 2013 has come in lower than
+// the last. Daily peaks: ≈10.7 in 2013, 10.1 in 2017, 7.2 in early 2021, 3.7 in late 2021,
+// 3.0 to 3.4 in 2024. Weekly closes print lower peaks (8.3 in Dec 2017, 6.96 in Feb 2021).
+//
+// Use it on INDEX:BTCUSD. The standard deviation counts from "Start counting from"
+// (default 2010-07-19, as in the backtest); a later start prints different numbers above zero.
+//
+// Measured in reports/mvrv-backtest.txt. The short version: the zone marked every bear-market
+// low from 2011 to 2022 (not the 2013 mid-bull crash); after the first signal price still
+// fell another 19–62% before the low; three years after every entry it was far higher; and
+// it has not fired so far in the decline from Sept 2025, whose lowest weekly reading was +0.21.
+// About five cycles in all — a strong pattern, not proof.
+
+//@version=6
+indicator("Bitcoin MVRV Z-Score (point in time)", shorttitle = "MVRV-Z", format = format.price, precision = 2)
+
+rcSymbol     = input.symbol("COINMETRICS:BTC_MARKETCAPREAL", "Realized cap (on-chain)")
+startTime    = input.time(timestamp("19 Jul 2010 00:00 +0000"), "Start counting from")
+buyBelow     = input.float(0.0, "Buy zone: Z below", step = 0.1)
+topAbove     = input.float(7.0, "Top zone: Z above", step = 0.5)
+showRealized = input.bool(true, "Draw realized price on the price chart")
+showTable    = input.bool(true, "Show current readings")
+
+// ---------------------------------------------------------------- supply from the halving schedule
+
+// Block height by time: linear between anchors (genesis, block 1, the four halvings, and
+// 1 January of every year from 2010, quarterly in 2010–11, read off Coin Metrics' supply),
+// then the pace of the last year. Same anchors as engine/mvrv.js.
+var array<int> anchorT = array.from(
+     timestamp("UTC", 2009, 1, 3, 18, 15, 5), timestamp("UTC", 2009, 1, 9, 2, 54, 25),
+     timestamp("UTC", 2010, 1, 1, 0, 0), timestamp("UTC", 2010, 4, 1, 0, 0), timestamp("UTC", 2010, 7, 1, 0, 0), timestamp("UTC", 2010, 10, 1, 0, 0),
+     timestamp("UTC", 2011, 1, 1, 0, 0), timestamp("UTC", 2011, 4, 1, 0, 0), timestamp("UTC", 2011, 7, 1, 0, 0), timestamp("UTC", 2011, 10, 1, 0, 0),
+     timestamp("UTC", 2012, 1, 1, 0, 0), timestamp("UTC", 2012, 11, 28, 15, 24, 38), timestamp("UTC", 2013, 1, 1, 0, 0),
+     timestamp("UTC", 2014, 1, 1, 0, 0), timestamp("UTC", 2015, 1, 1, 0, 0), timestamp("UTC", 2016, 1, 1, 0, 0), timestamp("UTC", 2016, 7, 9, 16, 46, 13),
+     timestamp("UTC", 2017, 1, 1, 0, 0), timestamp("UTC", 2018, 1, 1, 0, 0), timestamp("UTC", 2019, 1, 1, 0, 0), timestamp("UTC", 2020, 1, 1, 0, 0),
+     timestamp("UTC", 2020, 5, 11, 19, 23, 43), timestamp("UTC", 2021, 1, 1, 0, 0), timestamp("UTC", 2022, 1, 1, 0, 0), timestamp("UTC", 2023, 1, 1, 0, 0),
+     timestamp("UTC", 2024, 1, 1, 0, 0), timestamp("UTC", 2024, 4, 20, 0, 9, 27), timestamp("UTC", 2025, 1, 1, 0, 0), timestamp("UTC", 2026, 1, 1, 0, 0))
+var array<float> anchorH = array.from(
+     0.0, 1.0,
+     32626.0, 48470.0, 63777.0, 83156.0,
+     100593.0, 116217.0, 134297.0, 147711.0,
+     160192.0, 210000.0, 214724.0,
+     278200.0, 337025.0, 391315.0, 420000.0,
+     446181.0, 502108.0, 556598.0, 610855.0,
+     630000.0, 664036.0, 716743.0, 769913.0,
+     823911.0, 840000.0, 877333.0, 930423.0)
+
+heightAt(int t) =>
+    int last = array.size(anchorT) - 1
+    float h = na
+    if t <= array.get(anchorT, 0)
+        h := 0.0
+    else if t > array.get(anchorT, last)
+        float pace = (array.get(anchorH, last) - array.get(anchorH, last - 1)) / (array.get(anchorT, last) - array.get(anchorT, last - 1))
+        h := array.get(anchorH, last) + (t - array.get(anchorT, last)) * pace
+    else
+        for i = 1 to last
+            if t <= array.get(anchorT, i)
+                float t0 = array.get(anchorT, i - 1)
+                float t1 = array.get(anchorT, i)
+                float h0 = array.get(anchorH, i - 1)
+                float h1 = array.get(anchorH, i)
+                h := h0 + (t - t0) / (t1 - t0) * (h1 - h0)
+                break
+    h
+
+// 50 BTC a block, halved every 210,000 blocks.
+supplyAt(float height) =>
+    float supply = 0.0
+    float reward = 50.0
+    float remaining = math.max(height, 0.0)
+    for i = 0 to 40
+        if remaining <= 0.0
+            break
+        float blocks = math.min(remaining, 210000.0)
+        supply += blocks * reward
+        remaining -= blocks
+        reward /= 2.0
+    supply
+
+// ---------------------------------------------------------------- MVRV and Z
+
+float rc     = request.security(rcSymbol, timeframe.period, close, lookahead = barmerge.lookahead_off)
+float supply = supplyAt(heightAt(time_close))
+float mc     = close * supply
+bool  ready  = not na(rc) and rc > 0 and not na(mc) and time >= startTime
+
+// Standard deviation of market cap from the first bar to this one (Welford), so no bar
+// is ever scaled by data from its future.
+var float n    = 0.0
+var float mean = 0.0
+var float m2   = 0.0
+if ready
+    n += 1.0
+    float delta = mc - mean
+    mean += delta / n
+    m2 += delta * (mc - mean)
+float sd = n > 1.0 ? math.sqrt(m2 / (n - 1.0)) : na
+
+float z        = ready and not na(sd) and sd > 0 ? (mc - rc) / sd : na
+float mvrv     = ready ? mc / rc : na
+float realized = ready ? rc / supply : na
+
+// ---------------------------------------------------------------- display
+
+color zColor = z < buyBelow ? color.new(color.green, 0) : z > topAbove ? color.new(color.red, 0) : color.new(color.gray, 0)
+plot(z, "MVRV Z-Score", zColor, 2)
+hline(0.0, "MVRV = 1", color.new(color.green, 30), hline.style_dashed)
+hline(topAbove, "Top zone", color.new(color.red, 50), hline.style_dotted)
+bgcolor(z < buyBelow ? color.new(color.green, 85) : z > topAbove ? color.new(color.red, 85) : na)
+plot(showRealized ? realized : na, "Realized price", color.new(color.orange, 0), 2, force_overlay = true)
+
+var table info = table.new(position.top_right, 2, 4, bgcolor = chart.bg_color, border_width = 1)
+if showTable and barstate.islast
+    table.cell(info, 0, 0, "MVRV", text_color = color.gray)
+    table.cell(info, 1, 0, str.tostring(mvrv, "0.00"), text_color = chart.fg_color)
+    table.cell(info, 0, 1, "Z", text_color = color.gray)
+    table.cell(info, 1, 1, str.tostring(z, "0.00"), text_color = z < buyBelow ? color.green : chart.fg_color)
+    table.cell(info, 0, 2, "Realized price", text_color = color.gray)
+    table.cell(info, 1, 2, str.tostring(realized, "#,##0"), text_color = chart.fg_color)
+    table.cell(info, 0, 3, "Price vs realized", text_color = color.gray)
+    table.cell(info, 1, 3, (mvrv >= 1.0 ? "+" : "") + str.tostring((mvrv - 1.0) * 100.0, "0") + "%", text_color = chart.fg_color)

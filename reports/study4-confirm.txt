@@ -1,0 +1,53 @@
+Study 4 CONFIRMATION — 155 unseen US symbols + 10 crypto/Saudi (study 1).
+Confirmed = win ≥ 60% and edge > 0 with Holm-corrected permutation p < 0.05 (fixed in advance).
+
+CONFIRMED     weekly|rsi2|E2|F1
+   all   n 2419  win 73.6% (random 61.4%)  meanR 0.110  avg trade 1.9%  edge 0.086  p 0.0005  Holm 0.0050
+   I     n 1226  win 73.6%  edge 0.082      II  n 1193  win 73.6%  edge 0.091
+   us 74.2% (2318) edge 0.090 | crypto 57.6% (33) edge 0.047 | saudi 58.8% (68) edge -0.029
+   search set: win 74.6%  edge 0.092
+CONFIRMED     weekly|rsi2|E2|F0
+   all   n 2419  win 73.6% (random 63.2%)  meanR 0.110  avg trade 1.9%  edge 0.081  p 0.0005  Holm 0.0050
+   I     n 1226  win 73.6%  edge 0.080      II  n 1193  win 73.6%  edge 0.082
+   us 74.2% (2318) edge 0.085 | crypto 57.6% (33) edge 0.067 | saudi 58.8% (68) edge -0.041
+   search set: win 74.6%  edge 0.086
+CONFIRMED     weekly|down3|E2|F1
+   all   n 3122  win 72.4% (random 61.4%)  meanR 0.084  avg trade 1.6%  edge 0.060  p 0.0005  Holm 0.0050
+   I     n 1613  win 73.3%  edge 0.061      II  n 1509  win 71.4%  edge 0.058
+   us 72.8% (2987) edge 0.063 | crypto 61.2% (49) edge -0.009 | saudi 62.8% (86) edge -0.024
+   search set: win 74.8%  edge 0.079
+CONFIRMED     weekly|double7|E2|F1
+   all   n 5001  win 72.7% (random 61.5%)  meanR 0.082  avg trade 1.4%  edge 0.058  p 0.0005  Holm 0.0050
+   I     n 2547  win 72.8%  edge 0.053      II  n 2454  win 72.6%  edge 0.063
+   us 73.2% (4815) edge 0.061 | crypto 57.6% (59) edge -0.044 | saudi 60.6% (127) edge -0.038
+   search set: win 71.9%  edge 0.055
+CONFIRMED     weekly|down3|E2|F0
+   all   n 6864  win 70.6% (random 62.9%)  meanR 0.061  avg trade 1.3%  edge 0.035  p 0.0005  Holm 0.0050
+   I     n 3439  win 71.0%  edge 0.036      II  n 3425  win 70.2%  edge 0.033
+   us 71.1% (6500) edge 0.038 | crypto 61.2% (116) edge -0.041 | saudi 63.3% (248) edge -0.013
+   search set: win 72.0%  edge 0.051
+CONFIRMED     weekly|pullback5|E2|F1
+   all   n 7403  win 71.5% (random 61.5%)  meanR 0.062  avg trade 1.1%  edge 0.037  p 0.0005  Holm 0.0050
+   I     n 3763  win 72.0%  edge 0.034      II  n 3640  win 71.0%  edge 0.041
+   us 71.8% (7115) edge 0.041 | crypto 64.8% (88) edge -0.061 | saudi 65.0% (200) edge -0.040
+   search set: win 71.2%  edge 0.039
+CONFIRMED     weekly|double7|E2|F0
+   all   n 10441  win 69.6% (random 62.9%)  meanR 0.056  avg trade 1.2%  edge 0.029  p 0.0005  Holm 0.0050
+   I     n 5126  win 70.0%  edge 0.027      II  n 5315  win 69.3%  edge 0.031
+   us 70.1% (9945) edge 0.033 | crypto 61.3% (155) edge -0.050 | saudi 60.7% (341) edge -0.047
+   search set: win 69.8%  edge 0.030
+CONFIRMED     daily|rsi2|E2|F1
+   all   n 19576  win 63.4% (random 55.3%)  meanR 0.010  avg trade 0.2%  edge 0.024  p 0.0005  Holm 0.0050
+   I     n 9863  win 64.5%  edge 0.036      II  n 9713  win 62.4%  edge 0.012
+   us 63.7% (18651) edge 0.028 | crypto 65.2% (342) edge -0.040 | saudi 54.5% (583) edge -0.062
+   search set: win 63.1%  edge 0.028
+CONFIRMED     daily|vixfix|E2|F1
+   all   n 14678  win 62.2% (random 55.3%)  meanR 0.010  avg trade 0.2%  edge 0.024  p 0.0005  Holm 0.0050
+   I     n 7276  win 63.2%  edge 0.032      II  n 7402  win 61.1%  edge 0.015
+   us 62.3% (13940) edge 0.024 | crypto 65.0% (303) edge 0.041 | saudi 57.5% (435) edge 0.003
+   search set: win 61.4%  edge 0.026
+CONFIRMED     weekly|vixfix|E2|F1
+   all   n 2232  win 67.2% (random 61.8%)  meanR 0.066  avg trade 1.2%  edge 0.038  p 0.0005  Holm 0.0050
+   I     n 1077  win 66.6%  edge 0.033      II  n 1155  win 67.7%  edge 0.042
+   us 67.4% (2126) edge 0.038 | crypto 67.5% (40) edge 0.087 | saudi 60.6% (66) edge 0.010
+   search set: win 67.1%  edge 0.025

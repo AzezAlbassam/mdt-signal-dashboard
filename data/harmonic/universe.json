@@ -1,0 +1,326 @@
+{
+  "takenAt": "2026-10-18",
+  "source": "TradingView screener: market america, symbol_types [stock], market_cap_basic >= 50e9, sorted by market cap desc, limit 300 (534 matched)",
+  "rules": "PROTOCOL-harmonic.md §2",
+  "counts": {
+    "top20": 20,
+    "sector": 11,
+    "named": 3,
+    "crypto": 2,
+    "index": 4,
+    "total": 40
+  },
+  "symbols": [
+    {
+      "symbol": "NASDAQ:NVDA",
+      "name": "NVDA",
+      "description": "NVIDIA Corporation",
+      "sector": "Electronic Technology",
+      "marketCap": 5160533117676,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:AAPL",
+      "name": "AAPL",
+      "description": "Apple Inc.",
+      "sector": "Electronic Technology",
+      "marketCap": 5012516830763,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:GOOGL",
+      "name": "GOOGL",
+      "description": "Alphabet Inc.",
+      "sector": "Technology Services",
+      "marketCap": 4145076335693,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:MSFT",
+      "name": "MSFT",
+      "description": "Microsoft Corporation",
+      "sector": "Technology Services",
+      "marketCap": 3928484708599,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:AMZN",
+      "name": "AMZN",
+      "description": "Amazon.com, Inc.",
+      "sector": "Retail Trade",
+      "marketCap": 2696578613281,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:SPCX",
+      "name": "SPCX",
+      "description": "Space Exploration Technologies Corp",
+      "sector": "Communications",
+      "marketCap": 1981783230949,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:META",
+      "name": "META",
+      "description": "Meta Platforms, Inc.",
+      "sector": "Technology Services",
+      "marketCap": 1807009819575,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:AVGO",
+      "name": "AVGO",
+      "description": "Broadcom Inc.",
+      "sector": "Electronic Technology",
+      "marketCap": 1569330823975,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:TSLA",
+      "name": "TSLA",
+      "description": "Tesla, Inc.",
+      "sector": "Consumer Durables",
+      "marketCap": 1400983532126,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:LLY",
+      "name": "LLY",
+      "description": "Eli Lilly and Company",
+      "sector": "Health Technology",
+      "marketCap": 1183314087260,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:BRK.B",
+      "name": "BRK.B",
+      "description": "Berkshire Hathaway Inc. New",
+      "sector": "Finance",
+      "marketCap": 1138886007729,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:MU",
+      "name": "MU",
+      "description": "Micron Technology, Inc.",
+      "sector": "Electronic Technology",
+      "marketCap": 994340011093,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:WMT",
+      "name": "WMT",
+      "description": "Walmart Inc.",
+      "sector": "Retail Trade",
+      "marketCap": 942608354029,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:JPM",
+      "name": "JPM",
+      "description": "JP Morgan Chase & Co.",
+      "sector": "Finance",
+      "marketCap": 903039046048,
+      "group": "top20"
+    },
+    {
+      "symbol": "NASDAQ:AMD",
+      "name": "AMD",
+      "description": "Advanced Micro Devices, Inc.",
+      "sector": "Electronic Technology",
+      "marketCap": 863171143341,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:V",
+      "name": "V",
+      "description": "Visa Inc.",
+      "sector": "Finance",
+      "marketCap": 751691909655,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:XOM",
+      "name": "XOM",
+      "description": "ExxonMobil Holdings Corporation",
+      "sector": "Energy Minerals",
+      "marketCap": 735950011768,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:JNJ",
+      "name": "JNJ",
+      "description": "Johnson & Johnson",
+      "sector": "Health Technology",
+      "marketCap": 615873638804,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:MA",
+      "name": "MA",
+      "description": "Mastercard Incorporated",
+      "sector": "Finance",
+      "marketCap": 540866039917,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:ABBV",
+      "name": "ABBV",
+      "description": "AbbVie Inc.",
+      "sector": "Health Technology",
+      "marketCap": 504370646226,
+      "group": "top20"
+    },
+    {
+      "symbol": "NYSE:KO",
+      "name": "KO",
+      "description": "Coca-Cola Company (The)",
+      "sector": "Consumer Non-Durables",
+      "marketCap": 404009341526,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:UNH",
+      "name": "UNH",
+      "description": "UnitedHealth Group Incorporated",
+      "sector": "Health Services",
+      "marketCap": 360321493512,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:CAT",
+      "name": "CAT",
+      "description": "Caterpillar, Inc.",
+      "sector": "Producer Manufacturing",
+      "marketCap": 335912009365,
+      "group": "sector"
+    },
+    {
+      "symbol": "NASDAQ:LIN",
+      "name": "LIN",
+      "description": "Linde plc",
+      "sector": "Process Industries",
+      "marketCap": 229766339554,
+      "group": "sector"
+    },
+    {
+      "symbol": "NASDAQ:SHOP",
+      "name": "SHOP",
+      "description": "Shopify Inc.",
+      "sector": "Commercial Services",
+      "marketCap": 218111902002,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:DIS",
+      "name": "DIS",
+      "description": "Walt Disney Company (The)",
+      "sector": "Consumer Services",
+      "marketCap": 190954296803,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:UNP",
+      "name": "UNP",
+      "description": "Union Pacific Corporation",
+      "sector": "Transportation",
+      "marketCap": 171711587737,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:SCCO",
+      "name": "SCCO",
+      "description": "Southern Copper Corporation",
+      "sector": "Non-Energy Minerals",
+      "marketCap": 169299348436,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:NEE",
+      "name": "NEE",
+      "description": "NextEra Energy, Inc.",
+      "sector": "Utilities",
+      "marketCap": 166461072430,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:MCK",
+      "name": "MCK",
+      "description": "McKesson Corporation",
+      "sector": "Distribution Services",
+      "marketCap": 117154663035,
+      "group": "sector"
+    },
+    {
+      "symbol": "NYSE:ENB",
+      "name": "ENB",
+      "description": "Enbridge Inc",
+      "sector": "Industrial Services",
+      "marketCap": 109078471146,
+      "group": "sector"
+    },
+    {
+      "symbol": "NASDAQ:RKLB",
+      "name": "RKLB",
+      "description": "Rocket Lab Corporation",
+      "sector": "Electronic Technology",
+      "group": "named"
+    },
+    {
+      "symbol": "NYSE:BE",
+      "name": "BE",
+      "description": "Bloom Energy Corporation",
+      "sector": "Producer Manufacturing",
+      "group": "named"
+    },
+    {
+      "symbol": "NYSE:HIMS",
+      "name": "HIMS",
+      "description": "Hims & Hers Health, Inc.",
+      "sector": "Health Services",
+      "group": "named"
+    },
+    {
+      "symbol": "BINANCE:BTCUSDT",
+      "name": "BTCUSDT",
+      "description": "Bitcoin / TetherUS",
+      "sector": "Crypto",
+      "group": "crypto"
+    },
+    {
+      "symbol": "BITSTAMP:BTCUSD",
+      "name": "BTCUSD",
+      "description": "Bitcoin / U.S. Dollar (long history)",
+      "sector": "Crypto",
+      "group": "crypto"
+    },
+    {
+      "symbol": "AMEX:SPY",
+      "name": "SPY",
+      "description": "SPDR S&P 500 ETF Trust",
+      "sector": "Index ETF",
+      "group": "index"
+    },
+    {
+      "symbol": "NASDAQ:QQQ",
+      "name": "QQQ",
+      "description": "Invesco QQQ Trust",
+      "sector": "Index ETF",
+      "group": "index"
+    },
+    {
+      "symbol": "AMEX:IWM",
+      "name": "IWM",
+      "description": "iShares Russell 2000 ETF",
+      "sector": "Index ETF",
+      "group": "index"
+    },
+    {
+      "symbol": "AMEX:DIA",
+      "name": "DIA",
+      "description": "SPDR Dow Jones Industrial Average ETF",
+      "sector": "Index ETF",
+      "group": "index"
+    }
+  ]
+}

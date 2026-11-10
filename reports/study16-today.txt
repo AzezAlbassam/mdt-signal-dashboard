@@ -1,0 +1,65 @@
+Study 16 — the page today (PROTOCOL-study16.md §6): fair value before → after the applied option (D2 C)
+
+Favourites: 75 stocks, 70 with a fair value both times; changed > 0.5%: 7, > 10%: 7; median |change| of those changed +57.2%, largest +85.3%; value appeared 0, gone 0
+US list: 703 stocks, 657 with a fair value both times; changed > 0.5%: 41, > 10%: 41; median |change| of those changed +43.9%, largest +85.3%; value appeared 0, gone 0
+Tadawul list: 271 stocks, 240 with a fair value both times; changed > 0.5%: 14, > 10%: 14; median |change| of those changed +48.9%, largest +71.7%; value appeared 0, gone 0
+
+Stocks whose fair value moved more than 10% (favourites first, then by size):
+  ★ NYSE:OSCR              205.75 → 30.23        -85.3%  dropped: DCF (التدفق النقدي)
+  ★ NASDAQ:ARM              67.55 → 25.35        -62.5%  dropped: P/S مقارنة بتاريخه
+  ★ NASDAQ:CRWD             53.37 → 84.85        +59.0%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+  ★ NASDAQ:ALAB            117.41 → 50.3         -57.2%  dropped: P/S مقارنة بتاريخه
+  ★ NYSE:BWXT              110.31 → 138.88       +25.9%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+  ★ NASDAQ:SNDK           1766.15 → 2153.47      +21.9%  dropped: P/S مقارنة بتاريخه
+  ★ NASDAQ:MU             1428.56 → 1650.71      +15.6%  dropped: P/S مقارنة بتاريخه
+    NYSE:PINS                37.6 → 8.39         -77.7%  dropped: DCF (التدفق النقدي), P/S مقارنة بتاريخه
+    TADAWUL:4017            23.68 → 40.65        +71.7%  dropped: DCF (التدفق النقدي)
+    NASDAQ:JD               54.74 → 16.1         -70.6%  dropped: DCF (التدفق النقدي)
+    TADAWUL:4071           105.64 → 177.95       +68.4%  dropped: DCF (التدفق النقدي)
+    TADAWUL:7200           106.69 → 179.03       +67.8%  dropped: DCF (التدفق النقدي)
+    TADAWUL:2084             8.92 → 2.9          -67.5%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%), P/S مقارنة بتاريخه
+    NYSE:TIMB               63.21 → 22.67        -64.1%  dropped: DCF (التدفق النقدي)
+    NYSE:HPE                63.57 → 24.91        -60.8%  dropped: DCF (التدفق النقدي)
+    NASDAQ:TENB             32.84 → 52.07        +58.6%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:CELH             76.59 → 119.08       +55.5%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:BMRN            108.99 → 168.82       +54.9%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:MDB             198.58 → 307.41       +54.8%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:DLO              41.46 → 18.9         -54.4%  dropped: DCF (التدفق النقدي)
+    NASDAQ:DDOG            100.63 → 153.67       +52.7%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    TADAWUL:4006            16.31 → 24.83        +52.2%  dropped: DCF (التدفق النقدي)
+    NYSE:SKM                 31.3 → 15.33        -51.0%  dropped: DCF (التدفق النقدي)
+    NYSE:HUBS              389.88 → 586.77       +50.5%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    TADAWUL:4002            88.37 → 132.94       +50.4%  dropped: DCF (التدفق النقدي)
+    TADAWUL:4050            99.59 → 50.41        -49.4%  dropped: DCF (التدفق النقدي)
+    NASDAQ:TTD              45.13 → 23.15        -48.7%  dropped: P/S مقارنة بتاريخه
+    TADAWUL:2083            61.99 → 32           -48.4%  dropped: DCF (التدفق النقدي)
+    NYSE:STM                16.34 → 8.94         -45.3%  dropped: P/S مقارنة بتاريخه
+    NASDAQ:CEG             204.79 → 297.16       +45.1%  dropped: DCF (التدفق النقدي)
+    TADAWUL:6015             4.96 → 2.77         -44.2%  dropped: DCF (التدفق النقدي)
+    NASDAQ:OKTA            101.44 → 146.16       +44.1%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:MNDY            218.96 → 315.15       +43.9%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NYSE:FN                235.07 → 333.8        +42.0%  dropped: DCF (التدفق النقدي)
+    TADAWUL:4290            19.94 → 28.25        +41.7%  dropped: P/E مقارنة بتاريخه
+    NASDAQ:DGII             78.59 → 45.84        -41.7%  dropped: DCF (التدفق النقدي)
+    NASDAQ:MELI           3727.47 → 2183.4       -41.4%  dropped: DCF (التدفق النقدي)
+    NASDAQ:INOD             75.81 → 44.75        -41.0%  dropped: DCF (التدفق النقدي)
+    NASDAQ:PTGX             62.83 → 88.04        +40.1%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:SHOP             68.09 → 40.91        -39.9%  dropped: P/S مقارنة بتاريخه
+    NYSE:CVNA               86.71 → 121.15       +39.7%  dropped: DCF (التدفق النقدي)
+    NYSE:NKE                50.13 → 70.01        +39.7%  dropped: DCF (التدفق النقدي)
+    NYSE:TKO               242.89 → 147.13       -39.4%  dropped: DCF (التدفق النقدي)
+    TADAWUL:4007             27.8 → 38.66        +39.1%  dropped: DCF (التدفق النقدي)
+    NYSE:OGN                12.43 → 17.19        +38.3%  dropped: P/E مقارنة بتاريخه
+    TADAWUL:4009            57.94 → 79.26        +36.8%  dropped: DCF (التدفق النقدي)
+    TADAWUL:4051             5.47 → 7.46         +36.4%  dropped: DCF (التدفق النقدي)
+    NASDAQ:WDC              252.4 → 333.71       +32.2%  dropped: P/S مقارنة بتاريخه
+    NYSE:BURL               286.9 → 378.75       +32.0%  dropped: DCF (التدفق النقدي)
+    NYSE:NOW               137.44 → 179.18       +30.4%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:ADSK            286.99 → 372.07       +29.6%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NASDAQ:WDAY            220.08 → 281.81       +28.0%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)
+    NYSE:IOT                21.24 → 15.43        -27.4%  dropped: مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%), P/S مقارنة بتاريخه
+    NASDAQ:TMDX            151.31 → 114.5        -24.3%  dropped: P/S مقارنة بتاريخه
+    TADAWUL:4013            212.4 → 162.24       -23.6%  dropped: P/S مقارنة بتاريخه
+
+Snapshot /tmp/claude-0/-home-user-mdt-signal-dashboard/54968d20-8dbc-546c-8282-8a92848f6362/scratchpad/snap (sha256 of each file):
+  1874 files, listed in reports/study16-today-snap.sha256; sha256 of that list: e6de4b39c2dc8a04b2fbcb8e6919a32668c4abc85a70a5506d0b55fc2d131b38

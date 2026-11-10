@@ -1,0 +1,162 @@
+{
+  "note": "POST-HOC, descriptive. Calendar days from the entry bar to the exit bar. \"wait\" is from the bar the pattern was registered (C confirmed) to the bar the limit filled — dead time before the trade exists.",
+  "caveat": "The 1h and 4h series carry date-only stamps, so every intraday duration is rounded down to whole days and reads 0 inside one session. Their bar counts are exact; their day counts are a floor. 1D and above are unaffected.",
+  "horizonBars": 60,
+  "rows": [
+    {
+      "tf": "1h",
+      "n": 5344,
+      "horizonDays": 12.01785696022582,
+      "holdBars": {
+        "median": 1,
+        "p90": 6
+      },
+      "holdDays": {
+        "median": 0,
+        "p75": 0,
+        "p90": 1
+      },
+      "winnerDays": {
+        "median": 0,
+        "p75": 1,
+        "p90": 2
+      },
+      "waitDays": {
+        "median": 1,
+        "p90": 3
+      },
+      "structureDays": {
+        "median": 1,
+        "p90": 5
+      },
+      "cycleDays": {
+        "median": 4,
+        "p90": 7
+      }
+    },
+    {
+      "tf": "4h",
+      "n": 5918,
+      "horizonDays": 41.9863593105636,
+      "holdBars": {
+        "median": 1,
+        "p90": 5
+      },
+      "holdDays": {
+        "median": 0,
+        "p75": 2,
+        "p90": 4
+      },
+      "winnerDays": {
+        "median": 1,
+        "p75": 2,
+        "p90": 5
+      },
+      "waitDays": {
+        "median": 2,
+        "p90": 7
+      },
+      "structureDays": {
+        "median": 6,
+        "p90": 13
+      },
+      "cycleDays": {
+        "median": 12,
+        "p90": 22
+      }
+    },
+    {
+      "tf": "1D",
+      "n": 5642,
+      "horizonDays": 85.8975941475899,
+      "holdBars": {
+        "median": 1,
+        "p90": 5
+      },
+      "holdDays": {
+        "median": 1,
+        "p75": 4,
+        "p90": 7
+      },
+      "winnerDays": {
+        "median": 2,
+        "p75": 5,
+        "p90": 9
+      },
+      "waitDays": {
+        "median": 5,
+        "p90": 15
+      },
+      "structureDays": {
+        "median": 14,
+        "p90": 28
+      },
+      "cycleDays": {
+        "median": 25,
+        "p90": 48
+      }
+    },
+    {
+      "tf": "1W",
+      "n": 2460,
+      "horizonDays": 420.99665814822094,
+      "holdBars": {
+        "median": 1,
+        "p90": 5
+      },
+      "holdDays": {
+        "median": 7,
+        "p75": 14,
+        "p90": 35
+      },
+      "winnerDays": {
+        "median": 7,
+        "p75": 21,
+        "p90": 42
+      },
+      "waitDays": {
+        "median": 21,
+        "p90": 70
+      },
+      "structureDays": {
+        "median": 63,
+        "p90": 133
+      },
+      "cycleDays": {
+        "median": 119,
+        "p90": 231
+      }
+    },
+    {
+      "tf": "1M",
+      "n": 522,
+      "horizonDays": 1827.9152643040982,
+      "holdBars": {
+        "median": 1,
+        "p90": 4
+      },
+      "holdDays": {
+        "median": 29,
+        "p75": 61,
+        "p90": 122
+      },
+      "winnerDays": {
+        "median": 29,
+        "p75": 62,
+        "p90": 151
+      },
+      "waitDays": {
+        "median": 92,
+        "p90": 305
+      },
+      "structureDays": {
+        "median": 245,
+        "p90": 518
+      },
+      "cycleDays": {
+        "median": 485,
+        "p90": 945
+      }
+    }
+  ]
+}

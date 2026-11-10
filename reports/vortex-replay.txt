@@ -1,0 +1,593 @@
+VORTEX REPLAY — hindsight vs real time for the O → D "WALL CONTACTS · POTENTIAL TRADES" list
+────────────────────────────────────────────────────────────────────────────────────────────────
+Engine: engine/vortex.js (buildVortex, zigzag). Skip 3%, contact level 85%, windows ≥ 20 candles.
+Nulls: 2000 seeded draws each. Intervals: Wilson 95% for rates; percentile bootstrap 95% for means
+(by trade, engine/stats.js; and by window, resampling whole swing windows, since trades in one
+window share an exit). Costs: 0.5 index pt round trip on US500 2h/4h, 0 on SPX daily.
+Sanity check passed: the 2h file reproduces the video (O 7003.3, D 6311.6, N 475, its 3 contacts),
+and in every window below the real-time display on D's candle equals the hindsight list.
+
+  2h  PEPPERSTONE:US500 2h (NY wall-clock buckets of the 1h file): 2609 bars, 2025-11-27 02:00 → 2026-10-02 16:00; zigzag 1.5% / 2% / 3%; cost 0.5 pt
+  4h  PEPPERSTONE:US500 4h: 5000 bars, 2023-07-05 18:00 → 2026-10-02 14:00; zigzag 2% / 3% / 5%; cost 0.5 pt
+  1D  TVC:SPX daily (cash index): 5000 bars, 2006-11-15 → 2026-10-02; zigzag 5% / 8% / 12%; cost 0 pt
+
+━━━ SWING WINDOWS AND WHAT IS ON SCREEN (a) ━━━
+
+data thr    pivots windows≥20  live bars  bars w/ contact on screen  mean shown  updates  list changes
+──────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%       63         40       2541     1817  71.5% [70%, 73%]       1.95      354           257
+2h   2%         37         27       2464     2062  83.7% [82%, 85%]       2.42      337           260
+2h   3%         20         17       2439     2332  95.6% [95%, 96%]       2.91      250           199
+4h   2%        146         66       4973     3478  69.9% [69%, 71%]       1.91      779           595
+4h   3%         77         52       4965     4390  88.4% [87%, 89%]       2.66      803           628
+4h   5%         25         19       4908     4841  98.6% [98%, 99%]       3.38      639           530
+1D   5%        219         63       4948     2958  59.8% [58%, 61%]       1.57      932           696
+1D   8%         99         50       4898     3978  81.2% [80%, 82%]       2.54     1037           808
+1D   12%        33         26       4874     4611  94.6% [94%, 95%]       3.12      944           790
+
+live bars = bars from the first pivot's confirmation to the end of data, each in its live window.
+updates   = bars on which the display was recomputed (a new extreme, or a new O); a contact can
+            only appear or disappear on these. On every other bar the list is frozen.
+The Wilson interval here treats bars as independent; consecutive bars share one display, so it is
+far too narrow — read the share as descriptive.
+
+━━━ (b) WAS EACH HINDSIGHT CONTACT ON SCREEN WHILE IT WAS HAPPENING? ━━━
+
+data thr    contacts | shown by end of run     shown by peak candle   only once D printed    | lag, bars: median [IQR] | give-up %: with  counter
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%        102 |    7   6.9% [3%, 13%]      2   2.0% [1%, 7%]      27  26.5% [19%, 36%]  |     9 [2, 24]           |         +0.52    -0.96
+2h   2%           75 |    4   5.3% [2%, 13%]      2   2.7% [1%, 9%]      17  22.7% [15%, 33%]  |    13 [2, 27]           |         +0.69    -0.84
+2h   3%           52 |    2   3.8% [1%, 13%]      1   1.9% [0%, 10%]     12  23.1% [14%, 36%]  |    15 [3, 48]           |         +0.77    -1.35
+4h   2%          170 |    6   3.5% [2%, 7%]       1   0.6% [0%, 3%]      46  27.1% [21%, 34%]  |    14 [2, 22]           |         +0.73    -1.48
+4h   3%          149 |    6   4.0% [2%, 9%]       1   0.7% [0%, 4%]      33  22.1% [16%, 29%]  |    14 [3, 32]           |         +1.09    -1.65
+4h   5%           69 |    1   1.4% [0%, 8%]       1   1.4% [0%, 8%]       7  10.1% [5%, 19%]   |    28 [10, 76]          |         +2.46    -2.68
+1D   5%          167 |    9   5.4% [3%, 10%]      4   2.4% [1%, 6%]      37  22.2% [17%, 29%]  |    10 [2, 20]           |         +2.04    -4.30
+1D   8%          137 |   10   7.3% [4%, 13%]      2   1.5% [0%, 5%]      27  19.7% [14%, 27%]  |    12 [2, 23]           |         +2.48    -6.40
+1D   12%          77 |    2   2.6% [1%, 9%]       0   0.0% [0%, 5%]      13  16.9% [10%, 27%]  |    21 [5, 36]           |         +5.40    -7.80
+
+shown by end of run  = a same-side contact overlapping it was on screen no later than its last candle.
+only once D printed  = first shown on D's own candle or later, i.e. only when the final extreme was in.
+lag                  = bars from the contact's peak candle to the bar it was first on screen.
+give-up              = median of how much worse the real-time entry (close of the bar it first
+                       showed) is than the listed price (peak OHLC4), in the trade's direction, % of
+                       price; positive = worse. "with" = short in a falling window / long in a rising
+                       one; "counter" = the other side. Every signal lands on a new-extreme bar, so
+                       with-trend entries are chased and counter-trend ones are bought at the extreme.
+
+━━━ (c) REPAINT — SIGNALS THAT APPEARED IN REAL TIME AND LATER VANISHED ━━━
+
+data thr    signals  per window | vanished at least once        | absent from the final list (gone for good)
+────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%       247         6.2 |  152  61.5% [55%, 67%]        |  142  57.5% [51%, 63%]
+2h   2%         224         8.3 |  154  68.8% [62%, 74%]        |  146  65.2% [59%, 71%]
+2h   3%         147         8.6 |  100  68.0% [60%, 75%]        |   90  61.2% [53%, 69%]
+4h   2%         537         8.1 |  373  69.5% [65%, 73%]        |  359  66.9% [63%, 71%]
+4h   3%         472         9.1 |  341  72.2% [68%, 76%]        |  319  67.6% [63%, 72%]
+4h   5%         323        17.0 |  256  79.3% [75%, 83%]        |  245  75.9% [71%, 80%]
+1D   5%         521         8.3 |  361  69.3% [65%, 73%]        |  347  66.6% [62%, 71%]
+1D   8%         498        10.0 |  365  73.3% [69%, 77%]        |  351  70.5% [66%, 74%]
+1D   12%        330        12.7 |  253  76.7% [72%, 81%]        |  245  74.2% [69%, 79%]
+
+A signal = a contact (side + candle run) not overlapping any same-side contact shown earlier in the
+same window. Signals from the last, still-unconfirmed swing are excluded here and from the trades.
+
+Exits: "at D" = held to the end of the swing; "vector" = closed on the line O → D (else at D);
+"video" = with-trend contacts held to D, counter-trend ones closed at the vector — the reading under
+which all three of the video's listed trades win. Hindsight: D at its anchor price, the final line.
+Real time: D at the close of the bar zigzag confirms it; the line as drawn on the previous bar.
+A win is a net return > 0. p = share of null draws whose mean matched or beat the rule's.
+
+━━━ (1) HINDSIGHT — the video's list, traded at the listed price; null = random candle in the same window ━━━
+
+data thr    exit     trades win    win%  95% CI     | mean %/trade  95% CI by trade   95% CI by window  | null mean   p
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%   at D        102   52   51.0% [41%, 60%] |     -0.608     [-1.04, -0.18]     [-1.10, -0.26]   |    -0.040  1.000
+2h   1.5%   vector      102   83   81.4% [73%, 88%] |     +0.448     [+0.27, +0.61]     [+0.28, +0.60]   |    +0.224  0.000
+2h   1.5%   video       102   83   81.4% [73%, 88%] |     +0.542     [+0.35, +0.73]     [+0.37, +0.72]   |    +0.809  1.000
+2h   2%     at D         75   39   52.0% [41%, 63%] |     -0.526     [-1.07, -0.01]     [-0.92, -0.20]   |    +0.113  1.000
+2h   2%     vector       75   61   81.3% [71%, 89%] |     +0.517     [+0.28, +0.74]     [+0.34, +0.70]   |    +0.267  0.000
+2h   2%     video        75   61   81.3% [71%, 89%] |     +0.642     [+0.36, +0.89]     [+0.44, +0.86]   |    +1.089  1.000
+2h   3%     at D         52   28   53.8% [41%, 67%] |     -0.470     [-1.40, +0.33]     [-1.06, +0.01]   |    +0.334  1.000
+2h   3%     vector       52   44   84.6% [72%, 92%] |     +0.527     [-0.05, +0.98]     [-0.09, +1.03]   |    +0.344  0.074
+2h   3%     video        52   44   84.6% [72%, 92%] |     +0.716     [+0.09, +1.21]     [+0.17, +1.22]   |    +1.341  1.000
+4h   2%     at D        170   76   44.7% [37%, 52%] |     -1.153     [-1.61, -0.71]     [-1.56, -0.73]   |    -0.269  1.000
+4h   2%     vector      170  117   68.8% [62%, 75%] |     +0.230     [+0.01, +0.45]     [-0.06, +0.54]   |    +0.182  0.207
+4h   2%     video       170  117   68.8% [62%, 75%] |     +0.413     [+0.15, +0.68]     [+0.12, +0.70]   |    +0.945  1.000
+4h   3%     at D        149   71   47.7% [40%, 56%] |     -1.349     [-2.07, -0.66]     [-2.16, -0.67]   |    -0.102  1.000
+4h   3%     vector      149  109   73.2% [66%, 80%] |     +0.301     [-0.11, +0.67]     [-0.33, +0.77]   |    +0.232  0.208
+4h   3%     video       149  109   73.2% [66%, 80%] |     +0.585     [+0.10, +1.01]     [-0.03, +1.05]   |    +1.370  1.000
+4h   5%     at D         69   35   50.7% [39%, 62%] |     -2.837     [-4.79, -0.95]     [-5.68, -0.41]   |    +0.201  1.000
+4h   5%     vector       69   53   76.8% [66%, 85%] |     -0.100     [-1.39, +1.03]     [-2.01, +1.73]   |    +0.433  0.983
+4h   5%     video        69   53   76.8% [66%, 85%] |     +0.204     [-1.13, +1.45]     [-1.92, +2.00]   |    +2.553  1.000
+1D   5%     at D        167   84   50.3% [43%, 58%] |     -2.917     [-4.24, -1.64]     [-3.91, -1.92]   |    +0.176  1.000
+1D   5%     vector      167  123   73.7% [66%, 80%] |     +0.955     [+0.20, +1.70]     [+0.10, +1.78]   |    +0.910  0.414
+1D   5%     video       167  123   73.7% [66%, 80%] |     +1.264     [+0.49, +2.03]     [+0.44, +2.06]   |    +3.113  1.000
+1D   8%     at D        137   66   48.2% [40%, 56%] |     -5.660     [-7.89, -3.38]     [-8.73, -2.96]   |    -0.898  1.000
+1D   8%     vector      137  105   76.6% [69%, 83%] |     +1.712     [+0.69, +2.76]     [+0.61, +2.87]   |    +1.348  0.065
+1D   8%     video       137  105   76.6% [69%, 83%] |     +1.984     [+0.97, +3.00]     [+0.86, +3.12]   |    +4.284  1.000
+1D   12%    at D         77   41   53.2% [42%, 64%] |     -6.096    [-11.25, -0.87]     [-9.74, -2.51]   |    +1.068  1.000
+1D   12%    vector       77   65   84.4% [75%, 91%] |     +3.610     [+0.84, +5.99]     [+0.62, +6.17]   |    +1.933  0.001
+1D   12%    video        77   65   84.4% [75%, 91%] |     +4.411     [+1.60, +7.11]     [+1.30, +6.96]   |    +8.140  1.000
+
+━━━ (2d) REAL TIME — enter at the close of the bar on which a signal first appears ━━━
+
+null A = random bar while the window was live on screen (the stated null)
+null B = random UPDATE bar (a new extreme or a new O) in the window — the only bars a signal can land on
+null C = random update bar in the same window AND the same phase of the swing: the first display on its
+         own, then tenths of the way from the first display to D. Controls for WHEN, not just where.
+
+data thr    exit     trades win    win%  95% CI     | mean %/trade  95% CI by trade   95% CI by window  | null A    p    | null B    p    | null C    p
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%   at D        247   98   39.7% [34%, 46%] |     +0.013     [-0.22, +0.26]     [-0.44, +0.61]   |  +0.012 0.501  |  -0.015 0.351  |  +0.011 0.421
+2h   1.5%   vector      247  149   60.3% [54%, 66%] |     -0.060     [-0.14, +0.02]     [-0.20, +0.05]   |  -0.099 0.149  |  -0.095 0.140  |  -0.081 0.057
+2h   1.5%   video       247   56   22.7% [18%, 28%] |     -0.005     [-0.21, +0.21]     [-0.62, +0.78]   |  -0.090 0.039  |  -0.157 0.007  |  -0.011 0.265
+2h   2%     at D        224   84   37.5% [31%, 44%] |     -0.029     [-0.33, +0.28]     [-0.56, +0.65]   |  +0.114 0.926  |  +0.073 0.835  |  -0.043 0.194
+2h   2%     vector      224  151   67.4% [61%, 73%] |     +0.008     [-0.07, +0.08]     [-0.11, +0.10]   |  +0.067 0.906  |  +0.003 0.442  |  +0.013 0.616
+2h   2%     video       224   49   21.9% [17%, 28%] |     -0.042     [-0.29, +0.25]     [-0.73, +0.90]   |  +0.039 0.809  |  -0.070 0.375  |  -0.070 0.031
+2h   3%     at D        147   61   41.5% [34%, 50%] |     -0.096     [-0.70, +0.56]     [-0.93, +0.61]   |  +0.240 0.944  |  +0.078 0.813  |  -0.116 0.302
+2h   3%     vector      147   96   65.3% [57%, 73%] |     -0.079     [-0.23, +0.07]     [-0.36, +0.10]   |  -0.050 0.642  |  -0.091 0.447  |  -0.104 0.231
+2h   3%     video       147   36   24.5% [18%, 32%] |     -0.015     [-0.50, +0.57]     [-1.45, +1.31]   |  +0.087 0.686  |  -0.231 0.121  |  -0.083 0.016
+4h   2%     at D        537  222   41.3% [37%, 46%] |     -0.032     [-0.21, +0.16]     [-0.41, +0.36]   |  +0.017 0.808  |  -0.019 0.581  |  -0.031 0.565
+4h   2%     vector      537  348   64.8% [61%, 69%] |     +0.022     [-0.04, +0.09]     [-0.07, +0.10]   |  +0.037 0.673  |  -0.017 0.096  |  -0.004 0.019
+4h   2%     video       537  151   28.1% [24%, 32%] |     -0.027     [-0.19, +0.14]     [-0.50, +0.52]   |  -0.054 0.297  |  -0.137 0.024  |  -0.033 0.264
+4h   3%     at D        472  210   44.5% [40%, 49%] |     +0.469     [+0.07, +0.88]     [-0.55, +1.78]   |  +0.395 0.264  |  +0.461 0.466  |  +0.435 0.042
+4h   3%     vector      472  324   68.6% [64%, 73%] |     +0.008     [-0.08, +0.09]     [-0.14, +0.13]   |  -0.005 0.391  |  -0.062 0.037  |  +0.001 0.357
+4h   3%     video       472  147   31.1% [27%, 35%] |     +0.530     [+0.18, +0.89]     [-0.72, +2.05]   |  +0.264 0.007  |  +0.267 0.008  |  +0.501 0.067
+4h   5%     at D        323  176   54.5% [49%, 60%] |     +1.701     [+1.00, +2.46]     [-0.72, +3.25]   |  +1.169 0.011  |  +1.382 0.096  |  +1.616 0.021
+4h   5%     vector      323  256   79.3% [75%, 83%] |     +0.208     [+0.11, +0.31]     [-0.01, +0.33]   |  +0.260 0.729  |  +0.071 0.002  |  +0.152 0.043
+4h   5%     video       323  152   47.1% [42%, 53%] |     +1.989     [+1.34, +2.63]     [-1.07, +3.95]   |  +1.243 0.000  |  +1.386 0.004  |  +1.882 0.006
+1D   5%     at D        521  240   46.1% [42%, 50%] |     +0.131     [-0.28, +0.55]     [-0.66, +0.97]   |  +0.186 0.653  |  -0.057 0.077  |  +0.110 0.136
+1D   5%     vector      521  407   78.1% [74%, 81%] |     +0.112     [-0.05, +0.26]     [-0.16, +0.32]   |  +0.196 0.853  |  +0.044 0.144  |  +0.112 0.498
+1D   5%     video       521  234   44.9% [41%, 49%] |     +0.242     [-0.11, +0.61]     [-0.76, +1.30]   |  +0.072 0.083  |  -0.304 0.000  |  +0.219 0.101
+1D   8%     at D        498  213   42.8% [38%, 47%] |     +0.340     [-0.42, +1.13]     [-1.51, +1.89]   |  +0.475 0.707  |  +0.168 0.260  |  +0.347 0.577
+1D   8%     vector      498  413   82.9% [79%, 86%] |     +0.116     [-0.08, +0.31]     [-0.13, +0.30]   |  +0.167 0.663  |  +0.132 0.574  |  +0.173 0.873
+1D   8%     video       498  219   44.0% [40%, 48%] |     +0.789     [+0.11, +1.44]     [-1.51, +2.85]   |  +0.527 0.125  |  +0.036 0.001  |  +0.779 0.401
+1D   12%    at D        330  185   56.1% [51%, 61%] |     +4.811     [+2.85, +6.72]     [+0.69, +7.72]   |  +4.795 0.500  |  +3.994 0.090  |  +4.680 0.087
+1D   12%    vector      330  285   86.4% [82%, 90%] |     +0.238     [-0.02, +0.48]     [-0.32, +0.59]   |  +1.022 1.000  |  +0.072 0.102  |  +0.205 0.329
+1D   12%    video       330  195   59.1% [54%, 64%] |     +6.563     [+5.04, +8.16]    [+1.35, +10.12]   |  +5.406 0.033  |  +4.289 0.001  |  +6.328 0.008
+
+Multiple testing, real time (3 datasets × 3 thresholds × 3 exits per null):
+  null A: 27 comparisons, 5 with p < 0.05 (1.4 expected by chance); smallest Holm-adjusted p 0.013 (4h 5% video, null A).
+      p < 0.05: 2h 1.5% video (A) 0.039; 4h 3% video (A) 0.007; 4h 5% at D (A) 0.011; 4h 5% video (A) 0.000; 1D 12% video (A) 0.033
+  null B: 27 comparisons, 9 with p < 0.05 (1.4 expected by chance); smallest Holm-adjusted p 0.013 (1D 5% video, null B).
+      p < 0.05: 2h 1.5% video (B) 0.007; 4h 2% video (B) 0.024; 4h 3% vector (B) 0.037; 4h 3% video (B) 0.008; 4h 5% vector (B) 0.002; 4h 5% video (B) 0.004; 1D 5% video (B) 0.000; 1D 8% video (B) 0.001; 1D 12% video (B) 0.001
+  null C: 27 comparisons, 8 with p < 0.05 (1.4 expected by chance); smallest Holm-adjusted p 0.162 (4h 5% video, null C).
+      p < 0.05: 2h 2% video (C) 0.031; 2h 3% video (C) 0.016; 4h 2% vector (C) 0.019; 4h 3% at D (C) 0.042; 4h 5% at D (C) 0.021; 4h 5% vector (C) 0.043; 4h 5% video (C) 0.006; 1D 12% video (C) 0.008
+
+━━━ TIMING — why nulls A and B flatter the "video" exit ━━━
+
+data thr    signals  on the first display   position: live span  O-confirm→D  in-phase rank | later signals, video exit: n   mean   null C   p
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%       247     90  36.4% [31%, 43%]        median 0.37   median 0.54      mean 0.34 |                          157  +0.066   +0.055  0.233
+2h   2%         224     65  29.0% [23%, 35%]        median 0.43   median 0.54      mean 0.33 |                          159  -0.053   -0.093  0.032
+2h   3%         147     47  32.0% [25%, 40%]        median 0.15   median 0.30      mean 0.35 |                          100  +0.162   +0.062  0.008
+4h   2%         537    146  27.2% [24%, 31%]        median 0.46   median 0.60      mean 0.36 |                          391  -0.050   -0.058  0.264
+4h   3%         472    123  26.1% [22%, 30%]        median 0.28   median 0.41      mean 0.40 |                          349  +0.720   +0.680  0.055
+4h   5%         323     55  17.0% [13%, 22%]        median 0.29   median 0.34      mean 0.39 |                          268  +2.281   +2.150  0.003
+1D   5%         521    142  27.3% [24%, 31%]        median 0.47   median 0.56      mean 0.38 |                          379  +0.195   +0.164  0.111
+1D   8%         498    125  25.1% [21%, 29%]        median 0.34   median 0.44      mean 0.41 |                          373  +0.950   +0.937  0.392
+1D   12%        330     62  18.8% [15%, 23%]        median 0.33   median 0.37      mean 0.38 |                          268  +7.576   +7.287  0.009
+
+When a window first reaches 20 candles every contact on it is new at once, so a quarter or more of
+all signals land on that one bar, early in the swing. A signal never lands in the bounce between D
+and its confirmation (no new extreme prints there), while null A does. Held with the swing to its
+confirmed end, an early entry is worth more than a random one in the same — hindsight-delimited —
+window whatever the indicator says. Null C holds the phase fixed and asks only whether the contact
+picks better bars than its neighbours in the same stretch of the same swing. It removes most of the
+timing advantage, not all: inside its phase a signal still sits early (in-phase rank: mean position
+of later signals among their phase's update bars, 0 = first, 1 = last, 0.5 = no timing bias). That
+residue, not information in the walls, is the likeliest source of the small with-trend leftovers.
+
+━━━ BY SIDE — with the swing (short in a falling window, long in a rising one) vs against it ━━━
+
+data thr    exit    side     | hindsight:  n  win%   mean %    null    p   | real time:  n  win%   mean %  null A    p   null C    p
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%   at D    with     |              52  100%   +1.157  +1.644 1.000  |             181   26%   -0.004  -0.120 0.051   -0.014 0.254
+2h   1.5%   at D    counter  |              50    0%   -2.444  -1.790 1.000  |              66   77%   +0.059  +0.377 1.000   +0.079 0.995
+2h   1.5%   vector  with     |              52  100%   +0.971  +0.495 0.000  |             181   77%   -0.079  -0.133 0.114   -0.108 0.056
+2h   1.5%   vector  counter  |              50   62%   -0.097  -0.055 0.756  |              66   14%   -0.007  -0.007 0.553   -0.007 0.565
+2h   2%     at D    with     |              39  100%   +1.348  +2.150 1.000  |             167   25%   -0.055  +0.056 0.813   -0.093 0.031
+2h   2%     at D    counter  |              36    0%   -2.556  -2.085 0.990  |              57   75%   +0.046  +0.297 0.942   +0.105 1.000
+2h   2%     vector  with     |              39  100%   +1.107  +0.573 0.000  |             167   86%   +0.012  +0.090 0.895   +0.020 0.622
+2h   2%     vector  counter  |              36   61%   -0.123  -0.066 0.728  |              57   14%   -0.004  -0.006 0.337   -0.005 0.327
+2h   3%     at D    with     |              28  100%   +1.668  +2.592 1.000  |             111   31%   -0.018  +0.129 0.709   -0.108 0.010
+2h   3%     at D    counter  |              24    0%   -2.963  -2.291 0.993  |              36   75%   -0.339  +0.611 1.000   -0.137 0.999
+2h   3%     vector  with     |              28  100%   +1.317  +0.755 0.000  |             111   85%   -0.103  -0.065 0.649   -0.136 0.230
+2h   3%     vector  counter  |              24   67%   -0.395  -0.144 0.863  |              36    6%   -0.007  -0.008 0.459   -0.009 0.315
+4h   2%     at D    with     |              76  100%   +1.676  +2.380 1.000  |             409   34%   -0.034  -0.065 0.322   -0.041 0.258
+4h   2%     at D    counter  |              94    0%   -3.440  -2.400 1.000  |             128   64%   -0.028  +0.287 0.999   +0.002 0.991
+4h   2%     vector  with     |              76  100%   +1.268  +0.669 0.000  |             409   82%   +0.031  +0.049 0.661   -0.002 0.021
+4h   2%     vector  counter  |              94   44%   -0.608  -0.213 1.000  |             128    9%   -0.007  -0.004 0.619   -0.007 0.481
+4h   3%     at D    with     |              71  100%   +2.137  +3.183 1.000  |             368   37%   +0.682  +0.344 0.009   +0.645 0.061
+4h   3%     at D    counter  |              78    0%   -4.522  -3.086 1.000  |             104   70%   -0.283  +0.582 1.000   -0.308 0.192
+4h   3%     vector  with     |              71  100%   +1.542  +0.789 0.000  |             368   85%   +0.011  -0.006 0.386   +0.003 0.380
+4h   3%     vector  counter  |              78   49%   -0.828  -0.280 1.000  |             104   10%   -0.005  -0.004 0.498   -0.008 0.463
+4h   5%     at D    with     |              35  100%   +3.367  +5.921 1.000  |             255   55%   +2.521  +1.573 0.001   +2.382 0.003
+4h   5%     at D    counter  |              34    0%   -9.224  -5.699 1.000  |              68   53%   -1.375  -0.385 0.992   -1.266 0.968
+4h   5%     vector  with     |              35  100%   +2.768  +1.734 0.000  |             255   96%   +0.265  +0.333 0.755   +0.193 0.039
+4h   5%     vector  counter  |              34   53%   -3.052  -0.893 1.000  |              68   18%   -0.006  -0.008 0.401   -0.007 0.508
+1D   5%     at D    with     |              84  100%   +4.350  +6.873 1.000  |             414   44%   +0.323  +0.099 0.078   +0.295 0.119
+1D   5%     at D    counter  |              83    0%  -10.272  -6.612 1.000  |             107   54%   -0.611  +0.539 1.000   -0.606 0.595
+1D   5%     vector  with     |              84  100%   +3.737  +2.474 0.000  |             414   86%   +0.159  +0.248 0.815   +0.159 0.506
+1D   5%     vector  counter  |              83   47%   -1.860  -0.674 1.000  |             107   49%   -0.071  +0.002 0.978   -0.073 0.469
+1D   8%     at D    with     |              66  100%   +5.994  +9.458 1.000  |             393   41%   +1.001  +0.666 0.106   +0.991 0.413
+1D   8%     at D    counter  |              71    0%  -16.493 -10.515 1.000  |             105   50%   -2.133  -0.264 1.000   -2.063 0.925
+1D   8%     vector  with     |              66  100%   +5.430  +3.377 0.000  |             393   90%   +0.149  +0.220 0.691   +0.226 0.892
+1D   8%     vector  counter  |              71   55%   -1.744  -0.520 1.000  |             105   56%   -0.007  -0.044 0.270   -0.019 0.246
+1D   12%    at D    with     |              41  100%  +11.086 +16.095 1.000  |             263   60%   +8.292  +6.797 0.034   +7.996 0.006
+1D   12%    at D    counter  |              36    0%  -25.665 -16.096 1.000  |              67   42%   -8.854  -3.017 1.000   -8.330 1.000
+1D   12%    vector  with     |              41  100%   +9.581  +4.516 0.000  |             263   94%   +0.356  +1.296 1.000   +0.316 0.341
+1D   12%    vector  counter  |              36   67%   -3.191  -1.029 0.999  |              67   57%   -0.227  -0.059 0.940   -0.224 0.543
+
+━━━ SAME CONTACT, TWO PRICES — each listed contact traded as listed vs when it first appeared on screen ━━━
+
+Paired: for every final contact, the hindsight trade (listed price, hindsight exit) minus the same
+contact traded in real time (close of the bar it first appeared, real-time exit), % of price.
+p = sign-flip permutation (2000 draws), share of flips whose mean difference ≥ the observed one.
+
+data thr    exit     pairs | hindsight win%   mean %  | real time win%   mean %  | difference   95% CI            p
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2h   1.5%   at D       102 |          51.0%   -0.608  |          45.1%   -0.378  |     -0.230 [-0.72, +0.24]     0.819
+2h   1.5%   vector     102 |          81.4%   +0.448  |          33.3%   -0.289  |     +0.737 [+0.53, +0.95]     0.000
+2h   1.5%   video      102 |          81.4%   +0.542  |          12.7%   -0.499  |     +1.041 [+0.80, +1.27]     0.000
+2h   2%     at D        75 |          52.0%   -0.526  |          44.0%   -0.377  |     -0.149 [-0.81, +0.52]     0.670
+2h   2%     vector      75 |          81.3%   +0.517  |          38.7%   -0.285  |     +0.801 [+0.52, +1.09]     0.000
+2h   2%     video       75 |          81.3%   +0.642  |          12.0%   -0.667  |     +1.308 [+0.97, +1.66]     0.000
+2h   3%     at D        52 |          53.8%   -0.470  |          48.1%   -0.494  |     +0.025 [-1.09, +1.13]     0.504
+2h   3%     vector      52 |          84.6%   +0.527  |          34.6%   -0.505  |     +1.031 [+0.36, +1.57]     0.001
+2h   3%     video       52 |          84.6%   +0.716  |           7.7%   -1.114  |     +1.830 [+1.01, +2.51]     0.000
+4h   2%     at D       170 |          44.7%   -1.153  |          44.7%   -0.352  |     -0.800 [-1.33, -0.25]     0.999
+4h   2%     vector     170 |          68.8%   +0.230  |          24.1%   -0.344  |     +0.575 [+0.30, +0.84]     0.000
+4h   2%     video      170 |          68.8%   +0.413  |           7.1%   -0.589  |     +1.002 [+0.67, +1.35]     0.000
+4h   3%     at D       149 |          47.7%   -1.349  |          40.9%   -0.791  |     -0.558 [-1.28, +0.21]     0.918
+4h   3%     vector     149 |          73.2%   +0.301  |          32.2%   -0.466  |     +0.768 [+0.31, +1.20]     0.000
+4h   3%     video      149 |          73.2%   +0.585  |           6.0%   -0.998  |     +1.583 [+1.02, +2.08]     0.000
+4h   5%     at D        69 |          50.7%   -2.837  |          39.1%   -1.420  |     -1.417 [-3.69, +0.86]     0.886
+4h   5%     vector      69 |          76.8%   -0.100  |          47.8%   -0.452  |     +0.352 [-0.99, +1.62]     0.298
+4h   5%     video       69 |          76.8%   +0.204  |          13.0%   -1.840  |     +2.044 [+0.41, +3.54]     0.004
+1D   5%     at D       167 |          50.3%   -2.917  |          37.1%   -1.401  |     -1.516 [-3.00, -0.05]     0.980
+1D   5%     vector     167 |          73.7%   +0.955  |          54.5%   -0.747  |     +1.702 [+0.90, +2.42]     0.000
+1D   5%     video      167 |          73.7%   +1.264  |          32.9%   -1.483  |     +2.746 [+1.87, +3.58]     0.000
+1D   8%     at D       137 |          48.2%   -5.660  |          38.0%   -2.188  |     -3.472 [-6.14, -1.01]     0.997
+1D   8%     vector     137 |          76.6%   +1.712  |          56.9%   -1.260  |     +2.972 [+1.81, +4.15]     0.000
+1D   8%     video      137 |          76.6%   +1.984  |          37.2%   -2.440  |     +4.424 [+3.11, +5.78]     0.000
+1D   12%    at D        77 |          53.2%   -6.096  |          37.7%   -3.600  |     -2.496 [-7.64, +2.30]     0.829
+1D   12%    vector      77 |          84.4%   +3.610  |          63.6%   -1.137  |     +4.747 [+1.74, +7.42]     0.000
+1D   12%    video       77 |          84.4%   +4.411  |          33.8%   -3.304  |     +7.715 [+4.36, +10.68]    0.000
+
+"at D" can favour REAL TIME: held to D in hindsight, a counter-trend contact is closed at the swing's
+extreme — the worst price for it by construction — while in real time it was entered AT a new
+extreme. Under the exits the list implies (vector, video) hindsight is worth the difference shown.
+
+━━━ (3) THE VIDEO'S WINDOW, 03 FEB 02:00 → 30 MAR 20:00, REPLAYED IN REAL TIME ━━━
+
+Version A — the most generous reading: O is the video's own O (03 Feb 02:00, 7003.3), taken as known
+from the start (zigzag would only confirm it once price fell the threshold below it). D is the running
+low since O, W is sized from candles ≤ t. Every change to the contact list, as it happened:
+
+  2026-02-05 06:00  close 6,847.9  provisional D 02-05 06:00 6,833.9  N 26  Wup 112.1 Wdn 90.3
+      NEW  02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+      NEW  02-05 04:00               short ·  6,883.5 ·   1 candles  +1.00
+  2026-02-05 08:00  close 6,827.9  provisional D 02-05 08:00 6,809.6  N 27  Wup 130.9 Wdn 87.3
+           02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+           02-05 04:00 → 02-05 06:00 short ·  6,866.2 ·   2 candles  +1.00
+  2026-02-05 10:00  close 6,833.6  provisional D 02-05 10:00 6,779.4  N 28  Wup 137.5 Wdn 83.2
+           02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+           02-05 04:00 → 02-05 08:00 short ·  6,866.2 ·   3 candles  +1.00
+  2026-02-05 16:00  close 6,766.1  provisional D 02-05 16:00 6,762.6  N 31  Wup 96.7 Wdn 88.2
+           02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+           02-05 02:00 → 02-05 06:00 short ·  6,883.5 ·   3 candles  +0.97
+      NEW  02-05 12:00 → 02-05 14:00 short ·  6,804.6 ·   2 candles  +1.00
+  2026-02-05 18:00  close 6,760.4  provisional D 02-05 18:00 6,729.8  N 32  Wup 126.9 Wdn 84.0
+           02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+           02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+           02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+  2026-03-03 10:00  close 6,790.5  provisional D 03-03 10:00 6,711.0  N 242  Wup 412.0 Wdn 305.8
+      NEW  02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      NEW  03-02 12:00 → 03-02 20:00 short ·  6,868.0 ·   5 candles  +1.00
+      GONE 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+      GONE 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+      GONE 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+  2026-03-06 08:00  close 6,720.2  provisional D 03-06 08:00 6,708.9  N 277  Wup 326.3 Wdn 331.3
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      NEW  03-04 18:00 → 03-04 20:00 short ·  6,881.4 ·   2 candles  +0.92
+      NEW  03-05 00:00 → 03-05 10:00 short ·  6,860.8 ·   6 candles  +1.00
+      NEW  03-05 16:00               short ·  6,821.9 ·   1 candles  +0.96
+      GONE 03-02 12:00 → 03-02 20:00 short ·  6,868.0 ·   5 candles  +1.00
+  2026-03-08 18:00  close 6,623.2  provisional D 03-08 18:00 6,608.0  N 282  Wup 644.7 Wdn 316.8
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      NEW  03-05 22:00 → 03-06 02:00 short ·  6,833.3 ·   3 candles  +1.00
+      GONE 03-04 18:00 → 03-04 20:00 short ·  6,881.4 ·   2 candles  +0.92
+      GONE 03-05 00:00 → 03-05 10:00 short ·  6,860.8 ·   6 candles  +1.00
+      GONE 03-05 16:00               short ·  6,821.9 ·   1 candles  +0.96
+  2026-03-08 20:00  close 6,585.8  provisional D 03-08 20:00 6,585.0  N 283  Wup 669.5 Wdn 313.4
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-05 20:00 → 03-06 04:00 short ·  6,833.3 ·   5 candles  +1.00
+  2026-03-19 08:00  close 6,595.7  provisional D 03-19 08:00 6,560.4  N 385  Wup 476.7 Wdn 378.6
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      NEW  03-18 00:00 → 03-18 08:00 short ·  6,747.6 ·   5 candles  +1.00
+      GONE 03-05 20:00 → 03-06 04:00 short ·  6,833.3 ·   5 candles  +1.00
+  2026-03-20 06:00  close 6,583.6  provisional D 03-20 06:00 6,557.0  N 396  Wup 346.3 Wdn 384.8
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-17 22:00 → 03-18 06:00 short ·  6,753.6 ·   5 candles  +1.00
+  2026-03-20 14:00  close 6,510.5  provisional D 03-20 14:00 6,473.3  N 400  Wup 466.4 Wdn 374.9
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+  2026-03-22 18:00  close 6,490.7  provisional D 03-22 18:00 6,464.4  N 402  Wup 464.1 Wdn 374.9
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      NEW  03-19 18:00               short ·  6,624.2 ·   1 candles  +0.91
+  2026-03-23 02:00  close 6,448.6  provisional D 03-23 02:00 6,435.0  N 406  Wup 480.3 Wdn 373.0
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+           03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-27 08:00  close 6,412.7  provisional D 03-27 08:00 6,408.0  N 457  Wup 413.4 Wdn 400.0
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      NEW  03-25 04:00 → 03-26 04:00 short ·  6,586.6 ·  13 candles  +1.00
+      GONE 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      GONE 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-27 12:00  close 6,383.4  provisional D 03-27 12:00 6,381.1  N 459  Wup 451.2 Wdn 397.5
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-25 04:00 → 03-26 08:00 short ·  6,586.6 ·  15 candles  +1.00
+  2026-03-27 14:00  close 6,361.3  provisional D 03-27 14:00 6,352.1  N 460  Wup 533.8 Wdn 394.1
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-25 04:00 → 03-25 08:00 short ·  6,617.5 ·   3 candles  +0.88
+           03-25 12:00 → 03-26 04:00 short ·  6,586.6 ·   9 candles  +0.95
+           03-26 08:00 → 03-26 10:00 short ·  6,555.3 ·   2 candles  +1.00
+  2026-03-27 16:00  close 6,354.1  provisional D 03-27 16:00 6,343.1  N 461  Wup 537.5 Wdn 393.5
+           02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+           03-25 04:00 → 03-25 08:00 short ·  6,617.5 ·   3 candles  +0.89
+           03-25 12:00 → 03-26 10:00 short ·  6,555.3 ·  12 candles  +1.00
+  2026-03-29 18:00  close 6,323.7  provisional D 03-29 18:00 6,319.7  N 462  Wup 579.5 Wdn 390.9
+           02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+           03-25 04:00 → 03-25 08:00 short ·  6,617.5 ·   3 candles  +0.89
+           03-25 12:00 → 03-26 10:00 short ·  6,555.3 ·  12 candles  +1.00
+  2026-03-29 20:00  close 6,340.4  provisional D 03-29 20:00 6,316.5  N 463  Wup 567.8 Wdn 391.0
+           02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+           03-25 04:00 → 03-26 10:00 short ·  6,555.3 ·  16 candles  +1.00
+  2026-03-30 14:00  close 6,344.4  provisional D 03-30 14:00 6,315.7  N 472  Wup 446.1 Wdn 396.2
+           02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+      NEW  03-24 20:00               short ·  6,607.3 ·   1 candles  +0.86
+           03-25 00:00 → 03-26 10:00 short ·  6,586.6 ·  18 candles  +1.00
+      NEW  03-26 22:00 → 03-27 04:00 short ·  6,507.4 ·   4 candles  +0.97
+  2026-03-30 20:00  close 6,397.7  provisional D 03-30 20:00 6,311.6  N 475  Wup 428.8 Wdn 397.4
+           02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+           03-24 20:00 → 03-26 10:00 short ·  6,586.6 ·  20 candles  +1.00
+           03-27 00:00 → 03-27 02:00 short ·  6,507.4 ·   2 candles  +0.94
+
+Snapshots — what the panel would read at the close of these candles (Version A):
+
+  2026-02-05 16:00  close 6,766.1  low 6,762.6  — this candle IS the provisional D: price pinned to D, e = 0, inside the 3% skip
+      provisional D 2026-02-05 16:00 6,762.6, N 31, walls Wup 96.7 / Wdn 88.2
+      list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+      list: 02-05 02:00 → 02-05 06:00 short ·  6,883.5 ·   3 candles  +0.97
+      list: 02-05 12:00 → 02-05 14:00 short ·  6,804.6 ·   2 candles  +1.00
+  2026-02-05 18:00  close 6,760.4  low 6,729.8  — this candle IS the provisional D: price pinned to D, e = 0, inside the 3% skip
+      provisional D 2026-02-05 18:00 6,729.8, N 32, walls Wup 126.9 / Wdn 84.0
+      list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+      list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+      list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+  2026-02-05 22:00  close 6,765.7  low 6,760.5  — this candle is 2 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-02-05 18:00 6,729.8, N 32, walls Wup 126.9 / Wdn 84.0
+      list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+      list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+      list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+  2026-03-24 20:00  close 6,604.7  low 6,597.6  — this candle is 21 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-03-23 02:00 6,435.0, N 406, walls Wup 480.3 / Wdn 373.0
+      list: 02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      list: 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      list: 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-25 22:00  close 6,592.5  low 6,565.4  — this candle is 34 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-03-23 02:00 6,435.0, N 406, walls Wup 480.3 / Wdn 373.0
+      list: 02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      list: 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      list: 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-26 10:00  close 6,540.8  low 6,534.5  — this candle is 40 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-03-23 02:00 6,435.0, N 406, walls Wup 480.3 / Wdn 373.0
+      list: 02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      list: 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      list: 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-27 00:00  close 6,513.3  low 6,501.8  — this candle is 47 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-03-23 02:00 6,435.0, N 406, walls Wup 480.3 / Wdn 373.0
+      list: 02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      list: 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      list: 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-27 02:00  close 6,500.4  low 6,495.6  — this candle is 48 candles AFTER the provisional D: not inside O → D, not drawn
+      provisional D 2026-03-23 02:00 6,435.0, N 406, walls Wup 480.3 / Wdn 373.0
+      list: 02-05 16:00 → 02-06 00:00 long  ·  6,757.5 ·   5 candles  -1.00
+      list: 03-17 22:00 → 03-18 08:00 short ·  6,753.6 ·   6 candles  +1.00
+      list: 03-19 18:00 → 03-20 02:00 short ·  6,612.3 ·   5 candles  +0.99
+  2026-03-30 20:00  close 6,397.7  low 6,311.6  — this candle IS the provisional D: price pinned to D, e = 0, inside the 3% skip
+      provisional D 2026-03-30 20:00 6,311.6, N 475, walls Wup 428.8 / Wdn 397.4
+      list: 02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+      list: 03-24 20:00 → 03-26 10:00 short ·  6,586.6 ·  20 candles  +1.00
+      list: 03-27 00:00 → 03-27 02:00 short ·  6,507.4 ·   2 candles  +0.94
+
+The three contacts the video lists — hindsight trades as listed, and what real time offered (Version A):
+
+  02-05 16:00 → 02-05 22:00 long  ·  6,757.5 ·   4 candles  -1.00
+      HINDSIGHT  long at 6,757.5 (peak 2026-02-05 18:00): to D -445.9 pts; to the vector +184.7 pts (touched 2026-02-06 14:00)
+      REAL TIME  first on screen 2026-03-03 10:00, 210 candles after the peak; entry at that close 6,790.5, 33.0 pts worse than listed
+                 to D's exact low, granted with hindsight: -478.9 pts; to the provisional vector: -0.8 pts (2026-03-03 12:00)
+  03-24 20:00 → 03-26 10:00 short ·  6,586.6 ·  20 candles  +1.00
+      HINDSIGHT  short at 6,586.6 (peak 2026-03-25 22:00): to D +275.0 pts; to the vector +256.1 pts (touched 2026-03-29 18:00)
+      REAL TIME  first on screen 2026-03-27 08:00, 17 candles after the peak; entry at that close 6,412.7, 173.9 pts worse than listed
+                 to D's exact low, granted with hindsight: +101.1 pts; to the provisional vector: +6.0 pts (2026-03-27 10:00)
+  03-27 00:00 → 03-27 02:00 short ·  6,507.4 ·   2 candles  +0.94
+      HINDSIGHT  short at 6,507.4 (peak 2026-03-27 02:00): to D +195.8 pts; to the vector +176.9 pts (touched 2026-03-29 18:00)
+      REAL TIME  first on screen 2026-03-30 14:00, 18 candles after the peak; entry at that close 6,344.4, 163.0 pts worse than listed
+                 to D's exact low, granted with hindsight: +32.8 pts; provisional vector never reached by 2026-03-31 22:00; marked at that close -192.9 pts
+
+In words (Version A):
+ • 05 Feb. The −1.00 candle the video lists (05 Feb 18:00) was, as it printed, the provisional D itself:
+   price pinned to D, e = 0, inside the skip. By 22:00 the list read: long 02-03 12:00 (later vanishes), short 02-05 04:00 (later vanishes), short 02-05 16:00 (later vanishes).
+   The video's long first appeared on 2026-03-03 10:00, 210 candles later, with price at 6,790.5.
+ • 24 Mar. The provisional D was 2026-03-23 02:00 at 6,435.0; the 24→26 Mar rally was AFTER it, so it
+   was not inside O → D and was never drawn while it happened. The list read: long 02-05 18:00 (survives), short 03-18 04:00 (later vanishes), short 03-20 02:00 (later vanishes).
+   The video's 24→26 Mar short first appeared 2026-03-27 08:00, after the next lower low, at 6,412.7
+   — 173.9 pts below the listed 6,586.6.
+ • 27 Mar. Same position at 02:00 (D still 2026-03-23 02:00); list: long 02-05 18:00 (survives), short 03-18 04:00 (later vanishes), short 03-20 02:00 (later vanishes).
+   The 27 Mar short first appeared 2026-03-30 14:00 at 6,344.4, 163.0 pts below its listed 6,507.4,
+   6 hours before the low of the whole file printed.
+ • The list the video shows exists only from 30 Mar 20:00, the candle of D itself — and nobody knew then
+   that 6,311.6 was D: it is the lowest low in ten months of data and was confirmed only by the rally after it.
+
+Signals Version A raised between 03 Feb and 31 Mar: 14; of these 10 are not in the
+final list (repainted away) and 10 vanished at least once.
+
+Version B — fully mechanical: O = last pivot confirmed by zigzag at t, as in (2). At each date:
+
+  zigzag 1.5%:
+    2026-02-05 18:00: O = high 02-03 02:00 7,003.3 (confirmed 02-03 12:00), provisional D 02-05 18:00 6,729.8, N 32
+        list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+        list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+        list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+    2026-02-05 22:00: O = high 02-03 02:00 7,003.3 (confirmed 02-03 12:00), provisional D 02-05 18:00 6,729.8, N 32
+        list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+        list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+        list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+    2026-03-24 20:00: O = low 03-24 08:00 6,525.5 (confirmed 03-24 16:00), provisional D 03-24 16:00 6,631.1, N 4
+        list: (window under 20 candles — nothing drawn)
+    2026-03-25 22:00: O = low 03-24 08:00 6,525.5 (confirmed 03-24 16:00), provisional D 03-25 08:00 6,636.8, N 12
+        list: (window under 20 candles — nothing drawn)
+    2026-03-27 02:00: O = high 03-25 08:00 6,636.8 (confirmed 03-26 04:00), provisional D 03-26 16:00 6,470.2, N 16
+        list: (window under 20 candles — nothing drawn)
+    2026-03-30 20:00: O = high 03-30 06:00 6,436.8 (confirmed 03-30 14:00), provisional D 03-30 20:00 6,311.6, N 7
+        list: (window under 20 candles — nothing drawn)
+    real-time signals entered 03 Feb – 31 Mar: 42 (29 with the swing); at D 13/42 won, mean -0.40%; vector 23/42 won, mean -0.15%; video 5/42 won, mean -0.61%
+
+  zigzag 2%:
+    2026-02-05 18:00: O = high 02-03 02:00 7,003.3 (confirmed 02-03 14:00), provisional D 02-05 18:00 6,729.8, N 32
+        list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+        list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+        list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+    2026-02-05 22:00: O = high 02-03 02:00 7,003.3 (confirmed 02-03 14:00), provisional D 02-05 18:00 6,729.8, N 32
+        list: 02-03 12:00 → 02-03 14:00 long  ·  6,899.6 ·   2 candles  -1.00
+        list: 02-05 04:00 → 02-05 06:00 short ·  6,883.5 ·   2 candles  +0.90
+        list: 02-05 12:00 → 02-05 16:00 short ·  6,782.5 ·   3 candles  +1.00
+    2026-03-24 20:00: O = high 03-23 06:00 6,697.4 (confirmed 03-23 20:00), provisional D 03-24 08:00 6,525.5, N 13
+        list: (window under 20 candles — nothing drawn)
+    2026-03-25 22:00: O = high 03-23 06:00 6,697.4 (confirmed 03-23 20:00), provisional D 03-24 08:00 6,525.5, N 13
+        list: (window under 20 candles — nothing drawn)
+    2026-03-27 02:00: O = high 03-23 06:00 6,697.4 (confirmed 03-23 20:00), provisional D 03-26 16:00 6,470.2, N 41
+        list: 03-23 08:00               long  ·  6,610.8 ·   1 candles  -1.00
+        list: 03-26 10:00               short ·  6,555.3 ·   1 candles  +1.00
+    2026-03-30 20:00: O = high 03-23 06:00 6,697.4 (confirmed 03-23 20:00), provisional D 03-30 20:00 6,311.6, N 67
+        list: 03-23 10:00 → 03-23 12:00 long  ·  6,593.9 ·   2 candles  -1.00
+        list: 03-26 10:00               short ·  6,555.3 ·   1 candles  +0.85
+        list: 03-27 02:00               short ·  6,507.4 ·   1 candles  +0.89
+        list: 03-30 06:00 → 03-30 12:00 short ·  6,388.2 ·   4 candles  +1.00
+    real-time signals entered 03 Feb – 31 Mar: 43 (29 with the swing); at D 15/43 won, mean -0.48%; vector 23/43 won, mean -0.23%; video 6/43 won, mean -0.80%
+    each one (net % of entry; "contact" = the run as first shown):
+      02-05 06:00 long  @ 6,847.9 counter contact 02-03 12:00→14:00              at D  +0.28% (02-06 08:00)  vector  -0.02% (02-05 08:00)
+      02-05 06:00 short @ 6,847.9 with    contact 02-05 04:00                    at D  -0.30% (02-06 08:00)  vector  +0.29% (02-05 08:00)
+      02-05 16:00 short @ 6,766.1 with    contact 02-05 12:00→14:00              at D  -1.51% (02-06 08:00)  vector  +0.16% (02-05 18:00)
+      02-09 10:00 short @ 6,975.3 counter contact 02-05 20:00                    at D  +1.55% (02-12 12:00)  vector  -0.00% (02-09 12:00)  [repainted away]
+      02-09 10:00 short @ 6,975.3 counter contact 02-06 12:00→14:00              at D  +1.55% (02-12 12:00)  vector  -0.00% (02-09 12:00)
+      02-09 10:00 short @ 6,975.3 counter contact 02-08 18:00                    at D  +1.55% (02-12 12:00)  vector  -0.00% (02-09 12:00)
+      02-09 10:00 long  @ 6,975.3 with    contact 02-09 08:00                    at D  -1.57% (02-12 12:00)  vector  -1.57% (02-12 12:00)  [repainted away]
+      02-10 08:00 long  @ 6,978.5 with    contact 02-10 06:00                    at D  -1.61% (02-12 12:00)  vector  -1.61% (02-12 12:00)  [repainted away]
+      02-10 10:00 long  @ 6,968.8 with    contact 02-10 08:00                    at D  -1.48% (02-12 12:00)  vector  -1.48% (02-12 12:00)  [repainted away]
+      02-11 08:00 long  @ 6,961.7 with    contact 02-11 06:00                    at D  -1.38% (02-12 12:00)  vector  -1.38% (02-12 12:00)
+      02-13 00:00 long  @ 6,819.3 counter contact 02-11 10:00                    at D  +1.31% (02-20 12:00)  vector  -0.00% (02-13 02:00)
+      02-13 00:00 short @ 6,819.3 with    contact 02-12 06:00→08:00              at D  -1.32% (02-20 12:00)  vector  +0.38% (02-13 08:00)  [repainted away]
+      02-17 08:00 short @ 6,783.3 with    contact 02-17 06:00                    at D  -1.86% (02-20 12:00)  vector  +0.07% (02-17 10:00)  [repainted away]
+      02-17 10:00 short @ 6,842.3 with    contact 02-17 08:00                    at D  -0.98% (02-20 12:00)  vector  -0.98% (02-20 12:00)
+      02-20 12:00 short @ 6,908.9 counter contact 02-17 12:00                    at D  +1.27% (03-01 18:00)  vector  -0.00% (02-20 14:00)  [repainted away]
+      02-20 12:00 long  @ 6,908.9 with    contact 02-20 08:00                    at D  -1.28% (03-01 18:00)  vector  +0.43% (02-25 10:00)  [repainted away]
+      02-23 08:00 long  @ 6,881.9 with    contact 02-23 06:00                    at D  -0.89% (03-01 18:00)  vector  +0.83% (02-25 10:00)  [repainted away]
+      02-25 08:00 short @ 6,930.1 counter contact 02-17 14:00                    at D  +1.57% (03-01 18:00)  vector  -0.01% (02-25 10:00)
+      02-25 08:00 long  @ 6,930.1 with    contact 02-24 08:00                    at D  -1.58% (03-01 18:00)  vector  +0.13% (02-25 10:00)
+      02-25 08:00 long  @ 6,930.1 with    contact 02-25 02:00→04:00              at D  -1.58% (03-01 18:00)  vector  +0.13% (02-25 10:00)
+      03-01 18:00 long  @ 6,820.9 counter contact 02-25 18:00                    at D  +0.84% (03-02 14:00)  vector  -0.00% (03-01 20:00)
+      03-01 18:00 short @ 6,820.9 with    contact 02-27 16:00                    at D  -0.85% (03-02 14:00)  vector  +0.58% (03-02 00:00)
+      03-02 00:00 short @ 6,789.8 with    contact 03-01 22:00                    at D  -1.31% (03-02 14:00)  vector  +0.26% (03-02 02:00)
+      03-08 18:00 long  @ 6,623.2 counter contact 03-04 20:00                    at D  +1.26% (03-09 10:00)  vector  +0.00% (03-08 20:00)
+      03-08 18:00 short @ 6,623.2 with    contact 03-06 16:00                    at D  -1.28% (03-09 10:00)  vector  +0.40% (03-08 20:00)
+      03-12 08:00 long  @ 6,699.9 counter contact 03-10 14:00→16:00              at D  +0.75% (03-17 08:00)  vector  +0.01% (03-12 10:00)
+      03-12 08:00 short @ 6,699.9 with    contact 03-12 06:00                    at D  -0.76% (03-17 08:00)  vector  +0.19% (03-12 10:00)  [repainted away]
+      03-12 14:00 short @ 6,672.6 with    contact 03-12 12:00                    at D  -1.17% (03-17 08:00)  vector  +0.35% (03-13 02:00)  [repainted away]
+      03-13 02:00 short @ 6,652.0 with    contact 03-13 00:00                    at D  -1.49% (03-17 08:00)  vector  +0.17% (03-13 04:00)  [repainted away]
+      03-13 12:00 short @ 6,636.1 with    contact 03-13 08:00→10:00              at D  -1.73% (03-17 08:00)  vector  +0.16% (03-13 14:00)
+      03-18 02:00 short @ 6,751.5 counter contact 03-15 20:00                    at D  +1.86% (03-18 14:00)  vector  -0.00% (03-18 04:00)
+      03-18 02:00 long  @ 6,751.5 with    contact 03-17 18:00→20:00              at D  -1.87% (03-18 14:00)  vector  -1.87% (03-18 14:00)
+      03-20 06:00 long  @ 6,583.6 counter contact 03-18 16:00→18:00              at D  +0.12% (03-23 06:00)  vector  +0.01% (03-20 08:00)
+      03-20 06:00 short @ 6,583.6 with    contact 03-20 04:00                    at D  -0.13% (03-23 06:00)  vector  +0.55% (03-20 10:00)  [repainted away]
+      03-20 10:00 short @ 6,554.8 with    contact 03-20 08:00                    at D  -0.57% (03-23 06:00)  vector  +0.48% (03-20 14:00)  [repainted away]
+      03-20 14:00 short @ 6,510.5 with    contact 03-20 12:00                    at D  -1.26% (03-23 06:00)  vector  -1.26% (03-23 06:00)  [repainted away]
+      03-22 18:00 short @ 6,490.7 with    contact 03-20 16:00                    at D  -1.57% (03-23 06:00)  vector  -1.57% (03-23 06:00)  [repainted away]
+      03-23 02:00 short @ 6,448.6 with    contact 03-23 00:00                    at D  -2.23% (03-23 06:00)  vector  -2.23% (03-23 06:00)
+      03-26 12:00 long  @ 6,491.5 counter contact 03-23 08:00                    at D  -0.64% (03-31 08:00)  vector  -0.01% (03-26 14:00)  [repainted away]
+      03-26 12:00 short @ 6,491.5 with    contact 03-26 10:00                    at D  +0.62% (03-31 08:00)  vector  +0.11% (03-26 14:00)
+      03-27 04:00 short @ 6,469.1 with    contact 03-27 02:00                    at D  +0.28% (03-31 08:00)  vector  +0.17% (03-27 06:00)
+      03-27 10:00 long  @ 6,425.1 counter contact 03-23 10:00→12:00              at D  +0.39% (03-31 08:00)  vector  +0.00% (03-27 12:00)
+      03-30 14:00 short @ 6,344.4 with    contact 03-30 10:00                    at D  -1.68% (03-31 08:00)  vector  -1.68% (03-31 08:00)
+
+  zigzag 3%:
+    2026-02-05 18:00: O = high 01-28 00:00 7,014.6 (confirmed 02-05 10:00), provisional D 02-05 18:00 6,729.8, N 81
+        list: 01-29 10:00               long  ·  6,914.8 ·   1 candles  -1.00
+        list: 02-05 02:00 → 02-05 06:00 short ·  6,883.5 ·   3 candles  +1.00
+        list: 02-05 12:00 → 02-05 14:00 short ·  6,804.6 ·   2 candles  +0.95
+    2026-02-05 22:00: O = high 01-28 00:00 7,014.6 (confirmed 02-05 10:00), provisional D 02-05 18:00 6,729.8, N 81
+        list: 01-29 10:00               long  ·  6,914.8 ·   1 candles  -1.00
+        list: 02-05 02:00 → 02-05 06:00 short ·  6,883.5 ·   3 candles  +1.00
+        list: 02-05 12:00 → 02-05 14:00 short ·  6,804.6 ·   2 candles  +0.95
+    2026-03-24 20:00: O = low 03-23 02:00 6,435.0 (confirmed 03-23 06:00), provisional D 03-23 06:00 6,697.4, N 2
+        list: (window under 20 candles — nothing drawn)
+    2026-03-25 22:00: O = low 03-23 02:00 6,435.0 (confirmed 03-23 06:00), provisional D 03-23 06:00 6,697.4, N 2
+        list: (window under 20 candles — nothing drawn)
+    2026-03-27 02:00: O = high 03-23 06:00 6,697.4 (confirmed 03-26 12:00), provisional D 03-26 16:00 6,470.2, N 41
+        list: 03-23 08:00               long  ·  6,610.8 ·   1 candles  -1.00
+        list: 03-26 10:00               short ·  6,555.3 ·   1 candles  +1.00
+    2026-03-30 20:00: O = high 03-23 06:00 6,697.4 (confirmed 03-26 12:00), provisional D 03-30 20:00 6,311.6, N 67
+        list: 03-23 10:00 → 03-23 12:00 long  ·  6,593.9 ·   2 candles  -1.00
+        list: 03-26 10:00               short ·  6,555.3 ·   1 candles  +0.85
+        list: 03-27 02:00               short ·  6,507.4 ·   1 candles  +0.89
+        list: 03-30 06:00 → 03-30 12:00 short ·  6,388.2 ·   4 candles  +1.00
+    real-time signals entered 03 Feb – 31 Mar: 28 (18 with the swing); at D 12/28 won, mean -0.33%; vector 15/28 won, mean -0.13%; video 7/28 won, mean -0.56%
+
+━━━ SUMMARY — middle threshold of each dataset ━━━
+
+2h zigzag 2% — 27 windows, 75 listed contacts, 224 real-time signals
+   hindsight, video exit : 81% won, +0.64% [+0.44, +0.86]; vector exit 81% won, +0.52% [+0.34, +0.70]
+   real time, video exit : 22% won, -0.04% [-0.73, +0.90]; null A p 0.809, null C p 0.031
+   real time, at D       : 38% won, -0.03% [-0.56, +0.65]; null A p 0.926, null C p 0.194
+   real time, vector     : 67% won, +0.01% [-0.11, +0.10]; null A p 0.906, null C p 0.616
+   listed contacts on screen by the end of their own run: 4/75 = 5.3% [2%, 13%]; median lag 13 bars
+   real-time signals later gone for good: 146/224 = 65.2% [59%, 71%]
+
+4h zigzag 3% — 52 windows, 149 listed contacts, 472 real-time signals
+   hindsight, video exit : 73% won, +0.58% [-0.03, +1.05]; vector exit 73% won, +0.30% [-0.33, +0.77]
+   real time, video exit : 31% won, +0.53% [-0.72, +2.05]; null A p 0.007, null C p 0.067
+   real time, at D       : 44% won, +0.47% [-0.55, +1.78]; null A p 0.264, null C p 0.042
+   real time, vector     : 69% won, +0.01% [-0.14, +0.13]; null A p 0.391, null C p 0.357
+   listed contacts on screen by the end of their own run: 6/149 = 4.0% [2%, 9%]; median lag 14 bars
+   real-time signals later gone for good: 319/472 = 67.6% [63%, 72%]
+
+1D zigzag 8% — 50 windows, 137 listed contacts, 498 real-time signals
+   hindsight, video exit : 77% won, +1.98% [+0.86, +3.12]; vector exit 77% won, +1.71% [+0.61, +2.87]
+   real time, video exit : 44% won, +0.79% [-1.51, +2.85]; null A p 0.125, null C p 0.401
+   real time, at D       : 43% won, +0.34% [-1.51, +1.89]; null A p 0.707, null C p 0.577
+   real time, vector     : 83% won, +0.12% [-0.13, +0.30]; null A p 0.663, null C p 0.873
+   listed contacts on screen by the end of their own run: 10/137 = 7.3% [4%, 13%]; median lag 12 bars
+   real-time signals later gone for good: 351/498 = 70.5% [66%, 74%]
+
+(mean % per trade with its by-window bootstrap 95% CI)
+
+━━━ READING ━━━
+
+Hindsight vs real time differ in three ways, all visible above:
+ 1. Position. e is pinned to 0 at D and contacts are ignored within 3% of D, so the candle being
+    printed can never carry a contact. In real time D is the running extreme, so a contact on a
+    pullback is beyond D and is not drawn at all; it can only appear later, once a new extreme
+    makes it part of the window — that is the lag in (b).
+ 2. Size. W is the largest deviation in the window. Every new extreme re-sizes the walls and
+    moves the vector, so contacts appear, move and vanish as the leg grows — the repaint in (c).
+ 3. Price. The list prints the peak candle's OHLC4. A trader acting on the screen gets the close of
+    the bar on which the contact first appears — the entry give-up in (b) — and learns D only when
+    the swing is confirmed over, a threshold-sized reversal later.
+ 4. Net. Under the exits the list implies ("video"), its contacts win 69%–85% as listed and
+    6%–37% when traded from the bar they first appeared on (paired difference +1.0 to +7.7 percentage points per trade, p ≤ 0.004).
+    As a real-time signal stream it does no better than entries at random bars in the same phase of
+    the same swing once multiplicity is counted (null C, smallest Holm-adjusted p 0.162).
+

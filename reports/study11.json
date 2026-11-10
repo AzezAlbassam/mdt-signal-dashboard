@@ -1,0 +1,314 @@
+{
+ "run": "2026-10-17T15:03:57.804Z",
+ "W": 1000,
+ "K": 3,
+ "H": 40,
+ "draws": 10000,
+ "seed": 11,
+ "counts": {
+  "universe": 207,
+  "usable": 153,
+  "tooShort": [
+   [
+    "MEXC:SP500USDT.P",
+    251
+   ],
+   [
+    "NASDAQ:IBIT",
+    694
+   ],
+   [
+    "NASDAQ:SNDK",
+    421
+   ],
+   [
+    "NASDAQ:ARM",
+    768
+   ],
+   [
+    "NASDAQ:ZENA",
+    513
+   ],
+   [
+    "NYSE:FIG",
+    306
+   ],
+   [
+    "NASDAQ:XE",
+    121
+   ],
+   [
+    "AMEX:JAGU",
+    173
+   ],
+   [
+    "NYSE:BLSH",
+    297
+   ],
+   [
+    "NASDAQ:CEG",
+    1183
+   ],
+   [
+    "NASDAQ:SPCX",
+    88
+   ],
+   [
+    "AMEX:XRP",
+    227
+   ],
+   [
+    "NASDAQ:SOLZ",
+    397
+   ],
+   [
+    "OTC:GTAO",
+    212
+   ],
+   [
+    "AMEX:GLNK",
+    1003
+   ],
+   [
+    "CBOE:FOTO",
+    97
+   ],
+   [
+    "NASDAQ:FLNC",
+    1247
+   ],
+   [
+    "NASDAQ:SHAZ",
+    168
+   ],
+   [
+    "NYSE:AMTM",
+    518
+   ],
+   [
+    "NASDAQ:IPX",
+    1063
+   ],
+   [
+    "NASDAQ:ALMU",
+    823
+   ],
+   [
+    "NASDAQ:OPTX",
+    985
+   ],
+   [
+    "NASDAQ:CRWV",
+    391
+   ],
+   [
+    "NYSE:RDDT",
+    646
+   ],
+   [
+    "CBOE:DRAM",
+    136
+   ],
+   [
+    "NASDAQ:SKHY",
+    70
+   ],
+   [
+    "NYSE:BETA",
+    239
+   ],
+   [
+    "NASDAQ:BRR",
+    342
+   ],
+   [
+    "NASDAQ:TLN",
+    844
+   ],
+   [
+    "NASDAQ:CRDO",
+    1185
+   ],
+   [
+    "NASDAQ:CEPL",
+    447
+   ],
+   [
+    "NASDAQ:BTQ",
+    735
+   ],
+   [
+    "NASDAQ:LIFE",
+    181
+   ],
+   [
+    "NYSE:INFQ",
+    1168
+   ],
+   [
+    "NASDAQ:STRC",
+    310
+   ],
+   [
+    "NYSE:CRCL",
+    344
+   ],
+   [
+    "NASDAQ:IREN",
+    1233
+   ],
+   [
+    "NASDAQ:CBRS",
+    108
+   ],
+   [
+    "NASDAQ:MBLY",
+    997
+   ],
+   [
+    "NASDAQ:FRVO",
+    109
+   ],
+   [
+    "NASDAQ:LHAI",
+    311
+   ],
+   [
+    "NASDAQ:BSP",
+    76
+   ],
+   [
+    "NASDAQ:ALAB",
+    647
+   ],
+   [
+    "NASDAQ:NNE",
+    613
+   ],
+   [
+    "NASDAQ:TEM",
+    587
+   ],
+   [
+    "NASDAQ:KSPI",
+    689
+   ],
+   [
+    "NASDAQ:QNT",
+    94
+   ],
+   [
+    "TADAWUL:5027",
+    41
+   ],
+   [
+    "NYSE:AMBQ",
+    307
+   ],
+   [
+    "NASDAQ:KSMH",
+    42
+   ],
+   [
+    "NYSE:AVEX",
+    126
+   ],
+   [
+    "NASDAQ:KDK",
+    830
+   ],
+   [
+    "HKEX:81024",
+    812
+   ],
+   [
+    "NYSE:GEV",
+    642
+   ]
+  ],
+  "missing": [],
+  "observations": 10309,
+  "dates": 101,
+  "noFit": 0,
+  "thinDates": 18
+ },
+ "H1": {
+  "effect": -0.28873396291619147,
+  "p": 0.00009999000099990002,
+  "halves": [
+   -0.22827652780890223,
+   -0.3302990680808033
+  ],
+  "pHolm": 0.00019998000199980003,
+  "confirmed": false
+ },
+ "H2": {
+  "effect": -0.014776423041095322,
+  "p": 0.9129087091290871,
+  "halves": [
+   -0.012324699237847394,
+   -0.017180073828593292
+  ],
+  "pHolm": 0.9129087091290871,
+  "confirmed": false
+ },
+ "reported": {
+  "gapModel": 0.37988703981587385,
+  "gapFlat": 0.09115307689968215,
+  "ma10": 0.09885258473521645,
+  "ma20": 0.10681187292466494,
+  "anchored": -0.05518663656405664,
+  "extra": {
+   "20": {
+    "h1": -0.266179569836877,
+    "h2": -0.017120111725386588
+   },
+   "60": {
+    "h1": -0.30760114518729653,
+    "h2": -0.02917410125519997
+   }
+  },
+  "byGroup": {
+   "index": {
+    "n": 1003,
+    "effect": -0.1247771105445174
+   },
+   "nonUsStock": {
+    "n": 202,
+    "effect": -0.22740222077224218
+   },
+   "yield": {
+    "n": 303,
+    "effect": -0.43567454659244353
+   },
+   "usStock": {
+    "n": 7583,
+    "effect": -0.3187439443942084
+   },
+   "etf": {
+    "n": 660,
+    "effect": -0.19040735816680018
+   },
+   "otc": {
+    "n": 96,
+    "effect": -0.38027583109727864
+   },
+   "other": {
+    "n": 99,
+    "effect": -0.1259590158037406
+   },
+   "fxCommodity": {
+    "n": 199,
+    "effect": -0.18399579957422746
+   },
+   "spreadExpression": {
+    "n": 92,
+    "effect": -0.013096207349368495
+   },
+   "crypto": {
+    "n": 72,
+    "effect": -0.610579463064829
+   }
+  }
+ }
+}

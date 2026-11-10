@@ -1,0 +1,309 @@
+<title>دفتر التغريدات</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column, a week at a time — a week bar, then that week's tweets in posting order, each as a
+   post-shaped card ready to copy; the idea bank folded at the bottom. Dark first, like the timeline it feeds. */
+:root {
+  --bg: #0e141a; --panel: #151d25; --soft: #1b2530; --line: #273441; --fg: #e8eef3; --muted: #8d9aa7;
+  --accent: #3ea6f2; --good: #34c27a; --warn: #e9a33a;
+  --display: "Noto Kufi Arabic", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #f4f6f8; --panel: #ffffff; --soft: #eef2f5; --line: #d9e0e6; --fg: #0f1720; --muted: #5b6874;
+  --accent: #1574c4; --good: #17864f; --warn: #a76506; color-scheme: light } }
+:root[data-theme="light"] {
+  --bg: #f4f6f8; --panel: #ffffff; --soft: #eef2f5; --line: #d9e0e6; --fg: #0f1720; --muted: #5b6874;
+  --accent: #1574c4; --good: #17864f; --warn: #a76506; color-scheme: light }
+
+body { background: var(--bg); color: var(--fg); font: 15px/1.75 var(--body); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+h1 { font: 800 clamp(24px, 5vw, 32px)/1.3 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 600 18px/1.4 var(--display); margin: 0; }
+p { margin: 0; }
+.lead { color: var(--muted); max-width: 62ch; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.weekbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.weekbar .lbl { flex: 1; min-width: 0; display: grid; }
+.weekbar .lbl b { font: 600 16px var(--display); }
+.weekbar .lbl small { color: var(--muted); }
+.nav { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--soft); color: var(--fg); font-size: 18px; }
+.nav:disabled { opacity: .35; cursor: default; }
+
+.list { display: grid; gap: 16px; }
+.tw { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.tw.posted { border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
+.head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.day { font: 600 15px var(--display); }
+.chip { font-size: 12px; padding: 2px 10px; border-radius: 99px; background: var(--soft); border: 1px solid var(--line); color: var(--muted); }
+.state { margin-inline-start: auto; font-size: 12px; font-weight: 600; }
+.state.draft { color: var(--warn); } .state.done { color: var(--good); }
+.title { color: var(--muted); font-size: 14px; }
+.body { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.85; background: var(--soft); border-radius: 12px; padding: 14px 16px; }
+.body .tag { color: var(--accent); font-weight: 600; unicode-bidi: isolate; direction: ltr; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.count { color: var(--muted); font: 500 12px var(--mono); }
+.btn { border: 1px solid var(--line); background: var(--soft); color: var(--fg); border-radius: 99px; padding: 6px 16px; font-weight: 600; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.ok { border-color: var(--good); color: var(--good); }
+details.src summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+details.src ul { margin: 8px 0 0; padding-inline-start: 18px; display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.empty { background: var(--panel); border: 1px dashed var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 6px; }
+.empty b { font: 600 16px var(--display); }
+details.bank { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+details.bank summary { cursor: pointer; font: 600 16px var(--display); }
+.ideas { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ideas li { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.ideas li:last-child { border-bottom: 0; }
+.ideas .used { color: var(--good); font-size: 12px; }
+.shots { display: grid; gap: 10px; }
+.shot { margin: 0; display: grid; gap: 6px; }
+.shot img { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #0e141a; object-fit: contain; }
+.shot img.photo { object-fit: cover; }
+.shot video.photo { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #0b1117; }
+.shot .credit { font-size: 12px; } .shot .credit a { color: inherit; }
+.shot figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; }
+.toast { position: fixed; inset-inline: 0; bottom: max(16px, env(safe-area-inset-bottom, 0px)); margin: 0 auto; width: fit-content; background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: 99px; font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) { .tw { transition: border-color .2s; } }
+</style>
+
+<div class="wrap" dir="rtl">
+  <header style="display:grid;gap:6px">
+    <h1>دفتر التغريدات</h1>
+    <p class="lead">تغريدة جديدة كل يومين بفكرة مختلفة، أرقامها من TradingView ومتحقق منها. انسخها وانشرها، وعلّم عليها إنها نُشرت.</p>
+  </header>
+  <nav class="weekbar" aria-label="الأسابيع">
+    <button class="nav" id="next" type="button" aria-label="الأسبوع اللي بعده">›</button>
+    <div class="lbl"><b id="weekName">هالأسبوع</b><small id="weekRange"></small></div>
+    <button class="nav" id="prev" type="button" aria-label="الأسبوع اللي قبله">‹</button>
+  </nav>
+  <section class="list" id="list" aria-live="polite">
+    <div class="empty"><b>جاري تحميل التغريدات…</b><p class="lead">أول ما توصل، تطلع هنا مرتبة حسب يوم نشرها.</p></div>
+  </section>
+  <details class="bank" id="bank"><summary>بنك الأفكار</summary><p class="lead" style="margin-top:8px">كل تغريدة تاخذ فكرة ما انكتبت قريب، عشان ما تتكرر.</p><ul class="ideas" id="ideas"></ul></details>
+</div>
+<div class="toast" id="toast" dir="rtl" hidden></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id)
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+  const FAMILY = { market: 'قراءة السوق', company: 'تحليل شركة', valuation: 'تقييم', compounding: 'العائد المركب', etf: 'صناديق', halal: 'استثمار شرعي', earnings: 'نتائج', dividends: 'توزيعات', saudi: 'السوق السعودي', history: 'تاريخ', myth: 'خرافة وأرقام', 'data-study': 'من اختباراتنا', comparison: 'مقارنة', risk: 'مخاطر', behaviour: 'سلوك المستثمر', macro: 'اقتصاد' }
+  let tweets = []
+  let ideas = []
+  let db = null
+  let week = null
+  let mcp = null
+  let downloads = null
+
+  // Weeks run Sunday to Saturday (the Saudi week); keys are the Sunday's date.
+  const sundayOf = (iso) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10) }
+  const addDays = (iso, k) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return d.toISOString().slice(0, 10) }
+  const fmtDay = (iso, opts) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { timeZone: 'UTC', ...opts })
+  const weeks = () => [...new Set(tweets.map((t) => sundayOf(t.date)))].sort()
+  const today = new Date().toISOString().slice(0, 10)
+
+  function pick() {
+    const ws = weeks()
+    const h = location.hash.replace(/^#w-/, '')
+    week = ws.includes(h) ? h : ws.includes(sundayOf(today)) ? sundayOf(today) : ws.at(-1) ?? sundayOf(today)
+  }
+
+  // A thread: the text's parts separated by a line of three or more dashes, posted as replies in order.
+  const parts = (t) => String(t.text ?? '').split(/\n\s*-{3,}\s*\n/).map((x) => x.trim()).filter(Boolean)
+  const deco = (text) => esc(text).replace(/(^|[\s(])([$#][A-Za-z؀-ۿ_][\w.؀-ۿ]*)/g, '$1<span class="tag">$2</span>')
+
+  function render() {
+    const ws = weeks()
+    const i = ws.indexOf(week)
+    $('weekName').textContent = week === sundayOf(today) ? 'هالأسبوع' : `أسبوع ${fmtDay(week, { day: 'numeric', month: 'long' })}`
+    $('weekRange').textContent = `${fmtDay(week, { day: 'numeric', month: 'long' })} – ${fmtDay(addDays(week, 6), { day: 'numeric', month: 'long', year: 'numeric' })}`
+    $('prev').disabled = i <= 0
+    $('next').disabled = i < 0 || i >= ws.length - 1
+    const list = tweets.filter((t) => sundayOf(t.date) === week).sort((a, b) => a.date.localeCompare(b.date))
+    $('list').innerHTML = list.length ? list.map((t) => `
+      <article class="tw ${t.status === 'posted' ? 'posted' : ''}" data-id="${esc(t.id)}">
+        <div class="head"><span class="day">${fmtDay(t.date, { weekday: 'long', day: 'numeric', month: 'long' })}</span><span class="chip">${esc(FAMILY[t.family] ?? t.family ?? '')}</span>
+          <span class="state ${t.status === 'posted' ? 'done' : 'draft'}">${t.status === 'posted' ? 'نُشرت' : 'جاهزة للنشر'}</span></div>
+        ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
+        ${parts(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count">${[...x].length} حرف</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${deco(x)}</div>`).join('')}
+        ${t.charts?.length ? `<div class="shots">${t.charts.map((c, i) => `<figure class="shot"><img data-shot="${esc(t.id)}|${i}" alt="${esc(c.title)}"><figcaption><span>${esc(c.title)}</span><button class="btn" type="button" data-save="${esc(t.id)}|${i}" hidden>حفظ الصورة</button><span class="hint" hidden>اضغط مطوّل على الصورة واحفظها</span></figcaption></figure>`).join('')}</div>` : ''}
+        ${t.photos?.length ? `<div class="shots">${t.photos.map((ph, i) => `<figure class="shot">${ph.kind === 'video' ? `<video class="photo" src="${esc(ph.src)}" controls playsinline preload="metadata"></video>` : `<img class="photo" src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy">`}<figcaption><span>${esc(ph.caption)}</span>${ph.credit ? `<span class="credit">${ph.page ? `<a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>` : esc(ph.credit)}</span>` : ''}<button class="btn" type="button" data-photo="${esc(t.id)}|${i}" hidden>حفظ الصورة</button></figcaption></figure>`).join('')}</div>` : ''}
+        ${t.links?.length ? `<div class="links">${t.links.filter((l) => /^https:\/\/(www\.)?tradingview\.com\//.test(l.url)).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>` : ''}
+        <div class="foot">${parts(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
+          <button class="btn ${t.status === 'posted' ? 'ok' : ''}" type="button" data-post="${esc(t.id)}" aria-pressed="${t.status === 'posted'}">${t.status === 'posted' ? '✓ نشرتها' : 'علّم إنها نُشرت'}</button>
+          <span class="count">${parts(t).length > 1 ? `ثريد من ${parts(t).length} تغريدات` : `${[...(t.text ?? '')].length} حرف`}</span></div>
+        ${t.facts?.length ? `<details class="src"><summary>من وين الأرقام (${t.facts.length})</summary><ul>${t.facts.map((f) => `<li>${esc(f.claim)}: <b>${esc(f.value)}</b> — ${esc(f.source)}${f.as_of ? `، ${esc(f.as_of)}` : ''}</li>`).join('')}</ul></details>` : ''}
+      </article>`).join('')
+      : `<div class="empty"><b>${tweets.length ? 'ما فيه تغريدات بهالأسبوع' : 'للحين ما فيه تغريدات'}</b><p class="lead">كل يومين تنضاف تغريدة جديدة هنا تلقائياً.</p></div>`
+    const used = new Map(tweets.map((t) => [t.idea, t.date]))
+    $('ideas').innerHTML = ideas.map((x) => `<li><b>${esc(x.name_ar)}</b><span class="lead">${esc(x.angle)}</span>${used.has(x.key) ? `<span class="used">انكتبت ${fmtDay(used.get(x.key), { day: 'numeric', month: 'long' })}</span>` : ''}</li>`).join('')
+    $('bank').hidden = !ideas.length
+    drawShots(list)
+  }
+
+  // ---- Chart images: 1200×675 PNGs (X's 16:9), drawn from the tweet's chart spec. Bars carry their
+  // values; a line chart names a TradingView symbol and a fixed date window, fetched here.
+  const W = 1200, H = 675, C = { bg: '#0e141a', grid: '#273441', ink: '#e8eef3', muted: '#8d9aa7', line: '#3ea6f2', up: '#34c27a', down: '#ef6461', mark: '#e9a33a' }
+  const shots = new Map() // id|i|spec → object URL
+  const pending = new Map()
+  const num = (v, unit = '') => (unit === '$' ? '$' : '') + (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2)).replace(/\.0+$|(\.\d*?)0+$/, '$1') + (unit === '%' ? '%' : '')
+  // Numbers inside Arabic text are isolated left-to-right, so "87%" never renders as "%87".
+  const iso = (s) => String(s ?? '').replace(/[-+$]?\d[\d.,]*%?/g, (m) => '\u2066' + m + '\u2069')
+  // A chart whose title has no Arabic is an English chart: left-to-right, first bar on the left.
+  const isRtl = (c) => /[\u0600-\u06FF]/.test(c.title ?? '')
+  function frame(ctx, c, foot) {
+    const rtl = isRtl(c), x = rtl ? W - 48 : 48
+    ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
+    ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = rtl ? 'right' : 'left'; ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = C.ink; ctx.font = '800 40px "Noto Kufi Arabic"'; ctx.fillText(iso(c.title), x, 78)
+    if (c.subtitle) { ctx.fillStyle = C.muted; ctx.font = '500 24px "IBM Plex Sans Arabic"'; ctx.fillText(iso(c.subtitle), x, 118) }
+    ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'; ctx.fillText(iso(foot), x, H - 28)
+  }
+  function bars(ctx, c) {
+    frame(ctx, c, c.source || (isRtl(c) ? 'المصدر: TradingView' : 'Source: TradingView'))
+    const top = 170, bot = H - 120, L = 60, R = W - 60, n = c.bars.length
+    const max = Math.max(...c.bars.map((b) => Math.abs(b.value))), hasNeg = c.bars.some((b) => b.value < 0), hasPos = c.bars.some((b) => b.value > 0)
+    const zero = hasNeg && hasPos ? top + (bot - top) * (Math.max(...c.bars.map((b) => b.value)) / (Math.max(...c.bars.map((b) => b.value)) - Math.min(...c.bars.map((b) => b.value)))) : hasNeg ? top : bot
+    const span = hasNeg && hasPos ? (bot - top) / (Math.max(...c.bars.map((b) => b.value)) - Math.min(...c.bars.map((b) => b.value))) : (bot - top) / max
+    const slot = (R - L) / n, bw = Math.min(90, slot * 0.62)
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L, zero); ctx.lineTo(R, zero); ctx.stroke()
+    c.bars.forEach((b, i) => {
+      const x = isRtl(c) ? R - slot * (i + 0.5) : L + slot * (i + 0.5), h = b.value * span // first bar where reading starts
+      ctx.fillStyle = b.value >= 0 ? C.up : C.down
+      const y0 = Math.min(zero, zero - h), hh = Math.max(2, Math.abs(h))
+      ctx.beginPath(); ctx.roundRect(x - bw / 2, y0, bw, hh, b.value >= 0 ? [6, 6, 0, 0] : [0, 0, 6, 6]); ctx.fill()
+      ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillStyle = C.ink; ctx.font = `600 ${n > 10 ? 19 : 24}px "IBM Plex Mono"`
+      ctx.fillText(num(b.value, c.unit), x, b.value >= 0 ? zero - h - 12 : zero - h + 32)
+      ctx.direction = isRtl(c) ? 'rtl' : 'ltr'; ctx.fillStyle = C.muted; ctx.font = '500 20px "IBM Plex Sans Arabic"'
+      ctx.fillText(b.label, x, b.value >= 0 ? zero + 30 : zero - 14)
+    })
+  }
+  async function line(ctx, c) {
+    const p = await call('mcp-tv-get-ohlcv', { symbol: c.symbol, interval: c.interval || '1D', date_from: c.from, date_to: c.to, format: 'columns', count: 5000 })
+    const t = p?.bars?.t ?? [], v = p?.bars?.c ?? []
+    if (v.length < 2) throw new Error('no bars')
+    const day = (s) => new Date(s * 1000).toISOString().slice(0, 10)
+    const last = day(t.at(-1))
+    const en = (iso, o) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', ...o })
+    frame(ctx, c, isRtl(c) ? `المصدر: TradingView · ${c.symbol} · ${fmtDay(day(t[0]), { month: 'short', year: 'numeric' })} – ${fmtDay(last, { day: 'numeric', month: 'short', year: 'numeric' })}`
+      : `Source: TradingView · ${c.symbol} · ${en(day(t[0]), { month: 'short', year: 'numeric' })} – ${en(last, { month: 'short', day: 'numeric', year: 'numeric' })}`)
+    const top = 160, bot = H - 100, L = 120, R = W - 60
+    const step = ((r) => { const e = 10 ** Math.floor(Math.log10(r)); return [1, 2, 2.5, 5, 10].find((m) => m * e >= r) * e })((Math.max(...v) - Math.min(...v)) / 4)
+    const lo = Math.floor(Math.min(...v) / step) * step, hi = Math.ceil(Math.max(...v) / step) * step
+    const X = (i) => L + (R - L) * i / (v.length - 1), Y = (y) => bot - (bot - top) * (y - lo) / (hi - lo)
+    ctx.direction = 'ltr'; ctx.textAlign = 'right'; ctx.font = '500 20px "IBM Plex Mono"'
+    for (let y = lo; y <= hi + step / 2; y += step) {
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(L, Y(y)); ctx.lineTo(R, Y(y)); ctx.stroke()
+      ctx.fillStyle = C.muted; ctx.fillText(num(y, c.unit), L - 14, Y(y) + 7)
+    }
+    ctx.textAlign = 'center'
+    let prevYear = null
+    t.forEach((s, i) => { const y = day(s).slice(0, 4); if (y !== prevYear && prevYear !== null) { ctx.fillStyle = C.muted; ctx.fillText(y, X(i), bot + 34); ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.moveTo(X(i), bot); ctx.lineTo(X(i), bot + 8); ctx.stroke() } prevYear = y })
+    ctx.strokeStyle = C.line; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.beginPath()
+    v.forEach((y, i) => (i ? ctx.lineTo(X(i), Y(y)) : ctx.moveTo(X(i), Y(y)))); ctx.stroke()
+    for (const m of c.marks ?? []) {
+      const i = t.findIndex((s) => day(s) === m.date)
+      if (i < 0) continue
+      ctx.fillStyle = C.bg; ctx.beginPath(); ctx.arc(X(i), Y(v[i]), 9, 0, 7); ctx.fill()
+      ctx.fillStyle = C.mark; ctx.beginPath(); ctx.arc(X(i), Y(v[i]), 6, 0, 7); ctx.fill()
+      if (m.label) { ctx.font = '600 20px "IBM Plex Mono"'; ctx.fillStyle = C.ink; const above = (i > 0 && v[i] >= v[i - 1]) || Y(v[i]) + 34 > bot; ctx.fillText(m.label, X(i), Y(v[i]) + (above ? -16 : 32)) }
+    }
+  }
+  async function drawOne(t, i) {
+    const c = t.charts[i], key = `${t.id}|${i}|${JSON.stringify(c)}`
+    if (shots.has(key)) return shots.get(key)
+    if (!pending.has(key)) pending.set(key, (async () => {
+      await Promise.all(['800 40px "Noto Kufi Arabic"', '500 24px "IBM Plex Sans Arabic"', '600 24px "IBM Plex Mono"'].map((f) => document.fonts.load(f, 'أب$1')))
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H
+      const ctx = cv.getContext('2d')
+      if (c.kind === 'line') await line(ctx, c); else bars(ctx, c)
+      const blob = await new Promise((ok) => cv.toBlob(ok, 'image/png'))
+      const url = URL.createObjectURL(blob); shots.set(key, { url, blob }); return shots.get(key)
+    })().finally(() => pending.delete(key)))
+    return pending.get(key)
+  }
+  function drawShots(list) {
+    document.querySelectorAll('[data-photo]').forEach((b) => { b.hidden = !downloads })
+    for (const t of list) (t.charts ?? []).forEach((c, i) => {
+      drawOne(t, i).then((s) => {
+        const img = document.querySelector(`img[data-shot="${CSS.escape(t.id + '|' + i)}"]`)
+        if (!img) return
+        img.src = s.url
+        const fig = img.closest('figure')
+        fig.querySelector('[data-save]').hidden = !downloads
+        fig.querySelector('.hint').hidden = !!downloads
+      }, () => { const img = document.querySelector(`img[data-shot="${CSS.escape(t.id + '|' + i)}"]`); if (img) img.alt = 'ما قدرت أرسم الصورة: ' + (mcp ? 'TradingView ما رد' : 'اسمح للصفحة توصل لـ TradingView') })
+    })
+  }
+  async function call(tool, input) {
+    if (!mcp) throw new Error('no mcp')
+    return (await mcp.callTool('Trading view MCP', tool, input, { cache: { staleTime: 604800000, gcTime: 604800000 } })).payload
+  }
+
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true }, 1800) }
+
+  $('list').addEventListener('click', async (e) => {
+    const c = e.target.closest('[data-copy]')
+    if (c) {
+      const [id, k = '0'] = c.dataset.copy.split('|')
+      const t = tweets.find((x) => x.id === id)
+      try { await navigator.clipboard.writeText(parts(t)[+k]); toast('انتسخت') } catch {
+        const r = document.createRange(); r.selectNodeContents($(`body-${id}-${k}`)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('حدّدتها لك، انسخها')
+      }
+      return
+    }
+    const ph = e.target.closest('[data-photo]')
+    if (ph && downloads) {
+      const [id, i] = ph.dataset.photo.split('|')
+      const p = tweets.find((x) => x.id === id)?.photos?.[+i]
+      try {
+        const blob = await (await fetch(p.src)).blob()
+        const ext = p.kind === 'video' ? 'mp4' : (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+        await downloads.save({ filename: p.filename || `${id}-photo-${+i + 1}.${ext}`, data: blob }); toast('انحفظت')
+      } catch (err) { if (err?.code !== 'declined') toast('ما انحفظت. اضغط مطوّل على الصورة واحفظها.') }
+      return
+    }
+    const sv = e.target.closest('[data-save]')
+    if (sv && downloads) {
+      const [id, i] = sv.dataset.save.split('|')
+      const t = tweets.find((x) => x.id === id)
+      try { const s = await drawOne(t, +i); await downloads.save({ filename: `${id}-${(t.tickers?.[0] ?? 'chart')}-${+i + 1}.png`, data: s.blob }); toast('انحفظت') } catch (err) { if (err?.code !== 'declined') toast('ما انحفظت. اضغط مطوّل على الصورة واحفظها.') }
+      return
+    }
+    const p = e.target.closest('[data-post]')
+    if (p && db) {
+      const t = tweets.find((x) => x.id === p.dataset.post)
+      const status = t.status === 'posted' ? 'draft' : 'posted'
+      p.disabled = true
+      try { await db.collection('tweets').doc(t.id).update({ status, postedAt: status === 'posted' ? new Date().toISOString() : null }) } catch { toast('ما قدرت أحفظ. جرّب مرة ثانية.') }
+      p.disabled = false
+    }
+  })
+  $('prev').addEventListener('click', () => { const ws = weeks(); location.hash = 'w-' + ws[ws.indexOf(week) - 1] })
+  $('next').addEventListener('click', () => { const ws = weeks(); location.hash = 'w-' + ws[ws.indexOf(week) + 1] })
+  addEventListener('hashchange', () => { pick(); render() })
+
+  pick(); render()
+  ;(async () => {
+    ;[mcp, downloads] = await Promise.all(['mcp', 'downloads'].map((n) => Promise.resolve(window.claude?.use?.(n)).catch(() => null)))
+    db = await window.claude?.use?.('db').catch?.(() => null) ?? null
+    if (!db) { $('list').innerHTML = '<div class="empty"><b>ما قدرت أوصل للتغريدات المحفوظة</b><p class="lead">افتح الصفحة من claude.ai وأنت مسجل دخول.</p></div>'; return }
+    db.collection('tweets').onSnapshot((snap) => {
+      tweets = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((t) => t.date && t.text)
+      pick(); render()
+    }, () => { $('list').innerHTML = '<div class="empty"><b>انقطع الاتصال بالتغريدات المحفوظة</b><p class="lead">حدّث الصفحة.</p></div>' })
+    db.doc('meta/ideas').onSnapshot((d) => { ideas = d.exists ? (d.data().ideas ?? []) : []; render() }, () => {})
+  })()
+})()
+</script>

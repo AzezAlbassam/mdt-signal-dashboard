@@ -1,0 +1,1 @@
+axes | open after click: true | after a panel redraw: false

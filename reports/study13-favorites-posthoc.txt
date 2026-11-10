@@ -1,0 +1,75 @@
+POST-HOC — study 13 zone rules on the user's favourites (descriptive; not a test)
+Favourites: 75. Included: 57 (NASDAQ:ARM NASDAQ:ASML NYSE:NVO NYSE:SE NYSE:TSM added as ADRs). Not included (under 6 fiscal years or 60 months of prices): NASDAQ:ALAB NYSE:BLSH NASDAQ:BTQ NASDAQ:CBRS NASDAQ:CRDO NYSE:FIG NASDAQ:FLY NYSE:GEV NYSE:INFQ NASDAQ:IREN NASDAQ:MBLY NYSE:RBRK NYSE:RDDT NASDAQ:RIVN NASDAQ:SNDK NASDAQ:SPCX NASDAQ:TEM NASDAQ:TOYO.
+Stock-years where a favourite was profitable at the end of May 2014–2025 with a 12-month return: 358. "Beat" = above that year's median return of the 815-stock universe's profitable stocks.
+
+cand  rule                     buy: n  median 12m  beat    sell: n  median 12m  below   buy − sell
+Z1    P/E history                60      +13.7%   62%       95      +20.6%    38%   -6.9%
+Z2    P/S history                50      +28.8%   68%      140      +19.3%    41%   +9.5%
+Z3    EV/EBITDA history          58      +21.8%   64%       99      +24.9%    39%   -3.1%
+Z4    P/FCF history              51      +26.6%   67%       93      +17.8%    41%   +8.8%
+Z5    Combined Z1–Z4             34      +21.2%   76%       94      +19.1%    40%   +2.1%
+Z6    PEG rule                   91      +16.4%   64%       72      +31.1%    26%   -14.7%
+Z7    Price stretch              40       +9.8%   53%      113      +13.1%    46%   -3.3%
+Z8    P/E vs sector              77      +16.2%   64%       65      +24.9%    40%   -8.7%
+
+Where each favourite sits now (2026-09, fiscal years known by the backtest rule; B = buy zone, S = sell zone, · = between, blank = no value or not profitable):
+stock        Z1  Z2  Z3  Z4  Z5  Z6  Z7  Z8   P/E pctile  combined
+AAPL         S   S   S   S   S   S   ·   ·     94%        97%
+AAOI                                             –        –
+AMAT         S   S   S   S   S   S   S   S     86%        96%
+AMD          S   S   S   ·   S   S   S   ·     82%        84%
+AMZN         B   ·   B   S   ·       ·   B      6%        41%
+ANET         S   S   S   ·   S   ·   S   ·     85%        86%
+APLD                                             –        –
+APP          B   ·   ·   B   ·           B      0%        23%
+ARM          ·   S   ·   ·   ·   S       ·     61%        69%
+ASML         S   S   S   ·   S   S   S   ·     89%        87%
+AVGO         ·   S   S   S   S   S   ·   ·     76%        87%
+AXTI                                             –        –
+BE                                               –        –
+BWXT         ·   S   S   ·   ·   S   ·   ·     74%        74%
+CLS          S   S   S   S   S   B   S   ·     92%        93%
+CRM          B   B   B   B   B   B   B   B      4%        3%
+CRWD                                             –        –
+DELL         S   S   S   S   S   ·   S   S    100%        95%
+EOSE                                             –        –
+FSLR         ·   ·   ·   ·   ·       ·   B     23%        49%
+FTNT         ·   S   ·   S   ·   S   S   ·     48%        75%
+GOOGL        ·   S   S   S   S   B   S   ·     51%        82%
+GTLB                                             –        –
+HIMS             ·                   ·           –        –
+INTC                                             –        –
+IONQ                                             –        –
+KTOS         ·   S   S       S       ·   ·     69%        84%
+LLY          ·   S   ·   S   ·   ·   ·   ·     72%        79%
+MAMA         ·   ·   ·   ·   ·   S   ·   S     73%        70%
+META         ·   ·   B   ·   ·   B   ·   ·     27%        28%
+MSFT         ·   ·   ·   S   ·   S   ·   S     53%        67%
+MRVL         S   S   S   S   S       S   S     87%        95%
+MSTR                                             –        –
+MU           S   S   S   S   S       S   S     91%        93%
+NBIS         S   S           S           S     99%        93%
+NVDA         ·   ·   ·   ·   ·   B   ·   B     49%        57%
+NVO          B   B   B   B   B   B   B   B      0%        2%
+ORCL         ·   ·   ·       ·   B   B   ·     65%        71%
+OSCR                                             –        –
+PANW             S   ·   S   S       S           –        80%
+PL                                               –        –
+PLTR             S       ·   ·                   –        72%
+QCOM         S   ·   ·   ·   ·       ·   ·     90%        50%
+RCAT                                             –        –
+RDW                                              –        –
+RKLB                                             –        –
+RMBS         ·   S   ·   S   ·       S   ·     49%        74%
+SE               B       B   B       ·           –        8%
+SCWO                                             –        –
+SMCI         ·   ·   ·   ·   ·   B   ·   B     58%        60%
+TE                                               –        –
+TSLA         ·   ·   ·   ·   ·       ·   ·     77%        55%
+TSM          S   S   S   S   S   S   S   ·     93%        92%
+UBER             B       B   B       B           –        5%
+UNH          S   ·       ·   ·       B   ·     86%        60%
+UUUU                                             –        –
+ZS                                               –        –
+
+Read with study 13: on 815 stocks no rule beat chance (reports/study13.txt). These favourites are mostly fast growers that rose a lot, so a sell zone often meant "kept rising".

@@ -1,0 +1,178 @@
+//@version=5
+// Swing Lab — the entry rules tested in PROTOCOL-swing.md / PROTOCOL-us.md, with the exact
+// exits used in the backtest, so a chart shows what the study measured.
+//
+//   Preset "Daily 1–2 weeks"   : stop 2×ATR14, target 3×ATR14, exit after 10 bars  (Track A)
+//   Preset "Weekly 2–3 months" : stop 2×ATR14, target 4×ATR14, exit after 13 bars  (Track B)
+//
+// Signal on a bar's close, entry at the next bar's open, 0.1% commission per side.
+// Stop and target are measured from the fill price with ATR taken at the signal bar.
+// Every indicator uses TradingView's default inputs. The Technical Rating rule is not here:
+// Pine has no built-in for it.
+//
+// Differences from the backtest: TradingView's broker emulator decides the order of stop
+// and target inside one bar from the bar's shape; the backtest always took the stop.
+// So results here can look slightly better than the study's on volatile bars.
+strategy("Swing Lab — tested rules", overlay=true, initial_capital=10000,
+     default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     calc_on_order_fills=true)
+
+rule = input.string("keltner_break", "Rule", options=["keltner_break", "trix", "macd_zero",
+     "ichimoku", "supertrend", "macd_signal", "rsi_50", "donchian20", "price_ma", "ao", "bb_break",
+     "tsmom", "momentum", "vortex", "hma", "aroon", "psar", "bb_revert", "obv", "donchian55",
+     "willr", "cci", "ema_20_50", "uo", "stoch", "adx_di", "cmf", "stochrsi", "rsi_30", "rsi2",
+     "mfi", "ma_cross"])
+preset = input.string("Daily 1–2 weeks", "Exits", options=["Daily 1–2 weeks", "Weekly 2–3 months"])
+stopAtr = 2.0
+targetAtr = preset == "Daily 1–2 weeks" ? 3.0 : 4.0
+maxBars = preset == "Daily 1–2 weeks" ? 10 : 13
+
+wk = timeframe.isweekly
+fastN = wk ? 10 : 50
+slowN = wk ? 40 : 200
+// a crosses above b. Called once per rule on every bar, never inside a branch.
+crossUp(float a, float b) => a > b and a[1] <= b[1]
+
+// ── indicators (TradingView defaults) ──
+smaF = ta.sma(close, fastN)
+smaS = ta.sma(close, slowN)
+e20 = ta.ema(close, 20)
+e50 = ta.ema(close, 50)
+[macdL, sigL, _h] = ta.macd(close, 12, 26, 9)
+[_st, stDir] = ta.supertrend(3, 10)
+sar = ta.sar(0.02, 0.02, 0.2)
+f_mid(n) => (ta.highest(high, n) + ta.lowest(low, n)) / 2
+conv = f_mid(9)
+base = f_mid(26)
+lead1 = (conv + base) / 2
+lead2 = f_mid(52)
+cloudTop = math.max(lead1[25], lead2[25])
+[diP, diM, adx] = ta.dmi(14, 14)
+arUp = 100 * (ta.highestbars(high, 15) + 14) / 14
+arDn = 100 * (ta.lowestbars(low, 15) + 14) / 14
+hull = ta.hma(close, 9)
+kcUp = ta.ema(close, 20) + 2 * ta.atr(10)
+[bbMid, bbUp, bbLo] = ta.bb(close, 20, 2)
+r14 = ta.rsi(close, 14)
+r2 = ta.rsi(close, 2)
+stK = ta.sma(ta.stoch(close, high, low, 14), 3)
+stD = ta.sma(stK, 3)
+srK = ta.sma(ta.stoch(r14, r14, r14, 14), 3)
+srD = ta.sma(srK, 3)
+cci = ta.cci(hlc3, 20)
+wpr = ta.wpr(14)
+ao = ta.sma(hl2, 5) - ta.sma(hl2, 34)
+mom = ta.mom(close, 10)
+ts = ta.roc(close, wk ? 52 : 252)
+f_avg(n) =>
+    lo = math.min(low, nz(close[1], low))
+    hi = math.max(high, nz(close[1], high))
+    math.sum(close - lo, n) / math.sum(hi - lo, n)
+uo = 100 * (4 * f_avg(7) + 2 * f_avg(14) + f_avg(28)) / 7
+trix = 10000 * ta.change(ta.ema(ta.ema(ta.ema(math.log(close), 18), 18), 18))
+trSum = math.sum(ta.tr(true), 14)
+viP = math.sum(math.abs(high - low[1]), 14) / trSum
+viM = math.sum(math.abs(low - high[1]), 14) / trSum
+obv = ta.obv
+mfi = ta.mfi(hlc3, 14)
+mfv = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low) * volume
+cmf = math.sum(mfv, 20) / math.sum(volume, 20)
+hh20 = ta.highest(high, 20)[1]
+hh55 = ta.highest(high, 55)[1]
+rsi2Cond = r2 < 10 and close > smaS
+obvSma = ta.sma(obv, 20)
+
+// ── every rule's entry event, computed on every bar (Pine needs history-reading code to
+// run unconditionally), then the chosen one is picked ──
+ev_ma_cross = crossUp(smaF, smaS)
+ev_ema_20_50 = crossUp(e20, e50)
+ev_price_ma = crossUp(close, smaS)
+ev_macd_signal = crossUp(macdL, sigL)
+ev_macd_zero = crossUp(macdL, 0.0)
+ev_supertrend = stDir < 0 and stDir[1] > 0
+ev_psar = sar < close and not (sar[1] < close[1])
+ev_ichimoku = crossUp(close, cloudTop)
+ev_adx_di = crossUp(diP, diM) and adx > 20
+ev_aroon = crossUp(arUp, arDn)
+ev_hma = hull > hull[1] and hull[1] <= hull[2]
+ev_donchian20 = close > hh20 and not (close[1] > hh20[1])
+ev_donchian55 = close > hh55 and not (close[1] > hh55[1])
+ev_keltner_break = crossUp(close, kcUp)
+ev_bb_break = crossUp(close, bbUp)
+ev_rsi_30 = crossUp(r14, 30.0)
+ev_rsi_50 = crossUp(r14, 50.0)
+ev_rsi2 = rsi2Cond and not rsi2Cond[1]
+ev_stoch = crossUp(stK, stD) and stK < 20 and stD < 20
+ev_stochrsi = crossUp(srK, srD) and srK < 20 and srD < 20
+ev_cci = crossUp(cci, -100.0)
+ev_willr = crossUp(wpr, -80.0)
+ev_bb_revert = crossUp(close, bbLo)
+ev_ao = crossUp(ao, 0.0)
+ev_momentum = crossUp(mom, 0.0)
+ev_tsmom = crossUp(ts, 0.0)
+ev_uo = crossUp(uo, 30.0)
+ev_trix = crossUp(trix, 0.0)
+ev_vortex = crossUp(viP, viM)
+ev_obv = crossUp(obv, obvSma)
+ev_mfi = crossUp(mfi, 20.0)
+ev_cmf = crossUp(cmf, 0.0)
+
+sig = switch rule
+    "ma_cross"      => ev_ma_cross
+    "ema_20_50"     => ev_ema_20_50
+    "price_ma"      => ev_price_ma
+    "macd_signal"   => ev_macd_signal
+    "macd_zero"     => ev_macd_zero
+    "supertrend"    => ev_supertrend
+    "psar"          => ev_psar
+    "ichimoku"      => ev_ichimoku
+    "adx_di"        => ev_adx_di
+    "aroon"         => ev_aroon
+    "hma"           => ev_hma
+    "donchian20"    => ev_donchian20
+    "donchian55"    => ev_donchian55
+    "keltner_break" => ev_keltner_break
+    "bb_break"      => ev_bb_break
+    "rsi_30"        => ev_rsi_30
+    "rsi_50"        => ev_rsi_50
+    "rsi2"          => ev_rsi2
+    "stoch"         => ev_stoch
+    "stochrsi"      => ev_stochrsi
+    "cci"           => ev_cci
+    "willr"         => ev_willr
+    "bb_revert"     => ev_bb_revert
+    "ao"            => ev_ao
+    "momentum"      => ev_momentum
+    "tsmom"         => ev_tsmom
+    "uo"            => ev_uo
+    "trix"          => ev_trix
+    "vortex"        => ev_vortex
+    "obv"           => ev_obv
+    "mfi"           => ev_mfi
+    "cmf"           => ev_cmf
+    => false
+
+// ── orders ──
+atr14 = ta.atr(14)
+var float atrAtSignal = na
+var int entryBar = na
+
+if sig and strategy.position_size == 0
+    atrAtSignal := atr14
+    strategy.entry("L", strategy.long)
+
+if strategy.position_size > 0
+    if na(entryBar) or strategy.position_size[1] == 0
+        entryBar := bar_index
+    fill = strategy.position_avg_price
+    strategy.exit("SL/TP", "L", stop=fill - stopAtr * atrAtSignal, limit=fill + targetAtr * atrAtSignal)
+    if bar_index - entryBar + 1 >= maxBars
+        strategy.close("L", comment="time", immediately=true)
+else
+    entryBar := na
+
+plotshape(sig, "Signal", shape.triangleup, location.belowbar, color.new(color.green, 0), size=size.tiny)
+plot(strategy.position_size > 0 ? strategy.position_avg_price - stopAtr * atrAtSignal : na, "Stop", color.red, style=plot.style_linebr)
+plot(strategy.position_size > 0 ? strategy.position_avg_price + targetAtr * atrAtSignal : na, "Target", color.green, style=plot.style_linebr)
+plot(rule == "keltner_break" ? kcUp : na, "Keltner upper", color.new(color.orange, 30))

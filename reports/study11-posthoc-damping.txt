@@ -1,0 +1,17 @@
+Study 11 — POST-HOC: is a repaired HCP worth a study 12?
+Not a test. No null model, no p-value, nothing here is confirmed or claimed.
+Sample: every 4th symbol (39 with enough history) and every 200th bar, 580 projections, H 40.
+
+  no-change line                 mean |gap| 9.81%
+  anchored, damping 0            mean |gap| 14.90%   vs no-change -5.09%
+  anchored, damping 0.25         mean |gap| 12.95%   vs no-change -3.14%
+  anchored, damping 0.5          mean |gap| 11.32%   vs no-change -1.50%
+  anchored, damping 0.75         mean |gap| 10.21%   vs no-change -0.40%
+  anchored, damping 0.9          mean |gap| 9.89%   vs no-change -0.08%
+  anchored, damping 1            mean |gap| 9.81%   vs no-change +0.00%
+
+Reading it: the column is monotone. Every amount of model that is left in makes the
+projection worse, and the best point on the curve is damping 1.0 — which is the
+no-change line with the model entirely removed. There is no setting at which this
+family beats doing nothing, so the repair has no best case worth pre-registering.
+Study 12 on a damped or anchored HCP is NOT proposed.
