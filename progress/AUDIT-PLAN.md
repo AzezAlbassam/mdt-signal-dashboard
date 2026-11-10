@@ -375,6 +375,13 @@ home-made ones; text delivered so that line breaks survive copying.
    C p 0.45; E3 B and E4 B/C worse). The balance-sheet columns were empty in the saved data, as in Study 16,
    so financials had P/E only in the backtest. v32 per-stock diff: `reports/v32-today.txt` (32 changed).
 6. Then Phase 3 items 6–8, additions 6–12, tweets items 4 and 6.
+   **v33 done 2026-11-10:** Phase 3 items 6–8 (boot in parallel: first price 13.6 s → 1.6 s with 1.5 s saved
+   reads; one vocabulary, dates, currency, contrast, aria; sticky header; "كيف تنحسب؟" tab). Not done: item 7's
+   "fixed grid areas at 820px" (the 761–1239 px cards already hold 6 columns without overflow).
+   **v34 done 2026-11-10:** additions 6–12. Dividends via four batch columns (no new tool); alerts and
+   watchlists through three new tools in the page's grant, called only on a tap; "since last visit" kept per
+   browser (localStorage); notes and alerts in `notes/`, `alerts/`. The EPS forecast "cone" is one forecast
+   bar: TradingView gives no forecast range.
 
 **Why Study 18 is run rather than skipped:** Study 16 showed that a change which looks obviously right
 (dropping Lynch's rule) can fail once closeness to the price is controlled for. E1–E4 move hundreds of

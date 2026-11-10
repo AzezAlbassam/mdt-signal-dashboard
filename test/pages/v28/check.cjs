@@ -193,6 +193,54 @@ const CASES = {
     const ok = !r.soon.hidden && r.soon.items === 1 && /بعد (يومين|3 أيام)/.test(r.soon.text) && !/\d يومين/.test(r.soon.text) && r.panel.bars === 2 && r.panel.analysts && /قبل سنة/.test(r.panel.track) && /مشى صوب القيمة/.test(r.panel.track)
     return [ok, JSON.stringify(r).slice(0, 600)]
   },
+  // v34 (additions 6–12): a shortlist, a dividend chip and block, a note saved, an alert and a watchlist add on a
+  // tap (with the arguments the tools take), two stocks compared.
+  async v34() {
+    const r = await run((G, St, M, s) => {
+      const t = 'NASDAQ:BBB'
+      St['lists/us'] = { symbols: [s, t] }
+      M.quotes[t] = G.quote(t); M.hist[t] = G.histRow(); M.px[t] = G.px()
+      St['cache/' + t] = { sym: t, fin: G.fin(), fyEnd: G.fyEnd, fundsAt: Date.now(), px: G.px(), pxAt: Date.now(), extra: {} }; St['q/' + t] = { sym: t, fq: G.fq(), fqEnd: G.fqEnd }
+      Object.assign(M.quotes[s], { earnings_release_next_date: Math.floor(Date.now() / 1000) + 3 * 86400, dividends_yield: 3.1, dividend_payout_ratio_ttm: 55, continuous_dividend_growth: 12,
+        dividend_ex_date_upcoming: Math.floor(Date.now() / 1000) + 5 * 86400, dividend_amount_upcoming: 0.8, dividend_payment_date_upcoming: Math.floor(Date.now() / 1000) + 20 * 86400 })
+      window.__tv = []
+      M.hook = (kind, input) => {
+        if (kind === 'create-alert') { window.__tv.push(['alert', input]); return { alert_id: 77, status: 'starting' } }
+        if (kind === 'mcp-watchlist-list-watchlists') return { watchlists: [{ id: 5, name: 'Mine', type: 'custom', symbols: [] }, { id: 6, name: '', type: 'colored', symbols: [] }] }
+        if (kind === 'mcp-watchlist-add-to-watchlist') { window.__tv.push(['add', input]); return { success: true } }
+        return undefined
+      }
+    }, async ({ page }) => {
+      const o = {}
+      await page.click('#presets button[data-preset="soon"]'); await page.waitForTimeout(300)
+      o.soonRows = await page.$$eval('#rows tr.row', (x) => x.map((r) => r.dataset.sym))
+      await page.click('#presets button[data-preset="soon"]'); await page.waitForTimeout(300)
+      o.divChip = await page.$eval('#rows tr.row[data-sym="NASDAQ:AAA"]', (r) => /توزيع بعد [45] أيام/.test(r.textContent))
+      await page.click('#rows tr.row[data-sym="NASDAQ:AAA"]'); await page.waitForTimeout(800)
+      o.divBlock = await page.$eval('#rows tr.detail', (d) => /زاد توزيعه 12 سنة/.test(d.textContent))
+      await page.click('button[data-nst="NASDAQ:AAA|study"]'); await page.waitForTimeout(200)
+      await page.fill('textarea[data-note="NASDAQ:AAA"]', 'أنتظر نتايج الربع'); await page.click('button[data-nsave="NASDAQ:AAA"]'); await page.waitForTimeout(300)
+      o.note = await page.evaluate(() => window.__store['notes/NASDAQ:AAA'])
+      o.badge = await page.$eval('#rows tr.row[data-sym="NASDAQ:AAA"]', (r) => /أدرسه/.test(r.textContent))
+      await page.click('button[data-alert="NASDAQ:AAA"]'); await page.waitForTimeout(400)
+      await page.click('button[data-wl="NASDAQ:AAA"]'); await page.waitForTimeout(400)
+      o.lists = await page.$$eval('select[data-wlpick] option', (x) => x.map((y) => y.textContent))
+      await page.selectOption('select[data-wlpick="NASDAQ:AAA"]', '5'); await page.waitForTimeout(400)
+      o.tv = await page.evaluate(() => window.__tv)
+      o.alertSaved = await page.evaluate(() => !!window.__store['alerts/NASDAQ:AAA'])
+      await page.click('button[data-cmp="NASDAQ:AAA"]'); await page.waitForTimeout(200)
+      await page.click('#rows tr.row[data-sym="NASDAQ:BBB"]'); await page.waitForTimeout(800)
+      await page.click('button[data-cmp="NASDAQ:BBB"]'); await page.waitForTimeout(300)
+      o.cmp = await page.evaluate(() => ({ hidden: document.getElementById('cmp').hidden, cols: document.querySelectorAll('#cmp thead th').length }))
+      return o
+    })
+    const al = r.tv.find((x) => x[0] === 'alert')?.[1]
+    const ad = r.tv.find((x) => x[0] === 'add')?.[1]
+    const ok = r.soonRows.join() === 'NASDAQ:AAA' && r.divChip && r.divBlock && r.note?.status === 'study' && r.note?.note === 'أنتظر نتايج الربع' && r.badge
+      && al?.symbol === 'NASDAQ:AAA' && al.price > 0 && al.condition === 'cross' && ad?.watchlist_id === '5' && ad.symbols?.[0] === 'NASDAQ:AAA' && r.alertSaved
+      && r.lists.length === 2 && !r.cmp.hidden && r.cmp.cols === 3
+    return [ok, JSON.stringify(r).slice(0, 700)]
+  },
 }
 
 ;(async () => {
