@@ -308,10 +308,52 @@ home-made ones; text delivered so that line breaks survive copying.
 
 ---
 
-## Decisions the owner must make before work starts
+## Decisions (made 2026-11-10; the owner delegated them: "أنت اللي تقرر")
 
-1. Phase order as written (1 → 2 → 3 → 4 → 5), or the tweets work (5) in parallel?
-2. Study 18: run it (about the size of Study 16), or apply E1–E4 by reasoning and label them untested?
-3. REITs: accept "untested" removal of the P/B-from-ROE leg now (2.2), before Study 18 finishes?
-4. Tweets: which of 7A–7D; create the routine from the Routines page (item 3); delete the two drafts.
-5. Additions: which of the 12, in what order (suggested first: 1, 2, 3, 4, 5).
+**Order of work.** Each step is one version and one session-sized piece:
+
+1. **v28 — Phase 1, all of it**, plus the logging half of addition 2 (save each stock's fair value,
+   price and date once a month in the db). The track record needs time to exist, so it starts now; its
+   display comes in step 4.
+2. **v29 — the two "by reasoning" fixes of 2.2 that remove plainly wrong numbers, labelled untested:**
+   - REITs (industry "Real Estate Investment Trusts"): no P/B-from-ROE leg; weights EV/EBITDA 0.5,
+     P/S 0.25, 5-year-average P/E 0.25 (Study 18's option C, provisional until it reports); the score's
+     debt check applies to them.
+   - Other financials: the P/B-from-ROE leg only when 0 < P/B ≤ 4 (above that the leg's own cap of 4×
+     book binds and it measures nothing: V, MA). Without it they are valued on own-history P/E alone,
+     which is exactly the configuration the studies tested.
+   - DCF fade start `min(g1, clamp(3-year revenue growth), 25%)`; no DCF row for Heavy/cyclical.
+   - The Lynch line shows the P/E it implies. One discount rate on the panel.
+   - Not now: the Saudi discount rate (needs a cited source first; raise it with the numbers when found).
+3. **Tweets page, small items (5.1, 5.2, 5.5)** in `pages/tweets.html`: feedback buttons, idea inbox,
+   280-character mark and post/thread switch. Independent of the dashboard; do it right after step 2.
+4. **v30 — Phase 3 items 1–5** (the phone list and panel), then **additions 1, 2 (display), 3, 4, 5** as
+   v31. The cycle warning (addition 1) is descriptive, so it does not wait for Study 18.
+5. **Study 18** (E1–E4): protocol and scripts committed before any result, run on the saved data
+   (`data/fv`, `data/fv8`; no new TradingView calls beyond one batch for industries), then apply what
+   passes as v32 and say what did not.
+6. Then Phase 3 items 6–8, additions 6–12, tweets items 4 and 6.
+
+**Why Study 18 is run rather than skipped:** Study 16 showed that a change which looks obviously right
+(dropping Lynch's rule) can fail once closeness to the price is controlled for. E1–E4 move hundreds of
+fair values; they get the same test. Only changes that fix a category error (step 2) go in untested, and
+they say so on the page.
+
+**Tweets.**
+- Ideas from accounts: option 7A (publishers' feeds) plus 7D (the inbox). No paid X API now; revisit
+  after a month if automatic reading or post metrics are wanted.
+- Done on 2026-11-10: the two disliked drafts (2026-11-12, 2026-11-14) were moved to the collection
+  `tweets_archive` (reversible); `meta/style` has a new `owner_preferences` list; the routine's prompt now
+  asks for one long opinion-led post, English ratio names, the original news source, and reads `inbox`
+  and feedback fields (which step 3 creates).
+- Still the owner's to do, when convenient: create the routine from the claude.ai Routines page with
+  the TradingView connector (5.3). Until then the session-bound routine keeps running.
+
+## Kick-off prompt for the implementing session
+
+> Read `CLAUDE.md` and `progress/AUDIT-PLAN.md`. Do step 1 of "Order of work" (v28: Phase 1 and the
+> monthly fair-value log). For each item: reproduce it with its probe in `progress/audit-2026-11-10/`,
+> fix it marked POST-HOC with the example, add a test, and keep `npm test` and the browser checks green.
+> Run `test/pages/measure.cjs` before and after and put the per-stock diff in the change log. Publish
+> the dashboard to its existing artifact (https://claude.ai/artifact/TUkdHCEyfRfBorus6K5MDa), commit,
+> push, then report what changed and what you could not do. Stop after step 1 and wait.
