@@ -68,6 +68,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 .shot { margin: 0; display: grid; gap: 6px; }
 .shot img { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #0e141a; object-fit: contain; }
 .shot img.photo { object-fit: cover; }
+.shot video.photo { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #0b1117; }
 .shot .credit { font-size: 12px; } .shot .credit a { color: inherit; }
 .shot figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -137,7 +138,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
         ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
         ${parts(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count">${[...x].length} حرف</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${deco(x)}</div>`).join('')}
         ${t.charts?.length ? `<div class="shots">${t.charts.map((c, i) => `<figure class="shot"><img data-shot="${esc(t.id)}|${i}" alt="${esc(c.title)}"><figcaption><span>${esc(c.title)}</span><button class="btn" type="button" data-save="${esc(t.id)}|${i}" hidden>حفظ الصورة</button><span class="hint" hidden>اضغط مطوّل على الصورة واحفظها</span></figcaption></figure>`).join('')}</div>` : ''}
-        ${t.photos?.length ? `<div class="shots">${t.photos.map((ph, i) => `<figure class="shot"><img class="photo" src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy"><figcaption><span>${esc(ph.caption)}</span>${ph.credit ? `<span class="credit">${ph.page ? `<a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>` : esc(ph.credit)}</span>` : ''}<button class="btn" type="button" data-photo="${esc(t.id)}|${i}" hidden>حفظ الصورة</button></figcaption></figure>`).join('')}</div>` : ''}
+        ${t.photos?.length ? `<div class="shots">${t.photos.map((ph, i) => `<figure class="shot">${ph.kind === 'video' ? `<video class="photo" src="${esc(ph.src)}" controls playsinline preload="metadata"></video>` : `<img class="photo" src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy">`}<figcaption><span>${esc(ph.caption)}</span>${ph.credit ? `<span class="credit">${ph.page ? `<a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>` : esc(ph.credit)}</span>` : ''}<button class="btn" type="button" data-photo="${esc(t.id)}|${i}" hidden>حفظ الصورة</button></figcaption></figure>`).join('')}</div>` : ''}
         ${t.links?.length ? `<div class="links">${t.links.filter((l) => /^https:\/\/(www\.)?tradingview\.com\//.test(l.url)).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>` : ''}
         <div class="foot">${parts(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
           <button class="btn ${t.status === 'posted' ? 'ok' : ''}" type="button" data-post="${esc(t.id)}" aria-pressed="${t.status === 'posted'}">${t.status === 'posted' ? '✓ نشرتها' : 'علّم إنها نُشرت'}</button>
@@ -268,8 +269,8 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
       const p = tweets.find((x) => x.id === id)?.photos?.[+i]
       try {
         const blob = await (await fetch(p.src)).blob()
-        const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
-        await downloads.save({ filename: `${id}-photo-${+i + 1}.${ext}`, data: blob }); toast('انحفظت')
+        const ext = p.kind === 'video' ? 'mp4' : (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+        await downloads.save({ filename: p.filename || `${id}-photo-${+i + 1}.${ext}`, data: blob }); toast('انحفظت')
       } catch (err) { if (err?.code !== 'declined') toast('ما انحفظت. اضغط مطوّل على الصورة واحفظها.') }
       return
     }
