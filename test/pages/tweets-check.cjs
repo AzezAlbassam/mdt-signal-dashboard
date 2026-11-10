@@ -93,6 +93,13 @@ const long = `${para(4)}\n\n${para(4)}\n\n${para(4)}\n\nhttps://www.tradingview.
   r.shown = await page.$$eval('#inboxList li', (l) => l.map((x) => x.innerText.replace(/\s+/g, ' ')))
   check('inbox', r.inbox.length === 1 && r.inbox[0].src?.startsWith('/_blob/') && r.inbox[0].status === 'new' && r.shown.length === 1, `${JSON.stringify(r.inbox[0])} · shown ${JSON.stringify(r.shown)}`)
 
+  // tweets item 6: once posted, the numbers after 48 hours are saved and summarised by idea family
+  await page.click(`[data-post="${today}"]`); await page.waitForTimeout(300)
+  await page.fill(`[data-perf="${today}|url"]`, 'https://x.com/AzizzUnited/status/1'); await page.fill(`[data-perf="${today}|views"]`, '12000'); await page.fill(`[data-perf="${today}|likes"]`, '340')
+  await page.click(`[data-perfsave="${today}"]`); await page.waitForTimeout(300)
+  r.perf = await page.evaluate((d) => window.__store['tweets/' + d].perf, today)
+  r.worked = await page.$eval('#workedRows', (t) => t.innerText.replace(/\s+/g, ' '))
+  check('worked', r.perf?.views === 12000 && r.perf?.likes === 340 && /قراءة السوق 1 12,000 340/.test(r.worked), `${JSON.stringify(r.perf)} · ${r.worked}`)
   r.width = await page.evaluate(() => document.documentElement.scrollWidth)
   check('layout', r.width <= 390 && !errors.length, `scrollWidth ${r.width}, page errors ${JSON.stringify(errors)}`)
   await page.screenshot({ path: path.join(os.tmpdir(), 'tweets-check.png'), fullPage: true })

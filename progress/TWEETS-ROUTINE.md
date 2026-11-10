@@ -3,6 +3,8 @@
 The routine "تغريدة كل يومين" (`trig_01BUHWf4UEnjD5avt2MUrV6k`, every two days at 06:39 Riyadh, bound to the
 audit session) sends exactly the text below. Change it here first, then copy it into the routine.
 2026-11-10: added step 0 (feedback, rewrite requests, the inbox and the post/thread switch from the page).
+2026-11-10 (later): step 0 reads the posted tweets' numbers (`perf`) and once a month writes `meta/style.what_worked`;
+step 6 can make a clip with `scripts/clips/make.cjs`.
 
 ---
 
@@ -14,6 +16,7 @@ Page: https://claude.ai/artifact/HxfJc8duiX3H6fcVbp6HNY. Load ArtifactData with 
    - Feedback: tweets carry feedback {vote: "up"|"down"|null, reasons: subset of ["الفكرة","السهم","الطول","الأسلوب","الصورة"], note, rewrite, at}. Read the 10 most recent tweets that have feedback and let them steer the choice and the writing (a thumbs-down on "الطول" means shorter; on "الفكرة" means that kind of idea is out). When two or more reactions agree on something meta/style does not say yet, add it to meta/style.owner_preferences (update with if_version).
    - Rewrite requests: a tweet with status "draft" and feedback.rewrite true is replaced. Copy it, feedback included, to tweets_archive/<its date>, delete tweets/<its date>, and write today's post fixing what the feedback names (the same idea only if "الفكرة" was not faulted).
    - Inbox: inbox docs with status "new" ({text, src, asset_id, createdAt}), newest first, beat every other candidate when they can meet the editorial bar with numbers verified today. To see a screenshot, read it with the Artifact tool (url = the page, path = its asset_id) and open the saved file. Take the idea, never the image or the wording. After saving the post, update that inbox doc {status: "used", usedIn: D}. If an inbox idea cannot be used, leave it "new" and say why in the reply.
+   - What worked: posted tweets may carry perf {url, views, likes, reposts, replies, at} (typed in about 48 hours after posting). On the first run of each month, write meta/style.what_worked (update with if_version): for the last 60 days, each family's number of posts and median views and likes, and one line on what the best ones share. Lean toward families that do better, without repeating a family within the last 4 posts.
    - Format: tweets carry format "post" (one long post) or "thread", set by the owner's switch on the page. Write one long post unless his recent switches or notes ask for threads; a thread's parts are separated by a line "---" and each part fits in 280 characters as X counts them (a link is 23, an emoji 2).
 1. D = today's date in Asia/Riyadh. If tweets/D exists (after step 0), stop and say so.
 2. Read meta/style, meta/ideas, and the 15 most recent tweets.
@@ -26,6 +29,7 @@ Page: https://claude.ai/artifact/HxfJc8duiX3H6fcVbp6HNY. Load ArtifactData with 
      - bars: {kind:"bars", title, subtitle, unit:"%"|"$"|"", source, bars:[{label, value}]} (values must equal the facts).
      - line: {kind:"line", title, subtitle, unit, symbol:"EXCHANGE:TICKER" (e.g. NASDAQ:MU, TADAWUL:2222, FRED:APU000072610), interval:"1D"|"1W"|"M", from, to (fixed YYYY-MM-DD), marks:[{date (an exact bar date in that series), label}]}; the page fetches the series with get-ohlcv, so check that exact call returns data.
    - links: [{label, url:"https://www.tradingview.com/chart/?symbol=EXCHANGE%3ATICKER"}] for the main symbols.
+   - A clip, only when meta/style "clips" calls for one: write a spec like scripts/clips/spec.example.json (race of rebased lines, scoreboard, bars; English tickers; period returns are computed from the series) with every series fetched today from TradingView, check `node scripts/clips/make.cjs spec.json clip.mp4 --preview` frames, then render without --preview (beat "bounce" unless the owner said otherwise) and upload the mp4 with the Artifact tool (url = the page, asset: true) into photos as {kind: "video", src, asset_id, caption, credit: "@AzizzUnited"}. Every number in the clip is in facts.
    Every number shown in an image must also be in facts.
 7. Independent fact check: a subagent given only the text, facts, charts and photo credits re-fetches every number from TradingView, redoes the math, checks dates and Saudi times (UTC+3), cashtags, chart values and mark dates, photo licences and captions, whether any claim could mislead, and whether a core fact (growth or margin trend) is missing. Fix all it finds; if a fix changes a number, check again. Save only when every fact is confirmed. Then a quick style pass.
 8. ArtifactData "set" tweets/D: {date, idea, family, title, text, tickers, facts, charts, photos, links, status: "draft", format: "post"|"thread", createdAt, checked, scores: [{idea, scores, why}] for the 3 candidates, source: "inbox/<id>" when it came from the inbox}.

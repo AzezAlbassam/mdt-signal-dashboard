@@ -90,6 +90,15 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 .why[aria-pressed="true"] { border-color: var(--warn); color: var(--fg); background: color-mix(in srgb, var(--warn) 16%, transparent); }
 textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; color: var(--fg); background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; resize: vertical; }
 .btn.warn { border-color: var(--warn); color: var(--warn); }
+/* What worked: the post's numbers after about 48 hours, typed in */
+.perf { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+.perf .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.perf input { width: 100%; box-sizing: border-box; font: inherit; font-size: 14px; color: var(--fg); background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 7px 9px; }
+.perf label { display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+.worked { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 8px; }
+.worked table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.worked th, .worked td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: start; }
+.worked td.n { font-family: var(--mono); }
 /* Idea inbox */
 .inbox { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 10px; }
 .inbox .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -116,6 +125,11 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
   </nav>
   <section class="list" id="list" aria-live="polite">
     <div class="empty"><b>جاري تحميل التغريدات…</b><p class="lead">أول ما توصل، تطلع هنا مرتبة حسب يوم نشرها.</p></div>
+  </section>
+  <section class="worked" id="worked" aria-labelledby="workedH" hidden>
+    <h2 id="workedH">وش نجح؟</h2>
+    <p class="lead">من أرقام تغريداتك اللي نشرتها (اللي تكتبها بعد يومين من النشر)، حسب نوع الفكرة. الجولة تقراها كل شهر وتعدّل أسلوبها.</p>
+    <table><thead><tr><th>نوع الفكرة</th><th>تغريدات</th><th>وسط المشاهدات</th><th>وسط الإعجابات</th></tr></thead><tbody id="workedRows"></tbody></table>
   </section>
   <section class="inbox" id="inbox" aria-labelledby="inboxH" hidden>
     <h2 id="inboxH">عندك فكرة؟</h2>
@@ -197,6 +211,27 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
   const REASONS = ['الفكرة', 'السهم', 'الطول', 'الأسلوب', 'الصورة']
   const deco = (text) => esc(text).replace(/(^|[\s(])([$#][A-Za-z؀-ۿ_][\w.؀-ۿ]*)/g, '$1<span class="tag">$2</span>')
 
+  // Tweets item 6: after posting, the link and the numbers after about 48 hours (typed in; X is not read from here).
+  function perfHtml(t) {
+    if (!db || t.status !== 'posted') return ''
+    const p = t.perf ?? {}
+    const id = esc(t.id)
+    const f = (k, label) => `<label>${label}<input type="number" min="0" inputmode="numeric" data-perf="${id}|${k}" value="${Number.isFinite(p[k]) ? p[k] : ''}"></label>`
+    return `<div class="perf"><span class="lbl">أداؤها بعد يومين${p.at ? ` <span class="dim">(${fmtDay(p.at.slice(0, 10), { day: 'numeric', month: 'long' })})</span>` : ''}</span>
+      <input type="url" dir="ltr" placeholder="رابط التغريدة https://x.com/…" data-perf="${id}|url" value="${esc(p.url ?? '')}" aria-label="رابط التغريدة">
+      <div class="grid4">${f('views', 'مشاهدات')}${f('likes', 'إعجابات')}${f('reposts', 'إعادة نشر')}${f('replies', 'ردود')}</div>
+      <div><button class="btn" type="button" data-perfsave="${id}">حفظ الأرقام</button></div></div>`
+  }
+  const median = (a) => { const x = [...a].sort((p, q) => p - q); const n = x.length; return n ? (n % 2 ? x[(n - 1) / 2] : (x[n / 2 - 1] + x[n / 2]) / 2) : null }
+  function renderWorked() {
+    const done = tweets.filter((t) => t.status === 'posted' && Number.isFinite(t.perf?.views))
+    $('worked').hidden = !done.length
+    if (!done.length) return
+    const by = {}
+    for (const t of done) (by[t.family ?? 'other'] ??= []).push(t)
+    $('workedRows').innerHTML = Object.entries(by).sort((a, b) => median(b[1].map((t) => t.perf.views)) - median(a[1].map((t) => t.perf.views))).map(([fam, ts]) => `<tr><td>${esc(FAMILY[fam] ?? fam)}</td><td class="n">${ts.length}</td><td class="n">${Math.round(median(ts.map((t) => t.perf.views))).toLocaleString('en-US')}</td><td class="n">${Math.round(median(ts.map((t) => t.perf.likes ?? 0))).toLocaleString('en-US')}</td></tr>`).join('')
+  }
+
   function fbHtml(t) {
     if (!db) return ''
     const f = t.feedback ?? {}
@@ -217,6 +252,7 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
     draw()
     for (const n of document.querySelectorAll('textarea[data-note]')) if (drafts.has(n.dataset.note)) n.value = drafts.get(n.dataset.note)
     if (focused) document.querySelector(`textarea[data-note="${CSS.escape(focused)}"]`)?.focus()
+    renderWorked()
   }
   function draw() {
     const ws = weeks()
@@ -240,6 +276,7 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
           <span class="seg" role="group" aria-label="شكل النشر"><button type="button" data-format="${esc(t.id)}|post" aria-pressed="${formatOf(t) === 'post'}">تغريدة وحدة</button><button type="button" data-format="${esc(t.id)}|thread" aria-pressed="${formatOf(t) === 'thread'}">ثريد</button></span>
           <span class="count">${pieces(t).length > 1 ? `ثريد من ${pieces(t).length} تغريدات` : `${xLen(pieces(t)[0])} حرف بعدّ X${xLen(pieces(t)[0]) > LIMIT ? ' · أول 280 تطلع قبل Show more' : ''}`}</span></div>
         ${fbHtml(t)}
+        ${perfHtml(t)}
         ${t.facts?.length ? `<details class="src"><summary>من وين الأرقام (${t.facts.length})</summary><ul>${t.facts.map((f) => `<li>${esc(f.claim)}: <b>${esc(f.value)}</b> — ${esc(f.source)}${f.as_of ? `، ${esc(f.as_of)}` : ''}</li>`).join('')}</ul></details>` : ''}
       </article>`).join('')
       : `<div class="empty"><b>${tweets.length ? 'ما فيه تغريدات بهالأسبوع' : 'للحين ما فيه تغريدات'}</b><p class="lead">كل يومين تنضاف تغريدة جديدة هنا تلقائياً.</p></div>`
@@ -447,6 +484,18 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
       f.at = new Date().toISOString()
       t.feedback = f; render()
       write(id, { feedback: f }).then(() => { if (v.dataset.savenote || v.dataset.rewrite) toast(v.dataset.rewrite ? (f.rewrite ? 'تمام، بنكتب بدالها' : 'ألغيت الطلب') : 'انحفظت') }, () => toast('ما قدرت أحفظ. جرّب مرة ثانية.'))
+      return
+    }
+    const ps = e.target.closest('[data-perfsave]')
+    if (ps && db) {
+      const id = ps.dataset.perfsave
+      const val = (k) => document.querySelector(`[data-perf="${CSS.escape(id + '|' + k)}"]`)?.value ?? ''
+      const url = val('url').trim()
+      if (url && !/^https:\/\/(x|twitter)\.com\//.test(url)) { toast('الرابط لازم يكون من x.com'); return }
+      const num = (k) => { const v = Number(val(k)); return val(k) !== '' && Number.isFinite(v) && v >= 0 ? Math.round(v) : null }
+      const perf = { url: url || null, views: num('views'), likes: num('likes'), reposts: num('reposts'), replies: num('replies'), at: new Date().toISOString() }
+      const t = tweets.find((x) => x.id === id); t.perf = perf; render()
+      write(id, { perf }).then(() => toast('انحفظت'), () => toast('ما قدرت أحفظ. جرّب مرة ثانية.'))
       return
     }
     const p = e.target.closest('[data-post]')

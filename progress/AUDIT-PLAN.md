@@ -382,6 +382,14 @@ home-made ones; text delivered so that line breaks survive copying.
    watchlists through three new tools in the page's grant, called only on a tap; "since last visit" kept per
    browser (localStorage); notes and alerts in `notes/`, `alerts/`. The EPS forecast "cone" is one forecast
    bar: TradingView gives no forecast range.
+   **Tweets 4 and 6 done 2026-11-10:** `scripts/clips/make.cjs <spec.json> <out.mp4>` (scenes.html: race,
+   scoreboard, bars; no intro/outro; English tickers; period returns computed from the series; the beat muxed
+   in; `spec.example.json` rebuilds the US-vs-China clip with its scoreboard computed from the data). The tweets
+   page takes each posted tweet's link and numbers after 48 hours (`perf`) and shows "وش نجح؟" by family; the
+   routine writes `meta/style.what_worked` on its first run each month. **The order of work is complete.**
+   Still open, outside it: 5.3 (the owner creates the routine from the Routines page with the TradingView
+   connector), 5.7 (ideas from publishers' feeds needs their hosts allowed), the Saudi discount rate (needs a
+   cited source), and E2–E4's open questions for a later study.
 
 **Why Study 18 is run rather than skipped:** Study 16 showed that a change which looks obviously right
 (dropping Lynch's rule) can fail once closeness to the price is controlled for. E1–E4 move hundreds of

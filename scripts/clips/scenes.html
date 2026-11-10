@@ -1,0 +1,105 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>html,body{margin:0;background:#0b1117}canvas{display:block}</style></head><body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+// Clips from a JSON spec (window.SPEC, see make.cjs and spec.example.json): scenes drawn frame by frame,
+// draw(f) paints frame f of FRAMES. Audit plan 5.4: no intro or outro cards; English tickers in legends;
+// period labels carry each period's return, computed here from the series (never typed in).
+const S = window.SPEC
+const W = 1280, H = 720, FPS = S.fps ?? 25
+const C = { bg: '#0b1117', grid: '#223040', ink: '#eef3f7', muted: '#8fa0b0', pal: ['#4da3ff', '#ff5d5d', '#f2b53a', '#3fcf8e', '#b08cf0'] }
+const ctx = document.getElementById('c').getContext('2d')
+const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(1 - x, 3))
+// Latin runs (tickers, "S&P 500") and numbers are isolated left-to-right inside Arabic lines
+const iso = (s) => String(s).replace(/[A-Za-z0-9$&./,%+−–-]+(?: [A-Za-z0-9$&./,%+−–-]+)*/g, (m) => (/[A-Za-z0-9]/.test(m) ? '⁦' + m + '⁩' : m))
+const pctS = (x) => `${x >= 0 ? '+' : '−'}${Math.abs(Math.round(100 * x))}%`
+function text(s, x, y, font, color, align = 'right', dir = 'rtl', alpha = 1) {
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = dir
+  ctx.fillText(dir === 'rtl' ? iso(s) : s, x, y); ctx.restore()
+}
+const addMonths = (m, k) => { const [y, mo] = m.split('-').map(Number); const t = y * 12 + mo - 1 + k; return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}` }
+const monthIdx = (start, m) => { const [a, b] = start.split('-').map(Number); const [c, d] = m.split('-').map(Number); return (c - a) * 12 + (d - b) }
+
+// Scenes with their start and end second.
+let t = 0
+const scenes = S.scenes.map((sc) => { const o = { ...sc, a: t, b: t + sc.seconds }; t += sc.seconds; return o })
+const FRAMES = Math.round(t * FPS)
+const alphaOf = (sc, s) => Math.min(ease((s - sc.a) / 0.5), 1 - ease((s - (sc.b - 0.5)) / 0.5))
+
+function race(sc, s, alpha) {
+  const ser = sc.series.map((x, i) => ({ ...x, color: x.color ?? C.pal[i], v: x.values.map((y) => (y / x.values[0]) * (sc.rebase ?? 100)) }))
+  const n = ser[0].v.length
+  const L = 110, R = W - 60, T = 150, B = H - 110
+  const maxV = Math.max(...ser.flatMap((x) => x.v)) * 1.08
+  const X = (i) => L + (R - L) * i / (n - 1), Y = (v) => B - (B - T) * v / maxV
+  const k = Math.max(1, Math.round(ease((s - sc.a - 0.3) / Math.max(1, sc.seconds - 2)) * (n - 1)))
+  ctx.save(); ctx.globalAlpha = alpha
+  text(sc.title, W - 60, 72, '800 36px "Noto Kufi Arabic"', C.ink)
+  if (sc.subtitle) text(sc.subtitle, W - 60, 108, '500 20px "IBM Plex Sans Arabic"', C.muted)
+  // periods: shaded, labelled with each series' return over the period
+  for (const [pi, p] of (sc.periods ?? []).entries()) {
+    const i0 = monthIdx(sc.start, p.from), i1 = Math.min(n - 1, monthIdx(sc.start, p.to))
+    if (k <= i0) continue
+    const col = p.color ?? (pi % 2 ? 'rgba(77,163,255,0.07)' : 'rgba(255,93,93,0.07)')
+    ctx.fillStyle = col; ctx.fillRect(X(i0), T, X(Math.min(k, i1)) - X(i0), B - T)
+    if (k >= i1) {
+      const mid = (X(i0) + X(i1)) / 2
+      text(`${p.from.slice(0, 4)}–${p.to.slice(0, 4)}`, mid, T + 28, '600 20px "IBM Plex Mono"', C.ink, 'center', 'ltr')
+      text(ser.map((x) => `${x.ticker} ${pctS(x.values[i1] / x.values[i0] - 1)}`).join('  ·  '), mid, T + 54, '600 18px "IBM Plex Mono"', C.muted, 'center', 'ltr')
+    }
+  }
+  ctx.font = '500 16px "IBM Plex Mono"'; ctx.textAlign = 'right'; ctx.direction = 'ltr'
+  const step = [50, 100, 200, 250, 500, 1000, 2000].find((x) => maxV / x <= 6) ?? 5000
+  for (let v = 0; v <= maxV; v += step) { ctx.strokeStyle = C.grid; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(L, Y(v)); ctx.lineTo(R, Y(v)); ctx.stroke(); ctx.fillStyle = C.muted; ctx.fillText((sc.unit ?? '') + v, L - 12, Y(v) + 5) }
+  ctx.textAlign = 'center'
+  for (let i = 0; i < n; i++) { const m = addMonths(sc.start, i); if (m.endsWith('-12') && Number(m.slice(0, 4)) % 5 === 4) { ctx.fillStyle = C.muted; ctx.fillText(String(Number(m.slice(0, 4)) + 1), X(i), B + 28) } }
+  for (const x of ser) {
+    ctx.strokeStyle = x.color; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath()
+    for (let i = 0; i <= k; i++) (i ? ctx.lineTo(X(i), Y(x.v[i])) : ctx.moveTo(X(i), Y(x.v[i])))
+    ctx.stroke(); ctx.fillStyle = x.color; ctx.beginPath(); ctx.arc(X(k), Y(x.v[k]), 7, 0, 7); ctx.fill()
+  }
+  const order = [...ser].sort((p, q) => q.v[k] - p.v[k])
+  order.forEach((x, j) => { ctx.font = '600 24px "IBM Plex Mono"'; ctx.direction = 'ltr'; ctx.textAlign = 'right'; ctx.fillStyle = x.color; ctx.fillText((sc.unit ?? '') + Math.round(x.v[k]), X(k) - 14, Y(x.v[k]) + (j === 0 ? -14 : 32)) })
+  ser.forEach((x, j) => { ctx.font = '600 22px "IBM Plex Mono"'; ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.fillStyle = x.color; ctx.fillRect(L + 20, T + 92 + 34 * j, 20, 6); ctx.fillStyle = C.ink; ctx.fillText(`${x.ticker}  ${x.name ?? ''}`, L + 50, T + 100 + 34 * j) })
+  ctx.restore()
+}
+
+function scoreboard(sc, s, alpha) {
+  text(sc.title, W / 2, 120, '800 40px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', alpha)
+  if (sc.subtitle) text(sc.subtitle, W / 2, 160, '500 22px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', alpha)
+  const it = sc.items, w = Math.min(60, (W - 120) / it.length - 8), gap = 8, x0 = (W - (it.length * (w + gap) - gap)) / 2
+  const show = Math.floor(ease((s - sc.a - 0.4) / Math.max(0.5, sc.seconds - 2.5)) * it.length + 0.0001)
+  const cols = sc.colors ?? C.pal
+  ctx.save(); ctx.globalAlpha = alpha
+  it.forEach((x, i) => { if (i >= show) return; ctx.fillStyle = cols[x.winner]; ctx.beginPath(); ctx.roundRect(x0 + i * (w + gap), 250, w, 150, 8); ctx.fill(); ctx.font = '600 15px "IBM Plex Mono"'; ctx.textAlign = 'center'; ctx.direction = 'ltr'; ctx.fillStyle = C.muted; ctx.fillText(x.label, x0 + i * (w + gap) + w / 2, 428) })
+  ctx.restore()
+  const b = alpha * ease((s - (sc.b - 1.6)) / 0.5)
+  ;(sc.legend ?? []).forEach((l, j) => text(l, W / 2, 490 + 44 * j, '800 28px "Noto Kufi Arabic"', cols[j], 'center', 'rtl', b))
+}
+
+function bars(sc, s, alpha) {
+  text(sc.title, W / 2, 120, '800 40px "Noto Kufi Arabic"', C.ink, 'center', 'rtl', alpha)
+  if (sc.subtitle) text(sc.subtitle, W / 2, 160, '500 22px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', alpha)
+  const g = ease((s - sc.a - 0.4) / 1.2), max = Math.max(...sc.bars.map((x) => Math.abs(x.value))) * 1.1
+  const h = Math.min(80, 360 / sc.bars.length - 20)
+  sc.bars.forEach((x, i) => {
+    const y = 230 + i * (h + 60), len = (Math.abs(x.value) / max) * 760 * g
+    ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = x.color ?? C.pal[i]; ctx.beginPath(); ctx.roundRect(W - 120 - len, y, len, h, 10); ctx.fill(); ctx.restore()
+    text(x.label, W - 120, y - 14, '600 24px "IBM Plex Sans Arabic"', C.ink, 'right', 'rtl', alpha)
+    text(`${(x.value * g).toFixed(sc.decimals ?? 1)}${sc.unit ?? ''}`, W - 140 - len, y + h / 2 + 12, '600 32px "IBM Plex Mono"', C.ink, 'right', 'ltr', alpha)
+  })
+  if (sc.note) text(sc.note, W / 2, 640, '500 20px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', alpha * ease((s - sc.a - 1.4) / 0.6))
+}
+
+const DRAW = { race, scoreboard, bars }
+window.draw = (f) => {
+  const s = f / FPS
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
+  for (const sc of scenes) if (s >= sc.a && s < sc.b) DRAW[sc.kind](sc, s, alphaOf(sc, s))
+  text(S.handle ?? '@AzizzUnited', 36, H - 28, '600 22px "IBM Plex Mono"', C.ink, 'left', 'ltr', 0.9)
+  text(S.source ?? 'Data: TradingView', W - 36, H - 28, '500 16px "IBM Plex Mono"', C.muted, 'right', 'ltr', 0.8)
+  if (S.footer) text(S.footer, W / 2, H - 28, '500 16px "IBM Plex Sans Arabic"', C.muted, 'center', 'rtl', 0.8)
+}
+window.FRAMES = FRAMES
+</script></body></html>
