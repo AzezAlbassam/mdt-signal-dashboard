@@ -27,6 +27,9 @@
     'earnings_per_share_diluted_fy_h', 'fiscal_period_end_fq',
     // the snowflake's histories that the saved fiscal years lack
     'dps_common_stock_prim_issue_fy_h', 'total_assets_fy_h', 'total_debt_fy_h', 'free_cash_flow_fy_h', 'ebitda_fy_h']
+  // POST-HOC (2026-11-10, audit 1.8): the snowflake's dividend and asset histories come with the fundamentals (cache
+  // doc `extra`), so its total no longer depends on whether the stock was ever opened (the h/ doc).
+  const SNOW_FY = ['dps_common_stock_prim_issue_fy_h', 'total_assets_fy_h']
   const METHOD_NAMES = { pe: 'P/E مقارنة بتاريخه', peg: 'مكرر = النمو (قاعدة Lynch، نمو ربح السهم 3 سنين، أو المبيعات لو فيه خسارة، بحد 25%)', dcf: 'DCF (التدفق النقدي)', graham: 'سقف Graham للمستثمر المتحفظ (فحص، مو قيمة عادلة)', ev: 'EV/EBITDA مقارنة بتاريخه', ps: 'P/S مقارنة بتاريخه',
     pb: 'P/B مقارنة بتاريخه', pbj: 'P/B من العائد على حقوق المساهمين', cash: 'أرضية الكاش (الكاش الصافي للسهم)', pen: 'P/E على متوسط ربح 5 سنوات' }
   const PROFILE_AR = { 'Mature / profitable': 'ناضجة ورابحة', 'Growth / tech': 'نمو وتقنية', 'Heavy / cyclical': 'ثقيلة ودورية', Financial: 'مالية',
@@ -83,7 +86,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
+  const state = { snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '' }
   let db = null
   let mcp = null
@@ -102,6 +105,7 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
   // A signed number inside plain Arabic text (the tiles' tips), isolated LTR so '-66%' does not show as '66%-'.
   const ltr = (s) => `\u2066${s}\u2069`
+  const safeUrl = (u) => (/^https?:\/\//i.test(String(u ?? '')) ? u : '#') // audit 1.10: no javascript: links from news or ideas
   const NO_FIN = 'ما فيه بيانات مالية سنوية لهذا السهم'
 
   function notice(text, bad = false) {
@@ -141,10 +145,13 @@
   // never drop the rest of a saved doc, nor rebuild one from a page that has not read it yet.
   // One write at a time per doc (db.d.ts), so a first update that creates the doc is seen by the next.
   const saving = {}
+  // POST-HOC (2026-11-10, audit 1.10): a failed update falls back to a full set() only once a read shows
+  // the doc missing; set() over a doc that exists would drop every field this write does not carry.
+  const upsert = (path, fields) => db.doc(path).update(fields)
+    .catch((e) => db.doc(path).get().then((snap) => (snap.exists ? Promise.reject(e) : db.doc(path).set(fields))))
   function save(path, fields) {
     if (!db) return Promise.resolve()
-    return (saving[path] = (saving[path] ?? Promise.resolve()).then(() => db.doc(path).update(fields)
-      .catch((e) => (e?.code === 'invalid_argument' ? db.doc(path).set(fields) : Promise.reject(e))).catch(() => {})))
+    return (saving[path] = (saving[path] ?? Promise.resolve()).then(() => upsert(path, fields).catch(() => {})))
   }
   const recent = (at, ms) => Date.now() - (at ?? 0) < ms
   const failedAt = {} // symbol (fundamentals) or 'px:'+symbol → time of the last failed call
@@ -163,19 +170,91 @@
   // tab quoted in the last 5 minutes (the host cache's staleTime) is not asked again: the Big and
   // favourites tabs' batches never match the US list's, so the cache could not answer them.
   const quotedAt = {}
+  const QUOTE_MS = 15 * 60e3 // a quote is reused for 15 minutes across tabs (audit 1.9: was 5; a US↔SA switch cost 21 calls)
+  // POST-HOC (2026-11-10, audit 1.5): one stock's bad doc no longer fails its whole batch of 50 (a cache doc
+  // with labels and no series left 13 of 60 rows scored and blamed TradingView).
+  const computeSafe = (sym) => { try { compute(sym); logFair(sym) } catch (e) { state.errors[sym] = `ما قدرت أحسب هذا السهم (${e?.message ?? e})`; dirty.add(sym) } }
+  // v28 (2026-11-10, audit plan step 1): a monthly fair-value log, the start of a forward track record
+  // ("قلنا X قبل سنة، السعر صار Y"). The first fair value a stock gets each month on a live quote is kept with
+  // that day's price: fvlog/<bucket> → { m2026_11: { <sym>: { sym, fair, close, day, weak } } }. Nothing is
+  // shown from it yet. Read with the saved docs; written only once that read succeeded, 4 s after the last
+  // new entry, one write per bucket (the month's whole map: entries another tab wrote in between come back
+  // the next time those stocks are computed).
+  const fvlog = {}
+  let fvReady = false
+  let fvTimer = null
+  const fvDirty = new Set()
+  function logFair(sym) {
+    const q = state.quotes[sym]
+    const fair = state.fair[sym]?.fair
+    if (!db || !fvReady || !(fair > 0) || !(q?.close > 0) || q.__at) return
+    const mk = 'm' + monthKey(Math.floor(Date.now() / 1000)).replace('-', '_')
+    const b = bucketOf(sym)
+    const m = ((fvlog[b] ??= {})[mk] ??= {})
+    if (m[snapKey(sym)]) return
+    m[snapKey(sym)] = { sym, fair: +fair.toPrecision(6), close: q.close, day: new Date().toISOString().slice(0, 10), weak: !!weakFair(sym) }
+    fvDirty.add(b)
+    clearTimeout(fvTimer)
+    fvTimer = setTimeout(() => {
+      for (const d of fvDirty) save(`fvlog/${d}`, { [mk]: fvlog[d][mk] })
+      fvDirty.clear()
+    }, 4000)
+  }
+  async function loadFvlog() {
+    if (!db) return
+    const snap = await db.collection('fvlog').limit(64).get().catch(() => null)
+    if (!snap) return
+    for (const d of snap.docs) fvlog[d.id] = { ...d.data(), ...(fvlog[d.id] ?? {}) }
+    fvReady = true
+  }
+  // POST-HOC (2026-11-10, audit 1.5): the last quotes are saved (qsnap/<bucket>, at most every 3 hours a
+  // stock) and shown, dated, when TradingView refuses: on a day the quota was spent a cold start showed 700
+  // grey skeletons though fundamentals and prices were saved. 32 docs, a stock's bucket from its symbol.
+  const SNAP_MS = 3 * 3600e3
+  const bucketOf = (sym) => `b${String([...sym].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % 32).padStart(2, '0')}`
+  const snapKey = (sym) => sym.replace(/[^A-Za-z0-9_-]/g, '_')
+  function saveSnap(rows) {
+    const now = Date.now()
+    const by = {}
+    for (const [sym, row] of Object.entries(rows)) {
+      if (recent(state.snap[sym]?.at, SNAP_MS)) continue
+      state.snap[sym] = { sym, at: now, row }
+      ;((by[bucketOf(sym)] ??= {})[snapKey(sym)] = { sym, at: now, row })
+    }
+    for (const [b, rs] of Object.entries(by)) save(`qsnap/${b}`, { rows: rs })
+  }
+  // Saved quotes for stocks TradingView did not answer now; returns the oldest date used, or null.
+  function fromSnap(syms) {
+    let oldest = null
+    for (const sym of syms) {
+      const sn = state.snap[sym]
+      if (state.quotes[sym] && !state.quotes[sym].__at) continue
+      if (!sn?.row) { if (!state.quotes[sym]) { state.errors[sym] ??= 'ما وصلت أسعاره من TradingView، وما عندنا أسعار محفوظة له.'; dirty.add(sym) } continue }
+      state.quotes[sym] = { ...sn.row, __at: sn.at }
+      oldest = Math.min(oldest ?? Infinity, sn.at)
+      computeSafe(sym)
+    }
+    return oldest
+  }
   async function loadQuotes(symbols, fresh = false) {
-    if (!fresh) symbols = symbols.filter((s) => !recent(quotedAt[s], 300000))
+    if (!fresh) symbols = symbols.filter((s) => !recent(quotedAt[s], QUOTE_MS))
     const chunks = []
     for (let i = 0; i < symbols.length; i += 50) chunks.push(symbols.slice(i, i + 50))
     let firstError = null
     const lost = []
     await pool(chunks, async (chunk) => {
       try {
-        const p = await call(T.batch, { symbols: chunk, columns: COLS }, fresh ? { staleTime: 0, refresh: true } : { staleTime: 300000, gcTime: 3600000 })
-        if (p?.success === false) throw { code: 'server_unavailable' } // 429/5xx come back this way (see loadHist)
+        const p = await call(T.batch, { symbols: chunk, columns: COLS }, fresh ? { staleTime: 0, refresh: true } : { staleTime: QUOTE_MS, gcTime: 3600000 })
+        // 429/5xx come back this way (see loadHist); its text is kept so the quota message can match it
+        if (p?.success === false) throw { code: 'server_unavailable', message: [p?.error, p?.message, ...(p?.warnings ?? [])].filter(Boolean).join(' ') }
         for (const [sym, row] of Object.entries(p?.data ?? {})) { state.quotes[sym] = row; quotedAt[sym] = Date.now() }
         for (const m of p?.missing ?? []) state.errors[m.symbol] = 'TradingView ما لقى السهم'
-        chunk.forEach(compute)
+        // POST-HOC (2026-11-10, audit 1.5): a market that did not answer (partial) leaves its stocks in neither
+        // list; they count as lost, so they are reported and filled from the saved quotes.
+        const known = new Set([...Object.keys(p?.data ?? {}), ...(p?.missing ?? []).map((m) => m.symbol)])
+        lost.push(...chunk.filter((sym) => !known.has(sym)))
+        if (p?.data) saveSnap(p.data)
+        chunk.forEach(computeSafe)
         scheduleRender()
       } catch (e) {
         firstError ??= e
@@ -205,7 +284,12 @@
       if (snap.size < 150) break
     }
   }
-  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters), loadCollection('h', state.hist)])
+  const loadCacheFromDb = () => Promise.all([loadCollection('cache', state.cache), loadCollection('q', state.quarters), loadCollection('h', state.hist), loadSnaps(), loadFvlog()])
+  async function loadSnaps() {
+    if (!db) return
+    const snap = await db.collection('qsnap').limit(64).get()
+    for (const d of snap.docs) for (const v of Object.values(d.data()?.rows ?? {})) if (v?.sym && v.row && !(state.snap[v.sym]?.at > v.at)) state.snap[v.sym] = v
+  }
 
   // Fundamentals (fiscal years → cache/<sym>, quarters → q/<sym>) are fetched again only when the
   // quote shows a fiscal year or quarter newer than the saved one: docs saved from now on keep the
@@ -225,14 +309,20 @@
   function fyDue(s) {
     const q = state.quotes[s]
     const d = state.cache[s]
-    return !!q && (partial(d?.fin, q.fiscal_period_end_fy, 200) || (d?.fyEnd != null ? q.fiscal_period_end_fy > d.fyEnd : !d || Number(q.fiscal_period_fy) > Number(d.fin?.labels?.at(-1) ?? 0)))
+    // POST-HOC (2026-11-10, audit 1.5): an empty first answer (`missing`) is asked again after 3 days, not only
+    // once the quote shows a newer fiscal year (the stock read "no annual data" for up to a year).
+    return !!q && ((d?.missing && !d?.fin && !recent(d.fundsAt, 3 * 864e5)) || partial(d?.fin, q.fiscal_period_end_fy, 200) || (d?.fyEnd != null ? q.fiscal_period_end_fy > d.fyEnd : !d || Number(q.fiscal_period_fy) > Number(d.fin?.labels?.at(-1) ?? 0)))
   }
   function fqDue(s) {
     const q = state.quotes[s]
     const d = state.quarters[s]
     return !!q && (partial(d?.fq, q.fiscal_period_end_fq, 120) || (d?.fqEnd != null ? q.fiscal_period_end_fq > d.fqEnd : Number.isFinite(q.fiscal_period_end_fq) && qNum(q.fiscal_period_end_fq) > qNum(d?.fq?.labels?.at(-1))))
   }
-  const fundsDue = (s) => !recent(state.cache[s]?.fundsAt, RETRY_MS) && !recent(failedAt[s], FAIL_MS) && (fyDue(s) || fqDue(s))
+  // POST-HOC (2026-11-10, audit 1.1): `rebase` (set by loadPx when TradingView restated the saved prices,
+  // i.e. a split or bonus issue) makes the fundamentals due at once: until then history multiples mixed
+  // adjusted prices with unadjusted EPS (10-for-1: fair $1.05 at a $10 price).
+  // A doc saved before the snowflake's histories came with the fundamentals (no `extra`) is due once (audit 1.8).
+  const fundsDue = (s) => !recent(failedAt[s], FAIL_MS) && (!!state.cache[s]?.rebase || (!recent(state.cache[s]?.fundsAt, RETRY_MS) && (fyDue(s) || fqDue(s) || (!!state.cache[s]?.fin && !('extra' in state.cache[s])))))
 
   // Both periods for up to 50 stocks in one call: TradingView's *_fy_h / *_fq_h screener columns in
   // the financial-history shape the engine reads (histFromBatch, 16 points as before). An empty or
@@ -244,7 +334,7 @@
       const chunk = syms.slice(i, i + 50)
       let p
       try {
-        p = await call(T.batch, { symbols: chunk, columns: HIST_COLS })
+        p = await call(T.batch, { symbols: chunk, columns: [...HIST_COLS, ...SNOW_FY] })
         if (p?.success === false) throw { code: 'server_unavailable' }
       } catch (e) {
         chunk.forEach((x) => { failedAt[x] = Date.now() })
@@ -256,12 +346,16 @@
         const row = p?.data?.[sym]
         if (!row && !unknown.has(sym)) { failedAt[sym] = now; lost.push(sym); continue } // a market that did not answer (partial)
         const fin = row && histFromBatch(row, 'fy')
-        const fq = row && histFromBatch(row, 'fq')
+        // POST-HOC (2026-11-10, audit 1.5): quarterly arrays that are there but all null (no revenue, EPS or net
+        // income) are no answer either; they overwrote good saved quarters (PG and V again, guarded only when absent).
+        const fq0 = row && histFromBatch(row, 'fq')
+        const fq = fq0 && ['revenue', 'eps', 'net_income'].some((k) => fq0.series[k]?.some((v) => v.value != null)) ? fq0 : null
         const old = state.cache[sym] ?? {}
-        const c = fin && parseFundamentals(fin).length ? { sym, fin, fyEnd: row.fiscal_period_end_fy, missing: false, fundsAt: now, fetchedAt: now }
+        const extra = Object.fromEntries(SNOW_FY.filter((k) => Array.isArray(row?.[k])).map((k) => [k, row[k]]))
+        const c = fin && parseFundamentals(fin).length ? { sym, fin, fyEnd: row.fiscal_period_end_fy, missing: false, fundsAt: now, fetchedAt: now, rebase: false, extra }
           // Nothing saved and nothing returned: remember the quote's period, so it is asked again
           // only once the quote shows a newer one (a recent IPO with no full fiscal year yet).
-          : { sym, fundsAt: now, ...(cacheOk && !old.fin ? { missing: true, fyEnd: state.quotes[sym]?.fiscal_period_end_fy ?? null } : {}) }
+          : { sym, fundsAt: now, rebase: false, ...(cacheOk && !old.fin ? { missing: true, fyEnd: state.quotes[sym]?.fiscal_period_end_fy ?? null } : {}) }
         state.cache[sym] = { ...old, ...c }
         await save(`cache/${sym}`, c)
         if (fq) {
@@ -271,7 +365,7 @@
           state.quarters[sym] = { sym, fqEnd: state.quotes[sym].fiscal_period_end_fq, fetchedAt: now }
           await save(`q/${sym}`, state.quarters[sym])
         }
-        compute(sym)
+        computeSafe(sym)
       }
     }
     if (lost.length) throw { code: 'server_unavailable', syms: lost }
@@ -288,7 +382,7 @@
     const d = state.cache[s]
     if (!state.quotes[s] || recent(d?.pxAt, opened ? FAIL_MS : RETRY_MS) || recent(failedAt[`px:${s}`], FAIL_MS)) return false
     const px = d?.px
-    if (!px?.t?.length) return opened || !recent(d?.pxAt, 90 * 864e5)
+    if (!px?.t?.length) return opened || !recent(d?.pxAt, 864e5) // audit 1.6: was 90 days
     const q = state.quotes[s]
     const yr = px.c.filter((c, i) => c > 0 && px.t[i] > Date.now() / 1000 - 335 * 86400)
     if ((Math.min(...yr) < q.price_52_week_low * 0.97 || Math.max(...yr) > q.price_52_week_high * 1.03) && !recent(d.pxAt, 7 * 864e5)) return true
@@ -312,10 +406,19 @@
       failedAt[`px:${s}`] = Date.now()
       throw { code: e?.code, message: e?.message, syms: [s] }
     }
-    const f = { sym: s, pxTried: true, pxAt: Date.now(), ...(b?.t?.length ? { px: { t: b.t, c: b.c } } : {}) }
+    // POST-HOC (2026-11-10, audit 1.1): a finished month whose close moved more than 1% means TradingView
+    // restated the series (split, reverse split or bonus issue); the per-share fundamentals saved before
+    // are then on the old basis, so they are asked again now (one call) and, if that fails, at the next run.
+    const prev = state.cache[s]?.px
+    const rebase = !!(prev?.t?.length && b?.t?.length) && prev.t.slice(0, -1).some((t, i) => {
+      const j = b.t.findIndex((u) => monthKey(u) === monthKey(t))
+      return j >= 0 && j < b.t.length - 1 && prev.c[i] > 0 && Math.abs(b.c[j] / prev.c[i] - 1) > 0.01
+    })
+    const f = { sym: s, pxTried: true, pxAt: Date.now(), ...(b?.t?.length ? { px: { t: b.t, c: b.c } } : {}), ...(rebase && state.cache[s]?.fin && !recent(state.cache[s]?.fundsAt, FAIL_MS) ? { rebase: true } : {}) } // fundamentals asked minutes ago are already on the new basis
     state.cache[s] = { ...(state.cache[s] ?? {}), ...f }
     await save(`cache/${s}`, f)
     compute(s)
+    if (f.rebase) await loadFunds([s]).catch(() => {})
   }
 
   // Fetched when a stock is opened, and again once its quote shows a newer quarter; after a failed
@@ -393,7 +496,7 @@
     const shares = allShares(q) // free cash flow is the whole company's (TKO: on Class A only, DCF 1207 vs 466)
     const fcf0 = shares && Number.isFinite(q.free_cash_flow_ttm) ? q.free_cash_flow_ttm / shares : null
     if (!(fcf0 > 0)) return null
-    const a = analysts(q).rev
+    const a = revAhead(q)
     const g1 = a != null ? Math.min(0.6, Math.max(-0.2, a)) : null
     if (g1 == null) return fallback > 0 ? { value: fallback, g1: null, r: PARAMS.discount, beta: null } : null
     const r = beta5(q) != null ? Math.min(0.13, Math.max(0.07, 0.045 + beta5(q) * 0.042)) : PARAMS.discount
@@ -407,6 +510,24 @@
     }
     pv += (cf * (1 + gT)) / (r - gT) / (1 + r) ** 10
     return { value: pv, g1, r, beta: beta5(q) }
+  }
+
+  // POST-HOC (2026-11-10, audit 1.2): the growth still ahead of the last twelve months, a year's worth.
+  // analysts(q).rev (forecast year ÷ last reported year) was applied to twelve-month figures that already
+  // hold the part of it reported since that year closed: KO +4.2% with +6.3% already in, TSM 41.1% with
+  // 10.3% left. Now: forecast year ÷ the twelve months, annualised over the time from the last quarter's end
+  // to the forecast year's end (at least a quarter), as the plan says. Under steady growth this is the same
+  // rate all year (40% a year: 40% after every quarter), where the unannualised rest fell through the year
+  // and jumped at its close (AAPL after Q3 FY2026: 2.3% left of the year, DCF 146.58; annualised 9.6%).
+  // Right after a fiscal year closes, before TradingView moves the forecast year on (under 1½ months
+  // left), it keeps forecast year ÷ last year.
+  function revAhead(q) {
+    const a = analysts(q).rev
+    if (a == null || !(q.total_revenue_ttm > 0) || !Number.isFinite(q.fiscal_period_end_fy) || !Number.isFinite(q.fiscal_period_end_fq)) return a
+    const yr = 365.25 * 86400
+    const span = (q.fiscal_period_end_fy + yr - q.fiscal_period_end_fq) / yr
+    if (span < 0.125) return a
+    return (q.revenue_forecast_next_fy / q.total_revenue_ttm) ** (1 / Math.max(0.25, span)) - 1
   }
 
   // Monthly closes from the saved history, this month at the quote's price.
@@ -436,7 +557,7 @@
     // live: every fiscal year TradingView returns is already reported (MSFT, MU, COST… end
     // theirs mid-year), not only those the backtests' "May of the next year" rule allows.
     // Today and the recent history from the last twelve months when quarterly results are saved.
-    const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares)
+    const live = liveContext(funds, ttmFromQuarters(state.quarters[sym]?.fq), month, qShares, d.fyEnd ?? q.fiscal_period_end_fy)
     const s = scoreAt(funds, closes, q.sector, month, live)
     state.scores[sym] = { ...s, f0: live.f0 ?? last, period: live.period, known: funds }
     const fv = fairValuesAt(funds, closes, q.sector, month, live)
@@ -448,14 +569,18 @@
     state.fair[sym] = fv ? { ...liveFairValues(fv, q, funds, s.detail?.epsG ?? s.detail?.revG), capped } : null
     // A bank's free cash flow moves with deposits and loans, so no implied growth for financials.
     state.exp[sym] = q.sector === 'Finance' ? null : expectationsAt(funds, closes, month, live)
-    state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: analysts(q).rev, revNow: q.total_revenue_ttm, live })
+    state.proj[sym] = q.sector === 'Finance' ? null : projectAt(funds, closes, month, { revGrowthNext: revAhead(q), revNow: q.total_revenue_ttm, live })
     state.rdcf[sym] = (fv?.profile === 'Unprofitable growth' || preProfit(sym)) && !sym.startsWith('TADAWUL:') ? rdcfFor(sym, funds) : null
     // Snowflake and EHS (descriptive, not tested): histories from the saved fiscal years, the h/ doc when loaded.
     const b = BENCH?.[sym.startsWith('TADAWUL:') ? 'sa' : 'us']
     const nf = [...funds].reverse()
-    const hist = { earnings_per_share_diluted_fy_h: nf.map((f) => f.eps), ebitda_fy_h: nf.map((f) => f.ebitda), total_debt_fy_h: nf.map((f) => f.debt), free_cash_flow_fy_h: nf.map((f) => f.fcf) }
-    state.snow[sym] = b ? snowflake({ ...q, ...hist, ...(state.hist[sym]?.h ?? {}) }, b, state.fair[sym]?.fair ?? null) : null
-    const e = b ? ehsScore(q, b.ehs) : null
+    const hist = { earnings_per_share_diluted_fy_h: nf.map((f) => f.eps), ebitda_fy_h: nf.map((f) => f.ebitda), total_debt_fy_h: nf.map((f) => f.debt), free_cash_flow_fy_h: nf.map((f) => f.fcf), net_income_fy_h: nf.map((f) => f.ni), ...(d.extra ?? {}) }
+    // POST-HOC (2026-11-10, audit 1.8): the saved fiscal years (fresher) over the h/ doc's; the row's P/E (peNow) for
+    // V3/V4 and the earnings grade (Aramco: 14.2 in the row, 11.6 from TradingView's pre-bonus EPS); no fair value
+    // for a pre-revenue stock, whose number is a cash floor.
+    const qS = { ...q, price_earnings_ttm: peNow(sym) }
+    state.snow[sym] = b ? snowflake({ ...qS, ...(state.hist[sym]?.h ?? {}), ...hist }, b, state.fair[sym]?.profile === 'Pre-revenue' ? null : state.fair[sym]?.fair ?? null) : null
+    const e = b ? ehsScore(qS, b.ehs) : null
     state.ehs[sym] = e ? { ...e, letter: ehsLetter(e.total, b.ehs) } : null
   }
 
@@ -478,7 +603,18 @@
 
   let busy = false
   let again = false
-  const bgAt = {} // list → time of its last background update in this tab
+  // list → time of its last background update; kept in this browser (audit 1.9: a reload spent the background calls again)
+  const bgAt = (() => { try { return JSON.parse(localStorage.getItem('stocks.bgAt') ?? '{}') } catch { return {} } })()
+  const keepBg = () => { try { localStorage.setItem('stocks.bgAt', JSON.stringify(bgAt)) } catch {} }
+  const PX_FAV = 25 // favourites' monthly prices per visit (audit 1.9: the first visit of a month asked all 75)
+  // POST-HOC (2026-11-10, audit 1.9): a page left open refreshes when it is shown again after BG_MS, and the
+  // status says the day when the last update was not today.
+  let lastRefresh = 0
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !lastRefresh) return
+    if (Date.now() - lastRefresh > BG_MS) refresh()
+    else if (new Date(lastRefresh).toDateString() !== new Date().toDateString()) $('status').textContent = `آخر تحديث للأسعار: ${new Date(lastRefresh).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`
+  })
   async function refresh(opts = {}) {
     if (!mcp || !cacheRead || state.market === 'sectors') return
     if (busy) { again = true; return }
@@ -494,28 +630,33 @@
     $('status').textContent = `جاري تحميل الأسعار (${syms.length} سهم)…`
     const m = state.market
     if (freshQuotes) for (const k in failedAt) delete failedAt[k] // the button retries failures now
-    const bg = freshQuotes || !recent(bgAt[m], BG_MS)
+    // POST-HOC (2026-11-10, audit 1.9): no background fetches when the saved histories could not be read: every
+    // stock would look unsaved and be asked again (100 calls on every load).
+    const bg = cacheOk && (freshQuotes || !recent(bgAt[m], BG_MS))
     if (bg && !$('notice').querySelector('[data-undo]')) notice('') // a warning stays until a run retries; an undo offer until used
     let lost = []
     try {
       lost = await loadQuotes(syms, freshQuotes)
     } catch (e) {
-      notice(explainError(e), true)
+      const at = fromSnap(syms)
+      notice(`${explainError(e)}${at ? ` الأسعار المعروضة محفوظة من ${new Date(at).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.` : ''}`, true)
       $('status').textContent = ''
       $('refresh').disabled = false
       render()
       return
     }
+    const snapAt = lost.length ? fromSnap(lost) : null
     // Background updates for this list, favourites first: fundamentals of stocks with a newer
     // fiscal period (50 per call), then monthly prices (favourites, plus at most PX_OTHERS others,
     // oldest first). At most every BG_MS per list unless the refresh button was pressed.
     const fav = new Set(state.lists.fav)
     const order = [...syms].sort((a, b) => fav.has(b) - fav.has(a))
-    const funds = bg ? order.filter(fundsDue) : []
+    // the refresh button also asks again for stocks with no saved fundamentals (audit 1.5)
+    const funds = bg ? order.filter((s) => fundsDue(s) || (freshQuotes && state.quotes[s] && !state.cache[s]?.fin && !recent(failedAt[s], FAIL_MS))) : []
     const lastBar = (s) => state.cache[s]?.px?.t?.at(-1) ?? 0
     const others = bg ? order.filter((s) => !fav.has(s) && pxDue(s)).sort((a, b) => lastBar(a) - lastBar(b)) : []
-    const px = [...(bg ? order.filter((s) => fav.has(s) && pxDue(s)) : []), ...others.slice(0, PX_OTHERS)]
-    if (bg) bgAt[m] = Date.now()
+    const px = [...(bg ? order.filter((s) => fav.has(s) && pxDue(s)).slice(0, PX_FAV) : []), ...others.slice(0, PX_OTHERS)]
+    if (bg) { bgAt[m] = Date.now(); keepBg() }
     const jobs = []
     for (let i = 0; i < funds.length; i += 50) jobs.push(() => loadFunds(funds.slice(i, i + 50)))
     for (const s of px) jobs.push(() => loadPx(s))
@@ -538,11 +679,12 @@
     if (authError) notice(explainError(authError), true)
     else if (quota) notice('وصلنا حد TradingView اليومي لعدد الطلبات. الأسعار والبيانات المحفوظة تبقى ظاهرة، والتحديث يرجع بعد منتصف الليل بتوقيت غرينتش (3 الفجر بتوقيت السعودية).', true)
     else if (failed.size) {
-      bgAt[m] = Date.now() - BG_MS + FAIL_MS // the next refresh after 10 minutes retries them
-      notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد). بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
+      bgAt[m] = Date.now() - BG_MS + FAIL_MS; keepBg() // the next refresh after 10 minutes retries them
+      notice(`ما قدرت أحدّث بيانات ${failed.size} سهم الحين (TradingView ما رد)${snapAt ? `، وأسعارها المعروضة محفوظة من ${new Date(snapAt).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}` : ''}. بنحاول مرة ثانية في التحديث الجاي بعد 10 دقايق، أو اضغط تحديث الأسعار.`, true)
     }
     $('refresh').disabled = false
     const later = others.length - Math.min(PX_OTHERS, others.length)
+    lastRefresh = Date.now()
     $('status').textContent = `آخر تحديث للأسعار: ${new Date().toLocaleTimeString('ar-SA-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}${later ? ` · أسعار ${later} سهم ثاني الشهرية تتحدث في الزيارات الجاية (${PX_OTHERS} كل مرة)` : ''}`
     scheduleRender() // every stock was computed when its data came in
   }
@@ -676,6 +818,10 @@
     if (peNow(sym) > 100 && f.values.pe > 0) return 'مكرر الربح فوق 100 (ربح شبه صفر)، فالطرق على الربح ما لها معنى'
     if (up != null && Math.abs(up) > 0.6) return 'بعيدة أكثر من 60% عن السعر'
     if (f.low > 0 && f.high / f.low > 3) return f.dropped?.length ? 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)، وانشالت البعيدة منها' : 'الطرق مختلفة كثير (أعلاها أكثر من 3 أضعاف أقلها)'
+    // POST-HOC (2026-11-10, audit 1.6): built from a fraction of its methods (a stock without saved monthly
+    // prices showed $81.38 on 35% of its weights against $94.00 with them, not dimmed).
+    if (closesOf(sym).size < 12) return 'أسعار السهم الشهرية المحفوظة أقل من سنة، فالطرق اللي تقارن بتاريخه ناقصة'
+    if (f.coverage < 0.6) return `مبنية على ${Math.round(100 * f.coverage)}% بس من أوزان طرقها`
     return null
   }
 
@@ -687,7 +833,7 @@
       case 'price': return q.close
       case 'mcap': return q.market_cap_basic
       case 'fair': return state.fair[sym]?.fair
-      case 'upside': return upside(sym)
+      case 'upside': return weakFair(sym) ? null : upside(sym) // weak estimates last (audit 1.6: +11,656% sat on top)
       case 'score': return s.total
       case 'gstar': return s.detail?.gStar
       case 'greal': return s.detail?.revG
@@ -855,7 +1001,7 @@
       const up = upside(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
         <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="درجة الأرباح">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}</b><span dir="auto">${esc(q?.description ?? '')}</span></td>
-        <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
+        <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
         <td class="c-wide" data-label="الدرجة من 10">${scoreCell(sym)}</td>
@@ -907,7 +1053,7 @@
     return { rev, eps, falling: (rev != null && rev < -0.02) || (eps != null && eps < -0.1) }
   }
   // The forecast fiscal year (TradingView's next_fy is the year after the last reported one).
-  const fyNext = (q) => (Number.isFinite(Number(q?.fiscal_period_fy)) ? Number(q.fiscal_period_fy) + 1 : null)
+  const fyNext = (q) => (q?.fiscal_period_fy != null && Number.isFinite(Number(q.fiscal_period_fy)) ? Number(q.fiscal_period_fy) + 1 : null) // audit 1.10: Number(null) is 0 ("سنة 1")
 
   // P/E over the last 12 months (POST-HOC 2026-10-22): TradingView's, price ÷ diluted EPS; none when
   // diluted EPS is not positive (a loss for common holders: ALB, BYND). Market value ÷ the quote's
@@ -968,7 +1114,7 @@
     if (!(old && Math.abs(old.mean / m.mean - 1) < 0.02)) {
       state.svrMean = { ...state.svrMean, [market]: m }
       // update, not set: a full write here could drop the other market's mean (its read may not be back yet).
-      if (db) { const d = db.doc('meta/svr'); (d.update ? d.update({ [market]: m }) : d.set(state.svrMean)).catch(() => d.set(state.svrMean).catch(() => {})) }
+      if (db) upsert('meta/svr', { [market]: m }).catch(() => {})
     }
     return m
   }
@@ -990,7 +1136,7 @@
   const pegCell = (sym) => {
     const p = peg(sym)
     if (!p) return '—'
-    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: محسوب على نمو أرباح آخر 3 سنين">(تاريخي)</small>'
+    const note = p.past ? ' <small class="dim" dir="rtl" title="ما فيه توقعات محللين: مكرر آخر 12 شهر ÷ نمو ربح السهم السنوي في آخر 3 سنين مالية">(تاريخي)</small>'
       : p.jump ? ` <small class="dim" dir="rtl" title="المحللين متوقعين نمو ${pct(p.jump, 0)} بسنة وحدة. نمو بهالحجم نادراً يستمر وغالباً من أرباح مرة وحدة، فالـPEG هنا يبيّن السهم أرخص من حقيقته.">(نمو استثنائي)</small>` : ''
     return `${fmt(p.v, 2)}${note}`
   }
@@ -1012,7 +1158,7 @@
   const dayNo = (ms) => { const d = new Date(ms); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 }
   // A report's day is its UTC date, the exchange's own (every TradingView report time falls 06:00–23:59
   // UTC), so a US after-close report stays on its US date for a viewer in Riyadh; today is the viewer's.
-  const dateOf = (sec) => (Number.isFinite(sec) ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
+  const dateOf = (sec) => (Number.isFinite(sec) && Math.abs(sec) < 8.64e12 ? new Date(sec * 1000).toISOString().slice(0, 10) : '—')
 
   // Study 14's confirmed rank, T3 (PROTOCOL-study14.md §3, §7): −ln(diluted shares of the last fiscal
   // year ÷ the year before), shares = net income ÷ EPS, both years with |EPS| ≥ 0.25 of the same
@@ -1057,7 +1203,7 @@
     const news = state.news[sym]
     const newsHtml = news === undefined ? '<p class="dim">جاري جلب الأخبار…</p>'
       : news?.error ? `<p class="dim">${esc(news.error)}</p>`
-      : news.length ? `<ul class="news">${news.map((n) => `<li><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="dim n">${dateOf(n.published)} · ${esc(n.provider?.name ?? '')}</span></li>`).join('')}</ul>`
+      : news.length ? `<ul class="news">${news.map((n) => `<li><a href="${esc(safeUrl(n.link))}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="dim n">${dateOf(n.published)} · ${esc(n.provider?.name ?? '')}</span></li>`).join('')}</ul>`
       : '<p class="dim">ما فيه أخبار حديثة.</p>'
     return `<div class="part" style="grid-column:1/-1">
       <h3><span>وش ينتظره السوق</span><span class="dim">التقرير الجاي <span class="n">${dateOf(q.earnings_release_next_date)}</span></span></h3>
@@ -1085,7 +1231,7 @@
         }
         const base = adj ?? i.priceThen
         const since = base > 0 && q.close > 0 ? q.close / base - 1 : null
-        return `<li><div><a dir="auto" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
+        return `<li><div><a dir="auto" href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date || 'تاريخ غير معروف')}</span>${i.side ? ' · ' + (i.side === 'short' ? 'بيع' : 'شراء') : ''}</span></div>
           ${i.summary ? `<p>${esc(i.summary)}</p>` : ''}
           ${base ? `<p class="dim">السعر وقتها <span class="n">${fmt(base, dp(q))}</span>${adj ? ' (معدّل للتقسيمات، إغلاق ذاك الشهر)' : ' (كما ذكره المصدر)'} · من وقتها <b class="n ${since >= 0 ? 'hi' : 'lo'}">${pct(since)}</b></p>` : ''}</li>`
       }).join('')}</ul></div>`
@@ -1125,7 +1271,7 @@
     const noQ = !state.scores[sym]?.period && state.scores[sym]?.f0?.year
     const notes = [
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
-      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين للمبيعات)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
+      d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
       f.values.ev > 0 ? 'EV هنا = القيمة السوقية + الدين (بدون خصم الكاش).' : '',
       capped.length ? `${capped.map((m) => METHOD_NAMES[m]).join('، ')}: السعر اليوم فوق 100 ضعف الربح أو EBITDA، فما انحسبت.` : '',
       f.dropped?.length ? `${f.dropped.map((m) => `${METHOD_NAMES[m]} (${f.values[m] > f.med ? 'أكثر من 3 أضعافه' : 'أقل من ثلثه'})`).join(' و')}: بعيدة عن الوسيط الموزون لطرق السهم (<b class="n">${fmt(f.med, dp(q))}</b>)، فانشالت من المتوسط. دراسة 16: كذا صارت القيمة أقرب للسعر بعد سنة في 12 من 14 سنة.` : '',
@@ -1143,7 +1289,7 @@
   }
 
   // The digits isolated as LTR, the unit word left in the RTL sentence.
-  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e12 ? `<span class="n">${fmt(x / 1e12, 2)}</span> ترليون` : Math.abs(x) >= 1e9 ? `<span class="n">${fmt(x / 1e9, 1)}</span> مليار` : `<span class="n">${fmt(x / 1e6, 0)}</span> مليون`)
+  const big = (x) => (!Number.isFinite(x) ? '—' : Math.abs(x) >= 1e12 ? `<span class="n">${fmt(x / 1e12, 2)}</span> ترليون` : Math.abs(x) >= 1e9 ? `<span class="n">${fmt(x / 1e9, 1)}</span> مليار` : Math.abs(x) >= 5e5 ? `<span class="n">${fmt(x / 1e6, 0)}</span> مليون` : `<span class="n">${fmt(x / 1e6, 2)}</span> مليون`)
 
   // Revenue DCF for a loss-maker (engine/rdcf.js), US listings only (US rates): the default value,
   // the margin and growth the price implies, and a margin × growth grid. Histories come from the
@@ -1235,12 +1381,13 @@
     const q = state.quotes[sym]
     if (!SECTOR_PE || sym.startsWith('TADAWUL:') || !q) return []
     const g = SECTOR_PE.groups.find((x) => x.kind === 'industry' && x.key === q.industry) ?? SECTOR_PE.groups.find((x) => x.kind === 'sector' && x.key === q.sector)
-    const now = g?.pe.findLast((v) => v != null)
+    const at = g ? g.pe.findLastIndex((v) => v != null) : -1
+    const now = g?.pe[at]
     const pe = peNow(sym)
     if (!(now > 0)) return []
     const d = pe > 0 ? pe / now - 1 : null
     return [[`P/E مقارنة ب${g.kind === 'industry' ? 'صناعته' : 'قطاعه'}`, `${fmt(pe)} · ${fmt(now)}`,
-      `مكرر السهم ${fmt(pe)} ومكرر ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} (${nameAr(g.key)}) اليوم ${fmt(now)}: قيمة شركاتها الأمريكية السوقية كلها ÷ أرباحها. ${d == null ? 'السهم ما يربح.' : `السهم ${d >= 0 ? 'أغلى' : 'أرخص'} من ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} بـ ${pct(Math.abs(d)).replace('+', '')}.`} وسط تاريخ ${g.kind === 'industry' ? 'الصناعة' : 'القطاع'} من ${SECTOR_PE.first.slice(0, 4)}: ${fmt(g.p50)}. ضعفه: الشركات داخل الصناعة تختلف بنموها.`]]
+      `مكرر السهم ${fmt(pe)} ومكرر ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} (${nameAr(g.key)}) في ${monthAr(SECTOR_PE.months[at])} ${fmt(now)}: قيمة شركاتها الأمريكية السوقية كلها ÷ أرباحها. ${d == null ? 'السهم ما يربح.' : `السهم ${d >= 0 ? 'أغلى' : 'أرخص'} من ${g.kind === 'industry' ? 'صناعته' : 'قطاعه'} بـ ${pct(Math.abs(d)).replace('+', '')}.`} وسط تاريخ ${g.kind === 'industry' ? 'الصناعة' : 'القطاع'} من ${SECTOR_PE.first.slice(0, 4)}: ${fmt(g.p50)}. ضعفه: الشركات داخل الصناعة تختلف بنموها.`]]
   }
   // Months of cash left for a company burning it: cash and short-term investments ÷ the last 12
   // months' negative free cash flow per month.
@@ -1291,7 +1438,7 @@
       V2: ['أقل من القيمة العادلة بـ 40%', `الشرط: السعر أقل من القيمة العادلة بـ 40% أو أكثر.`],
       V3: ['مكرر الربح مقابل السوق', `مكرره ${X(v)} ومتوسط السوق ${X(b?.pe)}.`],
       V4: ['مكرر الربح مقابل القطاع', `مكرره ${X(v)} ومتوسط قطاعه ${X(ind.pe)}.`],
-      V5: ['PEG بين 0 و1', `PEG على نمو السنة الجاية المتوقع: ${X(v, 2)}.`],
+      V5: ['PEG بين 0 و1', `PEG على طريقة Simply Wall St (مكرر آخر 12 شهر ÷ نمو السنة الجاية المتوقع): ${X(v, 2)}. يختلف عن عمود PEG في القائمة (المكرر المتوقع ÷ نمو ربح السهم).`],
       V6: ['P/B مقابل القطاع', `السعر ÷ القيمة الدفترية ${X(v, 2)} ومتوسط قطاعه ${X(ind.pb, 2)}.`],
       F1: ['النمو أعلى من العائد الآمن', `نمو الربح المتوقع ${P(v)} والعائد الآمن ${P(b?.savings)}.`],
       F2: ['نمو الربح مقابل السوق', `نمو الربح المتوقع ${P(v)} والسوق ${P(b?.eg)}.`],
@@ -1318,7 +1465,7 @@
       D2: ['توزيعات عالية', `العائد ${X(v, 2)}% وأعلى ربع في السوق ${X(b?.yP75, 2)}%.`],
       D3: ['توزيعات مستقرة', 'تدفع من 10 سنين بدون نزول أكثر من 10% بأي سنة.'],
       D4: ['توزيعات تنمو', `التوزيع اليوم مقارنة بقبل 10 سنين${Number.isFinite(v) ? `: ${P(v)}` : ''}.`],
-      D5: ['الأرباح تغطي التوزيعات', `نسبة التوزيع ${X(v, 0)}% (الحد ${c.limit ?? 90}%).`],
+      D5: ['الأرباح تغطي التوزيعات', `نسبة التوزيع ${X(v, 0)}% (الحد ${q.industry === 'Real Estate Investment Trusts' ? 100 : 90}%).`],
       D6: ['التوزيعات الجاية مغطاة', `نسبة التوزيع على ربح السنة الجاية ${X(v, 0)}%.`],
     }[id] ?? [id, '']
     const icon = c.status === 'pass' ? '<i class="ck ok" aria-label="ناجح">✓</i>' : c.status === 'fail' ? '<i class="ck no" aria-label="ساقط">✕</i>' : '<i class="ck na" aria-label="ما فيه بيانات">!</i>'
@@ -1343,10 +1490,10 @@
       <div class="snowside">
         <div class="ehs"><span class="grade g-${letter}" title="درجة الأرباح (طريقة Earnings Hub): 5 مقاييس، كل واحد 0–3 حسب ربعه بين ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'أسهم S&P 500'}">${letter}</span>
           <div><b>درجة الأرباح</b> <span class="n dim">${e ? `${e.total}/15` : ''}</span>
-          <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip p${e.parts[m.key].points}" title="${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ المبيعات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>
+          <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip ${e.parts[m.key].value == null ? 'pna' : `p${e.parts[m.key].points}`}" title="${e.parts[m.key].value == null ? 'ما فيه بيانات، وتنحسب 0 في المجموع زي ما تحسبها Earnings Hub · ' : ''}${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ المبيعات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>
         <div class="stats">
           ${stat('القيمة السوقية', big(mv(q)).replace(/<[^>]+>/g, ''))}
-          ${stat('P/E', fmt(q.price_earnings_ttm))}
+          ${stat('P/E', fmt(peNow(sym)))}
           ${stat('Fwd P/E', fmt(q.non_gaap_price_to_earnings_per_share_forecast_next_fy))}
           ${stat('P/S', mv(q) > 0 && q.total_revenue_ttm > 0 ? fmt(mv(q) / q.total_revenue_ttm) : '—')}
           ${stat('الإيرادات (12 شهر)', big(q.total_revenue_ttm).replace(/<[^>]+>/g, ''), g(q.total_revenue_yoy_growth_ttm))}
@@ -1355,8 +1502,9 @@
         <div class="rr"><div><h4>المكافآت</h4>${good.length ? `<ul class="checks">${good.map((c) => checkLine(c.id, c, q, b)).join('')}</ul>` : '<p class="dim">ما فيه مكافآت بارزة من الفحوصات.</p>'}</div>
           <div><h4>المخاطر</h4>${bad.length ? `<ul class="checks">${bad.map((c) => checkLine(c.id, c, q, b)).join('')}</ul>` : '<p class="dim">ما طلعت مخاطر من فحوصاتنا.</p>'}</div></div>
       </div>
-      <details class="axes"><summary>الفحوصات الـ 30 بالتفصيل</summary>
+      <details class="axes" data-k="axes"><summary>الفحوصات الـ 30 بالتفصيل</summary>
         <div class="axgrid">${SNOW_AXES.map((a) => `<section><h4>${AXIS_AR[a]} <span class="n dim">${sn.axes[a].score}/${sn.axes[a].judged}</span></h4><ul class="checks">${sn.axes[a].checks.map((c) => checkLine(c.id, c, q, b)).join('')}</ul></section>`).join('')}</div>
+        ${b && BENCH.asOf ? `<p class="dim">متوسطات السوق والصناعة اللي نقارن فيها محسوبة في ${monthAr(BENCH.asOf.slice(0, 7))}، ما تتحدث كل يوم.</p>` : ''}
         <p class="dim">الفحوصات من نموذج Simply Wall St المنشور (رخصة CC BY-NC-SA 4.0) على بيانات TradingView، والدرجة من شرح Earnings Hub. "تقريبي" يعني بياناتنا أقل من بياناتهم (مثلاً توقع سنة وحدة بدل 3). ما اختبرناها على تاريخ أسهمنا: وصف، مو إشارة شراء.</p>
       </details>
     </div>`
@@ -1395,7 +1543,7 @@
     const fmtV = (v) => { if (key === 'eps') return fmt(v, 2); const a = Math.abs(v); return a >= 1e12 ? `${fmt(v / 1e12, 2)}T` : a >= 1e9 ? `${fmt(v / 1e9, 1)}B` : a >= 1e6 ? `${fmt(v / 1e6, 0)}M` : fmt(v, 0) }
     const bar = (v, i, cls) => (Number.isFinite(v) ? `<rect x="${(pad.l + i * bw + bw * 0.15).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${Math.max(1, Math.abs(y(v) - y(0))).toFixed(1)}" class="${cls}${v < 0 ? ' neg' : ''}"><title>${esc(rows[i]?.label ?? 'الربع الجاي (توقع)')}: ${fmtV(v)}</title></rect>` : '')
     const ticks = [hi, (hi + lo) / 2, lo].map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" class="grid"/><text x="${W - pad.r + 6}" y="${(y(t) + 4).toFixed(1)}" class="axis">${fmtV(t)}</text>`).join('')
-    const labels = rows.map((r, i) => (i % 4 === rows.length % 4 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
+    const labels = rows.map((r, i) => ((rows.length - 1 - i) % 4 === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
     return `<svg class="qchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${key === 'rev' ? 'الإيرادات' : key === 'eps' ? 'ربح السهم' : 'صافي الربح'} ربعياً" dir="ltr">
       <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--accent)" stroke-width="2"/></pattern></defs>
       ${ticks}${rows.map((r, i) => bar(r[key], i, 'act')).join('')}${Number.isFinite(est) ? bar(est, rows.length, 'est') : ''}
@@ -1428,14 +1576,20 @@
 
   // The company's own outlook, from the summary of its last earnings call (Quartr, through TradingView),
   // saved in g/<sym> and asked again only after a newer report.
+  const GUIDE_V = 2 // bump when the summary parser changes
   async function loadGuide(sym) {
     if (!mcp || state.guide[sym]?.loading) return
     if (!(sym in state.guide) && db) {
       const snap = await db.doc(`g/${sym}`).get().catch(() => null)
-      if (snap?.exists) state.guide[sym] = snap.data()
+      // POST-HOC (2026-11-10, audit 1.10): saved summaries carry the parser's version (v); one parsed by an
+      // older parser is read again once instead of being shown for ever.
+      if (snap?.exists && snap.data().v === GUIDE_V) state.guide[sym] = snap.data()
     }
     const g = state.guide[sym]
     const rep = state.quotes[sym]?.earnings_release_date
+    // POST-HOC (2026-11-10, audit 1.9): asked again at most every 20 hours (checkedAt, saved, also for "no summary"):
+    // it was 2 calls on every open while the newest summary was older than the last report.
+    if (recent(g?.checkedAt, RETRY_MS)) return
     if (g && !g.error && !(Number.isFinite(rep) && rep > (g.reported ?? 0) + 86400)) return
     if (g?.error && Date.now() - (g.at ?? 0) < 6e5) return
     state.guide[sym] = { ...(g ?? {}), loading: true }
@@ -1450,20 +1604,31 @@
       const at = kids.findIndex((k) => /outlook|guidance/i.test(text(k)) && text(k).length < 60)
       const list2 = at >= 0 ? kids.slice(at + 1).find((k) => (k.children ?? []).some((c) => c.type === 'list')) : null
       const bullets = list2 ? list2.children.filter((c) => c.type === 'list').flatMap((l) => l.children.map(text)).filter(Boolean).slice(0, 6) : []
-      state.guide[sym] = { sym, title: item.title ?? '', reported: item.reported ?? null, bullets, fetchedAt: Date.now() }
+      state.guide[sym] = { sym, title: item.title ?? '', reported: item.reported ?? null, bullets, fetchedAt: Date.now(), checkedAt: Date.now(), v: GUIDE_V }
       await save(`g/${sym}`, state.guide[sym])
     } catch (e) {
       state.guide[sym] = { ...(g ?? {}), sym, error: e?.code === 'no_doc' ? 'ما لقينا ملخص مكالمة أرباح لهالسهم.' : explainError(e), at: Date.now() }
+      if (e?.code === 'no_doc') { state.guide[sym].checkedAt = Date.now(); save(`g/${sym}`, { sym, checkedAt: Date.now(), v: GUIDE_V, ...(g?.bullets ? {} : { error: state.guide[sym].error }) }) }
     }
     if (state.open === sym) redraw(sym)
   }
 
+  // POST-HOC (2026-11-10, audit 1.7): an actual on another basis than the estimate (banks and Saudi names report
+  // gross interest income, analysts forecast net revenue: JPM "51.2B expected, 76.8B actual, −2.1%"; EPS bars are
+  // GAAP, the estimates adjusted: RIVN −0.63 vs −0.48) is told by TradingView's own surprise %. When
+  // actual ÷ estimate − 1 is more than 2 points from it, the card shows the actual on the estimate's basis
+  // (estimate × (1 + surprise)) and the chart drops that metric's estimate bar and mark.
+  const sameBasis = (est, act, surp) => !(Number.isFinite(est) && Number.isFinite(act) && Number.isFinite(surp) && est !== 0) || Math.abs((act / est - 1) * 100 * Math.sign(est) - surp) <= 2
   function earnBlock(sym) {
     const q = state.quotes[sym] || {}
+    const revOk = sameBasis(q.revenue_forecast_fq, q.total_revenue_fq, q.revenue_surprise_percent_fq)
+    const lastEps = quarters(sym).at(-1)?.eps
+    const epsOk = sameBasis(q.earnings_per_share_forecast_fq, q.earnings_per_share_fq, q.eps_surprise_percent_fq) && !(Number.isFinite(lastEps) && Number.isFinite(q.earnings_per_share_fq) && Math.abs(lastEps - q.earnings_per_share_fq) > 0.02 * Math.max(0.05, Math.abs(q.earnings_per_share_fq)))
+    const revAct = revOk ? q.total_revenue_fq : q.revenue_forecast_fq * (1 + q.revenue_surprise_percent_fq / 100)
     if (!Number.isFinite(q.earnings_per_share_fq) && !Number.isFinite(q.earnings_release_next_date) && quarters(sym).length < 4) return ''
     const when = (t) => (t === 1 ? 'بعد الإغلاق' : t === -1 ? 'قبل الافتتاح' : '')
     const day = (ts) => (Number.isFinite(ts) ? new Date(ts * 1000).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }) : '—')
-    const days = Number.isFinite(q.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - Math.floor(Date.now() / 86400000) : null
+    const days = Number.isFinite(q.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - dayNo(Date.now()) : null // audit 1.10: the chip's day, not UTC's
     const beat = (x) => (Number.isFinite(x) ? `<b class="n ${x >= 0 ? 'hi' : 'lo'}">${pct(x / 100, 1)}</b>` : '—')
     const log = Object.values(state.elog[sym]?.q ?? {})
     const beats = log.filter((r) => Number.isFinite(r.revSurp))
@@ -1471,9 +1636,9 @@
       <div class="ecards">
         ${days != null && days >= 0 ? `<div class="ecard next"><h4>التقرير الجاي ${days === 0 ? 'اليوم' : `بعد <span class="n">${days}</span> ${days === 1 ? 'يوم' : days === 2 ? 'يومين' : days <= 10 ? 'أيام' : 'يوم'}`}</h4><p>${day(q.earnings_release_next_date)} ${when(q.earnings_release_next_time)}</p>
           <div class="pair"><div><span>الإيراد المتوقع</span><b class="n">${big(q.revenue_forecast_next_fq).replace(/<[^>]+>/g, '')}</b></div><div><span>ربح السهم المتوقع</span><b class="n">${fmt(q.earnings_per_share_forecast_next_fq, 2)}</b></div></div></div>` : ''}
-        ${Number.isFinite(q.earnings_per_share_fq) ? `<div class="ecard last ${(q.eps_surprise_percent_fq ?? 0) >= 0 && (q.revenue_surprise_percent_fq ?? 0) >= 0 ? 'pos' : 'neg'}"><h4>آخر ربع</h4><p>${day(q.earnings_release_date)} ${when(q.earnings_release_time)}</p>
+        ${Number.isFinite(q.earnings_per_share_fq) ? `<div class="ecard last ${!Number.isFinite(q.eps_surprise_percent_fq) && !Number.isFinite(q.revenue_surprise_percent_fq) ? '' : (q.eps_surprise_percent_fq ?? 0) >= 0 && (q.revenue_surprise_percent_fq ?? 0) >= 0 ? 'pos' : 'neg'}"><h4>آخر ربع</h4><p>${day(q.earnings_release_date)} ${when(q.earnings_release_time)}</p>
           <table class="ptable"><thead><tr><th></th><th>المتوقع</th><th>الفعلي</th><th>الفرق</th></tr></thead><tbody>
-            <tr><th>الإيراد</th><td class="n">${big(q.revenue_forecast_fq).replace(/<[^>]+>/g, '')}</td><td class="n">${big(q.total_revenue_fq).replace(/<[^>]+>/g, '')}</td><td>${beat(q.revenue_surprise_percent_fq)}</td></tr>
+            <tr><th>الإيراد</th><td class="n">${big(q.revenue_forecast_fq).replace(/<[^>]+>/g, '')}</td><td class="n"${revOk ? '' : ' title="الإيراد المعلن على أساس ثاني (إجمالي دخل الفوائد مثلاً)، فهذا الفعلي على أساس توقع المحللين"'}>${big(revAct).replace(/<[^>]+>/g, '')}${revOk ? '' : '*'}</td><td>${beat(q.revenue_surprise_percent_fq)}</td></tr>
             <tr><th>ربح السهم</th><td class="n">${fmt(q.earnings_per_share_forecast_fq, 2)}</td><td class="n">${fmt(q.earnings_per_share_fq, 2)}</td><td>${beat(q.eps_surprise_percent_fq)}</td></tr>
           </tbody></table></div>` : ''}
       </div>
@@ -1482,12 +1647,13 @@
         if (rows.length < 4) return ''
         const v = state.eView[sym] ?? { m: 'rev', n: 16 }
         const shown = rows.slice(-v.n)
-        const est = v.m === 'rev' ? q.revenue_forecast_next_fq : v.m === 'eps' ? q.earnings_per_share_forecast_next_fq : null
-        const cur = v.m === 'rev' ? q.revenue_forecast_fq : v.m === 'eps' ? q.earnings_per_share_forecast_fq : null
+        const est = v.m === 'rev' ? (revOk ? q.revenue_forecast_next_fq : null) : v.m === 'eps' ? (epsOk ? q.earnings_per_share_forecast_next_fq : null) : null
+        const cur = v.m === 'rev' ? (revOk ? q.revenue_forecast_fq : null) : v.m === 'eps' ? (epsOk ? q.earnings_per_share_forecast_fq : null) : null
         const btn = (k, val, label) => `<button type="button" data-ev="${esc(sym)}|${k}|${val}" aria-pressed="${String(v[k]) === String(val)}">${label}</button>`
         return `<div class="qhead"><div class="seg">${btn('m', 'rev', 'الإيرادات')}${btn('m', 'ni', 'صافي الربح')}${btn('m', 'eps', 'ربح السهم')}</div><div class="seg">${btn('n', 16, '4 سنين')}${rows.length > 16 ? btn('n', 32, '8 سنين') : ''}</div></div>
           ${qChart(shown, v.m, est, cur)}
           <p class="dim legend-q"><i class="lg act"></i> الفعلي ${est != null ? '<i class="lg est"></i> توقع الربع الجاي' : ''} ${cur != null ? '<i class="lg mk"></i> المتوقع للربع الأخير' : ''}</p>
+          ${(v.m === 'rev' && !revOk) || (v.m === 'eps' && !epsOk) ? '<p class="dim">توقعات المحللين على أساس غير اللي تعلنه الشركة، فما انرسمت على هالرسم.</p>' : ''}
           ${marginView(rows)}`
       })()}
       ${(() => {
@@ -1545,7 +1711,7 @@
       ${part('السعر', p.A, `<p>أرخص من ${cheaper == null ? '<b class="n">—</b> من شهوره' : cheaper <= 0 ? '<b>أغلى من كل شهوره</b>' : cheaper >= 1 ? '<b>أرخص من كل شهوره</b>' : `<b class="n">${pct(cheaper).replace('+', '')}</b> من شهوره`} في آخر 5 سنوات (P/E، P/S، EV/EBITDA، P/FCF).</p>
         <p>${q.sector === 'Finance' ? 'للبنوك والمالية: السعر مقارنة بتاريخه بس، بدون النمو المفترض من التدفق النقدي.' : Number.isFinite(d.gStar) ? `السعر يفترض نمو تدفق نقدي <b class="n">${pct(d.gStar)}</b> سنوياً، والشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}.`
           : `${Number.isFinite(d.revG) ? `الشركة نمت إيراداتها <b class="n">${pct(d.revG)}</b> سنوياً ${gYears(sym)}. ` : ''}النمو اللي يفترضه السعر ما ينحسب: ${f0.fcf < 0 ? 'التدفق النقدي الحر سالب' : 'بيانات التدفق النقدي ناقصة'}.`}</p>`)}
-      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
+      ${part('الجودة', p.B, `<p>${marginName}: <b class="n">${pct(margin, 1)}</b></p><p>الكاش من الأرباح (آخر 3 سنوات): <b class="n">${q.sector === 'Finance' ? 'ما ينحسب للمالية' : !last3.length ? '—' : sNi > 0 ? fmt(sFcf / sNi, 2) + '×' : sFcf > 0 ? 'كاش موجب مع خسائر' : 'سالب'}</b></p>`)}
       ${part('النمو', p.C, `<p>نمو الإيراد السنوي: <b class="n">${pct(d.revG, 1)}</b></p><p>نمو ربح السهم السنوي: <b class="n">${d.epsG == null ? 'غير محسوب (خسارة)' : pct(d.epsG, 1)}</b></p>`)}
       ${part('الأمان', p.D, `<p>الدين ÷ EBITDA: <b class="n">${d.d1 == null ? 'ما ينحسب للمالية' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b></p><p>سنوات خسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b></p>`)}
       ${part('الاتجاه', p.E, `<p>نجح في <b><span class="n">${d.passed ?? '—'}</span> من <span class="n">${d.checks ?? '—'}</span></b> فحوصات تحسن (${q.sector === 'Finance' ? 'ربح، إيراد، ربح السهم، هوامش' : 'ربح، كاش، إيراد، هوامش، دين'}) مقارنة بالسنة اللي قبلها.</p>`)}
@@ -1559,7 +1725,7 @@
     if (!box) return
     const list = all.filter((i) => i.date).sort((x, y) => String(y.date).localeCompare(String(x.date))).slice(0, 25)
     box.innerHTML = list.length
-      ? `<ul class="ideas">${list.map((i) => `<li><div><b class="n">${esc((i.sym || '').split(':')[1] || i.sym)}</b> · <a dir="auto" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date)}</span></span></div>${i.summary ? `<p>${esc(i.summary)}</p>` : ''}</li>`).join('')}</ul>`
+      ? `<ul class="ideas">${list.map((i) => `<li><div><b class="n">${esc((i.sym || '').split(':')[1] || i.sym)}</b> · <a dir="auto" href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener">${esc(i.title || i.source)}</a> <span class="dim">${esc(i.source)} · <span class="n">${esc(i.date)}</span></span></div>${i.summary ? `<p>${esc(i.summary)}</p>` : ''}</li>`).join('')}</ul>`
       : '<p class="dim">ما فيه أفكار مسجلة للحين.</p>'
   }
 

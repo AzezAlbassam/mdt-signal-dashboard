@@ -24,9 +24,10 @@ export function snowflake(q, b = {}, fair = null) {
   const reit = q.industry === 'Real Estate Investment Trusts'
   const close = q.close
   const pe = q.price_earnings_ttm
-  const lossMaker = !(q.earnings_per_share_diluted_ttm > 0)
+  // POST-HOC (2026-11-10, audit 1.8): with no EPS column at all the value checks are no data, not "fail".
+  const lossMaker = fin(q.earnings_per_share_diluted_ttm) ? !(q.earnings_per_share_diluted_ttm > 0) : null
   // P/E checks fail for a loss-maker (SWS: "less than … but still greater than 0"); no P/E for another reason is no data.
-  const peBelow = (ref) => (lossMaker ? false : pos(pe) && pos(ref) ? pe < ref : null)
+  const peBelow = (ref) => (lossMaker == null ? null : lossMaker ? false : pos(pe) && pos(ref) ? pe < ref : null)
 
   // ---- Value
   add('value', 'V1', pos(fair) && pos(close) ? close <= 0.8 * fair : null, pos(fair) ? close / fair - 1 : null, true)
@@ -37,7 +38,7 @@ export function snowflake(q, b = {}, fair = null) {
   const epsF = q.earnings_per_share_forecast_next_fy
   const gE = swsGrowth(epsFY, epsF)
   const peg = pos(pe) && gE > 0 ? pe / (100 * gE) : null
-  add('value', 'V5', lossMaker ? false : gE == null || !pos(pe) ? null : peg != null && peg < 1, peg, true)
+  add('value', 'V5', lossMaker == null ? null : lossMaker ? false : gE == null || !pos(pe) ? null : peg != null && peg < 1, peg, true)
   const pb = q.price_book_fq
   add('value', 'V6', fin(pb) && pos(ind.pb) ? pb > 0 && pb < ind.pb : null, pb)
 
@@ -57,7 +58,8 @@ export function snowflake(q, b = {}, fair = null) {
   const eh = q.earnings_per_share_diluted_fy_h ?? []
   add('past', 'P2', fin(eh[0]) && fin(eh[5]) ? eh[0] > eh[5] : null, fin(eh[0]) && fin(eh[5]) ? swsGrowth(eh[5], eh[0]) : null)
   const g5 = pos(eh[0]) && pos(eh[5]) ? (eh[0] / eh[5]) ** (1 / 5) - 1 : null
-  add('past', 'P3', g1 == null || !fin(eh[5]) ? null : g5 != null && g1 > g5, g5)
+  // POST-HOC (2026-11-10, audit 1.8): no 5-year rate (a loss five years ago) is no data, not "fail".
+  add('past', 'P3', g1 == null || g5 == null ? null : g1 > g5, g5)
   add('past', 'P4', fin(q.return_on_equity) ? q.return_on_equity > 20 : null, q.return_on_equity)
   const eb = q.ebitda_fy_h ?? []
   const ta = q.total_assets_fy_h ?? []
@@ -83,7 +85,13 @@ export function snowflake(q, b = {}, fair = null) {
     add('health', 'H4', nde == null ? (fin(q.net_debt_fq) && q.net_debt_fq <= 0 ? true : null) : nde < 0.4, nde)
     const fcf = q.free_cash_flow_ttm
     const cash = q.cash_n_short_term_invest_fq
-    if (fin(fcf) && fcf < 0) {
+    // POST-HOC (2026-11-10, audit 1.8): the runway checks are for loss-makers, as the model says ("currently
+    // loss-making and loss-making on average"): EPS ≤ 0 and a negative net income over the last 3 fiscal years
+    // (just the first when that history is missing). A profitable company with negative free cash flow (utilities,
+    // capex-heavy tech: 19 of 412) is judged on debt cover; KO's row with FCF −2B and cover 8× failed both.
+    const ni = (q.net_income_fy_h ?? []).slice(0, 3).filter(fin)
+    const losing = lossMaker === true && (ni.length < 3 || ni.reduce((a, x) => a + x, 0) < 0)
+    if (losing && fin(fcf) && fcf < 0) {
       // Loss-makers: cash runway at today's burn, and at the burn's own 3-year trend.
       const runway = fin(cash) ? cash / -fcf : null
       add('health', 'H5', runway == null ? null : runway > 1, runway)
@@ -108,13 +116,16 @@ export function snowflake(q, b = {}, fair = null) {
   add('dividend', 'D1', !payer ? false : fin(b.yP25) ? y > b.yP25 : null, y)
   add('dividend', 'D2', !payer ? false : fin(b.yP75) ? y > b.yP75 : null, y)
   const notable = out.at(-2).status === 'pass'
+  // POST-HOC (2026-11-10, audit 1.8): a notable payer without the dividend history column is no data, not "fail"
+  // (the total depended on whether the stock had ever been opened: KO 13 → 17).
+  const dpsKnown = Array.isArray(q.dps_common_stock_prim_issue_fy_h)
   const dps = q.dps_common_stock_prim_issue_fy_h ?? []
   const ten = dps.slice(0, 11)
   const paid10 = ten.length >= 11 && ten.every(pos)
   const drop = paid10 && ten.slice(0, 10).some((x, i) => x < 0.9 * ten[i + 1])
   // SWS: without a notable dividend, stability and growth fail by default.
-  add('dividend', 'D3', notable ? paid10 && !drop : false)
-  add('dividend', 'D4', notable ? paid10 && dps[0] > dps[10] : false, paid10 ? swsGrowth(dps[10], dps[0]) : null)
+  add('dividend', 'D3', notable ? (dpsKnown ? paid10 && !drop : null) : false)
+  add('dividend', 'D4', notable ? (dpsKnown ? paid10 && dps[0] > dps[10] : null) : false, paid10 ? swsGrowth(dps[10], dps[0]) : null)
   const limit = reit ? 100 : 90
   const payout = q.dividend_payout_ratio_ttm > 0 ? q.dividend_payout_ratio_ttm : q.dividend_payout_ratio_fy
   add('dividend', 'D5', !payer ? false : fin(payout) ? payout > 0 && payout < limit : null, payout)

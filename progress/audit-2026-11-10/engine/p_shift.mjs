@@ -12,10 +12,10 @@ for (const f of files()) {
   const ttm = ttmAll.filter((t) => t.n <= 2025 * 4 + 4); if (!ttm.length || ttm.at(-1).n !== 2025 * 4 + 4) continue
   const c = d.closes.get('2026-04'); if (!c) continue
   const closes = new Map([...d.closes].filter(([m]) => m <= '2026-04')); 
-  const A = E.fairValuesAt(funds, closes, d.sector, '2026-04', E.liveContext(funds, ttm, '2026-04', null))
+  const A = E.fairValuesAt(funds, closes, d.sector, '2026-04', E.liveContext(funds, ttm, '2026-04', null, process.env.OLD ? null : Date.UTC(2025, 11, 31) / 1000))
   // one month later, nothing new reported, same price
   const closesB = new Map([...closes].map(([m, v]) => [E.addMonths(m, 1), v])) // the whole price history one month later: only the fiscal-year rule differs
-  const B = E.fairValuesAt(funds, closesB, d.sector, '2026-05', E.liveContext(funds, ttm, '2026-05', null))
+  const B = E.fairValuesAt(funds, closesB, d.sector, '2026-05', E.liveContext(funds, ttm, '2026-05', null, process.env.OLD ? null : Date.UTC(2025, 11, 31) / 1000))
   if (!A || !B || A.profile !== B.profile) continue
   n++
   for (const m of ['pe', 'ps', 'ev', 'pen']) if (A.values[m] > 0 && B.values[m] > 0) out[m].push(A.values[m] / B.values[m] - 1)

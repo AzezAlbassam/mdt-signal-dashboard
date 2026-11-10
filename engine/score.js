@@ -57,7 +57,12 @@ export function scoreAt(funds, closes, sector, month, live = false) {
   if (!pos(close) || known.length === 0) return { total: null, reason: 'no data' }
   if (known[known.length - 1].year < fy - 1) return { total: null, reason: 'stale fundamentals' }
   const f0 = live?.f0 ?? known[known.length - 1]
-  const f1 = live?.f0 ? live.f1 ?? (known.length > 1 ? known[known.length - 2] : null) : known.length > 1 ? known[known.length - 2] : null
+  // POST-HOC (2026-11-10, audit 1.10): twelve months with no twelve months a year before (under 8 quarters)
+  // are compared with the last fiscal year, not the one before it (two years back); only when they are that
+  // fiscal year (same revenue) does the year before it stand in.
+  const lastFy = known[known.length - 1]
+  const sameAsFy = (t) => num(t?.rev) && num(lastFy?.rev) && Math.abs(t.rev / lastFy.rev - 1) < 0.005
+  const f1 = live?.f0 ? live.f1 ?? (sameAsFy(live.f0) ? known[known.length - 2] ?? null : lastFy) : known.length > 1 ? known[known.length - 2] : null
   const S = stateFn(funds, month, live)
   const st = S(month)
   const fin = sector === 'Finance'

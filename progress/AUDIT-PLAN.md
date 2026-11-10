@@ -315,6 +315,17 @@ home-made ones; text delivered so that line breaks survive copying.
 1. **v28 — Phase 1, all of it**, plus the logging half of addition 2 (save each stock's fair value,
    price and date once a month in the db). The track record needs time to exist, so it starts now; its
    display comes in step 4.
+   **Done 2026-11-10 (v28, published).** All of 1.1–1.10 except: the big-25 pool rebuild (needs
+   `mcp-tv-run-screener` in the page's connector grant; left for a session that adds it) and the `acquire`
+   lease on list edits (edits are already serialised and refuse short reads; only two tabs editing the
+   same list at once could still race). Fair-value log in `fvlog/<bucket>` (nothing shown yet). Per-stock
+   diff: `reports/v28-today.txt` (682 stocks changed on the same snapshot; the change log carries the 614
+   fair-value moves). Test changes: the MU check expects 1627.23 (1.3), the browser check's failed-batch
+   scenario clears `stocks.bgAt` first (1.5). **Open for step 2:** 1.2 annualises what is left of the
+   forecast year over as little as a quarter, which multiplies a small mismatch between the forecast and
+   the twelve months by up to 4: KO's forecast year is 2% under its twelve months, so its DCF starts at
+   −7.6% (77.39 → 58.26) while analysts expect +4% for the year; NVO −20% (clamped), FSLR −13%. Weigh
+   this with the DCF fade-start change below (e.g. blend toward forecast ÷ last year by the time left).
 2. **v29 — the two "by reasoning" fixes of 2.2 that remove plainly wrong numbers, labelled untested:**
    - REITs (industry "Real Estate Investment Trusts"): no P/B-from-ROE leg; weights EV/EBITDA 0.5,
      P/S 0.25, 5-year-average P/E 0.25 (Study 18's option C, provisional until it reports); the score's

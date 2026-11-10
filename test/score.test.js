@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lin, impliedGrowth, scoreAt } from '../engine/score.js'
-import { addMonths, dcf } from '../engine/fairvalue.js'
+import { addMonths, dcf, liveContext } from '../engine/fairvalue.js'
 
 const funds = () =>
   Array.from({ length: 12 }, (_, i) => {
@@ -83,4 +83,17 @@ test('live: history is built on the same fiscal-year offset as today (mid-year f
   }
   const s = scoreAt(f, closes2, 'Technology Services', '2021-10', true)
   assert.equal(s.detail.pct_pe, 0.5)
+})
+
+test('live: twelve months with no year-ago twelve months are compared with the last fiscal year (audit 1.10)', () => {
+  // POST-HOC (2026-11-10, audit 1.10): twelve months at 0.98× FY2021 are below FY2021 but 9% above FY2020.
+  // Before they were compared with FY2020 ("revenue up, EPS up"), the same as 1.02×; now with FY2021.
+  const f = funds()
+  const at = (k) => {
+    const y = f.at(-1)
+    const f0 = { year: null, rev: k * y.rev, ebitda: k * y.ebitda, gp: k * y.gp, ni: k * y.ni, eps: k * y.eps, fcf: k * y.fcf, debt: y.debt }
+    return scoreAt(f, closes(), 'Technology Services', '2022-08', { ...liveContext(f, null, '2022-08'), f0, f1: null }).parts.E
+  }
+  assert.ok(at(0.98) < at(1.02), 'twelve months below the last fiscal year lose the revenue and EPS checks')
+  assert.ok(at(1) > at(0.98), 'twelve months that are the fiscal year compare with the year before it')
 })

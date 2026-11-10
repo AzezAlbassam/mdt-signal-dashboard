@@ -80,3 +80,21 @@ test('EHS: quartile points, negatives score 0, letter on the curve', () => {
   const top = ehsScore({ total_revenue_yoy_growth_ttm: 25, earnings_per_share_diluted_yoy_growth_ttm: 25, price_earnings_ttm: 10, non_gaap_price_to_earnings_per_share_forecast_next_fy: 10, price_sales_current: 1 }, fixed)
   assert.equal(top.total, 15)
 })
+
+// Audit 1.8 (POST-HOC 2026-11-10): missing columns are no data, not "fail"; the runway checks are for loss-makers.
+test('snowflake: missing histories are no data; a profitable company with negative FCF is judged on debt cover', async () => {
+  const { snowflake } = await import('../engine/snowflake.js')
+  const b = { pe: 20, eg: 0.1, rg: 0.06, yP25: 1, yP75: 3, savings: 0.045, industries: {}, sectors: {} }
+  const base = { close: 100, earnings_per_share_diluted_ttm: 4, price_earnings_ttm: 25, dividends_yield: 3.5, dividend_payout_ratio_ttm: 60, total_debt_fq: 1e9,
+    cash_f_operating_activities_ttm: 5e8, interst_cover_ttm: 8, free_cash_flow_ttm: -2e9, cash_n_short_term_invest_fq: 1e9, net_income_fy_h: [3e9, 3e9, 3e9] }
+  const ck = (q, id) => Object.values(snowflake(q, b).axes).flatMap((a) => a.checks).find((c) => c.id === id).status
+  assert.equal(ck(base, 'D3'), 'na') // notable payer, no dividend history column
+  assert.equal(ck(base, 'D4'), 'na')
+  assert.equal(ck({ ...base, dps_common_stock_prim_issue_fy_h: Array(11).fill(1) }, 'D3'), 'pass')
+  assert.equal(ck(base, 'H5'), 'pass') // debt cover 0.5 > 0.2, not a 0.5-year runway
+  assert.equal(ck(base, 'H6'), 'pass') // interest cover 8
+  assert.equal(ck({ ...base, earnings_per_share_diluted_ttm: -1, net_income_fy_h: [-1e9, -1e9, -1e9] }, 'H5'), 'fail') // a loss-maker: runway 0.5 years
+  const noEps = { ...base }; delete noEps.earnings_per_share_diluted_ttm
+  assert.equal(ck(noEps, 'V3'), 'na')
+  assert.equal(ck({ ...base, earnings_per_share_diluted_fy_h: [4, 3, 2, 1, 0.5, -1], earnings_per_share_diluted_yoy_growth_ttm: 20 }, 'P3'), 'na') // a loss five years ago
+})

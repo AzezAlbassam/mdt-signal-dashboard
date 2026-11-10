@@ -3,6 +3,10 @@
 // taking the fair value from 1539 to 1246; with the gate on the growth the method uses it is 1428.56.
 // 2026-10-23 (study 16 D2 C, adopted): P/S 539.96 is under ⅓ of the weighted median 1628.16, so it is
 // left out of the mean: (1377.68 × .2 + 1855.28 × .3 + 1628.16 × .3) ÷ .8 = 1650.71.
+// 2026-11-10 (v28, audit 1.3, post-hoc): each past month reads the fiscal year public by then (fiscal year end
+// + 3 months; MU's ends in late August) instead of waiting for May, so P/E against its own history is
+// 1283.78 (was 1377.68; 1377.68 again with the fiscal year end removed from the fixture):
+// (1283.78 × .2 + 1855.28 × .3 + 1628.16 × .3) ÷ .8 = 1627.23.
 //   node test/pages/mu-fair-check.cjs
 const path = require('path')
 const fs = require('fs')
@@ -61,7 +65,7 @@ fs.writeFileSync(tmp, html)
   await page.click('#rows tr.row')
   await page.waitForTimeout(800)
   const box = await page.$eval('#rows tr.detail .part.fv', (t) => t.innerText.replace(/\s+/g, ' ')).catch((e) => 'ERR ' + e.message)
-  const ok = /1650\.71/.test(cell) && /1855\.28/.test(box) && /P\/S مقارنة بتاريخه \(أقل من ثلثه\): بعيدة عن الوسيط الموزون/.test(box) && !logs.length
+  const ok = /1627\.23/.test(cell) && /1283\.78/.test(box) && /1855\.28/.test(box) && /P\/S مقارنة بتاريخه \(أقل من ثلثه\): بعيدة عن الوسيط الموزون/.test(box) && !logs.length
   console.log('MU CHECK:', ok ? 'ok' : 'FAILED', cell, logs)
   if (!ok) process.exitCode = 1
   await browser.close()

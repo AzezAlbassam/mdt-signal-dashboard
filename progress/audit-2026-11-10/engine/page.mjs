@@ -12,7 +12,7 @@ function cut(name) {
   for (; j < src.length; j++) { if (src[j] === '{') d++; else if (src[j] === '}') { d--; if (d === 0) break } }
   return src.slice(i + 1, j + 1)
 }
-const names = ['beta5', 'analysts', 'liveDcf', 'liveFairValues']
+const names = ['beta5', 'analysts', 'revAhead', 'liveDcf', 'liveFairValues']
 const body = names.map(cut).join('\n') + `\nreturn { ${names.join(', ')} }`
 const { PARAMS, WEIGHTS, METHODS, blendTrimmed, allShares, quoteShares } = E
 export const P = new Function('PARAMS', 'WEIGHTS', 'METHODS', 'blendTrimmed', 'allShares', 'quoteShares', body)(PARAMS, WEIGHTS, METHODS, blendTrimmed, allShares, quoteShares)

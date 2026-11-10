@@ -256,6 +256,9 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const early2 = await page.evaluate(() => window.__calls.length)
   await page.waitForTimeout(4500)
   const metaPx = await page.evaluate(() => window.__store['cache/NASDAQ:META']?.px?.t?.length ?? 0)
+  // v28 (audit 1.5): the 20-minute background window now survives a reload (localStorage stocks.bgAt), so the
+  // loads above used it up; this scenario is a first visit.
+  await page.evaluate(() => localStorage.removeItem('stocks.bgAt'))
   await page.goto('file://' + file + '?failbatch')
   await page.waitForTimeout(2500)
   const failNotice = await page.textContent('#notice')

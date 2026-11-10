@@ -109,25 +109,41 @@ export function ttmFromQuarters(resp) {
  * against 253M), and opposite signs are a loss for common holders (ALB): the reported EPS stays.
  * Returns { state(month), f0, f1, yoy, period } for scoreAt / fairValuesAt / expectationsAt.
  */
-export function liveContext(funds, ttm, month, sharesNow = null) {
+export function liveContext(funds, ttm, month, sharesNow = null, fyEnd = null) {
   const shift = liveShift(funds, month)
-  const fyState = (mk) => stateAt(funds, mk, lastUsableFiscalYear(mk) + shift)
+  // POST-HOC (2026-11-10, audit 1.3): with the last fiscal year's end date (`fyEnd`, unix seconds, the
+  // cache doc's fiscal_period_end_fy), a history month reads the fiscal years that had ended at least three
+  // months before it, each year's end a whole number of years before the last one's; today reads them all.
+  // liveShift moved every history month by a whole fiscal year decided by the "May" rule, so from February
+  // to April a December company's month 2024-06 read FY2024 (look-ahead) and everything stepped in May with
+  // no new data: 129 of 385 stocks moved more than 10% (AXON 125.5 in April, 226.4 in May).
+  const endM = Number.isFinite(fyEnd) && funds.length ? monthIndex(monthKey(fyEnd)) + 3 : null
+  const lastFy = funds.at(-1)?.year
+  const usable = (mk) => (mk === month ? Infinity : lastFy - Math.max(0, Math.ceil((endM - monthIndex(mk)) / 12)))
+  const fyState = (mk) => stateAt(funds, mk, endM != null ? usable(mk) : lastUsableFiscalYear(mk) + shift)
   // POST-HOC (2026-10-22): twelve months that end before the last fiscal year are not "now"; TradingView
   // left the recent quarters empty (RZLV: Q2 2024 against FY2025, SHMD Q4 2023, LU Q4 2024).
   if (!ttm?.length || Number(ttm.at(-1).label.slice(-4)) < (funds.at(-1)?.year ?? 0)) return { state: fyState, f0: null, f1: null, yoy: null, period: null }
   const avail = ttm.map((_, i) => addMonths(month, -3 * (ttm.length - 1 - i)))
   const sharesOf = (t) => (t.eps && t.ni && Math.sign(t.eps) === Math.sign(t.ni) ? t.ni / t.eps : null)
+  // POST-HOC (2026-11-10, audit 1.4b): a twelve-month count more than 1.5× away from at least half of its
+  // four neighbours (an EPS sum near zero: CVNA Q3 2024 gave 10,000M shares and a P/S of 37 among 2.4–3.5;
+  // MCHP 545M → 61M → 446M) takes the nearest good count, and that record's EPS is restated on it.
+  const counts = cleanCounts(ttm.map((t) => (Math.abs(t.eps ?? 0) >= 0.005 ? sharesOf(t) : null)))
   const state = (mk) => {
     const base = fyState(mk)
     let i = -1
     for (let j = 0; j < ttm.length; j += 1) if (avail[j] <= mk) i = j
     if (i < 0 || !base) return base
     const t = ttm[i]
-    let shares = sharesOf(t) ?? base.shares
-    let eps = t.eps
-    if (mk === month && pos(sharesNow) && !(pos(shares) && Math.abs(shares / sharesNow - 1) <= 0.1)) {
+    let shares = counts[i] ?? base.shares
+    let eps = counts[i] != null && sharesOf(t) != null && counts[i] !== sharesOf(t) ? t.ni / counts[i] : t.eps
+    // POST-HOC (2026-11-10, audit 1.4a): today's per-share values always use today's count (market value
+    // ÷ price), as the DCF beside them does; a weighted count within 10% was kept before (RIVN: 1.321B
+    // against 1.456B, P/S 2.86 for 3.15, upside +5% for −2%). EPS is still restated only on dilution over 10%.
+    if (mk === month && pos(sharesNow)) {
+      if (counts[i] != null && sharesNow > 1.1 * counts[i]) eps = t.ni / sharesNow
       shares = sharesNow
-      if (sharesOf(t) && sharesNow > sharesOf(t)) eps = t.ni / sharesNow
     }
     return { ...base, period: t.label, eps, rev: t.rev, ebitda: t.ebitda, debt: t.debt ?? base.debt,
       shares, revPS: pos(shares) && t.rev != null ? t.rev / shares : null, fcfPS: pos(shares) && t.fcf != null ? t.fcf / shares : null }
@@ -135,6 +151,23 @@ export function liveContext(funds, ttm, month, sharesNow = null) {
   const rec = (t) => t && { year: null, period: t.label, rev: t.rev, ni: t.ni, eps: t.eps, fcf: t.fcf, ebitda: t.ebitda, debt: t.debt, gp: t.gp, shares: sharesOf(t) }
   const last = ttm[ttm.length - 1]
   return { state, f0: rec(last), f1: rec(last.prev), yoy: last.revYoY, period: last.label }
+}
+
+/** Share counts with isolated outliers replaced by the nearest good one (a count is good when it is within
+ *  1.5× of at least half of the up to four counts around it); nulls stay null. */
+export function cleanCounts(counts) {
+  const near = (a, b) => pos(a) && pos(b) && a > b / 1.5 && a < b * 1.5
+  const good = counts.map((c, i) => {
+    if (!pos(c)) return null
+    const nb = [...counts.slice(Math.max(0, i - 2), i), ...counts.slice(i + 1, i + 3)].filter(pos)
+    return !nb.length || nb.filter((x) => near(c, x)).length >= Math.ceil(nb.length / 2) ? c : null
+  })
+  return counts.map((c, i) => {
+    if (good[i] != null || !pos(c)) return good[i]
+    let best = null
+    for (let j = 0; j < good.length; j += 1) if (good[j] != null && (best == null || Math.abs(j - i) < Math.abs(best - i))) best = j
+    return best == null ? c : good[best]
+  })
 }
 
 /**
@@ -186,6 +219,8 @@ export function monthKey(unixSec) {
   const d = new Date(unixSec * 1000)
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
 }
+
+const monthIndex = (month) => { const [y, m] = month.split('-').map(Number); return y * 12 + m - 1 }
 
 export function addMonths(month, k) {
   const [y, m] = month.split('-').map(Number)

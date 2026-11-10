@@ -174,11 +174,14 @@ test('quarters with a repeated label are numbered by position back from the last
   assert.equal(t.at(-1).rev, 13 + 14 + 15 + 16)
 })
 
-test('live context: today\'s share count replaces a weighted average more than 10% off, and EPS follows it (POST-HOC)', async () => {
+test('live context: today\'s share count is used today, and EPS follows it on dilution over 10% (POST-HOC)', async () => {
   const { liveContext } = await import('../engine/fairvalue.js')
   const f = funds()
   const ttm = [{ label: 'Q3 2021', n: 0, rev: 600, ni: 60, eps: 6, fcf: 48, ebitda: 100, gp: 240, debt: 8, prev: null, revYoY: 0.4 }] // 10 shares
-  assert.equal(liveContext(f, ttm, '2021-10', 10.5).state('2021-10').shares, 10) // 5% off: kept
+  // POST-HOC (2026-11-10, audit 1.4a): 5% off is today's count too (RIVN); EPS is kept
+  const near = liveContext(f, ttm, '2021-10', 10.5).state('2021-10')
+  assert.equal(near.shares, 10.5)
+  assert.equal(near.eps, 6)
   const st = liveContext(f, ttm, '2021-10', 12).state('2021-10') // 20% more shares today (an offering)
   assert.equal(st.shares, 12)
   assert.equal(st.eps, 60 / 12)
@@ -235,4 +238,35 @@ test('blendTrimmed (study 16 D2 C): a method above 3× or below ⅓ of the weigh
   assert.deepEqual(two.dropped, [])
   assert.equal(two.fair, blend({ pe: 10, dcf: 100 }, noGraham).fair)
   assert.equal(blendTrimmed({}, noGraham), null)
+})
+
+// Audit 1.3: with the last fiscal year's end date, history months read only fiscal years that had ended
+// three months before them, and the view does not step when the calendar passes May.
+test('liveContext with fyEnd: no look-ahead and no step in May', async () => {
+  const { liveContext } = await import('../engine/fairvalue.js')
+  const funds = [2019, 2020, 2021, 2022, 2023, 2024, 2025].map((y) => ({ year: y, eps: y - 2018, rev: 10, shares: 1 }))
+  const dec = Date.UTC(2025, 11, 31) / 1000
+  const read = (now) => { const S = liveContext(funds, null, now, null, dec).state; return ['2023-06', '2023-12', '2024-03', '2024-06', '2025-01', '2025-04'].map((m) => S(m).fiscalYear) }
+  assert.deepEqual(read('2026-04'), [2022, 2022, 2023, 2023, 2023, 2024])
+  assert.deepEqual(read('2026-05'), read('2026-04'))
+  assert.equal(liveContext(funds, null, '2026-04', null, dec).state('2026-04').fiscalYear, 2025) // today reads every reported year
+  // a June year (MSFT): FY2025 ends 2025-06, usable from 2025-09
+  const jun = Date.UTC(2026, 5, 30) / 1000
+  const f = [...funds, { year: 2026, eps: 8, rev: 10, shares: 1 }]
+  const S = liveContext(f, null, '2026-10', null, jun).state
+  assert.deepEqual(['2025-08', '2025-09', '2026-09'].map((m) => S(m).fiscalYear), [2024, 2025, 2026])
+})
+
+// Audit 1.4b: an EPS sum near zero gives an absurd count for one record; it takes its neighbour's.
+test('cleanCounts and live history counts', async () => {
+  const { cleanCounts, liveContext } = await import('../engine/fairvalue.js')
+  assert.deepEqual(cleanCounts([200, 205, 10000, 210, 212]), [200, 205, 205, 210, 212])
+  assert.deepEqual(cleanCounts([545, 61, 446, 500, null]), [545, 545, 446, 500, null])
+  const f = funds()
+  const q = (n, eps) => ({ label: `Q${n} 2021`, n, rev: 600, ni: 60, eps, fcf: 48, ebitda: 100, gp: 240, debt: 8, prev: null, revYoY: 0 })
+  const ttm = [q(1, 6), q(2, 6), q(3, 0.006), q(4, 6), q(5, 6)]
+  const live = liveContext(f, ttm, '2021-10', 10)
+  const st = live.state('2021-04') // the 0.006 record (10,000 shares)
+  assert.equal(st.shares, 10)
+  assert.equal(st.eps, 6)
 })
