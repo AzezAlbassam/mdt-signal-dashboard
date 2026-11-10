@@ -73,6 +73,33 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 .shot figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
 .links a { color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; }
+/* X preview: the cut where X shows "Show more" (marker drawn by CSS, so copying never picks it up) */
+.body .cut::before { content: "✂ Show more"; display: inline-block; margin: 6px 0; padding: 0 8px; border-radius: 99px; border: 1px dashed var(--warn); color: var(--warn); font: 600 11px var(--mono); }
+.body .tail { color: color-mix(in srgb, var(--fg) 62%, transparent); }
+.count.over { color: var(--warn); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.seg button { border: 0; background: none; color: var(--muted); padding: 5px 12px; font-size: 13px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--soft); color: var(--fg); }
+/* Feedback: a thumb, then why, a note and a rewrite request, saved on the tweet */
+.fb { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+.fb .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fb .lbl { color: var(--muted); font-size: 13px; }
+.thumb { width: 40px; height: 36px; border-radius: 99px; border: 1px solid var(--line); background: var(--soft); font-size: 17px; }
+.thumb[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--soft)); }
+.why { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 99px; padding: 3px 12px; font-size: 13px; }
+.why[aria-pressed="true"] { border-color: var(--warn); color: var(--fg); background: color-mix(in srgb, var(--warn) 16%, transparent); }
+textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; color: var(--fg); background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; resize: vertical; }
+.btn.warn { border-color: var(--warn); color: var(--warn); }
+/* Idea inbox */
+.inbox { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 10px; }
+.inbox .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.inbox .file { color: var(--muted); font-size: 13px; }
+.inbox ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.inbox li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.inbox li img { grid-column: 1 / -1; max-height: 220px; width: auto; max-width: 100%; border-radius: 10px; border: 1px solid var(--line); }
+.inbox li .st { font-size: 12px; color: var(--muted); }
+.inbox li .st.used { color: var(--good); }
+.inbox li p { white-space: pre-wrap; overflow-wrap: anywhere; }
 .toast { position: fixed; inset-inline: 0; bottom: max(16px, env(safe-area-inset-bottom, 0px)); margin: 0 auto; width: fit-content; background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: 99px; font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) { .tw { transition: border-color .2s; } }
 </style>
@@ -89,6 +116,13 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
   </nav>
   <section class="list" id="list" aria-live="polite">
     <div class="empty"><b>جاري تحميل التغريدات…</b><p class="lead">أول ما توصل، تطلع هنا مرتبة حسب يوم نشرها.</p></div>
+  </section>
+  <section class="inbox" id="inbox" aria-labelledby="inboxH" hidden>
+    <h2 id="inboxH">عندك فكرة؟</h2>
+    <p class="lead">اكتبها أو ارفع صورة شاشة لتغريدة عجبتك. الجولة الجاية تبدأ منها قبل أي فكرة ثانية، وأرقامها تنجاب من جديد وتتأكد.</p>
+    <textarea id="ideaText" rows="3" dir="auto" placeholder="الفكرة، أو رابط، أو وش عجبك فيها" aria-label="الفكرة"></textarea>
+    <div class="row"><label class="file" id="fileWrap" hidden>📎 صورة: <input type="file" id="ideaFile" accept="image/*"></label><button class="btn primary" type="button" id="ideaSend">أرسل</button></div>
+    <ul id="inboxList"></ul>
   </section>
   <details class="bank" id="bank"><summary>بنك الأفكار</summary><p class="lead" style="margin-top:8px">كل تغريدة تاخذ فكرة ما انكتبت قريب، عشان ما تتكرر.</p><ul class="ideas" id="ideas"></ul></details>
 </div>
@@ -121,9 +155,70 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 
   // A thread: the text's parts separated by a line of three or more dashes, posted as replies in order.
   const parts = (t) => String(t.text ?? '').split(/\n\s*-{3,}\s*\n/).map((x) => x.trim()).filter(Boolean)
+  // X counts most characters 1 and others (emoji, CJK) 2; a link is 23 (twitter-text's weighting). A long post
+  // shows its first 280 before "Show more"; a thread's every part must fit in 280.
+  const LIMIT = 280
+  const seg = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter() : null
+  const cpW = (c) => (c <= 4351 || (c >= 8192 && c <= 8205) || (c >= 8208 && c <= 8223) || (c >= 8242 && c <= 8247) ? 1 : 2)
+  function units(text) { // [[start, end, weight]]
+    const out = []
+    const re = /https?:\/\/\S+/g
+    let at = 0
+    const plain = (str, off) => { for (const g of seg ? [...seg.segment(str)].map((x) => x.segment) : [...str]) { out.push([off, off + g.length, /\p{Extended_Pictographic}/u.test(g) ? 2 : [...g].reduce((a, ch) => a + cpW(ch.codePointAt(0)), 0)]); off += g.length } }
+    for (const m of String(text ?? '').matchAll(re)) { plain(text.slice(at, m.index), at); out.push([m.index, m.index + m[0].length, 23]); at = m.index + m[0].length }
+    plain(String(text ?? '').slice(at), at)
+    return out
+  }
+  const xLen = (text) => units(text).reduce((a, u) => a + u[2], 0)
+  // ponytail: X breaks the preview near 280 at a word boundary; marked at the last space before it (within 40).
+  const cutAt = (text) => { let w = 0; for (const [a, , k] of units(text)) { w += k; if (w > LIMIT) { const sp = Math.max(text.lastIndexOf(' ', a), text.lastIndexOf('\n', a)); return sp > a - 40 && sp > 0 ? sp : a } } return -1 }
+  // A thread from a text without "---" lines: paragraphs packed into parts of at most 280, a long paragraph
+  // by its lines, then sentences, then words.
+  const SEPS = [[/\n{2,}/, '\n\n'], [/\n/, '\n'], [/(?<=[.!?؟…])\s+/, ' '], [/ +/, ' ']]
+  function autoSplit(text, k = 0) {
+    if (xLen(text) <= LIMIT || k >= SEPS.length) return [text]
+    const [re, join] = SEPS[k]
+    const out = []
+    let cur = ''
+    for (const piece of text.split(re).map((x) => x.trim()).filter(Boolean)) {
+      const next = cur ? cur + join + piece : piece
+      if (xLen(next) <= LIMIT || !cur) cur = next
+      else { out.push(cur); cur = piece }
+    }
+    if (cur) out.push(cur)
+    return out.flatMap((c) => autoSplit(c, k + 1))
+  }
+  const hasSep = (t) => /\n\s*-{3,}\s*\n/.test(String(t.text ?? ''))
+  const formatOf = (t) => t.format ?? (hasSep(t) ? 'thread' : 'post')
+  // What is shown and copied: one long post (parts joined by a blank line) or the thread's parts.
+  const pieces = (t) => (formatOf(t) === 'post' ? [parts(t).join('\n\n')] : hasSep(t) ? parts(t) : autoSplit(parts(t).join('\n\n')))
+  // The body with X's cut marked: the part after the first 280 is dimmed (long post) — the marker is CSS-only.
+  const bodyHtml = (x, single) => { const c = single ? cutAt(x) : -1; return c < 0 ? deco(x) : `${deco(x.slice(0, c))}<span class="cut" role="note" aria-label="هنا يقطعها X بـ Show more"></span><span class="tail">${deco(x.slice(c))}</span>` }
+  const REASONS = ['الفكرة', 'السهم', 'الطول', 'الأسلوب', 'الصورة']
   const deco = (text) => esc(text).replace(/(^|[\s(])([$#][A-Za-z؀-ۿ_][\w.؀-ۿ]*)/g, '$1<span class="tag">$2</span>')
 
+  function fbHtml(t) {
+    if (!db) return ''
+    const f = t.feedback ?? {}
+    const id = esc(t.id)
+    return `<div class="fb">
+      <div class="row"><span class="lbl">رأيك؟</span><button class="thumb" type="button" data-vote="${id}|up" aria-pressed="${f.vote === 'up'}" aria-label="عجبتني">👍</button><button class="thumb" type="button" data-vote="${id}|down" aria-pressed="${f.vote === 'down'}" aria-label="ما عجبتني">👎</button>
+        <button class="btn ${f.rewrite ? 'warn' : ''}" type="button" data-rewrite="${id}" aria-pressed="${!!f.rewrite}">${f.rewrite ? 'بنكتبها من جديد بالجولة الجاية · إلغاء' : 'اكتب بدالها'}</button></div>
+      ${f.vote || f.rewrite ? `<div class="row"><span class="lbl">${f.vote === 'up' ? 'وش عجبك؟' : 'وش ما عجبك؟'}</span>${REASONS.map((r) => `<button class="why" type="button" data-why="${id}|${esc(r)}" aria-pressed="${(f.reasons ?? []).includes(r)}">${esc(r)}</button>`).join('')}</div>
+      <textarea rows="2" dir="auto" data-note="${id}" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة على التغريدة">${esc(f.note ?? '')}</textarea>
+      <div class="row"><button class="btn" type="button" data-savenote="${id}">حفظ الملاحظة</button></div>` : ''}
+    </div>`
+  }
+
   function render() {
+    // keep notes being typed across redraws (a snapshot can arrive mid-typing)
+    const drafts = new Map([...document.querySelectorAll('textarea[data-note]')].map((n) => [n.dataset.note, n.value]))
+    const focused = document.activeElement?.dataset?.note
+    draw()
+    for (const n of document.querySelectorAll('textarea[data-note]')) if (drafts.has(n.dataset.note)) n.value = drafts.get(n.dataset.note)
+    if (focused) document.querySelector(`textarea[data-note="${CSS.escape(focused)}"]`)?.focus()
+  }
+  function draw() {
     const ws = weeks()
     const i = ws.indexOf(week)
     $('weekName').textContent = week === sundayOf(today) ? 'هالأسبوع' : `أسبوع ${fmtDay(week, { day: 'numeric', month: 'long' })}`
@@ -136,13 +231,15 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
         <div class="head"><span class="day">${fmtDay(t.date, { weekday: 'long', day: 'numeric', month: 'long' })}</span><span class="chip">${esc(FAMILY[t.family] ?? t.family ?? '')}</span>
           <span class="state ${t.status === 'posted' ? 'done' : 'draft'}">${t.status === 'posted' ? 'نُشرت' : 'جاهزة للنشر'}</span></div>
         ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
-        ${parts(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count">${[...x].length} حرف</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${deco(x)}</div>`).join('')}
+        ${pieces(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count ${xLen(x) > LIMIT ? 'over' : ''}">${xLen(x)} / ${LIMIT}${xLen(x) > LIMIT ? ' — أطول من تغريدة' : ''}</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${bodyHtml(x, a.length === 1)}</div>`).join('')}
         ${t.charts?.length ? `<div class="shots">${t.charts.map((c, i) => `<figure class="shot"><img data-shot="${esc(t.id)}|${i}" alt="${esc(c.title)}"><figcaption><span>${esc(c.title)}</span><button class="btn" type="button" data-save="${esc(t.id)}|${i}" hidden>حفظ الصورة</button><span class="hint" hidden>اضغط مطوّل على الصورة واحفظها</span></figcaption></figure>`).join('')}</div>` : ''}
         ${t.photos?.length ? `<div class="shots">${t.photos.map((ph, i) => `<figure class="shot">${ph.kind === 'video' ? `<video class="photo" src="${esc(ph.src)}" controls playsinline preload="metadata"></video>` : `<img class="photo" src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy">`}<figcaption><span>${esc(ph.caption)}</span>${ph.credit ? `<span class="credit">${ph.page ? `<a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>` : esc(ph.credit)}</span>` : ''}<button class="btn" type="button" data-photo="${esc(t.id)}|${i}" hidden>حفظ الصورة</button></figcaption></figure>`).join('')}</div>` : ''}
         ${t.links?.length ? `<div class="links">${t.links.filter((l) => /^https:\/\/(www\.)?tradingview\.com\//.test(l.url)).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>` : ''}
-        <div class="foot">${parts(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
+        <div class="foot">${pieces(t).length > 1 ? '' : `<button class="btn primary" type="button" data-copy="${esc(t.id)}|0">نسخ</button>`}
           <button class="btn ${t.status === 'posted' ? 'ok' : ''}" type="button" data-post="${esc(t.id)}" aria-pressed="${t.status === 'posted'}">${t.status === 'posted' ? '✓ نشرتها' : 'علّم إنها نُشرت'}</button>
-          <span class="count">${parts(t).length > 1 ? `ثريد من ${parts(t).length} تغريدات` : `${[...(t.text ?? '')].length} حرف`}</span></div>
+          <span class="seg" role="group" aria-label="شكل النشر"><button type="button" data-format="${esc(t.id)}|post" aria-pressed="${formatOf(t) === 'post'}">تغريدة وحدة</button><button type="button" data-format="${esc(t.id)}|thread" aria-pressed="${formatOf(t) === 'thread'}">ثريد</button></span>
+          <span class="count">${pieces(t).length > 1 ? `ثريد من ${pieces(t).length} تغريدات` : `${xLen(pieces(t)[0])} حرف بعدّ X${xLen(pieces(t)[0]) > LIMIT ? ' · أول 280 تطلع قبل Show more' : ''}`}</span></div>
+        ${fbHtml(t)}
         ${t.facts?.length ? `<details class="src"><summary>من وين الأرقام (${t.facts.length})</summary><ul>${t.facts.map((f) => `<li>${esc(f.claim)}: <b>${esc(f.value)}</b> — ${esc(f.source)}${f.as_of ? `، ${esc(f.as_of)}` : ''}</li>`).join('')}</ul></details>` : ''}
       </article>`).join('')
       : `<div class="empty"><b>${tweets.length ? 'ما فيه تغريدات بهالأسبوع' : 'للحين ما فيه تغريدات'}</b><p class="lead">كل يومين تنضاف تغريدة جديدة هنا تلقائياً.</p></div>`
@@ -253,12 +350,59 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 
   function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true }, 1800) }
 
+  // One write at a time per tweet doc (the db's rule); the latest state wins.
+  const writing = {}
+  const write = (id, data) => (writing[id] = (writing[id] ?? Promise.resolve()).catch(() => {}).then(() => db.collection('tweets').doc(id).update(data)))
+
+  // ---- Idea inbox: inbox/<auto id> {text, asset_id, src, createdAt, status: 'new' | 'used', usedIn}
+  let inbox = []
+  let assets = null
+  const safeSrc = (u) => (/^(\/_blob\/|https:\/\/)/.test(String(u ?? '')) ? u : '')
+  function renderInbox() {
+    $('inbox').hidden = !db
+    $('fileWrap').hidden = !assets
+    $('inboxList').innerHTML = inbox.slice(0, 12).map((x) => `<li>
+      <p dir="auto">${esc(x.text) || '<span class="lead">صورة بدون نص</span>'}</p>
+      <button class="btn" type="button" data-drop="${esc(x.id)}" aria-label="شيل الفكرة">شيل</button>
+      ${safeSrc(x.src) ? `<img src="${esc(safeSrc(x.src))}" alt="الصورة المرفقة" loading="lazy">` : ''}
+      <span class="st ${x.status === 'used' ? 'used' : ''}">${x.status === 'used' ? `انكتبت${x.usedIn ? ` · ${fmtDay(x.usedIn, { day: 'numeric', month: 'long' })}` : ''}` : `جديدة${Number.isFinite(Date.parse(x.createdAt)) ? ` · ${new Date(x.createdAt).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long' })}` : ''}`}</span>
+    </li>`).join('')
+  }
+  const UPLOAD_ERR = { too_large: 'الصورة كبيرة، جرّب وحدة أصغر.', unsupported_type: 'هذا النوع ما ينرفع، جرّب صورة PNG أو JPG.', quota_exceeded: 'المساحة امتلت.', not_granted: 'ما عندك صلاحية ترفع صور هنا.' }
+  $('ideaSend').addEventListener('click', async () => {
+    const text = $('ideaText').value.trim().slice(0, 4000)
+    const file = $('ideaFile').files?.[0]
+    if (!db || (!text && !file)) { toast('اكتب الفكرة أو اختر صورة'); return }
+    const b = $('ideaSend'); b.disabled = true
+    try {
+      let up = null
+      if (file && assets) {
+        try { up = await assets.upload(file) } catch (err) { toast(UPLOAD_ERR[err?.code] ?? 'ما انرفعت الصورة. جرّب مرة ثانية.'); return }
+      }
+      await db.collection('inbox').add({ text, asset_id: up?.id ?? null, src: up?.url ?? null, createdAt: new Date().toISOString(), status: 'new' })
+      $('ideaText').value = ''; $('ideaFile').value = ''
+      toast('وصلت، الجولة الجاية تبدأ منها')
+    } catch { toast('ما قدرت أحفظها. جرّب مرة ثانية.') } finally { b.disabled = false }
+  })
+  $('inboxList').addEventListener('click', async (e) => {
+    const d = e.target.closest('[data-drop]')
+    if (!d || !db) return
+    const x = inbox.find((y) => y.id === d.dataset.drop)
+    if (!x) return
+    if (d.dataset.armed !== '1') { d.dataset.armed = '1'; d.textContent = 'متأكد؟'; setTimeout(() => { d.dataset.armed = ''; d.textContent = 'شيل' }, 4000); return }
+    d.disabled = true
+    try {
+      await db.collection('inbox').doc(x.id).delete()
+      if (x.asset_id && assets) await assets.delete(x.asset_id).catch(() => {})
+    } catch { toast('ما قدرت أشيلها.'); d.disabled = false }
+  })
+
   $('list').addEventListener('click', async (e) => {
     const c = e.target.closest('[data-copy]')
     if (c) {
       const [id, k = '0'] = c.dataset.copy.split('|')
       const t = tweets.find((x) => x.id === id)
-      try { await navigator.clipboard.writeText(parts(t)[+k]); toast('انتسخت') } catch {
+      try { await navigator.clipboard.writeText(pieces(t)[+k]); toast('انتسخت') } catch {
         const r = document.createRange(); r.selectNodeContents($(`body-${id}-${k}`)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('حدّدتها لك، انسخها')
       }
       return
@@ -281,6 +425,30 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
       try { const s = await drawOne(t, +i); await downloads.save({ filename: `${id}-${(t.tickers?.[0] ?? 'chart')}-${+i + 1}.png`, data: s.blob }); toast('انحفظت') } catch (err) { if (err?.code !== 'declined') toast('ما انحفظت. اضغط مطوّل على الصورة واحفظها.') }
       return
     }
+    const fm = e.target.closest('[data-format]')
+    if (fm && db) {
+      const [id, format] = fm.dataset.format.split('|')
+      const t = tweets.find((x) => x.id === id)
+      if (formatOf(t) === format) return
+      t.format = format; render()
+      write(id, { format }).catch(() => toast('ما قدرت أحفظ. جرّب مرة ثانية.'))
+      return
+    }
+    const v = e.target.closest('[data-vote],[data-why],[data-rewrite],[data-savenote]')
+    if (v && db) {
+      const id = (v.dataset.vote ?? v.dataset.why ?? v.dataset.rewrite ?? v.dataset.savenote).split('|')[0]
+      const t = tweets.find((x) => x.id === id)
+      const f = { vote: null, reasons: [], note: '', rewrite: false, ...(t.feedback ?? {}) }
+      const note = document.querySelector(`textarea[data-note="${CSS.escape(id)}"]`)
+      if (note) f.note = note.value.trim().slice(0, 2000)
+      if (v.dataset.vote) { const vote = v.dataset.vote.split('|')[1]; f.vote = f.vote === vote ? null : vote }
+      if (v.dataset.why) { const r = v.dataset.why.split('|')[1]; f.reasons = f.reasons.includes(r) ? f.reasons.filter((x) => x !== r) : [...f.reasons, r] }
+      if (v.dataset.rewrite) f.rewrite = !f.rewrite
+      f.at = new Date().toISOString()
+      t.feedback = f; render()
+      write(id, { feedback: f }).then(() => { if (v.dataset.savenote || v.dataset.rewrite) toast(v.dataset.rewrite ? (f.rewrite ? 'تمام، بنكتب بدالها' : 'ألغيت الطلب') : 'انحفظت') }, () => toast('ما قدرت أحفظ. جرّب مرة ثانية.'))
+      return
+    }
     const p = e.target.closest('[data-post]')
     if (p && db) {
       const t = tweets.find((x) => x.id === p.dataset.post)
@@ -296,7 +464,7 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
 
   pick(); render()
   ;(async () => {
-    ;[mcp, downloads] = await Promise.all(['mcp', 'downloads'].map((n) => Promise.resolve(window.claude?.use?.(n)).catch(() => null)))
+    ;[mcp, downloads, assets] = await Promise.all(['mcp', 'downloads', 'assets'].map((n) => Promise.resolve(window.claude?.use?.(n)).catch(() => null)))
     db = await window.claude?.use?.('db').catch?.(() => null) ?? null
     if (!db) { $('list').innerHTML = '<div class="empty"><b>ما قدرت أوصل للتغريدات المحفوظة</b><p class="lead">افتح الصفحة من claude.ai وأنت مسجل دخول.</p></div>'; return }
     db.collection('tweets').onSnapshot((snap) => {
@@ -304,6 +472,11 @@ details.bank summary { cursor: pointer; font: 600 16px var(--display); }
       pick(); render()
     }, () => { $('list').innerHTML = '<div class="empty"><b>انقطع الاتصال بالتغريدات المحفوظة</b><p class="lead">حدّث الصفحة.</p></div>' })
     db.doc('meta/ideas').onSnapshot((d) => { ideas = d.exists ? (d.data().ideas ?? []) : []; render() }, () => {})
+    renderInbox()
+    db.collection('inbox').onSnapshot((snap) => {
+      inbox = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+      renderInbox()
+    }, () => {})
   })()
 })()
 </script>

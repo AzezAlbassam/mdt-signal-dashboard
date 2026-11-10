@@ -345,6 +345,11 @@ home-made ones; text delivered so that line breaks survive copying.
    revenue growth negative from the SanDisk spin-off; MPWR 650 → 261).
 3. **Tweets page, small items (5.1, 5.2, 5.5)** in `pages/tweets.html`: feedback buttons, idea inbox,
    280-character mark and post/thread switch. Independent of the dashboard; do it right after step 2.
+   **Done 2026-11-10 (tweets page version 7, published):** 👍/👎, reason chips, note and "اكتب بدالها" saved as
+   `feedback` on the tweet; idea inbox (text + screenshot through `assets`) in `inbox/`; X's weighted count
+   with the "Show more" cut marked (CSS-only, never copied) and a post/thread switch saved as `format`
+   (a thread without "---" lines is split into parts of at most 280). The routine's prompt now has a step 0
+   for all of it and is versioned in `progress/TWEETS-ROUTINE.md`. Check: `test/pages/tweets-check.cjs`.
 4. **v30 — Phase 3 items 1–5** (the phone list and panel), then **additions 1, 2 (display), 3, 4, 5** as
    v31. The cycle warning (addition 1) is descriptive, so it does not wait for Study 18.
 5. **Study 18** (E1–E4): protocol and scripts committed before any result, run on the saved data
