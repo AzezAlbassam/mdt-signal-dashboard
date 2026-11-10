@@ -359,6 +359,13 @@ home-made ones; text delivered so that line breaks survive copying.
    Not done from Phase 3: 6 (boot), 7 (consistency), 8 (own tab); `content-visibility` was tried and left out
    (sorting faster, scrolling slower). The probe falls back to the first drawn row for LCID/MSFT (not drawn
    until scrolled to); `measure.cjs` sets `stocks.rows = all` and treats a deliberate "…" with a title as fine.
+   **v31 done 2026-11-10 (published):** additions 1–5. Cycle warning only in cyclical sectors (heavy + electronic
+   technology) and only with both signals (margin > 2× its 10-year median and > +5 points, EPS > 2× its 5-year
+   average): 25 of 700 US stocks on the snapshot; either signal in any sector flagged 97 (AMZN, CRM, DDOG).
+   Track record in the panel and a list hit rate (price moved toward the fair value given 12 months earlier,
+   5% band = no call, weak estimates out) once 20 such stocks exist. Reports in 14 days strip, 52-week and target
+   bars (`recommendation_total` = analyst count, checked live: AAPL 48), sort "furthest from 52-week high".
+   Values unchanged on the snapshot.
 5. **Study 18** (E1–E4): protocol and scripts committed before any result, run on the saved data
    (`data/fv`, `data/fv8`; no new TradingView calls beyond one batch for industries), then apply what
    passes as v32 and say what did not.

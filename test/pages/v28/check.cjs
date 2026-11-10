@@ -175,6 +175,24 @@ const CASES = {
     const ok = r.first === 60 && r.more === 120 && r.starRebuilds === 0 && r.panelRebuilds === 0 && r.bar === 1 && r.all === 130
     return [ok, JSON.stringify(r)]
   },
+  // v31 (additions 2–5): a report in 3 days is in the strip; the panel shows the 52-week and target bars; a log
+  // entry from 12 months ago gives "قبل سنة قلنا …" with its verdict.
+  async v31() {
+    const r = await run((G, St, M, s) => {
+      Object.assign(M.quotes[s], { earnings_release_next_date: Math.floor(Date.now() / 1000) + 3 * 86400, earnings_per_share_forecast_next_fq: 1.1, revenue_forecast_next_fq: 2.6e10,
+        price_52_week_low: 70, price_52_week_high: 130, price_target_low: 90, price_target_1y: 115, price_target_high: 140, recommendation_total: 12 })
+      const b = 'b' + String([...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % 32).padStart(2, '0')
+      const d = new Date(); d.setUTCDate(15); d.setUTCMonth(d.getUTCMonth() - 12)
+      St['fvlog/' + b] = { ['m' + d.toISOString().slice(0, 7).replace('-', '_')]: { NASDAQ_AAA: { sym: s, fair: 120, close: 80, day: d.toISOString().slice(0, 10), weak: false } } }
+    }, async ({ page }) => {
+      const soon = await page.evaluate(() => ({ hidden: document.getElementById('soon').hidden, items: document.querySelectorAll('#soonList li').length, text: document.getElementById('soonList').textContent.replace(/\s+/g, ' ') }))
+      await page.click('#rows tr.row'); await page.waitForTimeout(1200)
+      const panel = await page.evaluate(() => { const d = document.querySelector('#rows tr.detail'); return { bars: d.querySelectorAll('.part.range .rbar').length, analysts: /12 محلل/.test(d.innerText), track: d.querySelector('.part.track')?.innerText.replace(/\s+/g, ' ') ?? '' } })
+      return { soon, panel }
+    })
+    const ok = !r.soon.hidden && r.soon.items === 1 && /بعد 3 أيام/.test(r.soon.text) && r.panel.bars === 2 && r.panel.analysts && /قبل سنة/.test(r.panel.track) && /مشى صوب القيمة/.test(r.panel.track)
+    return [ok, JSON.stringify(r).slice(0, 600)]
+  },
 }
 
 ;(async () => {

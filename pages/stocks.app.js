@@ -207,6 +207,7 @@
     if (!snap) return
     for (const d of snap.docs) fvlog[d.id] = { ...d.data(), ...(fvlog[d.id] ?? {}) }
     fvReady = true
+    renderTrackLine()
   }
   // POST-HOC (2026-11-10, audit 1.5): the last quotes are saved (qsnap/<bucket>, at most every 3 hours a
   // stock) and shown, dated, when TradingView refuses: on a day the quota was spent a cold start showed 700
@@ -883,6 +884,7 @@
       case 'svr': return svrShown(sym)
       case 'z': return q.altman_z_score_ttm
       case 'gap': return state.exp[sym]?.gap
+      case 'off52': return q.close > 0 && q.price_52_week_high > 0 ? q.close / q.price_52_week_high - 1 : null // v31: furthest from its 52-week high first
     }
   }
 
@@ -1006,6 +1008,8 @@
     if ([...$('sortSel').options].some((o) => o.value === sortVal)) $('sortSel').value = sortVal
     const body = $('rows')
     const syms = visible()
+    renderSoon(syms)
+    renderTrackLine()
     $('shown').textContent = state.lists[state.market].length ? `يظهر ${syms.length} من ${state.market === 'big' ? Math.min(25, BIG.length) : state.lists[state.market].length}` : ''
     if (!state.lists[state.market].length && saved[state.market] === null) {
       body.innerHTML = '<tr><td colspan="14" class="dim">جاري قراءة قائمتك المحفوظة…</td></tr>'
@@ -1245,6 +1249,7 @@
     // Calendar days in the viewer's time zone, the date dateOf prints (whole 24 hours said 'tomorrow' on the day itself).
     const days = Number.isFinite(q?.earnings_release_next_date) ? Math.floor(q.earnings_release_next_date / 86400) - dayNo(Date.now()) : null
     if (days != null && days >= 0 && days <= 14) chips.push(`<span class="chip" data-tip="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير." title="موعد إعلان النتايج الجاي: ${dateOf(q.earnings_release_next_date)}. السعر يتحرك أكثر من العادة حول التقرير.">${days === 0 ? 'تقريره اليوم' : days === 1 ? 'تقريره بكرة' : days === 2 ? 'تقريره بعد يومين' : `تقريره بعد ${days} ${days <= 10 ? 'أيام' : 'يوم'}`}</span>`)
+    if (cycleOf(sym)) chips.push('<span class="chip amber" data-tip="أرباحه أعلى بكثير من عادتها في السنين اللي فاتت: القيمة العادلة المبنية على أرباح اليوم ممكن تكون متفائلة لو رجعت الأرباح لمستواها. التفاصيل داخل السهم." title="أرباحه أعلى بكثير من عادتها في السنين اللي فاتت؛ التفاصيل داخل السهم.">أرباحه فوق عادتها</span>')
     if (q && analysts(q).falling) chips.push('<span class="chip amber" data-tip="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة." title="المحللين متوقعين إن إيراداته تنزل أكثر من 2%، أو ربح السهم ينزل أكثر من 10%، في سنة التوقع المالية مقارنة بآخر سنة معلنة.">المحللين متوقعين نزول</span>')
     return chips.join(' ') || '<span class="dim">—</span>'
   }
@@ -1346,6 +1351,119 @@
     if (state.open === sym) redraw(sym)
   }
 
+  // ---- v31: additions 1–5 of the audit plan (descriptive, from data already fetched; none tested on history)
+  const medianOf = (a) => { const x = [...a].sort((p, q) => p - q); const n = x.length; return n ? (n % 2 ? x[(n - 1) / 2] : (x[n / 2 - 1] + x[n / 2]) / 2) : null }
+  // 1. Cycle warning, for cyclical sectors (the engine's heavy/cyclical ones and electronic technology: memory,
+  // chips): the last twelve months' net margin above twice its median over up to 10 fiscal years (and 5 points
+  // above it) and diluted EPS above twice its 5-year average (the audit's MU: EPS 74 against 0.7–11.5). Either
+  // alone, in any sector, flagged 97 of 700 (AMZN, CRM, DDOG: margins that grew and stayed).
+  const CYCLICAL = new Set([...HEAVY_SECTORS, 'Electronic Technology'])
+  function cycleOf(sym) {
+    const s = state.scores[sym]
+    const q = state.quotes[sym]
+    if (!s?.known || !q || !CYCLICAL.has(q.sector)) return null
+    const fy = s.known.slice(-10).filter((f) => f.rev > 0 && Number.isFinite(f.ni))
+    if (fy.length < 5) return null
+    const now = s.f0?.rev > 0 && Number.isFinite(s.f0.ni) ? s.f0.ni / s.f0.rev : null
+    const med = medianOf(fy.map((f) => f.ni / f.rev))
+    const e5 = s.known.slice(-5).map((f) => f.eps).filter(Number.isFinite)
+    const avg5 = e5.length === 5 ? e5.reduce((a, b) => a + b, 0) / 5 : null
+    const eps = q.earnings_per_share_diluted_ttm
+    const byMargin = now != null && med > 0 && now > 2 * med && now - med > 0.05
+    const byEps = avg5 > 0 && eps > 2 * avg5
+    if (!byMargin || !byEps) return null
+    const pe = state.fair[sym]?.values?.pe
+    return { now, med, years: fy.length, avg5, eps, byMargin, byEps, epsAtMed: byMargin && eps > 0 ? (eps * med) / now : null, peAtMed: byMargin && pe > 0 ? (pe * med) / now : null }
+  }
+  const cycleNote = (sym) => {
+    const c = cycleOf(sym)
+    const q = state.quotes[sym] || {}
+    if (!c) return ''
+    const p1 = (x) => pct(x, 1).replace('+', '')
+    return `<b>تنبيه الدورة:</b> ${c.byMargin ? `هامش صافي الربح آخر 12 شهر <b class="n">${p1(c.now)}</b> ووسطه في آخر <span class="n">${c.years}</span> سنين مالية <b class="n">${p1(c.med)}</b>` : ''}${c.byMargin && c.byEps ? '، و' : ''}${c.byEps ? `ربح السهم <b class="n">${fmt(c.eps, 2)}</b> أكثر من ضعف متوسط آخر 5 سنين (<span class="n">${fmt(c.avg5, 2)}</span>)` : ''}. القيمة العادلة فوق مبنية على أرباح اليوم${c.epsAtMed ? `؛ على هامشه المعتاد يصير ربح السهم <b class="n">${fmt(c.epsAtMed, 2)}</b>${c.peAtMed ? ` وقيمة P/E مقارنة بتاريخه <b class="n">${fmt(c.peAtMed, dp(q))}</b>` : ''}` : ''}. وصف للأرقام، ما اختبرناه كإشارة.`
+  }
+
+  // 2. Track record from the monthly log (fvlog): what the page said each month and the price then.
+  const monthNo = (m) => Number(m.slice(0, 4)) * 12 + Number(m.slice(5, 7)) - 1
+  const curMonth = () => monthKey(Math.floor(Date.now() / 1000))
+  function trackOf(sym) {
+    const b = fvlog[bucketOf(sym)] ?? {}
+    const k = snapKey(sym)
+    return Object.keys(b).filter((m) => /^m\d{4}_\d{2}$/.test(m) && b[m]?.[k]?.fair > 0).sort().map((m) => ({ month: m.slice(1).replace('_', '-'), ...b[m][k] }))
+  }
+  // A call counts as right when the price moved from where it was toward the fair value we gave (5% band = no call).
+  const verdict = (e, now) => (Math.abs(e.fair / e.close - 1) < 0.05 ? null : Math.sign(e.fair - e.close) === Math.sign(now - e.close))
+  function trackBlock(sym) {
+    const t = trackOf(sym)
+    const q = state.quotes[sym] || {}
+    if (!t.length) return ''
+    const yr = [...t].reverse().find((e) => monthNo(curMonth()) - monthNo(e.month) >= 12)
+    const v = yr && q.close > 0 ? verdict(yr, q.close) : null
+    const first = t[0].month
+    const due = `${MONTHS_AR[(monthNo(first) + 12) % 12]} ${Math.floor((monthNo(first) + 12) / 12)}`
+    return `<div class="part track"><h3><span>سجل القيمة العادلة</span><span class="dim">من ${monthAr(first)}</span></h3>
+      <p>${yr ? `قبل سنة (${monthAr(yr.month)}) قلنا <b class="n">${fmt(yr.fair, dp(q))}</b> والسعر <b class="n">${fmt(yr.close, dp(q))}</b>؛ اليوم <b class="n">${fmt(q.close, dp(q))}</b>: ${v == null ? 'كان قريب من قيمته، فما فيه حكم' : v ? '<b class="hi">مشى صوب القيمة</b>' : '<b class="lo">مشى عكسها</b>'}.` : `كل شهر تنحفظ أول قيمة عادلة للسهم مع سعره ذاك اليوم. أول مقارنة بعد سنة (${due}).`}</p>
+      <ul class="tlog">${t.slice(-6).reverse().map((e) => `<li><span>${monthAr(e.month)}</span><span>قلنا <b class="n">${fmt(e.fair, dp(q))}</b></span><span>السعر <span class="n">${fmt(e.close, dp(q))}</span></span>${e.weak ? '<span class="dim">تقدير ضعيف</span>' : ''}</li>`).join('')}</ul></div>`
+  }
+  // The list's hit rate once entries a year old exist (under the fair-value section).
+  function renderTrackLine() {
+    const el = $('trackLine')
+    if (!el || !fvReady) return
+    let first = null
+    let n = 0
+    let hit = 0
+    for (const b of Object.values(fvlog)) for (const [m, rows] of Object.entries(b)) {
+      if (!/^m\d{4}_\d{2}$/.test(m)) continue
+      const mk = m.slice(1).replace('_', '-')
+      if (!first || mk < first) first = mk
+      if (monthNo(curMonth()) - monthNo(mk) !== 12) continue // exactly a year ago: one call per stock
+      for (const e of Object.values(rows)) { const q = state.quotes[e.sym]; const v = q?.close > 0 && !e.weak ? verdict(e, q.close) : null; if (v != null) { n += 1; hit += v ? 1 : 0 } }
+    }
+    el.hidden = !first
+    if (!first) return
+    el.innerHTML = n >= 20 ? `سجل القيمة العادلة: من القيم اللي قلناها قبل سنة (<span class="n">${n}</span> سهم، بدون الضعيفة)، السعر مشى صوبها في <b class="n">${hit}</b> (<span class="n">${Math.round((100 * hit) / n)}%</span>). نص الأسهم تقريباً بالصدفة.`
+      : `سجل القيمة العادلة بدأ ${monthAr(first)}: كل شهر تنحفظ القيمة والسعر، وأول مقارنة بعد سنة.`
+  }
+
+  // 3. Reports in the next 14 days among the stocks shown: date, what analysts expect, last surprise.
+  function renderSoon(syms) {
+    const el = $('soon')
+    if (!el) return
+    const today = dayNo(Date.now())
+    const rows = syms.map((sym) => ({ sym, q: state.quotes[sym] })).filter(({ q }) => Number.isFinite(q?.earnings_release_next_date))
+      .map((r) => ({ ...r, d: Math.floor(r.q.earnings_release_next_date / 86400) - today })).filter((r) => r.d >= 0 && r.d <= 14)
+      .sort((a, b) => a.d - b.d || (b.q.market_cap_basic ?? 0) - (a.q.market_cap_basic ?? 0))
+    el.hidden = !rows.length
+    if (!rows.length) return
+    $('soonSum').innerHTML = `تقارير الأرباح خلال 14 يوم <span class="n dim">${rows.length}</span>`
+    const surp = (x) => (Number.isFinite(x) ? `<span class="${x >= 0 ? 'hi' : 'lo'} n">${pct(x / 100, 0)}</span>` : '—')
+    $('soonList').innerHTML = rows.slice(0, 40).map(({ sym, q, d }) => `<li><button class="btn" type="button" data-goto="${esc(sym)}">${esc(sym.split(':')[1])}</button>
+      <span>${d === 0 ? 'اليوم' : d === 1 ? 'بكرة' : `بعد <span class="n">${d}</span> ${d === 2 ? 'يومين' : d <= 10 ? 'أيام' : 'يوم'}`} <span class="dim n">${dateOf(q.earnings_release_next_date)}</span></span>
+      <span>ربح السهم المتوقع <b class="n">${fmt(q.earnings_per_share_forecast_next_fq, 2)}</b></span>
+      <span>الإيراد المتوقع <b class="n">${big(q.revenue_forecast_next_fq).replace(/<[^>]+>/g, '')}</b></span>
+      <span>آخر مرة: الربح ${surp(q.eps_surprise_percent_fq)} · الإيراد ${surp(q.revenue_surprise_percent_fq)}</span></li>`).join('') + (rows.length > 40 ? `<li class="dim">و <span class="n">${rows.length - 40}</span> غيرها</li>` : '')
+  }
+
+  // 4–5. Where the price sits: its 52-week range, and analysts' targets (low, average, high).
+  function rangeBar(lo, hi, marks) {
+    const a = Math.min(lo, ...marks.map((m) => m.v))
+    const b = Math.max(hi, ...marks.map((m) => m.v))
+    const x = (v) => (((v - a) / (b - a || 1)) * 100).toFixed(1)
+    return `<div class="rbar" dir="ltr" aria-hidden="true"><span class="span" style="left:${x(lo)}%;width:${(x(hi) - x(lo)).toFixed(1)}%"></span>${marks.map((m) => `<i class="${m.cls}" style="left:${x(m.v)}%"></i>`).join('')}</div>`
+  }
+  function rangeBlock(sym) {
+    const q = state.quotes[sym] || {}
+    if (!(q.close > 0)) return ''
+    const out = []
+    const [lo, hi] = [q.price_52_week_low, q.price_52_week_high]
+    if (lo > 0 && hi > 0) out.push(`<h4>مدى 52 أسبوع</h4>${rangeBar(lo, hi, [{ v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${fmt(lo, dp(q))}</span><span>${fmt(hi, dp(q))}</span></p>
+      <p>السعر <b class="n">${pct(q.close / hi - 1)}</b> عن أعلى سعر بسنة، و <b class="n">${pct(q.close / lo - 1)}</b> عن أدناه.</p>`)
+    const [tl, tm, th] = [q.price_target_low, q.price_target_1y, q.price_target_high]
+    if (tl > 0 && th > 0 && tm > 0) out.push(`<h4>هدف المحللين${q.recommendation_total > 0 ? ` <span class="dim">(<span class="n">${q.recommendation_total}</span> ${q.recommendation_total >= 3 && q.recommendation_total <= 10 ? 'محللين' : 'محلل'})</span>` : ''}</h4>${rangeBar(tl, th, [{ v: tm, cls: 'mean' }, { v: q.close, cls: 'px' }])}<p class="ends n" dir="ltr"><span>${fmt(tl, dp(q))}</span><span>${fmt(th, dp(q))}</span></p>
+      <p>أقل هدف <b class="n">${fmt(tl, dp(q))}</b>، متوسطهم <b class="n">${fmt(tm, dp(q))}</b> (<span class="n">${pct(tm / q.close - 1)}</span> عن السعر)، وأعلى هدف <b class="n">${fmt(th, dp(q))}</b>. مرجع، مو قيمة عادلة.</p>`)
+    return out.length ? `<div class="part range"><h3><span>السعر بين حدوده</span><span class="dim"><i class="key px"></i> السعر${tm > 0 ? ' <i class="key mean"></i> متوسط الهدف' : ''}</span></h3>${out.join('')}</div>` : ''
+  }
+
   function fairBlock(sym) {
     const f = state.fair[sym]
     const q = state.quotes[sym] || {}
@@ -1368,6 +1486,7 @@
     const capped = (f.capped ?? []).filter((m) => f.weights[METHODS.indexOf(m)] > 0) // only methods this profile weights
     const noQ = !state.scores[sym]?.period && state.scores[sym]?.f0?.year
     const notes = [
+      cycleNote(sym),
       f.profile === 'Unprofitable growth' ? `${f.values.dcf > 0 ? 'الشركة تخسر (ربح السهم سالب)، فـ DCF العادي يبان للمقارنة بدون وزن، والقيمة العادلة' : 'DCF العادي (على التدفق النقدي) ما ينحسب لأن تدفقها سالب، فالقيمة العادلة'} فوق من طريقة وحدة: P/S مقارنة بتاريخ السهم، وتقيس وش دفع السوق قبل.${state.rdcf[sym] && !state.rdcf[sym].why ? ' تحت: DCF على إيراداتها للمقارنة.' : ''}` : '',
       f.reit ? 'صندوق عقاري: بـ EV/EBITDA و P/S ومتوسط ربح 5 سنين، بدون P/B من العائد على حقوق المساهمين (العائد بعد الاستهلاك ما يمثل دخل الصندوق). ما اختبرناها على الماضي.' : '',
       d?.g1 != null ? `DCF: نمو أول سنة <b class="n">${pct(d.g1)}</b> (توقع المحللين لمبيعات السنة المالية مقارنة بآخر 12 شهر، بالسنة)، ${d.G < Math.min(d.g1, 0.25) - 1e-9 ? `وبعدها من <b class="n">${pct(d.G)}</b> (نمو مبيعاتها آخر 3 سنين) ` : ''}يهدأ لين 2.5% بالسنة العاشرة، ومعدل خصم <b class="n">${pct(d.r, 1).replace('+', '')}</b>${d.beta != null ? ` (حسب بيتا <span class="n">${fmt(d.beta, 2)}</span>)` : ''}.` : '',
@@ -1778,7 +1897,7 @@
   function detail(sym) {
     const q = state.quotes[sym] || {}
     const s = state.scores[sym]
-    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
+    if (!s || !s.detail) return `${pbar(sym)}<div class="dgrid">${snowBlock(sym)}${earnBlock(sym)}${fairBlock(sym)}${rangeBlock(sym)}${trackBlock(sym)}${svrBlock(sym)}${projBlock(sym)}${expBlock(sym)}${ideasBlock(sym)}</div><p class="dim" style="margin-top:10px">${esc(state.errors[sym] || (s?.reason === 'pre-revenue' ? 'الدرجة ما تنحسب لما تكون الإيرادات أقل من 1% من القيمة السوقية (يعني السهم يتداول بأكثر من 100 ضعف مبيعاته، أو الشركة بدون إيرادات). هذي قاعدة الاختبار نفسه.' : 'بيانات الدرجة ناقصة لهذا السهم.'))}</p>`
     const d = s.detail
     const f0 = s.f0 || {}
     const last3 = (s.known || []).slice(-3).filter((f) => Number.isFinite(f.ni) && Number.isFinite(f.fcf))
@@ -1811,6 +1930,7 @@
     return `${pbar(sym)}<div class="dgrid">
       ${snowBlock(sym)}
       ${fairBlock(sym)}
+      ${rangeBlock(sym)}${trackBlock(sym)}
       ${earnBlock(sym)}
       ${svrBlock(sym)}
       ${projBlock(sym)}
@@ -2036,6 +2156,14 @@
   $('results').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-add]')
     if (b) addSymbol(b.dataset.add)
+  })
+  $('soonList').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-goto]')
+    if (!b) return
+    const sym = b.dataset.goto
+    state.focusSym = sym
+    render()
+    if (state.open !== sym) toggle(sym)
   })
   $('notice').addEventListener('click', (e) => {
     if (e.target.closest('button[data-hide]')) { notice(''); return }
