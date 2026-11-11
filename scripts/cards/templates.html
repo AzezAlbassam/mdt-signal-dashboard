@@ -1,0 +1,67 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic";overflow:hidden}
+.A{--bg:#0E1218;--panel:#161C25;--ink:#F2F5F8;--muted:#8A95A5;--accent:#3DDC97;--soft:#24594A;--line:#262E3A;--tf:"Noto Kufi Arabic";--r:10px;--bw:0px}
+.B{--bg:#E9E7E1;--panel:#fff;--ink:#111;--muted:#6B6962;--accent:#111;--soft:#BDBAB1;--line:#111;--tf:"Noto Kufi Arabic";--r:4px;--bw:2px}
+.C{--bg:#0A3B2C;--panel:#0F4A38;--ink:#F6EFDC;--muted:#A9C2B4;--accent:#E9C46A;--soft:#5E7A55;--line:#1B5C47;--tf:"Noto Kufi Arabic";--r:14px;--bw:0px}
+.D{--bg:#FFFFFF;--panel:#F3F5FA;--ink:#0B1020;--muted:#69708A;--accent:#2747F5;--soft:#C3CCF7;--line:#E2E6F0;--tf:"Noto Kufi Arabic";--r:18px;--bw:0px}
+.wrap{position:absolute;inset:0;padding:44px 56px 34px;display:flex;flex-direction:column}
+.kick{font:600 20px "IBM Plex Sans Arabic";color:var(--accent);margin-bottom:6px}
+.B .kick{background:#111;color:#fff;align-self:flex-start;padding:2px 12px}
+h1{font:900 46px/1.3 var(--tf);letter-spacing:0}
+h1 b{color:var(--accent)} .B h1 b{color:#111;text-decoration:underline;text-decoration-thickness:6px;text-underline-offset:8px}
+.sub{font:500 22px "IBM Plex Sans Arabic";color:var(--muted);margin-top:4px}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:var(--fw,1px) solid var(--line);direction:ltr}
+.B .foot{--fw:2px}
+.me{display:flex;align-items:center;gap:12px;font:700 24px "IBM Plex Mono"}
+.mono{width:42px;height:42px;border-radius:var(--r);background:var(--accent);color:var(--bg);display:grid;place-items:center;font:900 24px var(--tf);padding-bottom:6px}
+.B .mono{color:#fff}
+.note{font:500 18px "IBM Plex Sans Arabic";color:var(--muted);direction:rtl}
+/* chart */
+.plot{flex:1;display:flex;align-items:flex-end;gap:16px;direction:ltr;margin-top:22px;padding:0 4px;min-height:0}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:100%;background:var(--soft);border-radius:6px 6px 0 0}
+.B .bar{border-radius:0;border:2px solid #111;border-bottom:0;background:#fff}
+.col.hi .bar{background:var(--accent)}
+.v{font:600 20px "IBM Plex Mono";color:var(--muted);margin-bottom:6px}
+.col.hi .v{font-size:30px;font-weight:700;color:var(--ink)}
+.axis{display:flex;gap:16px;direction:ltr;border-top:2px solid var(--line);padding:8px 4px 0}
+.axis span{flex:1;text-align:center;font:500 16px "IBM Plex Mono";color:var(--muted)}
+/* portfolio */
+.tiles{display:flex;gap:16px;margin:26px 0 18px}
+.tile{flex:1;background:var(--panel);border:var(--bw) solid var(--line);border-radius:var(--r);padding:16px 20px}
+.tile .n{font:700 44px "IBM Plex Mono";direction:ltr;text-align:right}.tile .n.g{color:var(--accent)}
+.tile .l{font:500 19px "IBM Plex Sans Arabic";color:var(--muted)}
+.sec{font:700 24px var(--tf);margin:8px 0 6px;display:flex;justify-content:space-between;align-items:baseline}
+.sec small{font:500 17px "IBM Plex Sans Arabic";color:var(--muted)}
+.row{display:grid;grid-template-columns:170px 1fr 200px;align-items:center;gap:18px;direction:ltr;padding:9px 0;border-bottom:1px solid var(--line)}
+.tk{font:700 30px "IBM Plex Mono"}.dt{font:500 15px "IBM Plex Mono";color:var(--muted)}
+.track{height:22px}.fill{height:100%;background:var(--accent);border-radius:0 5px 5px 0;min-width:5px}
+.B .fill{border-radius:0}
+.pc{font:700 30px "IBM Plex Mono";text-align:right}
+.px{white-space:nowrap;font:500 15px "IBM Plex Mono";color:var(--muted);text-align:right}
+.tag{position:absolute;top:18px;left:20px;font:500 15px "IBM Plex Sans Arabic";color:var(--muted);border:1px dashed var(--muted);padding:2px 10px;border-radius:20px}
+</style><body><div class="wrap" id="w"></div>
+<script>
+const q=new URLSearchParams(location.search),th=q.get('t'),kind=q.get('k');document.body.className=th
+const foot=(n)=>`<div class="foot"><div class="me"><div class="mono">ع</div>@AzizzUnited</div><div class="note">${n}</div></div>`
+if(kind==='chart'){
+ const L=["Q3 2024","Q4 2024","Q1 2025","Q2 2025","Q3 2025","Q4 2025","Q1 2026","Q2 2026","Q3 2026"]
+ const gp=[2737,3388,2997,3540,5088,7640,17755,35056,47047],rev=[7750,8709,8053,9301,11315,13643,23860,41456,54229]
+ const m=gp.map((g,i)=>g/rev[i]*100),mx=Math.max(...m)
+ w.innerHTML=`<div class="kick">مايكرون MU · الهامش الإجمالي كل ربع</div>
+ <h1>من كل 100 دولار مبيعات يبقى لها <b>${Math.round(m[8])}</b></h1>
+ <div class="sub">الهامش الإجمالي (بعد تكلفة التصنيع)… قبل سنتين كان ${Math.round(m[0])} بس</div>
+ <div class="plot">${m.map((x,i)=>`<div class="col ${i===8?'hi':''}"><div class="v">${x.toFixed(0)}%</div><div class="bar" style="height:${x/mx*78}%"></div></div>`).join('')}</div>
+ <div class="axis">${L.map(l=>`<span>${l}</span>`).join('')}</div>`+foot('البيانات إلى 11 نوفمبر 2026 · مو توصية')
+}else{
+ const T=[["AAOI","Jul 29 → Aug 7","$78.00 → $138.85",78.0],["MU","Jul 4 → Jul 9","$660.00 → $948.80",43.8],["RDW","Jul 4 → Aug 6","$9.80 → $12.50",27.6],["MU","Jul 4 → Aug 7","$696.08 → $851.00",22.3],["ARM","Jul 4 → Jul 4","$330.00 → $395.00",19.7],["CRDO","Jul 29 → Aug 6","$178.00 → $211.00",18.5],["SKYT","Jul 4 → Jul 4","$35.70 → $38.55",8.0],["MSTR","Jul 4 → Jul 4","$152.00 → $155.00",2.0],["RDDT","Jul 4 → Jul 4","$169.00 → $172.00",1.8]]
+ w.innerHTML=`<div class="tag">نموذج · الأرقام من صورك، والباقي من موقعك</div><div class="kick">محفظتي العامة · من يوليو 2026</div>
+ <h1>صفقاتي المقفلة… <b>وحدة وحدة</b></h1><div class="sub">كل صفقة: متى دخلت، متى طلعت، وكم طلع منها</div>
+ <div class="tiles"><div class="tile"><div class="n">11</div><div class="l">صفقة مقفلة</div></div><div class="tile"><div class="n g">+78.0%</div><div class="l">أحسن صفقة (AAOI)</div></div><div class="tile"><div class="n">—</div><div class="l">عائد المحفظة الكلي</div></div></div>
+ <div class="sec"><span>الصفقات المقفلة</span><small>9 من 11 · 2026</small></div>
+ ${T.map(r=>`<div class="row"><div><div class="tk">${r[0]}</div><div class="dt">${r[1]}</div></div><div class="track"><div class="fill" style="width:${r[3]/78*100}%"></div></div><div><div class="pc">+${r[3].toFixed(1)}%</div><div class="px">${r[2]}</div></div></div>`).join('')}`+foot('رأيي الشخصي · مو توصية')
+}
+</script>
