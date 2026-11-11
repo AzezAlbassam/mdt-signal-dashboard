@@ -1,0 +1,63 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- Tweet 2026-11-12 (memory: cycle or lasting change). ?k=margin or ?k=pe; 1200x675. Numbers: TradingView, fetched 2026-11-11. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#E9E7E1;color:#111;font-family:"IBM Plex Sans Arabic";overflow:hidden}
+.wrap{position:absolute;inset:0;padding:40px 56px 30px;display:flex;flex-direction:column}
+.kick{font:600 19px "IBM Plex Sans Arabic";background:#111;color:#fff;align-self:flex-start;padding:2px 12px;margin-bottom:8px}
+h1{font:900 40px/1.3 "Noto Kufi Arabic"}
+h1 u{text-decoration-thickness:5px;text-underline-offset:8px}
+.sub{font:500 20px "IBM Plex Sans Arabic";color:#6B6962;margin-top:2px}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:2px solid #111;direction:ltr}
+.me{display:flex;align-items:center;gap:12px;font:700 22px "IBM Plex Mono"}
+.x{width:38px;height:38px;border-radius:4px;background:#111;display:grid;place-items:center}.x svg{width:22px;height:22px;fill:#fff}
+.note{font:500 17px "IBM Plex Sans Arabic";color:#6B6962;direction:rtl}
+.chart{position:relative;flex:1;margin-top:18px;min-height:0}
+.plot{position:absolute;inset:0 0 34px 0;display:flex;align-items:flex-end;gap:14px;direction:ltr}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:100%;background:#fff;border:2px solid #111;border-bottom:0}
+.col.hi .bar{background:#111}
+.v{font:600 18px "IBM Plex Mono";color:#6B6962;margin-bottom:6px;position:relative;z-index:3;background:#E9E7E1;padding:0 4px}
+.col.hi .v{font:700 28px "IBM Plex Mono";color:#111}
+.axis{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;gap:14px;direction:ltr;border-top:2px solid #111;padding-top:6px}
+.axis span{flex:1;text-align:center;font:500 15px "IBM Plex Mono";color:#6B6962}
+.ref{position:absolute;left:0;right:0;border-top:2px dashed #111;z-index:2}
+.ref b{position:absolute;left:44%;top:8px;font:600 16px "IBM Plex Sans Arabic";background:#E9E7E1;padding:0 6px;direction:rtl}
+.tiles{display:flex;gap:16px;margin-top:26px}
+.tile{flex:1;background:#fff;border:2px solid #111;padding:16px 20px;display:flex;flex-direction:column}
+.tile.k{background:#111;color:#fff}.tile.k .l,.tile.k .s{color:#C9C6BE}
+.tile .l{font:600 19px "IBM Plex Sans Arabic";color:#6B6962}
+.tile .n{font:700 76px "IBM Plex Mono";direction:ltr;text-align:right;margin:8px 0 4px}
+.tile .s{font:500 16px "IBM Plex Sans Arabic";color:#6B6962;margin-top:6px}
+.explain{margin-top:22px;font:700 24px "IBM Plex Sans Arabic";border:2px solid #111;background:#fff;padding:8px 14px}
+.n2{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.fv{margin-top:14px;display:flex;flex-direction:column;gap:4px;font:500 18px "IBM Plex Sans Arabic";color:#6B6962}.fv b{font:700 22px "IBM Plex Sans Arabic";color:#111}
+</style><body><div class="wrap" id="w"></div>
+<script>
+const X='<div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>'
+const foot=`<div class="foot"><div class="me">${X}@AzizzUnited</div><div class="note">البيانات إلى 11 نوفمبر 2026 · رأيي الشخصي، مو توصية</div></div>`
+const w=document.getElementById('w'),k=new URLSearchParams(location.search).get('k')
+if(k==='margin'){
+  // gross profit / revenue by quarter (TradingView fq labels); 10-year median of fiscal 2016-2025 = 38.8%
+  const L=['Q3 2024','Q4 2024','Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026','Q3 2026']
+  const gp=[2737,3388,2997,3540,5088,7640,17755,35056,47047],rev=[7750,8709,8053,9301,11315,13643,23860,41456,54229]
+  const m=gp.map((g,i)=>g/rev[i]*100),top=100,med=38.8
+  w.innerHTML=`<div class="kick">مايكرون MU · الهامش الإجمالي كل ربع</div>
+  <h1>الهامش الحين <u class="n2">87%</u>… ووسطه في 10 سنين <span class="n2">39%</span></h1>
+  <div class="sub">من كل 100 دولار مبيعات، كم يبقى بعد تكلفة التصنيع؟</div>
+  <div class="chart"><div class="plot">${m.map((x,i)=>`<div class="col ${i===8?'hi':''}"><div class="v">${x.toFixed(0)}%</div><div class="bar" style="height:${x/top*86}%"></div></div>`).join('')}</div>
+  <div class="ref" style="bottom:calc(34px + (100% - 34px) * ${med/top*0.86})"><b>وسط 10 سنين (2016–2025): <span class="n2">39%</span></b></div>
+  <div class="axis">${L.map(l=>`<span>${l}</span>`).join('')}</div></div>`+foot
+}else{
+  w.innerHTML=`<div class="kick">مايكرون MU · الرهان كله على الهامش</div>
+  <h1>كم تدفع عشان تاخذ دولار ربح؟</h1>
+  <div class="sub">P/E = سعر السهم ÷ ربح السهم · السعر 787 دولار</div>
+  <div class="tiles">
+   <div class="tile"><div class="l">على توقعات السنة المالية 2027</div><div class="n">4.5</div><div class="s">Forward P/E · لو صدقت توقعات المحللين</div></div>
+   <div class="tile k"><div class="l">على أرباح آخر 12 شهر</div><div class="n">10.5</div><div class="s">P/E · هامش الربح الصافي <span class="n2">64%</span></div></div>
+   <div class="tile"><div class="l">لو رجع الهامش لوسطه في 10 سنين</div><div class="n">30</div><div class="s">هامش صافي <span class="n2">22%</span> بدل <span class="n2">64%</span></div></div>
+  </div>
+  <div class="explain">لو بقى الهامش: السهم رخيص حيل. لو رجع لعادته: مو رخيص أبد.</div><div class="fv"><b>القيمة العادلة في الداشبورد حقي: <span class="n2">$1,627</span></b><span style="direction:ltr;text-align:right;font-family:'IBM Plex Mono'">P/E vs its own history 20% · Lynch (PEG) 30% · DCF 30%</span><span>كلها مبنية على أرباح اليوم… يعني نفس الرهان على الهامش.</span></div>`+foot
+}
+</script>
