@@ -130,6 +130,32 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const okV = pe['NASDAQ:META'] === '27.0' && pe['NASDAQ:AAPL'] === '—' && fcfJpm === '—'
   console.log('VALUE CHECK:', okV ? 'ok' : 'FAILED', JSON.stringify({ pe, fcfJpm }))
   if (!okV) process.exitCode = 1
+  // v35: the charts' axis labels sit right of the last bar (not over it), a tap on a column writes its value, the
+  // numbers are in a table, and the score is explained at the top of the panel.
+  const ch = await page.evaluate(() => {
+    const out = { charts: 0, over: 0 }
+    for (const svg of document.querySelectorAll('#rows svg.qchart')) {
+      const bars = [...svg.querySelectorAll('rect.act, rect.est, circle.mdot')].map((r) => r.getBoundingClientRect())
+      const right = Math.max(...bars.map((r) => r.right))
+      const side = [...svg.querySelectorAll('text.axis')].filter((t) => t.getAttribute('text-anchor') !== 'middle').map((t) => t.getBoundingClientRect())
+      if (!bars.length || !side.length) continue
+      out.charts += 1
+      out.over += side.filter((t) => t.left < right - 0.5 || t.right > svg.getBoundingClientRect().right + 0.5).length
+    }
+    const svg = document.querySelector('#rows .part.hist svg.qchart')
+    const hit = svg?.querySelectorAll('.hit')[1]
+    hit?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    out.read = svg?.nextElementSibling?.querySelector('b')?.textContent
+    out.want = hit?.dataset.v
+    out.table = document.querySelectorAll('#rows .part.hist details.qnums tr').length
+    out.why = document.querySelector('#rows .part.why')?.innerText.replace(/\s+/g, ' ').slice(0, 400)
+    out.open = !!document.querySelector('#rows tr.detail')
+    return out
+  })
+  const okC35 = ch.charts >= 1 && ch.over === 0 && ch.read && ch.read === ch.want && ch.table >= 3 && /ليش الدرجة/.test(ch.why ?? '') && ch.open
+  console.log('CHARTS v35:', okC35 ? 'ok' : 'FAILED', JSON.stringify(ch))
+  if (!okC35) process.exitCode = 1
+  for (const [sel, name] of [['.part.why', 'why'], ['.part.hist', 'hist']]) { const el = await page.$('#rows ' + sel); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), `stocks-${name}.png`) }) } }
   await page.screenshot({ path: path.join(os.tmpdir(), 'stocks-forecast.png'), fullPage: true })
   await page.fill('#filter', 'aapl'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row')

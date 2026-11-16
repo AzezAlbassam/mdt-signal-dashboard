@@ -1944,13 +1944,20 @@
     const fmtV = (v) => { if (key === 'eps') return fmt(v, 2); const a = Math.abs(v); return a >= 1e12 ? `${fmt(v / 1e12, 2)}T` : a >= 1e9 ? `${fmt(v / 1e9, 1)}B` : a >= 1e6 ? `${fmt(v / 1e6, 0)}M` : fmt(v, 0) }
     const bar = (v, i, cls) => (Number.isFinite(v) ? `<rect x="${(pad.l + i * bw + bw * 0.15).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${Math.max(1, Math.abs(y(v) - y(0))).toFixed(1)}" class="${cls}${v < 0 ? ' neg' : ''}"><title>${esc(rows[i]?.label ?? 'الربع الجاي (توقع)')}: ${fmtV(v)}</title></rect>` : '')
     const ticks = [hi, (hi + lo) / 2, lo].map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" class="grid"/><text x="${W - pad.r + 6}" y="${(y(t) + 4).toFixed(1)}" class="axis">${fmtV(t)}</text>`).join('')
+    // v35: a phone has no hover, so each column is a tap target that writes its value under the chart, and the
+    // same numbers sit in a table below (the owner could not read a single bar's value)
+    const cells = [...rows.map((r) => [r.label, r[key]]), ...(Number.isFinite(est) ? [['التوقع', est]] : [])]
+    const hits = cells.map(([l, v], i) => (Number.isFinite(v) ? `<rect class="hit${i === rows.length - 1 ? ' sel' : ''}" x="${(pad.l + i * bw).toFixed(1)}" y="${pad.t}" width="${bw.toFixed(1)}" height="${H - pad.t - pad.b}" data-v="${esc(l)}: ${fmtV(v)}"/>` : '')).join('')
+    const lastV = rows.at(-1)?.[key]
+    const under = `<p class="qread"><b class="n">${Number.isFinite(lastV) ? `${esc(rows.at(-1).label)}: ${fmtV(lastV)}` : ''}</b><span class="dim">اضغط أي عمود يطلع رقمه</span></p>
+      <details class="qnums" data-k="qnums"><summary>الأرقام كلها</summary><table class="ptable"><tbody>${[...cells].reverse().map(([l, v]) => (Number.isFinite(v) ? `<tr><th class="n">${esc(l)}</th><td class="n">${fmtV(v)}</td></tr>` : '')).join('')}</tbody></table></details>`
     const stride = 4 * Math.max(1, Math.ceil(56 / (4 * bw)))
     const labels = rows.map((r, i) => ((rows.length - 1 - i) % stride === 0 ? `<text x="${(pad.l + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" class="axis">${esc(r.label)}</text>` : '')).join('')
     return `<svg class="qchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${key === 'rev' ? 'الإيرادات' : key === 'eps' ? 'ربح السهم' : 'صافي الربح'} ربعياً" dir="ltr">
       <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--soft)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--accent)" stroke-width="2"/></pattern></defs>
       ${ticks}${rows.map((r, i) => bar(r[key], i, 'act')).join('')}${Number.isFinite(est) ? bar(est, rows.length, 'est') : ''}
       ${Number.isFinite(cur) ? `<line x1="${(pad.l + (rows.length - 1) * bw + bw * 0.1).toFixed(1)}" x2="${(pad.l + rows.length * bw - bw * 0.1).toFixed(1)}" y1="${y(cur).toFixed(1)}" y2="${y(cur).toFixed(1)}" class="estmark"><title>المتوقع للربع الأخير: ${fmtV(cur)}</title></line>` : ''}
-      ${labels}<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/></svg>`
+      ${labels}<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/>${hits}</svg>${under}`
   }
 
   // Net margin per quarter and over the last twelve months: rising or falling?
@@ -1973,7 +1980,8 @@
     const dir = yr == null ? '' : now > yr + 0.005 ? '<b class="hi">يرتفع</b>' : now < yr - 0.005 ? '<b class="lo">ينزل</b>' : '<b>ثابت تقريباً</b>'
     return `<div class="margin"><h4>هامش صافي الربح</h4>
       <p>آخر 12 شهر <b class="n">${pct(now, 1).replace('+', '')}</b>${yr != null ? `، وقبل سنة <b class="n">${pct(yr, 1).replace('+', '')}</b>: ${dir}` : ''}${y3 != null ? `. قبل 3 سنين <b class="n">${pct(y3, 1).replace('+', '')}</b>` : ''}.</p>
-      <svg class="qchart" viewBox="0 0 ${W} ${H}" dir="ltr" role="img" aria-label="هامش صافي الربح ربعياً"><line x1="8" x2="${W - 58}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/><path d="${path}" class="mline"/>${pts.map((p, i) => (p ? `<circle cx="${p[0].toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="${i === last ? 4 : 2.2}" class="mdot"><title>${esc(rows[i].label)}: ${pct(p[1], 1).replace('+', '')}</title></circle>` : '')).join('')}<text x="${W - 70}" y="${(y(m[last] ?? now) + 4).toFixed(1)}" class="axis">${pct(m[last] ?? now, 1).replace('+', '')}</text></svg></div>`
+      <svg class="qchart" viewBox="0 0 ${W} ${H}" dir="ltr" role="img" aria-label="هامش صافي الربح ربعياً"><line x1="8" x2="${W - 58}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" class="zero"/><path d="${path}" class="mline"/>${pts.map((p, i) => (p ? `<circle cx="${p[0].toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="${i === last ? 4 : 2.2}" class="mdot"><title>${esc(rows[i].label)}: ${pct(p[1], 1).replace('+', '')}</title></circle>` : '')).join('')}<text x="${W - 70}" y="${(y(m[last] ?? now) + 4).toFixed(1)}" class="axis">${pct(m[last] ?? now, 1).replace('+', '')}</text>${pts.map((p, i) => (p ? `<rect class="hit${i === last ? ' sel' : ''}" x="${(p[0] - (W - 86) / Math.max(1, rows.length - 1) / 2).toFixed(1)}" y="0" width="${((W - 86) / Math.max(1, rows.length - 1)).toFixed(1)}" height="${H}" data-v="${esc(rows[i].label)}: ${pct(p[1], 1).replace('+', '')}"/>` : '')).join('')}</svg>
+      <p class="qread"><b class="n">${pts[last] ? `${esc(rows[last].label)}: ${pct(pts[last][1], 1).replace('+', '')}` : ''}</b><span class="dim">اضغط أي نقطة يطلع رقمها</span></p></div>`
   }
 
   // The company's own outlook, from the summary of its last earnings call (Quartr, through TradingView),
@@ -2103,7 +2111,25 @@
       ...industryTile(sym),
       ...runwayTile(q),
     ]
+    // v35: why the score is what it is, at the top (the five parts were only at the very bottom of the panel, so a
+    // 6.5 looked unexplained). The same figures as the five cards below.
+    const whyTxt = {
+      A: cheaper == null ? 'ما فيه تاريخ كافي للمكررات' : cheaper < 0.005 ? 'أغلى من كل شهوره في آخر 5 سنوات' : cheaper > 0.995 ? 'أرخص من كل شهوره في آخر 5 سنوات' : `أرخص من <b class="n">${pct(Math.max(0, Math.min(1, cheaper))).replace('+', '')}</b> من شهوره في آخر 5 سنوات`,
+      B: `${marginName} <b class="n">${pct(margin, 1)}</b>`,
+      C: `الإيراد <b class="n">${pct(d.revG, 1)}</b> سنوياً، وربح السهم <b class="n">${d.epsG == null ? '—' : pct(d.epsG, 1)}</b>`,
+      D: `الدين ÷ EBITDA <b class="n">${d.d1 == null ? '—' : debtX == null ? '—' : fmt(debtX, 1) + '×'}</b>، وسنوات الخسارة في آخر 5: <b class="n">${d.losses ?? '—'}</b>`,
+      E: `نجح في <b class="n">${d.passed ?? '—'}</b> من <b class="n">${d.checks ?? '—'}</b> فحوصات تحسن عن السنة اللي قبلها`,
+    }
+    const judged = PARTS.filter(([k]) => Number.isFinite(p[k]))
+    const weak = [...judged].sort((x, y) => p[x[0]] - p[y[0]])[0]
+    const peers = Object.entries(state.scores).filter(([x, v]) => x.split(':')[0] === 'TADAWUL' === sym.startsWith('TADAWUL:') && Number.isFinite(v?.total)).map(([, v]) => v.total)
+    const below = peers.length >= 20 ? peers.filter((x) => x < s.total).length / peers.length : null
+    const why = !Number.isFinite(s.total) ? '' : `<div class="part why" style="grid-column:1/-1"><h3><span>ليش الدرجة <span class="n">${fmt(s.total, 1)}</span>؟</span><span class="dim">${s.total >= 7 ? 'قوية' : s.total >= 4 ? 'متوسطة' : 'ضعيفة'}${below != null ? ` · أعلى من <span class="n">${pct(below).replace('+', '')}</span> من أسهم القائمة` : ''}</span></h3>
+      <p class="dim">الدرجة مجموع خمسة أجزاء، كل جزء من 2:</p>
+      <ul class="whyrows">${PARTS.map(([k, name, color]) => `<li${weak && weak[0] === k ? ' class="weak"' : ''}><b>${name}</b><span class="wbar"><i style="width:${Number.isFinite(p[k]) ? Math.round((p[k] / 2) * 100) : 0}%;background:var(${color})"></i></span><span class="n">${Number.isFinite(p[k]) ? fmt(p[k], 1) : '—'} / 2</span><small>${whyTxt[k]}</small></li>`).join('')}</ul>
+      ${weak && p[weak[0]] < 1.2 ? `<p>أكثر شي نزّل الدرجة: <b>${weak[1]}</b> (<span class="n">${fmt(p[weak[0]], 1)}</span> من 2).</p>` : ''}</div>`
     return `${pbar(sym)}<div class="dgrid">
+      ${why}
       ${snowBlock(sym)}
       ${fairBlock(sym)}
       ${rangeBlock(sym)}${trackBlock(sym)}${histBlock(sym)}${divBlock(sym)}${noteBlock(sym)}${tvBlock(sym)}
@@ -2408,6 +2434,8 @@
     if (mcp && cacheRead && pxDue(sym, true)) loadPx(sym).then(scheduleRender, () => {})
   }
   $('rows').addEventListener('click', (e) => {
+    const hit = e.target.closest('.qchart .hit')
+    if (hit) { e.stopPropagation(); const svg = hit.closest('svg'); svg.querySelector('.hit.sel')?.classList.remove('sel'); hit.classList.add('sel'); const out = svg.nextElementSibling?.querySelector('b'); if (out) out.textContent = hit.dataset.v; return }
     if (e.target.closest('button[data-more]')) { state.limit += PAGE; render(); return }
     if (e.target.closest('button[data-all]')) { state.limit = Infinity; render(); return }
     const nb = e.target.closest('button[data-nst], button[data-nsave], button[data-alert], button[data-wl], button[data-cmp]')
