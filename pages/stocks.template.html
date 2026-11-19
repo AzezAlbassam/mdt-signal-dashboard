@@ -355,7 +355,18 @@ details.axes > summary { cursor: pointer; color: var(--accent); font-weight: 600
 .qhead .seg { display: flex; gap: 4px; flex-wrap: wrap; }
 .qhead button { border: 1px solid var(--line); background: var(--soft); color: var(--muted); border-radius: 8px; padding: 4px 10px; font-size: 13px; }
 .qhead button[aria-pressed="true"] { border-color: var(--accent); color: var(--fg); }
-.qchart { width: 100%; height: auto; display: block; margin-top: 6px; }
+/* v35: SVG text inherits the page's right-to-left direction, so an axis label drawn "from x" ran leftwards over the
+   last bar on a phone (dir="ltr" on an <svg> is not honoured by WebKit) */
+.qchart { width: 100%; height: auto; display: block; margin-top: 6px; direction: ltr; }
+.qchart .hit { fill: transparent; cursor: pointer; } .qchart .hit.sel { fill: var(--fg); opacity: .08; }
+.qread { margin: 6px 0 0; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: 14px; } .qread b { font-size: 15px; } .qread .dim { font-size: 12.5px; }
+details.qnums { margin-top: 6px; } details.qnums > summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 13.5px; padding: 6px 0; }
+details.qnums .ptable { max-width: 360px; } details.qnums .ptable th { text-align: start; }
+ul.whyrows { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+ul.whyrows li { display: grid; grid-template-columns: 4.2em minmax(60px, 1fr) auto; gap: 4px 10px; align-items: center; font-size: 14px; }
+ul.whyrows li small { grid-column: 1 / -1; color: var(--muted); font-size: 13px; line-height: 1.6; }
+ul.whyrows .wbar { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; direction: ltr; } ul.whyrows .wbar i { display: block; height: 100%; border-radius: 999px; }
+ul.whyrows li.weak b { color: var(--bad); }
 .qchart .act { fill: var(--chart-line); } .qchart .act.neg, .qchart .est.neg { fill: var(--bad); }
 .qchart .est { fill: url(#hatch); stroke: var(--accent); stroke-width: 1; }
 .qchart .estmark { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 4 3; }

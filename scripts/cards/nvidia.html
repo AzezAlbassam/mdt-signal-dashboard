@@ -47,6 +47,17 @@ if(k==='growth'){
   <div class="sub">إيرادات الربع مقارنة بنفس الربع السنة اللي قبل · آخر ربع 96.2 مليار دولار</div>
   <div class="chart"><div class="plot">${g.map((x,i)=>`<div class="col ${i===7?'hi':''}"><div class="v">${x.toFixed(0)}%</div><div class="bar" style="height:${x/top*86}%"></div></div>`).join('')}</div>
   <div class="axis">${L.map(l=>`<span>${l}</span>`).join('')}</div></div>`+foot
+}else if(k==='after'){
+  // Tweet 2026-11-18: results of 17 Nov (company figures as reported by Stocktwits/WSJ), after-hours price from TradingView
+  w.innerHTML=`<div class="kick">انفيديا NVDA · أول نتايج بدون جنسن</div>
+  <h1>الناس باعت على الخبر… وشرت على <u>الأرقام</u></h1>
+  <div class="sub">نتايج الربع المعلنة 17 نوفمبر 2026 · المجلس: جنسن ما راح يرجع</div>
+  <div class="tiles">
+   <div class="tile k"><div class="l">مبيعات الربع</div><div class="n">$115.8B</div><div class="s">المتوقع كان <span class="n2">109.3</span> · أكثر من ضعف السنة اللي راحت</div></div>
+   <div class="tile"><div class="l">توقعها للربع الجاي</div><div class="n">$130B</div><div class="s">أعلى من توقعات السوق بقرابة <span class="n2">4%</span></div></div>
+   <div class="tile"><div class="l">السهم بعد الإغلاق</div><div class="n">+4.8%</div><div class="s"><span class="n2">155.46</span> ← <span class="n2">162.95</span> · قبل الخبر كان <span class="n2">173.73</span></div></div>
+  </div>
+  <div class="explain">الشركة أكبر من الشخص.</div>`+foot.replace('البيانات إلى 13 نوفمبر 2026','البيانات إلى 17 نوفمبر 2026')
 }else{
   w.innerHTML=`<div class="kick">انفيديا NVDA · أسبوع طلعة جنسن</div>
   <h1>السوق باع جنسن… <u>بكم</u>؟</h1>
