@@ -1,0 +1,46 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- "Averaged down" card, Arabic, 1080x1350. Data from the owner's own trade record; one card per ?t= key below. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter+Tight:wght@700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1080px;height:1350px;overflow:hidden;background:#E4E3DD;background-image:linear-gradient(#d9d8d1 1px,transparent 1px),linear-gradient(90deg,#d9d8d1 1px,transparent 1px);background-size:40px 40px;font-family:"IBM Plex Sans Arabic";color:#111}
+.corner{position:absolute;width:44px;height:44px;border:3px solid #111}
+.c1{top:36px;left:36px;border-right:0;border-bottom:0}.c2{top:36px;right:36px;border-left:0;border-bottom:0}.c3{bottom:36px;left:36px;border-right:0;border-top:0}.c4{bottom:36px;right:36px;border-left:0;border-top:0}
+.card{position:absolute;inset:60px;background:#fff;border:2px solid #111;border-radius:22px;padding:50px 56px 34px;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(0,0,0,.08)}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:34px;border-bottom:2px solid #111}
+.me{display:flex;align-items:center;gap:14px;font:700 30px "IBM Plex Mono";direction:ltr}
+.x{width:56px;height:56px;border-radius:10px;background:#111;display:grid;place-items:center}.x svg{width:30px;height:30px;fill:#fff}
+.pill{background:#111;color:#fff;border-radius:30px;padding:8px 30px;font:700 26px "Noto Kufi Arabic"}
+.tk{font:800 150px/1 "Inter Tight";direction:ltr;text-align:right;margin-top:44px;letter-spacing:-4px}
+.name{font:500 30px "IBM Plex Sans Arabic";color:#55554f;margin-top:8px}
+.meta{font:600 26px "IBM Plex Sans Arabic";margin-top:26px;display:flex;gap:18px;flex-wrap:wrap}
+.meta b{font:700 26px "IBM Plex Mono";direction:ltr;unicode-bidi:isolate}
+.lab{font:600 26px "IBM Plex Sans Arabic";color:#55554f;margin-top:48px}
+.big{font:800 220px/1 "Inter Tight";direction:ltr;text-align:right;letter-spacing:-8px;margin-top:6px}
+.line{height:150px;margin-top:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid #111;padding-top:22px;margin-top:auto}
+.stats>div{padding:0 22px;border-left:2px solid #ccc}.stats>div:first-child{padding-right:0}.stats>div:last-child{border-left:0}
+.stats .l{font:600 22px "IBM Plex Sans Arabic";color:#55554f}
+.stats .n{font:800 52px "Inter Tight";direction:ltr;text-align:right;letter-spacing:-1.5px;margin-top:6px}
+.foot{margin-top:22px;font:500 20px "IBM Plex Sans Arabic";color:#55554f}
+</style><body><div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div><div class="card" id="c"></div>
+<script>
+const D={
+  SNDK:{name:'سانديسك',added:'18 نوفمبر',at:'$760.57',opened:'13 نوفمبر',was:877.00,now:851.97,pos:'+27%'},
+  NBIS:{name:'نبيس (Nebius)',added:'18 نوفمبر',at:'$104.64',opened:'30 أكتوبر',was:146.72,now:130.39,pos:'+117%'},
+}
+const t=new URLSearchParams(location.search).get('t'),d=D[t]
+const low=((1-d.now/d.was)*100).toFixed(1)
+const X='<div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>'
+const $=(n,dp=2)=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp})
+document.getElementById('c').innerHTML=`
+ <div class="top"><div class="pill">نزّلت المتوسط</div><div class="me">${X}@AzizzUnited</div></div>
+ <div class="tk">${t}</div>
+ <div class="name">${d.name}</div>
+ <div class="meta"><span>عززت ${d.added} على <b>${d.at}</b></span><span>·</span><span>أول دخول ${d.opened}</span></div>
+ <div class="lab">نزل متوسط سعري بـ</div>
+ <div class="big">${low}%</div>
+ <svg class="line" viewBox="0 0 860 150" preserveAspectRatio="none"><line x1="40" y1="22" x2="830" y2="22" stroke="#111" stroke-width="2" stroke-dasharray="4 10"/><polyline points="830,22 40,124" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/><circle cx="830" cy="22" r="13" fill="#fff" stroke="#111" stroke-width="5"/><circle cx="40" cy="124" r="24" fill="#ddd"/><circle cx="40" cy="124" r="14" fill="#111"/></svg>
+ <div class="stats"><div><div class="l">المتوسط كان</div><div class="n">${$(d.was)}</div></div><div><div class="l">المتوسط الحين</div><div class="n">${$(d.now)}</div></div><div><div class="l">زدت المركز</div><div class="n">${d.pos}</div></div></div>
+ <div class="foot">رأيي الشخصي وتجربتي، مو توصية.</div>`
+</script>
