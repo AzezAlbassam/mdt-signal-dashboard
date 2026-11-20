@@ -18,7 +18,7 @@ const long = `${para(4)}\n\n${para(4)}\n\n${para(4)}\n\nhttps://www.tradingview.
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.addInitScript(({ today, long }) => {
-    const store = { [`tweets/${today}`]: { date: today, text: long, family: 'market', status: 'draft' }, 'meta/ideas': { ideas: [] } }
+    const store = { [`tweets/${today}`]: { date: today, text: long, family: 'market', status: 'draft' }, 'meta/ideas': { ideas: [] }, 'growth/2026-11-13': { followers: 180 }, 'growth/2026-11-20': { followers: 187 } }
     const listeners = {}
     window.__store = store; window.__writes = []; window.__uploads = []
     const snapOf = (p) => ({ id: p.split('/').pop(), exists: p in store, data: () => store[p] })
@@ -100,6 +100,9 @@ const long = `${para(4)}\n\n${para(4)}\n\n${para(4)}\n\nhttps://www.tradingview.
   r.perf = await page.evaluate((d) => window.__store['tweets/' + d].perf, today)
   r.worked = await page.$eval('#workedRows', (t) => t.innerText.replace(/\s+/g, ' '))
   check('worked', r.perf?.views === 12000 && r.perf?.likes === 340 && /قراءة السوق 1 12,000 340/.test(r.worked), `${JSON.stringify(r.perf)} · ${r.worked}`)
+  // followers from growth/<date> (the owner's daily X task): count, change over the week, a line
+  r.growth = await page.$eval('#growth', (g) => (g.hidden ? '' : g.innerText.replace(/\s+/g, ' ')))
+  check('growth', /187/.test(r.growth) && /\+7/.test(r.growth) && /7 يوم/.test(r.growth), r.growth)
   r.width = await page.evaluate(() => document.documentElement.scrollWidth)
   check('layout', r.width <= 390 && !errors.length, `scrollWidth ${r.width}, page errors ${JSON.stringify(errors)}`)
   await page.screenshot({ path: path.join(os.tmpdir(), 'tweets-check.png'), fullPage: true })
