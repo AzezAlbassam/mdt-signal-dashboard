@@ -149,3 +149,27 @@ financing income, …), and save it in a reviewed table in the repo: {symbol, fi
 share of revenue, the exact sentence and page it came from, reviewer, date}. No disclosed figure → the stock
 stays `يحتاج مراجعة`; an estimate is never entered as if disclosed. The table is re-read once a year, after
 each company's annual report, and each row is checked by a second reader before the page uses it.
+
+## J. The ETF list (owner's watchlist screenshots, 2026-11-20)
+
+Owner's 26, all to be added to the ETF tab: SMH, SOXX, GLD, VOO, SLV, DRAM, XLK, XLE, IBIT, XLV, XLF, GDX,
+USO, MAGS, QQQM, CIBR, SPMO, KWEB, TAN, URNM, REMX, NCLD, LYTE, SEMI, DTCR, CHAT.
+
+He asked for any he missed; added by me, each confirmed to exist and have holdings in step 0.4 before it
+is shown (drop silently-missing ones and tell him):
+- Shariah-screened funds, as a reference and to compare our numbers with their published purification:
+  SPUS, HLAL, SPTE, UMMA, SPRE.
+- The remaining S&P sector funds: XLI, XLY, XLP, XLU, XLB, XLRE, XLC.
+- Themes close to his holdings: IGV (software), ARKK, NLR and URA (nuclear, uranium), COPX (copper),
+  LIT (lithium), XBI (biotech), BOTZ (robotics), SCHD (dividends), KSA (Saudi stocks).
+
+Funds the look-through method does not fit; the tab lists them with the reason and no verdict from us:
+- GLD, SLV (physical metal), IBIT (bitcoin), USO (oil futures): no company holdings. Their ruling is a
+  different question (metal, crypto, futures) that this method does not answer.
+- Any fund that gets its exposure through swaps or holds Treasury bills as collateral (check MAGS and the
+  Roundhill funds in step 0.4): the holdings file is not the shares the investor owns. Shown as
+  `ما ينحكم بهالطريقة` unless the file lists the actual shares.
+- XLF is expected to fail on activity (banks, insurers); it is computed like the rest, not pre-judged.
+
+Budget note for step 0.6: VOO (~500 holdings), QQQM and SPMO (~100 each) dominate the calls; holdings
+overlap, so fundamentals are fetched once per unique symbol (batches of 50).
