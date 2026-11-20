@@ -139,3 +139,13 @@ rule shows `ما ينحكم` for every stock and the owner is told before going 
 Step 0 (one sitting, about 40 TradingView calls) → owner answers A1–A6 → D1–D2 → G1–G2 → D3–D4 → G3–G4 →
 E1–E5 → G5–G7 → publish. Protocol rule of this repo applies: this plan is committed before any result;
 changes after results are marked POST-HOC with the reason.
+
+## I. Phase 2 (chosen by the owner 2026-11-20; starts only after parts D–F are published)
+
+For every stock flagged `يحتاج مراجعة` because its industry may carry illicit revenue the data does not
+show (retail, hotels, airlines, restaurants, media, …): read its latest annual report (10-K or the Saudi
+annual report), find any disclosed figure for the illicit activity (alcohol, tobacco, gambling, conventional
+financing income, …), and save it in a reviewed table in the repo: {symbol, fiscal year, illicit revenue or
+share of revenue, the exact sentence and page it came from, reviewer, date}. No disclosed figure → the stock
+stays `يحتاج مراجعة`; an estimate is never entered as if disclosed. The table is re-read once a year, after
+each company's annual report, and each row is checked by a second reader before the page uses it.
