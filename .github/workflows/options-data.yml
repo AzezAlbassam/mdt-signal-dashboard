@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Engine tests
-        run: node --test options/engine.test.js options/validate.test.js
+        run: node --test options/engine.test.js options/validate.test.js options/snapshot.test.js
       - name: Snapshot
         env:
           GH_TOKEN: ${{ github.token }}
@@ -71,12 +71,15 @@ jobs:
             gh workflow run pages.yml --ref main -R "$REPO" || echo 'deploy dispatch failed'
           }
 
+          # A failed pass (snapshot.js exits 1 on a source outage) is still saved — it only
+          # adds flags — and the job keeps going, but ends red so the failure is noticed.
+          failed=0
           if [ "$EVENT" != "schedule" ]; then
             restore
-            node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY"
+            node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY" || failed=1
             node options/validate.js _data --write || echo '::warning::validation found problems'
             save_and_deploy
-            exit 0
+            exit $failed
           fi
 
           deadline=$((SECONDS + 330 * 60))
@@ -86,7 +89,7 @@ jobs:
             echo "$(date -u +%H:%M) UTC → $next"
             case "$next" in
               run)
-                node options/snapshot.js _data
+                node options/snapshot.js _data || failed=1
                 node options/validate.js _data --write || echo '::warning::validation found problems'
                 save_and_deploy ;;
               wait*)
@@ -96,3 +99,7 @@ jobs:
               *) break ;;
             esac
           done
+          # ponytail: GitHub turns off schedules after 60 days without repository activity;
+          # re-enabling through the API resets that clock without a commit.
+          gh api -X PUT "repos/$REPO/actions/workflows/options-data.yml/enable" >/dev/null || true
+          exit $failed
