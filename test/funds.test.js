@@ -78,3 +78,11 @@ test('fundSummary: collateral is reported but left out; cash funds and debt coun
   // an equity holding with no verdict counts as unknown
   assert.equal(fundSummary([{ w: 0.9, kind: 'equity', state: 'مختلط جائز', purification: 0 }, { w: 0.1, kind: 'equity', state: 'ما ينحكم' }]).state, 'ما ينحكم');
 });
+
+test('a prohibited activity decides even without statements (banks in the funds)', () => {
+  const bank = { period: null, sic: '6021' };
+  assert.equal(screenStock(bank, null, SIC).state, 'غير جائز');
+  assert.deepEqual(screenStock(bank, null, SIC).failed, ['R1']);
+  assert.equal(screenHolding(bank, 100, SIC).state, 'غير جائز');
+  assert.equal(screenStock({ period: null, sic: '3674' }, null, SIC), null);  // permitted activity, no data: still nothing
+});

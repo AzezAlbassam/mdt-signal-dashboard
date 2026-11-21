@@ -168,3 +168,24 @@ test('A2 decided: leases out of debt; the liabilities upper bound subtracts know
   const d = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LongTermDebt: [i(Q[1], 200)], FinanceLeaseLiability: [i(Q[1], 50)] })), { yieldPct: 5 });
   assert.equal(d.debt, 200); assert.equal(d.debtParts.leases, 50);
 });
+
+// Fund-screen findings (2026-11-21): each from a real company in the funds
+test('funds: a disclosure of receivables SOLD does not block the estimate (AVGO)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    FinancingReceivableSignificantSales: [i('2025-11-02', 7401)] })), { yieldPct: 5 });
+  assert.equal(r.illicitEstimated, true); assert.ok(r.illicit > 0);
+});
+test('funds: debt tags of AbbVie and Oracle', () => {
+  const d = Q[1];
+  assert.equal(debtAt(ns({ LongTermDebtAndCapitalLeaseObligations: [i(d, 72230)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 8673)] }), d).debt, 80903);
+  assert.equal(debtAt(ns({ LongTermNotesAndLoans: [i(d, 117712)], NotesPayableCurrent: [i(d, 7625)] }), d).debt, 125337);
+});
+test('funds: total liabilities from liabilities-and-equity minus equity when not tagged (MNST)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LiabilitiesAndStockholdersEquity: [i(Q[1], 11922)], StockholdersEquity: [i(Q[1], 9839)] })), { yieldPct: 5 });
+  assert.equal(r.debt, null); assert.equal(r.debtUpperBound, 2083);
+});
+test('funds: share count from net income / EPS when no count is tagged (Visa, several classes)', () => {
+  const cf = company({ ...ns({ Revenues: [f(...Q, 1000)], NetIncomeLoss: [f(...Q, 5000)] }), EarningsPerShareBasic: { units: { 'USD/shares': [f(...Q, 2.5)] } } });
+  const r = secInputs(cf, { yieldPct: 5 });
+  assert.equal(r.shares, 2000); assert.equal(r.sharesMV, 2000); assert.equal(r.sharesSource, 'implied');
+});
