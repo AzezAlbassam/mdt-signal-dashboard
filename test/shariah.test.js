@@ -106,3 +106,16 @@ test('G1: fund rule never passes on bad data', () => {
   assert.equal(r.state, 'مختلط جائز'); assert.equal(r.purificationUnknownWeight, 0.02);
   assert.equal(fundVerdict([{ ...ok, weight: 0.996 }]).unknownWeight.toFixed(3), '0.004'); // unlisted rest counts as unknown
 });
+
+test('R1 by SIC code: fail, review, ok, unknown', async () => {
+  const { activityFromSic } = await import('../engine/shariah.js');
+  const table = JSON.parse((await import('node:fs')).readFileSync(new URL('../data/shariah/sic-activity.json', import.meta.url)));
+  assert.equal(activityFromSic('2084', table), 'fail');      // wines
+  assert.equal(activityFromSic('6022', table), 'fail');      // state banks
+  assert.equal(activityFromSic('5331', table), 'review');    // variety stores (Costco, Walmart)
+  assert.equal(activityFromSic('7990', table), 'review');
+  assert.equal(activityFromSic('3674', table), 'ok');        // semiconductors
+  assert.equal(activityFromSic('', table), null);
+  assert.equal(activityFromSic(null, table), null);
+  assert.equal(activityFromSic('abc', table), null);
+});

@@ -68,3 +68,11 @@ export function fundVerdict(holdings) {
     : badWeight + unknownWeight >= ILLICIT_MAX - EPS ? 'ما ينحكم' : 'مختلط جائز';
   return { state, badWeight, unknownWeight, purificationPct, purificationUnknownWeight };
 }
+
+// R1 from the SEC industry (SIC) code and the reviewed table data/shariah/sic-activity.json.
+export function activityFromSic(sic, table) {
+  const n = Number(sic);
+  if (sic == null || sic === '' || !Number.isInteger(n)) return null;
+  const hit = list => list.some(([a, b]) => n >= a && n <= b);
+  return hit(table.fail) ? 'fail' : hit(table.review) ? 'review' : 'ok';
+}
