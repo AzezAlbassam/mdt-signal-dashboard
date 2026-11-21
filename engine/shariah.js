@@ -79,3 +79,18 @@ export function activityFromSic(sic, table) {
   const hit = list => list.some(([a, b]) => n >= a && n <= b);
   return hit(table.fail) ? 'fail' : hit(table.review) ? 'review' : 'ok';
 }
+
+// One stock from its SEC inputs (engine/sec-facts.js) and a market value (the quarter-average price x shares on the page;
+// a band around the fund report's price for fund holdings). When the debt figure is incomplete, total liabilities minus
+// leases bound it from above: that bound can prove a pass (30% even counting all of it), never a fail.
+export function screenStock(r, marketValue, sicTable) {
+  if (!r?.period) return null
+  let debt = r.debt, debtUpper = false
+  if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
+    const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)
+    if (dr != null && dr <= DEBT_MAX + EPS) { debt = r.debtUpperBound; debtUpper = true }
+  }
+  const activity = activityFromSic(r.sic, sicTable)
+  const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+  return { ...v, debtUpper, activity, marketValue }
+}

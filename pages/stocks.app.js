@@ -1422,14 +1422,7 @@
     if (!r?.period) return null
     const mvShares = r.sharesMV ?? r.shares // the smaller share count: a later split or issue can only lower it (G6.4)
     const marketValue = Number.isFinite(avgClose) && mvShares > 0 ? avgClose * mvShares : null
-    let debt = r.debt, debtUpper = false
-    if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
-      const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)
-      if (dr != null && dr <= 0.3) { debt = r.debtUpperBound; debtUpper = true } // even all liabilities pass, so the debt does
-    }
-    const activity = activityFromSic(r.sic, SHARIAH.sic)
-    const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
-    return { ...v, period: r.period, avgClose, marketValue, debtUpper, activity }
+    return { ...screenStock(r, marketValue, SHARIAH.sic), period: r.period, avgClose }
   }
   async function loadSh(sym) {
     const r = shIn(sym)
