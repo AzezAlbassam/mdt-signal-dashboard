@@ -23,6 +23,6 @@ function shariah() {
   const stocks = Object.fromEntries(Object.entries(d.stocks).map(([t, r]) => [t, Object.fromEntries(KEEP.filter((k) => r[k] != null).map((k) => [k, r[k]]))]))
   return JSON.stringify({ built: d.built, stocks, sic: JSON.parse(fs.readFileSync('data/shariah/sic-activity.json', 'utf8')) })
 }
-const page = fs.readFileSync('pages/stocks.template.html', 'utf8').replace('/*ENGINE*/', () => engine).replace('/*APP*/', () => fs.readFileSync('pages/stocks.app.js', 'utf8').replace('/*SECTORS*/null', () => fs.readFileSync('pages/sector-pe.json', 'utf8')).replace('/*PEERS*/null', () => fs.readFileSync('pages/peer-margins.json', 'utf8')).replace('/*BENCH*/null', () => fs.readFileSync('pages/bench.json', 'utf8')).replace('/*SHARIAH*/null', () => shariah()))
+const page = fs.readFileSync('pages/stocks.template.html', 'utf8').replace('/*ENGINE*/', () => engine).replace('/*APP*/', () => fs.readFileSync('pages/stocks.app.js', 'utf8').replace('/*SECTORS*/null', () => fs.readFileSync('pages/sector-pe.json', 'utf8')).replace('/*PEERS*/null', () => fs.readFileSync('pages/peer-margins.json', 'utf8')).replace('/*BENCH*/null', () => fs.readFileSync('pages/bench.json', 'utf8')).replace('/*SHARIAH*/null', () => shariah()).replace('/*FUNDS*/null', () => (fs.existsSync('data/shariah/funds.json') ? fs.readFileSync('data/shariah/funds.json', 'utf8') : 'null')))
 fs.writeFileSync('pages/stocks.html', page)
 console.log(`pages/stocks.html: ${page.length} bytes`)

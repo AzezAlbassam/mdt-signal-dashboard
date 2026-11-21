@@ -180,6 +180,18 @@ details.key dd { margin: 0; color: var(--muted); }
 .tv select { font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--soft); color: var(--fg); max-width: 100%; }
 small.since { font-size: 11px; margin-inline-start: 3px; }
 .wrap:not([data-view="about"]) #aboutView { display: none; }
+.wrap[data-view="funds"] .filters, .wrap[data-view="funds"] details.key, .wrap[data-view="funds"] .tbl, .wrap[data-view="funds"] #soon, .wrap[data-view="funds"] .presets { display: none !important; }
+.funds { display: grid; gap: 12px; }
+.flist { display: grid; gap: 10px; }
+.fcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; }
+.fhead { all: unset; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.fhead:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fhead .shs { font: 700 13px var(--body); border: 1px solid currentColor; border-radius: 6px; padding: 0 8px; }
+.ftbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ftbl th, .ftbl td { text-align: start; padding: 6px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+.ftbl thead th { color: var(--muted); font-weight: 500; border-top: 0; }
+.fnone { margin: 0; padding-inline-start: 18px; display: grid; gap: 4px; }
+
 .wrap[data-view="big"] .add, .wrap[data-view="big"] .x, .wrap[data-view="fav"] .add, .wrap[data-view="fav"] .x { display: none; }
 .star { background: none; border: 0; color: var(--muted); font-size: 17px; line-height: 1; padding: 2px 4px; margin-inline-end: 4px; border-radius: 6px; cursor: pointer; }
 .star:hover { background: var(--soft); }
@@ -401,6 +413,7 @@ ul.whyrows li.weak b { color: var(--bad); }
     <button role="tab" id="tab-sa" data-m="sa" aria-selected="false">السوق السعودي<span class="cnt" id="cnt-sa"></span></button>
     <button role="tab" id="tab-big" data-m="big" aria-selected="false">أكبر 25 شركة</button>
     <button role="tab" id="tab-sectors" data-m="sectors" aria-selected="false">القطاعات</button>
+    <button role="tab" id="tab-funds" data-m="funds" aria-selected="false">الصناديق</button>
     <button role="tab" id="tab-fav" data-m="fav" aria-selected="false">★ المفضلة<span class="cnt" id="cnt-fav"></span></button>
     <button role="tab" id="tab-about" data-m="about" aria-selected="false">كيف تنحسب؟</button>
   </nav>
@@ -438,6 +451,7 @@ ul.whyrows li.weak b { color: var(--bad); }
   </div>
 
   <section class="sectors" id="sectorsView" hidden></section>
+  <section class="funds" id="fundsView" hidden></section>
 
   <details class="key">
     <summary>وش تعني الألوان؟</summary>

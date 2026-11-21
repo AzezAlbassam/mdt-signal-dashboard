@@ -2,7 +2,7 @@
 
 The scheduled task "تحديث الشرعية الأسبوعي" (every Saturday 01:17 Riyadh, bound to the audit session) sends a pointer to
 this file. Change the steps here, not in the scheduled task.
-2026-11-21: created (owner: "ابدا في التحديث الاسبوعي"). Funds join step 4 once the fund loader exists.
+2026-11-21: created (owner: "ابدا في التحديث الاسبوعي"); funds added to step 4 the same day.
 
 ---
 
@@ -17,13 +17,18 @@ the industry table): rules change only with the owner, tests first (progress/SHA
 3. Copy data/shariah/sec-inputs.json to the scratchpad as sec-inputs.prev.json. Run `node scripts/shariah/sec-load.js`
    in the background (it takes up to an hour) and wait for it. It must end with "wrote N" and N ≥ 500. Otherwise
    restore the file with `git checkout data/shariah/sec-inputs.json`, stop and report.
-4. Funds: when scripts/shariah/fund-load exists, run it as its header says (its own checks must pass).
+4. Funds: fetch the latest holdings, then screen them (the fund loader fetches the held companies that are not on the
+   dashboard; it takes up to an hour, run it in the background):
+   `curl -s -o <scratchpad>/mf.json -H "User-Agent: $SEC_USER_AGENT" https://www.sec.gov/files/company_tickers_mf.json`
+   `python3 -I scripts/shariah/nport.py <scratchpad>/mf.json $(python3 -I -c "import json;print(' '.join(f['sym'] for f in json.load(open('data/shariah/funds-list.json'))['funds'] if f.get('kind')!='none'))") > data/shariah/nport-latest.jsonl`
+   `node scripts/shariah/fund-load.js`: it must exit 0 (it fails on holdings that do not add up, or too few funds).
+   Keep its last lines (each fund's state) and compare them with the previous data/shariah/funds.json from git.
 5. `node scripts/shariah/diff-inputs.mjs <scratchpad>/sec-inputs.prev.json data/shariah/sec-inputs.json`: keep the
    result for the reply.
 6. `node scripts/build-stocks-page.js && npm test`, then the browser check at both widths:
    `NODE_PATH=$(npm root -g) node test/pages/stocks-browser-check.cjs` and the same with PHONE=1. Every "CHECK" and
    "SHARIAH" line must say ok and LOGS must be []. Any failure: do not commit, do not publish; report it.
-7. Commit data/shariah/sec-inputs.json (and the funds data) as "Weekly SEC refresh D" with the session's trailers, then
+7. Commit data/shariah/sec-inputs.json, nport-latest.jsonl, funds.json and fund-companies.json as "Weekly SEC refresh D" with the session's trailers, then
    `git fetch -q origin $B && git merge -q --no-edit origin/$B && git push -q -u origin $B`.
 8. Publish with the Artifact tool: file_path /home/user/mdt-signal-dashboard/pages/stocks.html,
    url https://claude.ai/artifact/TUkdHCEyfRfBorus6K5MDa, label "Weekly Shariah refresh D".

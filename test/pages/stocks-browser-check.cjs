@@ -452,6 +452,30 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const okC = /تقريره اليوم/.test(chips['NASDAQ:META']) && /تقريره اليوم/.test(chips['NYSE:JPM']) && !/10-23/.test(chips['NYSE:JPM']) && /تقريره بعد 14 يوم/.test(chips['NASDAQ:AAPL'])
   console.log('CLOCK CHECK:', okC ? 'ok' : 'FAILED', JSON.stringify(chips))
   if (!okC) process.exitCode = 1
+  // (6) Funds tab (7c): the cards, SMH opened, its figures recomputed HERE from data/shariah/funds.json rows (weights of
+  // non-compliant / unknown holdings, purification) and shown on the card; the amount box multiplies by the fund's rate.
+  const FD = JSON.parse(fs.readFileSync(root + 'data/shariah/funds.json', 'utf8'))
+  const smh = FD.funds.find((f) => f.sym === 'SMH')
+  const st = (x) => (x.k === 'equity' ? x.s : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? null : 'ما ينحكم')
+  const rows = smh.rows.filter((x) => x.k !== 'collateral')
+  const want6 = { bad: rows.filter((x) => st(x) === 'غير جائز').reduce((a, x) => a + Math.abs(x.w), 0),
+    pur: rows.filter((x) => x.k === 'equity' && x.pur != null).reduce((a, x) => a + x.w * x.pur, 0) }
+  await page.click('#tab-funds'); await page.waitForTimeout(200)
+  await page.click('button[data-fund="SMH"]'); await page.waitForTimeout(200)
+  const fv = await page.evaluate(() => {
+    const i = document.querySelector('input[data-fq="SMH"]')
+    if (i) { i.value = '10000'; i.dispatchEvent(new Event('input', { bubbles: true })) }
+    return { cards: document.querySelectorAll('#fundsView .fcard').length, tableHidden: getComputedStyle(document.querySelector('.tbl')).display === 'none',
+      head: document.querySelector('#fundsView .fcard.open .fhead')?.innerText.replace(/\s+/g, ' '), out: document.querySelector('[data-fo="SMH"]')?.textContent,
+      rows: document.querySelectorAll('#fundsView .fcard.open .ftbl tbody tr').length, w: innerWidth, sw: document.documentElement.scrollWidth }
+  })
+  const f1 = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
+  const okF = fv.cards === FD.funds.filter((f) => f.rows).length && fv.tableHidden && Math.abs(want6.bad - smh.badWeight) < 1e-9 && Math.abs(want6.pur - smh.purificationPct) < 1e-9
+    && (fv.head ?? '').includes(`${f1(100 * smh.badWeight, 1)}٪`) && (fv.head ?? '').includes(`${f1(100 * smh.purificationPct, 3)}٪`)
+    && (fv.out ?? '').includes(f1(10000 * smh.purificationPct, 2)) && fv.rows > 0 && fv.sw <= fv.w + 1
+  console.log('FUNDS CHECK:', okF ? 'ok' : 'FAILED', JSON.stringify({ want6, smh: { bad: smh.badWeight, pur: smh.purificationPct, state: smh.state }, ...fv }))
+  if (!okF) process.exitCode = 1
+  { const el = await page.$('#fundsView .fcard.open'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-funds.png') }) } }
   console.log('LOGS:', logs)
   await browser.close()
 })()
