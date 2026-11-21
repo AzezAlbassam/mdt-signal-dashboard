@@ -189,3 +189,13 @@ test('funds: share count from net income / EPS when no count is tagged (Visa, se
   const r = secInputs(cf, { yieldPct: 5 });
   assert.equal(r.shares, 2000); assert.equal(r.sharesMV, 2000); assert.equal(r.sharesSource, 'implied');
 });
+test('funds: trade receivables (Accounts...) do not block the estimate; real loans still do', () => {
+  const base = { Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)] };
+  assert.ok(secInputs(company(ns({ ...base, AccountsNotesAndLoansReceivableNetCurrent: [i(Q[1], 500)] })), { yieldPct: 5 }).illicit > 0); // PEP, CVX
+  assert.equal(secInputs(company(ns({ ...base, FinancingReceivableExcludingAccruedInterestPurchase: [f(...Q, 300)] })), { yieldPct: 5 }).illicit, null); // INTU buys loans
+});
+test('funds: revenue of investment banks (net of interest expense) and a plain Cash tag', () => {
+  assert.equal(secInputs(company(ns({ RevenuesNetOfInterestExpense: [f(...Q, 900)] })), { yieldPct: 5 }).revenue, 900);
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], Cash: [i(Q[1], 200)] })), { yieldPct: 4 });
+  assert.equal(r.illicitEstimated, true); assert.ok(r.illicit > 0);
+});

@@ -86,3 +86,7 @@ test('a prohibited activity decides even without statements (banks in the funds)
   assert.equal(screenHolding(bank, 100, SIC).state, 'غير جائز');
   assert.equal(screenStock({ period: null, sic: '3674' }, null, SIC), null);  // permitted activity, no data: still nothing
 });
+test('names match in any word order when that is unique (SCHWAB CHARLES CORP = Charles Schwab Corp/The)', () => {
+  const m = buildMaps([{ cik: '0000316709', ticker: 'SCHW', title: 'SCHWAB CHARLES CORP' }], []);
+  assert.deepEqual(mapHolding({ name: 'Charles Schwab Corp/The' }, m), { cik: '0000316709', by: 'name' });
+});
