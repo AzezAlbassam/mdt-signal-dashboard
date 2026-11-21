@@ -209,3 +209,20 @@ Consequence: no computation may start. Options put to the owner:
 2. Paid data (TradingView plan with fundamentals, or FMP plan with as-reported statements, Saudi coverage
    and ETF holdings).
 Saudi stocks: no source today in either option 1 or the current FMP plan.
+
+### K2. Owner decisions and TradingView root cause (2026-11-21, later)
+
+- A5 decided by the owner: the fund rule is proportional (his rule, not Al Rajhi's, labelled so on the
+  page): a fund passes when the weight of non-compliant holdings is below 5%, and the purification covers
+  the illicit part of every holding (look-through, E3). Example he gave: 3% non-compliant, 97% compliant → passes.
+- TradingView root cause: the connector's own tool description now reads "Fundamentals, analyst estimates,
+  earnings, dividends, sector/industry and ETF data columns are not available: such columns are dropped".
+  It changed between 2026-11-14 (fundamentals still served) and 2026-11-18. It is a change in TradingView's
+  MCP, not the owner's subscription. The free daily call limit is also small (it ran out today after about
+  10 calls); TradingView's paid "AI Add-on" raises it to 500 calls a day, but nothing says it brings the
+  fundamentals back. Filings (10-Q/10-K PDFs via get-documents) are still listed, but NVDA's Q3 10-Q filed
+  2026-11-17 was not listed four days later.
+- Proposed root fix: SEC EDGAR as the data source for US fundamentals (XBRL company facts) and US ETF holdings
+  (N-PORT), TradingView only for prices. Waiting for the owner: allow data.sec.gov, www.sec.gov and
+  efts.sec.gov, and the contact e-mail SEC requires in each request.
+- The stocks page depends on the same TradingView fundamentals; check it and plan its move to SEC data too.
