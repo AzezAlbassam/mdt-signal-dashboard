@@ -3,7 +3,7 @@
 //   SEC_USER_AGENT="Name email" node scripts/shariah/fund-load.js
 // It fetches SEC inputs for held companies that are not on the dashboard (saved in data/shariah/fund-companies.json),
 // and fails (exit 1) when its own checks fail: holdings weights outside 97-103% without collateral, or fewer funds written.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { getter, companies, yieldAverager, inputsFor } from './sec-lib.js';
 import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary } from '../../engine/funds.js';
 
@@ -12,6 +12,8 @@ const list = JSON.parse(readFileSync('data/shariah/funds-list.json', 'utf8')).fu
 const reports = Object.fromEntries(readFileSync('data/shariah/nport-latest.jsonl', 'utf8').trim().split('\n').map((l) => JSON.parse(l)).map((r) => [r.fund, r]));
 const sic = JSON.parse(readFileSync('data/shariah/sic-activity.json', 'utf8'));
 const stocks = JSON.parse(readFileSync('data/shariah/sec-inputs.json', 'utf8')).stocks;
+// Quarter-average closes for holdings near the debt line (data/shariah/quarter-prices.json, from FMP; see SHARIAH-REFRESH.md)
+const QP = existsSync('data/shariah/quarter-prices.json') ? JSON.parse(readFileSync('data/shariah/quarter-prices.json', 'utf8')).prices ?? {} : {};
 
 const get = getter();
 const cos = companies(get);
@@ -48,8 +50,10 @@ for (const f of list) {
     const m = mapHolding(h, maps);
     const c = m.cik ? byCik.get(m.cik) : null;
     const price = h.units === 'NS' && h.balance > 0 && h.usd > 0 ? h.usd / h.balance : null;
-    const s = screenHolding(c, price, sic);
-    return { ...row, t: m.cik ? tickerOf.get(m.cik) ?? null : null, by: m.by, s: s.state, why: [...(s.failed ?? []), ...(s.missing ?? [])],
+    const t = m.cik ? tickerOf.get(m.cik) ?? null : null;
+    const q = t ? QP[t] : null;
+    const s = screenHolding(c, price, sic, q && q.start === c?.period?.start && q.end === c?.period?.end ? q : null);
+    return { ...row, t, by: m.by, s: s.state, exact: !!s.exact, why: [...(s.failed ?? []), ...(s.missing ?? [])],
       dr: s.numbers?.debtRatio ?? null, is: s.numbers?.illicitShare ?? null, est: !!c?.illicitEstimated, pur: s.purification ?? null,
       end: c?.period?.end ?? null, foreign: h.country && h.country !== 'US' };
   });
@@ -65,9 +69,16 @@ for (const f of list) {
     purificationPct: sum.purificationPct, purificationUnknownWeight: sum.purificationUnknownWeight, kinds,
     rows: rows.sort((a, b) => Math.abs(b.w) - Math.abs(a.w)) });
 }
+// Holdings the band could not decide: the next step fetches their quarter-average close
+const band = new Map();
+for (const f of out.funds) for (const x of f.rows ?? []) if (x.why?.includes('priceBand') && x.t) {
+  const c = byCik.get(cos.find((k) => k.ticker === x.t)?.cik);
+  if (c?.period) band.set(x.t, { t: x.t, start: c.period.start, end: c.period.end });
+}
+writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()], null, 1));
 const written = out.funds.filter((f) => f.rows).length;
 if (written < 35) problems.push(`only ${written} funds with holdings`);
 writeFileSync('data/shariah/funds.json', JSON.stringify(out));
-console.log(`\nfunds ${out.funds.length} (with holdings ${written}); companies fetched ${need.size}`);
+console.log(`\nfunds ${out.funds.length} (with holdings ${written}); companies fetched ${need.size}; near the debt line ${band.size} (band-needed.json)`);
 for (const f of out.funds) console.log(f.sym.padEnd(5), f.state ?? f.why ?? f.err, f.rows ? `bad ${(100 * f.badWeight).toFixed(1)}% unknown ${(100 * f.unknownWeight).toFixed(1)}% collateral ${(100 * f.collateralWeight).toFixed(1)}% purif/qtr ${(100 * f.purificationPct).toFixed(3)}% age ${f.ageDays}d` : '');
 if (problems.length) { console.log('PROBLEMS', problems); process.exitCode = 1; }

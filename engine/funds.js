@@ -45,9 +45,15 @@ export function holdingKind(h) {
 // The report's price (value / shares held) is a point, not the quarter average Al Rajhi uses, so the debt test must
 // agree from 20% below to 25% above it; otherwise the holding is not judged.
 const LOW = 0.8, HIGH = 1.25
-export function screenHolding(r, price, sicTable) {
+// quarter: {avg, n} = the average daily close over the company's own quarter (as the stock page computes); with 40+
+// trading days it replaces the band and the test is exactly Al Rajhi's.
+export function screenHolding(r, price, sicTable, quarter = null) {
   if (!r?.period) return screenStock(r, null, sicTable) ? { ...screenStock(r, null, sicTable), purification: null } : { state: 'ما ينحكم', missing: ['statements'], purification: null }
   const shares = r.sharesMV ?? r.shares
+  if (quarter?.avg > 0 && quarter.n >= 40 && shares > 0) {
+    const mv = quarter.avg * shares, v = screenStock(r, mv, sicTable)
+    return { ...v, exact: true, band: false, purification: r.illicit >= 0 ? r.illicit / mv : null }
+  }
   if (!(price > 0 && shares > 0)) { const v = screenStock(r, null, sicTable); return { ...v, purification: null } }
   const mv = price * shares
   const point = screenStock(r, mv, sicTable), lo = screenStock(r, mv * LOW, sicTable), hi = screenStock(r, mv * HIGH, sicTable)
