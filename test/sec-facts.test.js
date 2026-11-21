@@ -48,9 +48,10 @@ test('T2b: debt sums lines of the SAME date, never LongTermDebt and its current 
   assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 90)] }), d).debt, null);
   // a stale line from another date does not count as today
   assert.equal(debtAt(ns({ ConvertibleNotesPayable: [i('2025-12-31', 0)] }), d).debt, null);
-  // leases are added (A2 default) and listed separately
+  // leases are NOT debt (owner's decision 2026-11-21, following Al Rajhi's own list: flynas is compliant with lease
+  // liabilities at 54% of its market value); they are still reported separately (this assertion was "debt 110" before)
   const l = debtAt(ns({ LongTermDebt: [i(d, 100)], OperatingLeaseLiability: [i(d, 7)], FinanceLeaseLiability: [i(d, 3)] }), d);
-  assert.equal(l.debt, 110); assert.equal(l.parts.leases, 10);
+  assert.equal(l.debt, 100); assert.equal(l.parts.leases, 10);
 });
 
 const company = (us, dei = {}) => ({ entityName: 'X', facts: { 'us-gaap': us, dei } });
@@ -159,4 +160,11 @@ test('G6 rerun: finance receivables seen only in cash flows also block the estim
   const cf = company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
     PaymentsToAcquireFinanceReceivables: [f('2025-11-03', Q[1], 19139)] }));
   assert.equal(secInputs(cf, { yieldPct: 5 }).illicit, null);
+});
+
+test('A2 decided: leases out of debt; the liabilities upper bound subtracts known lease liabilities', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], Liabilities: [i(Q[1], 900)], OperatingLeaseLiability: [i(Q[1], 300)] })), { yieldPct: 5 });
+  assert.equal(r.debt, null); assert.equal(r.debtUpperBound, 600); assert.equal(r.debtParts.leases, 300);
+  const d = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LongTermDebt: [i(Q[1], 200)], FinanceLeaseLiability: [i(Q[1], 50)] })), { yieldPct: 5 });
+  assert.equal(d.debt, 200); assert.equal(d.debtParts.leases, 50);
 });
