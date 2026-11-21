@@ -407,3 +407,10 @@ Not fixed (noted): preferred tickers (STRC, STRF, STRK) are judged on MSTR's com
 - After all fixes (425 stocks with a usable quarter): interest tagged 183, upper-bound or estimate 197, missing 45;
   debt known 230, liabilities upper bound 175, missing 20. `npm test` 475/475; browser check green at both widths.
 Remaining before the first publish: G7, the owner's sign-off.
+
+### M6. Owner sign-off G7 (2026-11-21)
+- A4 / activity table: the 56 "review" industries show «ما ينحكم» until phase 2 reads their annual reports.
+- Publish: approved, once the lease question is settled.
+- A2 (leases as interest-bearing debt): the owner asked NOT to decide it ourselves — "research what is correct,
+  don't issue a fatwa of our own, don't continue until sure from more than one source". Research running
+  (Al Rajhi, AAOIFI, index methodologies, Saudi boards, screeners). The page keeps leases until the answer.
