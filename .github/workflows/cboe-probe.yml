@@ -1,0 +1,30 @@
+name: Cboe probe
+on:
+  push:
+    branches: [probe/cboe]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36'
+          for u in \
+            https://cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json \
+            https://cdn.cboe.com/api/global/delayed_quotes/options/_SPX.json \
+            https://cdn.cboe.com/api/global/delayed_quotes/quotes/NVDA.json \
+            https://cdn.cboe.com/api/global/delayed_quotes/options/IBIT.json \
+            https://www.cboe.com/delayed_quotes/nvda/quote_table ; do
+            for hdr in "none" "browser"; do
+              echo "== $u [$hdr]"
+              if [ "$hdr" = browser ]; then
+                curl -sS -m 20 -D /tmp/h -o /tmp/b -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com' "$u" || true
+              else
+                curl -sS -m 20 -D /tmp/h -o /tmp/b "$u" || true
+              fi
+              grep -iE '^HTTP|^server|^x-cache|^content-type|^content-length|^cf-|^x-amz|^via|^age|^last-modified' /tmp/h || true
+              head -c 300 /tmp/b | tr -d '\r'; echo
+            done
+          done
+          echo "== node fetch like snapshot.js"
+          node -e 'fetch("https://cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json",{headers:{"User-Agent":process.argv[1],Accept:"application/json"}}).then(async r=>{console.log(r.status,[...r.headers].filter(([k])=>/cache|server|type|length|age|date/.test(k)));const t=await r.text();console.log(t.slice(0,300))}).catch(e=>console.log("ERR",e.message))' "$UA"
+          echo "== runner ip"; curl -sS -m 10 https://api.ipify.org; echo
