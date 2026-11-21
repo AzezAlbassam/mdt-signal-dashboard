@@ -89,6 +89,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
+        // Shariah block (7b): daily bars at a flat $250 for the quarter-average price
+        if (tool.endsWith('ohlcv') && input.interval === '1D') { const now = Math.floor(Date.now() / 864e5) * 86400; const t = Array.from({ length: input.count }, (_, i) => now - (input.count - 1 - i) * 86400); return { payload: { bars: { t, c: t.map(() => 250) } } } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
         if (tool.endsWith('get-news') && window.__newsFail) { window.__newsFail -= 1; throw { code: 'server_unavailable' } }
         if (tool.endsWith('get-news')) return { payload: { data: { headlines: [{ title: 'Example headline for ' + input.symbol, link: 'https://example.com', published: 1790913837, provider: { name: 'Test' } }] } } }
@@ -160,6 +162,20 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.fill('#filter', 'aapl'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row')
   await page.waitForTimeout(500)
+  // Shariah block (7b), AAPL from data/shariah/sec-inputs.json, by hand: debt 94.479B / (250 x 14.532182B shares)
+  // = 2.60%; estimated interest 1.98734B / revenue 114.477B = 1.74%; per share 1.98734B / 14.532182B = $0.1368.
+  await page.waitForTimeout(300)
+  const sh = await page.evaluate(async () => {
+    const b = document.querySelector('#rows .part.sh')
+    const i = b?.querySelector('input[data-shq]')
+    if (i) { i.value = '100'; i.dispatchEvent(new Event('input', { bubbles: true })) }
+    return { text: b?.innerText.replace(/\s+/g, ' ').slice(0, 700), state: b?.querySelector('.shs')?.textContent, out: b?.querySelector('[data-sho]')?.textContent,
+      saved: window.__store['sh/NASDAQ:AAPL']?.state, chip: document.querySelector('#rows tr.row[data-sym="NASDAQ:AAPL"] .shc')?.textContent,
+      daily: window.__calls.some((c) => c.startsWith('mcp-tv-get-ohlcv NASDAQ:AAPL')) }
+  })
+  const okSh = sh.state === 'مختلط جائز' && /2\.60/.test(sh.text) && /1\.74/.test(sh.text) && /0\.1368/.test(sh.text) && /13\.68/.test(sh.out ?? '') && /تقدير/.test(sh.text) && sh.saved === 'مختلط جائز' && sh.chip === '✓'
+  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify(sh)); if (!okSh) console.log('LOGS NOW:', logs)
+  if (!okSh) process.exitCode = 1
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   const svrBox = await page.$('#rows .part.svr svg.sc')
   await svrBox.scrollIntoViewIfNeeded()

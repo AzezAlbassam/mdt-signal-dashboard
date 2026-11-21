@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { verdict, purificationPerShare, estimateInterest, fundVerdict, debtRatio, illicitShare } from '../engine/shariah.js';
+import { shariahVerdict as verdict, purificationPerShare, estimateInterest, fundVerdict, debtRatio, illicitShare } from '../engine/shariah.js';
 
 const base = { activity: 'ok', debt: 10, marketValue: 100, bookEquity: 50, illicit: 1, illicitEstimated: false, revenue: 100, shares: 10 };
 const v = o => verdict({ ...base, ...o });
@@ -118,4 +118,10 @@ test('R1 by SIC code: fail, review, ok, unknown', async () => {
   assert.equal(activityFromSic('', table), null);
   assert.equal(activityFromSic(null, table), null);
   assert.equal(activityFromSic('abc', table), null);
+});
+test('an estimate is an upper bound: it decides only when it passes', () => {
+  const r = v({ illicit: 8, illicitEstimated: true });
+  assert.equal(r.state, 'ما ينحكم'); assert.ok(r.missing.includes('illicit')); assert.deepEqual(r.failed, []);
+  assert.equal(v({ illicit: 4, illicitEstimated: true }).state, 'مختلط جائز');
+  assert.equal(v({ illicit: 8, illicitEstimated: true, debt: 90 }).state, 'غير جائز'); // R2 fails for sure
 });

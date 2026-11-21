@@ -90,3 +90,7 @@ test('secInputs: shares from the cover page, else weighted basic shares of the q
 test('secInputs: no revenue quarter at all -> nothing to judge', () => {
   assert.equal(secInputs(company(ns({})), { yieldPct: 5 }).period, null);
 });
+test('T4: a latest quarter older than minEnd is never used (APA: 2021 revenue in 2026)', () => {
+  const r = secInputs(company(ns({ Revenues: [f('2021-04-01', '2021-06-30', 0)] })), { yieldPct: 5, minEnd: '2026-05-01' });
+  assert.equal(r.period, null); assert.equal(r.stale, '2021-06-30');
+});
