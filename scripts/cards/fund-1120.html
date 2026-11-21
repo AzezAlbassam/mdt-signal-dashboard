@@ -1,0 +1,53 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- Portfolio update 2026-11-20 (owner's own trades, from his Albassam Fund cards). 1080x1350. Percentages only, no prices. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#E9E7E1;color:#111;font-family:"IBM Plex Sans Arabic";overflow:hidden}
+.wrap{position:absolute;inset:0;padding:40px 56px 30px;display:flex;flex-direction:column}
+.kick{font:600 19px "IBM Plex Sans Arabic";background:#111;color:#fff;align-self:flex-start;padding:2px 12px;margin-bottom:8px}
+h1{font:900 40px/1.3 "Noto Kufi Arabic"}
+h1 u{text-decoration-thickness:5px;text-underline-offset:8px}
+.sub{font:500 20px "IBM Plex Sans Arabic";color:#6B6962;margin-top:2px}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:2px solid #111;direction:ltr}
+.me{display:flex;align-items:center;gap:12px;font:700 22px "IBM Plex Mono"}
+.x{width:38px;height:38px;border-radius:4px;background:#111;display:grid;place-items:center}.x svg{width:22px;height:22px;fill:#fff}
+.note{font:500 17px "IBM Plex Sans Arabic";color:#6B6962;direction:rtl}
+.chart{position:relative;flex:1;margin-top:18px;min-height:0}
+.plot{position:absolute;inset:0 0 34px 0;display:flex;align-items:flex-end;gap:14px;direction:ltr}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:100%;background:#fff;border:2px solid #111;border-bottom:0}
+.col.hi .bar{background:#111}
+.v{font:600 18px "IBM Plex Mono";color:#6B6962;margin-bottom:6px;position:relative;z-index:3;background:#E9E7E1;padding:0 4px}
+.col.hi .v{font:700 28px "IBM Plex Mono";color:#111}
+.axis{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;gap:14px;direction:ltr;border-top:2px solid #111;padding-top:6px}
+.axis span{flex:1;text-align:center;font:500 15px "IBM Plex Mono";color:#6B6962}
+.ref{position:absolute;left:0;right:0;border-top:2px dashed #111;z-index:2}
+.ref b{position:absolute;left:44%;top:8px;font:600 16px "IBM Plex Sans Arabic";background:#E9E7E1;padding:0 6px;direction:rtl}
+.tiles{display:flex;gap:16px;margin-top:26px}
+.tile{flex:1;background:#fff;border:2px solid #111;padding:16px 20px;display:flex;flex-direction:column}
+.tile.k{background:#111;color:#fff}.tile.k .l,.tile.k .s{color:#C9C6BE}
+.tile .l{font:600 19px "IBM Plex Sans Arabic";color:#6B6962}
+.tile .n{font:700 76px "IBM Plex Mono";direction:ltr;text-align:right;margin:8px 0 4px}
+.tile .s{font:500 16px "IBM Plex Sans Arabic";color:#6B6962;margin-top:6px}
+.explain{margin-top:22px;font:700 24px "IBM Plex Sans Arabic";border:2px solid #111;background:#fff;padding:8px 14px}
+.n2{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.fv{margin-top:14px;display:flex;flex-direction:column;gap:4px;font:500 18px "IBM Plex Sans Arabic";color:#6B6962}.fv b{font:700 22px "IBM Plex Sans Arabic";color:#111}
+</style><body><div class="wrap" id="w"></div>
+<script>
+const X='<div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>'
+const foot=`<div class="foot"><div class="me">${X}@AzizzUnited</div><div class="note">محفظتي الشخصية · 20 نوفمبر 2026 · مو توصية</div></div>`
+const row=(t,name,tag,big,bigl,sub,dark)=>`<div class="tile ${dark?'k':''}" style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px 18px;padding:44px 30px">
+ <div><div style="display:flex;gap:12px;align-items:baseline"><b style="font:700 46px 'IBM Plex Mono';direction:ltr">${t}</b><span class="l" style="font-size:20px">${name}</span></div>
+ <div class="s" style="font-size:19px;margin-top:6px">${sub}</div></div>
+ <div style="text-align:left"><span class="kick" style="margin:0 0 8px auto;display:inline-block;${dark?'background:#fff;color:#111':''}">${tag}</span><div class="n" style="font-size:58px;margin:0">${big}</div><div class="s" style="font-size:17px;margin:0">${bigl}</div></div></div>`
+document.getElementById('w').innerHTML=`<div class="kick">تحديث المحفظة · 20 نوفمبر</div>
+<h1 style="font-size:52px">دخلت انفيديا… <u>وعزّزت</u> في ثنتين</h1>
+<div class="sub" style="font-size:22px">نسب بس، بدون مبالغ</div>
+<div style="display:grid;gap:28px;margin-top:40px">
+${row('NVDA','انفيديا','مركز جديد','7.1%','من المحفظة','أول دخول، بعد نزول السهم على خبر جنسن',true)}
+${row('NBIS','نبيس','عزّزت','−2.7%','نزل متوسطي','زدت المركز <span class="n2">12%</span>',false)}
+${row('SNDK','سانديسك','عزّزت','−3.9%','نزل متوسطي','زدت المركز <span class="n2">19%</span>',false)}
+</div>
+<div class="explain" style="margin-top:40px;padding:22px 26px;font-size:30px;display:flex;justify-content:space-between;align-items:center"><span>المحفظة كلها من البداية</span><b class="n2" style="font:700 44px 'IBM Plex Mono'">+48.0%</b></div>`+foot
+</script>
