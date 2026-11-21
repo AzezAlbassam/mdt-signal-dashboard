@@ -8,14 +8,21 @@ const rows = (ns, tag, unit = 'USD') => (ns?.[tag]?.units?.[unit] ?? []).filter(
 const latestFiled = (a, b) => (!a || b.filed > a.filed ? b : a);
 
 export const REVENUE = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenueFromContractWithCustomerIncludingAssessedTax', 'SalesRevenueNet'];
-// Gross interest (or interest plus dividends: overstates, cautious). Net figures such as InvestmentIncomeNet are excluded.
-export const INTEREST = ['InvestmentIncomeInterest', 'InvestmentIncomeInterestAndDividend', 'InterestIncomeOther', 'InterestAndOtherIncome', 'InterestIncomeOperating', 'InterestAndDividendIncomeOperating'];
+// Interest income tags. EXACT: interest only (a lower bound of the company's total interest). UPPER: interest plus
+// other items (dividends, other income): an upper bound. Net figures such as InvestmentIncomeNet are excluded.
+export const INTEREST_EXACT = ['InvestmentIncomeInterest', 'InterestIncomeOther', 'InterestIncomeOperating', 'InterestIncomeDepositsWithFinancialInstitutions',
+  'InterestAndFeeIncomeLoansConsumer', 'InterestAndFeeIncomeLoansAndLeases', 'InterestAndFeeIncomeLoansCommercial', 'SalesTypeAndDirectFinancingLeasesInterestIncome',
+  'InterestIncomeDebtSecuritiesAvailableForSaleAndHeldToMaturity', 'InterestIncomeSecuritiesTaxable'];
+export const INTEREST_UPPER = ['InvestmentIncomeInterestAndDividend', 'InterestAndOtherIncome', 'InterestAndDividendIncomeOperating'];
+// Interest-earning assets the cash-based estimate does not cover: with any of these, no estimate (G6.2).
+const LOANS = ['FinancingReceivableExcludingAccruedInterestAfterAllowanceForCreditLoss', 'LoansAndLeasesReceivableNetReportedAmount', 'NotesReceivableNet',
+  'FinancingReceivableExcludingAccruedInterestBeforeAllowanceForCreditLoss', 'LoansReceivableNetReportedAmount', 'NetInvestmentInLease'];
 const CASH = ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'];
 const SEC_CUR = ['MarketableSecuritiesCurrent', 'ShortTermInvestments', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'];
 const SEC_NONCUR = ['MarketableSecuritiesNoncurrent', 'AvailableForSaleSecuritiesDebtSecuritiesNoncurrent'];
 
 // Three-month facts of one tag (latest filing per period) plus Q4 derived from the annual figure.
-function quartersOfTag(ns, tag, unit) {
+function quartersOfTag(ns, tag, unit, derive = true) {
   const q = new Map(), annual = new Map();
   for (const x of rows(ns, tag, unit)) {
     if (!x.start) continue;
@@ -24,7 +31,7 @@ function quartersOfTag(ns, tag, unit) {
     else if (n >= 350 && n <= 380) annual.set(key, latestFiled(annual.get(key), x));
   }
   const out = [...q.values()].map(x => ({ tag, start: x.start, end: x.end, val: x.val, form: x.form, filed: x.filed }));
-  for (const a of annual.values()) {
+  for (const a of derive ? annual.values() : []) {
     if (out.some(x => x.end === a.end)) continue;
     const three = out.filter(x => x.start >= a.start && x.end < a.end).sort((x, y) => x.end.localeCompare(y.end));
     if (three.length !== 3) continue;
@@ -34,9 +41,10 @@ function quartersOfTag(ns, tag, unit) {
 }
 
 // All quarters for the first tag (in priority order) that reports each period end, sorted by end.
-export function quarterFacts(ns, tags, unit = 'USD') {
+// derive = false for averages (weighted shares), where "year minus three quarters" means nothing (G6.5).
+export function quarterFacts(ns, tags, unit = 'USD', derive = true) {
   const byEnd = new Map();
-  for (const t of tags) for (const x of quartersOfTag(ns, t, unit)) if (!byEnd.has(x.end)) byEnd.set(x.end, x);
+  for (const t of tags) for (const x of quartersOfTag(ns, t, unit, derive)) if (!byEnd.has(x.end)) byEnd.set(x.end, x);
   return [...byEnd.values()].sort((a, b) => a.end.localeCompare(b.end));
 }
 
@@ -58,12 +66,13 @@ export function debtAt(ns, date) {
   const leases = fin + op;
   let borrowings = v('DebtLongtermAndShorttermCombinedAmount');
   if (borrowings == null) {
-    const lt = v('LongTermDebt'), nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations']);
+    const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
+    const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations']);
     const cur = v(['LongTermDebtCurrent', 'DebtCurrent']);
     if (lt != null) borrowings = lt + st;
     else if (nonCur != null && cur != null) borrowings = nonCur + cur + st;
-    else if (nonCur == null && cur != null) borrowings = cur + st;
-    else if (nonCur == null && (v('ShortTermBorrowings') != null || v('CommercialPaper') != null)) borrowings = st;
+    // Only short-term lines (G6.1: BAX, TMUS, ORA, DE): the long-term debt is under another tag, so the figure is
+    // incomplete and the liabilities upper bound is used instead.
   }
   // ponytail: debt under a company's own (custom) tag is missed; the G3 hand check samples for it.
   return { debt: borrowings == null ? null : borrowings + leases, parts: { borrowings, leases } };
@@ -77,9 +86,16 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // T4: an old quarter (the company stopped using these tags) is never taken as the latest
   if (rev.end < minEnd) return { name: cf.entityName, period: null, stale: rev.end };
   const period = { start: rev.start, end: rev.end, form: rev.form, filed: rev.filed, derived: !!rev.derived };
-  const int = quarterFacts(g, INTEREST).find(x => x.end === rev.end);
-  let illicit = int?.val ?? null, illicitEstimated = false, estimate = null;
-  if (int == null) {
+  // Largest figure of each kind for this quarter (a smaller tag never wins: G6.6).
+  const top = tags => tags.map(t => quarterFacts(g, [t]).find(x => x.end === rev.end)).filter(Boolean).sort((a, b) => b.val - a.val)[0] ?? null;
+  const exact = top(INTEREST_EXACT), upper = top(INTEREST_UPPER);
+  let int = exact, illicit = exact?.val ?? null, illicitEstimated = false, estimate = null;
+  // An exact figure above 5% decides; otherwise the larger upper-bound figure is used (it can prove a pass only).
+  if (upper && !(exact && rev.val > 0 && exact.val / rev.val > 0.05) && upper.val > (exact?.val ?? -Infinity)) {
+    int = upper; illicit = upper.val; illicitEstimated = true;
+  }
+  const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0);
+  if (int == null && !hasLoans) {
     const bal = d => {
       const c = instantAt(g, CASH, d);
       return c == null ? null : c + Math.max(0, ...SEC_CUR.map(t => instantAt(g, [t], d) ?? 0)) + Math.max(0, ...SEC_NONCUR.map(t => instantAt(g, [t], d) ?? 0));
@@ -94,12 +110,18 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const d = debtAt(g, rev.end);
   const deiShares = (dei.EntityCommonStockSharesOutstanding?.units?.shares ?? []).filter(x => x.end >= rev.end && days(rev.end, x.end) <= 120)
     .reduce(latestFiled, null);
-  const wavg = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares').find(x => x.end === rev.end);
+  const wavg = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares', false).find(x => x.end === rev.end);
+  // Market value uses the smaller count (G6.4): a split or new shares after the quarter can only lower it (stricter).
+  // A count 50x away from the other is a unit error (TEM reports thousands) and is dropped.
+  const c = deiShares?.val, w = wavg?.val;
+  const sane = c > 0 && w > 0 ? (c / w > 50 ? [c] : w / c > 50 ? [w] : [c, w]) : [c, w].filter(x => x > 0);
+  const sharesMV = sane.length ? Math.min(...sane) : null;
   return {
     name: cf.entityName, period, revenue: rev.val, revenueTag: rev.tag,
     illicit, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
     debt: d.debt, debtParts: d.parts, debtUpperBound: d.debt == null ? instantAt(g, ['Liabilities'], rev.end) : null,
     bookEquity: instantAt(g, ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest'], rev.end),
-    shares: deiShares?.val ?? wavg?.val ?? null, sharesSource: deiShares ? 'cover' : wavg ? 'weighted' : null,
+    // purification is owed per share held when the statements are issued: the cover-page count
+    shares: c > 0 && sane.includes(c) ? c : sharesMV, sharesMV, sharesSource: c > 0 && sane.includes(c) ? 'cover' : wavg ? 'weighted' : null,
   };
 }

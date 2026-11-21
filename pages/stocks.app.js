@@ -1420,7 +1420,8 @@
   function shCompute(sym, avgClose) {
     const r = shIn(sym)
     if (!r?.period) return null
-    const marketValue = Number.isFinite(avgClose) && r.shares > 0 ? avgClose * r.shares : null
+    const mvShares = r.sharesMV ?? r.shares // the smaller share count: a later split or issue can only lower it (G6.4)
+    const marketValue = Number.isFinite(avgClose) && mvShares > 0 ? avgClose * mvShares : null
     let debt = r.debt, debtUpper = false
     if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
       const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)
@@ -1452,12 +1453,14 @@
     } catch { /* prices failed: the block says so */ }
   }
   function shChip(sym) {
-    const s = state.sh[sym]
-    if (s?.state) return ` <span class="shc ${SH_CLS[s.state]}" title="الشرعية (طريقة الراجحي): ${esc(s.state)}">${s.state === 'غير جائز' ? '✕' : s.state === 'ما ينحكم' ? '؟' : '✓'}</span>`
-    // without prices R1 and R3 can already fail for sure
     const r = shIn(sym)
-    const pre = r?.period ? shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares }) : null
-    return pre?.state === 'غير جائز' ? ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>` : ''
+    if (!r?.period) return ''
+    const mark = (st) => ` <span class="shc ${SH_CLS[st] ?? 'dim'}" title="الشرعية (طريقة الراجحي): ${esc(st)}">${st === 'غير جائز' ? '✕' : st === 'حلال (نقي)' || st === 'مختلط جائز' ? '✓' : '؟'}</span>`
+    // A certain fail from the current filing (R1, R3) comes first: an old saved pass never hides it (G6.3).
+    const pre = shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+    if (pre.state === 'غير جائز') return mark(pre.state)
+    const s = state.sh[sym]
+    return s?.state && s.period?.end === r.period.end ? mark(s.state) : '' // saved for another quarter: not shown
   }
   function shBlock(sym) {
     const head = `<h3><span>الشرعية والتطهير <span class="dim">(طريقة الراجحي)</span></span>`
@@ -1468,7 +1471,7 @@
     const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
     const q = state.quotes[sym]
     const n = s.numbers
-    const ok = (x, lim) => (x == null ? '<span class="dim">—</span>' : x <= lim + 1e-12 ? '<span class="hi">✓</span>' : '<span class="lo">✕</span>')
+    const ok = (x, lim, upper = false) => (x == null ? '<span class="dim">—</span>' : x <= lim + 1e-12 ? '<span class="hi">✓</span>' : upper ? '<span class="dim">؟</span>' : '<span class="lo">✕</span>')
     const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
     const usd = (x, dp = 2) => (x == null ? '—' : `<bdi>$${fmt(x, dp)}</bdi>`)
     const big = (x) => (x == null ? '—' : Math.abs(x) >= 1e9 ? `<bdi>$${fmt(x / 1e9, 2)}</bdi> مليار` : `<bdi>$${fmt(x / 1e6, 1)}</bdi> مليون`)
@@ -1477,7 +1480,7 @@
     const rows = [
       ['النشاط', `${act} <small class="dim">${esc(r.sicDescription ?? '')}</small>`],
       ['الديون الربوية ÷ القيمة السوقية', `${ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? '—' : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون ${big(s.debtUpper ? r.debtUpperBound : r.debt)}${s.debtUpper ? ' (أعلى حد: كل الالتزامات)' : r.debtParts?.leases ? `، منها إيجارات ${big(r.debtParts.leases)}` : ''}</small>`],
-      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}</small>`],
+      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}</small>`],
       ['التطهير عن الربع لكل سهم', `<b class="n">${usd(pps, 4)}</b>${pps != null && q?.close > 0 ? ` <small class="dim">(<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من السعر)</small>` : ''}`],
     ]
     const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪' })[x]).join('، ')}. الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.`
@@ -1491,7 +1494,7 @@
       <details class="shmore"><summary>الطريقة والتنبيهات</summary>
       <p>الطريقة من وثيقة الراجحي المالية «آلية احتساب الدخل المحرم»: الديون الربوية لا تتجاوز 30٪ من متوسط القيمة السوقية للربع (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪ من الإيرادات. التطهير = الإيراد المحرم ÷ عدد أسهم الشركة × أسهمك.</p>
       <p>يلزم التطهير من يملك السهم وقت صدور القوائم (ربعية أو سنوية)، وزّعت الشركة أرباح أو لا. اللي باع قبل صدورها ما عليه. المبلغ يُصرف في وجوه الخير، وما ينحسب من الزكاة ولا الضريبة.</p>
-      <p>الديون تشمل عقود الإيجار (الأحوط). ${r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
+      <p>الديون تشمل عقود الإيجار (الأحوط). ${r.illicitEstimated && r.illicitTag ? `رقم الشركة (${esc(r.illicitTag)}) يجمع الفوائد مع إيرادات ثانية، فهو حد أعلى: يثبت الجواز إذا كان تحت 5٪، وما يثبت المنع إذا كان فوقها.` : r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
       <p>الراجحي يقول: إذا فيه شركات نقية تكفي الحاجة، يُكتفى بها.</p></details></div>`
   }
 

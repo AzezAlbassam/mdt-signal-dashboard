@@ -1,7 +1,7 @@
 // Build data/shariah/sec-inputs.json: SEC inputs for every US stock on the dashboard.
 // Usage: SEC_USER_AGENT="Name email" node scripts/shariah/sec-load.js [TICKER ...]
 import { execFileSync } from 'node:child_process';
-import { readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { secInputs } from '../../engine/sec-facts.js';
 
 const UA = process.env.SEC_USER_AGENT;
@@ -27,7 +27,9 @@ const out = { built: new Date().toISOString(), source: 'SEC EDGAR companyfacts +
 for (const t of tickers) {
   const cik = cikOf[t] ?? cikOf[t.replace('.', '-')];
   if (!cik) { out.stocks[t] = { error: 'no CIK' }; continue; }
-  const cf = get(`https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`);
+  // SEC_CACHE: a folder of companyfacts saved earlier the same day (<cik>.json), to avoid downloading them twice
+  const cached = process.env.SEC_CACHE && existsSync(`${process.env.SEC_CACHE}/${cik}.json`)
+  const cf = cached ? JSON.parse(readFileSync(`${process.env.SEC_CACHE}/${cik}.json`)) : get(`https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`);
   const sub = get(`https://data.sec.gov/submissions/CIK${cik}.json`);
   if (!cf) { out.stocks[t] = { cik, error: 'no XBRL facts', sic: sub?.sic ?? null }; continue; }
   const minEnd = new Date(Date.now() - 200 * 864e5).toISOString().slice(0, 10)

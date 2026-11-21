@@ -13,7 +13,8 @@ export function debtRatio(debt, marketValue, bookEquity) {
 // R3: illicit revenue / total revenue. No revenue: any illicit income fails (Infinity), none passes.
 export function illicitShare(illicit, revenue) {
   if (!amount(illicit) || !known(revenue)) return null;
-  if (revenue <= 0) return illicit > 0 ? Infinity : 0;
+  if (revenue < 0) return null; // bad data (G6.6)
+  if (revenue === 0) return illicit > 0 ? Infinity : 0;
   return illicit / revenue;
 }
 
@@ -34,7 +35,8 @@ export function shariahVerdict({ activity, debt, marketValue, bookEquity, illici
   if (activity === 'fail') failed.push('R1');
   else if (activity !== 'ok' && activity !== 'review') missing.push('activity'); // anything unexpected is unknown
   for (const [k, x] of Object.entries({ debt, illicit })) if (!amount(x)) missing.push(k);
-  for (const [k, x] of Object.entries({ marketValue, bookEquity, revenue })) if (!known(x)) missing.push(k);
+  for (const [k, x] of Object.entries({ marketValue, bookEquity })) if (!known(x)) missing.push(k);
+  if (!known(revenue) || revenue < 0) missing.push('revenue');
   const dr = debtRatio(debt, marketValue, bookEquity), is = illicitShare(illicit, revenue);
   if (dr == null && !missing.length) missing.push('marketValue'); // market value and book value both <= 0: bad data
   // Unknown book equity leaves R2 unknown: a larger book value could lower the ratio below 30%.

@@ -381,3 +381,22 @@ An independent agent compared NVDA, AAPL, MSFT, GOOGL, AMZN, META, AMD, COST wit
   (the cautious side, R6 "so as to be acquitted"). Proposed later fix (post-hoc): read the line's own label
   from the filing so "Interest income" under InvestmentIncomeNet can be used.
 - XOM is not in the dashboard universe (FMP shows a new CIK 0002115436 for it).
+
+### M5. Gate G6, adversarial review (2026-11-21) — 11 findings, all fixed with a test first
+An agent probed the engine, loader and page with real SEC data (proof scripts in the session scratchpad).
+1. CRITICAL: debt taken from short-term lines only when long-term debt sat under another tag: BAX, TMUS, ORA and DE
+   showed «مختلط جائز» where the right answer is «غير جائز». Now such a figure is incomplete and the total
+   liabilities upper bound decides (it can prove a pass, never a fail).
+2. HIGH: interest tags missing (deposits, consumer loans, leases): ENPH passed with an estimate of 4.41% while it
+   tags 5.77% of revenue as deposit interest. Ten exact interest tags now; the largest is used; no cash-based estimate
+   for a company with loans or financing receivables (the estimate would not be an upper bound there).
+3. HIGH: the row mark showed an old saved ✓ over a certain ✕. Now a certain fail from the current filing comes first,
+   and a saved result counts only for the same quarter.
+4. HIGH: a split or new shares after the quarter inflated the market value (shares from the cover page × split-
+   adjusted price). Market value now uses the smaller of the cover and weighted counts; purification uses the cover.
+5. MEDIUM: share-count unit error (TEM in thousands) → counts 50× apart drop the odd one; weighted shares no longer
+   get a "year minus three quarters" Q4.
+6. LOW: tags mixing interest with other income were treated as exact and could fail a stock → now upper bounds;
+   negative revenue → bad data, not a fail; a smaller interest tag no longer wins; R3 above 5% on an upper bound
+   shows «؟», not ✕.
+Not fixed (noted): preferred tickers (STRC, STRF, STRK) are judged on MSTR's common-stock figures (MSTR fails anyway).
