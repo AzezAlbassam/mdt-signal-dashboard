@@ -7,7 +7,7 @@ const nextDay = d => new Date(Date.parse(d) + 864e5).toISOString().slice(0, 10);
 const rows = (ns, tag, unit = 'USD') => (ns?.[tag]?.units?.[unit] ?? []).filter(x => FORMS.has(x.form) && typeof x.val === 'number');
 const latestFiled = (a, b) => (!a || b.filed > a.filed ? b : a);
 
-export const REVENUE = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenueFromContractWithCustomerIncludingAssessedTax', 'SalesRevenueNet'];
+export const REVENUE = ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenueFromContractWithCustomerIncludingAssessedTax', 'SalesRevenueNet', 'RevenuesNetOfInterestExpense'];
 // Interest income tags. EXACT: interest only (a lower bound of the company's total interest). UPPER: interest plus
 // other items (dividends, other income): an upper bound. Net figures such as InvestmentIncomeNet are excluded.
 export const INTEREST_EXACT = ['InvestmentIncomeInterest', 'InterestIncomeOther', 'InterestIncomeOperating', 'InterestIncomeDepositsWithFinancialInstitutions',
@@ -17,7 +17,7 @@ export const INTEREST_UPPER = ['InvestmentIncomeInterestAndDividend', 'InterestA
 // Interest-earning assets the cash-based estimate does not cover: with any of these, no estimate (G6.2).
 const LOANS = ['FinancingReceivableExcludingAccruedInterestAfterAllowanceForCreditLoss', 'LoansAndLeasesReceivableNetReportedAmount', 'NotesReceivableNet',
   'FinancingReceivableExcludingAccruedInterestBeforeAllowanceForCreditLoss', 'LoansReceivableNetReportedAmount', 'NetInvestmentInLease'];
-const CASH = ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'];
+const CASH = ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents', 'Cash'];
 const SEC_CUR = ['MarketableSecuritiesCurrent', 'ShortTermInvestments', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'];
 const SEC_NONCUR = ['MarketableSecuritiesNoncurrent', 'AvailableForSaleSecuritiesDebtSecuritiesNoncurrent'];
 
@@ -100,7 +100,7 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // Balances or cash flows of the last 400 days count (DE shows its receivables only in cash flows). Disclosures about
   // receivables (sold, significant sales, allowances, modifications) are not holdings: AVGO only discloses sold ones.
   const LOANISH = /(Financ\w*Receivable|Loans?(AndLeases)?Receivable|NetInvestmentInLease)/
-  const NOT_HELD = /(Sold|Sale|Significant|Allowance|Modification|Impaired|Writeoff|WriteOff|Recover|Collectively|Individually|Nonaccrual|PastDue|Troubled|Charge)/
+  const NOT_HELD = /(^Accounts|Sold|Sale|Significant|Allowance|Modification|Impaired|Writeoff|WriteOff|Recover|Collectively|Individually|Nonaccrual|PastDue|Troubled|Charge)/ // Accounts...: trade receivables (PEP, CVX)
   const recent = x => x.end <= rev.end && days(x.end, rev.end) <= 400 && x.val > 0
   const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0)
     || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && !NOT_HELD.test(t) && (v.units?.USD ?? []).some(recent)));

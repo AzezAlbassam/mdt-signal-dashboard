@@ -9,7 +9,9 @@ export function normName(s) {
     .replace(/[^A-Z0-9 ]/g, ' ').replace(SUFFIX, ' ').replace(/\s+/g, ' ').trim()
 }
 // The second key drops spaces: "Exxon Mobil Corp" and "ExxonMobil Holdings Corp" are the same company.
-export const nameKeys = (s) => { const k = normName(s); return k ? [k, k.replace(/ /g, '')] : [] }
+// The third key sorts the words: SEC writes "SCHWAB CHARLES CORP", funds write "Charles Schwab Corp". A key that two
+// companies share is never used (mapHolding needs a unique match).
+export const nameKeys = (s) => { const k = normName(s); return k ? [k, k.replace(/ /g, ''), k.split(' ').sort().join(' ')] : [] }
 
 // companies: [{cik, ticker, title}] (SEC company_tickers.json); seed: [{isin, ticker}] from funds that report tickers.
 export function buildMaps(companies, seed = []) {
