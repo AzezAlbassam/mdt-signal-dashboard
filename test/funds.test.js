@@ -90,3 +90,13 @@ test('names match in any word order when that is unique (SCHWAB CHARLES CORP = C
   const m = buildMaps([{ cik: '0000316709', ticker: 'SCHW', title: 'SCHWAB CHARLES CORP' }], []);
   assert.deepEqual(mapHolding({ name: 'Charles Schwab Corp/The' }, m), { cik: '0000316709', by: 'name' });
 });
+test('an exact quarter-average price replaces the band (Al Rajhi: quarter average)', () => {
+  // debt 270 at 1000 -> 27%: the band (800..1250) disagrees, the exact quarter average decides
+  assert.equal(screenHolding(co({ debt: 270 }), 10, SIC).state, 'ما ينحكم');
+  const r = screenHolding(co({ debt: 270 }), 10, SIC, { avg: 10.2, n: 62 });   // 270 / 1020 = 26.5%
+  assert.equal(r.state, 'مختلط جائز'); assert.equal(r.exact, true);
+  assert.ok(Math.abs(r.numbers.debtRatio - 270 / 1020) < 1e-12);
+  assert.equal(screenHolding(co({ debt: 270 }), 10, SIC, { avg: 8.5, n: 62 }).state, 'غير جائز'); // 270 / 850 = 31.8%
+  // too few days of prices: not used
+  assert.equal(screenHolding(co({ debt: 270 }), 10, SIC, { avg: 10.2, n: 12 }).state, 'ما ينحكم');
+});
