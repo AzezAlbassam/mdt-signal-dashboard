@@ -368,3 +368,16 @@ follow the Arabic (equity), which is the stricter reading too. 16 engine tests g
 - Name clash found by the browser check: the page has its own `verdict`; the engine's is now `shariahVerdict`.
 Before the first publish: G3 (hand check vs FMP), G6 (adversarial review), G7 (owner signs off A1–A4, A6 and
 the industry table data/shariah/sic-activity.json).
+
+### M4. Gate G3, second-source hand check (2026-11-21) — passed with one known overstatement
+An independent agent compared NVDA, AAPL, MSFT, GOOGL, AMZN, META, AMD, COST with FMP and MU with its 10-K text.
+- Revenue and stockholders' equity: identical for all 9. Shares within 0.4% (cover page vs weighted).
+- Debt: our borrowings and leases equal the companies' XBRL lines exactly; every difference with FMP is FMP's
+  definition (it leaves out current debt, current leases, sometimes finance leases).
+- Interest income: equal where tagged (NVDA 496, GOOGL 1,768, AMZN 1,187); COST 253 is right (FMP's own Q1 is off).
+- Known overstatement: MSFT, AMD and MU report interest income under `InvestmentIncomeNet`, a tag we exclude
+  because for other companies it nets gains and losses. They get the estimate instead: +42% (MSFT), +74% (AMD),
+  +82% (MU). All three still pass R3 by a wide margin; the purification shown is higher than the true one
+  (the cautious side, R6 "so as to be acquitted"). Proposed later fix (post-hoc): read the line's own label
+  from the filing so "Interest income" under InvestmentIncomeNet can be used.
+- XOM is not in the dashboard universe (FMP shows a new CIK 0002115436 for it).
