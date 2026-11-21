@@ -8,18 +8,18 @@ jobs:
     steps:
       - run: |
           UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
-          echo "== cboe redirect target"
-          curl -sS -m 20 -D - -o /dev/null -A "$UA" https://cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json | grep -iE '^HTTP|^location|^cf-mitigated|^server' || true
-          echo "== nasdaq option chain"
-          curl -sS -m 25 -D /tmp/h -o /tmp/b -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Origin: https://www.nasdaq.com' -H 'Referer: https://www.nasdaq.com/' \
-            'https://api.nasdaq.com/api/quote/NVDA/option-chain?assetclass=stocks&limit=5000&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all' || true
-          grep -iE '^HTTP|^content-type|^content-length' /tmp/h || true
-          python3 -c "import json;d=json.load(open('/tmp/b'));t=d.get('data') or {};r=(t.get('table') or {}).get('rows') or [];print('rows',len(r));print(r[:2]);print({k:v for k,v in t.items() if k!='table'})" 2>&1 | head -c 1500; echo
-          echo "== yahoo options (crumb flow)"
-          rm -f /tmp/cj
-          curl -sS -m 20 -c /tmp/cj -o /dev/null -A "$UA" https://fc.yahoo.com || true
-          CRUMB=$(curl -sS -m 20 -b /tmp/cj -A "$UA" https://query2.finance.yahoo.com/v1/test/getcrumb || true)
-          echo "crumb=[$CRUMB]"
-          curl -sS -m 25 -D /tmp/h -o /tmp/b -b /tmp/cj -A "$UA" "https://query2.finance.yahoo.com/v7/finance/options/NVDA?crumb=$CRUMB" || true
-          grep -iE '^HTTP|^content-type' /tmp/h || true
-          python3 -c "import json;d=json.load(open('/tmp/b'));r=d['optionChain']['result'][0];print('expiries',len(r['expirationDates']));o=r['options'][0];print('calls',len(o['calls']),'puts',len(o['puts']));print(o['calls'][len(o['calls'])//2])" 2>&1 | head -c 1500; echo
+          U=https://cdn-api.cboe.com/api/global/delayed_quotes/options/NVDA.json
+          try() { echo "== $1"; shift; curl -sS -m 20 -D /tmp/h -o /tmp/b "$@" "$U" || true; grep -iE '^HTTP|^content-type|^cf-mitigated|^location' /tmp/h || true; head -c 200 /tmp/b | tr -d '\r\n'; echo; }
+          try "bare"
+          try "ua" -A "$UA"
+          try "ua+accept" -A "$UA" -H 'Accept: application/json, text/plain, */*'
+          try "ua+referer+origin" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com'
+          try "full browser" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.9' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com' -H 'Sec-Fetch-Site: same-site' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Dest: empty'
+          echo "== node fetch, browser headers"
+          node -e '
+            const h={"User-Agent":process.argv[1],Accept:"application/json, text/plain, */*",Referer:"https://www.cboe.com/",Origin:"https://www.cboe.com"}
+            fetch("https://cdn-api.cboe.com/api/global/delayed_quotes/options/NVDA.json",{headers:h}).then(async r=>{const t=await r.text();console.log(r.status,t.slice(0,160));if(r.ok){const d=JSON.parse(t).data;console.log("options",d.options.length,Object.keys(d.options[0]).join(","))}}).catch(e=>console.log("ERR",e.message))' "$UA"
+          echo "== 20 tickers in a row (rate check)"
+          for t in AAPL MSFT AMZN META TSLA AMD PLTR MSTR COIN HOOD IBIT SPY QQQ IWM SMCI AVGO NFLX UBER HIMS RKLB; do
+            printf "%s " "$t"; curl -sS -m 20 -o /dev/null -w "%{http_code}\n" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com' "https://cdn-api.cboe.com/api/global/delayed_quotes/options/$t.json" || true
+          done

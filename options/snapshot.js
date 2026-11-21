@@ -36,6 +36,9 @@ function nyMinutes(now) {
   return Number(p.hour) * 60 + Number(p.minute)
 }
 
+/** The New York calendar date, YYYY-MM-DD: one trading day. */
+const nyDate = (d) => d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
+
 /** US regular session, 9:30–16:00 New York time, Monday–Friday. */
 export function marketOpen(now = new Date()) {
   const m = nyMinutes(now)
@@ -181,7 +184,9 @@ export async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
   if (rest.includes('--plan')) {
     const idx = await readJson(join(dataDir ?? '.', 'index.json'), null)
-    const p = plan(new Date(), idx?.updatedAt ? new Date(idx.updatedAt) : null)
+    // Plan from the last attempt, not the last success, or a dead source is hammered.
+    const last = idx?.attemptedAt ?? idx?.updatedAt
+    const p = plan(new Date(), last ? new Date(last) : null)
     console.log(p.action === 'wait' ? `wait ${p.seconds}` : p.action)
     return
   }
@@ -206,29 +211,25 @@ export async function main() {
   const only = cleanTickers(arg('--only'))
   const targets = only.length ? only.filter((t) => !removed.has(t)) : watchlist
   const prevIndex = await readJson(join(dataDir, 'index.json'), { tickers: {} })
-  const index = { updatedAt: new Date().toISOString(), marketOpen: marketOpen(), tickers: {} }
+  const now = new Date()
+  const index = { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), marketOpen: marketOpen(now), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
   // A small pool first, then one slow sequential pass over whatever was throttled.
+  // What a missing chain means is decided only after the whole pass (below).
+  const wasListed = (t) => { const p = prevIndex.tickers?.[t]; return Boolean(p && !p.noOptions && p.price != null) }
   let noOptions = 0
   const failed = []
+  const lost = []
   const run = async (t) => {
     try {
       index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
       return true
     } catch (e) {
       if (!e.noOptions) return e
-      // A ticker that had a chain and loses it is reported as a problem, not quietly
-      // relabelled: its last snapshot stays, flagged, until three passes in a row agree.
-      const prev = prevIndex.tickers?.[t]
-      const misses = (prev?.misses ?? 0) + 1
-      if (prev && !prev.noOptions && prev.price != null && misses < 3) {
-        index.tickers[t] = { ...prev, error: 'Cboe returned no chain this pass', misses }
-        return true
-      }
+      if (wasListed(t)) { lost.push(t); return true }
       noOptions += 1
       index.tickers[t] = { noOptions: true }
-      await rm(join(dataDir, `${t}.json`), { force: true })
       return true
     }
   }
@@ -250,10 +251,30 @@ export async function main() {
     index.tickers[t] = { ...(index.tickers[t] ?? {}), error: String(r.message ?? r) }
     console.log(`${t}: FAILED — ${r.message ?? r}`)
   }
+  // A few listed tickers losing their chain is news about those tickers. Most of them
+  // losing it at once is the source being down — on 20 Nov 2026 Cboe put its feed behind
+  // a bot wall and every ticker came back empty — and must not erase anything: keep the
+  // last snapshots, flag them, count nothing, keep the last good time, and fail the run.
+  const listed = targets.filter(wasListed)
+  const outage = listed.length >= 10 && lost.length + failures > 0.2 * listed.length
+  const day = nyDate(now)
+  for (const t of lost) {
+    const prev = prevIndex.tickers[t]
+    if (outage) { index.tickers[t] = { ...prev, error: 'source unavailable this pass' }; continue }
+    // One miss per trading day, not per pass: hourly passes must not turn one bad day
+    // into three. (Counts from before lastMiss existed were per pass, so they start over.)
+    const misses = prev.lastMiss === day ? prev.misses : (prev.lastMiss ? prev.misses ?? 0 : 0) + 1
+    if (misses < 3) { index.tickers[t] = { ...prev, error: 'Cboe returned no chain', misses, lastMiss: day }; continue }
+    noOptions += 1
+    index.tickers[t] = { noOptions: true }
+    await rm(join(dataDir, `${t}.json`), { force: true })
+  }
+  if (outage) index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
   console.log(`retried ${failed.length} after throttling`)
-  console.log(`${targets.length} tickers: ${targets.length - failures - noOptions} with options, ${noOptions} without, ${failures} failed`)
+  console.log(`${targets.length} tickers: ${targets.length - failures - noOptions - lost.length} with options, ${noOptions} without, ${lost.length} lost their chain, ${failures} failed`)
+  if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed`)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
-  if (failures > targets.length / 2) process.exitCode = 1
+  if (outage || failures > targets.length / 2) process.exitCode = 1
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) await main()

@@ -148,6 +148,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
       <div class="chips dates" id="dateChips"></div>
     </div>
   </div>
+  <div id="stale" class="verdict bad" hidden></div>
   <div id="out"><p class="empty">جاري التحميل…</p></div>
 </section>
 
@@ -579,6 +580,12 @@ fetch('data/options/validation.json', { cache: 'no-cache' }).then((r) => r.ok ? 
     ? `✓ فحص آلي بعد آخر تحديث: ${fmtN(v.tickers)} سهم و${fmtN(v.contracts)} عقد — كل الأرقام مطابقة لإعادة الحساب، بدون أخطاء.`
     : `⚠️ الفحص الآلي لقى مشكلة في ${bad} سهم — الأرقام لهذي الأسهم ممكن تكون غير دقيقة.`
   $('foot').insertAdjacentHTML('beforeend', `<br>${line}`)
+  // A pass that could not reach the source for most tickers: say it where it is seen.
+  const unreachable = v.fetchErrors?.length ?? 0
+  if (unreachable > 0.2 * (unreachable + (v.tickers ?? 0))) {
+    $('stale').innerHTML = `<div class="t">⚠️ آخر تحديث للبيانات فشل</div><p>مصدر البيانات ما رجّع عقود ${fmtN(unreachable)} سهم في آخر محاولة (${fmtTime(v.checkedAt)}). الأرقام المعروضة من آخر تحديث ناجح — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
+    $('stale').hidden = false
+  }
 }).catch(() => {})
 fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
   index = j
