@@ -31,7 +31,8 @@ test('R3 at 4.99 / 5 / 5.01 percent', () => {
 });
 test('R3 with zero or negative revenue', () => {
   assert.deepEqual(v({ revenue: 0, illicit: 3 }).failed, ['R3']);
-  assert.deepEqual(v({ revenue: -5, illicit: 3 }).failed, ['R3']);
+  // G6.6 (post-hoc, review finding): negative revenue is bad data, not a fail
+  assert.equal(v({ revenue: -5, illicit: 3 }).state, 'ما ينحكم');
   assert.equal(illicitShare(0, 0), 0);
   assert.equal(v({ revenue: 0, illicit: 0 }).state, 'مختلط جائز');
 });

@@ -94,3 +94,51 @@ test('T4: a latest quarter older than minEnd is never used (APA: 2021 revenue in
   const r = secInputs(company(ns({ Revenues: [f('2021-04-01', '2021-06-30', 0)] })), { yieldPct: 5, minEnd: '2026-05-01' });
   assert.equal(r.period, null); assert.equal(r.stale, '2021-06-30');
 });
+
+// G6 adversarial review (2026-11-21): every finding gets a test before the fix.
+test('G6.1: debt built only from short-term lines is incomplete (BAX, TMUS, ORA, DE)', () => {
+  const d = '2026-06-30';
+  assert.equal(debtAt(ns({ ShortTermBorrowings: [i(d, 0)], OperatingLeaseLiability: [i(d, 200)] }), d).debt, null);
+  assert.equal(debtAt(ns({ CommercialPaper: [i(d, 160)] }), d).debt, null);
+  assert.equal(debtAt(ns({ DebtCurrent: [i(d, 17460)] }), d).debt, null);
+  // a total that includes current maturities is a long-term line
+  assert.equal(debtAt(ns({ LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities: [i(d, 17700)], CommercialPaper: [i(d, 590)] }), d).debt, 18290);
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], DebtCurrent: [i(Q[1], 50)], Liabilities: [i(Q[1], 900)] })), { yieldPct: 5 });
+  assert.equal(r.debt, null); assert.equal(r.debtUpperBound, 900);
+});
+test('G6.2: interest = the largest interest figure the company tags (ENPH deposits, GM/SHOP loans, WEN leases)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 0)], InterestIncomeDepositsWithFinancialInstitutions: [f(...Q, 58)] })), { yieldPct: 5 });
+  assert.equal(r.illicit, 58); assert.equal(r.illicitEstimated, false);
+  for (const t of ['InterestAndFeeIncomeLoansConsumer', 'InterestAndFeeIncomeLoansAndLeases', 'SalesTypeAndDirectFinancingLeasesInterestIncome']) {
+    assert.equal(secInputs(company(ns({ Revenues: [f(...Q, 1000)], [t]: [f(...Q, 20)] })), { yieldPct: 5 }).illicit, 20, t);
+  }
+});
+test('G6.2: no cash-based estimate for a company with loans or financing receivables', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], FinancingReceivableExcludingAccruedInterestAfterAllowanceForCreditLoss: [i(Q[1], 5000)] })), { yieldPct: 5 });
+  assert.equal(r.illicit, null);
+});
+test('G6.6: tags that include more than interest are upper bounds (decide a pass, never a fail)', () => {
+  const up = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InterestAndOtherIncome: [f(...Q, 80)] })), { yieldPct: 5 });
+  assert.equal(up.illicit, 80); assert.equal(up.illicitEstimated, true);
+  // an exact figure above 5% decides even when a bigger upper-bound tag exists
+  const ex = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 60)], InterestAndOtherIncome: [f(...Q, 90)] })), { yieldPct: 5 });
+  assert.equal(ex.illicit, 60); assert.equal(ex.illicitEstimated, false);
+  // below 5% the larger (cautious) figure is used for purification
+  const lo = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)], InterestAndOtherIncome: [f(...Q, 30)] })), { yieldPct: 5 });
+  assert.equal(lo.illicit, 30); assert.equal(lo.illicitEstimated, true);
+});
+test('G6.4/5: shares for market value = the smaller sane count; purification uses the cover count', () => {
+  const sh = (cover, wavg) => company({ ...ns({ Revenues: [f(...Q, 1000)] }), WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q, wavg)] } } },
+    { EntityCommonStockSharesOutstanding: { units: { shares: [i('2026-07-25', cover)] } } });
+  const rev = secInputs(sh(100, 1000), { yieldPct: 5 });          // 1-for-10 reverse split after the quarter
+  assert.equal(rev.sharesMV, 100); assert.equal(rev.shares, 100);
+  const iss = secInputs(sh(603, 403), { yieldPct: 5 });           // shares issued after the quarter (SAFX)
+  assert.equal(iss.sharesMV, 403); assert.equal(iss.shares, 603);
+  const k = secInputs(sh(181311000, 181311), { yieldPct: 5 });    // weighted reported in thousands (TEM)
+  assert.equal(k.sharesMV, 181311000); assert.equal(k.shares, 181311000);
+});
+test('G6.5: weighted shares never get a "year minus 3 quarters" Q4', () => {
+  const g = { WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f('2025-01-01', '2025-03-31', 10), f('2025-04-01', '2025-06-30', 10), f('2025-07-01', '2025-09-30', 10), f('2025-01-01', '2025-12-31', 10, { form: '10-K' })] } } };
+  const r = secInputs(company({ ...ns({ Revenues: [f('2025-10-01', '2025-12-31', 100, { form: '10-K' })] }), ...g }), { yieldPct: 5 });
+  assert.equal(r.sharesMV, null);
+});
