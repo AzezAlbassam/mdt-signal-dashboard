@@ -262,3 +262,22 @@ T7 page (browser, 390 px): four verdict states render; numbers on the page equal
   errors; Arabic text and LTR numbers do not overlap.
 T8 independent review: a reviewer agent given only the Al Rajhi PDFs and the code restates the rules and
   lists every difference; the owner sees the list.
+
+### L2. Coverage measured (2026-11-21, all 519 US stocks on the dashboard)
+Run: `python3 -I scripts/shariah/sec-coverage.py us.txt out.jsonl` (ticker→CIK through efts.sec.gov, facts through
+data.sec.gov; neither needed the contact header). Raw output: data/shariah/sec-coverage-2026-11-21.jsonl.
+- 515 found; 3 tickers not found (BRK.B, MOG.A: dot tickers need the "-" form; ROKU: lookup miss), 1 with no facts (BTQ).
+- 434 file US-GAAP 10-Q/10-K. 81 are foreign or IFRS filers (20-F/40-F: one full report a year, interest income under
+  ifrs-full tags not read yet); these update once a year from SEC, not quarterly.
+- Of the 434, a value with a quarter ending on/after 2026-06-30: revenue 403 (93%), shares 345 (79%), debt 306 (71%),
+  interest income 221 (51%). All four together: 125 (29%).
+- Interest income is the gap: AAPL, AVGO, COST, ABNB, CMCSA and others report it only inside "other income, net" and
+  tag it with a dimension (or only in the note text), which companyfacts leaves out. Reading it needs the filing's own
+  XBRL instance or the note, from www.sec.gov/Archives (needs the contact header).
+- Missing debt is not always "no debt": a debt-free company has no debt tag. Telling the two apart needs the balance
+  sheet in the filing (same need).
+Added to the test catalogue (written before the engine):
+- T2b debt = the sum of current and non-current debt lines on the SAME balance-sheet date, never LongTermDebt plus
+  LongTermDebtCurrent twice; a single stale tag (e.g. CTM's 2025 ConvertibleNotesPayable = 0) never counts as today.
+- T2c tickers with a class letter (BRK.B → BRK-B) map to their CIK.
+- T2d "no interest-income tag" → read the filing's XBRL instance with dimensions; still nothing → `ما ينحكم`, never 0.
