@@ -48,6 +48,7 @@
   const SECTOR_PE = /*SECTORS*/null
   // Target operating margins for the revenue DCF (scripts/build-peer-margins.js).
   const PEERS = /*PEERS*/null
+  const SHARIAH = /*SHARIAH*/null // data/shariah: SEC inputs per US stock + the R1 industry table (scripts/shariah/sec-load.js)
   const BENCH = /*BENCH*/null // pages/bench.json: S&P 500 and TASI benchmarks (scripts/build-bench.js)
   const SECTOR_AR = {
     'Technology Services': 'خدمات التقنية (برمجيات وإنترنت)', 'Electronic Technology': 'التقنية الإلكترونية (رقائق وأجهزة)', Finance: 'المالية (بنوك وتأمين ومدفوعات)',
@@ -89,7 +90,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
+  const state = { sh: {}, snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '', limit: 60, focusSym: null, preset: '', notes: {}, alerts: {}, compare: [], wl: null }
   let db = null
   let mcp = null
@@ -1108,7 +1109,7 @@
       const up = upside(sym)
       const ch = sinceLast(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="تصنيف الأرباح" data-tip="تصنيف الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}${state.notes[sym]?.status ? ` <em class="nst s-${esc(state.notes[sym].status)}">${esc(NOTE_ST[state.notes[sym].status] ?? '')}</em>` : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${shChip(sym)}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="تصنيف الأرباح" data-tip="تصنيف الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}${state.notes[sym]?.status ? ` <em class="nst s-${esc(state.notes[sym].status)}">${esc(NOTE_ST[state.notes[sym].status] ?? '')}</em>` : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}${f?.fair && weakFair(sym) ? ` <button class="ib" type="button" data-tip="${esc(`تقدير ضعيف: ${weakFair(sym)}.`)}" aria-label="ليش ضعيف؟">ⓘ</button>` : ''}${ch.fair}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
@@ -1409,6 +1410,89 @@
       score: Number.isFinite(s) && b[0] != null && Math.abs(s - b[0]) >= 0.3 ? mark(s > b[0], `من زيارتك ${when}: كانت ${fmt(b[0], 1)}`) : '',
       fair: Number.isFinite(f) && b[1] > 0 && Math.abs(f / b[1] - 1) >= 0.05 ? mark(f > b[1], `من زيارتك ${when}: كانت ${fmt(b[1], 2)}`) : '',
     }
+  }
+
+  // 7b. Shariah screen and purification, Al Rajhi Capital's method (engine/shariah.js, progress/SHARIAH-PLAN.md).
+  // SEC filings give debt, revenue, interest income and shares; the quarter's average price comes from TradingView
+  // daily bars when the panel opens. The result is saved in sh/<sym> so the row chip and the change log keep it.
+  const SH_CLS = { 'حلال (نقي)': 'hi', 'مختلط جائز': 'hi', 'غير جائز': 'lo', 'ما ينحكم': 'dim' }
+  const shIn = (sym) => (sym.startsWith('TADAWUL:') ? null : SHARIAH?.stocks?.[sym.split(':')[1]] ?? null)
+  function shCompute(sym, avgClose) {
+    const r = shIn(sym)
+    if (!r?.period) return null
+    const marketValue = Number.isFinite(avgClose) && r.shares > 0 ? avgClose * r.shares : null
+    let debt = r.debt, debtUpper = false
+    if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
+      const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)
+      if (dr != null && dr <= 0.3) { debt = r.debtUpperBound; debtUpper = true } // even all liabilities pass, so the debt does
+    }
+    const activity = activityFromSic(r.sic, SHARIAH.sic)
+    const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+    return { ...v, period: r.period, avgClose, marketValue, debtUpper, activity }
+  }
+  async function loadSh(sym) {
+    const r = shIn(sym)
+    if (!mcp || !r?.period || state.sh[sym]?.live) return
+    const days = Math.ceil((Date.now() - Date.parse(r.period.start)) / 864e5)
+    try {
+      const b = (await call(T.px, { symbol: sym, interval: '1D', count: Math.min(400, Math.ceil(days * 5 / 7) + 15), format: 'columns' }))?.bars
+      const t0 = Date.parse(r.period.start) / 1000, t1 = Date.parse(r.period.end) / 1000 + 86400
+      const c = (b?.t ?? []).map((t, i) => (t >= t0 && t < t1 ? b.c[i] : null)).filter(Number.isFinite)
+      // ponytail: a quarter with under 40 trading days of bars is too thin to average; the screen stays unjudged
+      const res = shCompute(sym, c.length >= 40 ? c.reduce((a, x) => a + x, 0) / c.length : null)
+      if (!res) return
+      const prev = state.sh[sym]
+      state.sh[sym] = { ...res, live: true, days: c.length }
+      redraw(sym); scheduleRender()
+      if (db && (!prev || prev.state !== res.state || prev.period?.end !== res.period.end)) {
+        const log = [...(prev?.log ?? []), { at: Date.now(), state: res.state, end: res.period.end }].slice(-20)
+        state.sh[sym].log = log
+        db.doc(`sh/${sym}`).set({ sym, state: res.state, failed: res.failed, period: res.period, numbers: res.numbers, seenAt: Date.now(), log }).catch(() => {})
+      }
+    } catch { /* prices failed: the block says so */ }
+  }
+  function shChip(sym) {
+    const s = state.sh[sym]
+    if (s?.state) return ` <span class="shc ${SH_CLS[s.state]}" title="الشرعية (طريقة الراجحي): ${esc(s.state)}">${s.state === 'غير جائز' ? '✕' : s.state === 'ما ينحكم' ? '؟' : '✓'}</span>`
+    // without prices R1 and R3 can already fail for sure
+    const r = shIn(sym)
+    const pre = r?.period ? shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares }) : null
+    return pre?.state === 'غير جائز' ? ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>` : ''
+  }
+  function shBlock(sym) {
+    const head = `<h3><span>الشرعية والتطهير <span class="dim">(طريقة الراجحي)</span></span>`
+    if (sym.startsWith('TADAWUL:')) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">للحين ما عندنا مصدر لقوائم الشركات السعودية يعطي إيراد الفوائد والديون. أول ما نلقى مصدر موثوق تنضاف.</p></div>`
+    const r = shIn(sym)
+    if (!r) return ''
+    if (!r.period) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">${r.error === 'no CIK' ? 'ما لقينا الشركة في SEC.' : r.stale ? `آخر إيرادات ربعية بأسماء SEC المعتادة من ${esc(r.stale)}: الشركة غيّرت طريقة إعلانها، فما نحكم من أرقام قديمة.` : 'الشركة ما تقدم تقارير ربعية أمريكية لـSEC (غالباً شركة أجنبية تقدم تقرير سنوي)، فما عندنا أرقام ربعية نحكم منها.'}</p></div>`
+    const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
+    const q = state.quotes[sym]
+    const n = s.numbers
+    const ok = (x, lim) => (x == null ? '<span class="dim">—</span>' : x <= lim + 1e-12 ? '<span class="hi">✓</span>' : '<span class="lo">✕</span>')
+    const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
+    const usd = (x, dp = 2) => (x == null ? '—' : `<bdi>$${fmt(x, dp)}</bdi>`)
+    const big = (x) => (x == null ? '—' : Math.abs(x) >= 1e9 ? `<bdi>$${fmt(x / 1e9, 2)}</bdi> مليار` : `<bdi>$${fmt(x / 1e6, 1)}</bdi> مليون`)
+    const act = { ok: `<span class="hi">✓</span> مباح`, review: `<span class="dim">؟</span> يحتاج مراجعة`, fail: `<span class="lo">✕</span> نشاط محرم` }[s.activity] ?? '<span class="dim">—</span>'
+    const pps = n.purificationPerShare
+    const rows = [
+      ['النشاط', `${act} <small class="dim">${esc(r.sicDescription ?? '')}</small>`],
+      ['الديون الربوية ÷ القيمة السوقية', `${ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? '—' : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون ${big(s.debtUpper ? r.debtUpperBound : r.debt)}${s.debtUpper ? ' (أعلى حد: كل الالتزامات)' : r.debtParts?.leases ? `، منها إيجارات ${big(r.debtParts.leases)}` : ''}</small>`],
+      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}</small>`],
+      ['التطهير عن الربع لكل سهم', `<b class="n">${usd(pps, 4)}</b>${pps != null && q?.close > 0 ? ` <small class="dim">(<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من السعر)</small>` : ''}`],
+    ]
+    const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪' })[x]).join('، ')}. الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.`
+      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', marketValue: 'متوسط سعر الربع', bookEquity: 'حقوق المساهمين', illicit: r.illicitEstimated ? 'إيراد الفوائد الفعلي (الشركة ما تعلنه، وتقديرنا المتحفظ فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}${!state.sh[sym]?.live && mcp ? '. نحسب متوسط السعر الحين…' : ''}`
+      : s.state === 'حلال (نقي)' ? 'ما عليها ديون ربوية ولا إيراد محرم في القوائم.' : 'جائز مع التطهير.'
+    return `<div class="part sh">${head}<span class="shs ${SH_CLS[s.state]}">${esc(s.state)}</span></h3>
+      <p>${why}</p>
+      <table class="shrows">${rows.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table>
+      ${pps != null ? `<label class="shq">كم سهم عندك؟ <input type="number" min="0" step="any" inputmode="decimal" data-shq="${esc(sym)}" data-pps="${pps}"> <b class="n" data-sho="${esc(sym)}"></b></label>` : ''}
+      <p class="dim">القوائم: الربع المنتهي ${d(r.period.end)} (<bdi>${esc(r.period.form)}</bdi>${r.period.derived ? '، الربع الرابع = السنة ناقص 3 أرباع' : ''}، نُشرت ${d(r.period.filed)}). ${s.avgClose ? `متوسط السعر في الربع <span class="n">${usd(s.avgClose)}</span> (${s.days} يوم تداول).` : ''}${r.newerFiling ? ` <b>فيه تقرير أحدث (${esc(r.newerFiling.f)} ${d(r.newerFiling.d)}) ما انسحب للحين.</b>` : ''}</p>
+      <details class="shmore"><summary>الطريقة والتنبيهات</summary>
+      <p>الطريقة من وثيقة الراجحي المالية «آلية احتساب الدخل المحرم»: الديون الربوية لا تتجاوز 30٪ من متوسط القيمة السوقية للربع (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪ من الإيرادات. التطهير = الإيراد المحرم ÷ عدد أسهم الشركة × أسهمك.</p>
+      <p>يلزم التطهير من يملك السهم وقت صدور القوائم (ربعية أو سنوية)، وزّعت الشركة أرباح أو لا. اللي باع قبل صدورها ما عليه. المبلغ يُصرف في وجوه الخير، وما ينحسب من الزكاة ولا الضريبة.</p>
+      <p>الديون تشمل عقود الإيجار (الأحوط). ${r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
+      <p>الراجحي يقول: إذا فيه شركات نقية تكفي الحاجة، يُكتفى بها.</p></details></div>`
   }
 
   // 8. Research status and a note per stock (notes/<sym>, the owner's).
@@ -2130,6 +2214,7 @@
       ${weak && p[weak[0]] < 1.2 ? `<p>أكثر شي نزّل الدرجة: <b>${weak[1]}</b> (<span class="n">${fmt(p[weak[0]], 1)}</span> من 2).</p>` : ''}</div>`
     return `${pbar(sym)}<div class="dgrid">
       ${why}
+      ${shBlock(sym)}
       ${snowBlock(sym)}
       ${fairBlock(sym)}
       ${rangeBlock(sym)}${trackBlock(sym)}${histBlock(sym)}${divBlock(sym)}${noteBlock(sym)}${tvBlock(sym)}
@@ -2416,6 +2501,14 @@
     if (d.matches('details.proj')) state.projOpen = d.open
     else if (d.dataset.k) state.ctxOpen[d.open ? 'add' : 'delete'](d.dataset.k)
   }, true)
+  // purification for the owner's own shares (7b)
+  document.addEventListener('input', (e) => {
+    const i = e.target.closest?.('input[data-shq]')
+    if (!i) return
+    const o = document.querySelector(`[data-sho="${CSS.escape(i.dataset.shq)}"]`)
+    const n = Number(i.value), pps = Number(i.dataset.pps)
+    if (o) o.innerHTML = n > 0 && Number.isFinite(pps) ? `عليك <bdi>$${fmt(n * pps, 2)}</bdi> عن هالربع` : ''
+  })
   const toggle = (sym) => {
     const was = state.open
     state.open = state.open === sym ? null : sym
@@ -2426,6 +2519,7 @@
     const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
     const top = tr?.getBoundingClientRect().top
     if (tr && (top < 0 || top > innerHeight - 120)) tr.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    loadSh(sym)
     loadNews(sym)
     loadHist(sym)
     loadElog(sym)
@@ -2554,6 +2648,7 @@
       }, () => renderLatestIdeas([]))
     } catch { renderLatestIdeas([]) }
     // v34: research notes and fair-value alerts (small collections, the owner's)
+    db.collection('sh').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym && !state.sh[v.sym]?.live) state.sh[v.sym] = v } scheduleRender(true) }).catch(() => {})
     db.collection('notes').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym) state.notes[v.sym] = v } scheduleRender(true) }).catch(() => {})
     db.collection('alerts').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym) state.alerts[v.sym] = v } }).catch(() => {})
     db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; scheduleRender(true) } }).catch(() => {})

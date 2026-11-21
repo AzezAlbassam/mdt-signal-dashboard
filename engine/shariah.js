@@ -29,7 +29,7 @@ export function estimateInterest({ cashStart, cashEnd, yieldPct, days }) {
   return Math.max(cashStart, cashEnd) * yieldPct / 100 * days / 365;
 }
 
-export function verdict({ activity, debt, marketValue, bookEquity, illicit, illicitEstimated, revenue, shares }) {
+export function shariahVerdict({ activity, debt, marketValue, bookEquity, illicit, illicitEstimated, revenue, shares }) {
   const missing = [], failed = [];
   if (activity === 'fail') failed.push('R1');
   else if (activity !== 'ok' && activity !== 'review') missing.push('activity'); // anything unexpected is unknown
@@ -39,7 +39,8 @@ export function verdict({ activity, debt, marketValue, bookEquity, illicit, illi
   if (dr == null && !missing.length) missing.push('marketValue'); // market value and book value both <= 0: bad data
   // Unknown book equity leaves R2 unknown: a larger book value could lower the ratio below 30%.
   if (dr != null && dr > DEBT_MAX + EPS) failed.push('R2');
-  if (is != null && is > ILLICIT_MAX + EPS) failed.push('R3');
+  // A cautious estimate is an upper bound: below 5% it proves a pass; above, the true figure is unknown.
+  if (is != null && is > ILLICIT_MAX + EPS) { if (illicitEstimated) missing.push('illicit'); else failed.push('R3') }
   const numbers = { debtRatio: dr, illicitShare: is, purificationPerShare: purificationPerShare(illicit, shares), illicitEstimated: !!illicitEstimated };
   let state;
   if (failed.length) state = 'غير جائز';

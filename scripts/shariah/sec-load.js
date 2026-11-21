@@ -30,9 +30,10 @@ for (const t of tickers) {
   const cf = get(`https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`);
   const sub = get(`https://data.sec.gov/submissions/CIK${cik}.json`);
   if (!cf) { out.stocks[t] = { cik, error: 'no XBRL facts', sic: sub?.sic ?? null }; continue; }
-  const probe = secInputs(cf, { yieldPct: 0 });
+  const minEnd = new Date(Date.now() - 200 * 864e5).toISOString().slice(0, 10)
+  const probe = secInputs(cf, { yieldPct: 0, minEnd });
   const y = probe.period ? avgYield(probe.period.start, probe.period.end) : null;
-  const r = probe.period ? secInputs(cf, { yieldPct: y }) : probe;
+  const r = probe.period ? secInputs(cf, { yieldPct: y, minEnd }) : probe;
   // T4 freshness: is there a 10-Q/10-K newer than the period we used?
   const rec = sub?.filings?.recent ?? {};
   const latest = (rec.form ?? []).map((f, i) => ({ f, d: rec.filingDate[i], p: rec.reportDate[i] })).find(x => /^10-[QK]/.test(x.f));

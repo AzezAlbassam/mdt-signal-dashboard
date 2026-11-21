@@ -70,10 +70,12 @@ export function debtAt(ns, date) {
 }
 
 // Inputs for the latest quarter that has revenue. Market value is added by the page (quarter-average price).
-export function secInputs(cf, { yieldPct }) {
+export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const g = cf.facts?.['us-gaap'] ?? {}, dei = cf.facts?.dei ?? {};
   const rev = quarterFacts(g, REVENUE).at(-1);
   if (!rev) return { name: cf.entityName, period: null };
+  // T4: an old quarter (the company stopped using these tags) is never taken as the latest
+  if (rev.end < minEnd) return { name: cf.entityName, period: null, stale: rev.end };
   const period = { start: rev.start, end: rev.end, form: rev.form, filed: rev.filed, derived: !!rev.derived };
   const int = quarterFacts(g, INTEREST).find(x => x.end === rev.end);
   let illicit = int?.val ?? null, illicitEstimated = false, estimate = null;

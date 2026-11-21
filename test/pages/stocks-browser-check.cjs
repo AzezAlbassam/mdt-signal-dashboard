@@ -173,9 +173,10 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       saved: window.__store['sh/NASDAQ:AAPL']?.state, chip: document.querySelector('#rows tr.row[data-sym="NASDAQ:AAPL"] .shc')?.textContent,
       daily: window.__calls.some((c) => c.startsWith('mcp-tv-get-ohlcv NASDAQ:AAPL')) }
   })
-  const okSh = sh.state === 'مختلط جائز' && /2\.60/.test(sh.text) && /1\.74/.test(sh.text) && /0\.1368/.test(sh.text) && /13\.68/.test(sh.out ?? '') && /تقدير/.test(sh.text) && sh.saved === 'مختلط جائز' && sh.chip === '✓'
-  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify(sh)); if (!okSh) console.log('LOGS NOW:', logs)
+  const okSh = sh.state === 'مختلط جائز' && /2\.6%/.test(sh.text) && /1\.74/.test(sh.text) && /0\.1368/.test(sh.text) && /13\.68/.test(sh.out ?? '') && /تقدير/.test(sh.text) && sh.saved === 'مختلط جائز' && sh.chip === '✓'
+  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify(sh))
   if (!okSh) process.exitCode = 1
+  { const el = await page.$('#rows .part.sh'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-sh.png') }) } }
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   const svrBox = await page.$('#rows .part.svr svg.sc')
   await svrBox.scrollIntoViewIfNeeded()

@@ -349,3 +349,22 @@ Not in the engine, required of the SEC loader (T2) and the page:
   companies come first when they meet the need.
 Also from the review: the Arabic text says plain "market value"/"book value"; the English adds "of assets". We
 follow the Arabic (equity), which is the stricter reading too. 16 engine tests green; `npm test` all green.
+
+### M3. Loader, page block, first full run (2026-11-21)
+- engine/sec-facts.js (14+1 tests), scripts/shariah/sec-load.js; data/shariah/sec-inputs.json for all 519 US stocks.
+- Page (D3, not published yet): block «الشرعية والتطهير (طريقة الراجحي)» in each US stock panel, the quarter-average
+  price from TradingView daily bars when the panel opens, row chip after that (saved in sh/<sym> with a change
+  log), the "كم سهم عندك؟" box, period and filing date, the method and R6/R7 notes. Saudi stocks: «ما ينحكم», no
+  source yet. Browser check SHARIAH AAPL green at desktop and 390 px (progress/shariah-block-phone.png).
+- Two bugs caught by this run, both fixed with a test first:
+  1. APA stopped tagging total revenue; the loader took its 2021 quarter as "latest". Now a quarter older than
+     200 days is never used (12 stocks), shown as «ما ينحكم» with the reason.
+  2. A cautious estimate is an upper bound: below 5% it proves a pass, above 5% it proves nothing. A stock
+     failing R3 only on the estimate is now «ما ينحكم», not «غير جائز».
+- Full run (425 stocks with a usable quarter; 92 foreign/annual or stale; 2 not found):
+  interest income tagged 207, estimated 215, missing 3; debt known 233, liabilities upper bound 171, missing 21;
+  R1 by industry code: ok 363, review 56, fail 6. Already failing before prices: R3 55 (mostly companies with
+  little or no revenue earning interest on cash, lenders, brokers), R1 6.
+- Name clash found by the browser check: the page has its own `verdict`; the engine's is now `shariahVerdict`.
+Before the first publish: G3 (hand check vs FMP), G6 (adversarial review), G7 (owner signs off A1–A4, A6 and
+the industry table data/shariah/sic-activity.json).
