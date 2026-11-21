@@ -1,4 +1,4 @@
-// Render the portfolio update card (identity A): node scripts/cards/render-portfolio.cjs <out.png> [data.json]
+// Render the portfolio update card (identity C): node scripts/cards/render-portfolio.cjs <out.png> [data.json]
 // data.json has the shape of the default data in portfolio-update.html. Fails on page errors, missing fonts or overflow.
 const { chromium } = require('playwright')
 const fs = require('fs')
@@ -15,7 +15,7 @@ const fs = require('fs')
     fonts: [...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/"/g, '')),
     over: [...document.querySelectorAll('#card *')].filter((e) => { const r = e.getBoundingClientRect(); return r.width && (r.right > 1080.5 || r.left < -0.5 || r.bottom > 1350.5) }).map((e) => e.className || e.tagName),
   }))
-  const want = ['Readex Pro']
+  const want = ['Tajawal', 'Big Shoulders Display']
   const missing = want.filter((f) => !check.fonts.includes(f))
   if (missing.length) { console.log('FONTS NOT LOADED', missing); process.exitCode = 1 }
   if (check.over.length) { console.log('OVERFLOW', check.over); process.exitCode = 1 }
