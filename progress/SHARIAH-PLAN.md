@@ -323,6 +323,6 @@ Engine contract (`engine/shariah.js`, pure, tested by test/shariah.test.js writt
   non-compliant + `ما ينحكم` weight ≥ 5% → `ما ينحكم` (clarified while writing the engine, before any
   fund result: unknown holdings could be non-compliant); purification % of amount = Σ w × illicit ÷ marketValue, unknown
   holdings excluded and their weight reported.
-- 2026-11-21: D1 and D2 done; 14 tests green, `npm test` 446/446. The tests found one bug before release: an
+- 2026-11-21: D1 and D2 done; 13 tests green, `npm test` 446/446. The tests found one bug before release: an
   unexpected activity value (NaN, "OK") passed the screen; now anything but "ok"/"fail"/"review" is unknown.
   Next: G1 independent review of the engine against the PDFs, then the SEC loader (T2) and the page (D3).
