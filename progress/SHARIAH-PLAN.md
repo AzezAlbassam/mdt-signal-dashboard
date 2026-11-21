@@ -87,7 +87,7 @@ rule shows `ما ينحكم` for every stock and the owner is told before going 
 - [ ] D3 Page: a chip on each row (four states), and a panel block "الشرعية والتطهير (طريقة الراجحي)" with
       the three tests, their numbers and thresholds, the statement period used, purification per share for
       that quarter, a box "كم سهم عندك؟" → amount, who owes it (R6), and the disclaimer. Arabic, phone first.
-- [ ] D4 Updating: computed on every load from the live fields, so a new quarter shows as soon as
+- [x] D4 Updating (weekly SEC refresh, scheduled 2026-11-21, progress/SHARIAH-REFRESH.md): computed on every load from the live fields, so a new quarter shows as soon as
       TradingView has it. `sh/<sym>` in the db keeps {period, state, numbers, seenAt}; when the period or
       the state changes the row shows "تحديث جديد" and the change is logged (R4's 90 days start at seenAt).
 
