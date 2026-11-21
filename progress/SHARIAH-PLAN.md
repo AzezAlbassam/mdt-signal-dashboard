@@ -468,3 +468,25 @@ Index providers, Saudi boards, research (round 2, third group):
 - Finance leases counted as interest-bearing debt (stated): Pakistan's exchange index brochures ("Finance Lease, Hire
   Purchase"), Zoya (capital leases, its Shariah advisers), ISRA-Bloomberg paper 2017 (snippet). Operating / IFRS 16
   leases: no authority found that counts them, none that excludes them in words; only blogs, split both ways.
+Empirical test on Al Rajhi's own Q2 2026 Saudi list (15 leveraged companies, 31-Dec-2025 statements; my checks marked ✓):
+- Islamic financing is not counted: Saudi Kayan (all Murabaha, 126% of MV) and ADES (85% Islamic) are compliant.
+- Lease liabilities are not counted: flynas ✓ (list: compliant; statements: lease liabilities SAR 5,990m with a
+  370m finance cost for 2025, borrowings only Murabaha 1,484m; leases alone = 54% of MV, 42% of EV, 35% of total
+  assets) and 1820 BAAN ✓ (compliant; loans 377m ✓; right-of-use assets 629m ✓ already exceed its market value).
+- Book equity is not the denominator; MV, EV and max(MV, EV) fit equally (11 of 12 compliant labels with
+  conventional debt only); the list is not purely mechanical (Cenomi Retail compliant with conventional debt at
+  136% of MV). Non-compliant non-financials (4011, 4072, 4280 ✓) are not cleanly debt-driven.
+
+### M9. Conclusion of research round 2 (for the owner's decision)
+1. Leases: no written authority counts operating (IFRS 16 / ASC 842) lease liabilities as borrowing at interest
+   (Al Rajhi, AAOIFI SS21, S&P, MSCI, FTSE, Al-Maqasid: silent or "borrowing at interest" only), and Al Rajhi's own
+   list shows it does not count lease liabilities (flynas). Finance leases: counted by Pakistan's index, Zoya, ISRA
+   (conventional ones); presumed Islamic by Al-Maqasid when labelled «إيجار تمويلي». => Al Rajhi's practice:
+   leases out. A stricter option keeps US-GAAP finance leases in.
+2. Debt rule: Al Rajhi's own documents disagree — website (Saudi list) 33% / «القيمة المؤسسية (EV)» (undefined)
+   vs the Global Equity Fund terms of 2025-08-12 (decision 336, global stocks) and the still-linked purification PDF:
+   30% / quarter-average market value / book value. For US stocks the fund terms are Al Rajhi's most specific text,
+   and they are what the engine already does. The Saudi list cannot tell MV from EV. Only Al Rajhi can settle it.
+3. Islamic financing excluded (US companies rarely have any; Saudi only).
+Decisions asked of the owner: leases (out / finance leases in), the debt rule (keep 30% until Al Rajhi answers /
+switch to 33% with max(quarter-average MV, EV)), and whether to send Al Rajhi the question.
