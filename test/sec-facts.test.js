@@ -134,8 +134,9 @@ test('G6.4/5: shares for market value = the smaller sane count; purification use
   assert.equal(rev.sharesMV, 100); assert.equal(rev.shares, 100);
   const iss = secInputs(sh(603, 403), { yieldPct: 5 });           // shares issued after the quarter (SAFX)
   assert.equal(iss.sharesMV, 403); assert.equal(iss.shares, 603);
-  const k = secInputs(sh(181311000, 181311), { yieldPct: 5 });    // weighted reported in thousands (TEM)
-  assert.equal(k.sharesMV, 181311000); assert.equal(k.shares, 181311000);
+  // two counts 1000x apart and nothing to tell which is right: not judged (changed in the G6 rerun, was "keep the cover")
+  const k = secInputs(sh(181311000, 181311), { yieldPct: 5 });
+  assert.equal(k.sharesMV, null); assert.equal(k.shares, null);
 });
 test('G6.5: weighted shares never get a "year minus 3 quarters" Q4', () => {
   const g = { WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f('2025-01-01', '2025-03-31', 10), f('2025-04-01', '2025-06-30', 10), f('2025-07-01', '2025-09-30', 10), f('2025-01-01', '2025-12-31', 10, { form: '10-K' })] } } };
@@ -153,4 +154,9 @@ test('G6 rerun: a share count far from net income / EPS is a unit error (TEM: we
     WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q, 181311)] } } });
   const r = secInputs(cf, { yieldPct: 5 });
   assert.equal(r.shares, null); assert.equal(r.sharesMV, null);
+});
+test('G6 rerun: finance receivables seen only in cash flows also block the estimate (DE)', () => {
+  const cf = company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    PaymentsToAcquireFinanceReceivables: [f('2025-11-03', Q[1], 19139)] }));
+  assert.equal(secInputs(cf, { yieldPct: 5 }).illicit, null);
 });
