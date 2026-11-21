@@ -430,3 +430,28 @@ The engine keeps 30%/book value until the owner sees the verified findings; noth
 Process note: two research briefs asked agents to retry sites that refuse automated access with another User-Agent;
 the permission system blocked them, rightly. The briefs now allow only public routes (normal pages, official copies
 elsewhere, public archive copies, search snippets); a refusing site is recorded as unreachable.
+
+### M8. Research round 2 — verified so far (2026-11-21). Each point checked by me from the document itself.
+Al Rajhi (two of its own current documents disagree):
+- Website guidelines page (carries the Q2 2026 Saudi list, no decision number): 33% of total market value «ما لم تقل
+  عن القيمة المؤسسية (EV)»; no averaging; sell «ويفضّل خلال 90 يومًا»; new line «يجب الاجتهاد بمعرفة أي أرباح
+  مشبوهة أو غير واضحة المصدر»; purification only «يجب على المستثمرين التخلص من أي مكونات محرمة». EV is not defined
+  in any Al Rajhi document found.
+- Al Rajhi Global Equity Fund terms (stocks worldwide, benchmark Dow Jones Islamic Market; Shariah board decision
+  336; «تاريخ آخر تحديث 2025/08/12»; https://alrajhi-capital.sa/-/media/Feature/AlRajhiCapital/PDFs/Terms-and-Conditions/2025/Al-Rajhi-Global-Fund.pdf):
+  30% of total market value «ما لم تقل عن القيمة الدفترية» and «تؤخذ القيمة السوقية من متوسط قيمتها لكل ربع من
+  أرباع السنة» — i.e. Al Rajhi's own rule for NON-Saudi stocks as of Aug 2025 is the one the engine uses.
+- Purification PDF «آلية احتساب العنصر المحرم» (2022): still linked from today's Shariah Group page; downloaded today,
+  byte-identical to the 2022 copy; it also states 30% / book value and the formula the engine uses.
+- Argaam 2024-05-06 (Q1 2024 list): the rules are Al Rajhi Bank Shariah board decision 485: 30% / book value /
+  quarterly average.
+- No Al Rajhi text on leases. Contact on Al Rajhi's pages: customerservice@alrajhi-capital.sa, 800 124 5858; the
+  Shariah department's stated duties include answering clients' questions.
+AAOIFI Shariah Standard 21 (AAOIFI's own English PDF, issued 2004, in the 2015 book): 3/4/2 "the collective amount
+raised as loan on interest – whether long-term or short-term debt – does not exceed 30% of the market
+capitalization"; 3/4/5 "recourse is to be had to the last budget or verified financial position". No mention of
+leases anywhere in the standard (checked: the only hits are "pleased" and renting shares).
+Regulators (search snippets only, sites blocked): Pakistan's KMI/All-Share Islamic index lists "Finance Lease, Hire
+Purchase" as interest-bearing debt (operating leases not mentioned); Malaysia SC: "interest-bearing debt", Islamic
+financing excluded, leases not mentioned; Indonesia, DFM: leases not mentioned.
+Still running: the empirical test on Al Rajhi's Q2 2026 Saudi list; index providers, Saudi boards and papers on leases.
