@@ -173,3 +173,39 @@ Funds the look-through method does not fit; the tab lists them with the reason a
 
 Budget note for step 0.6: VOO (~500 holdings), QQQM and SPMO (~100 each) dominate the calls; holdings
 overlap, so fundamentals are fetched once per unique symbol (batches of 50).
+
+
+## K. Step 0 results (2026-11-21) — gate G0 NOT passed; owner decision needed
+
+0.1 Al Rajhi documents (all of https://alrajhi-capital.sa/ar/about-us/shariah-group read for this question):
+- Brokerage (local/international, AR doc 5): international stocks and fund units follow the same Shariah
+  board rules; the company must stop trading securities that break them. No separate US method.
+- Index funds (AR doc 1, صناديق المؤشرات, rule 5): «يجب على الشركة أن تلتزم في إدارتها لصناديق المؤشرات
+  بالضوابط الشرعية الصادرة من الهيئة الشرعية بشأن الاستثمار والمتاجرة في الأسهم» and rule 6: the manager
+  removes the illicit element. I.e. for Al Rajhi's own index fund EVERY stock must pass the stock rules;
+  there is no "below 5% of the fund" allowance. The owner's E4 rule is therefore his own, not Al Rajhi's;
+  the page must say so (A5 now also asks whether to keep it).
+- The English "Stock brokerage" page says it is "permissible" to trade shares of companies with prohibited
+  activities (wine, usury banks, ...): a translation error against every other Al Rajhi text; we follow the
+  Arabic. No compliant-company list for US stocks was found on the site.
+
+0.2 TradingView: every fundamental column (total_debt_fq, total_revenue_fq, market_cap_basic,
+total_shares_outstanding, any interest-income name) now returns "cannot be offered within TradingView" to
+this session (prices still work). financial-history and forecasts tools are gone from the toolset.
+=> TradingView cannot be the data source. (Check separately whether the stocks page itself still gets
+fundamentals; it uses the same server.)
+
+0.3 FMP (the plan's second source): standard quarterly statements work for US stocks, but
+`interestIncome` is 0 where the company reports it inside "other income" (AAPL two quarters, NVDA latest
+quarter, while NVDA's previous quarter shows 496M). A 0 is indistinguishable from "not reported", so it
+would silently pass companies; unusable for R3 without another source. As-reported statements and Saudi
+symbols (2222.SR) are refused: they need a higher FMP plan. No ETF-holdings tool in this FMP plan.
+
+Consequence: no computation may start. Options put to the owner:
+1. SEC EDGAR (official, free, US only): XBRL company facts give interest income where tagged, debt, shares;
+   N-PORT filings give every US ETF's full holdings with weights (quarterly, up to ~3 months old). Needs the
+   hosts data.sec.gov and www.sec.gov allowed, and SEC requires a contact e-mail in each request header
+   (owner must approve which address).
+2. Paid data (TradingView plan with fundamentals, or FMP plan with as-reported statements, Saudi coverage
+   and ETF holdings).
+Saudi stocks: no source today in either option 1 or the current FMP plan.
