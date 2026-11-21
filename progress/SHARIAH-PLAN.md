@@ -490,3 +490,15 @@ Empirical test on Al Rajhi's own Q2 2026 Saudi list (15 leveraged companies, 31-
 3. Islamic financing excluded (US companies rarely have any; Saudi only).
 Decisions asked of the owner: leases (out / finance leases in), the debt rule (keep 30% until Al Rajhi answers /
 switch to 33% with max(quarter-average MV, EV)), and whether to send Al Rajhi the question.
+
+### M10. Owner decisions after round 2 (2026-11-21) — applied
+- A2 leases: OUT of interest-bearing debt, as Al Rajhi's own list does (flynas). Shown separately on the page as
+  «ما تنحسب»; the liabilities upper bound now subtracts known lease liabilities. Tests changed first (marked).
+- Debt rule: stays 30% of the quarter-average market value, book value when higher (Al Rajhi Global Equity Fund
+  terms, decision 336, 2025-08-12; the linked purification PDF). The page cites them and says that Al Rajhi's Saudi-list
+  page reads 33% / «القيمة المؤسسية» and that we await their answer.
+- The owner sent the question to customerservice@alrajhi-capital.sa on 2026-11-21 (which rule applies to US stocks;
+  how EV is computed; whether IFRS 16 lease liabilities count). Their answer is applied with tests first.
+- Results after the change: AAPL debt 80.1B (leases 14.4B not counted) → 2.2% at a $250 average; MSFT 35.5B
+  (98.5B leases not counted). `npm test` 476/476; browser check SHARIAH AAPL green at desktop and 390 px.
+- Portfolio card identity A ("Midnight") chosen; B and C removed (in git history).

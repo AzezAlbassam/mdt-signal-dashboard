@@ -1,8 +1,7 @@
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
-<!-- Portfolio update card, NEW identity (owner 2026-11-21: new colours, font and design, nothing like the old beige
-     paper card). 1080x1350. ?theme=a|b|c while the owner chooses. Data: window.__DATA__ (set by render-portfolio.cjs
-     from a JSON file) or the default below (the 20 Nov update). -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Alexandria:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=Big+Shoulders+Display:wght@600;700;800&display=swap">
+<!-- Portfolio update card, identity A "Midnight" (owner picked it 2026-11-21 from three options; B and C are in git
+     history). 1080x1350. Data: window.__DATA__ (set by render-portfolio.cjs from a JSON file) or the default below. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1350px;overflow:hidden}
@@ -28,10 +27,7 @@ bdi{direction:ltr;unicode-bidi:isolate}
 .rows.dense .note{font-size:18px;margin-top:2px}
 .rows.dense .tag{font-size:16px;margin-bottom:4px;padding-top:2px;padding-bottom:2px}
 .rows.dense .bl{display:none}
-.b .rows.dense .logo{width:64px;height:64px;border-radius:16px;font-size:17px}
-.b .rows.dense .nm{font-size:26px}
-.a .rows.dense,.b .rows.dense{gap:12px}
-.c .card.dense .total b{font-size:110px}
+.a .rows.dense{gap:12px}
 
 /* A — Midnight: flat deep navy, mint and blue accents, Readex Pro, rounded solid tiles */
 .a body{background:#0B1220}
@@ -58,58 +54,6 @@ bdi{direction:ltr;unicode-bidi:isolate}
 .a .x{width:46px;height:46px;border-radius:14px;background:#34D399}.a .x svg{width:24px;height:24px;fill:#0B1220}
 .a .disc{font:400 20px 'Readex Pro';color:#8A97B0}
 
-/* B — Coastal: light cool white, deep teal header band, coral and amber accents, Alexandria, ticker badges */
-.b body{background:#EEF3F5}
-.b .card{font-family:'Alexandria';color:#0B2530;background:#EEF3F5}
-.b .k-new{--c:#E4572E}.b .k-add{--c:#0E7C86}.b .k-trim{--c:#C98A00}.b .k-exit{--c:#B42318}
-.b .hero{background:#0E5E6F;color:#fff;padding:58px 64px 132px;position:relative;overflow:hidden}
-.b .hero::after{content:'';position:absolute;width:560px;height:560px;border-radius:50%;background:#14788B;left:-190px;top:-250px;opacity:.75}
-.b .hero > *{position:relative;z-index:1}
-.b .pill{display:inline-block;font:500 22px 'Alexandria';background:rgba(255,255,255,.16);border-radius:12px;padding:8px 18px}
-.b h1{font:800 58px/1.32 'Alexandria';margin-top:26px}
-.b h1 em{font-style:normal;color:#FFC857}
-.b .sub{font:400 24px 'Alexandria';color:#BFE3EA;margin-top:8px}
-.b .body{margin:-92px 48px 0;padding-bottom:40px;position:relative;z-index:2}
-.b .rows{gap:18px}
-.b .row{background:#fff;border-radius:24px;padding:26px 30px;box-shadow:0 14px 34px rgba(11,37,48,.09);gap:24px}
-.b .logo{display:grid;place-items:center;width:96px;height:96px;border-radius:24px;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c);font:700 23px 'Alexandria';direction:ltr}
-.b .tk{display:none}
-.b .nm{font:700 34px 'Alexandria'}
-.b .note{font:400 21px 'Alexandria';color:#58707A;margin-top:8px}
-.b .tag{font:600 19px 'Alexandria';color:#fff;background:var(--c);border-radius:10px;padding:5px 14px;margin-bottom:8px}
-.b .big{font:700 60px/1.05 'Alexandria';color:#0B2530}
-.b .bl{font:400 19px 'Alexandria';color:#58707A;margin-top:6px}
-.b .total{margin-top:22px;display:flex;justify-content:space-between;align-items:center;border-radius:24px;padding:28px 34px;background:#0E5E6F;color:#fff}
-.b .total span{font:600 30px 'Alexandria'}
-.b .total b{font:800 74px 'Alexandria';color:#FFC857}
-.b .foot{padding-top:22px}
-.b .me{font:700 26px 'Alexandria';color:#0B2530}
-.b .x{width:46px;height:46px;border-radius:50%;background:#0E5E6F}.b .x svg{width:22px;height:22px;fill:#fff}
-.b .disc{font:400 20px 'Alexandria';color:#58707A}
-
-/* C — Forest: deep green, lime accent, Tajawal with Big Shoulders Display numbers, the total as the hero, ruled list */
-.c body{background:#0F2A22}
-.c .card{padding:60px 64px 46px;font-family:'Tajawal';color:#EAF2E3;background:linear-gradient(180deg,#123328 0%,#0D241D 100%)}
-.c .k-new{--c:#C8F169}.c .k-add{--c:#7DD3C0}.c .k-trim{--c:#F2C14E}.c .k-exit{--c:#FF7A6B}
-.c .pill{display:inline-block;font:800 22px 'Tajawal';color:#0F2A22;background:#C8F169;padding:6px 16px;border-radius:8px}
-.c h1{font:900 64px/1.22 'Tajawal';margin-top:24px}
-.c h1 em{font-style:normal;color:#C8F169}
-.c .sub{font:500 25px 'Tajawal';color:#9DB5A6;margin-top:6px}
-.c .total{order:-1;margin-top:34px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
-.c .total b{font:800 168px/1 'Big Shoulders Display';color:#C8F169}
-.c .total span{font:700 28px 'Tajawal';color:#C9D8C2}
-.c .rows{margin-top:40px;border-top:3px solid #C8F169}
-.c .row{padding:28px 0;border-bottom:1px solid rgba(234,242,227,.16);gap:18px}
-.c .tk{font:800 52px 'Big Shoulders Display';letter-spacing:1px}
-.c .nm{font:500 25px 'Tajawal';color:#9DB5A6;margin-right:14px}
-.c .note{font:500 23px 'Tajawal';color:#C9D8C2;margin-top:6px}
-.c .tag{font:800 19px 'Tajawal';color:var(--c);border:2px solid var(--c);border-radius:8px;padding:2px 12px;margin-bottom:8px}
-.c .big{font:800 68px/1.05 'Big Shoulders Display';color:#EAF2E3}
-.c .bl{font:500 20px 'Tajawal';color:#9DB5A6;margin-top:6px}
-.c .foot{padding-top:22px;border-top:1px solid rgba(234,242,227,.16)}
-.c .me{font:800 30px 'Big Shoulders Display';letter-spacing:.5px}
-.c .x{width:46px;height:46px;border-radius:10px;background:#C8F169}.c .x svg{width:24px;height:24px;fill:#0F2A22}
-.c .disc{font:500 21px 'Tajawal';color:#9DB5A6}
 </style>
 <body><div class="card" id="card"></div>
 <script>
@@ -125,8 +69,7 @@ const D = window.__DATA__ || {
   total: { label: 'المحفظة كلها من البداية', value: '+48.0%' },
 }
 const KIND = { new: 'مركز جديد', add: 'عزّزت', trim: 'خفّفت', exit: 'بعت' }
-const theme = new URLSearchParams(location.search).get('theme') || 'a'
-document.documentElement.className = theme
+document.documentElement.className = 'a'
 const X = '<div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>'
 document.getElementById('card').innerHTML = `
   <div class="hero"><span class="pill">${D.pill}</span>
@@ -144,5 +87,4 @@ document.getElementById('card').innerHTML = `
   </div>`
 const n = D.rows.length
 document.querySelector('.rows').classList.add(n >= 5 ? 'dense' : n >= 3 ? 'fill' : 'few')
-document.getElementById('card').classList.toggle('dense', n >= 5)
 </script>

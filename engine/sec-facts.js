@@ -57,7 +57,9 @@ export function instantAt(ns, tags, date, unit = 'USD') {
   return null;
 }
 
-// Interest-bearing debt on one balance-sheet date. Leases added (A2 default). null when incomplete.
+// Interest-bearing debt on one balance-sheet date; null when incomplete. Lease liabilities are NOT debt (A2, owner
+// 2026-11-21, following Al Rajhi's own list) but are returned in parts for the page.
+// ponytail: tags that bundle finance leases with debt (LongTermDebtAndCapitalLeaseObligations...) overstate it: stricter.
 export function debtAt(ns, date) {
   const v = tags => instantAt(ns, [].concat(tags), date);
   const st = Math.max(v('ShortTermBorrowings') ?? 0, v('CommercialPaper') ?? 0);
@@ -75,7 +77,7 @@ export function debtAt(ns, date) {
     // incomplete and the liabilities upper bound is used instead.
   }
   // ponytail: debt under a company's own (custom) tag is missed; the G3 hand check samples for it.
-  return { debt: borrowings == null ? null : borrowings + leases, parts: { borrowings, leases } };
+  return { debt: borrowings, parts: { borrowings, leases } };
 }
 
 // Inputs for the latest quarter that has revenue. Market value is added by the page (quarter-average price).
@@ -130,7 +132,8 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   return {
     name: cf.entityName, period, revenue: rev.val, revenueTag: rev.tag,
     illicit, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
-    debt: d.debt, debtParts: d.parts, debtUpperBound: d.debt == null ? instantAt(g, ['Liabilities'], rev.end) : null,
+    debt: d.debt, debtParts: d.parts, // all liabilities minus the lease liabilities still bound the borrowings from above
+    debtUpperBound: d.debt == null && instantAt(g, ['Liabilities'], rev.end) != null ? Math.max(0, instantAt(g, ['Liabilities'], rev.end) - d.parts.leases) : null,
     bookEquity: instantAt(g, ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest'], rev.end),
     // purification is owed per share held when the statements are issued: the cover-page count
     shares: c > 0 && sane.includes(c) ? c : sharesMV, sharesMV, sharesSource: c > 0 && sane.includes(c) ? 'cover' : wavg ? 'weighted' : null,
