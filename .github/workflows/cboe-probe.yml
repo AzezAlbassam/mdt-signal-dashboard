@@ -7,19 +7,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
-          U=https://cdn-api.cboe.com/api/global/delayed_quotes/options/NVDA.json
-          try() { echo "== $1"; shift; curl -sS -m 20 -D /tmp/h -o /tmp/b "$@" "$U" || true; grep -iE '^HTTP|^content-type|^cf-mitigated|^location' /tmp/h || true; head -c 200 /tmp/b | tr -d '\r\n'; echo; }
-          try "bare"
-          try "ua" -A "$UA"
-          try "ua+accept" -A "$UA" -H 'Accept: application/json, text/plain, */*'
-          try "ua+referer+origin" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com'
-          try "full browser" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.9' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com' -H 'Sec-Fetch-Site: same-site' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Dest: empty'
-          echo "== node fetch, browser headers"
-          node -e '
-            const h={"User-Agent":process.argv[1],Accept:"application/json, text/plain, */*",Referer:"https://www.cboe.com/",Origin:"https://www.cboe.com"}
-            fetch("https://cdn-api.cboe.com/api/global/delayed_quotes/options/NVDA.json",{headers:h}).then(async r=>{const t=await r.text();console.log(r.status,t.slice(0,160));if(r.ok){const d=JSON.parse(t).data;console.log("options",d.options.length,Object.keys(d.options[0]).join(","))}}).catch(e=>console.log("ERR",e.message))' "$UA"
-          echo "== 20 tickers in a row (rate check)"
-          for t in AAPL MSFT AMZN META TSLA AMD PLTR MSTR COIN HOOD IBIT SPY QQQ IWM SMCI AVGO NFLX UBER HIMS RKLB; do
-            printf "%s " "$t"; curl -sS -m 20 -o /dev/null -w "%{http_code}\n" -A "$UA" -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://www.cboe.com/' -H 'Origin: https://www.cboe.com' "https://cdn-api.cboe.com/api/global/delayed_quotes/options/$t.json" || true
+          BROWSER='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
+          HONEST='mdt-signal-dashboard/1.0 (+https://github.com/AzezAlbassam/mdt-signal-dashboard)'
+          nas() { # $1 ticker $2 assetclass $3 UA-label $4 UA
+            printf "nasdaq %-5s %-6s %-8s " "$1" "$2" "$3"
+            curl -sS -m 25 -o /tmp/b -w "%{http_code} " -A "$4" -H 'Accept: application/json' \
+              "https://api.nasdaq.com/api/quote/$1/option-chain?assetclass=$2&limit=10000&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all" || true
+            python3 -c "
+          import json,sys
+          try:
+            d=json.load(open('/tmp/b'));t=d.get('data') or {};r=(t.get('table') or {}).get('rows') or []
+            g=[x['expirygroup'] for x in r if x.get('expirygroup')]
+            print('rows',len(r),'expiries',len(g),'first',g[:1],'last',g[-1:],'|',t.get('lastTrade'),'| status',d.get('status',{}).get('rCode'))
+          except Exception as e: print('not json',open('/tmp/b').read(120).replace(chr(10),' '))"
+          }
+          nas NVDA stocks honest "$HONEST"
+          nas NVDA stocks browser "$BROWSER"
+          nas NVDA stocks none ""
+          nas SPY  etf    honest "$HONEST"
+          nas SPY  stocks honest "$HONEST"
+          nas RDW  stocks honest "$HONEST"
+          nas BRK.B stocks honest "$HONEST"
+          nas BRK-B stocks honest "$HONEST"
+          echo "== nasdaq 30 in a row (honest UA)"
+          for t in AAPL MSFT AMZN META TSLA AMD PLTR MSTR COIN HOOD IBIT QQQ IWM SMCI AVGO NFLX UBER HIMS RKLB OKLO SOXX XLK SLV TAN KWEB CIBR MAGS QQQM SPMO DTCR; do
+            c=stocks; case $t in IBIT|QQQ|IWM|SOXX|XLK|SLV|TAN|KWEB|CIBR|MAGS|QQQM|SPMO|DTCR) c=etf;; esac
+            printf "%s:" "$t"; curl -sS -m 25 -o /tmp/b -w "%{http_code}:" -A "$HONEST" -H 'Accept: application/json' "https://api.nasdaq.com/api/quote/$t/option-chain?assetclass=$c&limit=10000&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all" || true
+            python3 -c "import json;d=json.load(open('/tmp/b'));print(len(((d.get('data') or {}).get('table') or {}).get('rows') or []))" 2>/dev/null || echo x
           done
+          echo "== yahoo (honest UA, own crumb flow)"
+          rm -f /tmp/cj
+          curl -sS -m 20 -c /tmp/cj -o /dev/null -A "$HONEST" https://fc.yahoo.com || true
+          CRUMB=$(curl -sS -m 20 -b /tmp/cj -A "$HONEST" https://query2.finance.yahoo.com/v1/test/getcrumb || true)
+          echo "crumb=[$CRUMB]"
+          curl -sS -m 25 -o /tmp/b -w "%{http_code}\n" -b /tmp/cj -A "$HONEST" "https://query2.finance.yahoo.com/v7/finance/options/NVDA?crumb=$CRUMB" || true
+          head -c 200 /tmp/b; echo
