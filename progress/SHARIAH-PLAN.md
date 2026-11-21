@@ -226,3 +226,39 @@ Saudi stocks: no source today in either option 1 or the current FMP plan.
   (N-PORT), TradingView only for prices. Waiting for the owner: allow data.sec.gov, www.sec.gov and
   efts.sec.gov, and the contact e-mail SEC requires in each request.
 - The stocks page depends on the same TradingView fundamentals; check it and plan its move to SEC data too.
+
+## L. SEC first look (2026-11-21) and the test catalogue (written before any code)
+
+First look (data.sec.gov works without the contact header; www.sec.gov refuses requests without a
+declared contact, so the ticker→CIK map and N-PORT files need SEC_USER_AGENT, which the owner adds himself):
+- NVDA companyfacts: InvestmentIncomeInterest 496M for the quarter to 2026-07-26 (filed 2026-08-26), debt
+  (LongTermDebt 33.37B, DebtCurrent 1.0B), Revenues 96.22B, shares 24.10B. NVDA's Q3 10-Q (earnings
+  release 2026-11-17) was NOT in SEC data on 2026-11-21: SEC holds the 10-Q, which comes days after the
+  press release. Freshness = the 10-Q filing date, not the earnings date.
+- AAPL: no interest-income tag after FY2023 (InvestmentIncomeInterestAndDividend last 2023-09-30). Such
+  companies get `ما ينحكم` from XBRL unless a later step reads the note in the 10-K/10-Q text.
+- Coverage on the dashboard's lists must be measured in step 0 before the plan goes further.
+
+Test catalogue (each is a named test; a failure blocks the next step):
+T1 rules engine (unit, no network): Al Rajhi's own example 1,000/100,000×2,000=20; debt 29.99% / 30% /
+  30.01%; illicit 4.99% / 5% / 5.01%; market value below book value; each input missing → `ما ينحكم`; zero
+  revenue; negative income still owes purification; a zero interest figure that SEC did not report is
+  "missing", never 0.
+T2 SEC parsing (fixtures saved from real responses): quarter = 80–100-day period only; YTD and annual
+  values never taken as a quarter; Q4 derived as FY − (Q1+Q2+Q3) only when all four exist; amended filings
+  (10-Q/A) replace the original; restated values use the latest filing; units USD only; fiscal years that do
+  not end in December (NVDA January, AAPL September).
+T3 cross-source agreement: for 30 stocks, SEC revenue and debt vs FMP within 1% (FMP's interest figure is
+  not used as truth, only compared); every difference listed with its cause.
+T4 freshness: for every stock the page shows the filing date used; a test fails when a 10-Q newer than
+  the one used exists in SEC's submissions list.
+T5 ETF holdings: weights sum to 100% ± 0.5%; every holding mapped to a ticker or listed as unmapped;
+  unmapped weight shown; a fund with unmapped weight ≥ 5% is `ما ينحكم`; as-of date shown, refused when
+  older than 150 days.
+T6 fund maths: look-through purification = Σ wᵢ × illicitᵢ ÷ market valueᵢ, checked against a hand
+  computation in a separate script for SMH and one Shariah fund (SPUS/HLAL), and against that fund's
+  published purification figure when it publishes one.
+T7 page (browser, 390 px): four verdict states render; numbers on the page equal the engine's; no page
+  errors; Arabic text and LTR numbers do not overlap.
+T8 independent review: a reviewer agent given only the Al Rajhi PDFs and the code restates the rules and
+  lists every difference; the owner sees the list.
