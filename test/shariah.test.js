@@ -64,8 +64,7 @@ test('numbers are returned with the verdict', () => {
   const r = v({});
   assert.equal(r.numbers.debtRatio, 0.1); assert.equal(r.numbers.illicitShare, 0.01); assert.equal(r.numbers.purificationPerShare, 0.1);
 });
-test('A8 estimate: average balance x yield x days/365', () => {
-  assert.equal(estimateInterest({ cashStart: 100, cashEnd: 300, yieldPct: 5, days: 365 }), 10);
+test('A8 estimate: balance x yield x days/365 (higher balance since G1)', () => {
   assert.ok(Math.abs(estimateInterest({ cashStart: 1000, cashEnd: 1000, yieldPct: 4, days: 91 }) - 1000 * 0.04 * 91 / 365) < 1e-9);
   assert.equal(estimateInterest({ cashStart: null, cashEnd: 1, yieldPct: 4, days: 91 }), null);
 });
@@ -81,4 +80,29 @@ test('fund rule (owner A5): non-compliant weight below 5% passes', () => {
   // 3% failing + 3% unknown could be 6% failing: not judged (cautious)
   assert.equal(fundVerdict([{ ...ok, weight: 0.94 }, { ...bad, weight: 0.03 }, { state: 'ما ينحكم', illicit: null, marketValue: null, weight: 0.03 }]).state, 'ما ينحكم');
   assert.equal(fundVerdict([{ ...ok, weight: 0.96 }, { state: 'ما ينحكم', illicit: null, marketValue: null, weight: 0.04 }]).state, 'مختلط جائز');
+});
+
+// G1 review findings (2026-11-21): every case where the code was looser than the PDFs.
+test('G1: impossible inputs never pass (market value <= 0, negative debt or illicit)', () => {
+  assert.equal(v({ marketValue: 0, bookEquity: -10, debt: 50 }).state, 'ما ينحكم');
+  assert.equal(v({ marketValue: 0, bookEquity: 0, debt: 0, illicit: 0 }).state, 'ما ينحكم');
+  assert.equal(v({ debt: -5 }).state, 'ما ينحكم');
+  assert.equal(v({ illicit: -20 }).state, 'ما ينحكم');
+  assert.equal(purificationPerShare(-20, 10), null);
+});
+test('G1: estimate is cautious: the higher balance, not the average', () => {
+  assert.equal(estimateInterest({ cashStart: 100, cashEnd: 300, yieldPct: 5, days: 365 }), 15);
+  assert.equal(estimateInterest({ cashStart: -1, cashEnd: 300, yieldPct: 5, days: 365 }), null);
+});
+test('G1: fund rule never passes on bad data', () => {
+  const ok = { state: 'مختلط جائز', illicit: 1, marketValue: 100 };
+  assert.equal(fundVerdict([]).state, 'ما ينحكم');
+  assert.equal(fundVerdict([{ ...ok, weight: 0.97 }, { state: 'غير جائز', illicit: 1, marketValue: 1, weight: NaN }]).state, 'ما ينحكم');
+  assert.equal(fundVerdict([{ ...ok, weight: 0.50 }]).state, 'ما ينحكم');           // half the fund not listed
+  assert.equal(fundVerdict([{ ...ok, weight: 0.10 }, { ...ok, state: 'fail', weight: 0.90 }]).state, 'ما ينحكم'); // unknown state
+  assert.equal(fundVerdict([{ ...ok, weight: 97 }, { ...ok, weight: 3 }]).state, 'ما ينحكم'); // percent, not fractions
+  assert.equal(fundVerdict([{ ...ok, weight: 1.05 }, { state: 'غير جائز', illicit: 1, marketValue: 1, weight: -0.05 }]).state, 'ما ينحكم'); // short position
+  const r = fundVerdict([{ ...ok, weight: 0.98 }, { state: 'مختلط جائز', illicit: null, marketValue: 100, weight: 0.02 }]);
+  assert.equal(r.state, 'مختلط جائز'); assert.equal(r.purificationUnknownWeight, 0.02);
+  assert.equal(fundVerdict([{ ...ok, weight: 0.996 }]).unknownWeight.toFixed(3), '0.004'); // unlisted rest counts as unknown
 });

@@ -326,3 +326,26 @@ Engine contract (`engine/shariah.js`, pure, tested by test/shariah.test.js writt
 - 2026-11-21: D1 and D2 done; 13 tests green, `npm test` 446/446. The tests found one bug before release: an
   unexpected activity value (NaN, "OK") passed the screen; now anything but "ok"/"fail"/"review" is unknown.
   Next: G1 independent review of the engine against the PDFs, then the SEC loader (T2) and the page (D3).
+
+### M2. Gate G1, independent review (2026-11-21)
+A reviewer agent given only the two Al Rajhi PDFs and engine/shariah.js restated the rules and compared.
+It confirmed the formulas (R2 denominator = market value, or book value when market value is below it; R3 ≤ 5%;
+purification = total illicit ÷ shares × shares held; the 1,000/100,000×2,000 = 20 example) and found these
+places where the code was LOOSER than the text, all fixed with a test written first:
+1. Market value and book value both ≤ 0 with debt known → the stock passed R2 silently. Now `ما ينحكم`.
+2. Negative debt or negative illicit revenue was accepted (a net figure would under-count). Now bad data.
+3. A8 estimate used the average balance: not "على جانب الاحتياط". Now the higher of the two balances (this
+   changes part M's formula; no result had been computed yet).
+4. fundVerdict passed on an empty list, a NaN weight, a list covering half the fund, an unknown state, weights
+   in percent, or a short position. Now each of these is `ما ينحكم`, and unlisted weight counts as unknown.
+5. Fund purification silently skipped holdings with unknown illicit revenue. Their weight is now reported
+   (`purificationUnknownWeight`) and shown on the page.
+Not in the engine, required of the SEC loader (T2) and the page:
+- market value = the average over the quarter, never a spot value;
+- illicit = GROSS interest and other illicit income, never net of interest expense;
+- purification per quarter of the statements issued, never mixing quarterly and annual figures;
+- the 90-day sell rule (Arabic: a hard limit, «على ألا تتجاوز») shown from the date we first saw the change;
+- the page says the money goes to charity, not zakat or tax; and (Arabic «فيجب الاكتفاء بها») that pure
+  companies come first when they meet the need.
+Also from the review: the Arabic text says plain "market value"/"book value"; the English adds "of assets". We
+follow the Arabic (equity), which is the stricter reading too. 16 engine tests green; `npm test` all green.
