@@ -84,7 +84,9 @@ export function activityFromSic(sic, table) {
 // a band around the fund report's price for fund holdings). When the debt figure is incomplete, total liabilities minus
 // leases bound it from above: that bound can prove a pass (30% even counting all of it), never a fail.
 export function screenStock(r, marketValue, sicTable) {
-  if (!r?.period) return null
+  // A prohibited activity needs no numbers (banks whose statements we cannot read are still غير جائز)
+  if (!r?.period) return r && activityFromSic(r.sic, sicTable) === 'fail'
+    ? { state: 'غير جائز', failed: ['R1'], missing: [], numbers: {}, debtUpper: false, activity: 'fail', marketValue } : null
   let debt = r.debt, debtUpper = false
   if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
     const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)

@@ -15,7 +15,8 @@ const stocks = JSON.parse(readFileSync('data/shariah/sec-inputs.json', 'utf8')).
 
 const get = getter();
 const cos = companies(get);
-const tickerOf = new Map(cos.map((c) => [c.cik, c.ticker]));
+const tickerOf = new Map();
+for (const c of cos) if (!tickerOf.has(c.cik)) tickerOf.set(c.cik, c.ticker); // SEC lists the common stock first (not JPM-PM)
 const seed = Object.values(reports).flatMap((r) => r.holdings ?? []).filter((h) => h.ticker && h.isin).map((h) => ({ isin: h.isin, ticker: h.ticker }));
 const maps = buildMaps(cos, seed);
 
@@ -53,8 +54,9 @@ for (const f of list) {
       end: c?.period?.end ?? null, foreign: h.country && h.country !== 'US' };
   });
   const sum = fundSummary(rows.map((x) => ({ w: x.w, kind: x.k, state: x.s, purification: x.pur })));
-  const held = rows.filter((x) => x.k !== 'collateral').reduce((a, x) => a + Math.abs(x.w), 0);
-  if (held < 0.97 || held > 1.03) problems.push(`${f.sym}: holdings add up to ${(100 * held).toFixed(2)}% without collateral`);
+  // with their sign (a swap can be worth less than nothing); cash the report does not list stays outside
+  const held = rows.filter((x) => x.k !== 'collateral').reduce((a, x) => a + x.w, 0);
+  if (held < 0.95 || held > 1.05) problems.push(`${f.sym}: holdings add up to ${(100 * held).toFixed(2)}% without collateral`);
   const old = ageDays(r.as_of) > MAX_AGE_DAYS;
   const kinds = {};
   for (const x of rows) kinds[x.k] = (kinds[x.k] ?? 0) + Math.abs(x.w);

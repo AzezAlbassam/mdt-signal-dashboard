@@ -1450,6 +1450,7 @@
   }
   function shChip(sym) {
     const r = shIn(sym)
+    if (r && !r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>`
     if (!r?.period) return ''
     const mark = (st) => ` <span class="shc ${SH_CLS[st] ?? 'dim'}" title="الشرعية (طريقة الراجحي): ${esc(st)}">${st === 'غير جائز' ? '✕' : st === 'حلال (نقي)' || st === 'مختلط جائز' ? '✓' : '؟'}</span>`
     // A certain fail from the current filing (R1, R3) comes first: an old saved pass never hides it (G6.3).
@@ -1463,6 +1464,7 @@
     if (sym.startsWith('TADAWUL:')) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">للحين ما عندنا مصدر لقوائم الشركات السعودية يعطي إيراد الفوائد والديون. أول ما نلقى مصدر موثوق تنضاف.</p></div>`
     const r = shIn(sym)
     if (!r) return ''
+    if (!r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return `<div class="part sh">${head}<span class="shs lo">غير جائز</span></h3><p>نشاط الشركة محرم (${esc(r.sicDescription ?? '')})، فما يجوز بغض النظر عن أرقامها.</p></div>`
     if (!r.period) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">${r.error === 'no CIK' ? 'ما لقينا الشركة في SEC.' : r.stale ? `آخر إيرادات ربعية بأسماء SEC المعتادة من ${esc(r.stale)}: الشركة غيّرت طريقة إعلانها، فما نحكم من أرقام قديمة.` : 'الشركة ما تقدم تقارير ربعية أمريكية لـSEC (غالباً شركة أجنبية تقدم تقرير سنوي)، فما عندنا أرقام ربعية نحكم منها.'}</p></div>`
     const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
     const q = state.quotes[sym]

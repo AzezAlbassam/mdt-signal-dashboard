@@ -69,8 +69,8 @@ export function debtAt(ns, date) {
   let borrowings = v('DebtLongtermAndShorttermCombinedAmount');
   if (borrowings == null) {
     const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
-    const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations']);
-    const cur = v(['LongTermDebtCurrent', 'DebtCurrent']);
+    const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
+    const cur = v(['LongTermDebtCurrent', 'DebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent', 'NotesPayableCurrent']);
     if (lt != null) borrowings = lt + st;
     else if (nonCur != null && cur != null) borrowings = nonCur + cur + st;
     // Only short-term lines (G6.1: BAX, TMUS, ORA, DE): the long-term debt is under another tag, so the figure is
@@ -97,11 +97,13 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     int = upper; illicit = upper.val; illicitEstimated = true;
   }
   // Also any company-specific tag that names finance receivables or loans (DE: de:FinancingReceivables...).
-  // Balances or cash flows of the last 400 days count (DE shows its receivables only in cash flows).
+  // Balances or cash flows of the last 400 days count (DE shows its receivables only in cash flows). Disclosures about
+  // receivables (sold, significant sales, allowances, modifications) are not holdings: AVGO only discloses sold ones.
   const LOANISH = /(Financ\w*Receivable|Loans?(AndLeases)?Receivable|NetInvestmentInLease)/
+  const NOT_HELD = /(Sold|Sale|Significant|Allowance|Modification|Impaired|Writeoff|WriteOff|Recover|Collectively|Individually|Nonaccrual|PastDue|Troubled|Charge)/
   const recent = x => x.end <= rev.end && days(x.end, rev.end) <= 400 && x.val > 0
   const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0)
-    || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && (v.units?.USD ?? []).some(recent)));
+    || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && !NOT_HELD.test(t) && (v.units?.USD ?? []).some(recent)));
   if (int == null && !hasLoans) {
     const bal = d => {
       const c = instantAt(g, CASH, d);
@@ -115,6 +117,10 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     }
   }
   const d = debtAt(g, rev.end);
+  // total liabilities; when not tagged, liabilities-and-equity minus the parent's equity (includes minority and mezzanine
+  // equity, so it can only overstate: still an upper bound of the borrowings)
+  const le = instantAt(g, ['LiabilitiesAndStockholdersEquity'], rev.end), se = instantAt(g, ['StockholdersEquity'], rev.end);
+  const liabilities = instantAt(g, ['Liabilities'], rev.end) ?? (le != null && se != null ? le - se : null);
   const deiShares = (dei.EntityCommonStockSharesOutstanding?.units?.shares ?? []).filter(x => x.end >= rev.end && days(rev.end, x.end) <= 120)
     .reduce(latestFiled, null);
   const wavg = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares', false).find(x => x.end === rev.end);
@@ -128,14 +134,17 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   let c = deiShares?.val, w = wavg?.val;
   if (implied) { if (!(c > 0 && near(c, implied))) c = undefined; if (!(w > 0 && near(w, implied))) w = undefined; }
   const sane = c > 0 && w > 0 ? (near(c, w) ? [c, w] : []) : [c, w].filter(x => x > 0);
+  // nothing usable tagged: net income / EPS, only when EPS is large enough that its rounding to the cent costs < 2.5%
+  if (!sane.length && !(c > 0 && w > 0) && implied && Math.abs(eps) >= 0.2) sane.push(implied);
   const sharesMV = sane.length ? Math.min(...sane) : null;
   return {
     name: cf.entityName, period, revenue: rev.val, revenueTag: rev.tag,
     illicit, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
     debt: d.debt, debtParts: d.parts, // all liabilities minus the lease liabilities still bound the borrowings from above
-    debtUpperBound: d.debt == null && instantAt(g, ['Liabilities'], rev.end) != null ? Math.max(0, instantAt(g, ['Liabilities'], rev.end) - d.parts.leases) : null,
+    debtUpperBound: d.debt == null && liabilities != null ? Math.max(0, liabilities - d.parts.leases) : null,
     bookEquity: instantAt(g, ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest'], rev.end),
     // purification is owed per share held when the statements are issued: the cover-page count
-    shares: c > 0 && sane.includes(c) ? c : sharesMV, sharesMV, sharesSource: c > 0 && sane.includes(c) ? 'cover' : wavg ? 'weighted' : null,
+    shares: c > 0 && sane.includes(c) ? c : sharesMV, sharesMV,
+    sharesSource: c > 0 && sane.includes(c) ? 'cover' : w > 0 && sane.includes(w) ? 'weighted' : sharesMV != null ? 'implied' : null,
   };
 }
