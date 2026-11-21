@@ -455,3 +455,16 @@ Regulators (search snippets only, sites blocked): Pakistan's KMI/All-Share Islam
 Purchase" as interest-bearing debt (operating leases not mentioned); Malaysia SC: "interest-bearing debt", Islamic
 financing excluded, leases not mentioned; Indonesia, DFM: leases not mentioned.
 Still running: the empirical test on Al Rajhi's Q2 2026 Saudi list; index providers, Saudi boards and papers on leases.
+Index providers, Saudi boards, research (round 2, third group):
+- S&P Shariah (FAQ, snippet): debt = "the sum of all short- and long-term interest-bearing borrowings and liabilities",
+  Islamic and non-interest-bearing debt excluded, case by case; S&P/DJIM update of 2026-08-20 (snippets): debt ÷
+  36-month (S&P) / 24-month (DJIM) average market value < 30%, effective 2026-09-21. Leases not mentioned.
+- MSCI (Apr/Jul 2025 methodologies, read) and FTSE (Yasaar 2026, IdealRatings 2026, read): "debt" undefined; leases
+  not mentioned. No IFRS 16 consultation found 2018-2026.
+- Al-Maqasid / Dr. Al-Osaimi methodology, 2025 update (verified by me in the PDF, para. 19): «الأصل أن ما كتب بطريقة
+  توحي أنه تم حسب الضوابط الشرعية، مثل المرابحة، والتورق والإيجار التمويلي … فيعتبر شرعيا … وأما ما تم عنونته بطريقة
+  مدمجة مجملة … وضع في التمويلات التقليدية من باب الاحتياط»; limit (para. 10): non-Shariah borrowing ≤ «ثلث إجمالي
+  الموجودات». Finance leases presumed compliant when labelled so; operating leases not mentioned.
+- Finance leases counted as interest-bearing debt (stated): Pakistan's exchange index brochures ("Finance Lease, Hire
+  Purchase"), Zoya (capital leases, its Shariah advisers), ISRA-Bloomberg paper 2017 (snippet). Operating / IFRS 16
+  leases: no authority found that counts them, none that excludes them in words; only blogs, split both ways.
