@@ -400,3 +400,10 @@ An agent probed the engine, loader and page with real SEC data (proof scripts in
    negative revenue → bad data, not a fail; a smaller interest tag no longer wins; R3 above 5% on an upper bound
    shows «؟», not ✕.
 Not fixed (noted): preferred tickers (STRC, STRF, STRK) are judged on MSTR's common-stock figures (MSTR fails anyway).
+- Rerun after the fixes found two more, fixed with a test first: DE (a large finance arm whose receivables appear
+  only in cash-flow lines) was still given a cash-based estimate → loans or finance receivables in any namespace,
+  balance or cash flow of the last 400 days, now block the estimate; TEM's only share count is in thousands →
+  counts are checked against net income ÷ EPS, and two counts 50× apart with nothing to decide = not judged.
+- After all fixes (425 stocks with a usable quarter): interest tagged 183, upper-bound or estimate 197, missing 45;
+  debt known 230, liabilities upper bound 175, missing 20. `npm test` 475/475; browser check green at both widths.
+Remaining before the first publish: G7, the owner's sign-off.

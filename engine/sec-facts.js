@@ -94,7 +94,12 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   if (upper && !(exact && rev.val > 0 && exact.val / rev.val > 0.05) && upper.val > (exact?.val ?? -Infinity)) {
     int = upper; illicit = upper.val; illicitEstimated = true;
   }
-  const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0);
+  // Also any company-specific tag that names finance receivables or loans (DE: de:FinancingReceivables...).
+  // Balances or cash flows of the last 400 days count (DE shows its receivables only in cash flows).
+  const LOANISH = /(Financ\w*Receivable|Loans?(AndLeases)?Receivable|NetInvestmentInLease)/
+  const recent = x => x.end <= rev.end && days(x.end, rev.end) <= 400 && x.val > 0
+  const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0)
+    || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && (v.units?.USD ?? []).some(recent)));
   if (int == null && !hasLoans) {
     const bal = d => {
       const c = instantAt(g, CASH, d);
@@ -113,8 +118,14 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const wavg = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares', false).find(x => x.end === rev.end);
   // Market value uses the smaller count (G6.4): a split or new shares after the quarter can only lower it (stricter).
   // A count 50x away from the other is a unit error (TEM reports thousands) and is dropped.
-  const c = deiShares?.val, w = wavg?.val;
-  const sane = c > 0 && w > 0 ? (c / w > 50 ? [c] : w / c > 50 ? [w] : [c, w]) : [c, w].filter(x => x > 0);
+  // Implied count = net income / EPS of the quarter, when both are there and not tiny: a count 50x away is a unit error.
+  const ni = quarterFacts(g, ['NetIncomeLoss']).find(x => x.end === rev.end)?.val;
+  const eps = quarterFacts(g, ['EarningsPerShareBasic'], 'USD/shares').find(x => x.end === rev.end)?.val;
+  const implied = ni && eps && Math.abs(eps) >= 0.01 ? Math.abs(ni / eps) : null;
+  const near = (a, b) => a / b <= 50 && b / a <= 50;
+  let c = deiShares?.val, w = wavg?.val;
+  if (implied) { if (!(c > 0 && near(c, implied))) c = undefined; if (!(w > 0 && near(w, implied))) w = undefined; }
+  const sane = c > 0 && w > 0 ? (near(c, w) ? [c, w] : []) : [c, w].filter(x => x > 0);
   const sharesMV = sane.length ? Math.min(...sane) : null;
   return {
     name: cf.entityName, period, revenue: rev.val, revenueTag: rev.tag,
