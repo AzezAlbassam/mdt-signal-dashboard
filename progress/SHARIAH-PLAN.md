@@ -281,3 +281,19 @@ Added to the test catalogue (written before the engine):
   LongTermDebtCurrent twice; a single stale tag (e.g. CTM's 2025 ConvertibleNotesPayable = 0) never counts as today.
 - T2c tickers with a class letter (BRK.B → BRK-B) map to their CIK.
 - T2d "no interest-income tag" → read the filing's XBRL instance with dimensions; still nothing → `ما ينحكم`, never 0.
+
+### L3. With the contact header (2026-11-21, owner set SEC_USER_AGENT)
+- www.sec.gov now answers (ticker map, filings, archives).
+- N-PORT (`scripts/shariah/nport.py`, output data/shariah/nport-2026-11-21.jsonl): SMH, SOXX, XLE, XLK, QQQ, SPUS, HLAL
+  read; SPY is a unit trust and is not in SEC's fund list. Holdings as of: SMH 2026-09-30; SOXX, XLE, XLK, QQQ
+  2026-06-30 (144 days old today); SPUS, HLAL 2026-08-31. Only the quarter-end report is public, about 60 days late,
+  so holdings are 2 to 5 months old. Section E's 100-day limit would refuse 4 of the 7 today → decision A7 for the owner.
+- Weights: total of pctVal 99.7–101.2%; equity-only 99.7–99.9%. SOXX's 101.17% includes non-equity lines (cash/
+  collateral). T5 is restated as: equity weights 99–100.5% and the rest listed by asset type (a POST-HOC change to
+  the test's tolerance, made after seeing data).
+- Mapping holdings to tickers: SPUS and HLAL carry tickers; the others carry only ISIN/CUSIP (no ticker). A mapping
+  ISIN → ticker is needed (to build and test: every mapped name checked against SEC's company name).
+- SMH holds foreign 20-F filers (TSM, ASML): their figures update once a year from SEC.
+- Apple: the latest 10-K (FY ending 2026-09-26) shows only "Other income/(expense), net" 1,174M; no interest-income
+  figure in the statements, the notes or the XBRL. No source reports Apple's interest income → decision A8 for the
+  owner: `ما ينحكم`, or a labelled estimate (interest-bearing cash and securities × a published yield).
