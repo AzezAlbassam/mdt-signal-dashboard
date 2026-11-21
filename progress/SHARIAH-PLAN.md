@@ -297,3 +297,28 @@ Added to the test catalogue (written before the engine):
 - Apple: the latest 10-K (FY ending 2026-09-26) shows only "Other income/(expense), net" 1,174M; no interest-income
   figure in the statements, the notes or the XBRL. No source reports Apple's interest income → decision A8 for the
   owner: `ما ينحكم`, or a labelled estimate (interest-bearing cash and securities × a published yield).
+
+## M. Owner decisions A7, A8 (2026-11-21) and the engine contract (fixed before the engine is written)
+
+- A7 (owner): fund holdings up to 150 days old are accepted, the as-of date shown beside every fund. This
+  changes E1's 100 days (owner decision after seeing N-PORT's lag).
+- A8 (owner): when a company does not disclose its interest income, use a cautious estimate labelled «تقدير».
+  This is Al Rajhi's own R3 ("undisclosed revenue is estimated on the cautious side"). Method, fixed now:
+  estimate = average of (cash and equivalents + current and non-current marketable securities) at the start
+  and end of the quarter × the quarter's average ICE BofA US Corporate Index effective yield (FRED
+  BAMLC0A0CMEY) × days ÷ 365. A tagged interest figure always wins over the estimate.
+- A1–A4, A6 keep their cautious defaults until the owner says otherwise (G7).
+
+Engine contract (`engine/shariah.js`, pure, tested by test/shariah.test.js written first):
+- `verdict({activity, debt, marketValue, bookEquity, illicit, illicitEstimated, revenue, shares})`
+  activity: "ok" | "fail" | "review" | null. Returns {state, failed, missing, numbers}.
+- R2: debt ÷ (marketValue, or bookEquity when marketValue is below it) ≤ 30% passes.
+- R3: illicit ÷ revenue ≤ 5% passes; revenue ≤ 0 with illicit > 0 fails; with illicit = 0 passes.
+- A known failure gives `غير جائز` even when another input is missing (failing is already certain).
+- Otherwise any missing input (null/undefined/NaN), or activity "review", gives `ما ينحكم`.
+- `حلال (نقي)`: activity ok, debt 0, illicit 0 and not estimated. Else passing = `مختلط جائز`.
+- `purificationPerShare(illicit, shares)`; loss-making companies still owe it; shares ≤ 0 → null.
+- `estimateInterest({cashStart, cashEnd, yieldPct, days})` per A8.
+- `fundVerdict(holdings[{weight, state, illicit, marketValue}])` per A5: non-compliant weight < 5% passes;
+  `ما ينحكم` weight ≥ 5% → `ما ينحكم`; purification % of amount = Σ w × illicit ÷ marketValue, unknown
+  holdings excluded and their weight reported.
