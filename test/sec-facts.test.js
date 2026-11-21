@@ -142,3 +142,15 @@ test('G6.5: weighted shares never get a "year minus 3 quarters" Q4', () => {
   const r = secInputs(company({ ...ns({ Revenues: [f('2025-10-01', '2025-12-31', 100, { form: '10-K' })] }), ...g }), { yieldPct: 5 });
   assert.equal(r.sharesMV, null);
 });
+test('G6 rerun: loans under a company tag also block the cash estimate (DE: de:FinancingReceivables)', () => {
+  const cf = company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)] }));
+  cf.facts.de = { FinancingReceivablesNet: { units: { USD: [i(Q[1], 40000)] } } };
+  assert.equal(secInputs(cf, { yieldPct: 5 }).illicit, null);
+});
+test('G6 rerun: a share count far from net income / EPS is a unit error (TEM: weighted in thousands)', () => {
+  const cf = company({ ...ns({ Revenues: [f(...Q, 1000)], NetIncomeLoss: [f(...Q, -18131100)] }),
+    EarningsPerShareBasic: { units: { 'USD/shares': [f(...Q, -0.1)] } },
+    WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q, 181311)] } } });
+  const r = secInputs(cf, { yieldPct: 5 });
+  assert.equal(r.shares, null); assert.equal(r.sharesMV, null);
+});
