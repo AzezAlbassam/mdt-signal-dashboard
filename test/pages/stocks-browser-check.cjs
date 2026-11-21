@@ -162,8 +162,19 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.fill('#filter', 'aapl'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row')
   await page.waitForTimeout(500)
-  // Shariah block (7b), AAPL from data/shariah/sec-inputs.json, by hand: debt 80.111B (leases out since 2026-11-21) /
-  // (250 x 14.532182B shares) = 2.2%; estimated interest 1.98734B / revenue 114.477B = 1.74%; per share 1.98734B / 14.532182B = $0.1368.
+  // Shariah block (7b), AAPL. The expected figures are worked out HERE from data/shariah/sec-inputs.json with the rule's
+  // own formula (not the engine's code), so the check survives the weekly SEC refresh: debt (leases out) / max(market
+  // value at the mocked $250 average, book equity); illicit / revenue; illicit / shares; x 100 shares.
+  const AA = JSON.parse(fs.readFileSync(root + 'data/shariah/sec-inputs.json', 'utf8')).stocks.AAPL
+  const mv = 250 * (AA.sharesMV ?? AA.shares)
+  const f = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
+  const want = {
+    dr: AA.debt != null ? f(100 * AA.debt / Math.max(mv, AA.bookEquity), 1) + '%' : null,
+    ill: f(100 * AA.illicit / AA.revenue, 2) + '%',
+    pps: '$' + f(AA.illicit / AA.shares, 4),
+    own: '$' + f(100 * AA.illicit / AA.shares, 2),
+    pass: AA.debt != null && AA.debt / Math.max(mv, AA.bookEquity) <= 0.3 && AA.illicit / AA.revenue <= 0.05,
+  }
   await page.waitForTimeout(300)
   const sh = await page.evaluate(async () => {
     const b = document.querySelector('#rows .part.sh')
@@ -173,8 +184,11 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       saved: window.__store['sh/NASDAQ:AAPL']?.state, chip: document.querySelector('#rows tr.row[data-sym="NASDAQ:AAPL"] .shc')?.textContent,
       daily: window.__calls.some((c) => c.startsWith('mcp-tv-get-ohlcv NASDAQ:AAPL')) }
   })
-  const okSh = sh.state === 'مختلط جائز' && /2\.2%/.test(sh.text) && /ما تنحسب/.test(sh.text) && /1\.74/.test(sh.text) && /0\.1368/.test(sh.text) && /13\.68/.test(sh.out ?? '') && /تقدير/.test(sh.text) && sh.saved === 'مختلط جائز' && sh.chip === '✓'
-  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify(sh))
+  const has = (t) => (sh.text ?? '').includes(t)
+  const okSh = (!want.dr || has(want.dr)) && has(want.ill) && has(want.pps) && (sh.out ?? '').includes(want.own)
+    && (!AA.debtParts?.leases || has('ما تنحسب')) && (!AA.illicitEstimated || has('تقدير'))
+    && (!want.pass || (sh.state === 'مختلط جائز' && sh.saved === 'مختلط جائز' && sh.chip === '✓'))
+  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify({ want, ...sh }))
   if (!okSh) process.exitCode = 1
   { const el = await page.$('#rows .part.sh'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-sh.png') }) } }
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
