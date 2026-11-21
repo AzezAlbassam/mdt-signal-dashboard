@@ -79,9 +79,9 @@ rule shows `ما ينحكم` for every stock and the owner is told before going 
 
 ## D. Stocks
 
-- [ ] D1 `engine/shariah.js`: pure functions `debtRatio`, `illicitShare`, `purificationPerShare`,
+- [x] D1 `engine/shariah.js`: pure functions `debtRatio`, `illicitShare`, `purificationPerShare`,
       `verdict(inputs) → {state, failed:[rule], numbers, period}`; no network, no dates from the clock.
-- [ ] D2 `test/shariah.test.js`: the document's example (1,000 / 100,000 × 2,000 = 20); thresholds exactly
+- [x] D2 `test/shariah.test.js`: the document's example (1,000 / 100,000 × 2,000 = 20); thresholds exactly
       at 30% and 5% (equal passes: "must not exceed"); market value below book value; each missing input →
       `ما ينحكم`; negative or zero revenue; a loss-making company still owes purification.
 - [ ] D3 Page: a chip on each row (four states), and a panel block "الشرعية والتطهير (طريقة الراجحي)" with
@@ -320,5 +320,9 @@ Engine contract (`engine/shariah.js`, pure, tested by test/shariah.test.js writt
 - `purificationPerShare(illicit, shares)`; loss-making companies still owe it; shares ≤ 0 → null.
 - `estimateInterest({cashStart, cashEnd, yieldPct, days})` per A8.
 - `fundVerdict(holdings[{weight, state, illicit, marketValue}])` per A5: non-compliant weight < 5% passes;
-  `ما ينحكم` weight ≥ 5% → `ما ينحكم`; purification % of amount = Σ w × illicit ÷ marketValue, unknown
+  non-compliant + `ما ينحكم` weight ≥ 5% → `ما ينحكم` (clarified while writing the engine, before any
+  fund result: unknown holdings could be non-compliant); purification % of amount = Σ w × illicit ÷ marketValue, unknown
   holdings excluded and their weight reported.
+- 2026-11-21: D1 and D2 done; 14 tests green, `npm test` 446/446. The tests found one bug before release: an
+  unexpected activity value (NaN, "OK") passed the screen; now anything but "ok"/"fail"/"review" is unknown.
+  Next: G1 independent review of the engine against the PDFs, then the SEC loader (T2) and the page (D3).

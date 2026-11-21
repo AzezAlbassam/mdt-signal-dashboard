@@ -43,6 +43,8 @@ test('each missing input -> ما ينحكم, never a pass; zero is not missing',
     }
   }
   assert.equal(v({ activity: 'review' }).state, 'ما ينحكم');
+  assert.equal(v({ activity: 'OK' }).state, 'ما ينحكم');
+  assert.equal(v({ debt: '10' }).state, 'ما ينحكم'); // a string is not a number
 });
 test('book equity missing only matters when it could change R2', () => {
   assert.equal(v({ bookEquity: null }).state, 'ما ينحكم');
@@ -76,5 +78,7 @@ test('fund rule (owner A5): non-compliant weight below 5% passes', () => {
   assert.equal(fundVerdict([{ ...ok, weight: 0.95 }, { ...bad, weight: 0.05 }]).state, 'غير جائز');
   const u = fundVerdict([{ ...ok, weight: 0.94 }, { state: 'ما ينحكم', illicit: null, marketValue: null, weight: 0.06 }]);
   assert.equal(u.state, 'ما ينحكم'); assert.equal(u.unknownWeight, 0.06);
+  // 3% failing + 3% unknown could be 6% failing: not judged (cautious)
+  assert.equal(fundVerdict([{ ...ok, weight: 0.94 }, { ...bad, weight: 0.03 }, { state: 'ما ينحكم', illicit: null, marketValue: null, weight: 0.03 }]).state, 'ما ينحكم');
   assert.equal(fundVerdict([{ ...ok, weight: 0.96 }, { state: 'ما ينحكم', illicit: null, marketValue: null, weight: 0.04 }]).state, 'مختلط جائز');
 });
