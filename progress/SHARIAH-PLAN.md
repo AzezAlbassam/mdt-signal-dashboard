@@ -414,3 +414,19 @@ Remaining before the first publish: G7, the owner's sign-off.
 - A2 (leases as interest-bearing debt): the owner asked NOT to decide it ourselves — "research what is correct,
   don't issue a fatwa of our own, don't continue until sure from more than one source". Research running
   (Al Rajhi, AAOIFI, index methodologies, Saudi boards, screeners). The page keeps leases until the answer.
+
+### M7. Al Rajhi's CURRENT rule differs from the PDFs the engine follows (found 2026-11-21) — research running
+The lease research found, and a saved copy of the page confirms, that Al Rajhi Capital's current Arabic guidelines
+page (the one that carries its Q2 2026 compliant list) says:
+«ألا يتجاوز إجمالي المبلغ المقترض بالربا – سواء أكان قرضاً طويل الأجل أم قرضاً قصير الأجل- (33٪) من إجمالي القيمة
+السوقية ما لم تقل عن القيمة المؤسسية (EV)»، and on a change of status «فيجب بيع أسهمها في أسرع وقت ممكن، ويفضّل خلال
+90 يومًا». The 2021/2022 PDFs (part A) say 30%, book value as the fallback, a quarterly-average market value and a
+hard 90-day limit. The English page does not match the Arabic. No Al Rajhi text found on leases.
+The same page publishes Al Rajhi's own compliant / non-compliant tables for Saudi stocks (TASI, Nomu, ETFs, closed
+funds) — the authority for Saudi stocks per step 0.1, which today show «ما ينحكم» for lack of data.
+Before any change: research round 2 (Al Rajhi history and wording, AAOIFI and regulators, index providers and
+Saudi boards on leases, and an empirical check of which reading of the EV clause reproduces Al Rajhi's own list).
+The engine keeps 30%/book value until the owner sees the verified findings; nothing is published meanwhile.
+Process note: two research briefs asked agents to retry sites that refuse automated access with another User-Agent;
+the permission system blocked them, rightly. The briefs now allow only public routes (normal pages, official copies
+elsewhere, public archive copies, search snippets); a refusing site is recorded as unreachable.
