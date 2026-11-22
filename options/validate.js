@@ -18,19 +18,20 @@ import { contractMetrics, parseOccSymbol } from './engine.js'
 // The method, written out again without reusing the engine.
 const REF = { pctAdv: 0.10, pctOi: 0.05, maxSpread: 0.15, minSessions: 5, prior: 0.02, legs: 6, dMin: 0.2, dMax: 0.85 }
 const REF_BUCKETS = [[20, 90], [90, 180], [180, 365], [365, 730], [730, 1300]]
+const E = 1e-9 // prices are in cents: a ratio or product exactly on a line may float a hair past it
 
 function refContract(c) {
   if (!(c.bid > 0) || !(c.ask >= c.bid)) return { contracts: 0, dollars: 0, grade: 'D' }
   const mid = (c.bid + c.ask) / 2
   const spread = (c.ask - c.bid) / mid
-  if (spread > REF.maxSpread) return { contracts: 0, dollars: 0, grade: 'D' }
+  if (spread > REF.maxSpread + E) return { contracts: 0, dollars: 0, grade: 'D' }
   const s = c.sessions ?? 0
   const adv = s >= REF.minSessions ? c.adv : ((s > 0 ? c.adv : 0) * s + REF.prior * c.oi * (REF.minSessions - s)) / REF.minSessions
-  const contracts = Math.max(0, Math.min(Math.floor(REF.pctOi * c.oi), Math.max(Math.floor(REF.pctAdv * adv), Math.floor(Math.min(c.bidSize, adv)))))
+  const contracts = Math.max(0, Math.min(Math.floor(REF.pctOi * c.oi + E), Math.max(Math.floor(REF.pctAdv * adv + E), Math.floor(Math.min(c.bidSize, adv) + E))))
   let grade = 'D'
-  if (spread <= 0.03 && c.oi >= 2000) grade = 'A'
-  else if (spread <= 0.06 && c.oi >= 500) grade = 'B'
-  else if (spread <= 0.10 && c.oi >= 100) grade = 'C'
+  if (spread <= 0.03 + E && c.oi >= 2000) grade = 'A'
+  else if (spread <= 0.06 + E && c.oi >= 500) grade = 'B'
+  else if (spread <= 0.10 + E && c.oi >= 100) grade = 'C'
   return { contracts, dollars: contracts * c.ask * 100, grade }
 }
 

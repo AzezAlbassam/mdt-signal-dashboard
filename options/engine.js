@@ -27,18 +27,28 @@ export function daysToExpiry(expiry, fromDate) {
   return Math.round((Date.parse(`${expiry}T00:00:00Z`) - Date.parse(`${fromDate}T00:00:00Z`)) / 86400000)
 }
 
-/** Monthly (third-Friday) expirations carry most of the open interest in long-dated options. */
-export function isMonthly(expiry) {
+/**
+ * Monthly (third-Friday) expirations carry most of the open interest in long-dated options.
+ * A Thursday stands in for a third Friday that is a market holiday (Good Friday, Juneteenth);
+ * given the chain's expiries, only when that Friday is not listed too (SPY lists dailies).
+ */
+export function isMonthly(expiry, expiries = []) {
   const d = new Date(`${expiry}T00:00:00Z`)
-  // Thursday expiries cover a Good-Friday holiday on the third Friday.
   const dow = d.getUTCDay()
   const day = d.getUTCDate()
   if (dow === 5) return day >= 15 && day <= 21
-  if (dow === 4) return day >= 14 && day <= 20
+  if (dow === 4) return day >= 14 && day <= 20 && !expiries.includes(new Date(d.getTime() + 86400000).toISOString().slice(0, 10))
   return false
 }
 
 const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Number(v))
+
+// Spreads are ratios of prices in cents, so a quote that sits exactly on a threshold
+// (4.07 x 4.73 is 15%) can come out a hair above it in floating point.
+const EPS = 1e-9
+
+/** Median of an ascending array (null when empty). */
+const median = (s) => (s.length === 0 ? null : s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2)
 
 /**
  * Turn a Cboe delayed-quotes payload into contract rows.
@@ -63,7 +73,7 @@ export function chainRows(raw, ticker, today) {
     const bid = num(o.bid) ?? 0
     totalVolume += volume
     const t = typeof o.last_trade_time === 'string' ? o.last_trade_time.slice(0, 10) : ''
-    if (t > session) session = t
+    if (t > session && t <= today) session = t // a bad future date must not freeze the history
     if (oi === 0 && volume === 0 && bid === 0) continue
     const delta = num(o.delta)
     if (delta != null && (Math.abs(delta) < 0.03 || Math.abs(delta) > 0.98)) continue
@@ -93,9 +103,9 @@ export const DEFAULTS = {
  */
 export function grade({ spreadPct, oi }, [oiA, oiB, oiC] = DEFAULTS.gradeOi) {
   if (spreadPct == null || !(spreadPct >= 0)) return 'D'
-  if (spreadPct <= 0.03 && oi >= oiA) return 'A'
-  if (spreadPct <= 0.06 && oi >= oiB) return 'B'
-  if (spreadPct <= 0.10 && oi >= oiC) return 'C'
+  if (spreadPct <= 0.03 + EPS && oi >= oiA) return 'A'
+  if (spreadPct <= 0.06 + EPS && oi >= oiB) return 'B'
+  if (spreadPct <= 0.10 + EPS && oi >= oiC) return 'C'
   return 'D'
 }
 
@@ -140,7 +150,7 @@ export function contractMetrics(c, opts = {}) {
   const bidSize = bid > 0 ? c.bidSize ?? 0 : 0
   const byBid = toLot(Math.min(bidSize, adv), lot)
   const exit = Math.max(capByAdv, byBid)
-  const tradable = bid > 0 && spreadPct != null && spreadPct <= o.maxSpread
+  const tradable = bid > 0 && spreadPct != null && spreadPct <= o.maxSpread + EPS
   const capContracts = tradable ? Math.max(0, Math.min(exit, capByOi)) : 0
   const binding = !tradable ? 'spread' : capByOi <= exit ? 'oi' : byBid > capByAdv ? 'bid' : 'volume'
 
@@ -195,8 +205,8 @@ export function mergeSession(history, sessionDate, volumes, keep = 20) {
     for (const sym of Object.keys(h.vol)) h.vol[sym] = h.vol[sym].slice(drop)
   }
   // Contracts that have expired or vanished leave only nulls/zeros behind; prune them
-  // once they are absent from the latest session.
-  for (const sym of Object.keys(h.vol)) {
+  // once they are absent from a new session (a re-run of the same one may just miss them).
+  for (const sym of sameSession ? [] : Object.keys(h.vol)) {
     if (!(sym in volumes) && h.vol[sym].every((v) => !v)) delete h.vol[sym]
   }
   return h
@@ -249,8 +259,8 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
   // Orders too small to be worth placing (under 5%) are skipped unless nothing else fits.
   const legs = new Map()
   let remaining = amount
-  const fill = (perLeg, minCost) => {
-    for (const c of top) {
+  const fill = (perLeg, minCost, list = top) => {
+    for (const c of list) {
       if (remaining <= 0) break
       const leg = legs.get(c.sym)
       const perContract = c.ask * (c.multiplier ?? 100)
@@ -266,7 +276,11 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
   }
   fill(amount * 0.5, crumb)
   fill(Infinity, crumb)
-  if (legs.size === 0) fill(Infinity, 0)
+  // What the big legs cannot hold goes to the smaller top contracts, so an amount within
+  // the comfortable maximum is placed in full; a leftover under 5% is just rounding.
+  if (remaining >= crumb) fill(Infinity, 0)
+  // Every top contract costs more than the amount: the best-ranked one that fits.
+  if (legs.size === 0) fill(Infinity, 0, ranked)
 
   return { ranked, legs: [...legs.values()], placed: amount - remaining, unplaced: remaining, comfortable }
 }
@@ -321,11 +335,11 @@ export function expirySummary(contracts, today, opts = {}) {
       return {
         expiry,
         dte: daysToExpiry(expiry, today),
-        monthly: isMonthly(expiry),
+        monthly: isMonthly(expiry, [...by.keys()]),
         oi: list.reduce((s, c) => s + (c.oi ?? 0), 0),
         adv: ms.reduce((s, { m }) => s + m.adv, 0),
-        medianSpread: spreads.length ? spreads[Math.floor(spreads.length / 2)] : null,
-        capacity: allocate(candidates(list, { type: list[0].type, expiries: [expiry] }), { amount: 0, ...opts }).comfortable,
+        medianSpread: median(spreads),
+        capacity: allocate(candidates(list, { type: list[0].type, expiries: [expiry], dMin: opts.dMin, dMax: opts.dMax }), { amount: 0, ...opts }).comfortable,
       }
     })
     .sort((a, b) => a.dte - b.dte)
@@ -342,7 +356,7 @@ export function limitGuide(bid, ask, tick = 0.01) {
   const q = (ask - bid) / 4
   // Prices must sit on the tick grid; round in the direction that keeps the promise
   // (never pay more than mid + a quarter, never sell below mid − a quarter).
-  const dp = Math.max(0, Math.ceil(-Math.log10(tick) - 1e-9))
+  const dp = (String(tick).split('.')[1] ?? '').length
   const fix = (v) => Number(v.toFixed(dp))
   const down = (v) => fix(Math.floor(v / tick + 1e-9) * tick)
   const up = (v) => fix(Math.ceil(v / tick - 1e-9) * tick)
@@ -362,7 +376,7 @@ export function tickerSummary(contracts, today, opts = {}) {
     return c.type === 'C' && dte >= 60 && dte <= 400 && c.delta != null && Math.abs(c.delta) >= 0.3 && Math.abs(c.delta) <= 0.7
   })
   const spreads = pool.map((c) => contractMetrics(c, opts).spreadPct).filter((s) => s != null).sort((a, b) => a - b)
-  const medianSpread = spreads.length ? spreads[Math.floor(spreads.length / 2)] : null
+  const medianSpread = median(spreads)
   const caps = bucketCapacities(contracts, today, opts)
   const capacity = caps.C[2]
   const oi = contracts.reduce((s, c) => s + (c.oi ?? 0), 0)

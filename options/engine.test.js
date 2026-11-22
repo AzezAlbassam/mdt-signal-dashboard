@@ -46,6 +46,9 @@ test('isMonthly: third Friday, and Thursday before a Good Friday', () => {
   assert.equal(isMonthly('2026-12-11'), false)
   assert.equal(isMonthly('2027-01-15'), true)
   assert.equal(isMonthly('2025-04-17'), true) // Good Friday 2025-04-18
+  // A Thursday daily is not the monthly when its Friday is listed too (SPY, QQQ, IWM).
+  assert.equal(isMonthly('2026-12-17', ['2026-12-17', '2026-12-18']), false)
+  assert.equal(isMonthly('2026-06-18', ['2026-06-18', '2026-07-17']), true) // Juneteenth Friday
 })
 
 describe('grade: the weakest constraint decides', () => {
@@ -54,6 +57,11 @@ describe('grade: the weakest constraint decides', () => {
     assert.equal(grade({ spreadPct: 0.02, oi: 1000 }), 'B')
     assert.equal(grade({ spreadPct: 0.09, oi: 5000 }), 'C')
     assert.equal(grade({ spreadPct: 0.12, oi: 5000 }), 'D')
+  })
+  test('a spread exactly on a threshold counts as inside it', () => {
+    // (4.73 - 4.07) / 4.40 is 15% on paper and 0.15000000000000002 in floating point
+    assert.ok(contractMetrics({ bid: 4.07, ask: 4.73, bidSize: 10, oi: 1000, adv: 100, sessions: 10 }).capContracts > 0)
+    assert.equal(contractMetrics({ bid: 9.85, ask: 10.15, bidSize: 10, oi: 5000, adv: 100, sessions: 10 }).grade, 'A') // 3.0000000000000072%
   })
   test('no quote is D', () => {
     assert.equal(grade({ spreadPct: null, oi: 5000 }), 'D')
@@ -151,6 +159,13 @@ describe('mergeSession', () => {
     assert.deepEqual(h.vol.A, [25])
   })
 
+  test('a re-run of the same session does not drop a contract it misses', () => {
+    let h = mergeSession(null, '2026-10-01', { A: 61, C: 0, E: 9 })
+    h = mergeSession(h, '2026-10-01', { B: 0, E: 90 })
+    assert.deepEqual(h.vol.C, [0])
+    assert.deepEqual(h.vol.E, [90])
+  })
+
   test('an older session is ignored', () => {
     const h = mergeSession(mergeSession(null, '2026-10-02', { A: 1 }), '2026-10-01', { A: 99 })
     assert.deepEqual(h.vol.A, [1])
@@ -230,6 +245,20 @@ describe('allocate', () => {
     assert.equal(r.legs.length, 0)
   })
 
+  test('an amount within the comfortable maximum is placed in full, small legs included', () => {
+    const cs = [mk(100, { adv: 550 }), mk(110, { adv: 320 }), mk(120, { adv: 40, bidSize: 0 }), mk(130, { adv: 40, bidSize: 0 }), mk(140, { adv: 30, bidSize: 0 }), mk(150, { adv: 20, bidSize: 0 })]
+    const r = allocate(cs, { amount: 100000 })
+    assert.equal(r.comfortable, 100000)
+    assert.equal(r.unplaced, 0)
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 55], [110, 32], [120, 4], [130, 4], [140, 3], [150, 2]])
+  })
+
+  test('when every top contract costs more than the amount, the best-ranked one that fits is used', () => {
+    const cs = [mk(100, { bid: 99, ask: 100, adv: 1000 }), mk(110, { bid: 99, ask: 100, adv: 500 }), mk(120, { adv: 100 })]
+    const r = allocate(cs, { amount: 5000, maxLegs: 2 })
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[120, 5]])
+  })
+
   test('comfortable is what the top legs hold, whatever the amount', () => {
     const cs = [mk(100, { adv: 300 }), mk(110, { adv: 250 })]
     assert.equal(allocate(cs, { amount: 0 }).comfortable, 55000)
@@ -250,15 +279,26 @@ test('expirySummary rolls up per expiry', () => {
   assert.ok(Math.abs(rows[1].medianSpread - 0.1 / 9.95) < 1e-12)
 })
 
+test('expirySummary: even count takes the middle two, and the delta range is honoured', () => {
+  const list = [
+    { expiry: '2027-01-15', type: 'C', bid: 9.9, ask: 10, bidSize: 20, oi: 10000, adv: 1000, sessions: 10, delta: 0.5 },
+    { expiry: '2027-01-15', type: 'C', bid: 9.7, ask: 10, bidSize: 20, oi: 10000, adv: 1000, sessions: 10, delta: 0.4 },
+  ]
+  const [row] = expirySummary(list, '2026-10-05')
+  assert.ok(Math.abs(row.medianSpread - (0.1 / 9.95 + 0.3 / 9.85) / 2) < 1e-12)
+  const narrow = expirySummary(list, '2026-10-05', { dMin: 0.45, dMax: 0.6 })[0]
+  assert.ok(narrow.capacity > 0 && narrow.capacity < row.capacity)
+})
+
 describe('chainRows', () => {
   const o = (option, extra = {}) => ({ option, bid: 1, ask: 1.1, open_interest: 100, volume: 5, delta: 0.5, last_trade_time: '2026-10-02T15:00:00', ...extra })
   test('keeps standard roots, maps dotted tickers, drops adjusted roots and tails', () => {
     const raw = { data: { current_price: 500, options: [
       o('BRKB270115C00500000'), o('BRKB1270115C00500000'), o('BRKB270115C00900000', { delta: 0.01 }),
-      o('BRKB261002C00500000'),
+      o('BRKB261002C00500000'), o('BRKB270115C00600000', { last_trade_time: '2027-11-20T10:00:00' }),
     ] } }
     const r = chainRows(raw, 'BRK.B', '2026-10-05')
-    assert.deepEqual(r.rows.map((x) => x.sym), ['BRKB270115C00500000'])
+    assert.deepEqual(r.rows.map((x) => x.sym), ['BRKB270115C00500000', 'BRKB270115C00600000'])
     assert.equal(r.price, 500)
     assert.equal(r.session, '2026-10-02')
   })
@@ -270,6 +310,10 @@ test('limitGuide: start at mid, never give up more than a quarter of the spread'
   // Binance BTC options move in 5 USDT ticks
   assert.deepEqual(limitGuide(9800, 10000, 5), { mid: 9900, buyMax: 9950, sellMin: 9850 })
   assert.deepEqual(limitGuide(9805, 9890, 5), { mid: 9850, buyMax: 9865, sellMin: 9830 })
+  // Every price on the grid, also for ticks with more decimals than their size suggests.
+  for (const [bid, ask, tick] of [[3517, 3517.25, 0.25], [86.15, 87.275, 0.025], [3.75, 4, 0.05], [5.1, 5.6, 0.1]]) {
+    for (const v of Object.values(limitGuide(bid, ask, tick))) assert.ok(Math.abs(v / tick - Math.round(v / tick)) < 1e-9, `${v} off the ${tick} grid`)
+  }
 })
 
 test('tickerSummary grades a whole chain on long-dated near-the-money calls', () => {

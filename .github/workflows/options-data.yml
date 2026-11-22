@@ -54,10 +54,24 @@ jobs:
           ONLY: ${{ inputs.only }}
         run: |
           # Each pass starts from the branch as it is now, so a manual run in between is kept.
+          # Only a branch that does not exist may start empty: a fetch that failed must never
+          # turn into an empty tree that is then pushed over the history.
           restore() {
             rm -rf _data && mkdir -p _data
-            if git fetch -q --depth=1 origin options-data; then git archive FETCH_HEAD | tar -x -C _data; fi
+            for i in 1 2 3; do
+              if git fetch -q --depth=1 origin options-data; then
+                base=$(git rev-parse FETCH_HEAD)
+                git archive FETCH_HEAD | tar -x -C _data
+                return 0
+              fi
+              sleep $((i * 15))
+            done
+            base=''
+            local rc=0; git ls-remote --exit-code --heads origin options-data >/dev/null || rc=$?
+            [ "$rc" -eq 2 ]
           }
+          # Push only over the commit this pass started from. If another run pushed meanwhile,
+          # this push is refused and the next pass starts from that run's data instead.
           save_and_deploy() {
             (
               cd _data
@@ -66,8 +80,8 @@ jobs:
               git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
               git add -A
               git commit -q -m "Options snapshot $(date -u +%FT%TZ)"
-              git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" options-data
-            )
+              git push -q --force-with-lease="options-data:${base}" "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" options-data
+            ) || return 1
             gh workflow run pages.yml --ref main -R "$REPO" || echo 'deploy dispatch failed'
           }
 
@@ -75,23 +89,30 @@ jobs:
           # adds flags — and the job keeps going, but ends red so the failure is noticed.
           failed=0
           if [ "$EVENT" != "schedule" ]; then
-            restore
-            node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY" || failed=1
-            node options/validate.js _data --write || echo '::warning::validation found problems'
-            save_and_deploy
-            exit $failed
+            for try in 1 2 3; do
+              restore || { echo '::error::could not read the options-data branch'; exit 1; }
+              node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY" || failed=1
+              node options/validate.js _data --write || echo '::warning::validation found problems'
+              save_and_deploy && exit $failed
+              echo "::warning::options-data changed during this run; starting over ($try)"
+              failed=0
+            done
+            exit 1
           fi
 
           deadline=$((SECONDS + 330 * 60))
           while [ $SECONDS -lt $deadline ]; do
-            restore
+            if ! restore; then
+              echo '::warning::could not read the options-data branch; trying again in 5 minutes'
+              failed=1; sleep 300; continue
+            fi
             next=$(node options/snapshot.js _data --plan)
             echo "$(date -u +%H:%M) UTC → $next"
             case "$next" in
               run)
                 node options/snapshot.js _data || failed=1
                 node options/validate.js _data --write || echo '::warning::validation found problems'
-                save_and_deploy ;;
+                save_and_deploy || echo '::warning::options-data changed during this pass; the next pass starts from it' ;;
               wait*)
                 s=${next#wait }
                 [ $((SECONDS + s)) -ge $deadline ] && break

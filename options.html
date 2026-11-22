@@ -248,7 +248,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   <div class="ex">مثال من صورك (7 أكتوبر): كول 100,000 يونيو 2027، Open = 780,000$، البيتكوين 83,000$ ← المفتوح 9.4 BTC ← حدك 5% = <b>0.46 BTC</b>. لو سعر العقد ~5,300$ ← حدك تقريبًا <b>2,400$</b> في هذا العقد. وكل كول يونيو مجتمعة ~7,000$، ومارس 2027 ~17,000$.</div>
 </section>
 
-<footer id="foot">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق. للمعلومة فقط — مو توصية شراء أو بيع.</footer>
+<footer id="foot"><span id="src">البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق. للمعلومة فقط — مو توصية شراء أو بيع.</span><span id="check"></span></footer>
 </div>
 
 <script type="module">
@@ -319,6 +319,19 @@ async function loadTicker(t) {
 }
 
 const strikeTxt = (c) => fmtN(c.strike, c.strike % 1 ? 2 : 0)
+
+// Option prices move in fixed steps — $0.01, $0.05 or $0.10, by class and by whether the
+// price is under $3. Read them off the chain: the coarsest step every quote in that band
+// sits on (a price on a coarser grid is always valid on a finer one).
+const onGrid = (v, step) => Math.abs(v / step - Math.round(v / step)) < 1e-6
+function tickOf(contracts) {
+  const step = (lo, hi) => {
+    const qs = contracts.flatMap((c) => [c.bid, c.ask]).filter((v) => v > 0 && v >= lo && v < hi)
+    return [0.1, 0.05].find((s) => qs.every((v) => onGrid(v, s))) ?? 0.01
+  }
+  const under = step(0, 3), over = step(3, Infinity)
+  return (bid, ask) => Math.max(bid < 3 ? under : over, ask < 3 ? under : over)
+}
 const inDelta = (c) => c.delta != null && Math.abs(c.delta) >= adv.dMin && Math.abs(c.delta) <= adv.dMax
 
 function comfortableFor(contracts, expiries) {
@@ -339,7 +352,7 @@ function renderPickers() {
   $('dateChips').innerHTML = expiries.map((e) => {
     const cap = comfortableFor(current.contracts, [e])
     const dot = cap >= amount && cap > 0 ? 'dA' : cap > 0 ? 'dC' : 'dD'
-    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
+    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e, expiries) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
   }).join('')
   $('datesNote').textContent = expiries.length ? `(🟢 يتحمّل مبلغك كامل · 🟡 أقل منه · 🔴 ما يتحمّل)` : ''
 }
@@ -352,12 +365,13 @@ async function render() {
   if (cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
 
   if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
-  const data = await loadTicker(t)
+  const info = index?.tickers?.[t]
+  // Only tickers on the list are shown: a file left behind by a removal is not current advice.
+  const data = !index || (info && !info.noOptions) ? await loadTicker(t) : null
   if (cleanT($('ticker').value) !== t) return
   current = data
   renderPickers()
   renderList()
-  const info = index?.tickers?.[t]
   if (!data) {
     const msg = info?.noOptions
       ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
@@ -433,15 +447,17 @@ async function render() {
     }
   }
 
+  const tick = tickOf(contracts)
   const legsHtml = a.legs.map((l) => {
-    const g = limitGuide(l.bid, l.ask)
+    const step = tick(l.bid, l.ask)
+    const g = limitGuide(l.bid, l.ask, step)
     const dte = daysToExpiry(l.expiry, today)
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
-      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
+      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry, allExp) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
       <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
-      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}</div>` : ''}
+      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}${step > 0.01 ? ` · سعره يتحرك بخطوات ${price(step)}` : ''}</div>` : ''}
     </div>`
   }).join('')
 
@@ -457,7 +473,7 @@ async function render() {
     <td class="n"><bdi>${fmtExpShort(c.expiry)} · ${strikeTxt(c)}${c.type}</bdi></td><td class="n"><b>${money(c.m.capDollars)}</b></td>
     <td><span class="pill p${c.m.grade}">${GRADE_TXT[c.m.grade]}</span></td><td class="n"><bdi>${fmtP(c.m.spreadPct)}</bdi></td>
     <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
-  const ex = expirySummary(ofType, today, o).filter((e) => e.dte >= 7)
+  const ex = expirySummary(ofType, today, { ...o, dMin: adv.dMin, dMax: adv.dMax }).filter((e) => e.dte >= 7)
   const chosen = new Set(exps)
   const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
     <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
@@ -467,7 +483,7 @@ async function render() {
     <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
     ${nudge}
     ${a.legs.length ? `<div class="legs">${legsHtml}</div>
-      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل سنت أو سنتين كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
+      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل خطوة سعر وحدة كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
     ${notes.map((w) => `<p class="note">${w}</p>`).join('')}
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
@@ -581,19 +597,20 @@ fetch('data/options/validation.json', { cache: 'no-cache' }).then((r) => r.ok ? 
   const line = bad === 0
     ? `✓ فحص آلي بعد آخر تحديث: ${fmtN(v.tickers)} سهم و${fmtN(v.contracts)} عقد — كل الأرقام مطابقة لإعادة الحساب، بدون أخطاء.`
     : `⚠️ الفحص الآلي لقى مشكلة في ${bad} سهم — الأرقام لهذي الأسهم ممكن تكون غير دقيقة.`
-  $('foot').insertAdjacentHTML('beforeend', `<br>${line}`)
-  // A pass that could not reach the source for most tickers: say it where it is seen.
-  const unreachable = v.fetchErrors?.length ?? 0
-  if (unreachable > 0.2 * (unreachable + (v.tickers ?? 0))) {
-    $('stale').innerHTML = `<div class="t">⚠️ آخر تحديث للبيانات فشل</div><p>مصدر البيانات ما رجّع عقود ${fmtN(unreachable)} سهم في آخر محاولة (${fmtTime(v.checkedAt)}). الأرقام المعروضة من آخر تحديث ناجح — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
-    $('stale').hidden = false
-  }
+  $('check').innerHTML = `<br>${line}`
 }).catch(() => {})
 fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((j) => {
   index = j
   if (j) {
     $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
-    $('foot').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
+    $('src').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
+    // A pass that could not reach the source for most tickers: say it where it is seen.
+    const listed = Object.values(j.tickers).filter((v) => !v.noOptions)
+    const unreachable = listed.filter((v) => v.error).length
+    if (unreachable > 0.2 * listed.length) {
+      $('stale').innerHTML = `<div class="t">⚠️ آخر تحديث للبيانات فشل</div><p>مصدر البيانات ما رجّع عقود ${fmtN(unreachable)} سهم في آخر محاولة (${fmtTime(j.attemptedAt ?? j.updatedAt)}). الأرقام المعروضة من آخر تحديث ناجح (${fmtTime(j.updatedAt)}) — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
+      $('stale').hidden = false
+    }
   }
   render()
 }).catch(() => render())

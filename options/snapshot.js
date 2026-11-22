@@ -12,7 +12,7 @@ import { join } from 'node:path'
 import { chainRows, mergeSession, averageVolume, tickerSummary } from './engine.js'
 
 const INDEXES = new Set(['SPX', 'NDX', 'RUT', 'VIX', 'XSP', 'DJX', 'OEX', 'XEO'])
-const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36'
+const UA = 'options-liquidity-snapshot/1.0'
 
 const readJson = async (p, fallback) => {
   try {
@@ -25,31 +25,47 @@ const readJson = async (p, fallback) => {
 const cleanTickers = (s) =>
   (s ?? '').split(/[,\s]+/).map((t) => t.trim().toUpperCase().replace(/^\$/, '')).filter((t) => /^[A-Z.]{1,6}$/.test(t))
 
-/** Minutes since midnight in New York on a weekday, or null at the weekend. */
-function nyMinutes(now) {
+// NYSE full-day holidays and 13:00 early closes.
+// ponytail: a hand list through 2028 (from the exchange rules); add the next years before then.
+const HOLIDAYS = new Set([
+  '2026-01-01', '2026-01-19', '2026-02-16', '2026-04-03', '2026-05-25', '2026-06-19', '2026-07-03', '2026-09-07', '2026-11-26', '2026-12-25',
+  '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24',
+  '2028-01-17', '2028-02-21', '2028-04-14', '2028-05-29', '2028-06-19', '2028-07-04', '2028-09-04', '2028-11-23', '2028-12-25',
+])
+const EARLY_CLOSE = new Set(['2026-11-27', '2026-12-24', '2027-11-26', '2028-07-03', '2028-11-24'])
+
+// The feed runs 15 minutes behind the market, so every clock time here is the market time
+// its data shows plus LAG. Index-ETF options (SPY, QQQ, IWM) trade 15 minutes past the close.
+const LAG = 15
+
+/** New York clock on a trading day — minutes since midnight and the day's close — or null. */
+function nyClock(now) {
   const p = Object.fromEntries(
-    new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+    new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
       .formatToParts(now)
       .map((x) => [x.type, x.value]),
   )
-  if (p.weekday === 'Sat' || p.weekday === 'Sun') return null
-  return Number(p.hour) * 60 + Number(p.minute)
+  const date = `${p.year}-${p.month}-${p.day}`
+  if (p.weekday === 'Sat' || p.weekday === 'Sun' || HOLIDAYS.has(date)) return null
+  return { m: Number(p.hour) * 60 + Number(p.minute), close: EARLY_CLOSE.has(date) ? 780 : 960 }
 }
+const finalAt = (c) => c.close + 15 + LAG + 5 // the feed shows 5 minutes past the last options trade
 
 /** The New York calendar date, YYYY-MM-DD: one trading day. */
 const nyDate = (d) => d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
 
-/** US regular session, 9:30–16:00 New York time, Monday–Friday. */
+/** Whether the feed shows the session trading: 9:30 to the close (+15 for index-ETF options). */
 export function marketOpen(now = new Date()) {
-  const m = nyMinutes(now)
-  return m != null && m >= 570 && m < 960
+  const c = nyClock(now)
+  return c != null && c.m >= 570 + LAG && c.m < c.close + 15 + LAG
 }
 
-/** The most recent weekday 16:05 New York at or before `now`: when a session's volume is final. */
+/** The latest moment at or before `now` when a trading day's volume became final in the feed. */
 export function lastClose(now = new Date()) {
   let t = new Date(Math.floor(now.getTime() / 60000) * 60000)
   for (let i = 0; i < 6 * 1440; i += 1) {
-    if (nyMinutes(t) === 965) return t
+    const c = nyClock(t)
+    if (c && c.m === finalAt(c)) return t
     t = new Date(t.getTime() - 60000)
   }
   return null
@@ -63,30 +79,35 @@ export function lastClose(now = new Date()) {
  *   - otherwise: one snapshot if the last close is not captured yet, then stop
  * Returns { action: 'run' } | { action: 'wait', seconds } | { action: 'stop' }.
  */
-export function plan(now, lastUpdate) {
-  const m = nyMinutes(now)
-  const since = lastUpdate ? (now - lastUpdate) / 60000 : Infinity
+export function plan(now, lastAttempt, lastSuccess = lastAttempt) {
+  const c = nyClock(now)
+  const since = lastAttempt ? (now - lastAttempt) / 60000 : Infinity
   const close = lastClose(now)
-  const closeCaptured = lastUpdate && close && lastUpdate >= close
-  if (m != null && m >= 600 && m < 950) {
+  // Captured means a pass succeeded after the close; a failed attempt does not count.
+  const closeCaptured = lastSuccess && close && lastSuccess >= close
+  const start = 600 + LAG
+  if (c && c.m >= start && c.m < c.close - 10 + LAG) {
     if (since >= 55) return { action: 'run' }
-    return { action: 'wait', seconds: Math.round(Math.min(60 - since, 950 - m) * 60) + 30 }
+    return { action: 'wait', seconds: Math.round(Math.min(60 - since, c.close - 10 + LAG - c.m) * 60) + 30 }
   }
-  if (m != null && m < 600 && 600 - m <= 150) {
-    if (!closeCaptured) return { action: 'run' }
-    return { action: 'wait', seconds: (600 - m) * 60 + 30 }
+  if (c && c.m < start && start - c.m <= 150) {
+    if (!closeCaptured && since >= 55) return { action: 'run' }
+    return { action: 'wait', seconds: (start - c.m) * 60 + 30 }
   }
-  if (m != null && m >= 950 && m < 965) return { action: 'wait', seconds: (965 - m) * 60 + 30 }
-  return closeCaptured ? { action: 'stop' } : { action: 'run' }
+  if (c && c.m >= c.close - 10 + LAG && c.m < finalAt(c)) return { action: 'wait', seconds: (finalAt(c) - c.m) * 60 + 30 }
+  if (closeCaptured) return { action: 'stop' }
+  // The close pass failed: try again about hourly through the evening, not all night.
+  if (since < 55) return c && c.m < finalAt(c) + 180 ? { action: 'wait', seconds: Math.round((60 - since) * 60) } : { action: 'stop' }
+  return { action: 'run' }
 }
 
 /**
- * When quotes are representative: 10:00–15:50 New York. Spreads in the first half hour
- * and the last minutes are routinely two to three times wider than the rest of the day.
+ * When quotes are representative: 10:00 to 10 minutes before the close, New York. Spreads
+ * in the first half hour and the last minutes are routinely two to three times wider.
  */
 export function quoteWindow(now = new Date()) {
-  const m = nyMinutes(now)
-  return m != null && m >= 600 && m < 950
+  const c = nyClock(now)
+  return c != null && c.m >= 600 + LAG && c.m < c.close - 10 + LAG
 }
 
 async function fetchChain(ticker) {
@@ -184,9 +205,10 @@ export async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
   if (rest.includes('--plan')) {
     const idx = await readJson(join(dataDir ?? '.', 'index.json'), null)
-    // Plan from the last attempt, not the last success, or a dead source is hammered.
-    const last = idx?.attemptedAt ?? idx?.updatedAt
-    const p = plan(new Date(), last ? new Date(last) : null)
+    // Pace by the last attempt, or a dead source is hammered; the close counts only once a
+    // pass succeeded after it.
+    const at = (s) => (s ? new Date(s) : null)
+    const p = plan(new Date(), at(idx?.attemptedAt ?? idx?.updatedAt), at(idx?.updatedAt))
     console.log(p.action === 'wait' ? `wait ${p.seconds}` : p.action)
     return
   }
@@ -203,7 +225,10 @@ export async function main() {
   const removed = new Set(await readJson(join(dataDir, 'removed.json'), []))
   const add = cleanTickers(arg('--add'))
   for (const t of add) removed.delete(t)
-  for (const t of cleanTickers(arg('--remove'))) removed.add(t)
+  for (const t of cleanTickers(arg('--remove'))) {
+    removed.add(t)
+    await rm(join(dataDir, `${t}.json`), { force: true }) // the page must not find it and show it as current
+  }
   const watchlist = [...new Set([...seed, ...stored, ...add])].filter((t) => !removed.has(t))
   await writeFile(join(dataDir, 'watchlist.json'), JSON.stringify(watchlist))
   await writeFile(join(dataDir, 'removed.json'), JSON.stringify([...removed]))
@@ -248,22 +273,30 @@ export async function main() {
       return true
     }
   }
+  // A pass that runs into a throttled source must still end, be saved and be flagged, well
+  // inside the job's time limit: past this budget nothing new is fetched.
+  const budget = Date.now() + 40 * 60000
   const queue = [...targets]
   const worker = async () => {
-    while (queue.length) {
+    while (queue.length && Date.now() < budget) {
       const t = queue.shift()
       if ((await run(t)) !== true) failed.push(t)
       await new Promise((r) => setTimeout(r, 250))
     }
   }
   await Promise.all(Array.from({ length: 3 }, worker))
+  failed.push(...queue.splice(0))
   let failures = 0
   for (const t of failed) {
-    await new Promise((r) => setTimeout(r, 1500))
-    const r = await run(t)
-    if (r === true) continue
+    let r = new Error('not reached within the time budget')
+    if (Date.now() < budget) {
+      await new Promise((res) => setTimeout(res, 1500))
+      r = await run(t)
+      if (r === true) continue
+    }
     failures += 1
-    index.tickers[t] = { ...(index.tickers[t] ?? {}), error: String(r.message ?? r) }
+    // A ticker never fetched yet stays pending, so the page does not grade it.
+    index.tickers[t] = { ...(index.tickers[t] ?? { pending: true }), error: String(r.message ?? r) }
     console.log(`${t}: FAILED — ${r.message ?? r}`)
   }
   // A few listed tickers losing their chain is news about those tickers. Most of them
@@ -291,6 +324,7 @@ export async function main() {
     if (outage && !prev?.noOptions) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
     noOptions += 1
     index.tickers[t] = { noOptions: true }
+    await rm(join(dataDir, `${t}.json`), { force: true })
   }
   if (outage) index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
   console.log(`retried ${failed.length} after throttling`)
