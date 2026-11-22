@@ -171,3 +171,30 @@ test('final check: a debt test open on the liabilities bound says so, not "two r
   assert.deepEqual(screenStock(r, 1000, table).missing, ['debtBound']);
   assert.deepEqual(screenStock({ ...r, debtPartial: undefined }, 1000, table).missing, ['debtRange']);
 });
+test("owner's decisions of 2026-11-22 (post-hoc): Al Rajhi's type two fails outright by its own list; defense makers and rating agencies await Al Rajhi; derivatives exchanges fail", async () => {
+  const { activityFromSic } = await import('../engine/shariah.js');
+  const table = JSON.parse((await import('node:fs')).readFileSync(new URL('../data/shariah/sic-activity.json', import.meta.url)));
+  // type two (resolution 336): tobacco, gambling, obscenity, riba banks, companies dealing in debts
+  assert.equal(activityFromSic('2111', table), 'fail');                  // cigarettes (Philip Morris, Altria)
+  assert.equal(activityFromSic('6162', table), 'fail');                  // mortgage bankers (Rocket)
+  assert.equal(activityFromSic('6141', table), 'fail');                  // personal credit
+  assert.equal(activityFromSic('7011', table, '0001300514'), 'fail');    // Las Vegas Sands
+  assert.equal(activityFromSic('7370', table, '0001635327'), 'fail');    // Flutter (FanDuel) under a software code
+  assert.equal(activityFromSic('6199', table, '0001601712'), 'fail');    // Synchrony
+  assert.equal(activityFromSic('6798', table, '0001043219'), 'fail');    // Annaly, a mortgage REIT
+  assert.equal(activityFromSic('6153', table, '0001000045'), 'review');  // Old Market Capital sold its loans: the code is stale
+  assert.equal(activityFromSic('6199', table), 'review');                // finance services also hold crypto miners
+  assert.equal(activityFromSic('7011', table), 'review');                // hotels
+  assert.equal(activityFromSic('6411', table), 'review');                // insurance brokers: not decided
+  // defense makers: under review until Al Rajhi answers (Dow Jones Islamic, FTSE and MSCI exclude them; S&P permits)
+  assert.equal(activityFromSic('3760', table), 'review');                // Lockheed Martin
+  assert.equal(activityFromSic('3724', table, '0000101829'), 'review');  // RTX
+  assert.equal(activityFromSic('7372', table, '0001321655'), 'review');  // Palantir
+  assert.equal(activityFromSic('3812', table), 'ok');                    // Garmin shares the navigation code
+  // credit ratings await Al Rajhi; exchanges whose revenue is mostly derivatives fail (AAOIFI SS20)
+  assert.equal(activityFromSic('7320', table, '0001059556'), 'review');  // Moody's
+  assert.equal(activityFromSic('7320', table, '0000064040'), 'review');  // S&P Global
+  assert.equal(activityFromSic('7320', table), 'ok');                    // other credit reporting
+  assert.equal(activityFromSic('6200', table, '0001156375'), 'fail');    // CME
+  assert.equal(activityFromSic('6200', table), 'review');
+});

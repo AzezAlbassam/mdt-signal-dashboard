@@ -911,3 +911,39 @@ all confirmed, fixed except the Onconetix split above.
   Dutch Bros' lease-free LongTermDebt beside the bundled tag), and an offline end-to-end run of fund-load (a missing
   import had crashed it during the reload).
 
+### M17. Owner's decisions after research (2026-11-22) — POST-HOC, tests first
+Owner: «ابحث وشف الاجابة الادق في الموضوع انا ما اعرف بس الراجحي للحين مابعد ردوا». Four questions, each researched
+from primary sources by one agent and every cited source re-opened by a second (scratchpad research3/; the full answers
+with quotes are summarised here). Al Rajhi's binding text is resolution 336 (Global Equity Fund terms 2025, p.32):
+type two «الشركات المساهمة ذات الأغراض والأنشطة المحرمة، مثل شركات الخمور والتبغ ولحوم الخنزير وشركات القمار والبنوك
+الربوية، وشركات المجون والأفلام الخليعة، وصناديق الاستثمار في السندات الربوية، والشركات المتخصصة في تداول الديون
+والتعامل بها»; the debt test counts «إجمالي المبلغ المقترض بالربا». The fund's benchmark is the Dow Jones Islamic Market
+index (same terms, lines 110, 318, 403).
+Applied (data/shariah/sic-activity.json, test in test/shariah.test.js):
+- Type two, the certain part (owner: «طبّق الأكيد بس»): tobacco 2100-2199 and credit institutions 6111-6163 (personal and
+  business credit, mortgage bankers, loan brokers) fail; by CIK, casino and betting operators (Las Vegas Sands, Wynn,
+  MGM, Caesars, PENN, Boyd, Red Rock, Melco, DraftKings, Flutter, Rush Street, Churchill Downs, Brightstar Lottery),
+  adult entertainment (RCI, Playboy), lenders and banks under other codes (American Express, Synchrony, SoFi, Nu, Klarna,
+  Lufax, Qfin, Upstart, loanDepot, Navient, Goldman Sachs, Morgan Stanley), mortgage REITs (Annaly, AGNC, Starwood
+  Property, Blackstone Mortgage, Rithm) and Universal Corp (leaf tobacco) fail; Old Market Capital (SIC 6153, it sold its
+  loans) stays review. Sources: Al Rajhi's Arabic and English guidelines page (English: "primarily involved in
+  debt-related businesses"), AAOIFI SS21 3/4, MSCI Islamic, FTSE IdealRatings and Yasaar. Not applied (medium confidence,
+  for Al Rajhi): insurance brokers (6411), casino landlords (VICI, GLPI), Charles Schwab, LendingTree.
+- Defense makers (owner: «ما ينحكم لين يرد الراجحي»): review by SIC 3480-3489, 3760-3769 (it holds space firms too:
+  Rocket Lab, Firefly, Redwire, Voyager, York, Kratos; MSCI's definition includes space equipment) and 3795, and by CIK
+  for Northrop, L3Harris, Leonardo DRS, RTX, Boeing, General Dynamics, Huntington Ingalls, AeroVironment, AVEX, Palantir
+  and Axon (police weapons, not military; held by HLAL). Garmin's 3812 stays ok (held by SPUS and HLAL). Sources: Dow
+  Jones Islamic (Al Rajhi's benchmark), FTSE Yasaar, FTSE IdealRatings and MSCI exclude weapons or defense; S&P's Shariah
+  board permits them; Al Rajhi's list does not name them; classical fiqh ties the ban to the buyer and the use.
+- Credit ratings and exchanges (owner: «طبّق»): Moody's (ratings 53.4% of 2025 revenue) and S&P Global (29.7%) review: no
+  source permits fees for rating interest-bearing debt, SPUS drops Financial Exchanges & Data and MSCI Islamic drops GICS
+  4020. CME (75.3% derivatives), Cboe (47.6%), ICE (30.4%) and Nasdaq (20.6%) fail: AAOIFI SS20 5/1/2-5/3/2 forbids
+  forming and trading futures and options, and that is income from a prohibited activity far above 5% (their 10-Ks).
+  MSCI, FactSet and Morningstar are unchanged.
+Waiting for Al Rajhi (owner: «ننتظر رد الراجحي»): convertible notes at a 0.00% coupon (data/shariah/zero-coupon.json
+keeps them in the high reading). The research leans to counting them: Al Rajhi Capital's own book «زكاة الأوراق
+المالية» (not binding on its board) files convertible bonds as a debt with its interest; AAOIFI SS19 item 7 forbids
+stipulating a sale inside a loan («لا يحل سلف وبيع»); AAOIFI SS21 and IIFA resolution 60 forbid zero-coupon bonds; no index
+provider carves them out. The question for Al Rajhi: «هل تُحتسب السندات القابلة للتحويل ذات الكوبون 0% المصدرة بالقيمة
+الاسمية ضمن إجمالي المبلغ المقترض بالربا؟»
+
