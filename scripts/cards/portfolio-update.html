@@ -1,0 +1,89 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- Portfolio update card, identity C "Forest" (the owner's choice, 2026-11-21: "this design from today on"; options
+     A and B are in git history, commit f67e3e5). 1080x1350. Data: window.__DATA__ (render-portfolio.cjs) or the default. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Big+Shoulders+Display:wght@600;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;overflow:hidden}
+bdi{direction:ltr;unicode-bidi:isolate}
+.card{position:absolute;inset:0;display:flex;flex-direction:column}
+.body{display:flex;flex-direction:column;flex:1;min-height:0}
+.rows{display:grid}
+.row{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center}
+.logo{display:none}
+.tag{display:inline-block}
+.val{text-align:left}
+.big,.total b,.tk{direction:ltr;unicode-bidi:isolate}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;direction:ltr}
+.me{display:flex;align-items:center;gap:14px}
+.x{display:grid;place-items:center}
+.disc{direction:rtl}
+/* 3-4 positions share the free height; 5+ use a compact row (the renderer fails on overflow) */
+.rows.fill{flex:1;grid-auto-rows:minmax(0,1fr)}
+.rows.dense .row{padding-top:16px;padding-bottom:16px}
+.rows.dense .big{font-size:44px}
+.rows.dense .tk{font-size:34px}
+.rows.dense .nm{font-size:20px}
+.rows.dense .note{font-size:18px;margin-top:2px}
+.rows.dense .tag{font-size:16px;margin-bottom:4px;padding-top:2px;padding-bottom:2px}
+.rows.dense .bl{display:none}
+.c .card.dense .total b{font-size:110px}
+
+/* C — Forest: deep green, lime accent, Tajawal with Big Shoulders Display numbers, the total as the hero, ruled list */
+.c body{background:#0F2A22}
+.c .card{padding:60px 64px 46px;font-family:'Tajawal';color:#EAF2E3;background:linear-gradient(180deg,#123328 0%,#0D241D 100%)}
+.c .k-new{--c:#C8F169}.c .k-add{--c:#7DD3C0}.c .k-trim{--c:#F2C14E}.c .k-exit{--c:#FF7A6B}
+.c .pill{display:inline-block;font:800 22px 'Tajawal';color:#0F2A22;background:#C8F169;padding:6px 16px;border-radius:8px}
+.c h1{font:900 64px/1.22 'Tajawal';margin-top:24px}
+.c h1 em{font-style:normal;color:#C8F169}
+.c .sub{font:500 25px 'Tajawal';color:#9DB5A6;margin-top:6px}
+.c .total{order:-1;margin-top:34px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.c .total b{font:800 168px/1 'Big Shoulders Display';color:#C8F169}
+.c .total span{font:700 28px 'Tajawal';color:#C9D8C2}
+.c .rows{margin-top:40px;border-top:3px solid #C8F169}
+.c .row{padding:28px 0;border-bottom:1px solid rgba(234,242,227,.16);gap:18px}
+.c .tk{font:800 52px 'Big Shoulders Display';letter-spacing:1px}
+.c .nm{font:500 25px 'Tajawal';color:#9DB5A6;margin-right:14px}
+.c .note{font:500 23px 'Tajawal';color:#C9D8C2;margin-top:6px}
+.c .tag{font:800 19px 'Tajawal';color:var(--c);border:2px solid var(--c);border-radius:8px;padding:2px 12px;margin-bottom:8px}
+.c .big{font:800 68px/1.05 'Big Shoulders Display';color:#EAF2E3}
+.c .bl{font:500 20px 'Tajawal';color:#9DB5A6;margin-top:6px}
+.c .foot{padding-top:22px;border-top:1px solid rgba(234,242,227,.16)}
+.c .me{font:800 30px 'Big Shoulders Display';letter-spacing:.5px}
+.c .x{width:46px;height:46px;border-radius:10px;background:#C8F169}.c .x svg{width:24px;height:24px;fill:#0F2A22}
+.c .disc{font:500 21px 'Tajawal';color:#9DB5A6}
+</style>
+<body><div class="card" id="card"></div>
+<script>
+const D = window.__DATA__ || {
+  date: '20 نوفمبر 2026', pill: 'تحديث المحفظة · 20 نوفمبر',
+  title: { pre: 'دخلت انفيديا… ', em: 'وعزّزت', post: ' في ثنتين' },
+  sub: 'نسب بس، بدون مبالغ',
+  rows: [
+    { t: 'NVDA', name: 'انفيديا', kind: 'new', big: '7.1%', bl: 'من المحفظة', note: 'أول دخول، بعد نزول السهم على خبر جنسن' },
+    { t: 'NBIS', name: 'نبيس', kind: 'add', big: '−2.7%', bl: 'نزل متوسطي', note: 'زدت المركز <bdi>12%</bdi>' },
+    { t: 'SNDK', name: 'سانديسك', kind: 'add', big: '−3.9%', bl: 'نزل متوسطي', note: 'زدت المركز <bdi>19%</bdi>' },
+  ],
+  total: { label: 'المحفظة كلها من البداية', value: '+48.0%' },
+}
+const KIND = { new: 'مركز جديد', add: 'عزّزت', trim: 'خفّفت', exit: 'بعت' }
+document.documentElement.className = 'c'
+const X = '<div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>'
+document.getElementById('card').innerHTML = `
+  <div class="hero"><span class="pill">${D.pill}</span>
+    <h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1>
+    <div class="sub">${D.sub}</div></div>
+  <div class="body">
+    <div class="rows">${D.rows.map((r) => `
+      <div class="row k-${r.kind}">
+        <div class="logo">${r.t}</div>
+        <div class="who"><div><b class="tk">${r.t}</b><span class="nm">${r.name}</span></div><div class="note">${r.note}</div></div>
+        <div class="val"><span class="tag">${r.tag || KIND[r.kind]}</span><div class="big">${r.big}</div><div class="bl">${r.bl}</div></div>
+      </div>`).join('')}</div>
+    <div class="total"><span>${D.total.label}</span><b>${D.total.value}</b></div>
+    <div class="foot"><div class="me">${X}@AzizzUnited</div><div class="disc">محفظتي الشخصية · ${D.date} · مو توصية</div></div>
+  </div>`
+const n = D.rows.length
+document.querySelector('.rows').classList.add(n >= 5 ? 'dense' : n >= 3 ? 'fill' : 'few')
+document.getElementById('card').classList.toggle('dense', n >= 5)
+</script>

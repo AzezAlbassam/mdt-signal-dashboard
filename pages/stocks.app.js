@@ -48,6 +48,8 @@
   const SECTOR_PE = /*SECTORS*/null
   // Target operating margins for the revenue DCF (scripts/build-peer-margins.js).
   const PEERS = /*PEERS*/null
+  const FUNDS = /*FUNDS*/null // data/shariah/funds.json: each fund's holdings screened (scripts/shariah/fund-load.js)
+  const SHARIAH = /*SHARIAH*/null // data/shariah: SEC inputs per US stock + the R1 industry table (scripts/shariah/sec-load.js)
   const BENCH = /*BENCH*/null // pages/bench.json: S&P 500 and TASI benchmarks (scripts/build-bench.js)
   const SECTOR_AR = {
     'Technology Services': 'خدمات التقنية (برمجيات وإنترنت)', 'Electronic Technology': 'التقنية الإلكترونية (رقائق وأجهزة)', Finance: 'المالية (بنوك وتأمين ومدفوعات)',
@@ -89,7 +91,7 @@
   const nameAr = (key) => SECTOR_AR[key] ?? INDUSTRY_AR[key] ?? key
 
   const $ = (id) => document.getElementById(id)
-  const state = { snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
+  const state = { sh: {}, fundOpen: null, fundAll: {}, snap: {}, market: 'us', lists: { us: [], sa: [], big: BIG, fav: [] }, groups: { us: [], sa: [], big: [], fav: [] }, svrMean: {}, underCap: false, secKind: 'sector', quotes: {}, cache: {}, quarters: {}, hist: {}, scores: {}, fair: {}, exp: {}, proj: {}, rdcf: {}, snow: {}, ehs: {}, elog: {}, guide: {}, eView: {}, projOpen: false, ctxOpen: new Set(), news: {}, ideas: {}, errors: {},
     open: null, sort: { key: 'sym', dir: 1 }, filter: '', group: '', limit: 60, focusSym: null, preset: '', notes: {}, alerts: {}, compare: [], wl: null }
   let db = null
   let mcp = null
@@ -664,7 +666,7 @@
     else if (new Date(lastRefresh).toDateString() !== new Date().toDateString()) $('status').textContent = `آخر تحديث للأسعار: ${new Date(lastRefresh).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`
   })
   async function refresh(opts = {}) {
-    if (!mcp || !cacheRead || state.market === 'sectors' || state.market === 'about') return
+    if (!mcp || !cacheRead || state.market === 'sectors' || state.market === 'about' || state.market === 'funds') return
     if (busy) { again = true; return }
     busy = true
     try { await doRefresh(opts) } finally { busy = false }
@@ -1019,14 +1021,16 @@
   }
   function render(only) {
     for (const m of ['us', 'sa', 'fav']) $(`cnt-${m}`).textContent = state.lists[m].length ? ` ${state.lists[m].length}` : ''
-    for (const m of ['us', 'sa', 'big', 'sectors', 'fav', 'about']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
+    for (const m of ['us', 'sa', 'big', 'sectors', 'funds', 'fav', 'about']) $(`tab-${m}`).setAttribute('aria-selected', String(m === state.market))
     document.querySelector('.wrap').dataset.view = state.market
     const caps = state.market === 'sa' ? [listSvr('sa')] : state.market === 'fav' ? [listSvr('us'), listSvr('sa')] : [listSvr('us')]
     $('underCap').disabled = !caps.some(Boolean)
     if ($('underCap').disabled) { $('underCap').checked = false; state.underCap = false }
     $('underCap').parentElement.title = $('underCap').disabled ? 'يحتاج متوسط SVR لقائمتك (20 سهم أو أكثر بإيرادات فوق 10 مليون)، ويتحسب بعد ما تتحمل أسعار القائمة' : 'يخلي بس الأسهم الخسرانة اللي الـ SVR حقها تحت سقف Nanalyze (3 أضعاف متوسط قائمتك)'
     $('sectorsView').hidden = state.market !== 'sectors'
+    $('fundsView').hidden = state.market !== 'funds'
     if (state.market === 'sectors') { renderSectors(); return }
+    if (state.market === 'funds') { renderFunds(); return }
     if (state.market === 'about') return
     const sortVal = `${state.sort.key}:${state.sort.dir}`
     for (const b of document.querySelectorAll('thead button[data-sort]')) b.closest('th')?.setAttribute('aria-sort', b.dataset.sort === state.sort.key ? (state.sort.dir > 0 ? 'ascending' : 'descending') : 'none')
@@ -1108,7 +1112,7 @@
       const up = upside(sym)
       const ch = sinceLast(sym)
       return `<tr class="row" data-sym="${esc(sym)}" tabindex="0" aria-expanded="${state.open === sym}">
-        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="تصنيف الأرباح" data-tip="تصنيف الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}${state.notes[sym]?.status ? ` <em class="nst s-${esc(state.notes[sym].status)}">${esc(NOTE_ST[state.notes[sym].status] ?? '')}</em>` : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
+        <td class="stock c-stock"><b>${starBtn(sym)}${state.snow[sym] ? `<span class="mini">${snowSvg(state.snow[sym], 26, false)}</span>` : ''}${esc(sym.split(':')[1])}${shChip(sym)}${state.ehs[sym]?.letter ? ` <span class="grade sm g-${state.ehs[sym].letter}" title="تصنيف الأرباح" data-tip="تصنيف الأرباح ${state.ehs[sym].letter} (طريقة Earnings Hub): A الأفضل و D الأضعف، مقارنة بـ ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'S&P 500'}. التفاصيل داخل السهم.">${state.ehs[sym].letter}</span>` : ''}${MAG7.has(sym) ? ' <em class="mag">من السبعة الكبار</em>' : ''}${state.notes[sym]?.status ? ` <em class="nst s-${esc(state.notes[sym].status)}">${esc(NOTE_ST[state.notes[sym].status] ?? '')}</em>` : ''}</b><span dir="auto" title="${esc(q?.description ?? '')}">${esc(q?.description ?? '')}</span></td>
         <td class="n" data-label="السعر">${q ? `${money(q, q.close)}${q.__at ? ` <small class="dim" title="سعر محفوظ: TradingView ما رد الحين">محفوظ ${new Date(q.__at).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' })}</small>` : ''}${Number.isFinite(q.change) ? ` <small class="${q.change >= 0 ? 'hi' : 'lo'}" title="تغير اليوم">${pct(q.change / 100, 1)}</small>` : ''}` : state.errors[sym] ? '—' : '<span class="skel"></span>'}</td>
         <td class="n ${weakFair(sym) ? 'dim' : ''}" data-label="${f?.profile === 'Pre-revenue' ? 'أرضية الكاش' : 'القيمة العادلة'}" title="${esc(weakFair(sym) ? `تقدير ضعيف: ${weakFair(sym)}` : f?.profile === 'Pre-revenue' ? 'بدون إيرادات: الكاش الصافي للسهم، أرضية مو قيمة عادلة' : '')}">${f?.fair ? money(q, f.fair) : (q && state.cache[sym]) || state.errors[sym] ? '—' : '<span class="skel"></span>'}${f?.fair && weakFair(sym) ? ` <button class="ib" type="button" data-tip="${esc(`تقدير ضعيف: ${weakFair(sym)}.`)}" aria-label="ليش ضعيف؟">ⓘ</button>` : ''}${ch.fair}</td>
         <td class="n ${up == null || weakFair(sym) ? 'dim' : up >= 0 ? 'hi' : 'lo'}" data-label="الفرق عن القيمة العادلة">${f?.profile === 'Pre-revenue' && f.fair ? '<span style="font-family:var(--body)">أرضية كاش</span>' : pct(up)}</td>
@@ -1411,6 +1415,164 @@
     }
   }
 
+  // 7b. Shariah screen and purification, Al Rajhi Capital's method (engine/shariah.js, progress/SHARIAH-PLAN.md).
+  // SEC filings give debt, revenue, interest income and shares; the quarter's average price comes from TradingView
+  // daily bars when the panel opens. The result is saved in sh/<sym> so the row chip and the change log keep it.
+  const SH_CLS = { 'حلال (نقي)': 'hi', 'مختلط جائز': 'hi', 'غير جائز': 'lo', 'ما ينحكم': 'dim' }
+  const shIn = (sym) => (sym.startsWith('TADAWUL:') ? null : SHARIAH?.stocks?.[sym.split(':')[1]] ?? null)
+  function shCompute(sym, avgClose) {
+    const r = shIn(sym)
+    if (!r?.period) return null
+    const mvShares = r.sharesMV ?? r.shares // the smaller share count: a later split or issue can only lower it (G6.4)
+    const marketValue = Number.isFinite(avgClose) && mvShares > 0 ? avgClose * mvShares : null
+    return { ...screenStock(r, marketValue, SHARIAH.sic), period: r.period, avgClose }
+  }
+  async function loadSh(sym) {
+    const r = shIn(sym)
+    if (!mcp || !r?.period || state.sh[sym]?.live) return
+    const days = Math.ceil((Date.now() - Date.parse(r.period.start)) / 864e5)
+    try {
+      const b = (await call(T.px, { symbol: sym, interval: '1D', count: Math.min(400, Math.ceil(days * 5 / 7) + 15), format: 'columns' }))?.bars
+      const t0 = Date.parse(r.period.start) / 1000, t1 = Date.parse(r.period.end) / 1000 + 86400
+      const c = (b?.t ?? []).map((t, i) => (t >= t0 && t < t1 ? b.c[i] : null)).filter(Number.isFinite)
+      // ponytail: a quarter with under 40 trading days of bars is too thin to average; the screen stays unjudged
+      const res = shCompute(sym, c.length >= 40 ? c.reduce((a, x) => a + x, 0) / c.length : null)
+      if (!res) return
+      const prev = state.sh[sym]
+      state.sh[sym] = { ...res, live: true, days: c.length }
+      redraw(sym); scheduleRender()
+      if (db && (!prev || prev.state !== res.state || prev.period?.end !== res.period.end)) {
+        const log = [...(prev?.log ?? []), { at: Date.now(), state: res.state, end: res.period.end }].slice(-20)
+        state.sh[sym].log = log
+        db.doc(`sh/${sym}`).set({ sym, state: res.state, failed: res.failed, period: res.period, numbers: res.numbers, seenAt: Date.now(), log }).catch(() => {})
+      }
+    } catch { /* prices failed: the block says so */ }
+  }
+  function shChip(sym) {
+    const r = shIn(sym)
+    if (r && !r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>`
+    if (!r?.period) return ''
+    const mark = (st) => ` <span class="shc ${SH_CLS[st] ?? 'dim'}" title="الشرعية (طريقة الراجحي): ${esc(st)}">${st === 'غير جائز' ? '✕' : st === 'حلال (نقي)' || st === 'مختلط جائز' ? '✓' : '؟'}</span>`
+    // A certain fail from the current filing (R1, R3) comes first: an old saved pass never hides it (G6.3).
+    const pre = shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+    if (pre.state === 'غير جائز') return mark(pre.state)
+    const s = state.sh[sym]
+    return s?.state && s.period?.end === r.period.end ? mark(s.state) : '' // saved for another quarter: not shown
+  }
+  function shBlock(sym) {
+    const head = `<h3><span>الشرعية والتطهير <span class="dim">(طريقة الراجحي)</span></span>`
+    if (sym.startsWith('TADAWUL:')) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">للحين ما عندنا مصدر لقوائم الشركات السعودية يعطي إيراد الفوائد والديون. أول ما نلقى مصدر موثوق تنضاف.</p></div>`
+    const r = shIn(sym)
+    if (!r) return ''
+    if (!r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return `<div class="part sh">${head}<span class="shs lo">غير جائز</span></h3><p>نشاط الشركة محرم (${esc(r.sicDescription ?? '')})، فما يجوز بغض النظر عن أرقامها.</p></div>`
+    if (!r.period) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">${r.error === 'no CIK' ? 'ما لقينا الشركة في SEC.' : r.stale ? `آخر إيرادات ربعية بأسماء SEC المعتادة من ${esc(r.stale)}: الشركة غيّرت طريقة إعلانها، فما نحكم من أرقام قديمة.` : 'الشركة ما تقدم تقارير ربعية أمريكية لـSEC (غالباً شركة أجنبية تقدم تقرير سنوي)، فما عندنا أرقام ربعية نحكم منها.'}</p></div>`
+    const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
+    const q = state.quotes[sym]
+    const n = s.numbers
+    const ok = (x, lim, upper = false) => (x == null ? '<span class="dim">—</span>' : x <= lim + 1e-12 ? '<span class="hi">✓</span>' : upper ? '<span class="dim">؟</span>' : '<span class="lo">✕</span>')
+    const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
+    const usd = (x, dp = 2) => (x == null ? '—' : `<bdi>$${fmt(x, dp)}</bdi>`)
+    const big = (x) => (x == null ? '—' : Math.abs(x) >= 1e9 ? `<bdi>$${fmt(x / 1e9, 2)}</bdi> مليار` : `<bdi>$${fmt(x / 1e6, 1)}</bdi> مليون`)
+    const act = { ok: `<span class="hi">✓</span> مباح`, review: `<span class="dim">؟</span> يحتاج مراجعة`, fail: `<span class="lo">✕</span> نشاط محرم` }[s.activity] ?? '<span class="dim">—</span>'
+    const pps = n.purificationPerShare
+    const rows = [
+      ['النشاط', `${act} <small class="dim">${esc(r.sicDescription ?? '')}</small>`],
+      ['الديون الربوية ÷ القيمة السوقية', `${ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? '—' : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون بفائدة ${big(s.debtUpper ? r.debtUpperBound : r.debt)}${s.debtUpper ? ' (أعلى حد: كل الالتزامات ناقص الإيجارات)' : ''}${r.debtParts?.leases ? ` · إيجارات ${big(r.debtParts.leases)} ما تنحسب` : ''}</small>`],
+      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}${n.illicitShare > 1 ? ' · رقم الإيرادات المنشور ما يشمل الفوائد' : ''}</small>`],
+      ['التطهير عن الربع لكل سهم', `<b class="n">${usd(pps, 4)}</b>${pps != null && q?.close > 0 ? ` <small class="dim">(<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من السعر)</small>` : ''}`],
+    ]
+    const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪' })[x]).join('، ')}. الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.`
+      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', marketValue: 'متوسط سعر الربع', bookEquity: 'حقوق المساهمين', illicit: r.illicitEstimated ? 'إيراد الفوائد الفعلي (الشركة ما تعلنه، وتقديرنا المتحفظ فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}${!state.sh[sym]?.live && mcp ? '. نحسب متوسط السعر الحين…' : ''}`
+      : s.state === 'حلال (نقي)' ? 'ما عليها ديون ربوية ولا إيراد محرم في القوائم.' : 'جائز مع التطهير.'
+    return `<div class="part sh">${head}<span class="shs ${SH_CLS[s.state]}">${esc(s.state)}</span></h3>
+      <p>${why}</p>
+      <table class="shrows">${rows.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table>
+      ${pps != null ? `<label class="shq">كم سهم عندك؟ <input type="number" min="0" step="any" inputmode="decimal" data-shq="${esc(sym)}" data-pps="${pps}"> <b class="n" data-sho="${esc(sym)}"></b></label>` : ''}
+      <p class="dim">القوائم: الربع المنتهي ${d(r.period.end)} (<bdi>${esc(r.period.form)}</bdi>${r.period.derived ? '، الربع الرابع = السنة ناقص 3 أرباع' : ''}، نُشرت ${d(r.period.filed)}). ${s.avgClose ? `متوسط السعر في الربع <span class="n">${usd(s.avgClose)}</span> (${s.days} يوم تداول).` : ''}${r.newerFiling ? ` <b>فيه تقرير أحدث (${esc(r.newerFiling.f)} ${d(r.newerFiling.d)}) ما انسحب للحين.</b>` : ''}</p>
+      <details class="shmore"><summary>الطريقة والتنبيهات</summary>
+      <p>الطريقة من ضوابط الراجحي المالية كما في شروط صندوق الراجحي للأسهم العالمية (قرار الهيئة الشرعية 336، تحديث 2025/08/12) وملف «آلية احتساب العنصر المحرم»: الديون الربوية لا تتجاوز 30٪ من متوسط القيمة السوقية للربع (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪ من الإيرادات. التطهير = الإيراد المحرم ÷ عدد أسهم الشركة × أسهمك. صفحة الراجحي لقائمة الأسهم السعودية تذكر 33٪ مع «القيمة المؤسسية»، وننتظر توضيحهم.</p>
+      <p>يلزم التطهير من يملك السهم وقت صدور القوائم (ربعية أو سنوية)، وزّعت الشركة أرباح أو لا. اللي باع قبل صدورها ما عليه. المبلغ يُصرف في وجوه الخير، وما ينحسب من الزكاة ولا الضريبة.</p>
+      <p>التزامات الإيجار ما تنحسب من الديون، مثل تطبيق الراجحي في قائمته (طيران ناس متوافقة وإيجاراتها 54٪ من قيمتها السوقية). ${r.illicitEstimated && r.illicitTag ? `رقم الشركة (${esc(r.illicitTag)}) يجمع الفوائد مع إيرادات ثانية، فهو حد أعلى: يثبت الجواز إذا كان تحت 5٪، وما يثبت المنع إذا كان فوقها.` : r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
+      <p>الراجحي يقول: إذا فيه شركات نقية تكفي الحاجة، يُكتفى بها.</p></details></div>`
+  }
+
+  // 7c. Funds (plan part E): each fund's holdings from its SEC N-PORT report, every company screened by Al Rajhi's
+  // method from its SEC filings; the fund verdict is the OWNER's rule (non-compliant weight below 5%), labelled as his.
+  const FUND_WHY = { R1: 'نشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪', activity: 'النشاط يحتاج مراجعة', debt: 'رقم الديون ناقص',
+    marketValue: 'القيمة السوقية ناقصة', bookEquity: 'حقوق المساهمين ناقصة', illicit: 'إيراد الفوائد ناقص', revenue: 'الإيرادات ناقصة',
+    shares: 'عدد الأسهم ناقص', statements: 'ما عندنا قوائمها في SEC', priceBand: 'قريبة من حد الديون',
+    illicitHigh: 'تقدير الفوائد فوق 5٪ ورقمها الفعلي غير منشور', split: 'تقسيم أسهم قريب يخلي قيمتها السوقية غير أكيدة' }
+  const KIND_AR = { 'cash-fund': 'صندوق نقدي بفائدة', debt: 'سندات أو قروض بفائدة', derivative: 'مشتقات', other: 'أداة غير السهم العادي', collateral: 'ضمانات إقراض الأسهم' }
+  const pc = (x, d = 1) => (Number.isFinite(x) ? `<bdi>${fmt(100 * x, d)}٪</bdi>` : '—')
+  const fundWhy = (x) => (x.k !== 'equity' ? KIND_AR[x.k] ?? '' : x.s === 'غير جائز' || x.s === 'ما ينحكم'
+    ? [...new Set((x.why ?? []).map((c) => FUND_WHY[c] ?? c))].join('، ') || (x.foreign ? 'شركة أجنبية' : '') : '')
+  const fundState = (x) => (x.k === 'equity' ? x.s ?? 'ما ينحكم' : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? '' : 'ما ينحكم')
+  function fundRow(x) {
+    const st = fundState(x)
+    const why = [fundWhy(x), x.est && x.k === 'equity' ? 'فوائد مقدّرة' : '', x.ub && x.k === 'equity' ? 'الفوائد مدموجة مع غيرها' : '', x.exact ? 'بمتوسط سعر الربع' : ''].filter(Boolean).join(' · ')
+    return `<tr><th>${x.t ? `<b class="n">${esc(x.t)}</b> ` : ''}<small class="dim">${esc(x.n)}</small>${why ? `<small class="fwhy">${esc(why)}</small>` : ''}</th>
+      <td class="n">${pc(x.w, 2)}</td><td>${st ? `<span class="${SH_CLS[st] ?? 'dim'}">${esc(st)}</span>` : ''}</td></tr>`
+  }
+  // A7 on the viewer's own date in Riyadh (the data may be days old): holdings past the limit are not judged
+  const fundOld = (f) => f.old || (Date.parse(new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10)) - Date.parse(f.as_of)) / 864e5 > FUNDS.maxAgeDays
+  function fundCard(f) {
+    const open = state.fundOpen === f.sym, old = fundOld(f), fst = old ? 'ما ينحكم' : f.state
+    const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
+    const flags = [old ? `مكوناته أقدم من ${FUNDS.maxAgeDays} يوم` : '', f.collateralWeight > 0.005 ? `يقرض أسهمه (ضمانات ${pc(f.collateralWeight)})` : ''].filter(Boolean)
+    const head = `<button type="button" class="fhead" data-fund="${esc(f.sym)}" aria-expanded="${open}"><b class="n">${esc(f.sym)}</b>
+      <span class="shs ${SH_CLS[fst] ?? 'dim'}">${esc(fst)}</span>
+      <span>غير جائز ${pc(f.badWeight)} · ما ينحكم ${pc(f.unknownWeight)}</span>
+      <span>التطهير عن الربع ${pc(f.purificationPct, 3)} من مبلغك</span>
+      <small class="dim">المكونات بتاريخ ${d(f.as_of)}${flags.length ? ' · ' + flags.join(' · ') : ''}</small></button>`
+    if (!open) return `<div class="fcard">${head}</div>`
+    const rows = f.rows.filter((x) => x.k !== 'collateral')
+    const bad = rows.filter((x) => fundState(x) === 'غير جائز'), unk = rows.filter((x) => fundState(x) === 'ما ينحكم')
+    const all = state.fundAll[f.sym] ? rows : rows.slice(0, 30)
+    const tbl = (xs) => `<table class="ftbl"><thead><tr><th>الشركة والسبب</th><th>الوزن</th><th>الحكم</th></tr></thead><tbody>${xs.map(fundRow).join('')}</tbody></table>`
+    return `<div class="fcard open">${head}
+      <p>${fst === 'غير جائز' ? `الأسهم والأدوات غير الجائزة ${pc(f.badWeight)} من الصندوق، وقاعدتك تسمح بأقل من 5٪.`
+        : fst === 'ما ينحكم' ? (old ? 'مكوناته المنشورة أقدم من الحد اللي اعتمدته.' : `ما نقدر نحكم: غير الجائز ${pc(f.badWeight)} والمجهول ${pc(f.unknownWeight)}، ومجموعهم يوصل 5٪ أو أكثر.`)
+        : `جائز بقاعدتك: غير الجائز ${pc(f.badWeight)} والمجهول ${pc(f.unknownWeight)}، أقل من 5٪. يلزمك التطهير.`}</p>
+      <label class="shq">كم مبلغك في الصندوق؟ <input type="number" min="0" step="any" inputmode="decimal" data-fq="${esc(f.sym)}" data-p="${f.purificationPct}"> <b class="n" data-fo="${esc(f.sym)}"></b></label>
+      ${f.purificationCoveredWeight < 0.995 ? `<p class="dim">التطهير محسوب على ${pc(f.purificationCoveredWeight)} من الصندوق، والباقي ما عندنا أرقامه.</p>` : ''}
+      ${f.illicitCoveredWeight > 0 ? `<p class="dim">للاطلاع: الإيراد المحرم في شركاته ${pc(f.illicitLookThrough / f.illicitCoveredWeight, 2)} من إيراداتها (متوسط بأوزانها، تقريبي، على ${pc(f.illicitCoveredWeight)} من الصندوق عرفنا أرقامها). الحكم فوق بقاعدتك.</p>` : ''}
+      ${bad.length ? `<h4>غير جائز (${bad.length})</h4>${tbl(bad)}` : ''}
+      ${unk.length ? `<details><summary>ما ينحكم (${unk.length})</summary>${tbl(unk)}</details>` : ''}
+      <h4>أكبر المكونات</h4>${tbl(all)}
+      ${rows.length > all.length ? `<button class="btn" type="button" data-fall="${esc(f.sym)}">اعرض الكل (${rows.length})</button>` : ''}
+      <p class="dim">المصدر: تقرير N-PORT المقدم لـSEC بتاريخ ${d(f.filed)}، والمكونات كما في ${d(f.as_of)}.</p></div>`
+  }
+  function renderFunds() {
+    const box = $('fundsView')
+    if (!FUNDS) { box.innerHTML = '<p class="dim">بيانات الصناديق ما انبنت للحين.</p>'; return }
+    const has = FUNDS.funds.filter((f) => f.rows), rest = FUNDS.funds.filter((f) => !f.rows)
+    box.innerHTML = `<h2>الصناديق: الشرعية والتطهير</h2>
+      <p class="dim">كل شركة داخل الصندوق نحكم عليها بطريقة الراجحي من قوائمها في SEC. <b>حكم الصندوق بقاعدتك أنت</b>: إذا وزن الأسهم والأدوات غير الجائزة أقل من 5٪، والمجهول معها أقل من 5٪، يصير جائز مع التطهير. الراجحي نفسه يشترط في صناديق المؤشرات إن كل سهم فيها جائز.</p>
+      <div class="flist">${has.map(fundCard).join('')}</div>
+      ${rest.length ? `<h3>صناديق ما تنطبق عليها الطريقة</h3><ul class="fnone">${rest.map((f) => `<li><b class="n">${esc(f.sym)}</b> · ${esc(f.why ?? (f.err === 'not in SEC fund list' ? 'ما لقينا الصندوق في سجلات SEC' : 'ما لقينا تقرير مكوناته في SEC'))}</li>`).join('')}</ul>` : ''}
+      <details class="shmore"><summary>الطريقة والتنبيهات</summary>
+      <p>المكونات من تقرير الصندوق الربعي لـSEC (N-PORT)، وينشر بعد نهاية الربع بشهرين تقريباً، فالمكونات ممكن تكون أقدم من اليوم بأشهر.</p>
+      <p>كل شركة: الديون الربوية (بدون الإيجارات) لا تتجاوز 30٪ من قيمتها السوقية (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪، من آخر قوائمها في SEC. القيمة السوقية من أسعارها في تقارير الصناديق كلها، ولازم الحكم يثبت من 20٪ تحت أقل سعر إلى 25٪ فوق أعلى سعر. الشركات القريبة من حد الديون نحسب لها متوسط سعر ربعها الفعلي من أسعار الإغلاق اليومية مثل ما يشترط الراجحي، وإذا ما توفر تطلع «قريبة من حد الديون» وما ينحكم عليها. وإذا الشركة قسمت أسهمها بين ربعين، نحسب على السعرين قبل التقسيم وبعده.</p>
+      <p>الصناديق النقدية والسندات داخل الصندوق تنحسب غير جائزة لأنها بفائدة، والمشتقات وأي أداة غير السهم العادي تنحسب ما ينحكم عليها.</p>
+      <p>إذا الصندوق يقرض أسهمه، الضمانات اللي يستلمها ما تنحسب من مكوناته، بس نذكر نسبتها. عائد الإقراض وفوائد الكاش اللي داخل الصندوق نفسه ما انحسبت في التطهير للحين.</p>
+      <p>التطهير عن الربع = مجموع (وزن كل شركة × إيرادها المحرم ÷ قيمتها السوقية). يلزم من يملك الصندوق وقت صدور قوائم الشركات، ويصرف في وجوه الخير.</p>
+      <p>الشركات اللي نشاطها يحتاج مراجعة (مثل التجزئة اللي تبيع منتجات محرمة، والترفيه، والعقار) تطلع «ما ينحكم» لين نراجع تقاريرها السنوية في المرحلة الثانية.</p>
+      <p>الشركات الأجنبية اللي تقدم تقرير سنوي بس، والأسهم السعودية في KSA، ما نحكم عليها للحين.</p></details>`
+  }
+  document.addEventListener('click', (e) => {
+    const h = e.target.closest?.('button[data-fund]')
+    if (h) { state.fundOpen = state.fundOpen === h.dataset.fund ? null : h.dataset.fund; renderFunds(); return }
+    const a = e.target.closest?.('button[data-fall]')
+    if (a) { state.fundAll[a.dataset.fall] = true; renderFunds() }
+  })
+  document.addEventListener('input', (e) => {
+    const i = e.target.closest?.('input[data-fq]')
+    if (!i) return
+    const o = document.querySelector(`[data-fo="${CSS.escape(i.dataset.fq)}"]`)
+    const n = Number(i.value), p = Number(i.dataset.p)
+    if (o) o.innerHTML = n > 0 && Number.isFinite(p) ? `عليك <bdi>${fmt(n * p, 2)}</bdi> عن هالربع` : ''
+  })
+
   // 8. Research status and a note per stock (notes/<sym>, the owner's).
   const NOTE_ST = { idea: 'فكرة', study: 'أدرسه', own: 'عندي', pass: 'تركته' }
   function noteBlock(sym) {
@@ -1491,7 +1653,7 @@
     const el = $('cmp')
     if (!el) return
     const c = state.compare.filter((s) => state.quotes[s])
-    el.hidden = c.length < 2 || state.market === 'about' || state.market === 'sectors'
+    el.hidden = c.length < 2 || state.market === 'about' || state.market === 'sectors' || state.market === 'funds'
     if (el.hidden) return
     const q = (s) => state.quotes[s] || {}
     const rowsC = [
@@ -2130,6 +2292,7 @@
       ${weak && p[weak[0]] < 1.2 ? `<p>أكثر شي نزّل الدرجة: <b>${weak[1]}</b> (<span class="n">${fmt(p[weak[0]], 1)}</span> من 2).</p>` : ''}</div>`
     return `${pbar(sym)}<div class="dgrid">
       ${why}
+      ${shBlock(sym)}
       ${snowBlock(sym)}
       ${fairBlock(sym)}
       ${rangeBlock(sym)}${trackBlock(sym)}${histBlock(sym)}${divBlock(sym)}${noteBlock(sym)}${tvBlock(sym)}
@@ -2416,6 +2579,14 @@
     if (d.matches('details.proj')) state.projOpen = d.open
     else if (d.dataset.k) state.ctxOpen[d.open ? 'add' : 'delete'](d.dataset.k)
   }, true)
+  // purification for the owner's own shares (7b)
+  document.addEventListener('input', (e) => {
+    const i = e.target.closest?.('input[data-shq]')
+    if (!i) return
+    const o = document.querySelector(`[data-sho="${CSS.escape(i.dataset.shq)}"]`)
+    const n = Number(i.value), pps = Number(i.dataset.pps)
+    if (o) o.innerHTML = n > 0 && Number.isFinite(pps) ? `عليك <bdi>$${fmt(n * pps, 2)}</bdi> عن هالربع` : ''
+  })
   const toggle = (sym) => {
     const was = state.open
     state.open = state.open === sym ? null : sym
@@ -2426,6 +2597,7 @@
     const tr = $('rows').querySelector(`tr.row[data-sym="${CSS.escape(sym)}"]`)
     const top = tr?.getBoundingClientRect().top
     if (tr && (top < 0 || top > innerHeight - 120)) tr.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    loadSh(sym)
     loadNews(sym)
     loadHist(sym)
     loadElog(sym)
@@ -2554,6 +2726,7 @@
       }, () => renderLatestIdeas([]))
     } catch { renderLatestIdeas([]) }
     // v34: research notes and fair-value alerts (small collections, the owner's)
+    db.collection('sh').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym && !state.sh[v.sym]?.live) state.sh[v.sym] = v } scheduleRender(true) }).catch(() => {})
     db.collection('notes').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym) state.notes[v.sym] = v } scheduleRender(true) }).catch(() => {})
     db.collection('alerts').limit(1000).get().then((snap) => { for (const d of snap.docs) { const v = d.data(); if (v?.sym) state.alerts[v.sym] = v } }).catch(() => {})
     db.doc('meta/svr').get().then((snap) => { if (snap.exists) { state.svrMean = { ...snap.data(), ...state.svrMean }; scheduleRender(true) } }).catch(() => {})

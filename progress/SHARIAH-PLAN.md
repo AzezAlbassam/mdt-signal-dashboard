@@ -79,15 +79,15 @@ rule shows `ما ينحكم` for every stock and the owner is told before going 
 
 ## D. Stocks
 
-- [ ] D1 `engine/shariah.js`: pure functions `debtRatio`, `illicitShare`, `purificationPerShare`,
+- [x] D1 `engine/shariah.js`: pure functions `debtRatio`, `illicitShare`, `purificationPerShare`,
       `verdict(inputs) → {state, failed:[rule], numbers, period}`; no network, no dates from the clock.
-- [ ] D2 `test/shariah.test.js`: the document's example (1,000 / 100,000 × 2,000 = 20); thresholds exactly
+- [x] D2 `test/shariah.test.js`: the document's example (1,000 / 100,000 × 2,000 = 20); thresholds exactly
       at 30% and 5% (equal passes: "must not exceed"); market value below book value; each missing input →
       `ما ينحكم`; negative or zero revenue; a loss-making company still owes purification.
 - [ ] D3 Page: a chip on each row (four states), and a panel block "الشرعية والتطهير (طريقة الراجحي)" with
       the three tests, their numbers and thresholds, the statement period used, purification per share for
       that quarter, a box "كم سهم عندك؟" → amount, who owes it (R6), and the disclaimer. Arabic, phone first.
-- [ ] D4 Updating: computed on every load from the live fields, so a new quarter shows as soon as
+- [x] D4 Updating (weekly SEC refresh, scheduled 2026-11-21, progress/SHARIAH-REFRESH.md): computed on every load from the live fields, so a new quarter shows as soon as
       TradingView has it. `sh/<sym>` in the db keeps {period, state, numbers, seenAt}; when the period or
       the state changes the row shows "تحديث جديد" and the change is logged (R4's 90 days start at seenAt).
 
@@ -281,3 +281,290 @@ Added to the test catalogue (written before the engine):
   LongTermDebtCurrent twice; a single stale tag (e.g. CTM's 2025 ConvertibleNotesPayable = 0) never counts as today.
 - T2c tickers with a class letter (BRK.B → BRK-B) map to their CIK.
 - T2d "no interest-income tag" → read the filing's XBRL instance with dimensions; still nothing → `ما ينحكم`, never 0.
+
+### L3. With the contact header (2026-11-21, owner set SEC_USER_AGENT)
+- www.sec.gov now answers (ticker map, filings, archives).
+- N-PORT (`scripts/shariah/nport.py`, output data/shariah/nport-2026-11-21.jsonl): SMH, SOXX, XLE, XLK, QQQ, SPUS, HLAL
+  read; SPY is a unit trust and is not in SEC's fund list. Holdings as of: SMH 2026-09-30; SOXX, XLE, XLK, QQQ
+  2026-06-30 (144 days old today); SPUS, HLAL 2026-08-31. Only the quarter-end report is public, about 60 days late,
+  so holdings are 2 to 5 months old. Section E's 100-day limit would refuse 4 of the 7 today → decision A7 for the owner.
+- Weights: total of pctVal 99.7–101.2%; equity-only 99.7–99.9%. SOXX's 101.17% includes non-equity lines (cash/
+  collateral). T5 is restated as: equity weights 99–100.5% and the rest listed by asset type (a POST-HOC change to
+  the test's tolerance, made after seeing data).
+- Mapping holdings to tickers: SPUS and HLAL carry tickers; the others carry only ISIN/CUSIP (no ticker). A mapping
+  ISIN → ticker is needed (to build and test: every mapped name checked against SEC's company name).
+- SMH holds foreign 20-F filers (TSM, ASML): their figures update once a year from SEC.
+- Apple: the latest 10-K (FY ending 2026-09-26) shows only "Other income/(expense), net" 1,174M; no interest-income
+  figure in the statements, the notes or the XBRL. No source reports Apple's interest income → decision A8 for the
+  owner: `ما ينحكم`, or a labelled estimate (interest-bearing cash and securities × a published yield).
+
+## M. Owner decisions A7, A8 (2026-11-21) and the engine contract (fixed before the engine is written)
+
+- A7 (owner): fund holdings up to 150 days old are accepted, the as-of date shown beside every fund. This
+  changes E1's 100 days (owner decision after seeing N-PORT's lag).
+- A8 (owner): when a company does not disclose its interest income, use a cautious estimate labelled «تقدير».
+  This is Al Rajhi's own R3 ("undisclosed revenue is estimated on the cautious side"). Method, fixed now:
+  estimate = average of (cash and equivalents + current and non-current marketable securities) at the start
+  and end of the quarter × the quarter's average ICE BofA US Corporate Index effective yield (FRED
+  BAMLC0A0CMEY) × days ÷ 365. A tagged interest figure always wins over the estimate.
+- A1–A4, A6 keep their cautious defaults until the owner says otherwise (G7).
+
+Engine contract (`engine/shariah.js`, pure, tested by test/shariah.test.js written first):
+- `verdict({activity, debt, marketValue, bookEquity, illicit, illicitEstimated, revenue, shares})`
+  activity: "ok" | "fail" | "review" | null. Returns {state, failed, missing, numbers}.
+- R2: debt ÷ (marketValue, or bookEquity when marketValue is below it) ≤ 30% passes.
+- R3: illicit ÷ revenue ≤ 5% passes; revenue ≤ 0 with illicit > 0 fails; with illicit = 0 passes.
+- A known failure gives `غير جائز` even when another input is missing (failing is already certain).
+- Otherwise any missing input (null/undefined/NaN), or activity "review", gives `ما ينحكم`.
+- `حلال (نقي)`: activity ok, debt 0, illicit 0 and not estimated. Else passing = `مختلط جائز`.
+- `purificationPerShare(illicit, shares)`; loss-making companies still owe it; shares ≤ 0 → null.
+- `estimateInterest({cashStart, cashEnd, yieldPct, days})` per A8.
+- `fundVerdict(holdings[{weight, state, illicit, marketValue}])` per A5: non-compliant weight < 5% passes;
+  non-compliant + `ما ينحكم` weight ≥ 5% → `ما ينحكم` (clarified while writing the engine, before any
+  fund result: unknown holdings could be non-compliant); purification % of amount = Σ w × illicit ÷ marketValue, unknown
+  holdings excluded and their weight reported.
+- 2026-11-21: D1 and D2 done; 13 tests green, `npm test` 446/446. The tests found one bug before release: an
+  unexpected activity value (NaN, "OK") passed the screen; now anything but "ok"/"fail"/"review" is unknown.
+  Next: G1 independent review of the engine against the PDFs, then the SEC loader (T2) and the page (D3).
+
+### M2. Gate G1, independent review (2026-11-21)
+A reviewer agent given only the two Al Rajhi PDFs and engine/shariah.js restated the rules and compared.
+It confirmed the formulas (R2 denominator = market value, or book value when market value is below it; R3 ≤ 5%;
+purification = total illicit ÷ shares × shares held; the 1,000/100,000×2,000 = 20 example) and found these
+places where the code was LOOSER than the text, all fixed with a test written first:
+1. Market value and book value both ≤ 0 with debt known → the stock passed R2 silently. Now `ما ينحكم`.
+2. Negative debt or negative illicit revenue was accepted (a net figure would under-count). Now bad data.
+3. A8 estimate used the average balance: not "على جانب الاحتياط". Now the higher of the two balances (this
+   changes part M's formula; no result had been computed yet).
+4. fundVerdict passed on an empty list, a NaN weight, a list covering half the fund, an unknown state, weights
+   in percent, or a short position. Now each of these is `ما ينحكم`, and unlisted weight counts as unknown.
+5. Fund purification silently skipped holdings with unknown illicit revenue. Their weight is now reported
+   (`purificationUnknownWeight`) and shown on the page.
+Not in the engine, required of the SEC loader (T2) and the page:
+- market value = the average over the quarter, never a spot value;
+- illicit = GROSS interest and other illicit income, never net of interest expense;
+- purification per quarter of the statements issued, never mixing quarterly and annual figures;
+- the 90-day sell rule (Arabic: a hard limit, «على ألا تتجاوز») shown from the date we first saw the change;
+- the page says the money goes to charity, not zakat or tax; and (Arabic «فيجب الاكتفاء بها») that pure
+  companies come first when they meet the need.
+Also from the review: the Arabic text says plain "market value"/"book value"; the English adds "of assets". We
+follow the Arabic (equity), which is the stricter reading too. 16 engine tests green; `npm test` all green.
+
+### M3. Loader, page block, first full run (2026-11-21)
+- engine/sec-facts.js (14+1 tests), scripts/shariah/sec-load.js; data/shariah/sec-inputs.json for all 519 US stocks.
+- Page (D3, not published yet): block «الشرعية والتطهير (طريقة الراجحي)» in each US stock panel, the quarter-average
+  price from TradingView daily bars when the panel opens, row chip after that (saved in sh/<sym> with a change
+  log), the "كم سهم عندك؟" box, period and filing date, the method and R6/R7 notes. Saudi stocks: «ما ينحكم», no
+  source yet. Browser check SHARIAH AAPL green at desktop and 390 px (progress/shariah-block-phone.png).
+- Two bugs caught by this run, both fixed with a test first:
+  1. APA stopped tagging total revenue; the loader took its 2021 quarter as "latest". Now a quarter older than
+     200 days is never used (12 stocks), shown as «ما ينحكم» with the reason.
+  2. A cautious estimate is an upper bound: below 5% it proves a pass, above 5% it proves nothing. A stock
+     failing R3 only on the estimate is now «ما ينحكم», not «غير جائز».
+- Full run (425 stocks with a usable quarter; 92 foreign/annual or stale; 2 not found):
+  interest income tagged 207, estimated 215, missing 3; debt known 233, liabilities upper bound 171, missing 21;
+  R1 by industry code: ok 363, review 56, fail 6. Already failing before prices: R3 55 (mostly companies with
+  little or no revenue earning interest on cash, lenders, brokers), R1 6.
+- Name clash found by the browser check: the page has its own `verdict`; the engine's is now `shariahVerdict`.
+Before the first publish: G3 (hand check vs FMP), G6 (adversarial review), G7 (owner signs off A1–A4, A6 and
+the industry table data/shariah/sic-activity.json).
+
+### M4. Gate G3, second-source hand check (2026-11-21) — passed with one known overstatement
+An independent agent compared NVDA, AAPL, MSFT, GOOGL, AMZN, META, AMD, COST with FMP and MU with its 10-K text.
+- Revenue and stockholders' equity: identical for all 9. Shares within 0.4% (cover page vs weighted).
+- Debt: our borrowings and leases equal the companies' XBRL lines exactly; every difference with FMP is FMP's
+  definition (it leaves out current debt, current leases, sometimes finance leases).
+- Interest income: equal where tagged (NVDA 496, GOOGL 1,768, AMZN 1,187); COST 253 is right (FMP's own Q1 is off).
+- Known overstatement: MSFT, AMD and MU report interest income under `InvestmentIncomeNet`, a tag we exclude
+  because for other companies it nets gains and losses. They get the estimate instead: +42% (MSFT), +74% (AMD),
+  +82% (MU). All three still pass R3 by a wide margin; the purification shown is higher than the true one
+  (the cautious side, R6 "so as to be acquitted"). Proposed later fix (post-hoc): read the line's own label
+  from the filing so "Interest income" under InvestmentIncomeNet can be used.
+- XOM is not in the dashboard universe (FMP shows a new CIK 0002115436 for it).
+
+### M5. Gate G6, adversarial review (2026-11-21) — 11 findings, all fixed with a test first
+An agent probed the engine, loader and page with real SEC data (proof scripts in the session scratchpad).
+1. CRITICAL: debt taken from short-term lines only when long-term debt sat under another tag: BAX, TMUS, ORA and DE
+   showed «مختلط جائز» where the right answer is «غير جائز». Now such a figure is incomplete and the total
+   liabilities upper bound decides (it can prove a pass, never a fail).
+2. HIGH: interest tags missing (deposits, consumer loans, leases): ENPH passed with an estimate of 4.41% while it
+   tags 5.77% of revenue as deposit interest. Ten exact interest tags now; the largest is used; no cash-based estimate
+   for a company with loans or financing receivables (the estimate would not be an upper bound there).
+3. HIGH: the row mark showed an old saved ✓ over a certain ✕. Now a certain fail from the current filing comes first,
+   and a saved result counts only for the same quarter.
+4. HIGH: a split or new shares after the quarter inflated the market value (shares from the cover page × split-
+   adjusted price). Market value now uses the smaller of the cover and weighted counts; purification uses the cover.
+5. MEDIUM: share-count unit error (TEM in thousands) → counts 50× apart drop the odd one; weighted shares no longer
+   get a "year minus three quarters" Q4.
+6. LOW: tags mixing interest with other income were treated as exact and could fail a stock → now upper bounds;
+   negative revenue → bad data, not a fail; a smaller interest tag no longer wins; R3 above 5% on an upper bound
+   shows «؟», not ✕.
+Not fixed (noted): preferred tickers (STRC, STRF, STRK) are judged on MSTR's common-stock figures (MSTR fails anyway).
+- Rerun after the fixes found two more, fixed with a test first: DE (a large finance arm whose receivables appear
+  only in cash-flow lines) was still given a cash-based estimate → loans or finance receivables in any namespace,
+  balance or cash flow of the last 400 days, now block the estimate; TEM's only share count is in thousands →
+  counts are checked against net income ÷ EPS, and two counts 50× apart with nothing to decide = not judged.
+- After all fixes (425 stocks with a usable quarter): interest tagged 183, upper-bound or estimate 197, missing 45;
+  debt known 230, liabilities upper bound 175, missing 20. `npm test` 475/475; browser check green at both widths.
+Remaining before the first publish: G7, the owner's sign-off.
+
+### M6. Owner sign-off G7 (2026-11-21)
+- A4 / activity table: the 56 "review" industries show «ما ينحكم» until phase 2 reads their annual reports.
+- Publish: approved, once the lease question is settled.
+- A2 (leases as interest-bearing debt): the owner asked NOT to decide it ourselves — "research what is correct,
+  don't issue a fatwa of our own, don't continue until sure from more than one source". Research running
+  (Al Rajhi, AAOIFI, index methodologies, Saudi boards, screeners). The page keeps leases until the answer.
+
+### M7. Al Rajhi's CURRENT rule differs from the PDFs the engine follows (found 2026-11-21) — research running
+The lease research found, and a saved copy of the page confirms, that Al Rajhi Capital's current Arabic guidelines
+page (the one that carries its Q2 2026 compliant list) says:
+«ألا يتجاوز إجمالي المبلغ المقترض بالربا – سواء أكان قرضاً طويل الأجل أم قرضاً قصير الأجل- (33٪) من إجمالي القيمة
+السوقية ما لم تقل عن القيمة المؤسسية (EV)»، and on a change of status «فيجب بيع أسهمها في أسرع وقت ممكن، ويفضّل خلال
+90 يومًا». The 2021/2022 PDFs (part A) say 30%, book value as the fallback, a quarterly-average market value and a
+hard 90-day limit. The English page does not match the Arabic. No Al Rajhi text found on leases.
+The same page publishes Al Rajhi's own compliant / non-compliant tables for Saudi stocks (TASI, Nomu, ETFs, closed
+funds) — the authority for Saudi stocks per step 0.1, which today show «ما ينحكم» for lack of data.
+Before any change: research round 2 (Al Rajhi history and wording, AAOIFI and regulators, index providers and
+Saudi boards on leases, and an empirical check of which reading of the EV clause reproduces Al Rajhi's own list).
+The engine keeps 30%/book value until the owner sees the verified findings; nothing is published meanwhile.
+Process note: two research briefs asked agents to retry sites that refuse automated access with another User-Agent;
+the permission system blocked them, rightly. The briefs now allow only public routes (normal pages, official copies
+elsewhere, public archive copies, search snippets); a refusing site is recorded as unreachable.
+
+### M8. Research round 2 — verified so far (2026-11-21). Each point checked by me from the document itself.
+Al Rajhi (two of its own current documents disagree):
+- Website guidelines page (carries the Q2 2026 Saudi list, no decision number): 33% of total market value «ما لم تقل
+  عن القيمة المؤسسية (EV)»; no averaging; sell «ويفضّل خلال 90 يومًا»; new line «يجب الاجتهاد بمعرفة أي أرباح
+  مشبوهة أو غير واضحة المصدر»; purification only «يجب على المستثمرين التخلص من أي مكونات محرمة». EV is not defined
+  in any Al Rajhi document found.
+- Al Rajhi Global Equity Fund terms (stocks worldwide, benchmark Dow Jones Islamic Market; Shariah board decision
+  336; «تاريخ آخر تحديث 2025/08/12»; https://alrajhi-capital.sa/-/media/Feature/AlRajhiCapital/PDFs/Terms-and-Conditions/2025/Al-Rajhi-Global-Fund.pdf):
+  30% of total market value «ما لم تقل عن القيمة الدفترية» and «تؤخذ القيمة السوقية من متوسط قيمتها لكل ربع من
+  أرباع السنة» — i.e. Al Rajhi's own rule for NON-Saudi stocks as of Aug 2025 is the one the engine uses.
+- Purification PDF «آلية احتساب العنصر المحرم» (2022): still linked from today's Shariah Group page; downloaded today,
+  byte-identical to the 2022 copy; it also states 30% / book value and the formula the engine uses.
+- Argaam 2024-05-06 (Q1 2024 list): the rules are Al Rajhi Bank Shariah board decision 485: 30% / book value /
+  quarterly average.
+- No Al Rajhi text on leases. Contact on Al Rajhi's pages: customerservice@alrajhi-capital.sa, 800 124 5858; the
+  Shariah department's stated duties include answering clients' questions.
+AAOIFI Shariah Standard 21 (AAOIFI's own English PDF, issued 2004, in the 2015 book): 3/4/2 "the collective amount
+raised as loan on interest – whether long-term or short-term debt – does not exceed 30% of the market
+capitalization"; 3/4/5 "recourse is to be had to the last budget or verified financial position". No mention of
+leases anywhere in the standard (checked: the only hits are "pleased" and renting shares).
+Regulators (search snippets only, sites blocked): Pakistan's KMI/All-Share Islamic index lists "Finance Lease, Hire
+Purchase" as interest-bearing debt (operating leases not mentioned); Malaysia SC: "interest-bearing debt", Islamic
+financing excluded, leases not mentioned; Indonesia, DFM: leases not mentioned.
+Still running: the empirical test on Al Rajhi's Q2 2026 Saudi list; index providers, Saudi boards and papers on leases.
+Index providers, Saudi boards, research (round 2, third group):
+- S&P Shariah (FAQ, snippet): debt = "the sum of all short- and long-term interest-bearing borrowings and liabilities",
+  Islamic and non-interest-bearing debt excluded, case by case; S&P/DJIM update of 2026-08-20 (snippets): debt ÷
+  36-month (S&P) / 24-month (DJIM) average market value < 30%, effective 2026-09-21. Leases not mentioned.
+- MSCI (Apr/Jul 2025 methodologies, read) and FTSE (Yasaar 2026, IdealRatings 2026, read): "debt" undefined; leases
+  not mentioned. No IFRS 16 consultation found 2018-2026.
+- Al-Maqasid / Dr. Al-Osaimi methodology, 2025 update (verified by me in the PDF, para. 19): «الأصل أن ما كتب بطريقة
+  توحي أنه تم حسب الضوابط الشرعية، مثل المرابحة، والتورق والإيجار التمويلي … فيعتبر شرعيا … وأما ما تم عنونته بطريقة
+  مدمجة مجملة … وضع في التمويلات التقليدية من باب الاحتياط»; limit (para. 10): non-Shariah borrowing ≤ «ثلث إجمالي
+  الموجودات». Finance leases presumed compliant when labelled so; operating leases not mentioned.
+- Finance leases counted as interest-bearing debt (stated): Pakistan's exchange index brochures ("Finance Lease, Hire
+  Purchase"), Zoya (capital leases, its Shariah advisers), ISRA-Bloomberg paper 2017 (snippet). Operating / IFRS 16
+  leases: no authority found that counts them, none that excludes them in words; only blogs, split both ways.
+Empirical test on Al Rajhi's own Q2 2026 Saudi list (15 leveraged companies, 31-Dec-2025 statements; my checks marked ✓):
+- Islamic financing is not counted: Saudi Kayan (all Murabaha, 126% of MV) and ADES (85% Islamic) are compliant.
+- Lease liabilities are not counted: flynas ✓ (list: compliant; statements: lease liabilities SAR 5,990m with a
+  370m finance cost for 2025, borrowings only Murabaha 1,484m; leases alone = 54% of MV, 42% of EV, 35% of total
+  assets) and 1820 BAAN ✓ (compliant; loans 377m ✓; right-of-use assets 629m ✓ already exceed its market value).
+- Book equity is not the denominator; MV, EV and max(MV, EV) fit equally (11 of 12 compliant labels with
+  conventional debt only); the list is not purely mechanical (Cenomi Retail compliant with conventional debt at
+  136% of MV). Non-compliant non-financials (4011, 4072, 4280 ✓) are not cleanly debt-driven.
+
+### M9. Conclusion of research round 2 (for the owner's decision)
+1. Leases: no written authority counts operating (IFRS 16 / ASC 842) lease liabilities as borrowing at interest
+   (Al Rajhi, AAOIFI SS21, S&P, MSCI, FTSE, Al-Maqasid: silent or "borrowing at interest" only), and Al Rajhi's own
+   list shows it does not count lease liabilities (flynas). Finance leases: counted by Pakistan's index, Zoya, ISRA
+   (conventional ones); presumed Islamic by Al-Maqasid when labelled «إيجار تمويلي». => Al Rajhi's practice:
+   leases out. A stricter option keeps US-GAAP finance leases in.
+2. Debt rule: Al Rajhi's own documents disagree — website (Saudi list) 33% / «القيمة المؤسسية (EV)» (undefined)
+   vs the Global Equity Fund terms of 2025-08-12 (decision 336, global stocks) and the still-linked purification PDF:
+   30% / quarter-average market value / book value. For US stocks the fund terms are Al Rajhi's most specific text,
+   and they are what the engine already does. The Saudi list cannot tell MV from EV. Only Al Rajhi can settle it.
+3. Islamic financing excluded (US companies rarely have any; Saudi only).
+Decisions asked of the owner: leases (out / finance leases in), the debt rule (keep 30% until Al Rajhi answers /
+switch to 33% with max(quarter-average MV, EV)), and whether to send Al Rajhi the question.
+
+### M10. Owner decisions after round 2 (2026-11-21) — applied
+- A2 leases: OUT of interest-bearing debt, as Al Rajhi's own list does (flynas). Shown separately on the page as
+  «ما تنحسب»; the liabilities upper bound now subtracts known lease liabilities. Tests changed first (marked).
+- Debt rule: stays 30% of the quarter-average market value, book value when higher (Al Rajhi Global Equity Fund
+  terms, decision 336, 2025-08-12; the linked purification PDF). The page cites them and says that Al Rajhi's Saudi-list
+  page reads 33% / «القيمة المؤسسية» and that we await their answer.
+- The owner sent the question to customerservice@alrajhi-capital.sa on 2026-11-21 (which rule applies to US stocks;
+  how EV is computed; whether IFRS 16 lease liabilities count). Their answer is applied with tests first.
+- Results after the change: AAPL debt 80.1B (leases 14.4B not counted) → 2.2% at a $250 average; MSFT 35.5B
+  (98.5B leases not counted). `npm test` 476/476; browser check SHARIAH AAPL green at desktop and 390 px.
+- Portfolio card identity A ("Midnight") chosen; B and C removed (in git history).
+
+### M11. Funds (part E) built (2026-11-21/22)
+- Holdings: SEC N-PORT, latest report per fund (scripts/shariah/nport.py → data/shariah/nport-latest.jsonl). 40 of 44
+  funds found; DRAM, URNM, NCLD, LYTE are not in SEC's fund list; GLD, SLV, IBIT, USO hold no companies (listed with
+  the reason). Holdings dates 53-145 days old (A7 limit 150).
+- Matching holdings to companies (engine/funds.js): ticker, then ISIN (seeded from funds that report tickers), then a
+  unique normalised name (also without spaces, and with the words sorted). Checked: 395/395 correct on SPUS/HLAL.
+- Kinds: cash collateral from securities lending is left out and reported; money-market funds and bonds count as
+  non-compliant; derivatives and other instruments as not judged; unlisted remainder as not judged.
+- Each company: screenStock (shared with the stock page). Market value: the fund report's price within a -20%/+25%
+  band, or the exact quarter-average close when fetched (TradingView 1D bars; FMP's plan refuses most symbols; the
+  two sources gave the identical DIS average). TradingView's free daily quota allows about 10 calls: 16 of 86 holdings
+  near the debt line have exact averages so far; the weekly run fetches more.
+- Fund verdict: the owner's rule (fundVerdict); purification per quarter = Σ weight × illicit ÷ market value.
+- Bugs found by checking the first results, each fixed with a test first: banks without readable statements are
+  غير جائز by activity; AbbVie/Oracle debt tags; total liabilities derived for Monster; EPS-implied shares for Visa;
+  the loans guard no longer fires on disclosures (Broadcom) or trade receivables (PepsiCo, Chevron); investment-bank
+  revenue; a plain Cash tag; word-order names (Schwab); the first-listed ticker (not JPM-PM); IBM's short-term debt
+  equal to its current portion counted twice (70.8B → 63.8B; 31.6% → 28.4% at the quarter average).
+- Known limits shown on the page: foreign annual filers (TSMC, ASML, SK hynix, ARM) and combined-report utilities
+  (AEP, XEL, EXC) are not judged; activities under review (Walmart, Costco, Netflix, tobacco, REITs) stay «ما ينحكم»
+  until phase 2; the fund's own securities-lending income and cash interest are not in the purification.
+
+### M12. Funds review before publishing (2026-11-22) — 34 findings, 33 reproduced; fixes are POST-HOC, tests first
+Independent review: four lenses (code logic, matching, hand check of SMH/XLK, rules and page claims), each finding then
+reproduced by a separate skeptic (scripts and outputs in the session scratchpad, review-funds/). Fixed, each with a test
+written first (test/funds.test.js, test/sec-facts.test.js "review:", browser "FUNDS REVIEW CHECK"):
+- Matching (high): funds abroad report home-market tickers (UMMA, CHAT, SPTE, CIBR): Roche "ROP" was screened as Roper,
+  Richemont "CFR" as Cullen/Frost, Sanofi "SAN" as Santander; UMMA's Toronto "ABX" travelled by ISIN to GDX's Barrick
+  (7.95%) as Abacus. A reported ticker or an ISIN now counts only for a US holding or when the SEC title shares a name
+  word; then the name step (Sanofi → SNY, Barrick → B, CNR → CNI). Measured on all 2,973 equity holdings: 34 changes,
+  all correct except two now unmatched (TSMC under "TSMC", a 20-F filer either way; ARKK's renamed Brera, 0.02%).
+- Names: SEC's backslash and spaced state suffixes (US Bancorp, MP Materials), a place after the legal form (Energy
+  Fuels Inc/Canada), dotted N.V./S.A. (STMicroelectronics, Bunge); GROUP is no longer dropped (Compass Group ≠ Compass).
+- Purification (high): unknown interest gave purification 0, not unknown (JavaScript null >= 0), which hid the coverage
+  note (XLK 98.4% covered, not 99.95%). Coverage is now the weight of holdings with a figure.
+- MAGS: swap values counted by absolute value pushed the list over 100.5%, so 65% bills and money funds showed «ما ينحكم».
+  The 100.5% check uses signed weights. Weights are value ÷ net assets (SPRE lists two $0.03 lines at -1.41%).
+- Band: one band per company across every fund's report price (LUV, HONA, IT passed in one fund on a price another fund's
+  in-quarter price contradicts). A split between the last two quarters (shares moved 1.5x+: CrowdStrike 4:1, Amphenol
+  and Monster 2:1) leaves the price basis open by its ratio, for the band and the quarter average; purification takes the
+  lower market value. Row reasons are those failing at both band ends (AXP showed "debt over 30%"). Purification uses the
+  report price behind the weight; the quarter average decides only the debt test.
+- Debt never understated: max with noncurrent + DebtCurrent and with LongTermDebt + (DebtCurrent − its current portion)
+  (Cisco 21.4B → 29.8B, KDP, Corteva, Qualcomm); securitisation, lines of credit and other short-term borrowing tags read.
+  Found when checking the rerun (my own regression, fixed with a test first): the first version took lease-bundled
+  tags and the current finance lease inside DebtCurrent (Micron 2.8B → 5.2B, Valero 8.6B → 11.0B), against A2. The
+  rule now uses lease-free tags only and takes the tagged current finance lease out of DebtCurrent. Old vs new over all
+  1,114 cached companies: 22 debt figures rise (short-term borrowings), none fall (scratchpad fix/debt-scan.txt).
+- Interest estimate: debt securities tagged only as a total count (KLA's 3.2B available for sale; estimate 23M → ~67M).
+- Found when checking the first rerun: a share count 1000x the previous quarter's (Geron, Iovance: one quarter tagged in
+  thousands) was taken as a split, and their purification came out above 100% of the holding. A ratio beyond 50x is a
+  unit error, not a split (Chipotle's 50:1 is the largest kept). Test first.
+- Page: the 150-day limit is re-checked on the viewer's Riyadh date (XLK's 06-30 holdings turn 151 days on 2026-11-28,
+  still the 27th in UTC); the loader also uses Riyadh's date. Activities under review say so; an interest bound above 5%
+  says so (not "missing"); combined interest tags say "combined", not "estimated"; the method names the book-value
+  fallback and no single price source; the look-through illicit share (E3) is shown for reference (a share above 100% —
+  fee-only revenue tags of lenders — counts as 100%); the stock page explains such a share.
+- Quarter averages also come from the daily bars already in the repo (data/us/bars, TradingView 1D, last bar 2026-10-06;
+  the 16 fetched averages match them exactly): scripts/shariah/bars-quarter-prices.js, then the same merge checks.
+Not fixed, on the cautious side (documented): AMAT's short-term debt includes its current notes (+18%); NXP tags its
+2.0B commercial-paper programme size as CommercialPaper (+18%); AMD/MU/MSFT interest taken from estimates, not their
+own "interest income" lines (known since M4; +42-82% purification); AVGO debt at principal; INTC/AVGO the smaller share
+count; SNDK's upper bound. Renamed companies whose N-PORT name is the old one (BlackRock Funding, Hartford, Equity
+Residential, Franklin, Paramount) stay unmatched, i.e. not judged. A box-spread fund held as a share (MAGS's XBOX) stays
+not judged (finding refuted: no rule covers it). No fund verdict changed from any of the unfixed points.

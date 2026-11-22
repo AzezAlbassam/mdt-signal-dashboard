@@ -89,6 +89,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
         if (tool.endsWith('batch')) return { payload: { data: Object.fromEntries(input.symbols.filter((s) => s !== 'NASDAQ:NOPE').map((s) => [s, quote(s)])), missing: input.symbols.includes('NASDAQ:NOPE') ? [{ symbol: 'NASDAQ:NOPE' }] : [], success: true } }
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
+        // Shariah block (7b): daily bars at a flat $250 for the quarter-average price
+        if (tool.endsWith('ohlcv') && input.interval === '1D') { const now = Math.floor(Date.now() / 864e5) * 86400; const t = Array.from({ length: input.count }, (_, i) => now - (input.count - 1 - i) * 86400); return { payload: { bars: { t, c: t.map(() => 250) } } } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
         if (tool.endsWith('get-news') && window.__newsFail) { window.__newsFail -= 1; throw { code: 'server_unavailable' } }
         if (tool.endsWith('get-news')) return { payload: { data: { headlines: [{ title: 'Example headline for ' + input.symbol, link: 'https://example.com', published: 1790913837, provider: { name: 'Test' } }] } } }
@@ -160,6 +162,35 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   await page.fill('#filter', 'aapl'); await page.waitForTimeout(200) // v30: the filter waits 140 ms for typing to pause
   await page.click('#rows tr.row')
   await page.waitForTimeout(500)
+  // Shariah block (7b), AAPL. The expected figures are worked out HERE from data/shariah/sec-inputs.json with the rule's
+  // own formula (not the engine's code), so the check survives the weekly SEC refresh: debt (leases out) / max(market
+  // value at the mocked $250 average, book equity); illicit / revenue; illicit / shares; x 100 shares.
+  const AA = JSON.parse(fs.readFileSync(root + 'data/shariah/sec-inputs.json', 'utf8')).stocks.AAPL
+  const mv = 250 * (AA.sharesMV ?? AA.shares)
+  const f = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
+  const want = {
+    dr: AA.debt != null ? f(100 * AA.debt / Math.max(mv, AA.bookEquity), 1) + '%' : null,
+    ill: f(100 * AA.illicit / AA.revenue, 2) + '%',
+    pps: '$' + f(AA.illicit / AA.shares, 4),
+    own: '$' + f(100 * AA.illicit / AA.shares, 2),
+    pass: AA.debt != null && AA.debt / Math.max(mv, AA.bookEquity) <= 0.3 && AA.illicit / AA.revenue <= 0.05,
+  }
+  await page.waitForTimeout(300)
+  const sh = await page.evaluate(async () => {
+    const b = document.querySelector('#rows .part.sh')
+    const i = b?.querySelector('input[data-shq]')
+    if (i) { i.value = '100'; i.dispatchEvent(new Event('input', { bubbles: true })) }
+    return { text: b?.innerText.replace(/\s+/g, ' ').slice(0, 700), state: b?.querySelector('.shs')?.textContent, out: b?.querySelector('[data-sho]')?.textContent,
+      saved: window.__store['sh/NASDAQ:AAPL']?.state, chip: document.querySelector('#rows tr.row[data-sym="NASDAQ:AAPL"] .shc')?.textContent,
+      daily: window.__calls.some((c) => c.startsWith('mcp-tv-get-ohlcv NASDAQ:AAPL')) }
+  })
+  const has = (t) => (sh.text ?? '').includes(t)
+  const okSh = (!want.dr || has(want.dr)) && has(want.ill) && has(want.pps) && (sh.out ?? '').includes(want.own)
+    && (!AA.debtParts?.leases || has('ما تنحسب')) && (!AA.illicitEstimated || has('تقدير'))
+    && (!want.pass || (sh.state === 'مختلط جائز' && sh.saved === 'مختلط جائز' && sh.chip === '✓'))
+  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify({ want, ...sh }))
+  if (!okSh) process.exitCode = 1
+  { const el = await page.$('#rows .part.sh'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-sh.png') }) } }
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))
   const svrBox = await page.$('#rows .part.svr svg.sc')
   await svrBox.scrollIntoViewIfNeeded()
@@ -421,6 +452,56 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const okC = /تقريره اليوم/.test(chips['NASDAQ:META']) && /تقريره اليوم/.test(chips['NYSE:JPM']) && !/10-23/.test(chips['NYSE:JPM']) && /تقريره بعد 14 يوم/.test(chips['NASDAQ:AAPL'])
   console.log('CLOCK CHECK:', okC ? 'ok' : 'FAILED', JSON.stringify(chips))
   if (!okC) process.exitCode = 1
+  // (6) Funds tab (7c): the cards, SMH opened, its figures recomputed HERE from data/shariah/funds.json rows (weights of
+  // non-compliant / unknown holdings, purification) and shown on the card; the amount box multiplies by the fund's rate.
+  const FD = JSON.parse(fs.readFileSync(root + 'data/shariah/funds.json', 'utf8'))
+  const smh = FD.funds.find((f) => f.sym === 'SMH')
+  const st = (x) => (x.k === 'equity' ? x.s : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? null : 'ما ينحكم')
+  const fRows = smh.rows.filter((x) => x.k !== 'collateral')
+  const want6 = { bad: fRows.filter((x) => st(x) === 'غير جائز').reduce((a, x) => a + Math.abs(x.w), 0),
+    pur: fRows.filter((x) => x.k === 'equity' && x.pur != null).reduce((a, x) => a + x.w * x.pur, 0) }
+  await page.click('#tab-funds'); await page.waitForTimeout(200)
+  await page.click('button[data-fund="SMH"]'); await page.waitForTimeout(200)
+  const fv = await page.evaluate(() => {
+    const i = document.querySelector('input[data-fq="SMH"]')
+    if (i) { i.value = '10000'; i.dispatchEvent(new Event('input', { bubbles: true })) }
+    return { cards: document.querySelectorAll('#fundsView .fcard').length, tableHidden: getComputedStyle(document.querySelector('.tbl')).display === 'none',
+      head: document.querySelector('#fundsView .fcard.open .fhead')?.innerText.replace(/\s+/g, ' '), out: document.querySelector('[data-fo="SMH"]')?.textContent,
+      rows: document.querySelectorAll('#fundsView .fcard.open .ftbl tbody tr').length, w: innerWidth, sw: document.documentElement.scrollWidth,
+      // nothing in the tab may stick out of the screen (a clipped column does not make the page scroll)
+      // a name must stay inside its own cell (a long one ran over the weight column)
+      spill: [...document.querySelectorAll('#fundsView .ftbl th')].filter((th) => th.scrollWidth > th.clientWidth + 1).length,
+      stickOut: [...document.querySelectorAll('#fundsView *')].filter((e) => { const r = e.getBoundingClientRect(); return r.width && (r.right > innerWidth + 1 || r.left < -1) }).length }
+  })
+  const f1 = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
+  const okFunds = fv.cards === FD.funds.filter((f) => f.rows).length && fv.tableHidden && Math.abs(want6.bad - smh.badWeight) < 1e-9 && Math.abs(want6.pur - smh.purificationPct) < 1e-9
+    && (fv.head ?? '').includes(`${f1(100 * smh.badWeight, 1)}٪`) && (fv.head ?? '').includes(`${f1(100 * smh.purificationPct, 3)}٪`)
+    && (fv.out ?? '').includes(f1(10000 * smh.purificationPct, 2)) && fv.rows > 0 && fv.sw <= fv.w + 1 && fv.stickOut === 0 && fv.spill === 0
+  console.log('FUNDS CHECK:', okFunds ? 'ok' : 'FAILED', JSON.stringify({ want6, smh: { bad: smh.badWeight, pur: smh.purificationPct, state: smh.state }, ...fv }))
+  if (!okFunds) process.exitCode = 1
+  { const el = await page.$('#fundsView .fcard.open'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-funds.png') }) } }
+  // (7) Review 2026-11-22. The 150-day limit (A7) is checked on the viewer's date in Riyadh, not only when the data was
+  // built: at 00:30 Riyadh on the 151st day of the oldest holdings (still the 150th in UTC) that fund is not judged.
+  // Rows of activities under review say so; the method text names the book-value fallback and no single price source;
+  // the purification coverage and the look-through illicit share are the data's own figures.
+  const withRows = FD.funds.filter((f) => f.rows)
+  const oldest = withRows.map((f) => f.as_of).sort()[0]
+  const day = new Date(Date.parse(oldest) + (FD.maxAgeDays + 1) * 864e5).toISOString().slice(0, 10)
+  await page.clock.setFixedTime(new Date(`${day}T00:30:00+03:00`))
+  await page.goto('file://' + file); await page.waitForTimeout(2500)
+  await page.click('#tab-funds'); await page.waitForTimeout(200)
+  const ageOf = (d) => Math.round((Date.parse(day) - Date.parse(d)) / 864e5)
+  const heads = await page.$$eval('#fundsView .fcard .fhead', (bs) => Object.fromEntries(bs.map((b) => [b.dataset.fund, b.innerText.replace(/\s+/g, ' ')])))
+  const ageBad = withRows.filter((f) => (ageOf(f.as_of) > FD.maxAgeDays
+    ? !(heads[f.sym] ?? '').includes('ما ينحكم') || !(heads[f.sym] ?? '').includes('أقدم من') : !(heads[f.sym] ?? '').includes(f.state))).map((f) => f.sym)
+  const rv = withRows.find((f) => f.rows.some((x) => x.k === 'equity' && (x.why ?? []).includes('activity')))
+  await page.click(`button[data-fund="${rv.sym}"]`); await page.waitForTimeout(200)
+  const t7 = await page.evaluate(() => ({ card: document.querySelector('#fundsView .fcard.open')?.innerText.replace(/\s+/g, ' ') ?? '', method: document.querySelector('#fundsView .shmore')?.textContent ?? '' }))
+  const cov = rv.purificationCoveredWeight, lt = rv.illicitCoveredWeight > 0 ? rv.illicitLookThrough / rv.illicitCoveredWeight : null
+  const ok7 = ageBad.length === 0 && t7.card.includes('النشاط يحتاج مراجعة') && t7.method.includes('القيمة الدفترية') && !t7.method.includes('FMP')
+    && (cov >= 0.995 || t7.card.includes(`التطهير محسوب على ${f1(100 * cov, 1)}٪`)) && (lt == null || t7.card.includes(`${f1(100 * lt, 2)}٪`))
+  console.log('FUNDS REVIEW CHECK:', ok7 ? 'ok' : 'FAILED', JSON.stringify({ day, oldest, ageBad, fund: rv.sym, cov, lt, card: t7.card.slice(0, 400) }))
+  if (!ok7) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

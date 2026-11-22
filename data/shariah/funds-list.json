@@ -1,0 +1,21 @@
+{
+  "_note": "Funds on the page's «الصناديق» tab. owner: the owner's 26 (watchlist screenshots 2026-11-20); added: suggested in plan part J. kind 'none' = no company holdings: listed with the reason, no verdict from this method.",
+  "funds": [
+    {"sym": "SMH", "from": "owner"}, {"sym": "SOXX", "from": "owner"}, {"sym": "VOO", "from": "owner"}, {"sym": "DRAM", "from": "owner"},
+    {"sym": "XLK", "from": "owner"}, {"sym": "XLE", "from": "owner"}, {"sym": "XLV", "from": "owner"}, {"sym": "XLF", "from": "owner"},
+    {"sym": "GDX", "from": "owner"}, {"sym": "MAGS", "from": "owner"}, {"sym": "QQQM", "from": "owner"}, {"sym": "CIBR", "from": "owner"},
+    {"sym": "SPMO", "from": "owner"}, {"sym": "KWEB", "from": "owner"}, {"sym": "TAN", "from": "owner"}, {"sym": "URNM", "from": "owner"},
+    {"sym": "REMX", "from": "owner"}, {"sym": "NCLD", "from": "owner"}, {"sym": "LYTE", "from": "owner"}, {"sym": "SEMI", "from": "owner"},
+    {"sym": "DTCR", "from": "owner"}, {"sym": "CHAT", "from": "owner"},
+    {"sym": "GLD", "from": "owner", "kind": "none", "why": "ذهب فعلي، ما فيه شركات"},
+    {"sym": "SLV", "from": "owner", "kind": "none", "why": "فضة فعلية، ما فيه شركات"},
+    {"sym": "IBIT", "from": "owner", "kind": "none", "why": "بتكوين، ما فيه شركات"},
+    {"sym": "USO", "from": "owner", "kind": "none", "why": "عقود نفط آجلة، ما فيه شركات"},
+    {"sym": "SPUS", "from": "added"}, {"sym": "HLAL", "from": "added"}, {"sym": "SPTE", "from": "added"}, {"sym": "UMMA", "from": "added"},
+    {"sym": "SPRE", "from": "added"}, {"sym": "XLI", "from": "added"}, {"sym": "XLY", "from": "added"}, {"sym": "XLP", "from": "added"},
+    {"sym": "XLU", "from": "added"}, {"sym": "XLB", "from": "added"}, {"sym": "XLRE", "from": "added"}, {"sym": "XLC", "from": "added"},
+    {"sym": "IGV", "from": "added"}, {"sym": "ARKK", "from": "added"}, {"sym": "NLR", "from": "added"}, {"sym": "URA", "from": "added"},
+    {"sym": "COPX", "from": "added"}, {"sym": "LIT", "from": "added"}, {"sym": "XBI", "from": "added"}, {"sym": "BOTZ", "from": "added"},
+    {"sym": "SCHD", "from": "added"}, {"sym": "KSA", "from": "added"}
+  ]
+}

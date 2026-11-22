@@ -1,0 +1,25 @@
+{
+  "_note": "R1 activity by SEC SIC code. fail = core business prohibited; review = prohibited core or side revenue likely (ما ينحكم until a reviewed decision); any other code = ok. Draft 2026-11-21, needs the owner's review (G7). Ranges are inclusive.",
+  "fail": [
+    [2082, 2085, "Malt beverages, wines, distilled liquors"],
+    [5921, 5921, "Liquor stores"],
+    [6020, 6036, "Commercial and savings banks (interest-based)"],
+    [6311, 6399, "Conventional insurance"]
+  ],
+  "review": [
+    [2011, 2013, "Meat packing and processing (may include pork)"],
+    [2100, 2199, "Tobacco"],
+    [4830, 4841, "Radio, TV broadcasting, cable (music and entertainment content)"],
+    [5311, 5399, "Department, variety and general stores (sell alcohol)"],
+    [5400, 5499, "Food stores and supermarkets (sell alcohol, pork)"],
+    [5812, 5813, "Restaurants and drinking places"],
+    [5912, 5912, "Drug stores (sell alcohol, tobacco)"],
+    [6000, 6019, "Central banks and other depository"],
+    [6100, 6299, "Credit, mortgage, brokers, exchanges (interest income)"],
+    [6411, 6411, "Insurance agents and brokers"],
+    [6700, 6799, "Holding companies, trusts, REITs, blank-check companies"],
+    [7011, 7011, "Hotels and motels (may include casinos, bars)"],
+    [7800, 7899, "Motion pictures"],
+    [7900, 7999, "Amusement, recreation, gambling"]
+  ]
+}

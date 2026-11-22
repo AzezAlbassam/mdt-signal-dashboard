@@ -1,0 +1,730 @@
+{
+ "built": "2026-11-22T02:27:39.102Z",
+ "source": "daily closes, split-adjusted, averaged over the company's own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)",
+ "prices": {
+  "BA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 214.42875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "FMP"
+  },
+  "FDX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 314.141875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "FMP"
+  },
+  "PYPL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 55.06203125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "FMP"
+  },
+  "CARR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 61.9546875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "FMP"
+  },
+  "DIS": {
+   "start": "2026-06-28",
+   "end": "2026-10-03",
+   "avg": 102.29367647058824,
+   "n": 68,
+   "first": "2026-06-29",
+   "last": "2026-10-02",
+   "source": "FMP"
+  },
+  "TGT": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 131.05032258064517,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "FMP"
+  },
+  "RBLX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 45.3740625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "FMP"
+  },
+  "DOCU": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 48.33587301587301,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "FMP"
+  },
+  "BMY": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 63.19750000000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WMB": {
+   "start": "2026-04-01",
+   "end": "2026-06-30",
+   "avg": 73.59080645161289,
+   "n": 62,
+   "first": "2026-04-01",
+   "last": "2026-06-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MRSH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 182.92109375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CEG": {
+   "start": "2026-04-01",
+   "end": "2026-06-30",
+   "avg": 281.62322580645156,
+   "n": 62,
+   "first": "2026-04-01",
+   "last": "2026-06-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "RCL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 283.93421874999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ORLY": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 88.007421875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MDLZ": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 61.520468749999985,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CRH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 95.82124999999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HON": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 223.1453125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ICE": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 151.01937500000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SLB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 51.524999999999984,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PSX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 228.43812499999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "APD": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 297.4420312499999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HPE": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 42.89968253968255,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TRGP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 279.9279687500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BKR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 59.616718750000025,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BDX": {
+   "start": "2026-04-01",
+   "end": "2026-06-30",
+   "avg": 149.55903225806452,
+   "n": 62,
+   "first": "2026-04-01",
+   "last": "2026-06-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "FANG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 195.6796875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "IBM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 237.4609375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView"
+  },
+  "AMGN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 398.572890625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView"
+  },
+  "LOW": {
+   "start": "2026-05-02",
+   "end": "2026-07-31",
+   "avg": 216.36729032258066,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView"
+  },
+  "MDT": {
+   "start": "2026-04-25",
+   "end": "2026-07-31",
+   "avg": 80.15164179104477,
+   "n": 67,
+   "first": "2026-04-27",
+   "last": "2026-07-31",
+   "source": "TradingView"
+  },
+  "WM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 223.99984375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView"
+  },
+  "UPS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 104.990625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView"
+  },
+  "ORCL": {
+   "start": "2026-06-01",
+   "end": "2026-08-31",
+   "avg": 155.48828125,
+   "n": 64,
+   "first": "2026-06-01",
+   "last": "2026-08-31",
+   "source": "TradingView"
+  },
+  "CRM": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 172.56396825396826,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView"
+  }
+ },
+ "rejected": [
+  {
+   "t": "DHI",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ROP",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ATO",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "PPG",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "PKG",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ESS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "TSCO",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ECHO",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "AVY",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "IT",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "CVLT",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "SHLS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ENR",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "PCOR",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ALRM",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "ENS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "RHI",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires higher FMP plan"
+  },
+  {
+   "t": "YUM",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "SYY",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "MLM",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "ZTS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "HAL",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "WTW",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "IFF",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "BRO",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "GPC",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "MKC",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "GDDY",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "TTD",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "LDOS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "HPQ",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "NTNX",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "BOX",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "ASAN",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "HALO",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "VRTS",
+   "why": "FMP: FMP ACCESS DENIED: symbol requires a higher FMP plan"
+  },
+  {
+   "t": "VTR",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "ADM",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "GEHC",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "OTIS",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "LH",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "EFX",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "CTSH",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "SWK",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "TKO",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "HAS",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "CDE",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "HONA",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "LUV",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "RNG",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "CERS",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "JBTM",
+   "why": "FMP: FMP ACCESS DENIED: parameter requires higher plan"
+  },
+  {
+   "t": "VTR",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "SYY",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "MLM",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ROP",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "GEHC",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "HAL",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "PPG",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "LH",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "IFF",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ESS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "CTSH",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "GPC",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ECHO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "TKO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "GDDY",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "IT",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "CDE",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "CVLT",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "LUV",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "HPQ",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "NTNX",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "BOX",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ALRM",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "CERS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "HALO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "RHI",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "YUM",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "DHI",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ADM",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ZTS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ATO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "OTIS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "WTW",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "PKG",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "EFX",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "BRO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "TSCO",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "SWK",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "MKC",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "AVY",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "HAS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "TTD",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "HONA",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "LDOS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "SHLS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ENR",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "PCOR",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "RNG",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ASAN",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "ENS",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "JBTM",
+   "why": "TradingView: quota"
+  },
+  {
+   "t": "VRTS",
+   "why": "TradingView: quota"
+  }
+ ]
+}
