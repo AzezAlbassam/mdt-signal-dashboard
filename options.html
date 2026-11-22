@@ -154,7 +154,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
 
 <section id="mylist">
   <h2>قائمتي <span class="count" id="listCount"></span></h2>
-  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق. اضغط أي سهم يفتح في الأداة.</p>
+  <p class="note" style="margin-top:-6px">كل الأسهم الأمريكية من قوائمك في TradingView، مرتبة من الأسهل خروجًا للأصعب. <span id="listSame">عمود «يتحمّل» هو نفس الرقم اللي تعطيك الأداة للمدة والنوع المختارين فوق.</span> اضغط أي سهم يفتح في الأداة.</p>
   <input id="q" type="search" placeholder="ابحث عن سهم…" style="margin-top:10px;direction:ltr;text-align:right" autocomplete="off">
   <div class="filters chips" id="tierChips">
     <button type="button" data-tier="" aria-pressed="true">الكل</button>
@@ -271,7 +271,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const UNITS = { k: 1e3, 'ألف': 1e3, 'الف': 1e3, 'آلاف': 1e3, 'الاف': 1e3, 'ألاف': 1e3, 'الآف': 1e3, m: 1e6, 'مليون': 1e6, 'ملايين': 1e6 }
 const parseAmount = (s) => {
   const t = String(s ?? '').replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x660).replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 0x6f0)
-    .replace(/[\u200e\u200f\u061c\u202a-\u202e\u2066-\u2069]/g, '').replace(/٫/g, '.').replace(/[٬،,\s$]/g, '').toLowerCase()
+    .replace(/[\u200e\u200f\u061c\u202a-\u202e\u2066-\u2069]/g, '').replace(/٫/g, '.').replace(/[٬\s$]/g, '')
+    .replace(/[,،](?=\d{3}(?!\d))/g, '').toLowerCase()
     .replace(/(دولارات|دولار|usdt|usd)$/, '')
   const m = /^(\d*\.?\d+)(.*)$/.exec(t)
   if (!m || !(m[2] === '' || m[2] in UNITS)) return 0
@@ -400,7 +401,13 @@ async function render() {
   const t = cleanT($('ticker').value)
   const amount = amountOf()
   store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
-  if (!t) { renderList(); return }
+  if (!t) {
+    current = null
+    renderPickers()
+    renderList()
+    $('out').innerHTML = '<p class="empty">اكتب رمز السهم فوق.</p>'
+    return
+  }
   if (!sectionHash() && hashTicker() !== t) history.replaceState(null, '', '#' + t)
 
   if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
@@ -550,7 +557,7 @@ async function render() {
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
       <p class="note" style="margin-top:0">لكل عقد:<br>
-      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون الأيام الشاذة: اليوم اللي تداول فيه العقد أكثر من 10 أضعاف يومه المعتاد (وأكثر من 20 عقد) صفقة كبيرة وحدة، مو تداول تقدر تبيع فيه.<br>
+      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون الأيام الشاذة: اليوم اللي تداول فيه العقد أكثر من 10 أضعاف يومه المعتاد (وأكثر من 20 عقد) صفقة كبيرة وحدة، مو تداول تقدر تبيع فيه — نستبعد أكبر 3 أيام منها بحد أقصى، لأن أكثر من كذا يعني إن هذا أسلوب تداوله.<br>
       ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
       الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
       <h3>أفضل العقود هنا</h3>
@@ -606,17 +613,24 @@ $('dateChips').addEventListener('click', (e) => { const b = e.target.closest('bu
 // by clicking something fires this before that click lands, so the page is rebuilt only once
 // the pointer is released, or the click would hit an element that no longer exists.
 // On a touchscreen the box is left at the compatibility mousedown that follows the tap, so a
-// mouse press counts too; and a press whose release the page never sees (a context menu)
-// does not hold a setting back for more than a second.
+// mouse press counts too. Only the primary button: a right-click's release can go to a
+// context menu and never reach the page.
 let pressed = false, afterRelease = null
-for (const ev of ['pointerdown', 'mousedown']) document.addEventListener(ev, () => { pressed = true }, true)
+for (const ev of ['pointerdown', 'mousedown']) document.addEventListener(ev, (e) => { if (e.button === 0) pressed = true }, true)
 const release = () => { pressed = false; if (afterRelease) { const f = afterRelease; afterRelease = null; setTimeout(f, 0) } }
 for (const ev of ['pointerup', 'pointercancel', 'mouseup']) document.addEventListener(ev, release, true)
-const whenReleased = (f) => { if (!pressed) return f(); afterRelease = f; setTimeout(() => { if (afterRelease === f) release() }, 1000) }
-// Rebuilding the settings must not throw away where the keyboard was (Tab to the next box).
+const whenReleased = (f) => { if (pressed) afterRelease = f; else f() }
+const openDetails = () => { const d = document.querySelector('details.more'); if (d) d.open = true }
+// Rebuilding the settings must not throw away where the keyboard was (Tab to the next box),
+// and a box it lands in is selected, as Tab selects it, so typing replaces the value.
 const rerender = () => {
-  const key = document.activeElement?.dataset?.adv
-  render().then(() => { document.querySelector('details.more').open = true; if (key) document.querySelector(`[data-adv="${key}"]`)?.focus() })
+  const a = document.activeElement
+  const where = a?.dataset?.adv ? `[data-adv="${a.dataset.adv}"]` : a?.id ? `#${a.id}` : null
+  render().then(() => {
+    openDetails()
+    const el = where && document.querySelector(where)
+    if (el) { el.focus(); el.select?.() }
+  })
 }
 $('out').addEventListener('change', (e) => {
   const k = e.target.dataset?.adv
@@ -636,7 +650,7 @@ $('out').addEventListener('change', (e) => {
 $('out').addEventListener('click', (e) => {
   const d = e.target.closest('[data-setbucket]')
   if (d) { e.preventDefault(); sel = { bucket: d.dataset.setbucket }; render() }
-  if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv3', adv); render().then(() => { document.querySelector('details.more').open = true }) }
+  if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv3', adv); render().then(openDetails) }
 })
 window.addEventListener('hashchange', () => {
   const h = hashTicker()
@@ -695,6 +709,7 @@ fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.jso
   if (j) {
     $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
     $('src').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
+    if (daysToExpiry(todayNY(), nyDate(j.updatedAt)) > 4) $('listSame').textContent = `عمود «يتحمّل» محسوب على بيانات ${fmtExp(nyDate(j.updatedAt))}، فممكن يختلف عن الأداة اللي تحسب المدد من اليوم.`
     // Say it where it is seen when the data is not current: a pass that could not reach the
     // source for most tickers, or no successful pass by the time the next one was due.
     const listed = Object.values(j.tickers).filter((v) => !v.noOptions)
