@@ -119,14 +119,15 @@ export function quoteWindow(now = new Date()) {
 
 /**
  * The moment after which the page should call the data late. The pass runs once a trading
- * day, shortly after the source rolls the previous session at 9:30 New York; the next one is
- * due the next trading day, so the data is late from 12:30 that day.
+ * day, shortly after the source rolls the previous session in at 9:30 New York (a scheduled
+ * start can be late); the next one is due the next trading day, so the data is late from
+ * 14:00 that day.
  */
 export function staleAfter(now) {
   let t = new Date(Math.floor(now.getTime() / 60000) * 60000 + 12 * 3600000)
   for (let i = 0; i < 8 * 1440; i += 1) {
     const c = nyClock(t)
-    if (c && c.m === 750) return t.toISOString()
+    if (c && c.m === 840) return t.toISOString()
     t = new Date(t.getTime() + 60000)
   }
   return null

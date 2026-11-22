@@ -178,7 +178,7 @@ test('--resummarize recomputes ADV from the history and redates a stale chain, w
   assert.equal(idx.tickers.ZZZ.historySessions, 5)
   assert.ok(idx.tickers.ZZZ.caps.C.length === 5)
   assert.deepEqual(idx.tickers.GONE, { noOptions: true })
-  assert.equal(idx.staleAfter, '2026-11-23T17:30:00.000Z', 'Saturday data is due by Monday 12:30 New York')
+  assert.equal(idx.staleAfter, '2026-11-23T19:00:00.000Z', 'Saturday data is due by Monday 14:00 New York')
 })
 
 test('during a partial outage a never-seen ticker is not called option-less', async () => {
@@ -243,11 +243,11 @@ test('the schedule follows the exchange calendar and the 15-minute feed lag', ()
   assert.equal(missDay(at('2026-11-22T15:00:00Z')), '2026-11-20')
   assert.equal(missDay(at('2026-11-26T15:00:00Z')), '2026-11-25')
   assert.equal(missDay(at('2026-11-24T02:40:00Z')), '2026-11-23')
-  // When the page calls the data late: 12:30 New York on the next trading day, after its pass.
-  assert.equal(staleAfter(at('2026-11-23T14:50:00Z')), '2026-11-24T17:30:00.000Z')
-  assert.equal(staleAfter(at('2026-11-23T20:20:00Z')), '2026-11-24T17:30:00.000Z')
-  assert.equal(staleAfter(friClose), '2026-11-23T17:30:00.000Z')
-  assert.equal(staleAfter(at('2026-11-25T14:50:00Z')), '2026-11-27T17:30:00.000Z', 'Thanksgiving skipped; the half day counts')
+  // When the page calls the data late: 14:00 New York on the next trading day, after its pass.
+  assert.equal(staleAfter(at('2026-11-23T14:50:00Z')), '2026-11-24T19:00:00.000Z')
+  assert.equal(staleAfter(at('2026-11-23T20:20:00Z')), '2026-11-24T19:00:00.000Z')
+  assert.equal(staleAfter(friClose), '2026-11-23T19:00:00.000Z')
+  assert.equal(staleAfter(at('2026-11-25T14:50:00Z')), '2026-11-27T19:00:00.000Z', 'Thanksgiving skipped; the half day counts')
 })
 
 test('MarketData chains: delta from the price when the Greeks are missing, closing quotes marked', () => {
