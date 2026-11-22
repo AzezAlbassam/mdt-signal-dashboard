@@ -11,15 +11,18 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, chainDeltas } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, chainDeltas, daysToExpiry } from './engine.js'
 import { pathToFileURL } from 'node:url'
 
 const UA = 'options-liquidity-snapshot/1.0'
 const MARKETDATA = 'https://api.marketdata.app/v1/options/chain'
-// Credits left today, as the source last reported them; a pass stops fetching below RESERVE
-// (the free plan has 100 a day; a large chain costs about one credit per 1,000 contracts).
+// Credits left today, as the source last reported them (the free plan has 100 a day; a dated
+// chain costs 1 credit per 1,000 symbols returned, at least 1).
 export const credits = { remaining: null }
-const RESERVE = 15
+const UNAVAILABLE = 'source unavailable this pass'
+// One address at a time (see fetchChain): the block that follows a change of address is waited
+// out once a pass; main() resets this.
+let blockWaited = false
 
 const readJson = async (p, fallback) => {
   try {
@@ -154,7 +157,7 @@ function chainTime(raw, now) {
 function entryOf(snap, contracts, today) {
   const s = tickerSummary(contracts, today)
   return {
-    price: snap.price, contracts: snap.rows.length, session: snap.session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
+    price: snap.price, ...(snap.priceEstimated && { priceEstimated: true }), contracts: snap.rows.length, session: snap.session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
     tier: s.tier, medianSpread: s.medianSpread == null ? null : Math.round(s.medianSpread * 1000) / 1000,
     capacity: s.capacity, caps: s.caps, oi: s.oi,
   }
@@ -185,16 +188,41 @@ export function rolledSession(now) {
   return null
 }
 
+const RATE = 0.04 // the flat rate engine.js reads deltas with
+
+/**
+ * The underlying's price from put-call parity, S = C − P + K·e^(−rT), for a chain that comes
+ * without it (the HGX index: underlyingPrice null on every row, so no delta can be read).
+ * Read in the nearest expiry at least a week out, at the strikes where call and put are quoted
+ * tightest (nearest the money on a tie): the median of the three tightest, so one stale quote
+ * cannot set it. Index options are European, so parity holds at every strike.
+ * ponytail: no dividend term — about 0.2% a month at a 2% yield, enough for a delta band.
+ */
+function parityPrice(priced, day) {
+  const quoted = new Map(priced.filter((o) => o.mid != null && daysToExpiry(o.expiry, day) >= 7).map((o) => [`${o.root} ${o.expiry} ${o.strike} ${o.type}`, o]))
+  const pairs = []
+  for (const c of quoted.values()) {
+    const p = c.type === 'C' && quoted.get(`${c.root} ${c.expiry} ${c.strike} P`)
+    if (p) pairs.push({ expiry: c.expiry, wide: c.ask - c.bid + p.ask - p.bid, atm: Math.abs(c.mid - p.mid), S: c.mid - p.mid + c.strike * Math.exp(-RATE * c.T) })
+  }
+  const nearest = pairs.map((x) => x.expiry).sort()[0]
+  const best = pairs.filter((x) => x.expiry === nearest).sort((a, b) => a.wide - b.wide || a.atm - b.atm).slice(0, 3)
+  const S = best.length === 3 ? best.map((x) => x.S).sort((a, b) => a - b)[1] : best[0]?.S
+  return S > 0 ? S : null
+}
+
 /**
  * MarketData's columnar chain as the rows chainRows reads. End-of-day chains (the free and
  * trial plans) carry no Greeks, so delta comes from each option's own price. The chain's time
  * is its newest quote; quotes stamped at or after the close are closing quotes (eod), which
- * are wider than the session's and are labelled so.
+ * are wider than the session's and are labelled so. chainSize is every symbol returned (what
+ * the request cost), before any is dropped. `deltas` is chainDeltas; a test passes its own to
+ * see what the method is given.
  */
-export function fromMarketData(j) {
+export function fromMarketData(j, deltas = chainDeltas) {
   const n = j?.s === 'ok' ? j.optionSymbol?.length ?? 0 : 0
   const at = (k, i) => j[k]?.[i] ?? null
-  const S = n ? j.underlyingPrice?.find((x) => x > 0) ?? null : null
+  let S = n ? j.underlyingPrice?.find((x) => x > 0) ?? null : null
   let newest = 0
   for (let i = 0; i < n; i += 1) newest = Math.max(newest, at('updated', i) ?? 0)
   const options = []
@@ -208,15 +236,17 @@ export function fromMarketData(j) {
     const last = at('last', i)
     const stamp = at('updated', i) ?? newest
     const mid = bid > 0 && ask >= bid ? (bid + ask) / 2 : null
-    priced.push({ ...p, T: (Date.parse(`${p.expiry}T21:00:00Z`) - stamp * 1000) / (365 * 86400000), mid, price: mid ?? (last > 0 ? last : null) })
+    priced.push({ ...p, T: (Date.parse(`${p.expiry}T21:00:00Z`) - stamp * 1000) / (365 * 86400000), mid, price: mid ?? (last > 0 ? last : null), bid, ask })
     options.push({
       option: sym, bid, ask, bid_size: at('bidSize', i), ask_size: at('askSize', i), last_trade_price: last,
       volume: at('volume', i), open_interest: at('openInterest', i), iv: at('iv', i), delta: at('delta', i),
       last_trade_time: stamp ? nyDate(new Date(stamp * 1000)) : '',
     })
   }
+  const estimated = S == null && newest ? parityPrice(priced, nyDate(new Date(newest * 1000))) : null
+  S ??= estimated
   if (options.some((o) => o.delta == null)) {
-    const computed = chainDeltas(priced, S)
+    const computed = deltas(priced, S)
     options.forEach((o, i) => { o.delta ??= computed[i] })
   }
   const time = newest ? new Date(newest * 1000) : null
@@ -224,40 +254,56 @@ export function fromMarketData(j) {
   return {
     timestamp: time ? time.toISOString().slice(0, 19).replace('T', ' ') : undefined,
     eod: !c || c.m >= c.close,
+    chainSize: n,
+    ...(estimated != null && { priceEstimated: true }),
     data: { current_price: S, options },
   }
 }
 
-async function fetchChain(ticker, now = new Date()) {
-  // A session's end-of-day chain, asked for by its date: priced per 1,000 contracts, where an
-  // undated request is priced per contract (SPY alone cost 5,029 credits). Expiries a week to
-  // 1,300 days out: the rest is never sized.
+/**
+ * A session's end-of-day chain, asked for by its date: priced per 1,000 symbols, where an
+ * undated request is priced per symbol (SPY alone cost 5,029 credits). Expiries a week to
+ * 1,300 days out: the rest is never sized. `check` asks only for the calls of MarketData's
+ * default expiration (the next monthly after the date): a few hundred symbols, 1 credit.
+ */
+async function fetchChain(ticker, now = new Date(), check = false) {
   const day = rolledSession(now)
-  const url = `${MARKETDATA}/${encodeURIComponent(ticker)}/?date=${day}&expiration=all&from=${addDays(day, 7)}&to=${addDays(day, 1300)}`
+  const which = check ? 'side=call' : `expiration=all&from=${addDays(day, 7)}&to=${addDays(day, 1300)}`
+  const url = `${MARKETDATA}/${encodeURIComponent(ticker)}/?date=${day}&${which}`
   let status = 0
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
+      // A request that hangs is a failed attempt: one dead connection must not hold the pass.
+      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(60000) })
       const left = Number(res.headers.get('x-api-ratelimit-remaining') ?? NaN)
       if (Number.isFinite(left)) credits.remaining = left
       status = res.status
       if (status === 200 || status === 203) return fromMarketData(await res.json())
       const body = await res.json().catch(() => null)
       if (status === 404 && body?.s === 'no_data') throw Object.assign(new Error('no listed options'), { noOptions: true })
-      // The account itself is refused (no key, wrong key, plan): no other ticker will do better.
       // One address at a time: when the network's way out changes, MarketData blocks the
-      // account for five minutes. Wait it out on the same connection, then ask again.
-      if (status === 403 && body?.blockedIP) { await new Promise((r) => setTimeout(r, 330000)); continue }
+      // account for five minutes. Wait it out on the same connection, then ask again — once a
+      // pass: a way out that keeps changing would spend the pass waiting, so a second block
+      // stops it like the day's credits running out, and the rest waits for the next run.
+      if (status === 403 && body?.blockedIP) {
+        if (blockWaited) throw Object.assign(new Error('MarketData blocked the account again: the address changed twice this pass'), { budget: true, blocked: true })
+        blockWaited = true
+        await new Promise((r) => setTimeout(r, 330000))
+        continue
+      }
+      // The account itself is refused (no key, wrong key, plan): no other ticker will do better.
       if (status === 401 || status === 402 || status === 403) throw Object.assign(new Error(`MarketData refused the account (${status} ${body?.errmsg ?? ''})`.trim()), { fatal: true })
-      if (status === 429) throw Object.assign(new Error("MarketData's daily credits are used up (they reset at 9:30 New York)"), { budget: true })
+      if (status === 429) throw Object.assign(new Error(CREDITS_GONE), { budget: true })
     } catch (e) {
       if (e.noOptions || e.fatal || e.budget) throw e
-      status = String(e.cause?.code ?? e.message)
+      status = e.name === 'TimeoutError' ? 'no answer in 60 s' : String(e.cause?.code ?? e.message)
     }
     await new Promise((r) => setTimeout(r, 5000 * attempt))
   }
   throw new Error(`MarketData did not answer (${status})`)
 }
+
+const CREDITS_GONE = "MarketData's daily credits are used up (they reset at 9:30 New York)"
 
 export async function snapshotTicker(ticker, dataDir, now) {
   const raw = await fetchChain(ticker, now)
@@ -268,10 +314,11 @@ export async function snapshotTicker(ticker, dataDir, now) {
   // at zero and still pass validation: count it as a failed fetch, keep the last snapshot.
   // (A field that is there but zero is real: some small chains have no quotes at all.)
   const listed = raw?.data?.options ?? []
-  for (const k of ['bid', 'ask']) if (listed.length >= 20 && !listed.some((o) => o[k] != null)) throw new Error(`chain came back without ${k} prices`)
+  for (const [k, what] of [['bid', 'bid prices'], ['ask', 'ask prices'], ['open_interest', 'open interest']]) {
+    if (listed.length >= 20 && !listed.some((o) => o[k] != null)) throw new Error(`chain came back without ${what}`)
+  }
   const quoted = rows.filter((r) => r.bid > 0)
   if (quoted.filter((r) => r.delta == null).length > quoted.length / 2) throw new Error('chain came back without deltas')
-  if (rows.length >= 20 && rows.every((r) => !r.oi)) throw new Error('chain came back without open interest')
 
   // History: one figure per contract per session, the day's final volume.
   const histPath = join(dataDir, 'history', `${ticker}.json`)
@@ -314,6 +361,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const snap = {
     ticker,
     price,
+    ...(raw.priceEstimated && { priceEstimated: true }), // from put-call parity: the source sent no price
     cboeTimestamp: raw.timestamp ?? null,
     fetchedAt: now.toISOString(),
     quotesFrom,
@@ -327,7 +375,8 @@ export async function snapshotTicker(ticker, dataDir, now) {
     rows: out,
   }
   await writeFile(join(dataDir, `${ticker}.json`), JSON.stringify(snap))
-  return entryOf(snap, contracts, today)
+  // The chain's size prices its next request (see main).
+  return { ...entryOf(snap, contracts, today), chainSize: raw.chainSize }
 }
 
 /**
@@ -364,6 +413,11 @@ export async function resummarize(ticker, dataDir) {
 }
 
 export async function main() {
+  // A pass must end, be saved and be flagged well inside the scheduled session's limits. Its
+  // 40 minutes count from here, so the source check, a block waited out and the retries all
+  // come out of them; past the budget nothing new is fetched.
+  const budget = Date.now() + 40 * 60000
+  blockWaited = false
   const [dataDir, ...rest] = process.argv.slice(2)
   if (rest.includes('--plan')) {
     const idx = await readJson(join(dataDir ?? '.', 'index.json'), null)
@@ -421,11 +475,35 @@ export async function main() {
     : { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), staleAfter: staleAfter(now), marketOpen: marketOpen(now), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
+  // An end-of-day chain is final once its session has rolled in: a ticker that already has that
+  // session (and no error) is not asked again, and one without options is asked once a session,
+  // so the day's second run and runs on weekends and holidays cost nothing. --only always asks.
+  const rolled = rolledSession(now)
+  const current = (t) => {
+    const p = prevIndex.tickers?.[t]
+    return p?.noOptions ? p.checked === rolled : Boolean(p && p.session === rolled && !p.error && !p.pending)
+  }
+  const due = only.length ? targets : targets.filter((t) => !current(t))
+  // Nothing refreshed, so the clocks stay; only a removal changes the index, and it must still
+  // reach the page (its snapshot is gone).
+  const unchanged = async (why) => {
+    console.log(`nothing to refresh: ${why}`)
+    if (Object.keys(index.tickers).length !== Object.keys(prevIndex.tickers ?? {}).length) {
+      await writeFile(join(dataDir, 'index.json'), JSON.stringify({ ...prevIndex, tickers: index.tickers }, null, 2))
+    }
+  }
+  if (!due.length) {
+    await unchanged(only.length ? 'none of the --only tickers is on the list' : `every ticker already has session ${rolled}`)
+    return
+  }
+  if (due.length < targets.length) console.log(`${targets.length - due.length} tickers already have session ${rolled}: not asked again`)
+
   const outageExit = async (why) => {
-    for (const t of watchlist) {
+    // Only what this pass set out to refresh is flagged: a ticker with the newest session lacks nothing.
+    for (const t of due) {
       const prev = prevIndex.tickers?.[t]
       if (index.tickers[t] !== prev) continue // refreshed before the source went away
-      index.tickers[t] = prev?.noOptions ? prev : { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }
+      index.tickers[t] = prev?.noOptions ? prev : { ...(prev ?? { pending: true }), error: UNAVAILABLE }
     }
     index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
     index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
@@ -439,10 +517,10 @@ export async function main() {
   // the whole pass (below).
   const wasListed = (t) => { const p = prevIndex.tickers?.[t]; return Boolean(p && !p.noOptions && p.price != null) }
   const age = (t) => { const p = prevIndex.tickers?.[t]; return p?.noOptions ? '~' : p?.fetchedAt ?? '' }
-  const queue = [...targets].sort((a, b) => (age(a) < age(b) ? -1 : age(a) > age(b) ? 1 : 0)) // not localeCompare: it puts '~' first
+  const queue = [...due].sort((a, b) => (age(a) < age(b) ? -1 : age(a) > age(b) ? 1 : 0)) // not localeCompare: it puts '~' first
   let noOptions = 0
-  let stop = null // why fetching ended early: the account refused, or no credits left today
-  const failed = []
+  let stop = null // why fetching ended early: the account refused, no credits left today, or a second block
+  const failed = [] // [ticker, its first error]
   const lost = []
   const unseen = []
   const attempted = []
@@ -460,38 +538,52 @@ export async function main() {
     }
   }
 
-  // SPY answers for the source before anything else is fetched: if it is refused, comes back
-  // without a chain, or the day's credits are already gone, nothing can be refreshed — keep
-  // everything as it is.
-  if (queue.includes('SPY')) {
-    queue.splice(queue.indexOf('SPY'), 1)
-    const r = await run('SPY')
-    if (stop || r !== true || lost.includes('SPY') || unseen.includes('SPY')) {
-      await outageExit(`no chain for SPY (${stop?.message ?? r?.message ?? 'no listed options'})`)
-      return
-    }
+  // One small request answers for the source before anything else is asked: the calls of one
+  // SPY expiration, 1 credit where SPY's whole chain costs about 10. If it is refused or comes
+  // back empty, nothing can be refreshed: keep everything as it is, flagged. The day's credits
+  // already gone is not the source gone: nothing is flagged or written until they reset. SPY
+  // itself waits its turn in the queue. (--only answers for itself.)
+  if (!only.length) {
+    const why = await fetchChain('SPY', now, true).then((raw) => (raw.data.options.length ? null : new Error('no listed options')), (e) => e)
+    if (why?.budget && !why.blocked) { await unchanged(why.message); return }
+    if (why) { await outageExit(`no chain for SPY (${why.message})`); return }
   }
 
-  // A pass that runs into a slow source must still end, be saved and be flagged, well
-  // inside the job's time limit: past this budget nothing new is fetched.
-  const budget = Date.now() + 40 * 60000
-  const more = () => !stop && Date.now() < budget && !(credits.remaining != null && credits.remaining < RESERVE)
+  // What a chain will cost: 1 credit per 1,000 symbols it came back with last time; before
+  // that, from the contracts kept (about 6 in 10 of the symbols returned), with one to spare.
+  const cost = (t) => {
+    const p = prevIndex.tickers?.[t]
+    return Math.max(1, p?.chainSize != null ? Math.ceil(p.chainSize / 1000) : Math.ceil((p?.contracts ?? 0) / 600) + 1)
+  }
+  // MarketData serves any request while 1 credit is left, whatever it then costs, so every
+  // fetch leaves 1 for the next run's check. One too dear for what is left is skipped and the
+  // cheaper ones behind it still go: no fixed reserve sits unspent at the end of the day.
+  const affordable = (t) => credits.remaining == null || credits.remaining >= cost(t) + 1
+  const more = () => !stop && Date.now() < budget && !(credits.remaining != null && credits.remaining < 2)
   const worker = async () => {
-    while (queue.length && more()) {
-      const t = queue.shift()
-      if ((await run(t)) !== true) failed.push(t)
+    while (more()) {
+      const i = queue.findIndex(affordable)
+      if (i < 0) break
+      const [t] = queue.splice(i, 1)
+      const r = await run(t)
+      if (r !== true) failed.push([t, r])
     }
   }
   // One request at a time, so they share one connection and one address (see fetchChain).
   await Promise.all(Array.from({ length: 1 }, worker))
   if (stop?.fatal) { await outageExit(stop.message); return }
-  // What the day's credits did not reach keeps its last data and goes first next time.
+  // What the pass did not reach keeps its last data and goes first next time. The day's credits
+  // stopping it is the free plan's rotation working as meant; a second block or the time
+  // budget means the pass did not do its job (see incomplete, below).
+  const creditStop = stop ? !stop.blocked : credits.remaining != null && (credits.remaining < 2 || !queue.some(affordable))
+  if (creditStop && !attempted.length) { await unchanged(CREDITS_GONE); return } // the check took the last of them
+  const short = stop?.message ?? (creditStop ? `${credits.remaining} credits left` : null)
   const waiting = queue.splice(0)
-  if (waiting.length) console.log(`${waiting.length} tickers wait for the next pass (${stop?.message ?? (credits.remaining != null && credits.remaining < RESERVE ? `${credits.remaining} credits left` : 'time budget')})`)
+  if (waiting.length) console.log(`${waiting.length} tickers wait for the next pass (${short ?? 'time budget'})`)
   let failures = 0
-  for (const t of failed) {
-    let r = new Error('not reached within the time budget')
-    if (more()) {
+  for (const [t, first] of failed) {
+    let r = first
+    if (more() && affordable(t)) {
       await new Promise((res) => setTimeout(res, 1500))
       r = await run(t)
       if (r === true) continue
@@ -516,35 +608,50 @@ export async function main() {
   }
   for (const t of lost) {
     const prev = prevIndex.tickers[t]
-    if (outage) { index.tickers[t] = { ...prev, error: 'source unavailable this pass' }; continue }
+    if (outage) { index.tickers[t] = { ...prev, error: UNAVAILABLE }; continue }
     const m = miss(prev)
     if (m.misses < 3) { index.tickers[t] = { ...prev, error: 'no chain returned', ...m }; continue }
     noOptions += 1
-    index.tickers[t] = { noOptions: true }
+    index.tickers[t] = { noOptions: true, checked: rolled }
     await rm(join(dataDir, `${t}.json`), { force: true })
   }
   // A ticker never seen with a chain (a newly added one) stays pending: during an outage the
   // answer says nothing, and otherwise it takes empty answers on three trading days — the
-  // source also answers empty, now and then, for a symbol that has options.
+  // source also answers empty, now and then, for a symbol that has options. One known to have
+  // none records the session it was asked for, so it is asked once a session.
   for (const t of unseen) {
     const prev = prevIndex.tickers?.[t]
-    if (prev?.noOptions) { index.tickers[t] = prev; continue }
-    if (outage) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
+    if (prev?.noOptions) { index.tickers[t] = outage ? prev : { ...prev, checked: rolled }; continue }
+    if (outage) { index.tickers[t] = { ...(prev ?? { pending: true }), error: UNAVAILABLE }; continue }
     const m = miss(prev)
     if (m.misses < 3) { index.tickers[t] = { ...(prev ?? {}), pending: true, error: 'no chain returned', ...m }; continue }
     noOptions += 1
-    index.tickers[t] = { noOptions: true }
+    index.tickers[t] = { noOptions: true, checked: rolled }
     await rm(join(dataDir, `${t}.json`), { force: true })
   }
-  if (outage) {
+  // A pass the time budget or a second block stopped before it asked for half of what it set
+  // out to did not do its job: the page keeps the last full update's time, and calls the data
+  // late when it is.
+  const incomplete = !outage && !creditStop && waiting.length > due.length / 2
+  if (outage || incomplete) {
     index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
     index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
+  } else if (!only.length) {
+    // The source answered, so a ticker this pass did not reach is only waiting its turn (the
+    // page dates each one). Left flagged, one outage would hold the "last update failed" banner
+    // until the rotation came round to every ticker: about 11 days on the free plan.
+    for (const [t, e] of Object.entries(index.tickers)) {
+      if (e.error === UNAVAILABLE) { const { error, ...rest } = e; index.tickers[t] = rest }
+    }
   }
   console.log(`retried ${failed.length} after throttling`)
-  console.log(`${attempted.length} of ${targets.length} tickers fetched: ${attempted.length - failures - lost.length - unseen.length} with options, ${unseen.length} with none returned (${noOptions} now marked without), ${lost.length} lost their chain, ${failures} failed; credits left ${credits.remaining ?? 'unknown'}`)
-  if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed`)
+  // Exactly one summary line per pass: this one, OUTAGE:, INCOMPLETE: or "nothing to refresh:".
+  const counts = `${attempted.length} of ${due.length} tickers fetched: ${attempted.length - failures - lost.length - unseen.length} with options, ${unseen.length} with none returned (${noOptions} now marked without), ${lost.length} lost their chain, ${failures} failed; credits left ${credits.remaining ?? 'unknown'}`
+  if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed (${counts})`)
+  else if (incomplete) console.log(`INCOMPLETE: ${short ?? 'the time budget ran out'}, with ${waiting.length} of ${due.length} tickers not asked; the last full update's time is kept (${counts})`)
+  else console.log(counts)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
-  if (outage || failures > targets.length / 2) process.exitCode = 1
+  if (outage || incomplete || failures > targets.length / 2) process.exitCode = 1
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main()
