@@ -1,4 +1,4 @@
-// Merge quarter-average closes (FMP, fetched by agents into part-*.jsonl) into data/shariah/quarter-prices.json.
+// Merge quarter-average closes (FMP or TradingView, fetched by agents into part-*.jsonl) into data/shariah/quarter-prices.json.
 //   node scripts/shariah/merge-quarter-prices.js <part.jsonl ...>
 // Checks each entry: at least 40 trading days, dates inside the quarter, min <= avg <= max, and the average within 40%
 // of the price in the fund's own N-PORT report (a larger gap usually means a share split after the quarter, which
@@ -21,15 +21,17 @@ const prices = {}, rejected = [];
 for (const file of process.argv.slice(2)) {
   for (const line of readFileSync(file, 'utf8').trim().split('\n').filter(Boolean)) {
     const q = JSON.parse(line);
-    const why = q.error ? `FMP: ${q.error}` : !(q.n >= 40) ? `only ${q.n} days`
+    const why = q.error ? `${q.source ?? 'FMP'}: ${q.error}` : !(q.n >= 40) ? `only ${q.n} days`
       : !(q.first >= q.start && q.last <= q.end) ? 'dates outside the quarter'
       : !(q.min <= q.avg && q.avg <= q.max && q.avg > 0) ? 'average outside min..max'
       : nportPrice.has(q.t) && Math.abs(q.avg / nportPrice.get(q.t) - 1) > 0.4 ? `average ${q.avg.toFixed(2)} vs fund-report price ${nportPrice.get(q.t).toFixed(2)}`
       : null;
     if (why) rejected.push({ t: q.t, why });
-    else prices[q.t] = { start: q.start, end: q.end, avg: q.avg, n: q.n, first: q.first, last: q.last };
+    else prices[q.t] = { start: q.start, end: q.end, avg: q.avg, n: q.n, first: q.first, last: q.last, source: q.source ?? 'FMP' };
   }
 }
-writeFileSync('data/shariah/quarter-prices.json', JSON.stringify({ built: new Date().toISOString(), source: 'FMP historical-price-eod-light: daily close, split-adjusted; average over the company\'s own latest quarter', prices, rejected }, null, 1));
-console.log(`quarter prices: ${Object.keys(prices).length} accepted, ${rejected.length} rejected`);
-for (const r of rejected) console.log('  rejected', r.t, '-', r.why);
+// a ticker that one source refused and another delivered is not a rejection
+const rejectedFinal = rejected.filter((r) => !prices[r.t]);
+writeFileSync('data/shariah/quarter-prices.json', JSON.stringify({ built: new Date().toISOString(), source: 'daily closes, split-adjusted, averaged over the company\'s own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)', prices, rejected: rejectedFinal }, null, 1));
+console.log(`quarter prices: ${Object.keys(prices).length} accepted, ${rejectedFinal.length} rejected`);
+for (const r of rejectedFinal) console.log('  rejected', r.t, '-', r.why);
