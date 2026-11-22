@@ -480,6 +480,28 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('FUNDS CHECK:', okFunds ? 'ok' : 'FAILED', JSON.stringify({ want6, smh: { bad: smh.badWeight, pur: smh.purificationPct, state: smh.state }, ...fv }))
   if (!okFunds) process.exitCode = 1
   { const el = await page.$('#fundsView .fcard.open'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-funds.png') }) } }
+  // (7) Review 2026-11-22. The 150-day limit (A7) is checked on the viewer's date in Riyadh, not only when the data was
+  // built: at 00:30 Riyadh on the 151st day of the oldest holdings (still the 150th in UTC) that fund is not judged.
+  // Rows of activities under review say so; the method text names the book-value fallback and no single price source;
+  // the purification coverage and the look-through illicit share are the data's own figures.
+  const withRows = FD.funds.filter((f) => f.rows)
+  const oldest = withRows.map((f) => f.as_of).sort()[0]
+  const day = new Date(Date.parse(oldest) + (FD.maxAgeDays + 1) * 864e5).toISOString().slice(0, 10)
+  await page.clock.setFixedTime(new Date(`${day}T00:30:00+03:00`))
+  await page.goto('file://' + file); await page.waitForTimeout(2500)
+  await page.click('#tab-funds'); await page.waitForTimeout(200)
+  const ageOf = (d) => Math.round((Date.parse(day) - Date.parse(d)) / 864e5)
+  const heads = await page.$$eval('#fundsView .fcard .fhead', (bs) => Object.fromEntries(bs.map((b) => [b.dataset.fund, b.innerText.replace(/\s+/g, ' ')])))
+  const ageBad = withRows.filter((f) => (ageOf(f.as_of) > FD.maxAgeDays
+    ? !(heads[f.sym] ?? '').includes('ما ينحكم') || !(heads[f.sym] ?? '').includes('أقدم من') : !(heads[f.sym] ?? '').includes(f.state))).map((f) => f.sym)
+  const rv = withRows.find((f) => f.rows.some((x) => x.k === 'equity' && (x.why ?? []).includes('activity')))
+  await page.click(`button[data-fund="${rv.sym}"]`); await page.waitForTimeout(200)
+  const t7 = await page.evaluate(() => ({ card: document.querySelector('#fundsView .fcard.open')?.innerText.replace(/\s+/g, ' ') ?? '', method: document.querySelector('#fundsView .shmore')?.textContent ?? '' }))
+  const cov = rv.purificationCoveredWeight, lt = rv.illicitCoveredWeight > 0 ? rv.illicitLookThrough / rv.illicitCoveredWeight : null
+  const ok7 = ageBad.length === 0 && t7.card.includes('النشاط يحتاج مراجعة') && t7.method.includes('القيمة الدفترية') && !t7.method.includes('FMP')
+    && (cov >= 0.995 || t7.card.includes(`التطهير محسوب على ${f1(100 * cov, 1)}٪`)) && (lt == null || t7.card.includes(`${f1(100 * lt, 2)}٪`))
+  console.log('FUNDS REVIEW CHECK:', ok7 ? 'ok' : 'FAILED', JSON.stringify({ day, oldest, ageBad, fund: rv.sym, cov, lt, card: t7.card.slice(0, 400) }))
+  if (!ok7) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

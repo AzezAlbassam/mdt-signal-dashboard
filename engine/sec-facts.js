@@ -20,6 +20,11 @@ const LOANS = ['FinancingReceivableExcludingAccruedInterestAfterAllowanceForCred
 const CASH = ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents', 'Cash'];
 const SEC_CUR = ['MarketableSecuritiesCurrent', 'ShortTermInvestments', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'];
 const SEC_NONCUR = ['MarketableSecuritiesNoncurrent', 'AvailableForSaleSecuritiesDebtSecuritiesNoncurrent'];
+// the same securities tagged only as a total (KLA: 3.2B available for sale, review 2026-11-22)
+const SEC_TOTAL = ['AvailableForSaleSecuritiesDebtSecurities', 'MarketableSecurities'];
+// short-term borrowing lines; alternatives for the same money, so the largest counts (review 2026-11-22: securitisation
+// at Corpay, lines of credit at Global Payments, other borrowings at Charter)
+const SHORT = ['ShortTermBorrowings', 'CommercialPaper', 'OtherShortTermBorrowings', 'ShortTermBankLoansAndNotesPayable', 'LinesOfCreditCurrent', 'SecuredDebtCurrent'];
 
 // Three-month facts of one tag (latest filing per period) plus Q4 derived from the annual figure.
 function quartersOfTag(ns, tag, unit, derive = true) {
@@ -62,24 +67,31 @@ export function instantAt(ns, tags, date, unit = 'USD') {
 // ponytail: tags that bundle finance leases with debt (LongTermDebtAndCapitalLeaseObligations...) overstate it: stricter.
 export function debtAt(ns, date) {
   const v = tags => instantAt(ns, [].concat(tags), date);
-  const st = Math.max(v('ShortTermBorrowings') ?? 0, v('CommercialPaper') ?? 0);
+  const st = Math.max(0, ...SHORT.map(t => v(t) ?? 0));
   const fin = v('FinanceLeaseLiability') ?? ((v('FinanceLeaseLiabilityCurrent') ?? 0) + (v('FinanceLeaseLiabilityNoncurrent') ?? 0));
   const op = v('OperatingLeaseLiability') ?? ((v('OperatingLeaseLiabilityCurrent') ?? 0) + (v('OperatingLeaseLiabilityNoncurrent') ?? 0));
   const leases = fin + op;
   let borrowings = v('DebtLongtermAndShorttermCombinedAmount');
+  const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
+  const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
+  const curLtd = v(['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent']);
   if (borrowings == null) {
-    const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
-    const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
     const cur = v(['LongTermDebtCurrent', 'DebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent', 'NotesPayableCurrent']);
     // A short-term line equal (within 2%) to the current portion of long-term debt is that same money tagged twice
     // (IBM: "short-term debt" 7.013B includes the 7.009B current portion): count it once. Different amounts add up.
-    const curLtd = v(['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent']);
     const same = (a, b) => a > 0 && b > 0 && Math.abs(a - b) <= 0.02 * Math.max(a, b);
     const stAdd = same(st, curLtd) || same(st, cur) ? 0 : st;
     if (lt != null) borrowings = lt + stAdd;
     else if (nonCur != null && cur != null) borrowings = nonCur + cur + stAdd;
     // Only short-term lines (G6.1: BAX, TMUS, ORA, DE): the long-term debt is under another tag, so the figure is
     // incomplete and the liabilities upper bound is used instead.
+  }
+  // DebtCurrent is the balance sheet's whole current debt; commercial paper inside it is often tagged only on an axis
+  // (Cisco 2026-10-24: 8.4B). Debt is never less than noncurrent + DebtCurrent, or LongTermDebt + the rest of DebtCurrent.
+  const dc = v('DebtCurrent');
+  if (borrowings != null && dc != null) {
+    if (nonCur != null) borrowings = Math.max(borrowings, nonCur + dc);
+    if (lt != null && curLtd != null && dc > curLtd) borrowings = Math.max(borrowings, lt + dc - curLtd);
   }
   // ponytail: debt under a company's own (custom) tag is missed; the G3 hand check samples for it.
   return { debt: borrowings, parts: { borrowings, leases } };
@@ -112,7 +124,8 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   if (int == null && !hasLoans) {
     const bal = d => {
       const c = instantAt(g, CASH, d);
-      return c == null ? null : c + Math.max(0, ...SEC_CUR.map(t => instantAt(g, [t], d) ?? 0)) + Math.max(0, ...SEC_NONCUR.map(t => instantAt(g, [t], d) ?? 0));
+      const parts = Math.max(0, ...SEC_CUR.map(t => instantAt(g, [t], d) ?? 0)) + Math.max(0, ...SEC_NONCUR.map(t => instantAt(g, [t], d) ?? 0));
+      return c == null ? null : c + Math.max(parts, ...SEC_TOTAL.map(t => instantAt(g, [t], d) ?? 0));
     };
     const prevEnd = quarterFacts(g, REVENUE).at(-2)?.end;
     const end = bal(rev.end), start = prevEnd ? bal(prevEnd) : null;
@@ -128,7 +141,8 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const liabilities = instantAt(g, ['Liabilities'], rev.end) ?? (le != null && se != null ? le - se : null);
   const deiShares = (dei.EntityCommonStockSharesOutstanding?.units?.shares ?? []).filter(x => x.end >= rev.end && days(rev.end, x.end) <= 120)
     .reduce(latestFiled, null);
-  const wavg = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares', false).find(x => x.end === rev.end);
+  const wq = quarterFacts(g, ['WeightedAverageNumberOfSharesOutstandingBasic'], 'shares', false);
+  const wi = wq.findIndex(x => x.end === rev.end), wavg = wq[wi], wPrev = wi > 0 && days(wq[wi - 1].end, rev.end) <= 100 ? wq[wi - 1] : null;
   // Market value uses the smaller count (G6.4): a split or new shares after the quarter can only lower it (stricter).
   // A count 50x away from the other is a unit error (TEM reports thousands) and is dropped.
   // Implied count = net income / EPS of the quarter, when both are there and not tiny: a count 50x away is a unit error.
@@ -142,6 +156,9 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // nothing usable tagged: net income / EPS, only when EPS is large enough that its rounding to the cent costs < 2.5%
   if (!sane.length && !(c > 0 && w > 0) && implied && Math.abs(eps) >= 0.2) sane.push(implied);
   const sharesMV = sane.length ? Math.min(...sane) : null;
+  // a split (or a merger) between the last two quarters: the count moved 1.5x or more; prices from before it are on
+  // another basis (CrowdStrike 4:1, review 2026-11-22)
+  const ratio = w > 0 && wPrev?.val > 0 ? w / wPrev.val : null;
   return {
     name: cf.entityName, period, revenue: rev.val, revenueTag: rev.tag,
     illicit, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
@@ -151,5 +168,6 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     // purification is owed per share held when the statements are issued: the cover-page count
     shares: c > 0 && sane.includes(c) ? c : sharesMV, sharesMV,
     sharesSource: c > 0 && sane.includes(c) ? 'cover' : w > 0 && sane.includes(w) ? 'weighted' : sharesMV != null ? 'implied' : null,
+    splitRatio: ratio && (ratio >= 1.5 || ratio <= 1 / 1.5) && near(ratio, 1) ? ratio : null, // 50x+: a unit error, not a split
   };
 }

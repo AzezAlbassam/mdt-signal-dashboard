@@ -3,6 +3,7 @@
 The scheduled task "تحديث الشرعية الأسبوعي" (every Saturday 01:17 Riyadh, bound to the audit session) sends a pointer to
 this file. Change the steps here, not in the scheduled task.
 2026-11-21: created (owner: "ابدا في التحديث الاسبوعي"); funds added to step 4 the same day.
+2026-11-22: step 4b reads the repo's saved daily bars first (scripts/shariah/bars-quarter-prices.js).
 
 ---
 
@@ -31,7 +32,8 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    t[]/c[] arrays, never by hand; one JSON line per ticker with "source": "TradingView" appended to
    <scratchpad>/qp/part-tv-K.jsonl, or an error line; stop on a quota message). FMP's plan refuses most symbols, so
    it is not used. TradingView and FMP gave the identical DIS average (102.2937 over 68 days) on 2026-11-22.
-   Then `node scripts/shariah/merge-quarter-prices.js <scratchpad>/qp/part-*.jsonl` (it rejects short, out-of-window or
+   First `node scripts/shariah/bars-quarter-prices.js > <scratchpad>/qp/part-bars.jsonl` (quarters already covered by the
+   repo's saved daily bars need no call). Then `node scripts/shariah/merge-quarter-prices.js <scratchpad>/qp/part-*.jsonl` (it rejects short, out-of-window or
    split-distorted averages) and rerun `node scripts/shariah/fund-load.js --reuse`, which must exit 0.
 5. `node scripts/shariah/diff-inputs.mjs <scratchpad>/sec-inputs.prev.json data/shariah/sec-inputs.json`: keep the
    result for the reply.

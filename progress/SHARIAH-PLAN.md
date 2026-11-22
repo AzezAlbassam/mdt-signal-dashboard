@@ -524,3 +524,43 @@ switch to 33% with max(quarter-average MV, EV)), and whether to send Al Rajhi th
 - Known limits shown on the page: foreign annual filers (TSMC, ASML, SK hynix, ARM) and combined-report utilities
   (AEP, XEL, EXC) are not judged; activities under review (Walmart, Costco, Netflix, tobacco, REITs) stay «ما ينحكم»
   until phase 2; the fund's own securities-lending income and cash interest are not in the purification.
+
+### M12. Funds review before publishing (2026-11-22) — 34 findings, 33 reproduced; fixes are POST-HOC, tests first
+Independent review: four lenses (code logic, matching, hand check of SMH/XLK, rules and page claims), each finding then
+reproduced by a separate skeptic (scripts and outputs in the session scratchpad, review-funds/). Fixed, each with a test
+written first (test/funds.test.js, test/sec-facts.test.js "review:", browser "FUNDS REVIEW CHECK"):
+- Matching (high): funds abroad report home-market tickers (UMMA, CHAT, SPTE, CIBR): Roche "ROP" was screened as Roper,
+  Richemont "CFR" as Cullen/Frost, Sanofi "SAN" as Santander; UMMA's Toronto "ABX" travelled by ISIN to GDX's Barrick
+  (7.95%) as Abacus. A reported ticker or an ISIN now counts only for a US holding or when the SEC title shares a name
+  word; then the name step (Sanofi → SNY, Barrick → B, CNR → CNI). Measured on all 2,973 equity holdings: 34 changes,
+  all correct except two now unmatched (TSMC under "TSMC", a 20-F filer either way; ARKK's renamed Brera, 0.02%).
+- Names: SEC's backslash and spaced state suffixes (US Bancorp, MP Materials), a place after the legal form (Energy
+  Fuels Inc/Canada), dotted N.V./S.A. (STMicroelectronics, Bunge); GROUP is no longer dropped (Compass Group ≠ Compass).
+- Purification (high): unknown interest gave purification 0, not unknown (JavaScript null >= 0), which hid the coverage
+  note (XLK 98.4% covered, not 99.95%). Coverage is now the weight of holdings with a figure.
+- MAGS: swap values counted by absolute value pushed the list over 100.5%, so 65% bills and money funds showed «ما ينحكم».
+  The 100.5% check uses signed weights. Weights are value ÷ net assets (SPRE lists two $0.03 lines at -1.41%).
+- Band: one band per company across every fund's report price (LUV, HONA, IT passed in one fund on a price another fund's
+  in-quarter price contradicts). A split between the last two quarters (shares moved 1.5x+: CrowdStrike 4:1, Amphenol
+  and Monster 2:1) leaves the price basis open by its ratio, for the band and the quarter average; purification takes the
+  lower market value. Row reasons are those failing at both band ends (AXP showed "debt over 30%"). Purification uses the
+  report price behind the weight; the quarter average decides only the debt test.
+- Debt never understated: max with noncurrent + DebtCurrent and with LongTermDebt + (DebtCurrent − its current portion)
+  (Cisco 21.4B → 29.8B, KDP, Corteva, Qualcomm); securitisation, lines of credit and other short-term borrowing tags read.
+- Interest estimate: debt securities tagged only as a total count (KLA's 3.2B available for sale; estimate 23M → ~67M).
+- Found when checking the first rerun: a share count 1000x the previous quarter's (Geron, Iovance: one quarter tagged in
+  thousands) was taken as a split, and their purification came out above 100% of the holding. A ratio beyond 50x is a
+  unit error, not a split (Chipotle's 50:1 is the largest kept). Test first.
+- Page: the 150-day limit is re-checked on the viewer's Riyadh date (XLK's 06-30 holdings turn 151 days on 2026-11-28,
+  still the 27th in UTC); the loader also uses Riyadh's date. Activities under review say so; an interest bound above 5%
+  says so (not "missing"); combined interest tags say "combined", not "estimated"; the method names the book-value
+  fallback and no single price source; the look-through illicit share (E3) is shown for reference (a share above 100% —
+  fee-only revenue tags of lenders — counts as 100%); the stock page explains such a share.
+- Quarter averages also come from the daily bars already in the repo (data/us/bars, TradingView 1D, last bar 2026-10-06;
+  the 16 fetched averages match them exactly): scripts/shariah/bars-quarter-prices.js, then the same merge checks.
+Not fixed, on the cautious side (documented): AMAT's short-term debt includes its current notes (+18%); NXP tags its
+2.0B commercial-paper programme size as CommercialPaper (+18%); AMD/MU/MSFT interest taken from estimates, not their
+own "interest income" lines (known since M4; +42-82% purification); AVGO debt at principal; INTC/AVGO the smaller share
+count; SNDK's upper bound. Renamed companies whose N-PORT name is the old one (BlackRock Funding, Hartford, Equity
+Residential, Franklin, Paramount) stay unmatched, i.e. not judged. A box-spread fund held as a share (MAGS's XBOX) stays
+not judged (finding refuted: no rule covers it). No fund verdict changed from any of the unfixed points.

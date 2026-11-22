@@ -208,3 +208,39 @@ test('debt: a short-term line equal to the current portion of long-term debt is 
   // different amounts are different debts (commercial paper beside the current portion): both count
   assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], CommercialPaper: [i(d, 2)] }), d).debt, 102);
 });
+
+// ---- Independent review of the funds tab, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M12) ----
+test('review: debt is never less than noncurrent + DebtCurrent (Cisco: commercial paper only inside DebtCurrent)', () => {
+  const d = Q[1];
+  // Cisco 2026-10-24: LongTermDebt 21,375 (incl. 2,001 current), noncurrent 19,374, DebtCurrent 10,425 (incl. CP 8,424)
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 21375)], LongTermDebtNoncurrent: [i(d, 19374)], LongTermDebtCurrent: [i(d, 2001)], DebtCurrent: [i(d, 10425)] }), d).debt, 29799);
+  // KDP: noncurrent + LongTermDebtCurrent 2,840 misses the paper and the term loan inside DebtCurrent 7,270
+  assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 21595)], LongTermDebtCurrent: [i(d, 2840)], DebtCurrent: [i(d, 7270)] }), d).debt, 21595 + 7270);
+  // LongTermDebt plus the part of DebtCurrent that is not its own current portion
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], DebtCurrent: [i(d, 25)] }), d).debt, 115);
+  // QCOM: a combined principal below the balance sheet's two lines
+  assert.equal(debtAt(ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 14613)], LongTermDebtNoncurrent: [i(d, 12620)], DebtCurrent: [i(d, 2492)] }), d).debt, 15112);
+  // other short-term lines: securitisation (Corpay), lines of credit (Global Payments), other borrowings (Charter)
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], SecuredDebtCurrent: [i(d, 7)] }), d).debt, 107);
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], LinesOfCreditCurrent: [i(d, 4)] }), d).debt, 104);
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], OtherShortTermBorrowings: [i(d, 3)] }), d).debt, 103);
+});
+const Q0 = ['2026-01-01', '2026-03-31'];
+test('review: the interest estimate covers debt securities tagged only as a total (KLA: 3.2B available for sale)', () => {
+  const r = secInputs(company(ns({
+    Revenues: [f(...Q0, 900), f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q0[1], 100), i(Q[1], 100)],
+    AvailableForSaleSecuritiesDebtSecurities: [i(Q0[1], 300), i(Q[1], 300)],
+  })), { yieldPct: 5 });
+  assert.equal(r.illicitEstimated, true); assert.ok(Math.abs(r.illicit - 400 * 0.05 * 91 / 365) < 1e-9);
+});
+test('review: a share count 1.5x or more away from the previous quarter flags a split (CrowdStrike 4:1)', () => {
+  const sh = (a, b) => company({ ...ns({ Revenues: [f(...Q0, 900), f(...Q, 1000)] }),
+    WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q0, a), f(...Q, b)] } } });
+  assert.ok(Math.abs(secInputs(sh(254, 1019), { yieldPct: 5 }).splitRatio - 1019 / 254) < 1e-12);
+  assert.ok(Math.abs(secInputs(sh(1000, 100), { yieldPct: 5 }).splitRatio - 0.1) < 1e-12);     // reverse split
+  assert.equal(secInputs(sh(254, 260), { yieldPct: 5 }).splitRatio, null);
+  // 1000x is one quarter in thousands (Geron, Iovance), not a split: a 50:1 split (Chipotle) is the largest kept
+  assert.equal(secInputs(sh(1, 1000), { yieldPct: 5 }).splitRatio, null);
+  assert.equal(secInputs(sh(1000, 1), { yieldPct: 5 }).splitRatio, null);
+  assert.equal(secInputs(sh(10, 500), { yieldPct: 5 }).splitRatio, 50);
+});

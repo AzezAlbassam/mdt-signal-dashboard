@@ -55,7 +55,9 @@ export function shariahVerdict({ activity, debt, marketValue, bookEquity, illici
 // Fund, the owner's proportional rule (A5), not Al Rajhi's: non-compliant weight below 5% passes.
 // Weights are fractions of the fund. Unlisted weight, unknown states and bad weights count as unknown.
 const PASSING = new Set(['حلال (نقي)', 'مختلط جائز']);
-export function fundVerdict(holdings) {
+// listedTotal: the listed weights with their sign (fundSummary; a swap can be worth less than nothing), for the 100.5%
+// check and the unlisted rest; by default the sum of the weights given.
+export function fundVerdict(holdings, listedTotal) {
   let badWeight = 0, unknownWeight = 0, listed = 0, purificationPct = 0, purificationUnknownWeight = 0, invalid = false;
   for (const h of holdings) {
     if (!known(h.weight) || h.weight < 0 || h.weight > 1) { invalid = true; continue; }
@@ -65,8 +67,9 @@ export function fundVerdict(holdings) {
     if (amount(h.illicit) && known(h.marketValue) && h.marketValue > 0) purificationPct += h.weight * h.illicit / h.marketValue;
     else purificationUnknownWeight += h.weight;
   }
-  if (listed > 1 + 0.005) invalid = true;
-  unknownWeight += Math.max(0, 1 - listed);
+  const total = known(listedTotal) ? listedTotal : listed;
+  if (total > 1 + 0.005) invalid = true;
+  unknownWeight += Math.max(0, 1 - total);
   const state = invalid ? 'ما ينحكم' : badWeight >= ILLICIT_MAX - EPS ? 'غير جائز'
     : badWeight + unknownWeight >= ILLICIT_MAX - EPS ? 'ما ينحكم' : 'مختلط جائز';
   return { state, badWeight, unknownWeight, purificationPct, purificationUnknownWeight };
