@@ -9,7 +9,7 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume, tickerSummary } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate } from './engine.js'
 
 const INDEXES = new Set(['SPX', 'NDX', 'RUT', 'VIX', 'XSP', 'DJX', 'OEX', 'XEO'])
 const UA = 'options-liquidity-snapshot/1.0'
@@ -50,9 +50,6 @@ function nyClock(now) {
   return { m: Number(p.hour) * 60 + Number(p.minute), close: EARLY_CLOSE.has(date) ? 780 : 960 }
 }
 const finalAt = (c) => c.close + 15 + LAG + 5 // the feed shows 5 minutes past the last options trade
-
-/** The New York calendar date, YYYY-MM-DD: one trading day. */
-const nyDate = (d) => d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
 
 /** Whether the feed shows the session trading: 9:30 to the close (+15 for index-ETF options). */
 export function marketOpen(now = new Date()) {
@@ -110,6 +107,45 @@ export function quoteWindow(now = new Date()) {
   return c != null && c.m >= 600 + LAG && c.m < c.close - 10 + LAG
 }
 
+/**
+ * The moment after which the page should call the data late: the next pass plan() would run
+ * (at least an hour away — hourly in the quote window, then the close capture, then the next
+ * trading day's first pass), plus 90 minutes for a late or slow job.
+ */
+export function staleAfter(now) {
+  let t = new Date(Math.floor(now.getTime() / 60000) * 60000 + 60 * 60000)
+  for (let i = 0; i < 8 * 1440; i += 1) {
+    const c = nyClock(t)
+    if (c && ((c.m >= 600 + LAG && c.m < c.close - 10 + LAG) || c.m === finalAt(c))) return new Date(t.getTime() + 90 * 60000).toISOString()
+    t = new Date(t.getTime() + 60000)
+  }
+  return null
+}
+
+/** When the chain itself was last updated, per Cboe's own stamp (UTC); null if unknown. */
+function chainTime(raw, now) {
+  const ts = raw?.timestamp
+  if (typeof ts !== 'string') return null
+  const d = new Date(`${ts.replace(' ', 'T')}Z`)
+  return Number.isNaN(d.getTime()) || d > now ? null : d
+}
+
+/** The figures index.json carries for one ticker, from the contracts the page will read. */
+function entryOf(snap, contracts, today) {
+  const s = tickerSummary(contracts, today)
+  return {
+    price: snap.price, contracts: snap.rows.length, session: snap.session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
+    tier: s.tier, medianSpread: s.medianSpread == null ? null : Math.round(s.medianSpread * 1000) / 1000,
+    capacity: s.capacity, caps: s.caps, oi: s.oi,
+  }
+}
+
+// While a session is still trading its volume is partial: ADV averages completed sessions only.
+const completedSessions = (history, session, at) =>
+  (history?.dates?.length ?? 0) - (marketOpen(at) && session === nyDate(at) && history?.dates?.at(-1) === session ? 1 : 0)
+
+const COLS = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
+
 async function fetchChain(ticker) {
   const sym = INDEXES.has(ticker) ? `_${ticker}` : ticker
   const url = `https://cdn.cboe.com/api/global/delayed_quotes/options/${encodeURIComponent(sym)}.json`
@@ -134,9 +170,13 @@ async function fetchChain(ticker) {
 
 export async function snapshotTicker(ticker, dataDir, now) {
   const raw = await fetchChain(ticker)
-  const today = now.toISOString().slice(0, 10)
+  const today = nyDate(now)
   const { rows, session, totalVolume, price } = chainRows(raw, ticker, today)
   if (rows.length === 0) throw Object.assign(new Error('no listed options'), { noOptions: true })
+  // A chain missing a whole field (a renamed column, a broken feed) would size every contract
+  // at zero and still pass validation: count it as a failed fetch, keep the last snapshot.
+  if (rows.filter((r) => r.delta == null).length > rows.length / 2) throw new Error('chain came back without deltas')
+  if (rows.length >= 20 && rows.every((r) => !r.oi)) throw new Error('chain came back without open interest')
 
   // History: one figure per contract per session, the day's final volume.
   const histPath = join(dataDir, 'history', `${ticker}.json`)
@@ -146,28 +186,27 @@ export async function snapshotTicker(ticker, dataDir, now) {
     await writeFile(histPath, JSON.stringify(history))
   }
 
-  // Outside the quote window (after hours, or the open/close scramble) keep the last
+  // Quotes count as representative only when the chain itself is from the quote window: a
+  // source can return a chain it last updated before today's open. Otherwise keep the last
   // representative quotes for any contract that already has them.
-  const open = marketOpen(now)
-  const fresh = quoteWindow(now)
-  // While the session is still trading its volume is partial: average completed sessions only.
-  const inProgress = open && history?.dates?.at(-1) === session ? 1 : 0
-  const completedSessions = (history?.dates?.length ?? 0) - inProgress
+  const dataTime = chainTime(raw, now) ?? now
+  const fresh = quoteWindow(dataTime)
+  const completed = completedSessions(history, session, now)
   const prev = await readJson(join(dataDir, `${ticker}.json`), null)
   const prevQuotes = new Map()
   if (prev?.rows) {
     const ci = Object.fromEntries(prev.cols.map((c, i) => [c, i]))
     for (const r of prev.rows) prevQuotes.set(r[ci.sym], { bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize] })
   }
-  const quotesFrom = fresh ? now.toISOString() : prev?.quotesFrom ?? now.toISOString()
-  const quotesIntraday = fresh || Boolean(prev?.quotesIntraday)
+  const keepPrev = !fresh && Boolean(prev?.quotesIntraday)
+  const quotesFrom = keepPrev ? prev.quotesFrom : dataTime.toISOString()
+  const quotesIntraday = fresh || keepPrev
 
   const expiries = [...new Set(rows.map((r) => r.expiry))].sort()
   const expIndex = new Map(expiries.map((e, i) => [e, i]))
-  const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
   const contracts = rows.map((r) => {
-    const q = !fresh && prev?.quotesIntraday && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
-    const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completedSessions))
+    const q = keepPrev && prevQuotes.has(r.sym) ? prevQuotes.get(r.sym) : r
+    const { adv, sessions } = averageVolume(history?.vol?.[r.sym]?.slice(0, completed))
     // Round here, once: the summary below must be computed from exactly the values the
     // page will read, or a contract on a delta boundary counts in one and not the other.
     const delta = r.delta == null ? null : Math.round(r.delta * 1000) / 1000
@@ -176,8 +215,6 @@ export async function snapshotTicker(ticker, dataDir, now) {
   const out = contracts.map((c) => [
     c.sym, expIndex.get(c.expiry), c.type, c.strike, c.bid, c.ask, c.bidSize, c.volume, c.oi, c.delta, c.adv, c.sessions,
   ])
-  const summary = tickerSummary(contracts, today)
-
   const snap = {
     ticker,
     price,
@@ -186,19 +223,48 @@ export async function snapshotTicker(ticker, dataDir, now) {
     quotesFrom,
     quotesIntraday,
     session,
-    historySessions: completedSessions,
-    sessionInProgress: Boolean(inProgress),
+    historySessions: completed,
+    sessionInProgress: completed < (history?.dates?.length ?? 0),
     historyDates: history?.dates ?? [],
     expiries,
-    cols,
+    cols: COLS,
     rows: out,
   }
   await writeFile(join(dataDir, `${ticker}.json`), JSON.stringify(snap))
-  return {
-    price: snap.price, contracts: out.length, session, historySessions: snap.historySessions, fetchedAt: snap.fetchedAt,
-    tier: summary.tier, medianSpread: summary.medianSpread == null ? null : Math.round(summary.medianSpread * 1000) / 1000,
-    capacity: summary.capacity, caps: summary.caps, oi: summary.oi,
+  return entryOf(snap, contracts, today)
+}
+
+/**
+ * Recompute a stored snapshot with the current engine, without asking the source: ADV from
+ * the history, then the index figures. Run after the method changes, so the list and the tool
+ * agree before the next pass.
+ */
+export async function resummarize(ticker, dataDir) {
+  const path = join(dataDir, `${ticker}.json`)
+  const snap = await readJson(path, null)
+  if (!snap?.rows) return null
+  const history = await readJson(join(dataDir, 'history', `${ticker}.json`), null)
+  const at = new Date(snap.fetchedAt)
+  // Snapshots written before chainTime() was checked: a chain older than its label.
+  const ct = chainTime({ timestamp: snap.cboeTimestamp }, at)
+  if (ct && snap.quotesFrom && ct < new Date(snap.quotesFrom)) {
+    snap.quotesFrom = ct.toISOString()
+    snap.quotesIntraday = quoteWindow(ct)
   }
+  // Which sessions were complete was decided when the snapshot was taken; keep that.
+  const completed = snap.historySessions ?? 0
+  const ci = Object.fromEntries(snap.cols.map((c, i) => [c, i]))
+  const contracts = snap.rows.map((r) => {
+    const { adv, sessions } = averageVolume(history?.vol?.[r[ci.sym]]?.slice(0, completed))
+    r[ci.adv] = Math.round(adv * 10) / 10
+    r[ci.sessions] = sessions
+    return {
+      sym: r[ci.sym], expiry: snap.expiries[r[ci.exp]], type: r[ci.type], strike: r[ci.strike], bid: r[ci.bid], ask: r[ci.ask],
+      bidSize: r[ci.bidSize], volume: r[ci.volume], oi: r[ci.oi], delta: r[ci.delta], adv: r[ci.adv], sessions: r[ci.sessions],
+    }
+  })
+  await writeFile(path, JSON.stringify(snap))
+  return entryOf(snap, contracts, nyDate(at))
 }
 
 export async function main() {
@@ -212,7 +278,20 @@ export async function main() {
     console.log(p.action === 'wait' ? `wait ${p.seconds}` : p.action)
     return
   }
-  if (!dataDir) throw new Error('usage: node options/snapshot.js <dataDir> [--add T,..] [--remove T,..]')
+  if (!dataDir) throw new Error('usage: node options/snapshot.js <dataDir> [--add T,..] [--remove T,..] [--only T,..] [--resummarize]')
+  if (rest.includes('--resummarize')) {
+    const index = await readJson(join(dataDir, 'index.json'), null)
+    if (!index?.tickers) throw new Error(`no index.json in ${dataDir}`)
+    let n = 0
+    for (const [t, e] of Object.entries(index.tickers)) {
+      const s = e.noOptions ? null : await resummarize(t, dataDir)
+      if (s) { index.tickers[t] = { ...e, ...s }; n += 1 }
+    }
+    if (!index.staleAfter && index.updatedAt) index.staleAfter = staleAfter(new Date(index.updatedAt))
+    await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
+    console.log(`resummarized ${n} tickers with the current engine`)
+    return
+  }
   const arg = (name) => {
     const i = rest.indexOf(name)
     return i >= 0 ? rest[i + 1] : ''
@@ -237,7 +316,11 @@ export async function main() {
   const targets = only.length ? only.filter((t) => !removed.has(t)) : watchlist
   const prevIndex = await readJson(join(dataDir, 'index.json'), { tickers: {} })
   const now = new Date()
-  const index = { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), marketOpen: marketOpen(now), tickers: {} }
+  // A partial run (--only) refreshes its tickers but is not a pass: it neither moves the
+  // schedule's clock nor tells the page the whole list is fresh.
+  const index = only.length
+    ? { updatedAt: prevIndex.updatedAt, attemptedAt: prevIndex.attemptedAt, staleAfter: prevIndex.staleAfter, marketOpen: marketOpen(now), tickers: {} }
+    : { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), staleAfter: staleAfter(now), marketOpen: marketOpen(now), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
   // Ask about one ticker that always has options before touching the rest. If even SPY
@@ -249,6 +332,7 @@ export async function main() {
       index.tickers[t] = prev?.noOptions ? prev : { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }
     }
     index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
+    index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
     console.log(`OUTAGE: no chain for SPY (${canary.message}) — nothing fetched, counted or removed`)
     await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
     process.exitCode = 1
@@ -317,16 +401,23 @@ export async function main() {
     index.tickers[t] = { noOptions: true }
     await rm(join(dataDir, `${t}.json`), { force: true })
   }
-  // During an outage an empty answer says nothing about a ticker never seen with a chain
-  // (a newly added one stays pending); otherwise it means no listed options.
+  // A ticker never seen with a chain (a newly added one) stays pending: during an outage the
+  // answer says nothing, and otherwise it takes empty answers on three trading days — the
+  // source also answers empty, now and then, for a symbol that has options.
   for (const t of unseen) {
     const prev = prevIndex.tickers?.[t]
-    if (outage && !prev?.noOptions) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
+    if (prev?.noOptions) { index.tickers[t] = prev; continue }
+    if (outage) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
+    const misses = prev?.lastMiss === day ? prev.misses : (prev?.lastMiss ? prev.misses ?? 0 : 0) + 1
+    if (misses < 3) { index.tickers[t] = { ...(prev ?? {}), pending: true, error: 'no chain returned', misses, lastMiss: day }; continue }
     noOptions += 1
     index.tickers[t] = { noOptions: true }
     await rm(join(dataDir, `${t}.json`), { force: true })
   }
-  if (outage) index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
+  if (outage) {
+    index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
+    index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
+  }
   console.log(`retried ${failed.length} after throttling`)
   console.log(`${targets.length} tickers: ${targets.length - failures - noOptions - lost.length} with options, ${noOptions} without, ${lost.length} lost their chain, ${failures} failed`)
   if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed`)

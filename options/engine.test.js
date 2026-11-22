@@ -16,6 +16,7 @@ import {
   limitGuide,
   tickerSummary,
   bucketCapacities,
+  nyDate,
 } from './engine.js'
 
 describe('parseOccSymbol', () => {
@@ -180,9 +181,18 @@ describe('mergeSession', () => {
   })
 })
 
-test('averageVolume skips sessions before listing', () => {
-  assert.deepEqual(averageVolume([null, null, 10, 20]), { adv: 15, sessions: 2 })
+test('averageVolume skips sessions before listing and leaves out the busiest day', () => {
+  assert.deepEqual(averageVolume([null, null, 10, 20]), { adv: 10, sessions: 2 })
+  assert.deepEqual(averageVolume([7]), { adv: 7, sessions: 1 })
   assert.deepEqual(averageVolume([]), { adv: 0, sessions: 0 })
+  // One 40,000-contract block on a contract that trades a few a day is not a normal day.
+  assert.deepEqual(averageVolume([2, 1, 3, 40000, 2]), { adv: 2, sessions: 5 })
+})
+
+test('nyDate is the New York calendar date, also late in the evening', () => {
+  assert.equal(nyDate('2026-11-20T02:40:00Z'), '2026-11-19')
+  assert.equal(nyDate('2026-07-01T03:30:00Z'), '2026-06-30')
+  assert.equal(nyDate('2026-11-19T21:23:59Z'), '2026-11-19')
 })
 
 describe('selectExpirations', () => {
@@ -259,6 +269,17 @@ describe('allocate', () => {
     assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[120, 5]])
   })
 
+  test('an amount equal to the comfortable maximum is placed in full, best-graded first', () => {
+    // Five A contracts of $4,000 each (each under the 5% crumb) and one B contract of $80,000.
+    const cs = [1, 2, 3, 4, 5].map((k) => mk(k, { adv: 40, bidSize: 0 })).concat(mk(200, { bid: 9.5, ask: 10, adv: 800, bidSize: 0 }))
+    const r = allocate(cs, { amount: 100000 })
+    assert.equal(r.comfortable, 100000)
+    assert.equal(r.unplaced, 0)
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [200, 80]])
+    // Over the limit, the top legs fill to exactly the comfortable figure.
+    assert.equal(allocate(cs, { amount: 250000 }).placed, 100000)
+  })
+
   test('comfortable is what the top legs hold, whatever the amount', () => {
     const cs = [mk(100, { adv: 300 }), mk(110, { adv: 250 })]
     assert.equal(allocate(cs, { amount: 0 }).comfortable, 55000)
@@ -305,11 +326,22 @@ describe('chainRows', () => {
 })
 
 test('limitGuide: start at mid, never give up more than a quarter of the spread', () => {
-  assert.deepEqual(limitGuide(24.2, 25.8), { mid: 25, buyMax: 25.4, sellMin: 24.6 })
+  assert.deepEqual(limitGuide(24.2, 25.8), { buy: 25, buyMax: 25.4, sell: 25, sellMin: 24.6 })
   assert.equal(limitGuide(0, 1), null)
-  // Binance BTC options move in 5 USDT ticks
-  assert.deepEqual(limitGuide(9800, 10000, 5), { mid: 9900, buyMax: 9950, sellMin: 9850 })
-  assert.deepEqual(limitGuide(9805, 9890, 5), { mid: 9850, buyMax: 9865, sellMin: 9830 })
+  // Binance BTC options move in 5 USDT ticks; a mid between ticks rounds toward your own side.
+  assert.deepEqual(limitGuide(9800, 10000, 5), { buy: 9900, buyMax: 9950, sell: 9900, sellMin: 9850 })
+  assert.deepEqual(limitGuide(9805, 9890, 5), { buy: 9845, buyMax: 9865, sell: 9850, sellMin: 9830 })
+  // One tick wide: the buyer joins the bid and the seller the ask; neither crosses the spread.
+  assert.deepEqual(limitGuide(1, 1.01), { buy: 1, buyMax: 1, sell: 1.01, sellMin: 1.01 })
+  for (let i = 0; i < 2000; i += 1) {
+    const tick = [0.01, 0.05, 0.1][i % 3]
+    const bid = Math.round((0.05 + (i * 7919) % 5000 / 100) / tick) * tick
+    const ask = bid + tick * (1 + (i % 9))
+    const g = limitGuide(bid, ask, tick)
+    const mid = (bid + ask) / 2, q = (ask - bid) / 4
+    assert.ok(g.buy >= bid - 1e-9 && g.buy <= g.buyMax && g.buyMax <= mid + q + 1e-9, `buy ${JSON.stringify(g)} for ${bid} x ${ask}`)
+    assert.ok(g.sell <= ask + 1e-9 && g.sell >= g.sellMin && g.sellMin >= mid - q - 1e-9, `sell ${JSON.stringify(g)} for ${bid} x ${ask}`)
+  }
   // Every price on the grid, also for ticks with more decimals than their size suggests.
   for (const [bid, ask, tick] of [[3517, 3517.25, 0.25], [86.15, 87.275, 0.025], [3.75, 4, 0.05], [5.1, 5.6, 0.1]]) {
     for (const v of Object.values(limitGuide(bid, ask, tick))) assert.ok(Math.abs(v / tick - Math.round(v / tick)) < 1e-9, `${v} off the ${tick} grid`)

@@ -22,6 +22,9 @@ export function parseOccSymbol(sym) {
   }
 }
 
+/** The New York calendar date of a moment, YYYY-MM-DD: the date expiries are counted from. */
+export const nyDate = (d = new Date()) => new Date(d).toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
+
 /** Whole calendar days from `fromDate` to `expiry`, both YYYY-MM-DD. */
 export function daysToExpiry(expiry, fromDate) {
   return Math.round((Date.parse(`${expiry}T00:00:00Z`) - Date.parse(`${fromDate}T00:00:00Z`)) / 86400000)
@@ -212,11 +215,18 @@ export function mergeSession(history, sessionDate, volumes, keep = 20) {
   return h
 }
 
-/** Average daily volume over the sessions a contract was listed for. */
+/**
+ * A normal day's volume over the sessions a contract was listed for: the average without
+ * its busiest day. One block trade (40,000 contracts on a contract that trades 2 a day) is a
+ * single negotiated print, not daily flow; a plain average turns it into a "normal day" for
+ * the whole window and sizes positions the market never takes back.
+ */
 export function averageVolume(series) {
   const listed = (series ?? []).filter((v) => v != null)
   if (listed.length === 0) return { adv: 0, sessions: 0 }
-  return { adv: listed.reduce((a, b) => a + b, 0) / listed.length, sessions: listed.length }
+  const total = listed.reduce((a, b) => a + b, 0)
+  const adv = listed.length < 2 ? total : (total - Math.max(...listed)) / (listed.length - 1)
+  return { adv, sessions: listed.length }
 }
 
 const GRADE_RANK = { A: 0, B: 1, C: 2, D: 3 }
@@ -277,12 +287,14 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
   fill(amount * 0.5, crumb)
   fill(Infinity, crumb)
   // What the big legs cannot hold goes to the smaller top contracts, so an amount within
-  // the comfortable maximum is placed in full; a leftover under 5% is just rounding.
-  if (remaining >= crumb) fill(Infinity, 0)
+  // the comfortable maximum is placed in full (to the contract) and the top legs fill to
+  // exactly the comfortable figure the page quotes.
+  if (remaining > 0) fill(Infinity, 0)
   // Every top contract costs more than the amount: the best-ranked one that fits.
   if (legs.size === 0) fill(Infinity, 0, ranked)
 
-  return { ranked, legs: [...legs.values()], placed: amount - remaining, unplaced: remaining, comfortable }
+  // Legs listed best first, as ranked.
+  return { ranked, legs: ranked.filter((c) => legs.has(c.sym)).map((c) => legs.get(c.sym)), placed: amount - remaining, unplaced: remaining, comfortable }
 }
 
 /** Duration buckets, in calendar days to expiry: the choices the page offers. */
@@ -354,14 +366,16 @@ export function limitGuide(bid, ask, tick = 0.01) {
   if (!(bid > 0) || !(ask >= bid)) return null
   const mid = (bid + ask) / 2
   const q = (ask - bid) / 4
-  // Prices must sit on the tick grid; round in the direction that keeps the promise
-  // (never pay more than mid + a quarter, never sell below mid − a quarter).
+  // Prices must sit on the tick grid; round toward your own side, which keeps the promise
+  // (a buyer never pays more than mid + a quarter, a seller never takes less than mid − a
+  // quarter). On a one-tick market that means joining the bid, not paying the ask.
   const dp = (String(tick).split('.')[1] ?? '').length
   const fix = (v) => Number(v.toFixed(dp))
   const down = (v) => fix(Math.floor(v / tick + 1e-9) * tick)
   const up = (v) => fix(Math.ceil(v / tick - 1e-9) * tick)
-  const m = fix(Math.round(mid / tick) * tick)
-  return { mid: m, buyMax: Math.max(m, down(mid + q)), sellMin: Math.min(m, up(mid - q)) }
+  const buy = down(mid)
+  const sell = up(mid)
+  return { buy, buyMax: Math.max(buy, down(mid + q)), sell, sellMin: Math.min(sell, up(mid - q)) }
 }
 
 /**

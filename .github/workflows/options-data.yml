@@ -27,6 +27,10 @@ on:
         description: 'Refresh only these tickers (blank = whole watchlist)'
         required: false
         default: ''
+      resummarize:
+        description: 'Recompute every figure from the stored data with the current engine, fetching nothing (true/false)'
+        required: false
+        default: 'false'
 permissions:
   contents: write
   actions: write
@@ -52,6 +56,7 @@ jobs:
           ADD: ${{ inputs.add }}
           REMOVE: ${{ inputs.remove }}
           ONLY: ${{ inputs.only }}
+          RESUMMARIZE: ${{ inputs.resummarize }}
         run: |
           # Each pass starts from the branch as it is now, so a manual run in between is kept.
           # Only a branch that does not exist may start empty: a fetch that failed must never
@@ -87,12 +92,17 @@ jobs:
 
           # A failed pass (snapshot.js exits 1 on a source outage) is still saved — it only
           # adds flags — and the job keeps going, but ends red so the failure is noticed.
+          # So does a pass whose numbers the independent check does not reproduce.
           failed=0
           if [ "$EVENT" != "schedule" ]; then
             for try in 1 2 3; do
               restore || { echo '::error::could not read the options-data branch'; exit 1; }
-              node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY" || failed=1
-              node options/validate.js _data --write || echo '::warning::validation found problems'
+              if [ "$RESUMMARIZE" = "true" ]; then
+                node options/snapshot.js _data --resummarize || failed=1
+              else
+                node options/snapshot.js _data --add "$ADD" --remove "$REMOVE" --only "$ONLY" || failed=1
+              fi
+              node options/validate.js _data --write || { echo '::warning::validation found problems'; failed=1; }
               save_and_deploy && exit $failed
               echo "::warning::options-data changed during this run; starting over ($try)"
               failed=0
@@ -100,7 +110,9 @@ jobs:
             exit 1
           fi
 
-          deadline=$((SECONDS + 330 * 60))
+          # A pass can take 45 minutes (a 40-minute fetch budget, then checks and the push):
+          # none may start so late that the 350-minute job limit kills it half-saved.
+          deadline=$((SECONDS + 300 * 60))
           while [ $SECONDS -lt $deadline ]; do
             if ! restore; then
               echo '::warning::could not read the options-data branch; trying again in 5 minutes'
@@ -111,7 +123,7 @@ jobs:
             case "$next" in
               run)
                 node options/snapshot.js _data || failed=1
-                node options/validate.js _data --write || echo '::warning::validation found problems'
+                node options/validate.js _data --write || { echo '::warning::validation found problems'; failed=1; }
                 save_and_deploy || echo '::warning::options-data changed during this pass; the next pass starts from it' ;;
               wait*)
                 s=${next#wait }

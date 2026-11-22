@@ -185,7 +185,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   <h3>كيف تتخلص منه (أو تقلّله لأقل حد)</h3>
   <ol>
     <li><b>لا تستخدم أمر Market أبدًا على العقود.</b> دائمًا Limit. أمر Market ياخذ أسوأ سعر معروض، وأحيانًا أسوأ منه.</li>
-    <li><b>ابدأ عند المنتصف</b> (بين الـ Bid والـ Ask). ما تنفذ خلال دقيقة؟ حرّك السعر سنت إلى خمسة سنتات وانتظر. <b>لا تتجاوز ربع السبريد</b> — الأداة تكتب لك الحد لكل عقد.</li>
+    <li><b>ابدأ عند المنتصف</b> (بين الـ Bid والـ Ask). ما تنفذ خلال دقيقة؟ حرّك السعر خطوة سعر وحدة (سنت، أو 5 أو 10 سنتات حسب العقد) وانتظر. <b>لا تتجاوز ربع السبريد</b> — الأداة تكتب لك الحد لكل عقد.</li>
     <li><b>التوقيت:</b> تجنّب أول 30 دقيقة بعد الافتتاح وآخر 10 دقائق قبل الإغلاق — هنا السبريد أوسع شي.
       <br>أفضل وقت: <b>10:00 الصبح – 3:30 العصر بتوقيت نيويورك</b>
       <br>= <b>5:00 – 10:30 مساءً بتوقيت الرياض</b> (من مارس لنوفمبر) · <b>6:00 – 11:30 مساءً</b> (من نوفمبر لمارس).</li>
@@ -252,7 +252,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
 </div>
 
 <script type="module">
-import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates } from './options/engine.js'
+import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates, nyDate } from './options/engine.js'
 
 const $ = (id) => document.getElementById(id)
 const money = (v) => '<bdi class="m">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
@@ -265,20 +265,38 @@ const fmtExp = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { m
 const fmtExpShort = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit', timeZone: 'UTC' })
 const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) } catch { return iso } }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
-const parseAmount = (s) => Number(String(s).replace(/[^\d.]/g, '')) || 0
+// Amounts as people type them: Arabic or Persian digits, Arabic separators, $ and commas,
+// and 100k / 1.5m / ١٠٠ ألف / 2 مليون.
+const parseAmount = (s) => {
+  const t = String(s ?? '').replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x660).replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 0x6f0)
+    .replace(/٫/g, '.').replace(/[٬,\s$]/g, '').toLowerCase()
+  const m = /(\d*\.?\d+)(k|m|ألف|الف|مليون)?/.exec(t)
+  if (!m) return 0
+  return Number(m[1]) * ({ k: 1e3, 'ألف': 1e3, 'الف': 1e3, m: 1e6, 'مليون': 1e6 }[m[2]] ?? 1)
+}
 const cleanT = (s) => String(s).trim().toUpperCase().replace(/[^A-Z.]/g, '')
 const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'], P: ['بانتظار البيانات', 'dN'] }
 const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول', D: 'سبريد عالي' }
 const BUCKET_TXT = { m1: '1–3 شهور', m3: '3–6 شهور', m6: '6–12 شهر', y1: '1–2 سنة', y2: 'أكثر من سنتين' }
 const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
-const today = new Date().toISOString().slice(0, 10)
+// Days to expiry are counted from the date of the data, the same date the list's figures and
+// the automated check use; it differs from today only while the data is not fresh.
+const todayNY = nyDate()
 
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem('optliq:' + k)) } catch { return null } },
   set(k, v) { try { localStorage.setItem('optliq:' + k, JSON.stringify(v)) } catch {} },
 }
 const advDefaults = { pctAdv: 10, pctOi: 5, maxSpread: 15, maxLegs: 6, dMin: 0.2, dMax: 0.85 }
-let adv = { ...advDefaults, ...(store.get('adv3') ?? {}) }
+const ADV_LIMITS = { pctAdv: [1, 50], pctOi: [1, 30], maxSpread: [1, 40], maxLegs: [1, 15], dMin: [0, 0.95], dMax: [0.05, 1] }
+const advOk = (k, v, a) => Number.isFinite(v) && v >= ADV_LIMITS[k][0] && v <= ADV_LIMITS[k][1] && (k !== 'maxLegs' || Number.isInteger(v)) &&
+  (k === 'dMin' ? v < a.dMax : k === 'dMax' ? v > a.dMin : true)
+const sanitizeAdv = (a) => {
+  const out = { ...advDefaults }
+  for (const k of Object.keys(advDefaults)) if (advOk(k, Number(a?.[k]), { ...advDefaults, ...a })) out[k] = Number(a[k])
+  return out.dMin < out.dMax ? out : { ...out, dMin: advDefaults.dMin, dMax: advDefaults.dMax }
+}
+let adv = sanitizeAdv(store.get('adv3'))
 const saved = store.get('form2') ?? {}
 let type = saved.type ?? 'C'
 let sel = saved.sel ?? { bucket: 'm6' }
@@ -287,16 +305,22 @@ let current = null // { t, snap, contracts }
 const cache = new Map()
 if (saved.ticker) $('ticker').value = saved.ticker
 if (saved.amount) $('amount').value = saved.amount
-const fromHash = cleanT(decodeURIComponent(location.hash.slice(1)))
-if (fromHash && !['TOOL', 'MYLIST', 'SPREAD'].includes(fromHash)) $('ticker').value = fromHash
+// The hash is a section of the page (#binance) or a ticker (#MSTR); a malformed one is neither.
+const hashTicker = () => {
+  let h = ''
+  try { h = decodeURIComponent(location.hash.slice(1)) } catch { return '' }
+  return document.getElementById(h) ? '' : cleanT(h)
+}
+if (hashTicker()) $('ticker').value = hashTicker()
 
 const opts = () => ({ pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs })
-const bucketIdx = () => {
-  if (sel.bucket) return BUCKETS.findIndex((b) => b.key === sel.bucket)
-  const d = daysToExpiry(sel.expiry, today)
+const asOf = () => (current ? nyDate(current.snap.fetchedAt) : todayNY)
+const bucketOf = (expiry) => {
+  const d = daysToExpiry(expiry, asOf())
   const i = BUCKETS.findIndex((b) => d >= b.lo && d < b.hi)
   return i < 0 ? 0 : i
 }
+const bucketIdx = () => (sel.bucket ? BUCKETS.findIndex((b) => b.key === sel.bucket) : bucketOf(sel.expiry))
 
 function toContracts(snap) {
   const ci = Object.fromEntries(snap.cols.map((c, i) => [c, i]))
@@ -307,15 +331,16 @@ function toContracts(snap) {
   }))
 }
 
+// A ticker's snapshot; null when there is none. A failed download is not remembered, so the
+// next try asks again instead of calling the ticker unknown.
 async function loadTicker(t) {
   if (cache.has(t)) return cache.get(t)
-  let res = null
   try {
     const r = await fetch(`data/options/${encodeURIComponent(t)}.json`, { cache: 'no-cache' })
-    if (r.ok) { const snap = await r.json(); res = { t, snap, contracts: toContracts(snap) } }
+    if (r.ok) { const snap = await r.json(); const res = { t, snap, contracts: toContracts(snap) }; cache.set(t, res); return res }
+    if (r.status === 404) { cache.set(t, null); return null }
   } catch {}
-  cache.set(t, res)
-  return res
+  return { t, failed: true }
 }
 
 const strikeTxt = (c) => fmtN(c.strike, c.strike % 1 ? 2 : 0)
@@ -340,19 +365,20 @@ function comfortableFor(contracts, expiries) {
 
 function renderPickers() {
   const amount = parseAmount($('amount').value)
+  const day = asOf()
   const ofType = current ? current.contracts.filter((c) => c.type === type) : []
-  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, today) >= 7)
+  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, day) >= 7)
   document.querySelectorAll('#typeChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
   $('durChips').innerHTML = BUCKETS.map((b) => {
-    const ex = expiriesInRange(expiries, today, b.lo, b.hi)
+    const ex = expiriesInRange(expiries, day, b.lo, b.hi)
     const cap = current ? comfortableFor(current.contracts, ex) : null
     const sub = !current ? '' : ex.length === 0 ? 'ما فيه عقود' : `يتحمّل ${short$(cap)}`
     return `<button type="button" data-bucket="${b.key}" aria-pressed="${sel.bucket === b.key}">${BUCKET_TXT[b.key]}${sub ? `<small>${sub}</small>` : ''}</button>`
   }).join('')
   $('dateChips').innerHTML = expiries.map((e) => {
-    const cap = comfortableFor(current.contracts, [e])
+    const cap = Math.round(comfortableFor(current.contracts, [e]))
     const dot = cap >= amount && cap > 0 ? 'dA' : cap > 0 ? 'dC' : 'dD'
-    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, today)} يوم${isMonthly(e, expiries) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
+    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, day)} يوم${isMonthly(e, expiries) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
   }).join('')
   $('datesNote').textContent = expiries.length ? `(🟢 يتحمّل مبلغك كامل · 🟡 أقل منه · 🔴 ما يتحمّل)` : ''
 }
@@ -362,39 +388,49 @@ async function render() {
   const amount = parseAmount($('amount').value)
   store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
   if (!t) return
-  if (cleanT(decodeURIComponent(location.hash.slice(1))) !== t) history.replaceState(null, '', '#' + t)
+  if (hashTicker() !== t) history.replaceState(null, '', '#' + t)
 
   if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
   const info = index?.tickers?.[t]
   // Only tickers on the list are shown: a file left behind by a removal is not current advice.
   const data = !index || (info && !info.noOptions) ? await loadTicker(t) : null
   if (cleanT($('ticker').value) !== t) return
-  current = data
+  current = data?.failed ? null : data
+  // A date the new ticker or type does not list falls back to the duration it belongs to,
+  // so a duration stays lit and the list column shows that same duration.
+  const day = asOf()
+  const ofType = current ? current.contracts.filter((c) => c.type === type) : []
+  const allExp = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, day) >= 7)
+  if (current && sel.expiry && !allExp.includes(sel.expiry)) {
+    sel = { bucket: BUCKETS[bucketOf(sel.expiry)].key }
+    store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
+  }
   renderPickers()
   renderList()
-  if (!data) {
-    const msg = info?.noOptions
-      ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
-      : info?.pending
-        ? `<b>${esc(t)}</b> في قائمتك، وبياناته تنضاف أول تحديث ناجح لمصدر البيانات.`
-        : `<b>${esc(t)}</b> مو في قائمتك بعد. أرسله لـ Claude في المحادثة ويضيفه، ويظهر هنا بعد التحديث الجاي.`
+  if (!current) {
+    const msg = data?.failed
+      ? `ما قدرت أحمّل بيانات <b>${esc(t)}</b> — تأكد من الاتصال وجرّب مرة ثانية.`
+      : info?.noOptions
+        ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
+        : info?.pending
+          ? `<b>${esc(t)}</b> في قائمتك، وبياناته تنضاف أول تحديث ناجح لمصدر البيانات.`
+          : `<b>${esc(t)}</b> مو في قائمتك بعد. أرسله لـ Claude في المحادثة ويضيفه، ويظهر هنا بعد التحديث الجاي.`
     $('out').innerHTML = `<div class="verdict bad"><div class="t">ما فيه بيانات</div><p>${msg}</p></div>`
     return
   }
 
-  const { snap, contracts } = data
+  const { snap, contracts } = current
   const o = opts()
-  const ofType = contracts.filter((c) => c.type === type)
-  const allExp = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, today) >= 7)
-  if (sel.expiry && !allExp.includes(sel.expiry)) sel = { bucket: 'm6' }
   const bucket = sel.bucket ? BUCKETS.find((b) => b.key === sel.bucket) : null
-  const exps = sel.expiry ? [sel.expiry] : expiriesInRange(allExp, today, bucket.lo, bucket.hi)
+  const exps = sel.expiry ? [sel.expiry] : expiriesInRange(allExp, day, bucket.lo, bucket.hi)
   const cands = candidates(contracts, { type, expiries: exps, dMin: adv.dMin, dMax: adv.dMax })
   const a = allocate(cands, { amount, ...o })
   const typeName = type === 'C' ? 'Call' : 'Put'
   const durTxt = sel.expiry ? `تاريخ ${fmtExp(sel.expiry)}` : `مدة ${BUCKET_TXT[sel.bucket]}`
   const cost = a.legs.reduce((s, l) => s + l.cost, 0)
   const toll = a.legs.reduce((s, l) => s + l.m.roundTripCostPerContract * l.contracts, 0)
+  // Compare in whole dollars, as shown: typing the comfortable figure exactly must fit.
+  const comfortable = Math.round(a.comfortable)
 
   const tierKey = info?.tier ?? 'D'
   const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
@@ -404,31 +440,39 @@ async function render() {
     const far = allExp[allExp.length - 1]
     cls = 'bad'
     head = `ما فيه عقود ${typeName} لـ ${esc(t)} بهذه المدة`
-    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, today)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
-  } else if (a.comfortable === 0) {
+    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, day)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
+  } else if (comfortable === 0) {
     const quoted = cands.map((c) => contractMetrics(c, o)).filter((m) => m.spreadPct != null)
     const best = quoted.length ? Math.min(...quoted.map((m) => m.spreadPct)) : null
     cls = 'bad'
     head = `لا تدخل ${esc(t)} ${typeName} في ${durTxt}`
-    body = best != null && best > o.maxSpread
-      ? `المشترين موجودين، بس السبريد غالي: أضيق عقد هنا سبريده ${fmtP(best)} — يعني تخسر هذي النسبة بمجرد ما تبيع. جرّب مدة ثانية أو شوف <a href="#spread">دليل السبريد</a>.`
-      : `ما فيه مشترين معروضين على هذي العقود الحين.`
+    body = cands.length === 0
+      ? `ما فيه عقود ${typeName} دلتاها بين ${adv.dMin} و${adv.dMax} في هذي المدة. جرّب مدة ثانية، أو وسّع نطاق الدلتا من الإعدادات تحت.`
+      : best == null
+        ? `ما فيه مشترين معروضين على هذي العقود الحين.`
+        : best > o.maxSpread
+          ? `المشترين موجودين، بس السبريد غالي: أضيق عقد هنا سبريده ${fmtP(best)} — يعني تخسر هذي النسبة بمجرد ما تبيع. جرّب مدة ثانية أو شوف <a href="#spread">دليل السبريد</a>.`
+          : `العقود هنا قليلة التداول: العقود المفتوحة أو حجم التداول اليومي صغير لدرجة إن حتى عقد واحد كبير عليها. جرّب مدة ثانية.`
+  } else if (!(amount > 0)) {
+    cls = 'warn'
+    head = `اكتب المبلغ اللي تبي تدخل فيه`
+    body = `الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(comfortable)}.`
   } else if (a.legs.length === 0) {
     cls = 'warn'
     head = `المبلغ أقل من سعر عقد واحد`
     body = `أرخص عقد مناسب يكلّف ${money(Math.min(...a.ranked.map((c) => c.ask * 100)))}.`
-  } else if (amount <= a.comfortable && toll / cost > 0.08) {
+  } else if (amount <= comfortable && toll / cost > 0.08) {
     cls = 'warn'
     head = `⚠️ السيولة تكفي ${money(cost)} — بس السبريد غالي`
-    body = `تقدر تدخل وتطلع، لكن لو بعت فورًا تخسر ${fmtP(toll / cost)} من المبلغ بسبب السبريد. ادخل بأوامر Limit وبصبر، أو قلّل المبلغ. الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(a.comfortable)}.`
-  } else if (amount <= a.comfortable) {
+    body = `تقدر تدخل وتطلع، لكن لو بعت فورًا تخسر ${fmtP(toll / cost)} من المبلغ بسبب السبريد. ادخل بأوامر Limit وبصبر، أو قلّل المبلغ. الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(comfortable)}.`
+  } else if (amount <= comfortable) {
     cls = 'ok'
     head = `✅ تقدر تدخل ${money(cost)} وتطلع براحة`
-    body = `الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(a.comfortable)}.`
+    body = `الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}: ${money(comfortable)}.`
   } else {
     cls = 'warn'
-    head = `⚠️ لا تدخل أكثر من ${money(a.comfortable)}`
-    body = `هذا الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}. مبلغك ${money(amount)} أكبر منه — الباقي (${money(a.unplaced)}) لو دخلته بتصير أنت السوق وتبيع بخصم.`
+    head = `⚠️ لا تدخل أكثر من ${money(comfortable)}`
+    body = `هذا الحد المريح لـ ${esc(t)} ${typeName} في ${durTxt}. مبلغك ${money(amount)} أكبر منه — الباقي (${money(amount - comfortable)}) لو دخلته بتصير أنت السوق وتبيع بخصم.`
   }
   if (a.legs.length && cost > 0 && !head.includes('السبريد غالي')) body += ` تكلفة السبريد لو بعت فورًا: ${money(toll)} (${fmtP(toll / cost)}).`
   // Show where the number comes from: each expiry in range and how many contracts exist on it.
@@ -439,8 +483,8 @@ async function render() {
 
   // Nudge to a duration that can absorb more.
   let nudge = ''
-  if (a.comfortable < amount) {
-    const other = BUCKETS.map((b) => ({ b, cap: comfortableFor(contracts, expiriesInRange(allExp, today, b.lo, b.hi)) }))
+  if (comfortable < amount) {
+    const other = BUCKETS.map((b) => ({ b, cap: comfortableFor(contracts, expiriesInRange(allExp, day, b.lo, b.hi)) }))
       .filter((x) => x.b.key !== sel.bucket).sort((x, y) => y.cap - x.cap)[0]
     if (other && other.cap > Math.max(a.comfortable * 1.5, amount * 0.5)) {
       nudge = `<div class="tip">💡 مدة <b>${BUCKET_TXT[other.b.key]}</b> تتحمّل ${money(other.cap)} في ${esc(t)} ${typeName}. <a href="#" data-setbucket="${other.b.key}">جرّبها</a></div>`
@@ -451,13 +495,13 @@ async function render() {
   const legsHtml = a.legs.map((l) => {
     const step = tick(l.bid, l.ask)
     const g = limitGuide(l.bid, l.ask, step)
-    const dte = daysToExpiry(l.expiry, today)
+    const dte = daysToExpiry(l.expiry, day)
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
       <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry, allExp) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
       <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
-      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.mid)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}${step > 0.01 ? ` · سعره يتحرك بخطوات ${price(step)}` : ''}</div>` : ''}
+      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.buy)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}${step > 0.01 ? ` · سعره يتحرك بخطوات ${price(step)}` : ''}</div>` : ''}
     </div>`
   }).join('')
 
@@ -465,6 +509,7 @@ async function render() {
   if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
   if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
   notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
+  if (day !== todayNY) notes.push(`الأيام والمدد محسوبة من تاريخ آخر بيانات (${fmtExp(day)})، عشان تطابق أرقام القائمة.`)
   if (info?.error) notes.unshift(`⚠️ آخر تحديث ما رجّع بيانات ${esc(t)} من Cboe — الأرقام هنا من ${fmtTime(snap.fetchedAt)} وممكن تكون قديمة.`)
 
   const top = a.ranked.slice(0, 15)
@@ -473,7 +518,7 @@ async function render() {
     <td class="n"><bdi>${fmtExpShort(c.expiry)} · ${strikeTxt(c)}${c.type}</bdi></td><td class="n"><b>${money(c.m.capDollars)}</b></td>
     <td><span class="pill p${c.m.grade}">${GRADE_TXT[c.m.grade]}</span></td><td class="n"><bdi>${fmtP(c.m.spreadPct)}</bdi></td>
     <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
-  const ex = expirySummary(ofType, today, { ...o, dMin: adv.dMin, dMax: adv.dMax }).filter((e) => e.dte >= 7)
+  const ex = expirySummary(ofType, day, { ...o, dMin: adv.dMin, dMax: adv.dMax }).filter((e) => e.dte >= 7)
   const chosen = new Set(exps)
   const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
     <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
@@ -483,12 +528,12 @@ async function render() {
     <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
     ${nudge}
     ${a.legs.length ? `<div class="legs">${legsHtml}</div>
-      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل خطوة سعر وحدة كل دقيقة. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
+      <div class="tip">📤 <b>وقت البيع:</b> Limit عند المنتصف، ولو ما نفذ انزل خطوة سعر وحدة كل دقيقة — بس لا تنزل تحت المنتصف ناقص ربع السبريد (احسبه من أسعار وقت البيع)، وبعدها انتظر. لا تبيع بأمر Market. <a href="#spread">ليش؟</a></div>` : ''}
     ${notes.map((w) => `<p class="note">${w}</p>`).join('')}
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
       <p class="note" style="margin-top:0">لكل عقد:<br>
-      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة).<br>
+      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون أكثر يوم تداول، عشان صفقة كبيرة وحدة ما تنحسب كأنها تداول كل يوم.<br>
       ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
       الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
       <h3>أفضل العقود هنا</h3>
@@ -504,7 +549,7 @@ async function render() {
         <label>دلتا من<input data-adv="dMin" type="number" min="0" max="1" step="0.05" value="${adv.dMin}"></label>
         <label>دلتا إلى<input data-adv="dMax" type="number" min="0" max="1" step="0.05" value="${adv.dMax}"></label>
       </div>
-      <p class="note"><a href="#" id="resetAdv">رجّع الافتراضي</a> · الإعدادات تغيّر أرقام الأداة فقط؛ عمود «يتحمّل» في القائمة محسوب بالافتراضي.</p>
+      <p class="note"><a href="#" id="resetAdv">رجّع الافتراضي</a> · الإعدادات تغيّر أرقام الأداة فقط؛ عمود «يتحمّل» في القائمة محسوب بالافتراضي. <span id="advMsg"></span></p>
     </details>`
 }
 
@@ -539,13 +584,22 @@ $('amount').addEventListener('blur', () => { const v = parseAmount($('amount').v
 $('typeChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { type = b.dataset.type; render() } })
 $('durChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { bucket: b.dataset.bucket }; render() } })
 $('dateChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { expiry: b.dataset.expiry }; render() } })
-$('out').addEventListener('input', (e) => {
+// Settings apply when a value is complete (Enter, or leaving the box), not on every keystroke,
+// and only within each box's range; anything else is put back and explained.
+$('out').addEventListener('change', (e) => {
   const k = e.target.dataset?.adv
   if (!k) return
-  const v = Number(e.target.value)
-  if (!Number.isFinite(v) || v <= 0) return
+  const v = parseAmount(e.target.value)
+  if (String(e.target.value).trim() === '' || !advOk(k, v, adv)) {
+    const [lo, hi] = ADV_LIMITS[k]
+    e.target.value = adv[k]
+    $('advMsg').textContent = k === 'dMin' || k === 'dMax'
+      ? `⚠️ «دلتا من» لازم تكون أقل من «دلتا إلى»، وكلها بين 0 و1.`
+      : `⚠️ القيمة لازم تكون بين ${lo} و${hi}${k === 'maxLegs' ? ' (رقم صحيح)' : ''}.`
+    return
+  }
   adv[k] = v; store.set('adv3', adv)
-  clearTimeout(timer); timer = setTimeout(() => render().then(() => { document.querySelector('details.more').open = true }), 500)
+  render().then(() => { document.querySelector('details.more').open = true })
 })
 $('out').addEventListener('click', (e) => {
   const d = e.target.closest('[data-setbucket]')
@@ -553,8 +607,8 @@ $('out').addEventListener('click', (e) => {
   if (e.target.id === 'resetAdv') { e.preventDefault(); adv = { ...advDefaults }; store.set('adv3', adv); render().then(() => { document.querySelector('details.more').open = true }) }
 })
 window.addEventListener('hashchange', () => {
-  const h = cleanT(decodeURIComponent(location.hash.slice(1)))
-  if (h && !['TOOL', 'MYLIST', 'SPREAD'].includes(h) && h !== cleanT($('ticker').value)) { $('ticker').value = h; render() }
+  const h = hashTicker()
+  if (h && h !== cleanT($('ticker').value)) { $('ticker').value = h; render() }
 })
 $('q').addEventListener('input', renderList)
 
@@ -563,15 +617,20 @@ const bNum = (id) => parseAmount($(id).value)
 function renderBinanceCheck() {
   const open = bNum('bOpen'), spot = bNum('bSpot'), bid = bNum('bBid'), ask = bNum('bAsk')
   if (!open || !spot || !ask) { $('bOut').textContent = 'اكتب الأرقام وتطلع النتيجة هنا.'; return }
+  if (bid > ask) { $('bOut').innerHTML = '🔴 الـ Bid أكبر من الـ Ask — تأكد إنك نسخت الأرقام صح (الـ Bid دائمًا الأصغر).'; return }
   const coins = open / spot
   const cap = Math.floor(coins * 0.05 * 100) / 100
   const mid = bid > 0 ? (bid + ask) / 2 : null
   const spread = mid ? (ask - bid) / mid : null
+  // The limit keeps the quotes' own decimals (plus one for a half step), so a cheap contract's
+  // limit stays between its bid and ask instead of being rounded past them.
+  const dec = Math.max(...[bid, ask].map((v) => (String(v).split('.')[1] ?? '').length))
+  const quote = (v) => '<bdi class="m">$' + v.toLocaleString('en-US', { maximumFractionDigits: dec + 1 }) + '</bdi>'
   const lines = [`العقود المفتوحة: <b>${fmtN(coins, 2)}</b> عملة ← حدك المريح <b>${fmtN(cap, 2)}</b> عملة ≈ <b>${money(cap * ask)}</b>.`]
   if (!bid || bid <= ask * 0.02) lines.push('🔴 الـ Bid صفر أو رقم تافه — ما فيه مشتري حقيقي. لا تدخل هذا العقد.')
   else if (spread > 0.15) lines.push(`🔴 السبريد ${fmtP(spread)} — غالي جدًا، تخسر هذي النسبة بمجرد ما تبيع.`)
   else if (spread > 0.10) lines.push(`🟡 السبريد ${fmtP(spread)} — حذر، ادخل بمبلغ صغير وبأوامر Limit.`)
-  else lines.push(`🟢 السبريد ${fmtP(spread)} — ${spread <= 0.05 ? 'ممتاز' : 'مقبول'}. ادخل بـ Limit عند ${money(mid)}.`)
+  else lines.push(`🟢 السبريد ${fmtP(spread)} — ${spread <= 0.05 ? 'ممتاز' : 'مقبول'}. ادخل بـ Limit عند ${quote(mid)}.`)
   if (cap < 0.01) lines.push('🔴 العقود المفتوحة قليلة جدًا — حتى أصغر كمية (0.01) أكبر من حدك.')
   $('bOut').innerHTML = lines.join('<br>')
 }
@@ -593,7 +652,7 @@ $('list').addEventListener('click', (e) => {
 
 fetch('data/options/validation.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then((v) => {
   if (!v) return
-  const bad = Object.keys(v.failed ?? {}).length + (v.fetchErrors?.length ?? 0)
+  const bad = Object.keys(v.failed ?? {}).length
   const line = bad === 0
     ? `✓ فحص آلي بعد آخر تحديث: ${fmtN(v.tickers)} سهم و${fmtN(v.contracts)} عقد — كل الأرقام مطابقة لإعادة الحساب، بدون أخطاء.`
     : `⚠️ الفحص الآلي لقى مشكلة في ${bad} سهم — الأرقام لهذي الأسهم ممكن تكون غير دقيقة.`
@@ -604,11 +663,16 @@ fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.jso
   if (j) {
     $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
     $('src').innerHTML = `البيانات: أسعار Cboe متأخرة 15 دقيقة، تتحدث تقريبًا كل ساعة وقت السوق (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
-    // A pass that could not reach the source for most tickers: say it where it is seen.
+    // Say it where it is seen when the data is not current: a pass that could not reach the
+    // source for most tickers, or no successful pass by the time the next one was due.
     const listed = Object.values(j.tickers).filter((v) => !v.noOptions)
-    const unreachable = listed.filter((v) => v.error).length
+    const unreachable = listed.filter((v) => v.error && !v.pending).length
+    const late = j.staleAfter ? Date.now() > Date.parse(j.staleAfter) : Date.now() - Date.parse(j.updatedAt) > 4 * 86400000
     if (unreachable > 0.2 * listed.length) {
       $('stale').innerHTML = `<div class="t">⚠️ آخر تحديث للبيانات فشل</div><p>مصدر البيانات ما رجّع عقود ${fmtN(unreachable)} سهم في آخر محاولة (${fmtTime(j.attemptedAt ?? j.updatedAt)}). الأرقام المعروضة من آخر تحديث ناجح (${fmtTime(j.updatedAt)}) — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
+      $('stale').hidden = false
+    } else if (late) {
+      $('stale').innerHTML = `<div class="t">⚠️ البيانات متأخرة</div><p>آخر تحديث ناجح كان ${fmtTime(j.updatedAt)}، وكان المفروض يجي تحديث بعده. الأرقام المعروضة ممكن تكون قديمة — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
       $('stale').hidden = false
     }
   }

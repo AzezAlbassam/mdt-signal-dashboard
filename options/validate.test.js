@@ -3,8 +3,11 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
-import { auditSnapshot } from './validate.js'
+import { auditSnapshot, main } from './validate.js'
 import { tickerSummary } from './engine.js'
 
 const cols = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
@@ -56,4 +59,34 @@ test('an expired contract is caught', () => {
 test('a missing underlying price is caught', () => {
   const s = snap(); s.price = null
   assert.ok(auditSnapshot(s, entryFor(s)).errors.some((m) => m.includes('underlying price')))
+})
+
+// History behind the rows above: each contract's ADV is its sessions without the busiest day.
+const historyFor = (r = rows()) => ({ dates: ['a', 'b', 'c', 'd', 'e'], vol: Object.fromEntries(r.map((x) => [x[0], [x[10], x[10], x[10], x[10], x[10] * 30]])) })
+
+test('ADV is re-derived from the history, and a block day does not count', () => {
+  const s = snap()
+  assert.deepEqual(auditSnapshot(s, entryFor(s), historyFor()).errors, [])
+  const h = historyFor()
+  h.vol['ABC270617C00100000'] = [100, 100, 100, 100, 100]
+  assert.ok(auditSnapshot(s, entryFor(s), h).errors.some((m) => m.includes('ABC270617C00100000: ADV 300 over 5 sessions, history says 100 over 5')))
+})
+
+test('a snapshot left behind for a ticker that is not on the list is caught', async () => {
+  const d = mkdtempSync(join(tmpdir(), 'val-'))
+  mkdirSync(join(d, 'history'))
+  const s = snap()
+  writeFileSync(join(d, 'ABC.json'), JSON.stringify(s))
+  writeFileSync(join(d, 'history', 'ABC.json'), JSON.stringify(historyFor()))
+  writeFileSync(join(d, 'OLD.json'), JSON.stringify(s))
+  writeFileSync(join(d, 'GONE.json'), JSON.stringify(s))
+  writeFileSync(join(d, 'index.json'), JSON.stringify({ tickers: { ABC: entryFor(s), GONE: { noOptions: true } } }))
+  writeFileSync(join(d, 'watchlist.json'), '[]')
+  process.argv = ['node', 'validate.js', d, '--write']
+  await main()
+  const v = JSON.parse(readFileSync(join(d, 'validation.json'), 'utf8'))
+  assert.deepEqual(Object.keys(v.failed).sort(), ['GONE', 'OLD'])
+  assert.equal(v.tickers, 1)
+  assert.equal(v.ok, false)
+  process.exitCode = 0
 })

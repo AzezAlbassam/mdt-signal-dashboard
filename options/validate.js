@@ -4,13 +4,15 @@
 //
 // Two kinds of check:
 //   1. Integrity — each contract row is internally consistent (symbol matches its fields,
-//      bid ≤ ask, delta has the right sign, nothing expired, nothing negative).
-//   2. Recalculation — every contract's size and every watchlist figure is recomputed here
-//      by a separate, deliberately plain implementation of the method and compared to what
-//      the engine published. Any difference is a bug in one of them.
+//      bid ≤ ask, delta has the right sign, nothing expired, nothing negative), and every
+//      snapshot file belongs to a ticker on the list.
+//   2. Recalculation — every contract's average daily volume is re-derived from the stored
+//      history, and its size and every watchlist figure are recomputed here by a separate,
+//      deliberately plain implementation of the method and compared to what the engine
+//      published. Any difference is a bug in one of them.
 // --write saves validation.json next to the snapshots so the page can show the result.
 
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, writeFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import { contractMetrics, parseOccSymbol } from './engine.js'
@@ -37,6 +39,17 @@ function refContract(c) {
 
 const days = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000)
 
+// Expiries are counted from the New York date of the fetch.
+const newYorkDate = (iso) => new Date(iso).toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
+
+// A normal day: the mean of the listed sessions after dropping the single busiest one.
+function refAdv(series) {
+  const listed = series.filter((v) => v != null).sort((a, b) => b - a)
+  if (listed.length === 0) return { adv: 0, sessions: 0 }
+  const kept = listed.length >= 2 ? listed.slice(1) : listed
+  return { adv: Math.round((kept.reduce((s, v) => s + v, 0) / kept.length) * 10) / 10, sessions: listed.length }
+}
+
 function refBucket(contracts, today, type, [lo, hi]) {
   const sized = contracts
     .filter((c) => c.type === type && c.delta != null && Math.abs(c.delta) >= REF.dMin && Math.abs(c.delta) <= REF.dMax)
@@ -48,11 +61,11 @@ function refBucket(contracts, today, type, [lo, hi]) {
   return Math.round(sized.slice(0, REF.legs).reduce((s, r) => s + r.dollars, 0))
 }
 
-export function auditSnapshot(snap, entry) {
+export function auditSnapshot(snap, entry, history) {
   const errors = []
   const err = (msg) => { if (errors.length < 20) errors.push(msg) }
   const ci = Object.fromEntries(snap.cols.map((c, i) => [c, i]))
-  const today = snap.fetchedAt.slice(0, 10)
+  const today = newYorkDate(snap.fetchedAt)
   if (!(snap.price > 0)) err(`underlying price missing (${snap.price})`)
 
   const contracts = []
@@ -72,6 +85,10 @@ export function auditSnapshot(snap, entry) {
     if (c.bid > 0 && c.ask > 0 && c.bid > c.ask) err(`${c.sym}: bid ${c.bid} > ask ${c.ask}`)
     if (c.delta != null && (Math.abs(c.delta) > 1 || (c.type === 'C' && c.delta < -1e-9) || (c.type === 'P' && c.delta > 1e-9))) err(`${c.sym}: delta ${c.delta} for a ${c.type}`)
     if (c.sessions > (snap.historySessions ?? 0)) err(`${c.sym}: ${c.sessions} sessions but history has ${snap.historySessions}`)
+    if (history) {
+      const h = refAdv((history.vol?.[c.sym] ?? []).slice(0, snap.historySessions ?? 0))
+      if (Math.abs(h.adv - c.adv) > 1e-9 || h.sessions !== c.sessions) err(`${c.sym}: ADV ${c.adv} over ${c.sessions} sessions, history says ${h.adv} over ${h.sessions}`)
+    }
 
     const mine = refContract(c)
     const eng = contractMetrics(c)
@@ -93,14 +110,15 @@ export function auditSnapshot(snap, entry) {
   return { errors, contracts: contracts.length }
 }
 
-async function main() {
+export async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
   if (!dataDir) throw new Error('usage: node options/validate.js <dataDir> [--write]')
   const index = JSON.parse(await readFile(join(dataDir, 'index.json'), 'utf8'))
   const out = { checkedAt: new Date().toISOString(), tickers: 0, contracts: 0, noOptions: 0, pending: 0, fetchErrors: [], failed: {}, oldestQuotes: null }
   for (const [t, entry] of Object.entries(index.tickers)) {
     if (entry.noOptions) { out.noOptions += 1; continue }
-    if (entry.error) { out.fetchErrors.push(`${t}: ${entry.error}`); continue }
+    // A failed fetch is reported, and the last good snapshot the page still serves is checked.
+    if (entry.error) out.fetchErrors.push(`${t}: ${entry.error}`)
     if (entry.pending) { out.pending += 1; continue } // added, not fetched yet: no snapshot to check
     let snap
     try {
@@ -109,15 +127,25 @@ async function main() {
       out.failed[t] = ['snapshot file missing']
       continue
     }
-    const r = auditSnapshot(snap, entry)
+    let history = null
+    try { history = JSON.parse(await readFile(join(dataDir, 'history', `${t}.json`), 'utf8')) } catch {}
+    const r = auditSnapshot(snap, entry, history ?? undefined)
+    if (!history && (snap.historySessions ?? 0) > 0) r.errors.push('volume history missing: ADV cannot be re-derived')
     out.tickers += 1
     out.contracts += r.contracts
     if (r.errors.length) out.failed[t] = r.errors
     const q = snap.quotesFrom ?? snap.fetchedAt
     if (!out.oldestQuotes || q < out.oldestQuotes) out.oldestQuotes = q
   }
+  // A snapshot with no live list entry is advice nobody updates: a removal must delete it.
+  const listed = new Set(Object.entries(index.tickers).filter(([, e]) => !e.noOptions).map(([t]) => t))
+  for (const f of await readdir(dataDir)) {
+    const t = /^(.+)\.json$/.exec(f)?.[1]
+    if (t && !['index', 'watchlist', 'removed', 'validation'].includes(t) && !listed.has(t)) out.failed[t] = ['snapshot file for a ticker that is not on the list']
+  }
   const nFailed = Object.keys(out.failed).length
-  out.ok = nFailed === 0 && out.fetchErrors.length === 0
+  // Failed fetches are the snapshot step's to report; this check is about the numbers.
+  out.ok = nFailed === 0
   console.log(`checked ${out.tickers} tickers, ${out.contracts} contracts; ${out.noOptions} without options; ${out.pending} pending; ${out.fetchErrors.length} fetch errors; ${nFailed} with problems`)
   for (const [t, e] of Object.entries(out.failed).slice(0, 30)) console.log(`  ${t}: ${e.slice(0, 3).join(' | ')}`)
   for (const e of out.fetchErrors.slice(0, 30)) console.log(`  fetch: ${e}`)
