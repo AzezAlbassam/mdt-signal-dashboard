@@ -9,12 +9,10 @@ jobs:
       - run: |
           set +e
           HONEST='mdt-signal-dashboard/1.0 (+https://github.com/AzezAlbassam/mdt-signal-dashboard)'
-          echo "== AAPL sample"
-          curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=AAPL" | head -12
-          echo "== ROKU as option symbol"
-          curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=O&symbol=ROKU" | head -5
-          echo "== counts"
           for t in AAPL NVDA SPY IBIT CTM AENT SLNH GDLC GXRP SKYT AXIA SKYQ SATS FUSE RAYA UCAR AIXI SQFT ELAB CREG BBGI ROKU LNKS ONCO UGRO SWMR SAFX ARAI BATL BENF ISPC DVLT CYCN FUTU ANNA TMDE PSKY WBD HIVE CUE SMX QNCX GLMD OMEX CTRA DKI PFSA CLIK CVV STI SSSS STRK BGIN INDV AEI TYGO MRKR FUFU ANL JAGU XRP GLNK BRR CEPL SCWO HGX LHAI INKT HUBC SOXX VOO SLV XLK XLE XLV XLF MAGS QQQM CIBR SPMO KWEB TAN NCLD LYTE SEMI DTCR CHAT; do
-            n=$(curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=$t" | grep -cE '^[A-Z0-9]+ +[0-9]{4} ')
-            echo "OCC $t $n"; sleep 0.3
+            curl -sS -m 30 -A "$HONEST" -o /tmp/b "https://marketdata.theocc.com/series-search?symbolType=U&symbol=$t"
+            n=$(awk -F'\t' '$3 ~ /^[0-9][0-9][0-9][0-9]$/ {c++} END {print c+0}' /tmp/b)
+            oi=$(awk -F'\t' '$3 ~ /^[0-9][0-9][0-9][0-9]$/ {s+=$8+$9} END {print s+0}' /tmp/b)
+            nd=$(grep -c 'No data exists' /tmp/b)
+            echo "OCC $t series=$n oi=$oi nodata=$nd"; sleep 0.3
           done
