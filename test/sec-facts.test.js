@@ -484,6 +484,26 @@ test('fix review: a reverse split of 1:50 or more is a split; only a 1000x step 
   assert.equal(unit.splitRatio, null);
 });
 
+test('audit round 2: a cover count of one share class is no count of the company (Mobileye: 252.4M Class A of 824M)', () => {
+  const g = { WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q, 824e6)] } }, ...ns({ Revenues: [f(...Q, 1000)], NetIncomeLoss: [f(...Q, -67e6)] }),
+    EarningsPerShareBasic: { units: { 'USD/shares': [f(...Q, -0.08)] } } };
+  const cover = { EntityCommonStockSharesOutstanding: { units: { shares: [{ end: '2026-07-20', val: 252403844, form: '10-Q', filed: '2026-07-30' }] } } };
+  const r = secInputs(company(g, cover), { yieldPct: 5 });
+  assert.equal(r.sharesMV, 824e6); assert.equal(r.shares, 824e6);
+});
+test('audit round 2: notes receivable from related parties are loans (Muscle Maker Grill: 12% notes; its estimate missed them)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesReceivableRelatedPartiesNoncurrent: [i(Q[1], 12.44)] })), { yieldPct: 5 });
+  assert.equal(r.estimate.loans, 12.44);
+  // a change in trade receivables is no loan book (the first, broad version of this rule charged Axon's 448.9M of
+  // "increase in accounts and notes receivable" at 20%); nor is a gross figure beside the net one already read (Verizon)
+  const axon = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    IncreaseDecreaseInAccountsAndNotesReceivable: [f('2026-01-01', Q[1], 448.9)] })), { yieldPct: 5 });
+  assert.equal(axon.estimate.loans, undefined);
+  const vz = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesReceivableNet: [i(Q[1], 29530)],
+    NotesReceivableGross: [i(Q[1], 32055)] })), { yieldPct: 5 });
+  assert.equal(vz.estimate.loans, 29530);
+});
+
 // ---- External audit, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M13) ----
 // Debt has two readings when the tags cannot show whether two lines are the same money: debt counts such lines once,
 // debtHigh separately (null when both agree). The balance sheet's figure lies between them.

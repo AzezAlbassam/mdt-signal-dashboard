@@ -124,7 +124,7 @@ for (const f of list) {
   const rows = r.holdings.map((h) => {
     const kind = holdingKind(h);
     const row = { n: h.name.slice(0, 48), w: holdingWeight(h, r.net_assets), k: kind };
-    if (kind === 'debt' || kind === 'cash-fund') return { ...row, pur: ownInterest(r.as_of) };
+    if (kind === 'debt' || kind === 'cash-fund' || kind === 'collateral') return { ...row, pur: ownInterest(r.as_of) };
     if (kind !== 'equity') return row;
     const m = mapHolding(h, maps);
     const c = m.cik ? byCik.get(m.cik) : null;

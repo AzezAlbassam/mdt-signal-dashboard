@@ -130,11 +130,13 @@ export const needsQuarterAverage = (x) => !!x.t && x.k !== 'collateral' && ((x.w
 
 // rows: [{w (fraction of net assets; negative for some derivatives), kind, state, purification, illicitShare}]
 export function fundSummary(rows) {
-  let collateralWeight = 0, net = 0, purificationCoveredWeight = 0, illicitLookThrough = 0, illicitCoveredWeight = 0
+  let collateralWeight = 0, net = 0, purificationCoveredWeight = 0, illicitLookThrough = 0, illicitCoveredWeight = 0, collateralPur = 0
   const judged = []
   for (const r of rows) {
     const w = Math.abs(r.w ?? NaN)
-    if (r.kind === 'collateral') { collateralWeight += Number.isFinite(w) ? w : 0; continue }
+    // cash collateral from lending the fund's shares is reinvested at interest, part of it the fund's own income:
+    // purified at the bill yield, an upper bound (audit round 2: TAN lends 34% of itself); no weight, no coverage
+    if (r.kind === 'collateral') { collateralWeight += Number.isFinite(w) ? w : 0; if (Number.isFinite(w) && Number.isFinite(r.purification)) collateralPur += w * r.purification; continue }
     net += r.w ?? NaN                                  // with its sign: a swap can be worth less than nothing (MAGS)
     // a short equity position is not compliant weight, whatever the company (audit 2026-11-22: plan M2 #4)
     const state = r.kind === 'equity' ? (r.w < 0 ? 'ما ينحكم' : r.state) : r.kind === 'cash-fund' || r.kind === 'debt' ? 'غير جائز' : 'ما ينحكم'
@@ -145,5 +147,6 @@ export function fundSummary(rows) {
     if (Number.isFinite(pur)) purificationCoveredWeight += r.w
     if (r.kind === 'equity' && Number.isFinite(r.illicitShare)) { illicitLookThrough += r.w * r.illicitShare; illicitCoveredWeight += r.w }
   }
-  return { ...fundVerdict(judged, net), collateralWeight, purificationCoveredWeight, illicitLookThrough, illicitCoveredWeight }
+  const v = fundVerdict(judged, net)
+  return { ...v, purificationPct: v.purificationPct + collateralPur, collateralWeight, purificationCoveredWeight, illicitLookThrough, illicitCoveredWeight }
 }

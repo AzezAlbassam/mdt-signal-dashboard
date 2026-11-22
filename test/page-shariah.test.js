@@ -2,8 +2,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { pageFns } from './lib/page-fns.js';
+import { readFileSync } from 'node:fs';
 
-const P = pageFns(['illNote', 'shNoPeriod', 'loanWords', 'purOn', 'wd', 'purMissing', 'illRange'], { esc: (s) => String(s) });
+const P = pageFns(['illNote', 'shNoPeriod', 'loanWords', 'purOn', 'wd', 'purMissing', 'illRange', 'shareMismatch', 'fullQuarter'], { esc: (s) => String(s) });
 test('audit: a combined interest figure is called an upper bound, not an estimate (CSCO, BKNG)', () => {
   assert.equal(P.illNote({ illicitEstimated: true, illicitTag: 'InvestmentIncomeInterestAndDividend' }), 'رقم مدموج (حد أعلى)');
   assert.equal(P.illNote({ illicitEstimated: true, illicitTag: null }), 'تقدير');
@@ -42,4 +43,22 @@ test('fix review: the interest row shows the figure its ratio uses when that is 
   assert.equal(P.illRange(234, 673.4, big), 'USD 234 إلى USD 673.4');
   assert.equal(P.illRange(234, 234, big), 'USD 234');
   assert.equal(P.illRange(234, null, big), 'USD 234');
+});
+test('audit round 2: a share count that does not match the market value today is not judged (a reverse split after the filing passed at 5% instead of failing at 50%)', () => {
+  assert.equal(P.shareMismatch(30, 1e8, 3e8), true);        // 1:10 reverse split after the 10-Q: 10x the market value
+  assert.equal(P.shareMismatch(3, 1e8, 3e9), true);         // a 10:1 split: a tenth
+  assert.equal(P.shareMismatch(30, 1e8, 2.9e9), false);     // buybacks and issues move it a little
+  assert.equal(P.shareMismatch(30, 1e8, null), false);      // no market value to compare: nothing to say
+});
+test('audit round 2: a quarter average needs bars from the quarter\'s start to its end, give or take a long weekend (47 days to 09-04 was judged)', () => {
+  const day = (iso) => Date.parse(iso) / 1000;
+  assert.equal(P.fullQuarter([day('2026-07-01'), day('2026-09-30')], '2026-07-01', '2026-09-30'), true);
+  assert.equal(P.fullQuarter([day('2026-07-01'), day('2026-09-04')], '2026-07-01', '2026-09-30'), false);
+  assert.equal(P.fullQuarter([day('2026-07-20'), day('2026-09-30')], '2026-07-01', '2026-09-30'), false);
+});
+test('audit round 2: a panel without a score still has the Shariah block (VKTX, DJT, RGTI showed none)', () => {
+  const src = readFileSync(new URL('../pages/stocks.app.js', import.meta.url), 'utf8');
+  const noScore = src.split('\n').find((l) => l.includes('if (!s || !s.detail) return'));
+  assert.ok(noScore, 'the no-score branch');
+  assert.match(noScore, /shBlock\(sym\)/);
 });

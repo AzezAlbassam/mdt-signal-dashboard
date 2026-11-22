@@ -87,7 +87,8 @@ rule shows `ما ينحكم` for every stock and the owner is told before going 
 - [ ] D3 Page: a chip on each row (four states), and a panel block "الشرعية والتطهير (طريقة الراجحي)" with
       the three tests, their numbers and thresholds, the statement period used, purification per share for
       that quarter, a box "كم سهم عندك؟" → amount, who owes it (R6), and the disclaimer. Arabic, phone first.
-- [x] D4 Updating (weekly SEC refresh, scheduled 2026-11-21, progress/SHARIAH-REFRESH.md): computed on every load from the live fields, so a new quarter shows as soon as
+- [x] D4 Updating (weekly SEC refresh, scheduled 2026-11-21, progress/SHARIAH-REFRESH.md; correction 2026-11-22, M15: the
+      page shows no "تحديث جديد" mark and no change notice yet; the weekly reply names the changes): computed on every load from the live fields, so a new quarter shows as soon as
       TradingView has it. `sh/<sym>` in the db keeps {period, state, numbers, seenAt}; when the period or
       the state changes the row shows "تحديث جديد" and the change is logged (R4's 90 days start at seenAt).
 
@@ -783,3 +784,32 @@ largest overcounts Apple), split windows wider than the filings (a no-bar compan
 two splits within a year, restatements that are not splits (a 10-Q/A, SPAC exchange ratios), the 40% check's blind spot
 for a 3:2 split not yet restated, activities (the round-2 gap lens: GE's insurance, Casey's tobacco, Royal Caribbean,
 Amazon's film and music, AppLovin's gambling ads, defense makers): owner decisions for phase 2 (A4).
+The first audit's round 2 (four more lenses after its completeness critic; verified):
+- Stock page: a panel without a score had no Shariah block (VKTX, DJT, RGTI); now it has. A split after the filing put
+  today's split-adjusted bars on the old share count (a 1:10 reverse split passed at 5% instead of failing at 50%): the
+  page now compares the count with today's market value from TradingView and, beyond 1.5x either way, does not judge
+  («عدد أسهم يطابق السعر») and gives no amount per share. A quarter average needs bars from the quarter's start to its
+  end (47 days to 09-04 had been judged).
+- Funds: cash collateral from lending the fund's shares is reinvested at interest, part of it the fund's own income: it
+  is purified at the bill's investment yield, an upper bound (TAN lends 34% of itself); its weight still stays out.
+- Inputs: a cover count of one share class is dropped when net income / EPS confirms the weighted count (Mobileye's
+  Class A, 252.4M of 824M: purification per share was 3.26x too high); notes receivable from related parties are loans
+  (Muscle Maker Grill). A first, broad version (every NotesReceivable tag) was caught by the reload's own comparison
+  before any commit: it charged trade receivables' cash-flow changes at 20% (Axon 0.66% -> 3.43%) and Verizon's gross
+  device plans (a pass turned «ما ينحكم»); changes in receivables never count as a loan book now.
+- Wording: what is checked is interest income: the stock row reads «إيراد الفوائد ÷ الإيرادات», a fail «إيراد الفوائد
+  فوق 5٪», and the funds' method says the income of prohibited side activities is not counted yet (Royal Caribbean's
+  row said «الإيراد المحرم 0.09%» beside a casino and bars on board). Plan D4's change notice is corrected above.
+Owner decisions (not applied; each with its filing):
+- Al Rajhi's own terms (Global Fund, p.32, type two) prohibit outright "alcohol, tobacco, pork, gambling, conventional
+  banks ... and companies that deal in debts", while the table has tobacco (2100-2199), amusement and casinos
+  (7900-7999, 7011) and credit and brokers (6100-6299) as review. Aligning them moves «ما ينحكم» rows to «غير جائز».
+- Defense makers pass on numbers (RTX, Boeing; Lockheed, Northrop, General Dynamics and L3Harris since M12); SPUS holds
+  none, HLAL holds AXON. Al Rajhi's documents in research2/ do not mention weapons.
+- Income of prohibited side activities (phase 2, A4): GE's run-off insurance 5.9% of revenue, Carvana's gains on loans
+  sold 4.7% with GAP and insurance commissions, Royal Caribbean's casino and bars (inside 30.5% "onboard"), Amazon's
+  films and music (about 3%), AppLovin's real-money gambling ads, Paychex's insurance agency, Monster's alcohol segment
+  1.1%, PulteGroup's and NVR's mortgage banking 2.7% and 2.2%; plan part I names airlines (4512-4522 is not in the table).
+- Interest inside a revenue line on an axis companyfacts does not carry: ADP's client-fund interest (8.43% with it: a
+  fail; the screen shows «ما ينحكم»), Snap-on's and MercadoLibre's financing revenue, Deere's finance income (all open,
+  none pass).

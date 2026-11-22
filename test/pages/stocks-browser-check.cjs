@@ -22,6 +22,9 @@ for (const sym of ['NASDAQ:META', 'NASDAQ:AAPL', 'TADAWUL:1120', 'NYSE:JPM']) {
 }
 // AAPL plays a company not yet profitable (SVR shown): losses in its last three fiscal years.
 for (const k of ['net_income', 'eps']) fixtures['NASDAQ:AAPL'].fin.series[k] = fixtures['NASDAQ:AAPL'].fin.series[k].map((x, i, a) => (i >= a.length - 3 ? { value: -Math.abs(x.value) } : x))
+// AAPL's market value in the quote agrees with $250 x its filing's share count, as TradingView's does (the page's
+// split guard compares them; audit round 2), and the daily bars are trading days
+{ const a = JSON.parse(fs.readFileSync(root + 'data/shariah/sec-inputs.json', 'utf8')).stocks.AAPL; fixtures.cap = { 'NASDAQ:AAPL': 250 * (a.sharesMV ?? a.shares) } }
 // TradingView's AAPL revenue, net income and EPS histories (get-symbol-data-batch, 2026-10-19).
 fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 'utf8'))
 
@@ -70,7 +73,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
     }
     const quote = (s) => ({ description: `${s.split(':')[1]} Inc.`, close: { 'TADAWUL:1120': 61.95, 'NASDAQ:META': 718.67, 'NYSE:JPM': 300 }[s] ?? 250, sector: s.includes('1120') || s.includes('JPM') ? 'Finance' : 'Technology Services', type: 'stock',
       price_earnings_ttm: 27, non_gaap_price_to_earnings_per_share_forecast_next_fy: 23, earnings_per_share_forecast_next_fy: 31, earnings_per_share_diluted_ttm: s === 'NASDAQ:AAPL' ? -1.2 : 26.5, // AAPL plays a loss-making stock (SVR shown)
-      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
+      altman_z_score_ttm: 6.4, price_free_cash_flow_ttm: 45, price_target_1y: 797, price_book_fq: 7, return_on_equity: 30, market_cap_basic: fx.cap?.[s] ?? 1.8e12, net_debt_fq: 2.1e10, total_revenue_fq: 1.094e11, fiscal_period_end_fq: 1782777600,
       earnings_per_share_fy: 26.5, total_revenue_fy: 4e11, revenue_forecast_next_fy: 4.4e11, total_revenue_ttm: 4.2e11, fiscal_period_fy: '2025', free_cash_flow_ttm: 9e10, beta: 1.2, dividends_yield: 0.5, price_52_week_high: 300, price_52_week_low: 180, piotroski_f_score_fy: 7, piotroski_f_score_ttm: 8,
       ...(s === 'NASDAQ:META' ? { fiscal_period_end_fq: recentEnd } : {}),
       earnings_release_next_date: { 'NASDAQ:META': Date.UTC(2026, 9, 22, 20), 'NYSE:JPM': Date.UTC(2026, 9, 22, 22, 30), 'NASDAQ:AAPL': Date.UTC(2026, 10, 5, 12) }[s] / 1000,
@@ -94,7 +97,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
         // Shariah block (7b): daily bars at a flat $250 for the quarter-average price
-        if (tool.endsWith('ohlcv') && input.interval === '1D') { const now = Math.floor(Date.now() / 864e5) * 86400; const t = Array.from({ length: input.count }, (_, i) => now - (input.count - 1 - i) * 86400); return { payload: { bars: { t, c: t.map(() => 250) } } } }
+        if (tool.endsWith('ohlcv') && input.interval === '1D') { const t = []; for (let d = Math.floor(Date.now() / 864e5) * 86400; t.length < input.count; d -= 86400) if (![0, 6].includes(new Date(d * 1000).getUTCDay())) t.unshift(d); return { payload: { bars: { t, c: t.map(() => 250) } } } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
         if (tool.endsWith('get-news') && window.__newsFail) { window.__newsFail -= 1; throw { code: 'server_unavailable' } }
         if (tool.endsWith('get-news')) return { payload: { data: { headlines: [{ title: 'Example headline for ' + input.symbol, link: 'https://example.com', published: 1790913837, provider: { name: 'Test' } }] } } }
@@ -469,7 +472,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const st = (x) => (x.k === 'equity' ? x.s : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? null : 'ما ينحكم')
   const fRows = smh.rows.filter((x) => x.k !== 'collateral')
   const want6 = { bad: fRows.filter((x) => st(x) === 'غير جائز').reduce((a, x) => a + Math.abs(x.w), 0),
-    pur: fRows.filter((x) => x.pur != null).reduce((a, x) => a + x.w * x.pur, 0) }   // bills and money funds carry their own interest
+    // bills and money funds carry their own interest; so does lending collateral, outside the weights (audit round 2)
+    pur: smh.rows.filter((x) => x.pur != null).reduce((a, x) => a + Math.abs(x.w) * x.pur, 0) }
   await page.click('#tab-funds'); await page.waitForTimeout(200)
   await page.click('button[data-fund="SMH"]'); await page.waitForTimeout(200)
   const fv = await page.evaluate(() => {

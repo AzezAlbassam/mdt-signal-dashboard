@@ -207,10 +207,12 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // Also any company-specific tag that names finance receivables or loans (DE: de:FinancingReceivables...).
   // Balances or cash flows of the last 400 days count (DE shows its receivables only in cash flows). Disclosures about
   // receivables (sold, significant sales, allowances, modifications) are not holdings: AVGO only discloses sold ones.
-  const LOANISH = /(Financ\w*Receivable|Loans?(AndLeases)?Receivable|NetInvestmentInLease)/
+  // (notes receivable from related parties too: Muscle Maker Grill's 12% notes; audit round 2. Not every note: a broad
+  // rule took trade receivables and Verizon's gross device plans)
+  const LOANISH = /(Financ\w*Receivable|Loans?(AndLeases)?Receivable|NetInvestmentInLease|NotesReceivable\w*RelatedPart|OriginationOfNotesReceivable)/
   // Accounts...: trade receivables (PEP, CVX). Loans held for sale and balances after or before the allowance are held
   // loans (audit 2026-11-22: Carvana's 896M held for sale); sales of loans and the allowance itself are not.
-  const NOT_HELD = /(^Accounts|Sold|(?<!HeldFor)Sale|Significant|(?<!After|Before)Allowance|Modification|Impaired|Writeoff|WriteOff|Recover|Collectively|Individually|Nonaccrual|PastDue|Troubled|Charge|CreditLossExpense)/
+  const NOT_HELD = /(^Accounts|Sold|(?<!HeldFor)Sale|Significant|(?<!After|Before)Allowance|Modification|Impaired|Writeoff|WriteOff|Recover|Collectively|Individually|Nonaccrual|PastDue|Troubled|Charge|CreditLossExpense|IncreaseDecrease)/
   const recent = x => x.end <= rev.end && days(x.end, rev.end) <= 400 && x.val > 0
   const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0)
     || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && !NOT_HELD.test(t) && (v.units?.USD ?? []).some(recent)));
@@ -323,6 +325,9 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const near = (a, b) => a / b <= 50 && b / a <= 50;
   let c = deiShares?.val, w = wavg?.val;
   if (implied) { if (!(c > 0 && near(c, implied))) c = undefined; if (!(w > 0 && near(w, implied))) w = undefined; }
+  // a cover count far below a weighted count that net income / EPS confirms is one share class of several (Mobileye's
+  // cover lists Class A only, 252.4M of 824M; audit round 2)
+  if (c > 0 && w > 0 && implied && Math.abs(w / implied - 1) <= 0.1 && c < w / 1.5) c = undefined;
   const sane = c > 0 && w > 0 ? (near(c, w) ? [c, w] : []) : [c, w].filter(x => x > 0);
   // nothing usable tagged: net income / EPS, only when EPS is large enough that its rounding to the cent costs < 2.5%
   if (!sane.length && !(c > 0 && w > 0) && implied && Math.abs(eps) >= 0.2) sane.push(implied);

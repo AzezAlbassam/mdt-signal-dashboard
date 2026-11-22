@@ -320,3 +320,9 @@ test('fix review: a company\'s combined interest figure above 5% reads as a boun
   const v = screenStock(co({ illicit: 60, illicitEstimated: true, illicitHigh: 90 }), 1000, SIC);
   assert.equal(v.state, 'ما ينحكم'); assert.ok(v.missing.includes('illicit'), JSON.stringify(v.missing)); assert.ok(!v.missing.includes('illicitRange'));
 });
+test('audit round 2: cash collateral from lending the fund\'s shares earns interest the fund keeps part of: purified at the bill yield, an upper bound (TAN: 34% of the fund)', () => {
+  const r = fundSummary([{ w: 0.9, kind: 'equity', state: 'مختلط جائز', purification: 0.001 }, { w: 0.1, kind: 'equity', state: 'مختلط جائز', purification: 0.002 },
+    { w: 0.34, kind: 'collateral', purification: 0.0092 }]);
+  assert.ok(Math.abs(r.purificationPct - (0.9 * 0.001 + 0.1 * 0.002 + 0.34 * 0.0092)) < 1e-12, String(r.purificationPct));
+  assert.equal(r.state, 'مختلط جائز'); assert.ok(Math.abs(r.purificationCoveredWeight - 1) < 1e-12);   // weights and coverage as before
+});

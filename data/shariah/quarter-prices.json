@@ -1,5 +1,5 @@
 {
- "built": "2026-11-22T08:56:38.397Z",
+ "built": "2026-11-22T10:11:09.314Z",
  "source": "daily closes, split-adjusted, averaged over the company's own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)",
  "prices": {
   "BA": {
