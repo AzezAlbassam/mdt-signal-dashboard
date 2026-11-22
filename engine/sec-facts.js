@@ -291,16 +291,19 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   for (const x of rows(g, 'WeightedAverageNumberOfSharesOutstandingBasic', 'shares')) if (x.start && x.val > 0) {
     const k = x.start + '/' + x.end; periods.set(k, [...(periods.get(k) ?? []), x]);
   }
-  // per period: after the last filing still unrestated, by the first restated one; one split restates many periods, so
-  // the periods with the same ratio narrow the window together, and the most recent split is the one that matters
+  // Each step in a period's count between two filings in date order is one split, after the earlier filing and by the
+  // later one (a period restated twice gives two steps, not their product). One split restates many periods: steps of
+  // the same ratio whose windows overlap narrow it together; the same ratio years apart is another split (Monster 2:1 in
+  // 2012, 2023 and 2026: grouped by ratio alone their window ended before it began). The most recent split matters.
   const close = (a, b) => Math.abs(a / b - 1) <= 0.02, events = [];
   for (const xs of periods.values()) {
-    const first = xs.reduce((a, b) => (b.filed < a.filed ? b : a)), last = xs.reduce(latestFiled, null), k = last.val / first.val;
-    if (!((k >= 1.5 || k <= 1 / 1.5) && near(k, 1))) continue;
-    const after = xs.filter(x => close(x.val, first.val)).reduce((a, b) => (b.filed > a.filed ? b : a)).filed;
-    const until = xs.filter(x => close(x.val, last.val)).reduce((a, b) => (b.filed < a.filed ? b : a)).filed;
-    const e = events.find(x => close(x.k, k));
-    if (e) { e.after = e.after > after ? e.after : after; e.until = e.until < until ? e.until : until; } else events.push({ k, after, until });
+    const s = [...xs].sort((a, b) => (a.filed < b.filed ? -1 : a.filed > b.filed ? 1 : 0));
+    for (let i = 1; i < s.length; i++) {
+      const k = s[i].val / s[i - 1].val, after = s[i - 1].filed, until = s[i].filed;
+      if (!((k >= 1.5 || k <= 1 / 1.5) && near(k, 1)) || !(after < until)) continue;
+      const e = events.find(x => close(x.k, k) && (x.after > after ? x.after : after) < (x.until < until ? x.until : until));
+      if (e) { e.after = e.after > after ? e.after : after; e.until = e.until < until ? e.until : until; } else events.push({ k, after, until });
+    }
   }
   for (const e of events) if (!split || e.until > split.until) split = e;
   // Contract revenue never holds interest (ASC 606): a lender's interest comes on top of it for the total revenue

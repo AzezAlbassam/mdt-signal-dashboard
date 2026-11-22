@@ -688,6 +688,12 @@ page's wording), and the browser check's section (9) FUNDS AUDIT 2 CHECK.
   stale numbers (77), or no quarterly filings. Rows whose company has a 10-Q or 10-K newer than the numbers say so (12
   companies: CEG, PCG, WMB, PEG and others; companyfacts lags those filings). A combined interest tag reads «رقم مدموج
   (حد أعلى)» on the stock page, not «تقدير». The method says collateral is named above 0.5%.
+- Splits (found while checking a verifier's reproduction of M13's split fix): grouping restatements by ratio alone merged
+  a company's splits of the same ratio years apart into a window that ended before it began, and a period restated by
+  two splits gave their product. Monster's 2:1 split of 2026 was lost (its 2016 3:1 taken instead: VOO's and XLP's
+  pre-split prices went undivided, half the purification on those rows); Copart read 4 for two 2:1 splits, Texas Pacific
+  Land 9 for two 3:1. Each step between two filings of a period is now one split, and steps join only when their windows
+  overlap; 30 of the 1,114 cached companies change (most had inverted windows). Test first (test/sec-facts.test.js).
 - Corrections to earlier parts: M11's "EPS-implied shares for Visa" never reached real Visa data (Visa, Hershey, Tyson,
   Constellation, Ares and others tag share counts only by class, so their market value is missing and they stay
   «ما ينحكم»; no fund verdict depends on it today: XLP has 4.0% of its weight unknown for this reason alone). M12's "22

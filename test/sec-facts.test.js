@@ -294,6 +294,25 @@ test('review: a split restates earlier share counts; the ratio and the window it
   assert.equal(k(150), 1.5); assert.equal(k(160), 1.6); assert.equal(k(140), null);
 });
 
+test('audit: splits of the same ratio years apart stay apart, and the latest is the one (Monster 2:1 in 2012, 2023 and 2026, 3:1 in 2016)', () => {
+  // Found while checking the fix branch: one group per ratio merged Monster's three 2:1 splits into a window that ended
+  // before it began, so the 2016 3:1 split was taken and VOO's and XLP's pre-split prices were not divided (half the
+  // purification). Each step between two filings of a period is one split; steps of one split share a window.
+  const w = (start, end, val, filed) => ({ start, end, val, form: '10-Q', filed });
+  const sh = (rows) => company({ ...ns({ Revenues: [f(...Q0, 900), f(...Q, 1000)] }), WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: rows } } });
+  const mnst = secInputs(sh([
+    w('2011-07-01', '2011-09-30', 87, '2011-11-09'), w('2011-07-01', '2011-09-30', 174, '2012-11-09'),
+    w('2016-07-01', '2016-09-30', 190, '2016-11-07'), w('2016-07-01', '2016-09-30', 570, '2017-11-09'),
+    w('2022-07-01', '2022-09-30', 530, '2022-11-04'), w('2022-07-01', '2022-09-30', 1060, '2023-11-06'),
+    w('2025-07-01', '2025-09-30', 976.6, '2025-11-07'), w('2025-07-01', '2025-09-30', 1953.2, '2026-11-06'), w(...Q, 1958.6, '2026-11-06')]), { yieldPct: 5 });
+  assert.ok(Math.abs(mnst.splitRatio - 2) < 1e-9, String(mnst.splitRatio)); assert.deepEqual(mnst.splitWindow, ['2025-11-07', '2026-11-06']);
+  // a period restated by two splits (a five-year table) gives each split its own step, not their product
+  const two = secInputs(sh([w('2020-01-01', '2020-03-31', 100, '2020-05-01'), w('2020-01-01', '2020-03-31', 200, '2022-05-01'),
+    w('2020-01-01', '2020-03-31', 400, '2026-08-15'), w('2025-04-01', '2025-06-30', 210, '2025-08-14'), w('2025-04-01', '2025-06-30', 420, '2026-08-15'),
+    w(...Q, 425, '2026-08-15')]), { yieldPct: 5 });
+  assert.equal(two.splitRatio, 2); assert.deepEqual(two.splitWindow, ['2025-08-14', '2026-08-15']);
+});
+
 // ---- External audit, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M13) ----
 // Debt has two readings when the tags cannot show whether two lines are the same money: debt counts such lines once,
 // debtHigh separately (null when both agree). The balance sheet's figure lies between them.
