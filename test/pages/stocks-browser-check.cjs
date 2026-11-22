@@ -459,7 +459,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const st = (x) => (x.k === 'equity' ? x.s : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? null : 'ما ينحكم')
   const fRows = smh.rows.filter((x) => x.k !== 'collateral')
   const want6 = { bad: fRows.filter((x) => st(x) === 'غير جائز').reduce((a, x) => a + Math.abs(x.w), 0),
-    pur: fRows.filter((x) => x.k === 'equity' && x.pur != null).reduce((a, x) => a + x.w * x.pur, 0) }
+    pur: fRows.filter((x) => x.pur != null).reduce((a, x) => a + x.w * x.pur, 0) }   // bills and money funds carry their own interest
   await page.click('#tab-funds'); await page.waitForTimeout(200)
   await page.click('button[data-fund="SMH"]'); await page.waitForTimeout(200)
   const fv = await page.evaluate(() => {
@@ -502,6 +502,37 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
     && (cov >= 0.995 || t7.card.includes(`التطهير محسوب على ${f1(100 * cov, 1)}٪`)) && (lt == null || t7.card.includes(`${f1(100 * lt, 2)}٪`))
   console.log('FUNDS REVIEW CHECK:', ok7 ? 'ok' : 'FAILED', JSON.stringify({ day, oldest, ageBad, fund: rv.sym, cov, lt, card: t7.card.slice(0, 400) }))
   if (!ok7) process.exitCode = 1
+  // (8) External audit 2026-11-22. Purification below full coverage is a floor («على الأقل», in the head and the amount
+  // box), under half no figure at all; the method names the two readings and that a review activity can still fail;
+  // rows judged on report prices say so; a row's reasons include the new ones when the data has them.
+  await page.clock.setFixedTime(new Date(`${withRows.map((f) => f.as_of).sort().at(-1)}T12:00:00+03:00`))
+  await page.goto('file://' + file); await page.waitForTimeout(2500)
+  await page.click('#tab-funds'); await page.waitForTimeout(200)
+  const part = withRows.find((f) => f.purificationCoveredWeight >= 0.5 && f.purificationCoveredWeight < 0.995 && f.state !== 'غير جائز')
+    ?? withRows.find((f) => f.purificationCoveredWeight >= 0.5 && f.purificationCoveredWeight < 0.995)
+  const low = withRows.find((f) => f.purificationCoveredWeight < 0.5)
+  const t8 = {}
+  for (const f of [part, low].filter(Boolean)) {
+    await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(200)
+    t8[f.sym] = await page.evaluate((sym) => {
+      const i = document.querySelector(`input[data-fq="${sym}"]`)
+      if (i) { i.value = '10000'; i.dispatchEvent(new Event('input', { bubbles: true })) }
+      return { head: document.querySelector('#fundsView .fcard.open .fhead')?.innerText.replace(/\s+/g, ' ') ?? '', box: !!i,
+        out: document.querySelector(`[data-fo="${sym}"]`)?.textContent ?? '', card: document.querySelector('#fundsView .fcard.open')?.innerText.replace(/\s+/g, ' ') ?? '',
+        method: document.querySelector('#fundsView .shmore')?.textContent ?? '' }
+    }, f.sym)
+    await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(100)
+  }
+  const tp = part ? t8[part.sym] : null, tl = low ? t8[low.sym] : null, anyT = tp ?? tl
+  // a passing row judged on report prices among the 30 the open card shows says so
+  const bandShown = part && part.rows.filter((x) => x.k !== 'collateral').slice(0, 30).some((x) => x.k === 'equity' && !x.exact && x.dr != null && x.s === 'مختلط جائز')
+  const ok8 = (!tp || (tp.head.includes('على الأقل') && tp.out.includes('على الأقل') && tp.out.includes(f1(10000 * part.purificationPct, 2))))
+    && (!tl || (tl.head.includes('ما نقدر نحسبه') && !tl.box))
+    && anyT && anyT.method.includes('قراءتين') && anyT.method.includes('إلا إذا فشلت') && anyT.method.includes('الديون بسعر التقرير')
+    && (!bandShown || tp.card.includes('الديون بسعر التقرير'))
+  console.log('FUNDS AUDIT CHECK:', ok8 ? 'ok' : 'FAILED', JSON.stringify({ part: part?.sym, partCov: part?.purificationCoveredWeight, low: low?.sym, lowCov: low?.purificationCoveredWeight,
+    partHead: tp?.head.slice(0, 200), partOut: tp?.out, lowHead: tl?.head.slice(0, 200), lowBox: tl?.box }))
+  if (!ok8) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

@@ -568,3 +568,72 @@ own "interest income" lines (known since M4; +42-82% purification); AVGO debt at
 count; SNDK's upper bound. Renamed companies whose N-PORT name is the old one (BlackRock Funding, Hartford, Equity
 Residential, Franklin, Paramount) stay unmatched, i.e. not judged. A box-spread fund held as a share (MAGS's XBOX) stays
 not judged (finding refuted: no rule covers it). No fund verdict changed from any of the unfixed points.
+
+### M13. External audit after M12 (2026-11-22) — fixes are POST-HOC, tests first
+Nine external auditors, one lens each (the M12 fixes C0-C16 and C17-C32, a line-by-line code read, an independent
+recomputation that never imports the engine, a hand check of XLK/SPUS/HLAL/MAGS against SEC filings, every number this
+round changed, the rules and page texts with the unattended weekly run, matching, data and prices), each followed by a
+second auditor who tries to refute every finding, then a completeness round (scripts and outputs in the session
+scratchpad, audit/). The fixes below were made from the auditors' own filing evidence while the verifiers ran; each has a
+test written first and seen failing on the pre-audit engine (e39aeb6): 22 new or changed tests in test/sec-facts.test.js,
+test/funds.test.js and test/shariah.test.js ("audit:").
+
+Debt has two readings (the principle that replaced M12's "debt never understated", which the audit showed false):
+- debt = the largest figure made only of lines that are debt and cannot overlap (long-term debt with its current
+  portion, the combined figure, noncurrent + DebtCurrent, debt-and-finance-leases less the tagged finance leases,
+  convertible notes or a drawn credit line larger than the debt they could sit inside). It alone can prove a fail.
+- debtHigh = the largest figure any reading of the tags gives (every short-term line apart, the parts, LongTermDebt as a
+  noncurrent line beside DebtCurrent, convertibles and credit lines that may sit inside). A pass needs it under 30%.
+- Between the two the debt test is open: «بنود الديون تحتمل قراءتين». Short-term lines are high-reading only because
+  they can overlap the current portion (Corpay's 2,300 securitisation is inside its 5,161), include it (IBM, BMY), be the
+  total of the others (Citigroup) or be a programme's size with nothing drawn (Camden's 600M of commercial paper made a
+  wrong R2 fail; NXP's 2.0B, M12). Cases from the filings: eBay 6,733 (was 5,989), Cummins 6,788..7,519 (was 7,171),
+  PSIX 35.9..36.1M (was 1.1M), SMCI 8,646 with its convertible notes (was 3,977: a wrong pass), Walmart 39,932..50,411
+  (the combined figure is long-term only), Marriott 16,735 (LongTermDebt held a stray 23M), Adobe 4,766..6,363, Tapestry
+  2,557, PepsiCo 42,658..56,681 (noncurrent with only short-term lines beside it; it was unknown).
+- Finance leases come out of bundled lines wherever they are tagged (A2): Home Depot 52,483 -> 49,417 high (3,066 of
+  finance leases), Tyson, Yum, Domino's, IP, EchoStar, Ameresco, Medtronic. Across all 1,114 cached companies no high
+  reading falls below the old figure except by tagged finance leases.
+
+Interest:
+- The A8 estimate counts current assets no tagged line explains as interest-earning (Energy Fuels keeps 779M of
+  securities under its own tag, which companyfacts does not carry: a wrong pass at 4.8% against 32.5% in its 10-Q), reads
+  the current taxonomy's debt-securities tags and long-term investments (Arteris passed only on the gap), and charges
+  loans a lending rate of 20% a year instead of refusing to estimate (Linde's 29M note against 3.9B of cash left it
+  unknown). 20% was checked against the cases where the filings show the financing revenue: at twice the corporate
+  yield Snap-on would pass at 4.89% against its own 8.77%; Ford and Caterpillar likewise.
+- A tagged figure has a high reading too: separate exact lines add up (IBM 87 + 62), a lender's revenue outside contracts
+  with customers may be financing income (MercadoLibre's credit revenues: a wrong pass at 0.51%), unexplained current
+  assets may earn interest booked in revenue (ADP's 44.7B of client funds: a wrong pass at 2.44%), and loans whose tagged
+  interest is under 4% a year of the book earn the lending rate (Snap-on, IBM). R3 passes only under 5% at the high
+  reading and fails only above it at the exact low one; purification uses the high reading (cautious).
+- A lender whose revenue is contract revenue only gets its interest added for the total (AXP 56.9% -> 36.3%, still a fail).
+- C19 correction to M12: after M12's securities-total rule the estimates overstate AMD by 137% and MSFT by 71% (not
+  42-82%): the cautious side, kept.
+
+Activity (data/shariah/sic-activity.json, the owner's G7 draft): SEC files wine and spirits makers under 2080 Beverages
+with soft drinks, so companies can be listed by CIK: Brown-Forman and Constellation Brands fail (Brown-Forman passed);
+Tyson (pork) and Casey's (alcohol, tobacco) are reviewed; 5180 wholesale alcohol fails; restaurants are 5810-5813 at SEC
+(Starbucks passed). These are corrections of the table's evident intent, for the owner to confirm with G7.
+
+Funds:
+- Splits come from restated share counts (an IPO or a share issue restates nothing: 7 of M12's 14 split flags were false;
+  KLA's 10:1 next to a 10-K quarter was missed). Each report price goes on the share count's basis by the saved bars or by
+  the dates around the split; unknown, both bases stand (CrowdStrike's post-split prices had been divided by 4 too).
+- The band uses the report prices dated in the company's own quarter when there are any (Martin Marietta and HP had their
+  in-quarter fails opened by out-of-quarter prices). The report-price band is no bound on the quarter average (Snowflake,
+  Moderna, Marathon fell outside it), so the saved daily bars now give the exact average for every held company they
+  cover (bars-quarter-prices.js --all), and rows judged on the band say «الديون بسعر التقرير».
+- A foreign holding takes a reported ticker or ISIN only when the names agree (a name key in common), not one shared word
+  (Xetra's MRK is Merck KGaA, not Merck & Co.; Prudential plc; 3i Group); foreign legal forms (Oyj, KGaA, ASA, SpA,
+  public limited company) are dropped from names; a state suffix tells Independent Bank Corp/MI (IBCP) from INDB.
+- Short equity positions count as unknown, never compliant; spot currency contracts filed as STIV are derivatives, not
+  money funds; the unlisted remainder has no purification figure; a zero-revenue row's infinite interest share is written
+  as 100% with a flag; a fail lists only what fails.
+- Purification: a fund's own bills, bonds and money funds carry their interest at the 3-month bill yield (MAGS: 65% of the
+  fund in bills and money funds; its purification was about 56x too low). Below full coverage the card says «على الأقل»
+  with the covered share, and under half no figure at all (UMMA showed 0.000% on 0.4% of the fund).
+Not fixed (documented): debt under a company's own tag (Penske's floor-plan notes, MannKind's current convertibles, SLB's
+current debt), share counts only by class (Hershey, Visa, Constellation, Tyson, Ares), KLA's swap-marked carrying value,
+derivatives at fair value rather than notional. T5's restated 99-100.5% equity tolerance (L3) is replaced by the loader's
+95-105% signed check (fixes-b C30).

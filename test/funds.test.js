@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight } from '../engine/funds.js';
+import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares } from '../engine/funds.js';
 import { screenStock } from '../engine/shariah.js';
 
 const SIC = { fail: [[6020, 6036, 'banks']], review: [[5400, 5499, 'food stores']] };
@@ -148,15 +148,36 @@ test('review: one price range per company across every fund report (Southwest: 5
   assert.equal(r.state, 'ما ينحكم'); assert.equal(r.purification, 10 / 1000)  // purification stays at this fund's price
   assert.equal(screenHolding(co0({ debt: 100 }), 10, SIC, null, [7, 12]).state, 'مختلط جائز')  // 100/560 and 100/1500
 })
-test('review: a split between two quarters leaves the price basis open by its ratio (CrowdStrike 4:1)', () => {
-  assert.equal(screenHolding(co0({ debt: 100 }), 10, SIC).state, 'مختلط جائز')                  // 10% at 1000
-  // shares 4x the previous quarter: a report price from before the split makes market value 4x too high
-  assert.equal(screenHolding(co0({ debt: 100, splitRatio: 4 }), 10, SIC).state, 'ما ينحكم')    // 100 / (1000 x 0.8 / 4) = 50%
-  assert.equal(screenHolding(co0({ debt: 20, splitRatio: 4 }), 10, SIC).state, 'مختلط جائز')   // 20 / 200 = 10%
-  // the quarter average too: 100 / (1000 / 4) = 40% at one basis, 10% at the other
-  const q = screenHolding(co0({ debt: 100, splitRatio: 4 }), 10, SIC, { avg: 10, n: 62 })
-  assert.equal(q.state, 'ما ينحكم'); assert.ok(q.missing.includes('split'))
-  assert.equal(screenHolding(co0({ debt: 100, splitRatio: 0.25 }), 10, SIC).state, 'مختلط جائز') // reverse split: only higher
+test('review: a split puts each report price on the basis of the share count (CrowdStrike 4:1); unknown basis opens both', () => {
+  // This test was "a split between two quarters leaves the price basis open by its ratio" until the audit of
+  // 2026-11-22: prices after the split were divided by 4 too, so purification came out 4x too high.
+  const k = 1016 / 254, win = ['2025-08-14', '2026-08-15'];
+  // the saved bars (split-adjusted) settle it: 763.14 against a bar of 190.785 is before the split; 231.00 against 231.00 after
+  assert.equal(splitBasis({ price: 763.14, asOf: '2026-03-31', bar: 190.785, splitRatio: k, splitWindow: win }), 'pre');
+  assert.equal(splitBasis({ price: 231.0, asOf: '2026-09-30', bar: 231.0, splitRatio: k, splitWindow: win }), 'post');
+  // without bars the dates do: on or before the old filing, before; after the restating filing, after; between, unknown
+  assert.equal(splitBasis({ price: 760, asOf: '2025-06-30', splitRatio: k, splitWindow: win }), 'pre');
+  assert.equal(splitBasis({ price: 230, asOf: '2026-09-30', splitRatio: k, splitWindow: win }), 'post');
+  assert.equal(splitBasis({ price: 500, asOf: '2026-03-31', splitRatio: k, splitWindow: win }), null);
+  assert.equal(splitBasis({ price: 500, asOf: '2026-03-31' }), 'post');                 // no split
+  // prices on the count's basis: before the split divided by the ratio, unknown both
+  assert.deepEqual(onShares(763.14, 'pre', 4), [763.14 / 4]);
+  assert.deepEqual(onShares(231, 'post', 4), [231]);
+  assert.deepEqual(onShares(500, null, 4), [125, 500]);
+  // purification follows the price on the share basis: a pre-split 40 is 10 a share now, so 10 x 100 shares = 1000
+  assert.equal(screenHolding(co0(), onShares(40, 'pre', 4)[0], SIC).purification, 10 / 1000);
+  assert.equal(screenHolding(co0(), onShares(10, 'post', 4)[0], SIC).purification, 10 / 1000);
+  // a quarter average from bars saved before the split is open by the ratio (alt): 100 / (1000 / 4) = 40% or 10%
+  const q = screenHolding(co0({ debt: 100 }), 10, SIC, { avg: 10, n: 62, alt: 2.5 });
+  assert.equal(q.state, 'ما ينحكم'); assert.ok(q.missing.includes('split'));
+  assert.equal(screenHolding(co0({ debt: 20 }), 10, SIC, { avg: 10, n: 62, alt: 2.5 }).state, 'مختلط جائز'); // 8% and 2%
+})
+test('audit: the band is the range given (report prices of the company own quarter, on its share basis); the own price only buys purification', () => {
+  // MLM: an in-quarter price of 518.70 gives a sure fail; a price from before its quarter (576.70) must not open the band
+  const r = screenHolding(co0({ debt: 330 }), 11, SIC, null, [10, 10])        // 330 / 800 = 41%, 330 / 1250 = 26%: open
+  assert.equal(r.state, 'ما ينحكم')
+  const s2 = screenHolding(co0({ debt: 330 }), 13, SIC, null, [7, 7])         // 330/560 and 330/875: fails at both
+  assert.equal(s2.state, 'غير جائز'); assert.equal(s2.purification, 10 / 1300)  // purification at its own price 13
 })
 test('review: swaps count with their sign in the 100% check (MAGS: 65% bills and money funds is غير جائز)', () => {
   const r = fundSummary([
@@ -182,3 +203,73 @@ test('review: a holding weight is its value over net assets when both are known 
   assert.equal(holdingWeight({ pct: 2.5, usd: null }, 1e8), 0.025)
   assert.equal(holdingWeight({ pct: 2.5, usd: 5 }, null), 0.025)
 })
+
+// ---- External audit, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M13) ----
+test('audit: two debt readings decide only together: a pass needs the high one under 30%, a fail the low one over', () => {
+  // debt 100 or 130 (lines that may be the same money, engine/sec-facts.js); book equity 0, so market value decides
+  const c2 = co({ debt: 100, debtHigh: 130, bookEquity: 0 });
+  const pass = screenStock(c2, 500, SIC);                                   // 20% and 26%
+  assert.equal(pass.state, 'مختلط جائز'); assert.equal(pass.numbers.debtRatio, 130 / 500); // the cautious reading is shown
+  const open = screenStock(c2, 400, SIC);                                   // 25% and 32.5%
+  assert.equal(open.state, 'ما ينحكم'); assert.ok(open.missing.includes('debtRange')); assert.ok(!open.missing.includes('debt'));
+  assert.deepEqual(open.debtRange, [100 / 400, 130 / 400]);
+  const fail = screenStock(c2, 300, SIC);                                   // 33% and 43%
+  assert.equal(fail.state, 'غير جائز'); assert.deepEqual(fail.failed, ['R2']);
+  // one reading: as before
+  assert.equal(screenStock(co({ debt: 100, bookEquity: 0 }), 400, SIC).state, 'مختلط جائز');
+  // in a fund the readings meet both ends of the price band: 400 is open, 625 passes
+  assert.equal(screenHolding(c2, 5, SIC).state, 'ما ينحكم');
+  assert.ok(screenHolding(c2, 5, SIC).missing.includes('debtRange'));
+});
+test('audit: interest readings decide R3 only together; a lender with unread loan interest cannot pass', () => {
+  const open = screenStock(co({ illicit: 20, illicitHigh: 80 }), 1000, SIC);          // 2% and 8%
+  assert.equal(open.state, 'ما ينحكم'); assert.ok(open.missing.includes('illicitRange')); assert.ok(!open.missing.includes('illicit'));
+  const pass = screenStock(co({ illicit: 20, illicitHigh: 40 }), 1000, SIC);          // 2% and 4%: passes on the high one
+  assert.equal(pass.state, 'مختلط جائز'); assert.equal(pass.numbers.illicitShare, 0.04); assert.equal(pass.numbers.purificationPerShare, 40 / 100);
+  assert.equal(screenStock(co({ illicit: 60, illicitHigh: 90 }), 1000, SIC).state, 'غير جائز');   // 6% exact fails
+  assert.equal(screenStock(co({ illicit: 10, illicitOpen: true }), 1000, SIC).state, 'ما ينحكم');
+  assert.equal(screenStock(co({ illicit: 60, illicitOpen: true }), 1000, SIC).state, 'غير جائز');
+  // an estimate (upper bound) with unread loan interest is open too
+  assert.equal(screenStock(co({ illicit: 10, illicitEstimated: true, illicitOpen: true }), 1000, SIC).state, 'ما ينحكم');
+  // purification uses the high figure; none when the loan interest is unread
+  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 40 }), 10, SIC).purification, 40 / 1000);
+  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 80 }), 10, SIC).purification, 80 / 1000);
+  assert.equal(screenHolding(co({ illicit: 10, illicitOpen: true }), 10, SIC).purification, null);
+});
+test('audit: a short position in equities is not compliant weight (a 130/30 fund cannot pass on its shorts)', () => {
+  const longs = Array.from({ length: 13 }, () => ({ w: 0.10, kind: 'equity', state: 'مختلط جائز', purification: 0.001 }));
+  const shorts = Array.from({ length: 3 }, () => ({ w: -0.10, kind: 'equity', state: 'مختلط جائز', purification: 0.001 }));
+  const r = fundSummary([...longs, ...shorts]);
+  assert.equal(r.state, 'ما ينحكم'); assert.ok(r.unknownWeight >= 0.30 - 1e-12, String(r.unknownWeight));
+});
+test('audit: spot currency contracts are not money-market funds (URA, COPX, LIT)', () => {
+  assert.equal(holdingKind({ asset: 'STIV', units: 'NC', name: 'Spot FX Contract' }), 'derivative');
+  assert.equal(holdingKind({ asset: 'STIV', units: 'NS', name: 'State Street Institutional US Government Money Market Fund' }), 'cash-fund');
+});
+test('audit: a foreign holding takes a reported ticker or ISIN only when the names agree, not just share a word (Merck KGaA, Prudential, 3i)', () => {
+  const m = buildMaps([
+    { cik: '0000310158', ticker: 'MRK', title: 'Merck & Co., Inc.' }, { cik: '0001137774', ticker: 'PRU', title: 'PRUDENTIAL FINANCIAL INC' },
+    { cik: '0001062047', ticker: 'III', title: 'Information Services Group Inc.' }, { cik: '0000849395', ticker: 'CRH', title: 'CRH PUBLIC LTD CO' },
+    { cik: '0000924613', ticker: 'NOK', title: 'NOKIA CORP' }, { cik: '0001046179', ticker: 'TSM', title: 'TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD' },
+  ], []);
+  assert.deepEqual(mapHolding({ name: 'Merck KGaA', ticker: 'MRK', country: 'DE' }, m), { cik: null, by: null });
+  assert.deepEqual(mapHolding({ name: 'Prudential PLC', ticker: 'PRU', country: 'GB' }, m), { cik: null, by: null });
+  assert.deepEqual(mapHolding({ name: '3i Group PLC', ticker: 'III', country: 'GB' }, m), { cik: null, by: null });
+  // the same company under its foreign legal form still matches
+  assert.deepEqual(mapHolding({ name: 'CRH PLC', ticker: 'CRH', country: 'IE' }, m), { cik: '0000849395', by: 'ticker' });
+  assert.equal(mapHolding({ name: 'Nokia Oyj', ticker: 'NOKIA', country: 'FI' }, m).cik, '0000924613');
+  assert.deepEqual(mapHolding({ name: 'Taiwan Semiconductor Manufacturing Co Ltd', ticker: 'TSM', country: 'TW' }, m), { cik: '0001046179', by: 'ticker' });
+});
+test('audit: a state suffix tells two same-named companies apart (Independent Bank Corp/MI is IBCP, not INDB)', () => {
+  const m = buildMaps([{ cik: '0000776901', ticker: 'INDB', title: 'INDEPENDENT BANK CORP' }, { cik: '0000039311', ticker: 'IBCP', title: 'INDEPENDENT BANK CORP /MI/' }], []);
+  assert.deepEqual(mapHolding({ name: 'Independent Bank Corp/MI', country: 'US' }, m), { cik: '0000039311', by: 'name' });
+  assert.deepEqual(mapHolding({ name: 'Independent Bank Corp', country: 'US' }, m), { cik: null, by: null });   // still two candidates
+});
+test('audit: the interest a fund earns on its own bills, bonds and money funds is purified too (MAGS: 65% of the fund)', () => {
+  // purification of a bill or money-fund row = its quarter's interest per unit of value (fund-load: 3-month bill yield)
+  const r = fundSummary([{ w: 0.5545, kind: 'debt', purification: 0.0084 }, { w: 0.0941, kind: 'cash-fund', purification: 0.0084 },
+    { w: 0.225, kind: 'equity', state: 'مختلط جائز', purification: 0.0004 }]);
+  assert.ok(Math.abs(r.purificationPct - (0.5545 * 0.0084 + 0.0941 * 0.0084 + 0.225 * 0.0004)) < 1e-12, String(r.purificationPct));
+  assert.ok(Math.abs(r.purificationCoveredWeight - (0.5545 + 0.0941 + 0.225)) < 1e-12);
+  assert.equal(r.state, 'غير جائز');
+});

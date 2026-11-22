@@ -4,6 +4,8 @@ The scheduled task "تحديث الشرعية الأسبوعي" (every Saturday 
 this file. Change the steps here, not in the scheduled task.
 2026-11-21: created (owner: "ابدا في التحديث الاسبوعي"); funds added to step 4 the same day.
 2026-11-22: step 4b reads the repo's saved daily bars first (scripts/shariah/bars-quarter-prices.js).
+2026-11-22 (external audit, M13): the bars give the exact quarter average for every held company they cover (--all),
+not only the near-line ones; the report-price band is an approximation and is no longer the default where bars exist.
 
 ---
 
@@ -26,8 +28,8 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    Keep its last lines (each fund's state) and compare them with the previous data/shariah/funds.json from git.
 4b. Holdings near the 30% debt line (data/shariah/band-needed.json, written by the loader) get the quarter-average close
    that Al Rajhi's rule uses, in this order:
-   (1) `node scripts/shariah/bars-quarter-prices.js > <scratchpad>/qp/part-bars.jsonl`: quarters the repo's saved daily
-       bars (data/us/bars) already cover, no call needed.
+   (1) `node scripts/shariah/bars-quarter-prices.js --all > <scratchpad>/qp/part-bars.jsonl`: every held company whose
+       quarter the repo's saved daily bars (data/us/bars) already cover, near the line or not, no call needed.
    (2) Only for the band-needed tickers that (1) did not write: build TradingView symbols from
        https://www.sec.gov/files/company_tickers_exchange.json (Nasdaq → NASDAQ, NYSE → NYSE, NYSE American/Arca → AMEX;
        "-" → "."), split the list in two, and give each part to a background agent with the brief used on 2026-11-22

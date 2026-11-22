@@ -1,10 +1,11 @@
 {
-  "_note": "R1 activity by SEC SIC code. fail = core business prohibited; review = prohibited core or side revenue likely (ما ينحكم until a reviewed decision); any other code = ok. Draft 2026-11-21, needs the owner's review (G7). Ranges are inclusive.",
+  "_note": "R1 activity by SEC SIC code. fail = core business prohibited; review = prohibited core or side revenue likely (ما ينحكم until a reviewed decision); any other code = ok. Draft 2026-11-21, needs the owner's review (G7). Ranges are inclusive. Audit 2026-11-22 (post-hoc): SEC files wine and spirits makers under 2080 Beverages with soft drinks, so companies are listed by CIK; 5180 (wholesale beer, wine and spirits) added to fail; restaurants are 5810-5813 at SEC.",
   "fail": [
     [2082, 2085, "Malt beverages, wines, distilled liquors"],
     [5921, 5921, "Liquor stores"],
     [6020, 6036, "Commercial and savings banks (interest-based)"],
-    [6311, 6399, "Conventional insurance"]
+    [6311, 6399, "Conventional insurance"],
+    [5180, 5180, "Wholesale beer, wine and distilled beverages"]
   ],
   "review": [
     [2011, 2013, "Meat packing and processing (may include pork)"],
@@ -12,7 +13,7 @@
     [4830, 4841, "Radio, TV broadcasting, cable (music and entertainment content)"],
     [5311, 5399, "Department, variety and general stores (sell alcohol)"],
     [5400, 5499, "Food stores and supermarkets (sell alcohol, pork)"],
-    [5812, 5813, "Restaurants and drinking places"],
+    [5810, 5813, "Restaurants and drinking places (SEC: 5810 eating and drinking places)"],
     [5912, 5912, "Drug stores (sell alcohol, tobacco)"],
     [6000, 6019, "Central banks and other depository"],
     [6100, 6299, "Credit, mortgage, brokers, exchanges (interest income)"],
@@ -21,5 +22,11 @@
     [7011, 7011, "Hotels and motels (may include casinos, bars)"],
     [7800, 7899, "Motion pictures"],
     [7900, 7999, "Amusement, recreation, gambling"]
-  ]
+  ],
+  "companies": {
+    "0000014693": ["fail", "Brown-Forman: whiskey, wine and spirits (SIC 2080 also covers soft drinks)"],
+    "0000016918": ["fail", "Constellation Brands: beer, wine and spirits (SIC 2080)"],
+    "0000100493": ["review", "Tyson Foods: poultry and a large pork business (SIC 2015)"],
+    "0000726958": ["review", "Casey's General Stores: convenience stores selling beer, wine and tobacco (SIC 5500)"]
+  }
 }

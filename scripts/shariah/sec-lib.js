@@ -25,9 +25,10 @@ export function companies(get) {
   return rows;
 }
 
-// ICE BofA US Corporate Index effective yield (A8), daily, percent -> average over a period
-export function yieldAverager(get) {
-  const yields = (get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLC0A0CMEY', false) ?? '').trim().split('\n').slice(1)
+// ICE BofA US Corporate Index effective yield (A8), daily, percent -> average over a period; another FRED series by id
+// (DTB3: the 3-month Treasury bill, for the interest a fund earns on its own bills and money funds)
+export function yieldAverager(get, id = 'BAMLC0A0CMEY') {
+  const yields = (get(`https://fred.stlouisfed.org/graph/fredgraph.csv?id=${id}`, false) ?? '').trim().split('\n').slice(1)
     .map((l) => l.split(',')).filter(([, v]) => v && v !== '.').map(([d, v]) => [d, +v]);
   if (!yields.length) throw new Error('FRED yield series did not load');
   return (a, b) => { const v = yields.filter(([d]) => d >= a && d <= b).map(([, y]) => y); return v.length ? v.reduce((s, y) => s + y, 0) / v.length : null; };

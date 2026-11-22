@@ -1,9 +1,10 @@
 // Fund look-through (progress/SHARIAH-PLAN.md part E): holdings from the fund's N-PORT report, each matched to its SEC
 // company and screened with Al Rajhi's stock rules; the fund verdict is the OWNER's proportional rule (fundVerdict).
-import { screenStock, fundVerdict } from './shariah.js'
+import { screenStock, fundVerdict, purificationIllicit } from './shariah.js'
 
 // GROUP stays: "Compass Group PLC" (the UK caterer) is not "Compass, Inc." (review 2026-11-22).
-const SUFFIX = /\b(INC|INCORPORATED|CORP|CORPORATION|CO|COS|COMPANY|COMPANIES|LTD|LIMITED|PLC|PL|NV|SA|AG|SE|LLC|LP|HOLDINGS?|THE|CLASS [A-Z]|CL [A-Z]|COM|NEW|ADR|SPONSORED|ORD|SHS|REG)\b/g
+// Foreign legal forms too (Nokia Oyj, Merck KGaA, Equinor ASA, Eni SpA; audit 2026-11-22), and "public limited company".
+const SUFFIX = /\b(INC|INCORPORATED|CORP|CORPORATION|CO|COS|COMPANY|COMPANIES|LTD|LIMITED|PLC|PL|NV|SA|AG|SE|LLC|LP|OYJ|KGAA|ASA|SPA|HOLDINGS?|THE|CLASS [A-Z]|CL [A-Z]|COM|NEW|ADR|SPONSORED|ORD|SHS|REG)\b/g
 // a place or a state after the legal form: "ENERGY FUELS INC/CANADA", "TJX COS INC/THE", "US BANCORP /DE/"
 const QUALIFIER = /\b(INC|INCORPORATED|CORP|CORPORATION|CO|COS|COMPANY|COMPANIES|LTD|LIMITED|PLC|LLC|LP|NV|SA|AG|SE|BANCORP)\.?\/.*$/
 export function normName(s) {
@@ -12,21 +13,22 @@ export function normName(s) {
     .replace(/\b(?:N\.V|S\.A|A\.G|S\.E|L\.P|P\.L\.C|L\.L\.C|S\.P\.A)\.?(?![A-Z0-9])/g, (m) => m.replace(/\./g, '')) // N.V. = NV
     .replace(QUALIFIER, '$1')
     .replace(/\/[A-Z]{2,3}(?=\/|$)\/?/g, ' ')    // a state suffix at the end: CORNING INC /NY (not "/Los Angeles CA")
-    .replace(/[^A-Z0-9 ]/g, ' ').replace(SUFFIX, ' ').replace(/\s+/g, ' ').trim()
+    .replace(/[^A-Z0-9 ]/g, ' ').replace(/\bPUBLIC (LTD|LIMITED)( CO| COMPANY)?\b/g, ' ').replace(SUFFIX, ' ').replace(/\s+/g, ' ').trim()
 }
+// the US state after the legal form, when there is one: "INDEPENDENT BANK CORP /MI/" (IBCP) is not "INDEPENDENT BANK CORP" (INDB)
+const stateOf = (s) => String(s ?? '').toUpperCase().replace(/\\/g, '/').match(/\/\s*([A-Z]{2})\s*\/?\s*$/)?.[1] ?? null
 // The second key drops spaces: "Exxon Mobil Corp" and "ExxonMobil Holdings Corp" are the same company.
 // The third key sorts the words: SEC writes "SCHWAB CHARLES CORP", funds write "Charles Schwab Corp". A key that two
 // companies share is never used (mapHolding needs a unique match).
-export const nameKeys = (s) => { const k = normName(s); return k ? [k, k.replace(/ /g, ''), k.split(' ').sort().join(' ')] : [] }
+export const nameKeys = (s) => { const k = normName(s), st = stateOf(s); return k ? [k, k.replace(/ /g, ''), k.split(' ').sort().join(' '), ...(st ? [`${k} /${st}`] : [])] : [] }
 
-// A reported ticker or an ISIN seed counts for a US holding, or when the SEC title shares a word with the holding's name:
-// funds abroad report home-market tickers, and Zurich's "ROP" (Roche) is Roper Technologies at SEC (review 2026-11-22).
-const STOP = new Set(['AND', 'OF', 'DE', 'DU', 'LA', 'LE', 'ET'])
-const words = (s) => new Set(normName(s).split(' ').filter((w) => w.length > 1 && !STOP.has(w)))
+// A reported ticker or an ISIN seed counts for a US holding, or when the SEC title and the holding's name agree (a name
+// key in common): funds abroad report home-market tickers, and Zurich's "ROP" (Roche) is Roper Technologies at SEC
+// (review 2026-11-22). One shared word was not enough: Xetra's MRK (Merck KGaA) is Merck & Co. (audit 2026-11-22).
 function agrees(h, title) {
   if (h.country === 'US') return true
-  const b = words(title)
-  return [...words(h.name)].some((w) => b.has(w)) || normName(h.name).replace(/ /g, '') === normName(title).replace(/ /g, '')
+  const b = new Set(nameKeys(title))
+  return nameKeys(h.name).some((k) => b.has(k))
 }
 
 // companies: [{cik, ticker, title}] (SEC company_tickers.json); seed: [{isin, ticker, name, country}] from funds that
@@ -61,39 +63,53 @@ const DERIV = new Set(['DE', 'DIR', 'DFE', 'DCR', 'DCO', 'DO'])
 export function holdingKind(h) {
   if (h.collateral) return 'collateral'                     // cash collateral from lending the fund's shares
   if (h.asset === 'EC') return 'equity'
-  if (h.asset === 'STIV') return 'cash-fund'                // money-market fund: interest-bearing
+  // money-market fund: interest-bearing; a spot currency trade filed under the same code is not (audit 2026-11-22)
+  if (h.asset === 'STIV') return h.units === 'NC' && /\bFX\b|currenc/i.test(h.name ?? '') ? 'derivative' : 'cash-fund'
   if (DEBT.has(h.asset)) return 'debt'                       // bonds, bills, loans: interest-bearing
   if (DERIV.has(h.asset)) return 'derivative'
   return 'other'                                             // preferred shares, real estate, unclassified
 }
 
 // The report's price (value / shares held) is a point, not the quarter average Al Rajhi uses, so the debt test must
-// agree from 20% below the lowest report price of the company (any fund) to 25% above the highest; otherwise the holding
-// is not judged.
+// agree from 20% below the lowest report price of the company to 25% above the highest (fund-load.js gives that range:
+// the prices dated in the company's own quarter, or all of them when none is); otherwise the holding is not judged.
 const LOW = 0.8, HIGH = 1.25
 const both = (a, b) => (a.failed ?? []).filter((x) => (b.failed ?? []).includes(x))
 const union = (a, b, ...more) => [...new Set([...(a.missing ?? []), ...(b.missing ?? []), ...more.filter(Boolean)])]
-// quarter: {avg, n} = the average daily close over the company's own quarter (as the stock page computes); with 40+
-// trading days it replaces the band and the test is exactly Al Rajhi's. range: [lowest, highest] report price of this
-// company across all funds. r.splitRatio: shares this quarter / last quarter when a split shows; the price basis is then
-// open by that ratio (a report or bar price from before the split). Purification uses the price behind the weight.
+
+// A split (engine/sec-facts.js: splitRatio k, splitWindow [after, until]) puts a report price on the share count's basis
+// or not. The saved daily bars (split-adjusted) settle it when they cover the report's date; else the dates: on or before
+// the filing the split restated came later, after the restating filing it was done; between, unknown (null).
+export function splitBasis({ price, asOf, bar = null, splitRatio = null, splitWindow = null }) {
+  if (!(splitRatio > 0) || !(price > 0)) return 'post'
+  if (bar > 0) { const q = price / bar; if (Math.abs(q - 1) < 0.15) return 'post'; if (Math.abs(q / splitRatio - 1) < 0.15) return 'pre' }
+  if (splitWindow && asOf <= splitWindow[0]) return 'pre'
+  if (splitWindow && asOf > splitWindow[1]) return 'post'
+  return null
+}
+// the price on the share count's basis; both candidates when the basis is unknown
+export const onShares = (price, basis, k) => (basis === 'pre' ? [price / k] : basis === 'post' || !(k > 0) ? [price] : [Math.min(price, price / k), Math.max(price, price / k)])
+
+// quarter: {avg, n, alt?} = the average daily close over the company's own quarter (as the stock page computes); with 40+
+// trading days it replaces the band and the test is exactly Al Rajhi's. alt: the same average on the other side of a
+// split, when the bars it came from may predate it. price: the report price on the share basis (purification uses it,
+// the price behind the weight); range: [lowest, highest] on that basis for the band.
 export function screenHolding(r, price, sicTable, quarter = null, range = null) {
   if (!r?.period) return screenStock(r, null, sicTable) ? { ...screenStock(r, null, sicTable), purification: null } : { state: 'ما ينحكم', missing: ['statements'], purification: null }
   const shares = r.sharesMV ?? r.shares
-  const k = r.splitRatio > 0 ? r.splitRatio : 1, kLo = Math.min(1, 1 / k), kHi = Math.max(1, 1 / k)
-  const pmv = shares > 0 ? (price > 0 ? price : quarter?.avg > 0 ? quarter.avg : NaN) * shares * kLo : NaN
-  const purification = Number.isFinite(r.illicit) && r.illicit >= 0 && pmv > 0 ? r.illicit / pmv : null
+  const pmv = shares > 0 ? (price > 0 ? price : quarter?.avg > 0 ? quarter.avg : NaN) * shares : NaN
+  const ill = purificationIllicit(r), purification = ill != null && pmv > 0 ? ill / pmv : null
   const judge = (lo, hi, extra) => (lo.state !== hi.state
-    ? { ...lo, state: 'ما ينحكم', failed: both(lo, hi), missing: union(lo, hi, extra, k !== 1 && 'split') }
+    ? { ...lo, state: 'ما ينحكم', failed: both(lo, hi), missing: union(lo, hi, extra) }
     : { ...lo, failed: both(lo, hi), missing: union(lo, hi) })
   if (quarter?.avg > 0 && quarter.n >= 40 && shares > 0) {
-    const mv = quarter.avg * shares
-    return { ...judge(screenStock(r, mv * kLo, sicTable), screenStock(r, mv * kHi, sicTable)), exact: true, band: false, purification }
+    const [a, b] = quarter.alt > 0 ? [Math.min(quarter.avg, quarter.alt), Math.max(quarter.avg, quarter.alt)] : [quarter.avg, quarter.avg]
+    return { ...judge(screenStock(r, a * shares, sicTable), screenStock(r, b * shares, sicTable), quarter.alt > 0 && 'split'), exact: true, band: false, purification }
   }
   if (!(price > 0 && shares > 0)) { const v = screenStock(r, null, sicTable); return { ...v, purification: null } }
-  const [pLo, pHi] = range ? [Math.min(price, ...range), Math.max(price, ...range)] : [price, price]
+  const [pLo, pHi] = range ?? [price, price]
   const point = screenStock(r, price * shares, sicTable)
-  const v = judge(screenStock(r, pLo * shares * LOW * kLo, sicTable), screenStock(r, pHi * shares * HIGH * kHi, sicTable), 'priceBand')
+  const v = judge(screenStock(r, pLo * shares * LOW, sicTable), screenStock(r, pHi * shares * HIGH, sicTable), 'priceBand')
   return { ...point, state: v.state, failed: v.failed, missing: v.missing, band: v.state === 'ما ينحكم' && v.missing.includes('priceBand'), purification }
 }
 
@@ -105,11 +121,14 @@ export function fundSummary(rows) {
     const w = Math.abs(r.w ?? NaN)
     if (r.kind === 'collateral') { collateralWeight += Number.isFinite(w) ? w : 0; continue }
     net += r.w ?? NaN                                  // with its sign: a swap can be worth less than nothing (MAGS)
-    const state = r.kind === 'equity' ? r.state : r.kind === 'cash-fund' || r.kind === 'debt' ? 'غير جائز' : 'ما ينحكم'
-    judged.push({ weight: w, state, illicit: r.kind === 'equity' ? r.purification : null, marketValue: 1 })
-    if (r.kind !== 'equity' || !(r.w > 0)) continue
-    if (Number.isFinite(r.purification)) purificationCoveredWeight += r.w
-    if (Number.isFinite(r.illicitShare)) { illicitLookThrough += r.w * r.illicitShare; illicitCoveredWeight += r.w }
+    // a short equity position is not compliant weight, whatever the company (audit 2026-11-22: plan M2 #4)
+    const state = r.kind === 'equity' ? (r.w < 0 ? 'ما ينحكم' : r.state) : r.kind === 'cash-fund' || r.kind === 'debt' ? 'غير جائز' : 'ما ينحكم'
+    // bills, bonds and money funds carry their own interest as purification (audit 2026-11-22: MAGS)
+    const pur = r.kind === 'equity' || r.kind === 'debt' || r.kind === 'cash-fund' ? r.purification : null
+    judged.push({ weight: w, state, illicit: pur, marketValue: 1 })
+    if (!(r.w > 0)) continue
+    if (Number.isFinite(pur)) purificationCoveredWeight += r.w
+    if (r.kind === 'equity' && Number.isFinite(r.illicitShare)) { illicitLookThrough += r.w * r.illicitShare; illicitCoveredWeight += r.w }
   }
   return { ...fundVerdict(judged, net), collateralWeight, purificationCoveredWeight, illicitLookThrough, illicitCoveredWeight }
 }

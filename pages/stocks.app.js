@@ -1450,11 +1450,11 @@
   }
   function shChip(sym) {
     const r = shIn(sym)
-    if (r && !r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>`
+    if (r && !r.period && activityFromSic(r.sic, SHARIAH.sic, r.cik) === 'fail') return ` <span class="shc lo" title="الشرعية (طريقة الراجحي): غير جائز">✕</span>`
     if (!r?.period) return ''
     const mark = (st) => ` <span class="shc ${SH_CLS[st] ?? 'dim'}" title="الشرعية (طريقة الراجحي): ${esc(st)}">${st === 'غير جائز' ? '✕' : st === 'حلال (نقي)' || st === 'مختلط جائز' ? '✓' : '؟'}</span>`
     // A certain fail from the current filing (R1, R3) comes first: an old saved pass never hides it (G6.3).
-    const pre = shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+    const pre = shariahVerdict({ activity: activityFromSic(r.sic, SHARIAH.sic, r.cik), debt: null, marketValue: null, bookEquity: null, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
     if (pre.state === 'غير جائز') return mark(pre.state)
     const s = state.sh[sym]
     return s?.state && s.period?.end === r.period.end ? mark(s.state) : '' // saved for another quarter: not shown
@@ -1464,7 +1464,7 @@
     if (sym.startsWith('TADAWUL:')) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">للحين ما عندنا مصدر لقوائم الشركات السعودية يعطي إيراد الفوائد والديون. أول ما نلقى مصدر موثوق تنضاف.</p></div>`
     const r = shIn(sym)
     if (!r) return ''
-    if (!r.period && activityFromSic(r.sic, SHARIAH.sic) === 'fail') return `<div class="part sh">${head}<span class="shs lo">غير جائز</span></h3><p>نشاط الشركة محرم (${esc(r.sicDescription ?? '')})، فما يجوز بغض النظر عن أرقامها.</p></div>`
+    if (!r.period && activityFromSic(r.sic, SHARIAH.sic, r.cik) === 'fail') return `<div class="part sh">${head}<span class="shs lo">غير جائز</span></h3><p>نشاط الشركة محرم (${esc(r.sicDescription ?? '')})، فما يجوز بغض النظر عن أرقامها.</p></div>`
     if (!r.period) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">${r.error === 'no CIK' ? 'ما لقينا الشركة في SEC.' : r.stale ? `آخر إيرادات ربعية بأسماء SEC المعتادة من ${esc(r.stale)}: الشركة غيّرت طريقة إعلانها، فما نحكم من أرقام قديمة.` : 'الشركة ما تقدم تقارير ربعية أمريكية لـSEC (غالباً شركة أجنبية تقدم تقرير سنوي)، فما عندنا أرقام ربعية نحكم منها.'}</p></div>`
     const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
     const q = state.quotes[sym]
@@ -1477,12 +1477,13 @@
     const pps = n.purificationPerShare
     const rows = [
       ['النشاط', `${act} <small class="dim">${esc(r.sicDescription ?? '')}</small>`],
-      ['الديون الربوية ÷ القيمة السوقية', `${ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? '—' : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون بفائدة ${big(s.debtUpper ? r.debtUpperBound : r.debt)}${s.debtUpper ? ' (أعلى حد: كل الالتزامات ناقص الإيجارات)' : ''}${r.debtParts?.leases ? ` · إيجارات ${big(r.debtParts.leases)} ما تنحسب` : ''}</small>`],
-      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}${n.illicitShare > 1 ? ' · رقم الإيرادات المنشور ما يشمل الفوائد' : ''}</small>`],
+      // two readings of the debt (lines that may be the same money): both figures, and both ratios while they disagree
+      ['الديون الربوية ÷ القيمة السوقية', `${n.debtRatio == null && s.debtRange ? '<span class="dim">؟</span>' : ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? (s.debtRange ? s.debtRange.map((x) => pct(x, 1).replace('+', '')).join(' إلى ') : '—') : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون بفائدة ${s.debtUpper ? big(r.debtUpperBound) : r.debtHigh ? `${big(r.debt)} إلى ${big(r.debtHigh)}` : big(r.debt)}${s.debtUpper ? ' (أعلى حد: كل الالتزامات ناقص الإيجارات)' : ''}${!s.debtUpper && r.debtHigh ? ' (بعض بنود الديون ممكن تكون نفس الدين مكتوب مرتين، فحسبناها بالطريقتين)' : ''}${r.debtParts?.leases ? ` · إيجارات ${big(r.debtParts.leases)} ما تنحسب` : ''}</small>`],
+      ['الإيراد المحرم ÷ الإيرادات', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${big(r.illicit)} من ${big(r.revenue)}${r.illicitEstimated ? ' · <b>تقدير</b>' : ''}${n.illicitShare > 1 ? (r.revenueTag === 'RevenuesNetOfInterestExpense' ? ' · إيراداتها المنشورة صافية بعد مصروف الفوائد، والفوائد هنا قبله' : ' · إيراداتها صغيرة والفوائد أكبر منها') : ''}</small>`],
       ['التطهير عن الربع لكل سهم', `<b class="n">${usd(pps, 4)}</b>${pps != null && q?.close > 0 ? ` <small class="dim">(<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من السعر)</small>` : ''}`],
     ]
     const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪' })[x]).join('، ')}. الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.`
-      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', marketValue: 'متوسط سعر الربع', bookEquity: 'حقوق المساهمين', illicit: r.illicitEstimated ? 'إيراد الفوائد الفعلي (الشركة ما تعلنه، وتقديرنا المتحفظ فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}${!state.sh[sym]?.live && mcp ? '. نحسب متوسط السعر الحين…' : ''}`
+      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', illicitRange: 'إيراد الفوائد الكامل (المؤكد تحت 5٪، وممكن فوائد ثانية داخل الإيرادات أو على قروض توصله فوقها)', debtRange: 'رقم الديون الأكيد (بطريقة تطلع النسبة تحت 30٪ وبطريقة فوقها)', marketValue: 'متوسط سعر الربع', bookEquity: 'حقوق المساهمين', illicit: r.illicitEstimated ? 'إيراد الفوائد الفعلي (الشركة ما تعلنه، وتقديرنا المتحفظ فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}${!state.sh[sym]?.live && mcp ? '. نحسب متوسط السعر الحين…' : ''}`
       : s.state === 'حلال (نقي)' ? 'ما عليها ديون ربوية ولا إيراد محرم في القوائم.' : 'جائز مع التطهير.'
     return `<div class="part sh">${head}<span class="shs ${SH_CLS[s.state]}">${esc(s.state)}</span></h3>
       <p>${why}</p>
@@ -1492,7 +1493,7 @@
       <details class="shmore"><summary>الطريقة والتنبيهات</summary>
       <p>الطريقة من ضوابط الراجحي المالية كما في شروط صندوق الراجحي للأسهم العالمية (قرار الهيئة الشرعية 336، تحديث 2025/08/12) وملف «آلية احتساب العنصر المحرم»: الديون الربوية لا تتجاوز 30٪ من متوسط القيمة السوقية للربع (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪ من الإيرادات. التطهير = الإيراد المحرم ÷ عدد أسهم الشركة × أسهمك. صفحة الراجحي لقائمة الأسهم السعودية تذكر 33٪ مع «القيمة المؤسسية»، وننتظر توضيحهم.</p>
       <p>يلزم التطهير من يملك السهم وقت صدور القوائم (ربعية أو سنوية)، وزّعت الشركة أرباح أو لا. اللي باع قبل صدورها ما عليه. المبلغ يُصرف في وجوه الخير، وما ينحسب من الزكاة ولا الضريبة.</p>
-      <p>التزامات الإيجار ما تنحسب من الديون، مثل تطبيق الراجحي في قائمته (طيران ناس متوافقة وإيجاراتها 54٪ من قيمتها السوقية). ${r.illicitEstimated && r.illicitTag ? `رقم الشركة (${esc(r.illicitTag)}) يجمع الفوائد مع إيرادات ثانية، فهو حد أعلى: يثبت الجواز إذا كان تحت 5٪، وما يثبت المنع إذا كان فوقها.` : r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
+      <p>التزامات الإيجار ما تنحسب من الديون، مثل تطبيق الراجحي في قائمته (طيران ناس متوافقة وإيجاراتها 54٪ من قيمتها السوقية). ${r.illicitEstimated && r.illicitTag ? `رقم الشركة (${esc(r.illicitTag)}) يجمع الفوائد مع إيرادات ثانية، فهو حد أعلى: يثبت الجواز إذا كان تحت 5٪، وما يثبت المنع إذا كان فوقها.` : r.illicitEstimated ? `الشركة ما تعلن إيراد الفوائد، فقدّرناه بالأحوط: أعلى رصيد للكاش والاستثمارات في الربع (ومعها الأصول المتداولة اللي ما نعرف نوعها) × متوسط عائد سندات الشركات الأمريكية <span class="n">${fmt(r.yieldPct, 2)}٪</span>${r.estimate?.loans ? `، وقروضها اللي تقرضها للعملاء ${big(r.estimate.loans)} × ${fmt(r.estimate.lendPct, 0)}٪ بالسنة` : ''}.` : `إيراد الفوائد من قوائم الشركة (${esc(r.illicitTag ?? '')}).`} الإيراد من أنشطة جانبية محرمة (مثل بيع الخمور) ما ينحسب هنا للحين.</p>
       <p>الراجحي يقول: إذا فيه شركات نقية تكفي الحاجة، يُكتفى بها.</p></details></div>`
   }
 
@@ -1501,7 +1502,9 @@
   const FUND_WHY = { R1: 'نشاط محرم', R2: 'الديون فوق 30٪', R3: 'الإيراد المحرم فوق 5٪', activity: 'النشاط يحتاج مراجعة', debt: 'رقم الديون ناقص',
     marketValue: 'القيمة السوقية ناقصة', bookEquity: 'حقوق المساهمين ناقصة', illicit: 'إيراد الفوائد ناقص', revenue: 'الإيرادات ناقصة',
     shares: 'عدد الأسهم ناقص', statements: 'ما عندنا قوائمها في SEC', priceBand: 'قريبة من حد الديون',
-    illicitHigh: 'تقدير الفوائد فوق 5٪ ورقمها الفعلي غير منشور', split: 'تقسيم أسهم قريب يخلي قيمتها السوقية غير أكيدة' }
+    illicitHigh: 'تقدير الفوائد فوق 5٪ ورقمها الفعلي غير منشور', split: 'تقسيم أسهم قريب يخلي قيمتها السوقية غير أكيدة',
+    illicitBound: 'رقم الفوائد المنشور مدموج مع دخل ثاني وفوق 5٪', debtRange: 'بنود الديون تحتمل قراءتين، وحدة تحت 30٪ ووحدة فوقها',
+    illicitRange: 'الفوائد المؤكدة تحت 5٪ وممكن تكون فوقها (فوائد داخل الإيرادات أو على قروض)' }
   const KIND_AR = { 'cash-fund': 'صندوق نقدي بفائدة', debt: 'سندات أو قروض بفائدة', derivative: 'مشتقات', other: 'أداة غير السهم العادي', collateral: 'ضمانات إقراض الأسهم' }
   const pc = (x, d = 1) => (Number.isFinite(x) ? `<bdi>${fmt(100 * x, d)}٪</bdi>` : '—')
   const fundWhy = (x) => (x.k !== 'equity' ? KIND_AR[x.k] ?? '' : x.s === 'غير جائز' || x.s === 'ما ينحكم'
@@ -1509,12 +1512,19 @@
   const fundState = (x) => (x.k === 'equity' ? x.s ?? 'ما ينحكم' : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? '' : 'ما ينحكم')
   function fundRow(x) {
     const st = fundState(x)
-    const why = [fundWhy(x), x.est && x.k === 'equity' ? 'فوائد مقدّرة' : '', x.ub && x.k === 'equity' ? 'الفوائد مدموجة مع غيرها' : '', x.exact ? 'بمتوسط سعر الربع' : ''].filter(Boolean).join(' · ')
+    const why = [fundWhy(x), x.est && x.k === 'equity' ? 'فوائد مقدّرة' : '', x.ub && x.k === 'equity' ? 'الفوائد مدموجة مع غيرها' : '',
+      x.exact ? 'بمتوسط سعر الربع' : x.k === 'equity' && x.dr != null && (x.s === 'مختلط جائز' || x.why?.includes('R2')) ? 'الديون بسعر التقرير' : ''].filter(Boolean).join(' · ')
     return `<tr><th>${x.t ? `<b class="n">${esc(x.t)}</b> ` : ''}<small class="dim">${esc(x.n)}</small>${why ? `<small class="fwhy">${esc(why)}</small>` : ''}</th>
       <td class="n">${pc(x.w, 2)}</td><td>${st ? `<span class="${SH_CLS[st] ?? 'dim'}">${esc(st)}</span>` : ''}</td></tr>`
   }
   // A7 on the viewer's own date in Riyadh (the data may be days old): holdings past the limit are not judged
   const fundOld = (f) => f.old || (Date.parse(new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10)) - Date.parse(f.as_of)) / 864e5 > FUNDS.maxAgeDays
+  // Purification is known only for the part of the fund whose companies' numbers we have (audit 2026-11-22: UMMA showed
+  // 0.000% on 0.4% of the fund): the figure is a floor below full coverage, and no figure under half of it.
+  const PUR_MIN = 0.5
+  const fundPur = (f) => f.purificationCoveredWeight >= 0.995 ? `التطهير عن الربع ${pc(f.purificationPct, 3)} من مبلغك`
+    : f.purificationCoveredWeight >= PUR_MIN ? `التطهير عن الربع على الأقل ${pc(f.purificationPct, 3)} من مبلغك (محسوب على ${pc(f.purificationCoveredWeight)} منه)`
+    : `التطهير عن الربع ما نقدر نحسبه: عندنا أرقام ${pc(f.purificationCoveredWeight)} من الصندوق بس`
   function fundCard(f) {
     const open = state.fundOpen === f.sym, old = fundOld(f), fst = old ? 'ما ينحكم' : f.state
     const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -1522,7 +1532,7 @@
     const head = `<button type="button" class="fhead" data-fund="${esc(f.sym)}" aria-expanded="${open}"><b class="n">${esc(f.sym)}</b>
       <span class="shs ${SH_CLS[fst] ?? 'dim'}">${esc(fst)}</span>
       <span>غير جائز ${pc(f.badWeight)} · ما ينحكم ${pc(f.unknownWeight)}</span>
-      <span>التطهير عن الربع ${pc(f.purificationPct, 3)} من مبلغك</span>
+      <span>${fundPur(f)}</span>
       <small class="dim">المكونات بتاريخ ${d(f.as_of)}${flags.length ? ' · ' + flags.join(' · ') : ''}</small></button>`
     if (!open) return `<div class="fcard">${head}</div>`
     const rows = f.rows.filter((x) => x.k !== 'collateral')
@@ -1533,8 +1543,8 @@
       <p>${fst === 'غير جائز' ? `الأسهم والأدوات غير الجائزة ${pc(f.badWeight)} من الصندوق، وقاعدتك تسمح بأقل من 5٪.`
         : fst === 'ما ينحكم' ? (old ? 'مكوناته المنشورة أقدم من الحد اللي اعتمدته.' : `ما نقدر نحكم: غير الجائز ${pc(f.badWeight)} والمجهول ${pc(f.unknownWeight)}، ومجموعهم يوصل 5٪ أو أكثر.`)
         : `جائز بقاعدتك: غير الجائز ${pc(f.badWeight)} والمجهول ${pc(f.unknownWeight)}، أقل من 5٪. يلزمك التطهير.`}</p>
-      <label class="shq">كم مبلغك في الصندوق؟ <input type="number" min="0" step="any" inputmode="decimal" data-fq="${esc(f.sym)}" data-p="${f.purificationPct}"> <b class="n" data-fo="${esc(f.sym)}"></b></label>
-      ${f.purificationCoveredWeight < 0.995 ? `<p class="dim">التطهير محسوب على ${pc(f.purificationCoveredWeight)} من الصندوق، والباقي ما عندنا أرقامه.</p>` : ''}
+      ${f.purificationCoveredWeight >= PUR_MIN ? `<label class="shq">كم مبلغك في الصندوق؟ <input type="number" min="0" step="any" inputmode="decimal" data-fq="${esc(f.sym)}" data-p="${f.purificationPct}" data-floor="${f.purificationCoveredWeight < 0.995 ? 1 : 0}"> <b class="n" data-fo="${esc(f.sym)}"></b></label>` : ''}
+      ${f.purificationCoveredWeight < 0.995 ? `<p class="dim">التطهير محسوب على ${pc(f.purificationCoveredWeight)} من الصندوق، والباقي ما عندنا أرقامه${f.purificationCoveredWeight >= PUR_MIN ? '، فالمبلغ أقل شي عليك' : ''}.</p>` : ''}
       ${f.illicitCoveredWeight > 0 ? `<p class="dim">للاطلاع: الإيراد المحرم في شركاته ${pc(f.illicitLookThrough / f.illicitCoveredWeight, 2)} من إيراداتها (متوسط بأوزانها، تقريبي، على ${pc(f.illicitCoveredWeight)} من الصندوق عرفنا أرقامها). الحكم فوق بقاعدتك.</p>` : ''}
       ${bad.length ? `<h4>غير جائز (${bad.length})</h4>${tbl(bad)}` : ''}
       ${unk.length ? `<details><summary>ما ينحكم (${unk.length})</summary>${tbl(unk)}</details>` : ''}
@@ -1552,11 +1562,12 @@
       ${rest.length ? `<h3>صناديق ما تنطبق عليها الطريقة</h3><ul class="fnone">${rest.map((f) => `<li><b class="n">${esc(f.sym)}</b> · ${esc(f.why ?? (f.err === 'not in SEC fund list' ? 'ما لقينا الصندوق في سجلات SEC' : 'ما لقينا تقرير مكوناته في SEC'))}</li>`).join('')}</ul>` : ''}
       <details class="shmore"><summary>الطريقة والتنبيهات</summary>
       <p>المكونات من تقرير الصندوق الربعي لـSEC (N-PORT)، وينشر بعد نهاية الربع بشهرين تقريباً، فالمكونات ممكن تكون أقدم من اليوم بأشهر.</p>
-      <p>كل شركة: الديون الربوية (بدون الإيجارات) لا تتجاوز 30٪ من قيمتها السوقية (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪، من آخر قوائمها في SEC. القيمة السوقية من أسعارها في تقارير الصناديق كلها، ولازم الحكم يثبت من 20٪ تحت أقل سعر إلى 25٪ فوق أعلى سعر. الشركات القريبة من حد الديون نحسب لها متوسط سعر ربعها الفعلي من أسعار الإغلاق اليومية مثل ما يشترط الراجحي، وإذا ما توفر تطلع «قريبة من حد الديون» وما ينحكم عليها. وإذا الشركة قسمت أسهمها بين ربعين، نحسب على السعرين قبل التقسيم وبعده.</p>
+      <p>كل شركة: الديون الربوية (بدون الإيجارات) لا تتجاوز 30٪ من قيمتها السوقية (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪، من آخر قوائمها في SEC. القيمة السوقية من متوسط سعر ربع الشركة الفعلي من أسعار الإغلاق اليومية مثل ما يشترط الراجحي، إذا عندنا أسعاره. وإذا ما عندنا، من أسعارها في تقارير الصناديق (المؤرخة داخل ربعها إن وجدت)، ولازم الحكم يثبت من 20٪ تحت أقل سعر إلى 25٪ فوق أعلى سعر، وهذا تقريب: الشركة اللي حكمها بهالطريقة مكتوب عندها «الديون بسعر التقرير»، واللي ما يثبت حكمها تطلع «قريبة من حد الديون». وإذا الشركة قسمت أسهمها، نحسب كل سعر على أساس عدد الأسهم الحالي، وإذا ما عرفنا السعر قبل التقسيم أو بعده نحسب على الاثنين.</p>
+      <p>إذا بنود الديون في قوائم الشركة ممكن تكون نفس الدين مكتوب مرتين، أو بند ممكن يكون حد برنامج اقتراض مو دين فعلي، نحسب قراءتين: نمنع بالقراءة الأقل ونجيز بالأعلى، وإذا اختلفتا ما نحكم. ونفس الشي في الفوائد: إذا فيه فوائد ممكن تكون داخل الإيرادات (مثل فوائد أموال العملاء أو التمويل)، ما نجيز إلا إذا كانت تحت 5٪ حتى بحسابها.</p>
       <p>الصناديق النقدية والسندات داخل الصندوق تنحسب غير جائزة لأنها بفائدة، والمشتقات وأي أداة غير السهم العادي تنحسب ما ينحكم عليها.</p>
-      <p>إذا الصندوق يقرض أسهمه، الضمانات اللي يستلمها ما تنحسب من مكوناته، بس نذكر نسبتها. عائد الإقراض وفوائد الكاش اللي داخل الصندوق نفسه ما انحسبت في التطهير للحين.</p>
+      <p>إذا الصندوق يقرض أسهمه، الضمانات اللي يستلمها ما تنحسب من مكوناته، بس نذكر نسبتها. فوائد السندات والصناديق النقدية اللي يملكها الصندوق نفسه تنحسب في التطهير بعائد أذونات الخزينة لثلاث أشهر، وعائد إقراض الأسهم ما انحسب للحين.</p>
       <p>التطهير عن الربع = مجموع (وزن كل شركة × إيرادها المحرم ÷ قيمتها السوقية). يلزم من يملك الصندوق وقت صدور قوائم الشركات، ويصرف في وجوه الخير.</p>
-      <p>الشركات اللي نشاطها يحتاج مراجعة (مثل التجزئة اللي تبيع منتجات محرمة، والترفيه، والعقار) تطلع «ما ينحكم» لين نراجع تقاريرها السنوية في المرحلة الثانية.</p>
+      <p>الشركات اللي نشاطها يحتاج مراجعة (مثل التجزئة اللي تبيع منتجات محرمة، والترفيه، والعقار) تطلع «ما ينحكم» لين نراجع تقاريرها السنوية في المرحلة الثانية، إلا إذا فشلت في الديون أو الإيراد المحرم فتطلع «غير جائز».</p>
       <p>الشركات الأجنبية اللي تقدم تقرير سنوي بس، والأسهم السعودية في KSA، ما نحكم عليها للحين.</p></details>`
   }
   document.addEventListener('click', (e) => {
@@ -1570,7 +1581,7 @@
     if (!i) return
     const o = document.querySelector(`[data-fo="${CSS.escape(i.dataset.fq)}"]`)
     const n = Number(i.value), p = Number(i.dataset.p)
-    if (o) o.innerHTML = n > 0 && Number.isFinite(p) ? `عليك <bdi>${fmt(n * p, 2)}</bdi> عن هالربع` : ''
+    if (o) o.innerHTML = n > 0 && Number.isFinite(p) ? `عليك ${i.dataset.floor === '1' ? 'على الأقل ' : ''}<bdi>${fmt(n * p, 2)}</bdi> عن هالربع` : ''
   })
 
   // 8. Research status and a note per stock (notes/<sym>, the owner's).

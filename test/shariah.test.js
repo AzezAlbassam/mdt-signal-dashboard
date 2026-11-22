@@ -126,3 +126,19 @@ test('an estimate is an upper bound: it decides only when it passes', () => {
   assert.equal(v({ illicit: 4, illicitEstimated: true }).state, 'مختلط جائز');
   assert.equal(v({ illicit: 8, illicitEstimated: true, debt: 90 }).state, 'غير جائز'); // R2 fails for sure
 });
+test('audit: the unlisted remainder of a fund has no purification figure either', () => {
+  const r = fundVerdict([{ weight: 0.9, state: 'مختلط جائز', illicit: 0.01, marketValue: 1 }]);
+  assert.ok(Math.abs(r.purificationUnknownWeight - 0.1) < 1e-12, String(r.purificationUnknownWeight));
+});
+test('audit: R1 table fixes: wine and spirits makers filed under 2080 Beverages fail, wholesale alcohol fails, restaurants under 5810 are reviewed', async () => {
+  const { activityFromSic } = await import('../engine/shariah.js');
+  const table = JSON.parse((await import('node:fs')).readFileSync(new URL('../data/shariah/sic-activity.json', import.meta.url)));
+  assert.equal(activityFromSic('2080', table, '0000014693'), 'fail');    // Brown-Forman (Jack Daniel's)
+  assert.equal(activityFromSic('2080', table, '0000016918'), 'fail');    // Constellation Brands (Corona, Modelo, wine)
+  assert.equal(activityFromSic('2080', table, '0000021344'), 'ok');      // Coca-Cola shares the code
+  assert.equal(activityFromSic('2080', table), 'ok');
+  assert.equal(activityFromSic('5180', table), 'fail');                  // wholesale beer, wine and spirits
+  assert.equal(activityFromSic('5810', table), 'review');                // Starbucks, Wendy's: SEC's eating and drinking places
+  assert.equal(activityFromSic('2015', table, '0000100493'), 'review');  // Tyson: a large pork business
+  assert.equal(activityFromSic('5500', table, '0000726958'), 'review');  // Casey's: convenience stores selling beer, wine, tobacco
+});

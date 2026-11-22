@@ -70,13 +70,20 @@ export function fundVerdict(holdings, listedTotal) {
   const total = known(listedTotal) ? listedTotal : listed;
   if (total > 1 + 0.005) invalid = true;
   unknownWeight += Math.max(0, 1 - total);
+  purificationUnknownWeight += Math.max(0, 1 - total);
   const state = invalid ? 'ما ينحكم' : badWeight >= ILLICIT_MAX - EPS ? 'غير جائز'
     : badWeight + unknownWeight >= ILLICIT_MAX - EPS ? 'ما ينحكم' : 'مختلط جائز';
   return { state, badWeight, unknownWeight, purificationPct, purificationUnknownWeight };
 }
 
-// R1 from the SEC industry (SIC) code and the reviewed table data/shariah/sic-activity.json.
-export function activityFromSic(sic, table) {
+// The interest income purification is paid on: the higher reading (cautious), none while a lender's loan interest is unread.
+export const purificationIllicit = r => (r?.illicitOpen || !amount(r?.illicit) ? null : Math.max(r.illicit, r.illicitHigh ?? 0))
+
+// R1 from the SEC industry (SIC) code and the reviewed table data/shariah/sic-activity.json; a company listed there by CIK
+// takes its own entry (SEC files Brown-Forman's whiskey under 2080 Beverages with Coca-Cola: audit 2026-11-22).
+export function activityFromSic(sic, table, cik = null) {
+  const own = cik != null ? table.companies?.[cik] : null;
+  if (own) return own[0];
   const n = Number(sic);
   if (sic == null || sic === '' || !Number.isInteger(n)) return null;
   const hit = list => list.some(([a, b]) => n >= a && n <= b);
@@ -88,14 +95,33 @@ export function activityFromSic(sic, table) {
 // leases bound it from above: that bound can prove a pass (30% even counting all of it), never a fail.
 export function screenStock(r, marketValue, sicTable) {
   // A prohibited activity needs no numbers (banks whose statements we cannot read are still غير جائز)
-  if (!r?.period) return r && activityFromSic(r.sic, sicTable) === 'fail'
+  if (!r?.period) return r && activityFromSic(r.sic, sicTable, r.cik) === 'fail'
     ? { state: 'غير جائز', failed: ['R1'], missing: [], numbers: {}, debtUpper: false, activity: 'fail', marketValue } : null
-  let debt = r.debt, debtUpper = false
+  let debt = r.debt, debtUpper = false, debtRange = null, open = false
   if (debt == null && r.debtUpperBound > 0 && marketValue > 0) {
     const dr = debtRatio(r.debtUpperBound, marketValue, r.bookEquity ?? 0)
     if (dr != null && dr <= DEBT_MAX + EPS) { debt = r.debtUpperBound; debtUpper = true }
   }
-  const activity = activityFromSic(r.sic, sicTable)
-  const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit: r.illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
-  return { ...v, debtUpper, activity, marketValue }
+  // Two readings of the debt when lines may be the same money (engine/sec-facts.js): a pass needs the higher one under
+  // 30%, a fail the lower one above it; in between the debt test is open (audit 2026-11-22).
+  if (debt != null && r.debtHigh > debt) {
+    const lo = debtRatio(debt, marketValue, r.bookEquity), hi = debtRatio(r.debtHigh, marketValue, r.bookEquity)
+    if (lo != null && hi != null) debtRange = [lo, hi]
+    if (hi != null && hi <= DEBT_MAX + EPS) debt = r.debtHigh
+    else if (lo != null && !(lo > DEBT_MAX + EPS)) { debt = null; open = true }
+  }
+  // Interest readings the same way: a pass needs the higher one under 5%, a fail the exact lower one above it; a lender
+  // whose loan interest no tag shows has no higher reading and cannot pass (engine/sec-facts.js, audit 2026-11-22)
+  let illicit = r.illicit, illOpen = false
+  if (known(r.illicit) && (r.illicitOpen || r.illicitHigh > r.illicit)) {
+    const hi = r.illicitOpen ? Infinity : illicitShare(r.illicitHigh, r.revenue), lo = illicitShare(r.illicit, r.revenue)
+    if (hi != null && hi <= ILLICIT_MAX + EPS) illicit = r.illicitHigh
+    else if (r.illicitEstimated || !(lo > ILLICIT_MAX + EPS)) { illicit = null; illOpen = true }
+  }
+  const activity = activityFromSic(r.sic, sicTable, r.cik)
+  const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
+  if (open) v.missing = v.missing.map(x => (x === 'debt' ? 'debtRange' : x))
+  if (illOpen) v.missing = v.missing.map(x => (x === 'illicit' ? 'illicitRange' : x))
+  v.numbers.purificationPerShare = purificationPerShare(purificationIllicit(r), r.shares)
+  return { ...v, debtUpper, debtRange, activity, marketValue }
 }
