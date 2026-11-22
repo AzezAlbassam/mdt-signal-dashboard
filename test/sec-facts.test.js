@@ -199,3 +199,12 @@ test('funds: revenue of investment banks (net of interest expense) and a plain C
   const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], Cash: [i(Q[1], 200)] })), { yieldPct: 4 });
   assert.equal(r.illicitEstimated, true); assert.ok(r.illicit > 0);
 });
+test('debt: a short-term line equal to the current portion of long-term debt is the same money (IBM), counted once', () => {
+  const d = Q[1];
+  // IBM 10-Q 2026-09-30: noncurrent 56.804B, current portion 7.009B, "short-term debt" 7.013B (includes that portion)
+  assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 56804)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 7009)], ShortTermBorrowings: [i(d, 7013)] }), d).debt, 56804 + 7009);
+  // LongTermDebt includes the current portion; a short-term line equal to it adds nothing
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 63813)], LongTermDebtCurrent: [i(d, 7009)], ShortTermBorrowings: [i(d, 7013)] }), d).debt, 63813);
+  // different amounts are different debts (commercial paper beside the current portion): both count
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], CommercialPaper: [i(d, 2)] }), d).debt, 102);
+});
