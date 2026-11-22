@@ -522,3 +522,14 @@ test('audit: a loan book tagged in a current and a noncurrent part counts both (
     NotesAndLoansReceivableNetCurrent: [i(Q[1], 11051)], NotesAndLoansReceivableNetNoncurrent: [i(Q[1], 14402)] })), { yieldPct: 5.474 });
   assert.equal(t.estimate.loans, 25453);
 });
+test('audit: a tagged loan balance wins over loan cash flows, which stand in only when no balance is tagged', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesAndLoansReceivableNetCurrent: [i(Q[1], 200)],
+    ProceedsFromCollectionOfFinanceReceivables: [f('2025-10-01', Q[1], 900)] })), { yieldPct: 5 });
+  assert.equal(r.estimate.loans, 200);
+});
+test('audit: a loan balance repeated in later filings counts once (Cisco: 3,623 + 5,118, not every filing that repeats them)', () => {
+  const rep = (end, val) => [i(end, val, { filed: '2026-08-01' }), i(end, val, { filed: '2026-11-20' })];
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    NotesAndLoansReceivableNetCurrent: rep(Q[1], 3623), NotesAndLoansReceivableNetNoncurrent: rep(Q[1], 5118) })), { yieldPct: 5 });
+  assert.equal(r.estimate.loans, 3623 + 5118);
+});

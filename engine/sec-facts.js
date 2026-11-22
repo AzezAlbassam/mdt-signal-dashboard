@@ -198,11 +198,17 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // the loans to charge a lending rate: the largest loan balance (a current and a noncurrent part of one line on one
   // date added up: Caterpillar 11,051 + 14,402) or loan cash flow of the last 400 days (a flow stands in where no
   // balance is tagged: Corning collected 1.1B of finance receivables in 2025)
+  // each fact once (later filings repeat earlier balances as comparatives: the latest filing's value counts)
   const loanFacts = Object.values(cf.facts ?? {}).flatMap(nsx => Object.entries(nsx)
-    .filter(([t]) => LOANS.includes(t) || (LOANISH.test(t) && !NOT_HELD.test(t))).flatMap(([t, x]) => (x.units?.USD ?? []).filter(recent).map(y => ({ t, ...y }))));
+    .filter(([t]) => LOANS.includes(t) || (LOANISH.test(t) && !NOT_HELD.test(t))).flatMap(([t, x]) => {
+      const one = new Map();
+      for (const y of (x.units?.USD ?? []).filter(recent)) { const k = `${y.start ?? ''}/${y.end}`; one.set(k, latestFiled(one.get(k), y)); }
+      return [...one.values()].map(y => ({ t, ...y }));
+    }));
   const parts = new Map();   // base tag @ date -> sum of its current and noncurrent parts (a total stays as it is)
   for (const y of loanFacts) if (!y.start && /[Cc]urrent$/.test(y.t)) { const k = y.t.replace(/(Non)?[Cc]urrent$/, '') + '@' + y.end; parts.set(k, (parts.get(k) ?? 0) + y.val); }
-  const loanBook = Math.max(0, ...parts.values(), ...loanFacts.map(y => y.val));
+  const balances = [...parts.values(), ...loanFacts.filter(y => !y.start).map(y => y.val)];
+  const loanBook = Math.max(0, ...(balances.length ? balances : loanFacts.map(y => y.val)));
   const max = (tags, d) => Math.max(0, ...tags.map(t => instantAt(g, [t], d) ?? 0));
   const unexplainedAt = (d, c) => {
     const ac = instantAt(g, ['AssetsCurrent'], d);

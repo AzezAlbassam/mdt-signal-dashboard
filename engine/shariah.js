@@ -76,8 +76,17 @@ export function fundVerdict(holdings, listedTotal) {
   return { state, badWeight, unknownWeight, purificationPct, purificationUnknownWeight };
 }
 
-// The interest income purification is paid on: the higher reading (cautious), none while a lender's loan interest is unread.
-export const purificationIllicit = r => (r?.illicitOpen || !amount(r?.illicit) ? null : Math.max(r.illicit, r.illicitHigh ?? 0))
+// The interest income purification is paid on: the figure that decided R3 — the higher reading when it passes (the
+// cautious figure), the exact one when it fails — and none while R3 is open, because a loose bound is no amount to pay
+// (audit 2026-11-22: Ford's loan book at the lending rate came to 40% of the holding a quarter). R3 does not depend on
+// the market value, so a fund holding's band gives the same answer at both ends.
+export function purificationIllicit(r) {
+  if (r?.illicitOpen || !amount(r?.illicit)) return null
+  const high = Math.max(r.illicit, r.illicitHigh ?? 0), hi = illicitShare(high, r.revenue), lo = illicitShare(r.illicit, r.revenue)
+  if (hi != null && hi <= ILLICIT_MAX + EPS) return high
+  if (!r.illicitEstimated && lo != null && lo > ILLICIT_MAX + EPS) return r.illicit
+  return null
+}
 
 // R1 from the SEC industry (SIC) code and the reviewed table data/shariah/sic-activity.json; a company listed there by CIK
 // takes its own entry (SEC files Brown-Forman's whiskey under 2080 Beverages with Coca-Cola: audit 2026-11-22).

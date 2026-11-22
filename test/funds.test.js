@@ -231,10 +231,17 @@ test('audit: interest readings decide R3 only together; a lender with unread loa
   assert.equal(screenStock(co({ illicit: 60, illicitOpen: true }), 1000, SIC).state, 'غير جائز');
   // an estimate (upper bound) with unread loan interest is open too
   assert.equal(screenStock(co({ illicit: 10, illicitEstimated: true, illicitOpen: true }), 1000, SIC).state, 'ما ينحكم');
-  // purification uses the high figure; none when the loan interest is unread
+  // purification is the figure that decided R3: the high one when it passes, the exact one when it fails, and none
+  // while R3 is open (a loose bound is no amount to pay: Ford came out at 40% of the holding a quarter; audit 2026-11-22)
   assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 40 }), 10, SIC).purification, 40 / 1000);
-  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 80 }), 10, SIC).purification, 80 / 1000);
+  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 80 }), 10, SIC).purification, null);
+  assert.equal(screenHolding(co({ illicit: 60, illicitHigh: 90 }), 10, SIC).purification, 60 / 1000);
   assert.equal(screenHolding(co({ illicit: 10, illicitOpen: true }), 10, SIC).purification, null);
+  // an estimate (an upper bound) above 5% leaves R3 open: no purification amount either
+  assert.equal(screenHolding(co({ illicit: 90, illicitEstimated: true }), 10, SIC).purification, null);
+  assert.equal(screenHolding(co({ illicit: 30, illicitEstimated: true }), 10, SIC).purification, 30 / 1000);
+  // the stock page gives the same per share
+  assert.equal(screenStock(co({ illicit: 20, illicitHigh: 80 }), 1000, SIC).numbers.purificationPerShare, null);
 });
 test('audit: a short position in equities is not compliant weight (a 130/30 fund cannot pass on its shorts)', () => {
   const longs = Array.from({ length: 13 }, () => ({ w: 0.10, kind: 'equity', state: 'مختلط جائز', purification: 0.001 }));
