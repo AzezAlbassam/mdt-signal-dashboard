@@ -7,7 +7,8 @@ const os = require('os')
 const path = require('path')
 const root = path.join(__dirname, '../../')
 const html = `<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>${fs.readFileSync(root + 'pages/stocks.html', 'utf8')}</body></html>`
-const file = path.join(os.tmpdir(), 'stocks-test.html')
+// one file per run: two checks at once (another copy of the repo) would otherwise load each other's page
+const file = path.join(os.tmpdir(), `stocks-test-${process.pid}.html`)
 fs.writeFileSync(file, html)
 
 const load = (dir, s) => JSON.parse(fs.readFileSync(`${root}data/${dir}/raw/${s}.json`))

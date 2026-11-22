@@ -594,6 +594,13 @@ Debt has two readings (the principle that replaced M12's "debt never understated
 - Finance leases come out of bundled lines wherever they are tagged (A2): Home Depot 52,483 -> 49,417 high (3,066 of
   finance leases), Tyson, Yum, Domino's, IP, EchoStar, Ameresco, Medtronic. Across all 1,114 cached companies no high
   reading falls below the old figure except by tagged finance leases.
+- The current finance lease comes out of DebtCurrent only when what is left equals the other current debt lines
+  (Micron: 491 is the lease). M12 took 151 out of KDP's 7,270, which its 10-Q shows holds paper, a term loan and notes,
+  and the M12 test asserted that; it now expects 28,865. PayPal mixes a principal schedule (LongTermDebt) with carrying
+  values: the low reading takes the smaller noncurrent figure (13,472), the high one the larger (13,553). Short-term
+  lines are never added on top of a DebtCurrent reading, which holds them.
+- The second batch also reads notes payable to banks as noncurrent debt (Sky Quarry); Block's 1,096M warehouse line
+  under LongTermLineOfCredit enters the high reading (it may sit inside its long-term debt).
 
 Interest:
 - The A8 estimate counts current assets no tagged line explains as interest-earning (Energy Fuels keeps 779M of
@@ -606,10 +613,27 @@ Interest:
   with customers may be financing income (MercadoLibre's credit revenues: a wrong pass at 0.51%), unexplained current
   assets may earn interest booked in revenue (ADP's 44.7B of client funds: a wrong pass at 2.44%), and loans whose tagged
   interest is under 4% a year of the book earn the lending rate (Snap-on, IBM). R3 passes only under 5% at the high
-  reading and fails only above it at the exact low one; purification uses the high reading (cautious).
+  reading and fails only above it at the exact low one.
+- Purification is the figure that decided R3: the high reading when R3 passes on it (the cautious figure), the exact
+  one when R3 fails, and none while R3 is open — found when checking the rebuild: the high reading as an amount gave
+  Ford 40% and Bunge 90% of the holding a quarter (a bound is no amount to pay). An estimate above 5% likewise gives
+  no amount now. Fund cards then show the covered part as a floor.
+- The 20% lending rate, checked on the rebuilt data: only Palo Alto and Caterpillar change with twice the corporate
+  yield instead. Palo Alto's 10-Q shows 1,409 of financing receivables carrying 123 of unearned income (about 5% a
+  year): at 20% it is a wrong «ما ينحكم» (5.09%), the mild side. Caterpillar's financial products arm is large against
+  its revenue: at twice the yield it would pass at 4.64%, likely wrongly. Kept at 20%; FinancialServicesRevenue, which
+  would settle such cases, has not been tagged by these filers since 2018.
+- Loan balances are counted once (later filings repeat them as comparatives: Cisco's 8.7B had come to 16.7B), current
+  and noncurrent parts of one line add up (Caterpillar 11,051 + 14,402), and cash flows stand in only where no balance
+  is tagged.
 - A lender whose revenue is contract revenue only gets its interest added for the total (AXP 56.9% -> 36.3%, still a fail).
-- C19 correction to M12: after M12's securities-total rule the estimates overstate AMD by 137% and MSFT by 71% (not
-  42-82%): the cautious side, kept.
+- C19 correction to M12: after M12's securities-total rule the estimates overstated AMD by 137% and MSFT by 71% (not
+  42-82%). A securities total now counts only when no investment line is tagged (KLA) and it is not the cash itself
+  (Natera): fair-value tables often hold the cash equivalents (AMD's 14,107 holds 5,736; AvePoint's T-bills inside cash
+  are still counted twice, which needs the filing's balance-sheet-location axis). An insurer's published investment
+  income (NetInvestmentIncome, GrossInvestmentIncomeOperating) is a floor of its estimate and a high reading (AMERISAFE,
+  Primerica: bonds held to maturity are not all tagged); a consolidated CLO or insurance book that companyfacts does not
+  show (Apollo, Virtus) stays understated, and both are under activity review.
 
 Activity (data/shariah/sic-activity.json, the owner's G7 draft): SEC files wine and spirits makers under 2080 Beverages
 with soft drinks, so companies can be listed by CIK: Brown-Forman and Constellation Brands fail (Brown-Forman passed);

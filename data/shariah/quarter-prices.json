@@ -1,33 +1,33 @@
 {
- "built": "2026-11-22T02:27:39.102Z",
+ "built": "2026-11-22T05:07:50.324Z",
  "source": "daily closes, split-adjusted, averaged over the company's own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)",
  "prices": {
   "BA": {
    "start": "2026-07-01",
    "end": "2026-09-30",
-   "avg": 214.42875,
+   "avg": 214.42874999999995,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "FDX": {
    "start": "2026-07-01",
    "end": "2026-09-30",
-   "avg": 314.141875,
+   "avg": 314.14187499999997,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "PYPL": {
    "start": "2026-07-01",
    "end": "2026-09-30",
-   "avg": 55.06203125,
+   "avg": 55.061953124999995,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "CARR": {
    "start": "2026-07-01",
@@ -36,7 +36,7 @@
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "DIS": {
    "start": "2026-06-28",
@@ -45,16 +45,16 @@
    "n": 68,
    "first": "2026-06-29",
    "last": "2026-10-02",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "TGT": {
    "start": "2026-05-03",
    "end": "2026-08-01",
-   "avg": 131.05032258064517,
+   "avg": 131.05024193548385,
    "n": 62,
    "first": "2026-05-04",
    "last": "2026-07-31",
-   "source": "FMP"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "RBLX": {
    "start": "2026-07-01",
@@ -74,10 +74,955 @@
    "last": "2026-07-31",
    "source": "FMP"
   },
+  "IBM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 237.46093750000006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AMGN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 398.572890625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LOW": {
+   "start": "2026-05-02",
+   "end": "2026-07-31",
+   "avg": 216.3672903225806,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MDT": {
+   "start": "2026-04-25",
+   "end": "2026-07-31",
+   "avg": 80.1516417910448,
+   "n": 67,
+   "first": "2026-04-27",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 223.99984375000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "UPS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 104.990625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ORCL": {
+   "start": "2026-06-01",
+   "end": "2026-08-31",
+   "avg": 155.48828125000006,
+   "n": 64,
+   "first": "2026-06-01",
+   "last": "2026-08-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CRM": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 172.56396825396823,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NVDA": {
+   "start": "2026-04-27",
+   "end": "2026-07-26",
+   "avg": 209.1290322580645,
+   "n": 62,
+   "first": "2026-04-27",
+   "last": "2026-07-24",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AMD": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 511.3890476190477,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AVGO": {
+   "start": "2026-05-04",
+   "end": "2026-08-02",
+   "avg": 400.6210483870967,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MU": {
+   "start": "2026-05-29",
+   "end": "2026-09-03",
+   "avg": 962.8418382352944,
+   "n": 68,
+   "first": "2026-05-29",
+   "last": "2026-09-03",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "INTC": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 102.33960317460321,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AMAT": {
+   "start": "2026-04-27",
+   "end": "2026-07-26",
+   "avg": 512.5504838709678,
+   "n": 62,
+   "first": "2026-04-27",
+   "last": "2026-07-24",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TXN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 276.50890625000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "KLAC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 196.17625000000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MRVL": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 226.21548387096772,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LRCX": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 315.26174603174604,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ADI": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 401.1924193548387,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "QCOM": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 172.86841269841258,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CDNS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 328.6335937500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SNPS": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 458.14412698412707,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TER": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 370.6129365079365,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MPWR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1310.201953125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NXPI": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 245.17587301587295,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AAPL": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 319.47444444444443,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MSFT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 462.4603124999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AMZN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 254.07624999999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GOOGL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 347.06671875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "META": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 624.15640625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TSLA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 357.87148437500014,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LLY": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1179.9985937500005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BRK-B": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 504.52140625000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "JPM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 349.76734375000007,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "JNJ": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 263.37507936507944,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "XOM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 156.35828124999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "V": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 365.5348437500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WMT": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 118.82571428571428,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CAT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 848.1123437499999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ABBV": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 256.36125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "COST": {
+   "start": "2026-05-11",
+   "end": "2026-08-30",
+   "avg": 965.4307142857142,
+   "n": 77,
+   "first": "2026-05-11",
+   "last": "2026-08-28",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 562.2385937500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GE": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 346.421875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "UNH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 402.57984375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BAC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 60.92359374999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 146.53671875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MRK": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 138.18234375000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "KO": {
+   "start": "2026-07-04",
+   "end": "2026-10-02",
+   "avg": 86.83062500000001,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CVX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 196.90640625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NFLX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 75.15335937500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 188.935625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1023.1510937499997,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PLTR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 159.37171874999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "RTX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 204.71375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WFC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 86.5059375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 212.47343750000002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LIN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 491.3661718750001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WDC": {
+   "start": "2026-07-04",
+   "end": "2026-10-02",
+   "avg": 482.12367187499996,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "STX": {
+   "start": "2026-07-04",
+   "end": "2026-10-02",
+   "avg": 854.8172656249998,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GLW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 158.92796874999993,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MCD": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 263.208125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TMO": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 587.2149206349205,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PEP": {
+   "start": "2026-06-14",
+   "end": "2026-09-05",
+   "avg": 140.04913793103447,
+   "n": 58,
+   "first": "2026-06-15",
+   "last": "2026-09-04",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AXP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 334.12874999999997,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "VZ": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 47.044531249999984,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ANET": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 188.22296875000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TJX": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 156.34064516129027,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ETN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 417.33703125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "UNP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 290.76671875000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WELL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 236.47609375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DE": {
+   "start": "2026-05-04",
+   "end": "2026-08-02",
+   "avg": 586.4969354838712,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ABT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 104.41843749999994,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GILD": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 140.30664062500003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SCHW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 105.29249999999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "UBER": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 73.1325,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "T": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 24.125156250000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ISRG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 381.7182031250002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "APP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 368.2407812500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BKNG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 187.93734375000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PFE": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 26.42396825396826,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CVS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 97.90593750000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "VRT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 272.43296875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PGR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 215.98828125000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "COP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 123.90531250000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "VRTX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 512.0377343749999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "COF": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 209.83875000000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DELL": {
+   "start": "2026-05-02",
+   "end": "2026-07-31",
+   "avg": 367.7398387096775,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SPGI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 423.14109375000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 981.6295312499998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 345.2381249999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MO": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 69.44078125000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DHR": {
+   "start": "2026-06-27",
+   "end": "2026-09-25",
+   "avg": 203.935873015873,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "BMY": {
    "start": "2026-07-01",
    "end": "2026-09-30",
    "avg": 63.19750000000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SBUX": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 103.58111111111108,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SYK": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 315.0375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 459.81109375000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PWR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 645.0171875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HWM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 263.22812500000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LMT": {
+   "start": "2026-06-29",
+   "end": "2026-09-27",
+   "avg": 550.0190476190476,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "EQIX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1039.298125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NOW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 122.88578125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NEM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 111.94015625000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PNC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 245.12078125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CMI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 603.4443749999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "FTNT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 162.12859375000002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "USB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 62.43250000000001,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
@@ -92,10 +1037,145 @@
    "last": "2026-06-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "MCK": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 860.3115624999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "FCX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 68.07062499999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GD": {
+   "start": "2026-07-06",
+   "end": "2026-10-04",
+   "avg": 370.14890625000004,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ADP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 265.27562499999993,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "JCI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 144.75546875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CSX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 49.58328124999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CMCSA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 24.489218750000006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 130.83375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DDOG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 247.32289062499999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MMM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 170.5556249999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ADBE": {
+   "start": "2026-05-30",
+   "end": "2026-08-28",
+   "avg": 239.0509523809523,
+   "n": 63,
+   "first": "2026-06-01",
+   "last": "2026-08-28",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MAR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 356.31296875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ELV": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 399.0462500000002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "MRSH": {
    "start": "2026-07-01",
    "end": "2026-09-30",
    "avg": 182.92109375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "EMR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 150.46953124999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CME": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 263.668828125,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
@@ -110,6 +1190,15 @@
    "last": "2026-06-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "HOOD": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 106.16984375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "RCL": {
    "start": "2026-07-01",
    "end": "2026-09-30",
@@ -117,6 +1206,51 @@
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SHW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 337.93953124999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TMUS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 178.99875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "VLO": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 337.53281250000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "COHR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 300.24906250000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ACN": {
+   "start": "2026-06-01",
+   "end": "2026-08-31",
+   "avg": 159.76375000000002,
+   "n": 64,
+   "first": "2026-06-01",
+   "last": "2026-08-31",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "ORLY": {
@@ -128,10 +1262,73 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "AMT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 171.66484375000002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HLT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 320.55984375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MPC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 345.70843749999995,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TDG": {
+   "start": "2026-06-28",
+   "end": "2026-09-30",
+   "avg": 1205.9139393939395,
+   "n": 66,
+   "first": "2026-06-29",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "MDLZ": {
    "start": "2026-07-01",
    "end": "2026-09-30",
    "avg": 61.520468749999985,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 90.50812500000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 281.79296875000006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SPG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 217.69109375000002,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
@@ -155,6 +1352,78 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "URI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1066.6709375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AON": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 338.21906249999984,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ITW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 277.64953125000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NSC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 331.2284374999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ECL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 277.70765625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TRV": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 366.1554687499999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DASH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 201.89164062500006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "FIX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1678.7875000000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "ICE": {
    "start": "2026-07-01",
    "end": "2026-09-30",
@@ -173,6 +1442,69 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "GM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 83.63624999999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CIEN": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 481.79629032258055,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "EOG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 142.66312499999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MSI": {
+   "start": "2026-07-05",
+   "end": "2026-10-03",
+   "avg": 450.99640624999995,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ROST": {
+   "start": "2026-05-03",
+   "end": "2026-08-01",
+   "avg": 227.3101612903225,
+   "n": 62,
+   "first": "2026-05-04",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MCO": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 485.3179687499999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NOC": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 538.4340625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "PSX": {
    "start": "2026-07-01",
    "end": "2026-09-30",
@@ -180,6 +1512,15 @@
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "LITE": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 840.6100793650793,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "APD": {
@@ -191,6 +1532,87 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "KKR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 102.07984375000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BSX": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 46.2990625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PCAR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 125.19187499999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "KMI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 31.704374999999995,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "REGN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 755.6765625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ALL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 253.58203125000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DAL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 84.82781249999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HCA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 409.8334375000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "KEYS": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 337.8919047619048,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "HPE": {
    "start": "2026-05-01",
    "end": "2026-07-31",
@@ -200,10 +1622,100 @@
    "last": "2026-07-31",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "ABNB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 163.96437499999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GWW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1319.5043749999995,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AJG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 250.73984375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TEL": {
+   "start": "2026-06-27",
+   "end": "2026-09-25",
+   "avg": 206.29682539682534,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CTAS": {
+   "start": "2026-06-01",
+   "end": "2026-08-31",
+   "avg": 190.729140625,
+   "n": 64,
+   "first": "2026-06-01",
+   "last": "2026-08-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "O": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 61.690156250000015,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "TRGP": {
    "start": "2026-07-01",
    "end": "2026-09-30",
    "avg": 279.9279687500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CAH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 232.51625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AME": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 241.48078125000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "FAST": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 48.998671875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ROK": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 444.80718749999994,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
@@ -218,6 +1730,177 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
+  "COR": {
+   "start": "2026-04-01",
+   "end": "2026-06-30",
+   "avg": 288.27467741935493,
+   "n": 62,
+   "first": "2026-04-01",
+   "last": "2026-06-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "OKE": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 92.01625000000003,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "APO": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 126.90562499999996,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "F": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 13.870625000000004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AFL": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 119.89546875000002,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "AZO": {
+   "start": "2026-05-10",
+   "end": "2026-08-29",
+   "avg": 3094.228441558442,
+   "n": 77,
+   "first": "2026-05-11",
+   "last": "2026-08-28",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "EW": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 88.87031249999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NUE": {
+   "start": "2026-07-05",
+   "end": "2026-10-03",
+   "avg": 250.55031249999982,
+   "n": 64,
+   "first": "2026-07-06",
+   "last": "2026-10-02",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "PSA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 312.88500000000005,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "VST": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 147.1171875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "EBAY": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 108.888046875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NKE": {
+   "start": "2026-06-01",
+   "end": "2026-08-31",
+   "avg": 42.382968750000025,
+   "n": 64,
+   "first": "2026-06-01",
+   "last": "2026-08-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "HUM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 388.77875000000006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "DVN": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 45.89859374999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CVNA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 68.44953124999999,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "STT": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 185.07828124999997,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "WAB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 284.35171875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MET": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 95.35671874999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "RSG": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 217.61468750000006,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
   "BDX": {
    "start": "2026-04-01",
    "end": "2026-06-30",
@@ -225,6 +1908,69 @@
    "n": 62,
    "first": "2026-04-01",
    "last": "2026-06-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "ADSK": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 221.17968253968255,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "XYZ": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 79.5953125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "GRMN": {
+   "start": "2026-06-28",
+   "end": "2026-09-26",
+   "avg": 274.9690476190477,
+   "n": 63,
+   "first": "2026-06-29",
+   "last": "2026-09-25",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "IBKR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 91.51171875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "A": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 128.01555555555558,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "OXY": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 57.1534375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NDAQ": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 93.44203125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
   "FANG": {
@@ -236,77 +1982,122 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
-  "IBM": {
+  "COIN": {
    "start": "2026-07-01",
    "end": "2026-09-30",
-   "avg": 237.4609375,
+   "avg": 169.85546875,
    "n": 64,
    "first": "2026-07-01",
    "last": "2026-09-30",
-   "source": "TradingView"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   },
-  "AMGN": {
-   "start": "2026-07-01",
-   "end": "2026-09-30",
-   "avg": 398.572890625,
-   "n": 64,
-   "first": "2026-07-01",
-   "last": "2026-09-30",
-   "source": "TradingView"
-  },
-  "LOW": {
-   "start": "2026-05-02",
-   "end": "2026-07-31",
-   "avg": 216.36729032258066,
-   "n": 62,
-   "first": "2026-05-04",
-   "last": "2026-07-31",
-   "source": "TradingView"
-  },
-  "MDT": {
-   "start": "2026-04-25",
-   "end": "2026-07-31",
-   "avg": 80.15164179104477,
-   "n": 67,
-   "first": "2026-04-27",
-   "last": "2026-07-31",
-   "source": "TradingView"
-  },
-  "WM": {
-   "start": "2026-07-01",
-   "end": "2026-09-30",
-   "avg": 223.99984375,
-   "n": 64,
-   "first": "2026-07-01",
-   "last": "2026-09-30",
-   "source": "TradingView"
-  },
-  "UPS": {
-   "start": "2026-07-01",
-   "end": "2026-09-30",
-   "avg": 104.990625,
-   "n": 64,
-   "first": "2026-07-01",
-   "last": "2026-09-30",
-   "source": "TradingView"
-  },
-  "ORCL": {
-   "start": "2026-06-01",
-   "end": "2026-08-31",
-   "avg": 155.48828125,
-   "n": 64,
-   "first": "2026-06-01",
-   "last": "2026-08-31",
-   "source": "TradingView"
-  },
-  "CRM": {
+  "VEEV": {
    "start": "2026-05-01",
    "end": "2026-07-31",
-   "avg": 172.56396825396826,
+   "avg": 175.154126984127,
    "n": 63,
    "first": "2026-05-01",
    "last": "2026-07-31",
-   "source": "TradingView"
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "BLK": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1092.14015625,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SHOP": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 135.7084375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MELI": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 1855.2230468750004,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "MSTR": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 115.68687500000001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "RKLB": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 72.014375,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NET": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 296.24125,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "CLS": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 330.70875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SNOW": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 227.75666666666666,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "TEAM": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 144.12796875,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "SCCO": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 191.28153001843745,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
+  },
+  "NTRA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 314.1308593750001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)"
   }
  },
  "rejected": [
@@ -725,6 +2516,22 @@
   {
    "t": "VRTS",
    "why": "TradingView: quota"
+  },
+  {
+   "t": "APH",
+   "why": "average 80.55 vs fund-report price 176.32"
+  },
+  {
+   "t": "CRWD",
+   "why": "average 171.60 vs fund-report price 763.14"
+  },
+  {
+   "t": "MNST",
+   "why": "average 46.30 vs fund-report price 96.12"
+  },
+  {
+   "t": "MRNA",
+   "why": "average 107.77 vs fund-report price 70.03"
   }
  ]
 }
