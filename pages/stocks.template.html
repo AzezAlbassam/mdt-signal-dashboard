@@ -191,6 +191,14 @@ small.since { font-size: 11px; margin-inline-start: 3px; }
 .ftbl th, .ftbl td { text-align: start; padding: 6px 4px; border-top: 1px solid var(--line); vertical-align: top; }
 .ftbl thead th { color: var(--muted); font-weight: 500; border-top: 0; }
 .fnone { margin: 0; padding-inline-start: 18px; display: grid; gap: 4px; }
+.fcard { min-width: 0; overflow-wrap: anywhere; }
+.ftbl th { font-weight: 500; white-space: normal; overflow-wrap: anywhere; }
+.ftbl th small { display: inline; }
+.ftbl .fwhy { display: block; color: var(--muted); margin-top: 2px; }
+.funds, .flist { grid-template-columns: minmax(0, 1fr); }
+.ftbl { table-layout: fixed; }
+.ftbl thead th:nth-child(2) { width: 62px; } .ftbl thead th:nth-child(3) { width: 74px; }
+.ftbl td:nth-child(2) { white-space: nowrap; }
 
 .wrap[data-view="big"] .add, .wrap[data-view="big"] .x, .wrap[data-view="fav"] .add, .wrap[data-view="fav"] .x { display: none; }
 .star { background: none; border: 0; color: var(--muted); font-size: 17px; line-height: 1; padding: 2px 4px; margin-inline-end: 4px; border-radius: 6px; cursor: pointer; }

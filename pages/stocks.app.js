@@ -1508,8 +1508,9 @@
   const fundState = (x) => (x.k === 'equity' ? x.s ?? 'ما ينحكم' : x.k === 'cash-fund' || x.k === 'debt' ? 'غير جائز' : x.k === 'collateral' ? '' : 'ما ينحكم')
   function fundRow(x) {
     const st = fundState(x)
-    return `<tr><th>${x.t ? `<b class="n">${esc(x.t)}</b> ` : ''}<small class="dim">${esc(x.n)}</small></th><td class="n">${pc(x.w, 2)}</td>
-      <td>${st ? `<span class="${SH_CLS[st] ?? 'dim'}">${esc(st)}</span>` : ''}</td><td><small class="dim">${esc(fundWhy(x))}${x.est && x.k === 'equity' ? ' · فوائد مقدّرة' : ''}${x.exact ? ' · بمتوسط سعر الربع' : ''}</small></td></tr>`
+    const why = [fundWhy(x), x.est && x.k === 'equity' ? 'فوائد مقدّرة' : '', x.exact ? 'بمتوسط سعر الربع' : ''].filter(Boolean).join(' · ')
+    return `<tr><th>${x.t ? `<b class="n">${esc(x.t)}</b> ` : ''}<small class="dim">${esc(x.n)}</small>${why ? `<small class="fwhy">${esc(why)}</small>` : ''}</th>
+      <td class="n">${pc(x.w, 2)}</td><td>${st ? `<span class="${SH_CLS[st] ?? 'dim'}">${esc(st)}</span>` : ''}</td></tr>`
   }
   function fundCard(f) {
     const open = state.fundOpen === f.sym
@@ -1524,7 +1525,7 @@
     const rows = f.rows.filter((x) => x.k !== 'collateral')
     const bad = rows.filter((x) => fundState(x) === 'غير جائز'), unk = rows.filter((x) => fundState(x) === 'ما ينحكم')
     const all = state.fundAll[f.sym] ? rows : rows.slice(0, 30)
-    const tbl = (xs) => `<table class="ftbl"><thead><tr><th>الشركة</th><th>الوزن</th><th>الحكم</th><th>السبب</th></tr></thead><tbody>${xs.map(fundRow).join('')}</tbody></table>`
+    const tbl = (xs) => `<table class="ftbl"><thead><tr><th>الشركة والسبب</th><th>الوزن</th><th>الحكم</th></tr></thead><tbody>${xs.map(fundRow).join('')}</tbody></table>`
     return `<div class="fcard open">${head}
       <p>${f.state === 'غير جائز' ? `الأسهم والأدوات غير الجائزة ${pc(f.badWeight)} من الصندوق، وقاعدتك تسمح بأقل من 5٪.`
         : f.state === 'ما ينحكم' ? (f.old ? 'مكوناته المنشورة أقدم من الحد اللي اعتمدته.' : `ما نقدر نحكم: غير الجائز ${pc(f.badWeight)} والمجهول ${pc(f.unknownWeight)}، ومجموعهم يوصل 5٪ أو أكثر.`)
