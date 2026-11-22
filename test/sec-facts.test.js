@@ -511,3 +511,14 @@ test('audit: published investment income bounds the estimate from below and is a
   const ex = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)], GrossInvestmentIncomeOperating: [f(...Q, 60)] })), { yieldPct: 5 });
   assert.deepEqual([ex.illicit, ex.illicitHigh], [10, 60]);
 });
+test('audit: a loan book tagged in a current and a noncurrent part counts both (Caterpillar: 11,051 + 14,402)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 20682)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 18703)],
+    NotesAndLoansReceivableNetCurrent: [i(Q[1], 11051)], NotesAndLoansReceivableNetNoncurrent: [i(Q[1], 14402)],
+    ProceedsFromCollectionOfFinanceReceivables: [f('2025-10-01', Q[1], 15329)] })), { yieldPct: 5.474 });
+  assert.equal(r.estimate.loans, 11051 + 14402);
+  assert.ok(r.illicit / r.revenue > 0.05, String(r.illicit / r.revenue));
+  // a total tagged beside its parts is not added to them
+  const t = secInputs(company(ns({ Revenues: [f(...Q, 20682)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 18703)], NotesAndLoansReceivableNet: [i(Q[1], 25453)],
+    NotesAndLoansReceivableNetCurrent: [i(Q[1], 11051)], NotesAndLoansReceivableNetNoncurrent: [i(Q[1], 14402)] })), { yieldPct: 5.474 });
+  assert.equal(t.estimate.loans, 25453);
+});
