@@ -9,13 +9,9 @@ jobs:
       - run: |
           set +e
           HONEST='mdt-signal-dashboard/1.0 (+https://github.com/AzezAlbassam/mdt-signal-dashboard)'
-          rm -f /tmp/cj
-          curl -sS -m 20 -c /tmp/cj -o /dev/null -w "fc %{http_code}\n" -A "$HONEST" https://fc.yahoo.com
-          CRUMB=$(curl -sS -m 20 -b /tmp/cj -A "$HONEST" https://query2.finance.yahoo.com/v1/test/getcrumb)
-          echo "crumb=[$CRUMB]"
-          y() { curl -sS -m 25 -o /tmp/b -w "%{http_code}" -b /tmp/cj -A "$HONEST" "https://query2.finance.yahoo.com/v7/finance/options/$1?crumb=$CRUMB$2"; }
-          echo "NVDA $(y NVDA '')"; python3 -c "
-          import json;d=json.load(open('/tmp/b'));r=d['optionChain']['result'][0];o=r['options'][0]
-          print('expiries',len(r['expirationDates']),'calls',len(o['calls']));c=o['calls'][len(o['calls'])//2];print(sorted(c.keys()));print(c)"
-          echo "== 30 calls in a row"
-          for t in AAPL MSFT AMZN META TSLA AMD PLTR MSTR COIN HOOD IBIT QQQ IWM SMCI AVGO NFLX UBER HIMS RKLB OKLO SOXX XLK SLV TAN KWEB CIBR MAGS QQQM SPMO DTCR; do printf "%s:%s " "$t" "$(y $t '')"; done; echo
+          for t in ROKU SATS; do
+            echo "== OCC series search $t"
+            curl -sS -m 30 -D /tmp/h -o /tmp/b -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=$t"
+            grep -iE '^HTTP|^content-type|^server' /tmp/h
+            echo "lines: $(wc -l < /tmp/b)"; head -c 900 /tmp/b; echo; echo ...; tail -c 300 /tmp/b; echo
+          done
