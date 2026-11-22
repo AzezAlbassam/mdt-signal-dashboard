@@ -30,9 +30,13 @@ for (const r of Object.values(reports)) for (const h of r.holdings ?? []) {
   const m = mapHolding(h, maps);
   if (m.cik && !byCik.has(m.cik)) need.add(m.cik);
 }
-const avgYield = yieldAverager(get);
+// --reuse: take fund-companies.json (up to 36 hours old) instead of fetching again (a rerun after new prices)
+const reuse = process.argv.includes('--reuse') && existsSync('data/shariah/fund-companies.json')
+  ? JSON.parse(readFileSync('data/shariah/fund-companies.json', 'utf8')) : null;
+if (reuse && Date.now() - Date.parse(reuse.built) > 36 * 3600e3) throw new Error('fund-companies.json is older than 36 hours: run without --reuse');
+const avgYield = reuse ? null : yieldAverager(get);
 const extra = {};
-for (const cik of need) { extra[cik] = inputsFor(cik, get, avgYield); byCik.set(cik, extra[cik]); process.stderr.write('.'); }
+for (const cik of need) { extra[cik] = reuse?.companies?.[cik] ?? inputsFor(cik, get, avgYield ?? yieldAverager(get)); byCik.set(cik, extra[cik]); process.stderr.write('.'); }
 writeFileSync('data/shariah/fund-companies.json', JSON.stringify({ built: new Date().toISOString(), companies: extra }));
 
 const today = new Date().toISOString().slice(0, 10);

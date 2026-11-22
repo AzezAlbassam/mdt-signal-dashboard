@@ -23,12 +23,19 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    `python3 -I scripts/shariah/nport.py <scratchpad>/mf.json $(python3 -I -c "import json;print(' '.join(f['sym'] for f in json.load(open('data/shariah/funds-list.json'))['funds'] if f.get('kind')!='none'))") > data/shariah/nport-latest.jsonl`
    `node scripts/shariah/fund-load.js`: it must exit 0 (it fails on holdings that do not add up, or too few funds).
    Keep its last lines (each fund's state) and compare them with the previous data/shariah/funds.json from git.
+4b. Holdings near the 30% debt line (data/shariah/band-needed.json, written by the loader) get the quarter-average close
+   that Al Rajhi's rule uses: split the list in three, and give each part to a background agent with the brief used on
+   2026-11-21 (FMP chart tool, endpoint historical-price-eod-light, symbol, from_date = start, to_date = end; keep the
+   dates inside the window; count and mean computed by a python one-liner from the pasted [date, price] pairs, never by
+   hand; one JSON line per ticker appended to <scratchpad>/qp/part-K.jsonl, or {"t", "error"}; no other price source).
+   Then `node scripts/shariah/merge-quarter-prices.js <scratchpad>/qp/part-*.jsonl` (it rejects short, out-of-window or
+   split-distorted averages) and rerun `node scripts/shariah/fund-load.js --reuse`, which must exit 0.
 5. `node scripts/shariah/diff-inputs.mjs <scratchpad>/sec-inputs.prev.json data/shariah/sec-inputs.json`: keep the
    result for the reply.
 6. `node scripts/build-stocks-page.js && npm test`, then the browser check at both widths:
    `NODE_PATH=$(npm root -g) node test/pages/stocks-browser-check.cjs` and the same with PHONE=1. Every "CHECK" and
    "SHARIAH" line must say ok and LOGS must be []. Any failure: do not commit, do not publish; report it.
-7. Commit data/shariah/sec-inputs.json, nport-latest.jsonl, funds.json and fund-companies.json as "Weekly SEC refresh D" with the session's trailers, then
+7. Commit data/shariah/sec-inputs.json, nport-latest.jsonl, funds.json, fund-companies.json, band-needed.json and quarter-prices.json as "Weekly SEC refresh D" with the session's trailers, then
    `git fetch -q origin $B && git merge -q --no-edit origin/$B && git push -q -u origin $B`.
 8. Publish with the Artifact tool: file_path /home/user/mdt-signal-dashboard/pages/stocks.html,
    url https://claude.ai/artifact/TUkdHCEyfRfBorus6K5MDa, label "Weekly Shariah refresh D".
