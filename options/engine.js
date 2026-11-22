@@ -215,18 +215,21 @@ export function mergeSession(history, sessionDate, volumes, keep = 20) {
   return h
 }
 
-// A day that traded more than this many times the contract's typical day, and more than
-// OUTLIER_MIN contracts, is a one-off print (a block trade), not daily flow.
+// A day that traded more than OUTLIER_X times the contract's typical day, and more than
+// OUTLIER_MIN contracts, is a one-off print (a block trade), not daily flow — up to
+// OUTLIER_DAYS of them in the window; more such days than that are how the contract trades.
 export const OUTLIER_X = 10
 export const OUTLIER_MIN = 20
+export const OUTLIER_DAYS = 3
 
 /**
  * A normal day's volume over the sessions a contract was listed for: the average of its days
  * without the one-off prints. A 40,000-contract block on a contract that trades 2 a day, or
  * three 500-lots on one that is otherwise idle, is not flow you can sell into; a plain average
  * turns it into a "normal day" for the whole window. A day is one-off when it traded more than
- * OUTLIER_X times the median of the contract's other days (and over OUTLIER_MIN contracts), so
- * busy days of a steadily traded contract stay in.
+ * OUTLIER_X times the median of the contract's other days (and over OUTLIER_MIN contracts);
+ * at most the OUTLIER_DAYS largest of those are left out, so a contract that trades in bursts
+ * — nine busy days, then quiet — keeps its volume, as do busy days of a steady one.
  */
 export function averageVolume(series) {
   const listed = (series ?? []).filter((v) => v != null)
@@ -234,7 +237,9 @@ export function averageVolume(series) {
   const s = [...listed].sort((a, b) => a - b)
   const m = s.length - 1 // the other days of each day
   const other = (j, p) => s[p < j ? p : p + 1] // p-th smallest of the days other than s[j]
-  const kept = s.length < 2 ? s : s.filter((v, j) => v <= Math.max(OUTLIER_X * (m % 2 ? other(j, (m - 1) / 2) : (other(j, m / 2 - 1) + other(j, m / 2)) / 2), OUTLIER_MIN))
+  const oneOff = s.length < 2 ? [] : s.map((v, j) => j).filter((j) => s[j] > Math.max(OUTLIER_X * (m % 2 ? other(j, (m - 1) / 2) : (other(j, m / 2 - 1) + other(j, m / 2)) / 2), OUTLIER_MIN))
+  const drop = new Set(oneOff.slice(-OUTLIER_DAYS)) // the largest, as s is ascending
+  const kept = s.filter((_, j) => !drop.has(j))
   return { adv: kept.reduce((a, b) => a + b, 0) / kept.length, sessions: listed.length }
 }
 
@@ -296,11 +301,10 @@ export function allocate(contracts, { amount, maxLegs = DEFAULTS.maxLegs, ...opt
   fill(amount * 0.5, crumb)
   fill(Infinity, crumb)
   // What the big legs cannot hold goes to the smaller top contracts, so an amount within the
-  // comfortable maximum is placed in full; only orders under 1% of it (one contract on a
-  // large amount) are not worth their own line, and their dollars stay unplaced.
-  if (remaining > 0) fill(Infinity, crumb / 5)
+  // comfortable maximum is placed in full; a leftover under 1% of it is not worth new orders.
+  if (remaining >= crumb / 5) fill(Infinity, 0)
   // Every top contract costs more than the amount: the best-ranked one that fits.
-  if (legs.size === 0) fill(Infinity, 0, ranked.filter((c) => c.ask * (c.multiplier ?? 100) * (c.lot ?? 1) <= amount).slice(0, 1))
+  if (legs.size === 0) fill(Infinity, 0, ranked.filter((c) => toLot(amount / (c.ask * (c.multiplier ?? 100)), c.lot ?? 1) >= (c.lot ?? 1)).slice(0, 1))
 
   // Legs listed best first, as ranked (a symbol listed twice still makes one leg).
   const rank = new Map(ranked.map((c, i) => [c.sym, i]).reverse())

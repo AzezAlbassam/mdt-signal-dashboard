@@ -83,15 +83,17 @@ export function plan(now, lastAttempt, lastSuccess = lastAttempt) {
   // Captured means a pass succeeded after the close; a failed attempt does not count.
   const closeCaptured = lastSuccess && close && lastSuccess >= close
   const start = 600 + LAG
+  // The first pass waits three minutes into the window: the busiest chains are stamped a
+  // minute before they are fetched, and one stamped before the window is not today's quotes.
+  const first = start + 3
   if (c && c.m >= start && c.m < c.close - 10 + LAG) {
+    if (c.m < first) return { action: 'wait', seconds: (first - c.m) * 60 }
     if (since >= 55) return { action: 'run' }
     return { action: 'wait', seconds: Math.round(Math.min(60 - since, c.close - 10 + LAG - c.m) * 60) + 30 }
   }
   if (c && c.m < start && start - c.m <= 150) {
     if (!closeCaptured && since >= 55) return { action: 'run' }
-    // Wake a couple of minutes in: the busiest chains are stamped a minute before they are
-    // fetched, and a chain stamped before the window does not count as today's quotes.
-    return { action: 'wait', seconds: (start - c.m) * 60 + 150 }
+    return { action: 'wait', seconds: (first - c.m) * 60 }
   }
   if (c && c.m >= c.close - 10 + LAG && c.m < finalAt(c)) return { action: 'wait', seconds: (finalAt(c) - c.m) * 60 + 30 }
   if (closeCaptured) return { action: 'stop' }
@@ -187,7 +189,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   // at zero and still pass validation: count it as a failed fetch, keep the last snapshot.
   // (A field that is there but zero is real: some small chains have no quotes at all.)
   const listed = raw?.data?.options ?? []
-  if (listed.length >= 20 && !listed.some((o) => o.bid != null || o.ask != null)) throw new Error('chain came back without quotes')
+  for (const k of ['bid', 'ask']) if (listed.length >= 20 && !listed.some((o) => o[k] != null)) throw new Error(`chain came back without ${k} prices`)
   if (rows.filter((r) => r.delta == null).length > rows.length / 2) throw new Error('chain came back without deltas')
   if (rows.length >= 20 && rows.every((r) => !r.oi)) throw new Error('chain came back without open interest')
 

@@ -196,6 +196,9 @@ test('averageVolume skips sessions before listing and leaves out one-off prints'
   assert.deepEqual(averageVolume([100, 120, 90, 800, 110]), { adv: 244, sessions: 5 })
   // Small prints are never called one-off, however quiet the other days.
   assert.deepEqual(averageVolume([20, 0, 0, 0]), { adv: 5, sessions: 4 })
+  // A contract that trades in bursts is not all one-off: at most the three largest days go.
+  assert.deepEqual(averageVolume([0, 0, 0, 34, 77, 29, 33, 11, 75, 26, 28, 26, 0, 0, 0, 0, 0, 0, 0, 0]), { adv: 153 / 17, sessions: 20 })
+  assert.deepEqual(averageVolume([...Array(11).fill(0), ...Array(9).fill(60)]), { adv: 360 / 17, sessions: 20 })
 })
 
 test('nyDate is the New York calendar date, also late in the evening', () => {
@@ -276,6 +279,9 @@ describe('allocate', () => {
     const cs = [mk(100, { bid: 99, ask: 100, adv: 1000 }), mk(110, { bid: 99, ask: 100, adv: 500 }), mk(120, { adv: 100 }), mk(130, { adv: 90 })]
     const r = allocate(cs, { amount: 5000, maxLegs: 2 })
     assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[120, 5]], 'one leg, not one per contract that fits')
+    // An amount of exactly one lot fits, whatever the floating point does to ask x 100.
+    const one = allocate([mk(100, { bid: 99, ask: 100, adv: 1000 }), mk(110, { bid: 1.09, ask: 1.1, adv: 100 })], { amount: 110, maxLegs: 1 })
+    assert.deepEqual(one.legs.map((l) => [l.strike, l.contracts]), [[110, 1]])
   })
 
   test('a leftover under 1% of the amount does not open its own order', () => {

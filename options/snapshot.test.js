@@ -89,7 +89,7 @@ test('a chain that comes back without a field is a failed fetch, not a ticker wi
   noQuotes = new Set(['CCC'])
   const idx = await pass()
   assert.match(idx.tickers.AAA.error, /without deltas/)
-  assert.match(idx.tickers.CCC.error, /without quotes/)
+  assert.match(idx.tickers.CCC.error, /without bid prices/)
   assert.equal(idx.tickers.AAA.tier, 'B', 'last good figures kept')
   assert.equal(readFileSync(join(dir, 'AAA.json'), 'utf8'), '{"keep":true}', 'last good snapshot kept')
   assert.equal(idx.tickers.BBB.error, undefined)
@@ -204,7 +204,9 @@ test('the schedule follows the exchange calendar and the 15-minute feed lag', ()
   assert.equal(quoteWindow(at('2026-11-26T15:30:00Z')), false)
   assert.equal(marketOpen(at('2026-11-26T15:30:00Z')), false)
   // Monday 10:10: the feed still shows the opening scramble; wait for 10:15.
-  assert.deepEqual(plan(at('2026-11-23T15:10:00Z'), friClose), { action: 'wait', seconds: 450 })
+  assert.deepEqual(plan(at('2026-11-23T15:10:00Z'), friClose), { action: 'wait', seconds: 480 })
+  // A job that starts in the window's first minutes waits for chains stamped inside it.
+  assert.deepEqual(plan(at('2026-11-23T15:15:00Z'), friClose), { action: 'wait', seconds: 180 })
   assert.deepEqual(plan(at('2026-11-23T15:20:00Z'), friClose), { action: 'run' })
   // The feed shows SPY options trading until 16:15 market time, so 16:20 New York is still open.
   assert.equal(marketOpen(at('2026-11-23T21:20:00Z')), true)
