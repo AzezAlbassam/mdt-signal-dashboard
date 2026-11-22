@@ -25,16 +25,19 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    `node scripts/shariah/fund-load.js`: it must exit 0 (it fails on holdings that do not add up, or too few funds).
    Keep its last lines (each fund's state) and compare them with the previous data/shariah/funds.json from git.
 4b. Holdings near the 30% debt line (data/shariah/band-needed.json, written by the loader) get the quarter-average close
-   that Al Rajhi's rule uses. Build TradingView symbols from https://www.sec.gov/files/company_tickers_exchange.json
-   (Nasdaq → NASDAQ, NYSE → NYSE, NYSE American/Arca → AMEX; "-" → "."), split the list in two, and give each part to
-   a background agent with the brief used on 2026-11-22 (TradingView get-ohlcv: interval 1D, date_from = start,
-   date_to = end, format columns; check the returned symbol; count and mean by a python one-liner from the pasted
-   t[]/c[] arrays, never by hand; one JSON line per ticker with "source": "TradingView" appended to
-   <scratchpad>/qp/part-tv-K.jsonl, or an error line; stop on a quota message). FMP's plan refuses most symbols, so
-   it is not used. TradingView and FMP gave the identical DIS average (102.2937 over 68 days) on 2026-11-22.
-   First `node scripts/shariah/bars-quarter-prices.js > <scratchpad>/qp/part-bars.jsonl` (quarters already covered by the
-   repo's saved daily bars need no call). Then `node scripts/shariah/merge-quarter-prices.js <scratchpad>/qp/part-*.jsonl` (it rejects short, out-of-window or
-   split-distorted averages) and rerun `node scripts/shariah/fund-load.js --reuse`, which must exit 0.
+   that Al Rajhi's rule uses, in this order:
+   (1) `node scripts/shariah/bars-quarter-prices.js > <scratchpad>/qp/part-bars.jsonl`: quarters the repo's saved daily
+       bars (data/us/bars) already cover, no call needed.
+   (2) Only for the band-needed tickers that (1) did not write: build TradingView symbols from
+       https://www.sec.gov/files/company_tickers_exchange.json (Nasdaq → NASDAQ, NYSE → NYSE, NYSE American/Arca → AMEX;
+       "-" → "."), split the list in two, and give each part to a background agent with the brief used on 2026-11-22
+       (TradingView get-ohlcv: interval 1D, date_from = start, date_to = end, format columns; check the returned symbol;
+       count and mean by a python one-liner from the pasted t[]/c[] arrays, never by hand; one JSON line per ticker with
+       "source": "TradingView" appended to <scratchpad>/qp/part-tv-K.jsonl, or an error line; stop on a quota message).
+       FMP's plan refuses most symbols, so it is not used. TradingView and FMP gave the identical DIS average (102.2937
+       over 68 days) on 2026-11-22.
+   (3) `node scripts/shariah/merge-quarter-prices.js <scratchpad>/qp/part-*.jsonl` (it rejects short, out-of-window or
+       split-distorted averages), then `node scripts/shariah/fund-load.js --reuse`, which must exit 0.
 5. `node scripts/shariah/diff-inputs.mjs <scratchpad>/sec-inputs.prev.json data/shariah/sec-inputs.json`: keep the
    result for the reply.
 6. `node scripts/build-stocks-page.js && npm test`, then the browser check at both widths:
