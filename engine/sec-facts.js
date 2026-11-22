@@ -101,12 +101,19 @@ export function debtAt(ns, date) {
   const op = v('OperatingLeaseLiability') ?? ((v('OperatingLeaseLiabilityCurrent') ?? 0) + (v('OperatingLeaseLiabilityNoncurrent') ?? 0));
   const leases = fin + op;
   const combined = v('DebtLongtermAndShorttermCombinedAmount');
-  const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
+  // a total that bundles finance leases loses the tagged ones (A2)
+  const lt = v('LongTermDebt') ?? (x => (x == null ? null : Math.max(0, x - fin)))(v('LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities'));
   // noncurrent and current debt; a line that bundles finance leases loses them when they are tagged
   const flCur = v('FinanceLeaseLiabilityCurrent') ?? 0, flNc = v('FinanceLeaseLiabilityNoncurrent');
   const bundled = v('LongTermDebtAndCapitalLeaseObligations'), lessFl = x => (x == null ? null : Math.max(0, x - flCur));
-  const nonCur = v(['LongTermDebtNoncurrent', 'LongTermNotesAndLoans', 'LongTermNotesPayable']) ?? (bundled == null ? null : bundled - (flNc ?? 0));
-  const cur = v('LongTermDebtCurrent') ?? lessFl(v('DebtCurrent')) ?? lessFl(v('LongTermDebtAndCapitalLeaseObligationsCurrent')) ?? v(['NotesPayableCurrent', 'NotesAndLoansPayableCurrent']);
+  const nonCur = v(['LongTermDebtNoncurrent', 'LongTermNotesAndLoans', 'LongTermNotesPayable']) ?? (bundled == null ? null : bundled - (flNc ?? 0))
+    ?? v('NotesPayableToBankNoncurrent');
+  // DebtCurrent loses the current finance lease only when what is left is the other current debt lines (Micron: 491 is
+  // its current finance lease, 491 - 491 = 0); KDP's 7,270 and PayPal's 2,533 hold no lease (audit 2026-11-22)
+  const dcRaw = v('DebtCurrent'), others = (v('LongTermDebtCurrent') ?? 0) + top(SHORT);
+  const near1 = (a, b) => Math.abs(a - b) <= 0.01 * Math.max(Math.abs(a), Math.abs(b), 1);
+  const dcFree = dcRaw == null ? null : flCur > 0 && near1(dcRaw - flCur, others) && !near1(dcRaw, others) ? Math.max(0, dcRaw - flCur) : dcRaw;
+  const cur = v('LongTermDebtCurrent') ?? dcFree ?? lessFl(v('LongTermDebtAndCapitalLeaseObligationsCurrent')) ?? v(['NotesPayableCurrent', 'NotesAndLoansPayableCurrent']);
   const curLtd = v('LongTermDebtCurrent') ?? lessFl(v('LongTermDebtAndCapitalLeaseObligationsCurrent'));
   const parts = nonCur != null && cur != null ? nonCur + cur : null;
   // the short-term lines apart (one amount under two tags is one line; a line equal to the current portion is that
@@ -124,7 +131,7 @@ export function debtAt(ns, date) {
   // ORA, DE): the long-term debt is under another tag, so the figure is incomplete and the liabilities bound is used.
   const base = combined ?? lt ?? parts ?? (nonCur != null && shortSum > 0 ? nonCur : null);
   if (base == null) return { debt: null, debtHigh: null, parts: { borrowings: null, leases } };
-  const lo = [base], hi = [base];
+  const lo = [base];
   // LongTermDebt smaller than the noncurrent tag is itself a noncurrent line (Tapestry: 1,960 beside 2,000 + 597)
   if (lt != null && nonCur != null && lt < nonCur && curLtd != null) lo.push(lt + curLtd);
   // DebtCurrent is usually the balance sheet's whole current debt: commercial paper inside it is often tagged only on
@@ -133,21 +140,23 @@ export function debtAt(ns, date) {
   // (Micron's 4,688 holds 1,896), and a bundled line never stands beside the combined figure (Valero's 10,012 carries
   // leases it does not tag; its combined 8,579 does not). At IFF DebtCurrent is the current portion alone, beside 539
   // of paper: the high reading still adds the paper.
-  const dc = lessFl(v('DebtCurrent'));
+  const dc = dcFree;
   const pureNonCur = v(['LongTermDebtNoncurrent', 'LongTermNotesAndLoans', 'LongTermNotesPayable'])
     ?? (bundled != null && (flNc != null || combined == null) ? bundled - (flNc ?? 0) : null);
   const pureLt = v('LongTermDebt'), pureCurLtd = v('LongTermDebtCurrent');
-  // the noncurrent part from its own tag or from LongTermDebt less its current portion (PayPal: 10,939 or 11,020)
-  if (dc != null && pureNonCur != null && dc >= (curLtd ?? 0)) lo.push(pureNonCur + dc);
-  if (dc != null && pureLt != null && pureCurLtd != null && dc >= pureCurLtd) lo.push(pureLt - pureCurLtd + dc);
+  // the noncurrent part from its own tag or from LongTermDebt less its current portion (PayPal: 10,939 carrying or
+  // 11,020 from its principal schedule): the low reading takes the smaller, the high one the larger
+  const sure = [dc != null && pureNonCur != null && dc >= (curLtd ?? 0) ? pureNonCur + dc : null,
+    dc != null && pureLt != null && pureCurLtd != null && dc >= pureCurLtd ? pureLt - pureCurLtd + dc : null].filter(x => x != null);
   // debt and finance leases together, less the finance leases (Marriott: 16,843 - 108, where LongTermDebt holds a stray 23)
   const daclo = v('DebtAndCapitalLeaseObligations');
   if (daclo != null && combined == null) lo.push(daclo - fin);
-  // the high reading: every short-term line apart, the parts when larger, and LongTermDebt as a noncurrent line beside
-  // DebtCurrent (Adobe)
-  hi.push(Math.max(...lo) + shortSum);
+  // the high reading: every short-term line apart on top of the long-term readings (DebtCurrent already holds them),
+  // the parts when larger, and LongTermDebt as a noncurrent line beside DebtCurrent (Adobe)
+  const hi = [...lo.map(x => x + shortSum), ...sure];
   if (parts != null) hi.push(parts + shortSum);
   if (lt != null && curLtd == null && dc != null) hi.push(lt + dc + shortSum);
+  if (sure.length) lo.push(Math.min(...sure));
   // A drawn long-term credit line (PSIX: 35M revolver beside 0.9M of other long-term debt) and convertible notes
   // (SMCI: 4,669M beside a combined 3,977M): debt for sure when larger than all the debt they could sit inside, else
   // perhaps inside it (high reading only); a credit line equal to the long-term line is that line (Rollins).
@@ -195,11 +204,15 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     const ac = instantAt(g, ['AssetsCurrent'], d);
     return ac == null ? 0 : Math.max(0, ac - (c ?? 0) - max(SEC_CUR, d) - CUR_GROUPS.reduce((a, grp) => a + max(grp, d), 0));
   };
+  // a securities total counts only when no investment line is tagged (KLA) and it is not the cash itself (Natera):
+  // filers' fair-value tables often hold the cash equivalents too (AMD's 14,107 holds 5,736; audit 2026-11-22); the
+  // part of it already among the unexplained current assets is not counted twice
   const bal = d => {
     const c = instantAt(g, CASH, d);
     if (c == null) return null;
-    const parts = max(SEC_CUR, d) + max(SEC_NONCUR, d);
-    return c + Math.max(parts, max(SEC_TOTAL, d)) + unexplainedAt(d, c);
+    const parts = max(SEC_CUR, d) + max(SEC_NONCUR, d), total = max(SEC_TOTAL, d), unexpl = unexplainedAt(d, c);
+    const fromTotal = parts > 0 || Math.abs(total - c) <= 0.02 * Math.max(total, c) ? 0 : Math.max(0, total - unexpl);
+    return c + parts + fromTotal + unexpl;
   };
   const prevEnd = quarterFacts(g, REVENUE).at(-2)?.end, qDays = days(rev.start, rev.end) + 1;
   const loanInterest = loanBook * LEND_RATE / 100 * qDays / 365;
@@ -211,6 +224,10 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
       estimate = { cashStart: start ?? end, cashEnd: end, yieldPct, days: qDays, ...(loanBook > 0 ? { loans: loanBook, lendPct: LEND_RATE } : {}) };
       const cashPart = estimateInterest(estimate);
       illicit = cashPart == null ? null : cashPart + loanInterest; illicitEstimated = illicit != null;
+      // an insurer's published investment income is at least what its interest-earning book yields (AMERISAFE,
+      // Primerica: their bonds held to maturity are not all tagged; audit 2026-11-22)
+      const nii = top(['NetInvestmentIncome', 'GrossInvestmentIncomeOperating']);
+      if (illicit != null && nii?.val > illicit) { illicit = nii.val; estimate = { ...estimate, published: nii.tag, publishedVal: nii.val }; }
     }
   }
   // A higher reading of the interest when a tagged figure is used (audit 2026-11-22): separate exact lines add up (IBM:
@@ -225,7 +242,8 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     const unexpl = estimateInterest({ cashStart: prevEnd ? unexplainedAt(prevEnd, instantAt(g, CASH, prevEnd)) : 0, cashEnd: unexplainedAt(rev.end, instantAt(g, CASH, rev.end)), yieldPct, days: qDays }) ?? 0;
     // revenue outside contracts with customers is financing income only at a company that lends (MercadoLibre); at
     // others it is commodity contracts (Bunge), leases or regulated programmes (Sempra)
-    let high = Math.max(sep.reduce((a, x) => a + x, 0), illicit + (hasLoans ? Math.max(0, nonContract) : 0), illicit + unexpl);
+    const nii = top(['NetInvestmentIncome', 'GrossInvestmentIncomeOperating'])?.val ?? 0;   // published investment income
+    let high = Math.max(sep.reduce((a, x) => a + x, 0), illicit + (hasLoans ? Math.max(0, nonContract) : 0), illicit + unexpl, nii);
     // loans earning less than 4% a year by their tagged interest: that interest is not all of it (IBM: 62 of lease
     // interest on 13,257 of loans and leases; Snap-on: none tagged), so the loans earn the lending rate instead
     const loanTagged = exacts.filter(x => LOAN_INTEREST.has(x.tag)).reduce((a, x) => Math.max(a, x.val), 0);

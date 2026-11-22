@@ -246,8 +246,11 @@ test('review: the DebtCurrent rule never brings leases back in (A2; found when c
     LongTermDebtAndCapitalLeaseObligations: [i(d, 4688)], FinanceLeaseLiabilityNoncurrent: [i(d, 1896)] }), d).debt, 2792);
   // Valero: debt 8,579; the 10,012 and 989 lines carry finance leases it does not tag separately
   assert.equal(debtAt(ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 8579)], DebtCurrent: [i(d, 989)], LongTermDebtAndCapitalLeaseObligations: [i(d, 10012)] }), d).debt, 8579);
-  // KDP: DebtCurrent 7,270 holds 151 of current finance leases
-  assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 21595)], LongTermDebtCurrent: [i(d, 2840)], DebtCurrent: [i(d, 7270)], FinanceLeaseLiabilityCurrent: [i(d, 151)] }), d).debt, 21595 + 7270 - 151);
+  // KDP: this said "DebtCurrent 7,270 holds 151 of current finance leases" until the audit of 2026-11-22 read its 10-Q:
+  // 7,270 = paper 1,242 + term loan 3,188 + notes 2,840, no leases. The current finance lease comes out of DebtCurrent
+  // only when what is left equals the other current debt lines (Micron: 491 - 491 = 0).
+  assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 21595)], LongTermDebtCurrent: [i(d, 2840)], DebtCurrent: [i(d, 7270)], FinanceLeaseLiabilityCurrent: [i(d, 151)],
+    CommercialPaper: [i(d, 1242)] }), d).debt, 21595 + 7270);
   // Corteva: LongTermDebt 3,458, nothing current in it, DebtCurrent 3,988 of short-term borrowings
   assert.equal(debtAt(ns({ LongTermDebt: [i(d, 3458)], LongTermDebtCurrent: [i(d, 0)], DebtCurrent: [i(d, 3988)] }), d).debt, 7446);
 });
@@ -335,7 +338,7 @@ test('audit: noncurrent + DebtCurrent is a sure reading; the short lines stay in
   // tag (no finance lease tagged) and 750 of commercial paper only inside DebtCurrent
   const ebay = debtAt(ns({ LongTermDebtAndCapitalLeaseObligations: [i(d, 5134)], LongTermDebtCurrent: [i(d, 850)], DebtCurrent: [i(d, 1599)],
     OtherShortTermBorrowings: [i(d, 5)] }), d);
-  assert.deepEqual([ebay.debt, ebay.debtHigh], [6733, 6738]);   // the 5 of other borrowings may be inside DebtCurrent
+  assert.deepEqual([ebay.debt, ebay.debtHigh], [6733, null]);   // its 5 of other borrowings sit inside the 1,599
   // BMY: short-term borrowings 1,028 = DebtCurrent = current portion 768 + bank loans 260: 42,877 (it was counted as
   // 43,645, now the low reading; the high one counts every line apart)
   const bmy = debtAt(ns({ LongTermDebt: [i(d, 42617)], LongTermDebtNoncurrent: [i(d, 41849)], LongTermDebtCurrent: [i(d, 768)], DebtCurrent: [i(d, 1028)],
@@ -351,10 +354,12 @@ test('audit: noncurrent + DebtCurrent is a sure reading; the short lines stay in
   // Adobe 2026-08-28: LongTermDebt 4,766 is the noncurrent line, DebtCurrent 1,597 the current one: 6,363 in the high reading
   const adbe = debtAt(ns({ LongTermDebt: [i(d, 4766)], DebtCurrent: [i(d, 1597)] }), d);
   assert.deepEqual([adbe.debt, adbe.debtHigh], [4766, 6363]);
-  // PayPal: the noncurrent tag (10,939) and LongTermDebt less its current portion (13,353 - 2,333) disagree: the larger
+  // PayPal: the noncurrent tag (10,939, carrying) and LongTermDebt less its current portion (13,353 - 2,333, principal)
+  // disagree: the low reading takes the smaller, the high one the larger; its short-term debt 2,533 = notes 2,333 +
+  // paper 200 holds no lease, so the 5 of current finance lease stays (audit 2026-11-22)
   const pypl = debtAt(ns({ LongTermDebt: [i(d, 13353)], LongTermDebtCurrent: [i(d, 2333)], LongTermDebtNoncurrent: [i(d, 10939)], DebtCurrent: [i(d, 2533)],
-    FinanceLeaseLiabilityCurrent: [i(d, 5)] }), d);
-  assert.deepEqual([pypl.debt, pypl.debtHigh], [13548, null]);
+    FinanceLeaseLiabilityCurrent: [i(d, 5)], CommercialPaper: [i(d, 200)] }), d);
+  assert.deepEqual([pypl.debt, pypl.debtHigh], [13472, 13553]);
   // a bundled noncurrent line loses its tagged finance lease (Micron-like: 4,688 holds 1,896; current debt is the lease)
   assert.equal(debtAt(ns({ LongTermDebtAndCapitalLeaseObligations: [i(d, 4688)], FinanceLeaseLiabilityNoncurrent: [i(d, 1896)],
     DebtCurrent: [i(d, 491)], FinanceLeaseLiabilityCurrent: [i(d, 491)] }), d).debt, 2792);
@@ -483,4 +488,26 @@ test('audit: current debt securities under DebtSecuritiesCurrent are securities,
     CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 22443)], DebtSecuritiesCurrent: [i(Q[1], 34143)], AccountsReceivableNetCurrent: [i(Q[1], 63059)],
     InventoryNet: [i(Q[1], 31575)], PrepaidExpenseAndOtherAssetsCurrent: [i(Q[1], 3409)] })), { yieldPct: 5 });
   assert.equal(r.illicitHigh, null);
+});
+test('audit: a debt total that bundles finance leases loses the tagged ones; notes payable to banks are a noncurrent line (Sky Quarry)', () => {
+  const d = Q[1];
+  assert.equal(debtAt(ns({ LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities: [i(d, 17700)], FinanceLeaseLiability: [i(d, 300)] }), d).debt, 17400);
+  const skyq = debtAt(ns({ LongTermDebt: [i(d, 5957)], NotesPayableCurrent: [i(d, 8661)], NotesPayableToBankNoncurrent: [i(d, 1689)] }), d);
+  assert.equal(skyq.debt, 5957); assert.ok(skyq.debtHigh >= 8661 + 1689, String(skyq.debtHigh));
+});
+test('audit: a securities total is used only when no investment line is tagged and it is not the cash itself (AMD, Natera); KLA stays', () => {
+  const at = (o) => secInputs(company(ns({ Revenues: [f(...Q, 1000)], ...Object.fromEntries(Object.entries(o).map(([k, v]) => [k, [i(Q[1], v)]])) })), { yieldPct: 5 });
+  const r = (base) => base * 0.05 * 91 / 365;
+  // AMD-like: the available-for-sale total 11,000 holds 3,000 of cash equivalents and the 8,000 of short-term investments
+  assert.ok(Math.abs(at({ CashAndCashEquivalentsAtCarryingValue: 5000, ShortTermInvestments: 8000, AvailableForSaleSecuritiesDebtSecurities: 11000 }).illicit - r(13000)) < 1e-9);
+  // Natera-like: the total equals the cash
+  assert.ok(Math.abs(at({ CashAndCashEquivalentsAtCarryingValue: 1000, AvailableForSaleSecuritiesDebtSecurities: 1000 }).illicit - r(1000)) < 1e-9);
+  // KLA: securities tagged only as a total still count
+  assert.ok(Math.abs(at({ CashAndCashEquivalentsAtCarryingValue: 100, AvailableForSaleSecuritiesDebtSecurities: 300 }).illicit - r(400)) < 1e-9);
+});
+test('audit: published investment income bounds the estimate from below and is a high reading (insurers: AMERISAFE, Primerica)', () => {
+  const est = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NetInvestmentIncome: [f(...Q, 50)] })), { yieldPct: 5 });
+  assert.equal(est.illicit, 50); assert.equal(est.illicitEstimated, true);
+  const ex = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)], GrossInvestmentIncomeOperating: [f(...Q, 60)] })), { yieldPct: 5 });
+  assert.deepEqual([ex.illicit, ex.illicitHigh], [10, 60]);
 });
