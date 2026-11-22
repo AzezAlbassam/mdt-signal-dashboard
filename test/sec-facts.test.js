@@ -225,6 +225,19 @@ test('review: debt is never less than noncurrent + DebtCurrent (Cisco: commercia
   assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], LinesOfCreditCurrent: [i(d, 4)] }), d).debt, 104);
   assert.equal(debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermDebtCurrent: [i(d, 10)], OtherShortTermBorrowings: [i(d, 3)] }), d).debt, 103);
 });
+test('review: the DebtCurrent rule never brings leases back in (A2; found when checking the rerun: Micron, Valero)', () => {
+  const d = Q[1];
+  // Micron 2026-09-03: LongTermDebt 2,792 is all of its debt; "current debt" 491 is its current finance lease, and the
+  // 4,688 long-term line bundles 1,896 of finance leases
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 2792)], DebtCurrent: [i(d, 491)], FinanceLeaseLiabilityCurrent: [i(d, 491)],
+    LongTermDebtAndCapitalLeaseObligations: [i(d, 4688)], FinanceLeaseLiabilityNoncurrent: [i(d, 1896)] }), d).debt, 2792);
+  // Valero: debt 8,579; the 10,012 and 989 lines carry finance leases it does not tag separately
+  assert.equal(debtAt(ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 8579)], DebtCurrent: [i(d, 989)], LongTermDebtAndCapitalLeaseObligations: [i(d, 10012)] }), d).debt, 8579);
+  // KDP: DebtCurrent 7,270 holds 151 of current finance leases
+  assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 21595)], LongTermDebtCurrent: [i(d, 2840)], DebtCurrent: [i(d, 7270)], FinanceLeaseLiabilityCurrent: [i(d, 151)] }), d).debt, 21595 + 7270 - 151);
+  // Corteva: LongTermDebt 3,458, nothing current in it, DebtCurrent 3,988 of short-term borrowings
+  assert.equal(debtAt(ns({ LongTermDebt: [i(d, 3458)], LongTermDebtCurrent: [i(d, 0)], DebtCurrent: [i(d, 3988)] }), d).debt, 7446);
+});
 const Q0 = ['2026-01-01', '2026-03-31'];
 test('review: the interest estimate covers debt securities tagged only as a total (KLA: 3.2B available for sale)', () => {
   const r = secInputs(company(ns({

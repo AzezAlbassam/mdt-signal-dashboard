@@ -547,6 +547,10 @@ written first (test/funds.test.js, test/sec-facts.test.js "review:", browser "FU
   report price behind the weight; the quarter average decides only the debt test.
 - Debt never understated: max with noncurrent + DebtCurrent and with LongTermDebt + (DebtCurrent − its current portion)
   (Cisco 21.4B → 29.8B, KDP, Corteva, Qualcomm); securitisation, lines of credit and other short-term borrowing tags read.
+  Found when checking the rerun (my own regression, fixed with a test first): the first version took lease-bundled
+  tags and the current finance lease inside DebtCurrent (Micron 2.8B → 5.2B, Valero 8.6B → 11.0B), against A2. The
+  rule now uses lease-free tags only and takes the tagged current finance lease out of DebtCurrent. Old vs new over all
+  1,114 cached companies: 22 debt figures rise (short-term borrowings), none fall (scratchpad fix/debt-scan.txt).
 - Interest estimate: debt securities tagged only as a total count (KLA's 3.2B available for sale; estimate 23M → ~67M).
 - Found when checking the first rerun: a share count 1000x the previous quarter's (Geron, Iovance: one quarter tagged in
   thousands) was taken as a split, and their purification came out above 100% of the holding. A ratio beyond 50x is a

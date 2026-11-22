@@ -72,13 +72,13 @@ export function debtAt(ns, date) {
   const op = v('OperatingLeaseLiability') ?? ((v('OperatingLeaseLiabilityCurrent') ?? 0) + (v('OperatingLeaseLiabilityNoncurrent') ?? 0));
   const leases = fin + op;
   let borrowings = v('DebtLongtermAndShorttermCombinedAmount');
-  const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
-  const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
-  const curLtd = v(['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent']);
   if (borrowings == null) {
+    const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
+    const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
     const cur = v(['LongTermDebtCurrent', 'DebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent', 'NotesPayableCurrent']);
     // A short-term line equal (within 2%) to the current portion of long-term debt is that same money tagged twice
     // (IBM: "short-term debt" 7.013B includes the 7.009B current portion): count it once. Different amounts add up.
+    const curLtd = v(['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent']);
     const same = (a, b) => a > 0 && b > 0 && Math.abs(a - b) <= 0.02 * Math.max(a, b);
     const stAdd = same(st, curLtd) || same(st, cur) ? 0 : st;
     if (lt != null) borrowings = lt + stAdd;
@@ -87,11 +87,15 @@ export function debtAt(ns, date) {
     // incomplete and the liabilities upper bound is used instead.
   }
   // DebtCurrent is the balance sheet's whole current debt; commercial paper inside it is often tagged only on an axis
-  // (Cisco 2026-10-24: 8.4B). Debt is never less than noncurrent + DebtCurrent, or LongTermDebt + the rest of DebtCurrent.
-  const dc = v('DebtCurrent');
+  // (Cisco 2026-10-24: 8.4B). Debt is never less than lease-free noncurrent debt + DebtCurrent, or LongTermDebt + the
+  // rest of DebtCurrent. Leases stay out (A2): DebtCurrent loses the current finance lease when tagged, and tags that
+  // bundle finance leases are not used here (Micron's 4,688 long-term line holds 1,896 of them; Valero's too).
+  const dcAll = v('DebtCurrent'), dc = dcAll == null ? null : Math.max(0, dcAll - (v('FinanceLeaseLiabilityCurrent') ?? 0));
+  const pureNonCur = v(['LongTermDebtNoncurrent', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
+  const pureLt = v('LongTermDebt'), pureCurLtd = v('LongTermDebtCurrent');
   if (borrowings != null && dc != null) {
-    if (nonCur != null) borrowings = Math.max(borrowings, nonCur + dc);
-    if (lt != null && curLtd != null && dc > curLtd) borrowings = Math.max(borrowings, lt + dc - curLtd);
+    if (pureNonCur != null) borrowings = Math.max(borrowings, pureNonCur + dc);
+    if (pureLt != null && pureCurLtd != null && dc > pureCurLtd) borrowings = Math.max(borrowings, pureLt + dc - pureCurLtd);
   }
   // ponytail: debt under a company's own (custom) tag is missed; the G3 hand check samples for it.
   return { debt: borrowings, parts: { borrowings, leases } };
