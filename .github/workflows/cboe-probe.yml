@@ -9,9 +9,12 @@ jobs:
       - run: |
           set +e
           HONEST='mdt-signal-dashboard/1.0 (+https://github.com/AzezAlbassam/mdt-signal-dashboard)'
-          for t in ROKU SATS; do
-            echo "== OCC series search $t"
-            curl -sS -m 30 -D /tmp/h -o /tmp/b -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=$t"
-            grep -iE '^HTTP|^content-type|^server' /tmp/h
-            echo "lines: $(wc -l < /tmp/b)"; head -c 900 /tmp/b; echo; echo ...; tail -c 300 /tmp/b; echo
+          echo "== AAPL sample"
+          curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=AAPL" | head -12
+          echo "== ROKU as option symbol"
+          curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=O&symbol=ROKU" | head -5
+          echo "== counts"
+          for t in AAPL NVDA SPY IBIT CTM AENT SLNH GDLC GXRP SKYT AXIA SKYQ SATS FUSE RAYA UCAR AIXI SQFT ELAB CREG BBGI ROKU LNKS ONCO UGRO SWMR SAFX ARAI BATL BENF ISPC DVLT CYCN FUTU ANNA TMDE PSKY WBD HIVE CUE SMX QNCX GLMD OMEX CTRA DKI PFSA CLIK CVV STI SSSS STRK BGIN INDV AEI TYGO MRKR FUFU ANL JAGU XRP GLNK BRR CEPL SCWO HGX LHAI INKT HUBC SOXX VOO SLV XLK XLE XLV XLF MAGS QQQM CIBR SPMO KWEB TAN NCLD LYTE SEMI DTCR CHAT; do
+            n=$(curl -sS -m 30 -A "$HONEST" "https://marketdata.theocc.com/series-search?symbolType=U&symbol=$t" | grep -cE '^[A-Z0-9]+ +[0-9]{4} ')
+            echo "OCC $t $n"; sleep 0.3
           done
