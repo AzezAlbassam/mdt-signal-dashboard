@@ -17,6 +17,7 @@ import {
   tickerSummary,
   bucketCapacities,
   nyDate,
+  chainDeltas,
 } from './engine.js'
 
 describe('parseOccSymbol', () => {
@@ -418,5 +419,41 @@ describe('crypto contracts: fractional lots, one coin per unit', () => {
   test('equity defaults are unchanged', () => {
     const m = contractMetrics({ bid: 9.9, ask: 10, bidSize: 0, oi: 4000, adv: 600, sessions: 10 })
     assert.equal(m.capDollars, 60 * 10 * 100)
+  })
+})
+
+describe('chainDeltas (chains without Greeks)', () => {
+  const N = (x) => { const t = 1 / (1 + 0.2316419 * Math.abs(x)); const y = 1 - (Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI)) * t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429)))); return x >= 0 ? y : 1 - y }
+  // European prices with a dividend yield q, standing in for what a source quotes.
+  const euro = (S, K, T, v, q, type, r = 0.04) => {
+    const d1 = (Math.log(S / K) + (r - q + (v * v) / 2) * T) / (v * Math.sqrt(T))
+    const d2 = d1 - v * Math.sqrt(T)
+    return type === 'C' ? S * Math.exp(-q * T) * N(d1) - K * Math.exp(-r * T) * N(d2) : K * Math.exp(-r * T) * N(-d2) - S * Math.exp(-q * T) * N(-d1)
+  }
+  const leg = (type, strike, T, price) => ({ expiry: '2029-01-19', type, strike, T, price, mid: price })
+
+  test('a deep put carrying early-exercise value reads near -1, not inside the band', () => {
+    const call = leg('C', 200, 2, euro(100, 200, 2, 0.3, 0, 'C'))
+    const put = leg('P', 200, 2, 100.5) // an American put a little over K - S
+    const [alone] = chainDeltas([put], 100)
+    assert.ok(alone > -0.85, `on its own price it looks like ${alone}`)
+    const [, withCall] = chainDeltas([call, put], 100)
+    assert.ok(withCall < -0.97, `from its call's volatility: ${withCall}`)
+  })
+
+  test("a call on a dividend payer trades under parity: it is 1 + its put's delta, not 1", () => {
+    const call = leg('C', 90, 3, euro(100, 90, 3, 0.15, 0.04, 'C'))
+    const put = leg('P', 90, 3, euro(100, 90, 3, 0.15, 0.04, 'P'))
+    assert.equal(chainDeltas([call], 100)[0], 1, 'on its own price it has no time value left')
+    const [d] = chainDeltas([call, put], 100)
+    assert.ok(d > 0.6 && d < 0.85, `with its put: ${d}`)
+  })
+
+  test('out-of-the-money options and unpaired ones read from their own price', () => {
+    const [c, p] = chainDeltas([leg('C', 110, 1, euro(100, 110, 1, 0.4, 0, 'C')), leg('P', 90, 1, euro(100, 90, 1, 0.4, 0, 'P'))], 100)
+    assert.ok(Math.abs(c - 0.5246) < 0.005, `call ${c}`) // N(d1) at the 40% it was priced with
+    assert.ok(Math.abs(p + 0.2866) < 0.005, `put ${p}`)
+    assert.deepEqual(chainDeltas([leg('C', 110, 1, null)], 100), [null])
+    assert.deepEqual(chainDeltas([leg('C', 110, 1, 1)], null), [null])
   })
 })

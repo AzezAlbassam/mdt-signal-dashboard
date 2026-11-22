@@ -11,7 +11,8 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, bsDelta } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, chainDeltas } from './engine.js'
+import { pathToFileURL } from 'node:url'
 
 const UA = 'options-liquidity-snapshot/1.0'
 const MARKETDATA = 'https://api.marketdata.app/v1/options/chain'
@@ -193,9 +194,11 @@ export function rolledSession(now) {
 export function fromMarketData(j) {
   const n = j?.s === 'ok' ? j.optionSymbol?.length ?? 0 : 0
   const at = (k, i) => j[k]?.[i] ?? null
+  const S = n ? j.underlyingPrice?.find((x) => x > 0) ?? null : null
   let newest = 0
   for (let i = 0; i < n; i += 1) newest = Math.max(newest, at('updated', i) ?? 0)
   const options = []
+  const priced = []
   for (let i = 0; i < n; i += 1) {
     const sym = at('optionSymbol', i)
     const p = parseOccSymbol(sym)
@@ -204,24 +207,24 @@ export function fromMarketData(j) {
     const ask = at('ask', i)
     const last = at('last', i)
     const stamp = at('updated', i) ?? newest
-    let delta = at('delta', i)
-    if (delta == null) {
-      const price = bid > 0 && ask >= bid ? (bid + ask) / 2 : last > 0 ? last : null
-      const T = (Date.parse(`${p.expiry}T21:00:00Z`) - stamp * 1000) / (365 * 86400000)
-      delta = bsDelta({ S: at('underlyingPrice', i), K: p.strike, T, price, type: p.type })
-    }
+    const mid = bid > 0 && ask >= bid ? (bid + ask) / 2 : null
+    priced.push({ ...p, T: (Date.parse(`${p.expiry}T21:00:00Z`) - stamp * 1000) / (365 * 86400000), mid, price: mid ?? (last > 0 ? last : null) })
     options.push({
       option: sym, bid, ask, bid_size: at('bidSize', i), ask_size: at('askSize', i), last_trade_price: last,
-      volume: at('volume', i), open_interest: at('openInterest', i), iv: at('iv', i), delta,
+      volume: at('volume', i), open_interest: at('openInterest', i), iv: at('iv', i), delta: at('delta', i),
       last_trade_time: stamp ? nyDate(new Date(stamp * 1000)) : '',
     })
+  }
+  if (options.some((o) => o.delta == null)) {
+    const computed = chainDeltas(priced, S)
+    options.forEach((o, i) => { o.delta ??= computed[i] })
   }
   const time = newest ? new Date(newest * 1000) : null
   const c = time && nyClock(time)
   return {
     timestamp: time ? time.toISOString().slice(0, 19).replace('T', ' ') : undefined,
     eod: !c || c.m >= c.close,
-    data: { current_price: n ? at('underlyingPrice', 0) : null, options },
+    data: { current_price: S, options },
   }
 }
 
@@ -436,7 +439,7 @@ export async function main() {
   // the whole pass (below).
   const wasListed = (t) => { const p = prevIndex.tickers?.[t]; return Boolean(p && !p.noOptions && p.price != null) }
   const age = (t) => { const p = prevIndex.tickers?.[t]; return p?.noOptions ? '~' : p?.fetchedAt ?? '' }
-  const queue = [...targets].sort((a, b) => age(a).localeCompare(age(b)))
+  const queue = [...targets].sort((a, b) => (age(a) < age(b) ? -1 : age(a) > age(b) ? 1 : 0)) // not localeCompare: it puts '~' first
   let noOptions = 0
   let stop = null // why fetching ended early: the account refused, or no credits left today
   const failed = []
@@ -444,7 +447,7 @@ export async function main() {
   const unseen = []
   const attempted = []
   const run = async (t) => {
-    attempted.push(t)
+    if (!attempted.includes(t)) attempted.push(t)
     try {
       index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
       return true
@@ -457,12 +460,13 @@ export async function main() {
     }
   }
 
-  // SPY answers for the source before anything else is fetched: if it is refused, or comes
-  // back without a chain, the source is down — keep everything as it is.
+  // SPY answers for the source before anything else is fetched: if it is refused, comes back
+  // without a chain, or the day's credits are already gone, nothing can be refreshed — keep
+  // everything as it is.
   if (queue.includes('SPY')) {
     queue.splice(queue.indexOf('SPY'), 1)
     const r = await run('SPY')
-    if (stop?.fatal || r !== true || lost.includes('SPY') || unseen.includes('SPY')) {
+    if (stop || r !== true || lost.includes('SPY') || unseen.includes('SPY')) {
       await outageExit(`no chain for SPY (${stop?.message ?? r?.message ?? 'no listed options'})`)
       return
     }
@@ -537,10 +541,10 @@ export async function main() {
     index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
   }
   console.log(`retried ${failed.length} after throttling`)
-  console.log(`${attempted.length} of ${targets.length} tickers fetched: ${attempted.length - failures - noOptions - lost.length} with options, ${noOptions} without, ${lost.length} lost their chain, ${failures} failed; credits left ${credits.remaining ?? 'unknown'}`)
+  console.log(`${attempted.length} of ${targets.length} tickers fetched: ${attempted.length - failures - lost.length - unseen.length} with options, ${unseen.length} with none returned (${noOptions} now marked without), ${lost.length} lost their chain, ${failures} failed; credits left ${credits.remaining ?? 'unknown'}`)
   if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed`)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
   if (outage || failures > targets.length / 2) process.exitCode = 1
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) await main()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main()

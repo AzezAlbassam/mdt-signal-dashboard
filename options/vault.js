@@ -13,6 +13,7 @@ import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:
 import { gzipSync, gunzipSync } from 'node:zlib'
 import { readFile, writeFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 export const ITERATIONS = 210000
 const CHECK = 'options-liquidity'
@@ -44,6 +45,11 @@ export async function keyFor(dir, pass) {
     const key = deriveKey(pass, Buffer.from(meta.salt, 'base64'), meta.iterations)
     try { if (open(meta.check, key) === CHECK) return key } catch {}
     throw new Error('wrong passphrase for this data')
+  }
+  // Sealed files with no vault.json were sealed under a key that is gone: a new vault.json would
+  // match none of them. To change the passphrase: open with the old one, delete vault.json, seal.
+  for await (const f of jsonFiles(dir)) {
+    if (isSealed(JSON.parse(await readFile(f, 'utf8')))) throw new Error(`${f} is sealed but ${dir} has no vault.json: restore it`)
   }
   const salt = randomBytes(16)
   const key = deriveKey(pass, salt)
@@ -77,13 +83,15 @@ export async function openDir(dir, pass) {
     const j = JSON.parse(await readFile(f, 'utf8'))
     if (!isSealed(j)) continue
     key ??= await keyFor(dir, pass)
-    await writeFile(f, JSON.stringify(open(j, key)))
+    let plain
+    try { plain = open(j, key) } catch (e) { throw new Error(`${f}: ${e.message}`) }
+    await writeFile(f, JSON.stringify(plain))
     n += 1
   }
   return n
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [cmd, dir] = process.argv.slice(2)
   if (!['seal', 'open'].includes(cmd) || !dir) throw new Error('usage: VAULT_PASS=... node options/vault.js seal|open <dataDir>')
   const n = await (cmd === 'seal' ? sealDir : openDir)(dir, process.env.VAULT_PASS)

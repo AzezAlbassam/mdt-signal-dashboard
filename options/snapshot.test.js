@@ -35,6 +35,7 @@ globalThis.fetch = async (url) => {
   if (ipBlocked.delete(t)) return answer(403, { s: 'error', errmsg: 'Access denied. Only one device is permitted.', authorizedIP: '1.1.1.1', blockedIP: '2.2.2.2' })
   assert.match(url, /[?&]date=\d{4}-\d{2}-\d{2}&/, 'chains are asked for by session date')
   if (down.has(t)) return answer(404, { s: 'no_data' })
+  if (creditsLeft != null && creditsLeft <= 0) return answer(429, { s: 'error', errmsg: 'You have used all of your daily credits.' }, 0)
   if (busy.has(t)) return answer(503, null)
   if (creditsLeft != null) creditsLeft -= 1
   // One call contract (25 with no quotes at all), stamped 15:00 New York on 19 Nov unless told otherwise.
@@ -298,6 +299,29 @@ test("a pass the day's credits cannot finish refreshes the stalest tickers and l
     assert.equal(readFileSync(join(dir, `${t}.json`), 'utf8'), '{"keep":true}')
   }
   assert.equal(process.exitCode, 0)
+})
+
+test("with the day's credits already gone nothing is refreshed, and the page is not told it was", async () => {
+  creditsLeft = 0
+  writeFileSync(join(dir, 'watchlist.json'), JSON.stringify(TICKERS))
+  process.argv = ['node', 'snapshot.test', dir]
+  await main()
+  const idx = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
+  assert.deepEqual(calls, ['SPY'])
+  assert.equal(idx.updatedAt, prevUpdatedAt, 'last good time is kept')
+  assert.equal(idx.tickers.AAA.price, 10)
+  assert.equal(process.exitCode, 1)
+  process.exitCode = 0
+})
+
+test('tickers known to have no options are asked last', async () => {
+  const idx0 = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
+  TICKERS.forEach((t) => { idx0.tickers[t].fetchedAt = '2026-11-19T21:00:00.000Z' })
+  idx0.tickers.AAA = { noOptions: true }
+  writeFileSync(join(dir, 'index.json'), JSON.stringify(idx0))
+  down = new Set(['AAA'])
+  await pass()
+  assert.equal(calls.at(-1), 'AAA', calls.join(' '))
 })
 
 test('the one-address block is waited out, not taken for a refused account', async () => {

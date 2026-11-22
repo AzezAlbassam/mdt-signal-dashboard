@@ -2,7 +2,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -27,4 +27,14 @@ test('seal then open gives back every file; a wrong passphrase opens nothing', a
   const salt = JSON.parse(readFileSync(join(d, 'vault.json'), 'utf8')).salt
   await sealDir(d, 'correct horse')
   assert.equal(JSON.parse(readFileSync(join(d, 'vault.json'), 'utf8')).salt, salt)
+})
+
+test('sealed files without their vault.json are refused, not re-keyed into data nobody can read', async () => {
+  const d = mkdtempSync(join(tmpdir(), 'vault-'))
+  writeFileSync(join(d, 'MSTR.json'), '{"rows":[]}')
+  await sealDir(d, 'old pass')
+  rmSync(join(d, 'vault.json'))
+  await assert.rejects(sealDir(d, 'new pass'), /is sealed but .* has no vault\.json/)
+  await assert.rejects(openDir(d, 'new pass'), /has no vault\.json/)
+  assert.ok(!existsSync(join(d, 'vault.json')), 'no new vault.json was written')
 })

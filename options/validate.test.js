@@ -82,6 +82,7 @@ test('a snapshot left behind for a ticker that is not on the list is caught', as
   writeFileSync(join(d, 'GONE.json'), JSON.stringify(s))
   writeFileSync(join(d, 'index.json'), JSON.stringify({ tickers: { ABC: entryFor(s), GONE: { noOptions: true } } }))
   writeFileSync(join(d, 'watchlist.json'), '[]')
+  writeFileSync(join(d, 'vault.json'), '{"salt":""}') // the vault's salt and check: not a snapshot
   process.argv = ['node', 'validate.js', d, '--write']
   await main()
   const v = JSON.parse(readFileSync(join(d, 'validation.json'), 'utf8'))

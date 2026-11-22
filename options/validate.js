@@ -16,6 +16,7 @@ import { readFile, writeFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import { contractMetrics, parseOccSymbol } from './engine.js'
+import { pathToFileURL } from 'node:url'
 
 // The method, written out again without reusing the engine.
 const REF = { pctAdv: 0.10, pctOi: 0.05, maxSpread: 0.15, minSessions: 5, prior: 0.02, legs: 6, dMin: 0.2, dMax: 0.85 }
@@ -149,7 +150,7 @@ export async function main() {
   const listed = new Set(Object.entries(index.tickers).filter(([, e]) => !e.noOptions).map(([t]) => t))
   for (const f of await readdir(dataDir)) {
     const t = /^(.+)\.json$/.exec(f)?.[1]
-    if (t && !['index', 'watchlist', 'removed', 'validation'].includes(t) && !listed.has(t)) out.failed[t] = ['snapshot file for a ticker that is not on the list']
+    if (t && !['index', 'watchlist', 'removed', 'validation', 'vault'].includes(t) && !listed.has(t)) out.failed[t] = ['snapshot file for a ticker that is not on the list']
   }
   const nFailed = Object.keys(out.failed).length
   // Failed fetches are the snapshot step's to report; this check is about the numbers.
@@ -161,4 +162,4 @@ export async function main() {
   if (!out.ok) process.exitCode = 1
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) await main()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main()
