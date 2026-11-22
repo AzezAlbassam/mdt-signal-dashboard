@@ -71,8 +71,13 @@ export function debtAt(ns, date) {
     const lt = v(['LongTermDebt', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities']);
     const nonCur = v(['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesAndLoans', 'LongTermNotesPayable']);
     const cur = v(['LongTermDebtCurrent', 'DebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent', 'NotesPayableCurrent']);
-    if (lt != null) borrowings = lt + st;
-    else if (nonCur != null && cur != null) borrowings = nonCur + cur + st;
+    // A short-term line equal (within 2%) to the current portion of long-term debt is that same money tagged twice
+    // (IBM: "short-term debt" 7.013B includes the 7.009B current portion): count it once. Different amounts add up.
+    const curLtd = v(['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent']);
+    const same = (a, b) => a > 0 && b > 0 && Math.abs(a - b) <= 0.02 * Math.max(a, b);
+    const stAdd = same(st, curLtd) || same(st, cur) ? 0 : st;
+    if (lt != null) borrowings = lt + stAdd;
+    else if (nonCur != null && cur != null) borrowings = nonCur + cur + stAdd;
     // Only short-term lines (G6.1: BAX, TMUS, ORA, DE): the long-term debt is under another tag, so the figure is
     // incomplete and the liabilities upper bound is used instead.
   }
