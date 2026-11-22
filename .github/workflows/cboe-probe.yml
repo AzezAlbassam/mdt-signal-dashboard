@@ -2,6 +2,7 @@ name: Cboe probe
 on:
   push:
     branches: [probe/cboe]
+    paths: ['.github/workflows/cboe-probe.yml']
 jobs:
   probe:
     runs-on: ubuntu-latest

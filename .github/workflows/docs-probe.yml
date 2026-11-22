@@ -31,9 +31,14 @@ jobs:
                   print('['+k+']', text[max(0,m.start()-220):m.end()+260].replace('\n',' '))
           PY
           get() { echo; echo "######## $1"; curl -sSL -m 40 -o /tmp/p -w "HTTP %{http_code} final=%{url_effective}\n" -A 'mdt-signal-dashboard/1.0 (+https://github.com/AzezAlbassam/mdt-signal-dashboard)' "$1"; python3 /tmp/txt.py /tmp/p "$2" | head -c 6000; }
-          get https://documentation.tradier.com/brokerage-api/markets/get-options-chains "bidsize,open_interest,greeks,delta,expiration,Response"
-          get https://documentation.tradier.com/brokerage-api/overview/rate-limiting "per minute,Market Data,sandbox,requests"
-          get https://documentation.tradier.com/brokerage-api/overview/market-data "delayed,sandbox,real-time,15"
-          get https://tradier.com/products/market-data-api "free,price,month,delayed,sandbox,options"
-          get https://polygon.io/docs/rest/options/snapshots/option-chain-snapshot "last_quote,bid_size,open_interest,greeks,day,limit,Starter,plan"
-          get https://polygon.io/pricing "Options,Starter,Developer,Advanced,month,delayed,Unlimited,Quotes,Greeks,Snapshot"
+          get https://www.marketdata.app/docs/api/options/chain "bidSize,openInterest,delta,credit,feed,cached,expiration"
+          get https://www.marketdata.app/docs/api/universal-parameters/feed "cached,live,delayed,credit"
+          get https://www.marketdata.app/docs/api/rate-limiting "credit,daily,per minute,Free,Starter,Trader,concurrent"
+          get https://www.marketdata.app/pricing/ "Free,Starter,Trader,month,credits,delayed,Options,commercial,personal,year"
+          get https://docs.alpaca.markets/docs/historical-option-data "indicative,OPRA,delayed,free,Basic,modified"
+          get https://docs.alpaca.markets/reference/optionchain "latestQuote,greeks,dailyBar,feed,indicative,limit"
+          get https://docs.alpaca.markets/reference/get-options-contracts "open_interest,close_price,limit"
+          get https://alpaca.markets/data "Options,indicative,Basic,Algo Trader,month,OPRA,delayed"
+          get https://docs.tradier.com/ "sandbox,delayed,options,market data,account"
+          get https://docs.tradier.com/reference/brokerage-api-markets-get-options-chains "bidsize,open_interest,greeks,sandbox"
+          get https://eodhd.com/financial-apis/stock-options-data "bid,ask,volume,open_interest,delta,month,price,size"
