@@ -1,0 +1,72 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- Weekly bottom indicators, 2026-11-20 close, from the owner's StockCharts screenshots:
+     $RHCOMPQ close 2.8816 (prev 6.7442), EMA(20) 17.2551; !PRBFISH close -6.80 (prev -6.05).
+     The path on the left is the owner's expected scenario, drawn as a sketch, not data. 1200x675. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:675px;background:#E9E7E1;color:#111;font-family:"IBM Plex Sans Arabic";overflow:hidden}
+.wrap{position:absolute;inset:0;padding:34px 52px 26px;display:flex;flex-direction:column}
+.kick{font:600 18px "IBM Plex Sans Arabic";background:#111;color:#fff;align-self:flex-start;padding:2px 12px;margin-bottom:6px}
+h1{font:900 36px/1.3 "Noto Kufi Arabic"}
+.cols{display:grid;grid-template-columns:430px 1fr;gap:20px;margin-top:16px;flex:1;min-height:0}
+.ind{border:2px solid #111;background:#fff;padding:14px 18px;margin-bottom:14px}
+.ind:last-child{margin-bottom:0}
+.ind.k{background:#111;color:#fff}.ind.k .s{color:#C9C6BE}
+.t{font:700 20px "Noto Kufi Arabic"}
+.s{font:500 16px "IBM Plex Sans Arabic";color:#6B6962;margin-top:2px}
+.n{font:700 50px "IBM Plex Mono";direction:ltr;text-align:right;line-height:1.1;margin-top:6px}
+.n small{font:600 18px "IBM Plex Mono"}
+.bar{position:relative;height:14px;border:2px solid currentColor;margin:8px 0 4px;direction:ltr}
+.bar i{position:absolute;top:-6px;bottom:-6px;width:4px;background:#C0392B}
+.bar b{position:absolute;top:-4px;bottom:-4px;border-left:2px dashed currentColor}
+.ticks{position:relative;height:16px;direction:ltr;font:500 13px "IBM Plex Mono";color:#6B6962}
+.sc{border:2px solid #111;background:#fff;padding:12px 16px;display:flex;flex-direction:column}
+.sc .t small{font:500 15px "IBM Plex Sans Arabic";color:#6B6962;margin-right:8px}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:2px solid #111;direction:ltr}
+.me{display:flex;align-items:center;gap:12px;font:700 22px "IBM Plex Mono"}
+.x{width:38px;height:38px;border-radius:4px;background:#111;display:grid;place-items:center}.x svg{width:22px;height:22px;fill:#fff}
+.note{font:500 15px "IBM Plex Sans Arabic";color:#6B6962;direction:rtl}
+.ticks span{position:absolute;transform:translateX(-50%)}.ticks span:first-child{transform:none}
+</style><body><div class="wrap">
+<div class="kick">مؤشرات القيعان · إغلاق الجمعة 20 نوفمبر</div>
+<h1>السوق مبيوع بقوة… بس القاع الكبير للحين؟</h1>
+<div class="cols">
+ <div>
+  <div class="ind k">
+   <div class="t">نسبة القمم الجديدة في ناسداك</div>
+   <div class="s">من كل 100 سهم سجّل قمة أو قاع سنوي جديد، كم منها قمة</div>
+   <div class="n">2.9% <small>EMA20: 17.3</small></div>
+   <div class="bar" style="color:#fff"><b style="left:20%"></b><b style="left:35%"></b><i style="left:2.9%"></i></div>
+   <div class="ticks"><span style="left:0">0</span><span style="left:20%">20</span><span style="left:35%">35</span><span style="left:calc(100% - 28px)">100</span></div>
+   <div class="s">تحت 20 = منطقة قيعان</div>
+  </div>
+  <div class="ind">
+   <div class="t">Pring Bottom Fisher</div>
+   <div class="s">أسهم الداو: كم سهم زخمه يتحسن مقابل كم سهم ينزل</div>
+   <div class="n">-6.8</div>
+   <div class="bar"><b style="left:26.7%"></b><b style="left:53.3%"></b><i style="left:57.6%"></i></div>
+   <div class="ticks"><span style="left:0">-50</span><span style="left:26.7%">-30</span><span style="left:53.3%">-10</span><span style="left:66.7%">0</span><span style="left:calc(100% - 28px)">+25</span></div>
+   <div class="s">للحين فوق ‎-10، ما دخل منطقة القاع</div>
+  </div>
+ </div>
+ <div class="sc">
+  <div class="t">السيناريو اللي أتوقعه <small>(رأيي، رسم توضيحي مو بيانات)</small></div>
+  <svg viewBox="0 0 640 380" style="flex:1;width:100%;margin-top:6px;direction:ltr">
+   <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker></defs>
+   <polyline points="20,60 70,90 110,150 150,200" fill="none" stroke="#999" stroke-width="4"/>
+   <polyline points="150,200 230,120 290,95 340,140 380,175 430,150 470,135 520,230 560,300 585,320" fill="none" stroke="#111" stroke-width="5" stroke-dasharray="12 8" stroke-linejoin="round" marker-end="url(#a)"/>
+   <line x1="290" y1="95" x2="20" y2="95" stroke="#bbb" stroke-dasharray="3 6"/>
+   <line x1="470" y1="135" x2="600" y2="135" stroke="#bbb" stroke-dasharray="3 6"/>
+   <circle cx="150" cy="200" r="10" fill="#C0392B"/>
+   <text x="150" y="240" text-anchor="middle" font-family="Noto Kufi Arabic" font-weight="700" font-size="20" fill="#111">احنا هنا</text>
+   <text x="290" y="78" text-anchor="middle" font-family="IBM Plex Sans Arabic" font-weight="600" font-size="19" fill="#111">① ارتداد 2-3 شهور</text>
+   <text x="470" y="118" text-anchor="middle" font-family="IBM Plex Sans Arabic" font-weight="600" font-size="19" fill="#111">② قمة أقل</text>
+   <text x="505" y="300" text-anchor="end" font-family="IBM Plex Sans Arabic" font-weight="600" font-size="19" fill="#111">③ الانهيار الكبير</text>
+   <rect x="440" y="336" width="190" height="40" fill="#111"/>
+   <text x="535" y="363" text-anchor="middle" font-family="Noto Kufi Arabic" font-weight="700" font-size="17" fill="#fff">فرصة الشراء المثالية</text>
+  </svg>
+ </div>
+</div>
+<div class="foot"><div class="me"><div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>@AzizzUnited</div><div class="note">قراءات المؤشرين: StockCharts · رأيي الشخصي، مو توصية</div></div>
+</div>
