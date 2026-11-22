@@ -1,0 +1,54 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
+<!-- The owner's own StockCharts screenshot shown as it is, with light Arabic notes on top and his handle below.
+     ?c=rh | pring ; the screenshot is read from ?img=<file url>. Positions are pixels of that screenshot. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#E9E7E1;font-family:"IBM Plex Sans Arabic";color:#111}
+#stage{position:relative;overflow:hidden;direction:ltr}
+#stage img{position:absolute;display:block}
+.ln{position:absolute;border-top:3px dashed #C0392B}
+.tag{position:absolute;background:#111;color:#fff;font:700 var(--fs) "IBM Plex Sans Arabic";padding:4px 12px;direction:rtl;white-space:nowrap}
+.tag.r{background:#C0392B}
+.tag.w{background:#fff;color:#111;border:2px solid #111}
+.dot{position:absolute;width:var(--d);height:var(--d);border-radius:50%;border:4px solid #C0392B;transform:translate(-50%,-50%)}
+.head{padding:18px 26px 12px;direction:rtl}
+.head b{display:block;font:800 var(--h) "Noto Kufi Arabic"}
+.head span{font:500 var(--sub) "IBM Plex Sans Arabic";color:#55554f}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:12px 26px 16px;direction:ltr;border-top:2px solid #111}
+.me{display:flex;align-items:center;gap:12px;font:700 var(--sub) "IBM Plex Mono"}
+.x{width:38px;height:38px;border-radius:4px;background:#111;display:grid;place-items:center}.x svg{width:22px;height:22px;fill:#fff}
+.note{font:500 calc(var(--sub) * .8) "IBM Plex Sans Arabic";color:#55554f;direction:rtl}
+</style><body>
+<div class="head"><b id="h"></b><span id="s"></span></div>
+<div id="stage"></div>
+<div class="foot"><div class="me"><div class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></div>@AzizzUnited</div><div class="note">الشارت: StockCharts.com · إغلاق 20 نوفمبر 2026 · رأيي الشخصي، مو توصية</div></div>
+<script>
+const q=new URLSearchParams(location.search),c=q.get('c'),img=q.get('img')
+const C={
+ rh:{w:1320,h:1163,crop:[70,0,1250,903],fs:'19px',d:'30px',hh:'30px',sub:'20px',
+  h:'مؤشر القمم والقيعان في ناسداك: 2.9',s:'من الأسهم اللي سجلت قمة أو قاع سنوي، كم نسبة القمم · الحين 97 من كل 100 منها عند قاع',
+  lines:[[93,1205,519]],
+  tags:[['w',100,528,'خط 20: تحته بيع قوي'],['r',1010,700,'احنا هنا: 2.9'],['',275,845,'2018'],['',408,845,'2020'],['',640,790,'2022'],['',822,750,'2023'],['',985,760,'2025']],
+  dots:[[1200,686]]},
+ pring10:{w:1320,h:1190,crop:[70,0,1250,908],fs:'19px',d:'30px',hh:'30px',sub:'20px',
+  h:'مؤشر صيد القيعان (Pring Bottom Fisher): ‎-6.8',s:'يقيس زخم أسهم الداو الـ30 · لما ينزل لمنطقة ‎-30 يكون السوق قرب قاع قوي',
+  lines:[[93,1225,680],[93,1225,776]],
+  tags:[['w',100,784,'تحت ‎-10 منطقة قاع · تحت ‎-30 قاع قوي'],['r',1085,805,'احنا هنا: ‎-6.8'],['',255,848,'2018'],['',486,846,'2020'],['',772,814,'2022'],['',962,792,'2025']],
+  dots:[[1215,665]]},
+ pring:{w:1978,h:1900,crop:[0,0,1978,1462],fs:'28px',d:'44px',hh:'44px',sub:'29px',
+  h:'Pring Bottom Fisher: ‎-6.8',s:'يقيس زخم أسهم الداو الـ30 · القيعان القوية تجي لما ينزل تحت ‎-10 ثم ‎-30',
+  lines:[[32,1880,1182]],
+  tags:[['w',770,1196,'خط ‎-10: تحته تبدأ منطقة القاع (والقاع القوي تحت ‎-30)'],['r',1560,1250,'احنا هنا: ‎-6.8'],['',440,1340,'أبريل: ‎-23']],
+  dots:[[1866,1131]]}
+}[c]
+const [cx,cy,cw,ch]=C.crop,st=document.getElementById('stage')
+document.body.style.width=cw+'px'
+for(const [k,v] of [['--fs',C.fs],['--d',C.d],['--h',C.hh],['--sub',C.sub]])document.body.style.setProperty(k,v)
+st.style.width=cw+'px';st.style.height=ch+'px'
+document.getElementById('h').textContent=C.h;document.getElementById('s').textContent=C.s
+st.innerHTML=`<img src="${img}" style="left:${-cx}px;top:${-cy}px;width:${C.w}px;height:${C.h}px">`+
+ C.lines.map(([a,b,y])=>`<div class="ln" style="left:${a-cx}px;width:${b-a}px;top:${y-cy}px"></div>`).join('')+
+ C.dots.map(([x,y])=>`<div class="dot" style="left:${x-cx}px;top:${y-cy}px"></div>`).join('')+
+ C.tags.map(([k,x,y,t])=>`<div class="tag ${k}" style="left:${x-cx}px;top:${y-cy}px">${t}</div>`).join('')
+</script>

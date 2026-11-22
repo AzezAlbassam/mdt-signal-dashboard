@@ -18,7 +18,7 @@ const long = `${para(4)}\n\n${para(4)}\n\n${para(4)}\n\nhttps://www.tradingview.
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.addInitScript(({ today, long }) => {
-    const store = { [`tweets/${today}`]: { date: today, text: long, family: 'market', status: 'draft' }, 'meta/ideas': { ideas: [] }, 'growth/2026-11-13': { followers: 180 }, 'growth/2026-11-20': { followers: 187 } }
+    const store = { [`tweets/${today}`]: { date: today, text: long, family: 'market', status: 'draft' }, 'meta/ideas': { ideas: [] }, 'growth/2026-11-06': { followers: 178 }, 'growth/2026-11-13': { followers: 180 }, 'growth/2026-11-20': { followers: 187 }, 'tweets/2026-11-13': { date: '2026-11-13', text: 'تغريدة مروّجة عن السوق', title: 'مروّجة', family: 'market', status: 'posted', perf: { views: 90000, likes: 50 }, boost: { amount: 39.99, currency: 'ر.س', at: '2026-11-13' } } }
     const listeners = {}
     window.__store = store; window.__writes = []; window.__uploads = []
     const snapOf = (p) => ({ id: p.split('/').pop(), exists: p in store, data: () => store[p] })
@@ -100,6 +100,9 @@ const long = `${para(4)}\n\n${para(4)}\n\n${para(4)}\n\nhttps://www.tradingview.
   r.perf = await page.evaluate((d) => window.__store['tweets/' + d].perf, today)
   r.worked = await page.$eval('#workedRows', (t) => t.innerText.replace(/\s+/g, ' '))
   check('worked', r.perf?.views === 12000 && r.perf?.likes === 340 && /قراءة السوق 1 12,000 340/.test(r.worked), `${JSON.stringify(r.perf)} · ${r.worked}`)
+  // a boosted post stays out of the medians (the row above still reads 12,000) and gets its own line with followers after/before
+  r.boosted = await page.$eval('#boosted', (b) => b.innerText.replace(/\s+/g, ' '))
+  check('boosted', /90,000/.test(r.boosted) && /\+7 في 7 أيام بعدها/.test(r.boosted) && /قبلها \+2/.test(r.boosted), r.boosted)
   // followers from growth/<date> (the owner's daily X task): count, change over the week, a line
   r.growth = await page.$eval('#growth', (g) => (g.hidden ? '' : g.innerText.replace(/\s+/g, ' ')))
   check('growth', /187/.test(r.growth) && /\+7/.test(r.growth) && /7 يوم/.test(r.growth), r.growth)

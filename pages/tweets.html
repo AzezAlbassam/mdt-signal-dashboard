@@ -137,6 +137,7 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
     <p class="lead">الأرقام تجي كل يوم لحالها من مهمة "X Posts" على جهازك (كروم وحسابك في إكس). الجولة تقراها كل مرة وتعدّل أفكارها.</p>
     <div id="growth" class="growth" hidden></div>
     <div id="topPosts"></div>
+    <div id="boosted"></div>
     <table><thead><tr><th>نوع الفكرة</th><th>تغريدات</th><th>وسط المشاهدات</th><th>وسط الإعجابات</th></tr></thead><tbody id="workedRows"></tbody></table>
   </section>
   <section class="inbox" id="inbox" aria-labelledby="inboxH" hidden>
@@ -245,15 +246,30 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
     const path = v.map((y, i) => `${i ? 'L' : 'M'}${(v.length < 2 ? 50 : (i / (v.length - 1)) * 100).toFixed(1)},${(40 - (hi === lo ? 20 : ((y - lo) / (hi - lo)) * 36) - 2).toFixed(1)}`).join('')
     box.innerHTML = `<b class="big">${now.followers.toLocaleString('en-US')}</b><span>متابع${days ? ` <span class="chg ${d > 0 ? 'up' : d < 0 ? 'down' : ''}" dir="ltr">${d > 0 ? '+' : ''}${d}</span> في آخر ${days} يوم` : ''}<br><span class="lead">آخر قراءة ${esc(now.id)}</span></span>${v.length > 1 ? `<svg viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="المتابعين يوم بيوم"><path d="${path}"/></svg>` : ''}`
   }
+  // followers gained in the 7 days after a day and in the 7 before it, from growth/<date> (nearest reading on or before each end)
+  function follow7(day) {
+    const g = growth.filter((x) => Number.isFinite(x.followers)).sort((a, b) => a.id.localeCompare(b.id))
+    const d0 = String(day).slice(0, 10)
+    const at = (d) => g.filter((x) => x.id <= d).at(-1)?.followers
+    const shift = (n) => new Date(Date.parse(d0 + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10)
+    const a = at(d0), b = at(shift(7)), c = at(shift(-7))
+    if (a == null || b == null || !g.some((x) => x.id > d0)) return null
+    return { after: b - a, before: c == null ? null : a - c }
+  }
   function renderWorked() {
     const done = tweets.filter((t) => t.status === 'posted' && Number.isFinite(t.perf?.views))
     renderGrowth()
     $('worked').hidden = !done.length && !growth.length
-    const top = [...done].sort((a, b) => b.perf.views - a.perf.views).slice(0, 3)
+    // a boosted post (tweet.boost {amount, currency, at}) buys its views: it stays out of the top 3 and the
+    // medians, and gets its own line with the followers gained in the 7 days after against the 7 before
+    const paid = done.filter((t) => t.boost)
+    const organic = done.filter((t) => !t.boost)
+    const top = [...organic].sort((a, b) => b.perf.views - a.perf.views).slice(0, 3)
     $('topPosts').innerHTML = top.length ? `<b>أعلى 3 تغريدات</b><ol>${top.map((t) => `<li>${esc(t.title ?? t.text.split('\n')[0]).slice(0, 70)} · <span class="n">${t.perf.views.toLocaleString('en-US')}</span> مشاهدة · <span class="n">${t.perf.likes ?? 0}</span> إعجاب</li>`).join('')}</ol>` : ''
-    if (!done.length) return
+    $('boosted').innerHTML = paid.length ? `<b>التغريدات المروّجة</b><ul>${paid.map((t) => { const f = follow7(t.boost.at ?? t.date); return `<li>${esc(t.title ?? t.text.split('\n')[0]).slice(0, 60)} · <span class="n">${t.perf.views.toLocaleString('en-US')}</span> مشاهدة · <span class="n">${t.perf.likes ?? 0}</span> إعجاب${f ? ` · المتابعين <span class="n" dir="ltr">${f.after > 0 ? '+' : ''}${f.after}</span> في 7 أيام بعدها${f.before != null ? ` (قبلها <span class="n" dir="ltr">${f.before > 0 ? '+' : ''}${f.before}</span>)` : ''}` : ''}</li>` }).join('')}</ul>` : ''
+    if (!organic.length) { $('workedRows').innerHTML = ''; return }
     const by = {}
-    for (const t of done) (by[t.family ?? 'other'] ??= []).push(t)
+    for (const t of organic) (by[t.family ?? 'other'] ??= []).push(t)
     $('workedRows').innerHTML = Object.entries(by).sort((a, b) => median(b[1].map((t) => t.perf.views)) - median(a[1].map((t) => t.perf.views))).map(([fam, ts]) => `<tr><td>${esc(FAMILY[fam] ?? fam)}</td><td class="n">${ts.length}</td><td class="n">${Math.round(median(ts.map((t) => t.perf.views))).toLocaleString('en-US')}</td><td class="n">${Math.round(median(ts.map((t) => t.perf.likes ?? 0))).toLocaleString('en-US')}</td></tr>`).join('')
   }
 
@@ -289,7 +305,7 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
     const list = tweets.filter((t) => sundayOf(t.date) === week).sort((a, b) => a.date.localeCompare(b.date))
     $('list').innerHTML = list.length ? list.map((t) => `
       <article class="tw ${t.status === 'posted' ? 'posted' : ''}" data-id="${esc(t.id)}">
-        <div class="head"><span class="day">${fmtDay(t.date, { weekday: 'long', day: 'numeric', month: 'long' })}</span><span class="chip">${esc(FAMILY[t.family] ?? t.family ?? '')}</span>
+        <div class="head"><span class="day">${fmtDay(t.date, { weekday: 'long', day: 'numeric', month: 'long' })}</span><span class="chip">${esc(FAMILY[t.family] ?? t.family ?? '')}</span>${t.boost ? `<span class="chip" title="تغريدة مدفوع ترويجها">مروّجة${t.boost.amount ? ` · <span class="n">${esc(String(t.boost.amount))}</span> ${esc(t.boost.currency ?? 'ر.س')}` : ''}</span>` : ''}
           <span class="state ${t.status === 'posted' ? 'done' : 'draft'}">${t.status === 'posted' ? 'نُشرت' : 'جاهزة للنشر'}</span></div>
         ${t.title ? `<p class="title">${esc(t.title)}</p>` : ''}
         ${pieces(t).map((x, k, a) => `${a.length > 1 ? `<div class="foot"><span class="chip">${k + 1}/${a.length}${k ? ' — رد على اللي قبلها' : ''}</span><button class="btn" type="button" data-copy="${esc(t.id)}|${k}">نسخ ${k + 1}</button><span class="count ${xLen(x) > LIMIT ? 'over' : ''}">${xLen(x)} / ${LIMIT}${xLen(x) > LIMIT ? ' — أطول من تغريدة' : ''}</span></div>` : ''}<div class="body" dir="rtl" id="body-${esc(t.id)}-${k}">${bodyHtml(x, a.length === 1)}</div>`).join('')}
