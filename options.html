@@ -267,7 +267,7 @@ const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const parseAmount = (s) => Number(String(s).replace(/[^\d.]/g, '')) || 0
 const cleanT = (s) => String(s).trim().toUpperCase().replace(/[^A-Z.]/g, '')
-const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'] }
+const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'], P: ['بانتظار البيانات', 'dN'] }
 const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول', D: 'سبريد عالي' }
 const BUCKET_TXT = { m1: '1–3 شهور', m3: '3–6 شهور', m6: '6–12 شهر', y1: '1–2 سنة', y2: 'أكثر من سنتين' }
 const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
@@ -361,7 +361,9 @@ async function render() {
   if (!data) {
     const msg = info?.noOptions
       ? `<b>${esc(t)}</b> ما له عقود أوبشن مدرجة في السوق الأمريكي.`
-      : `<b>${esc(t)}</b> مو في قائمتك بعد. أرسله لـ Claude في المحادثة ويضيفه، ويظهر هنا بعد التحديث الجاي.`
+      : info?.pending
+        ? `<b>${esc(t)}</b> في قائمتك، وبياناته تنضاف أول تحديث ناجح لمصدر البيانات.`
+        : `<b>${esc(t)}</b> مو في قائمتك بعد. أرسله لـ Claude في المحادثة ويضيفه، ويظهر هنا بعد التحديث الجاي.`
     $('out').innerHTML = `<div class="verdict bad"><div class="t">ما فيه بيانات</div><p>${msg}</p></div>`
     return
   }
@@ -496,10 +498,10 @@ function renderList() {
   if (!index?.tickers) return
   const q = cleanT($('q').value)
   const bi = bucketIdx()
-  const all = Object.entries(index.tickers).map(([t, v]) => ({ t, ...v, k: v.noOptions ? 'N' : v.tier ?? 'D', cap: v.caps?.[type]?.[bi] ?? null }))
+  const all = Object.entries(index.tickers).map(([t, v]) => ({ t, ...v, k: v.noOptions ? 'N' : v.pending ? 'P' : v.tier ?? 'D', cap: v.caps?.[type]?.[bi] ?? null }))
   $('listCount').textContent = `(${all.length})`
   const rows = all.filter((r) => (!q || r.t.includes(q)) && (!tierFilter || r.k === tierFilter))
-    .sort((x, y) => (x.k === 'N') - (y.k === 'N') || (y.cap ?? -1) - (x.cap ?? -1) || x.t.localeCompare(y.t))
+    .sort((x, y) => (x.k === 'N' || x.k === 'P') - (y.k === 'N' || y.k === 'P') || (y.cap ?? -1) - (x.cap ?? -1) || x.t.localeCompare(y.t))
   document.querySelectorAll('#tierChips button').forEach((b) => {
     const n = b.dataset.tier ? all.filter((r) => r.k === b.dataset.tier).length : all.length
     b.querySelector('.count')?.remove(); b.insertAdjacentHTML('beforeend', `<span class="count">${n}</span>`)

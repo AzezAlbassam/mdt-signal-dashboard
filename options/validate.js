@@ -96,10 +96,11 @@ async function main() {
   const [dataDir, ...rest] = process.argv.slice(2)
   if (!dataDir) throw new Error('usage: node options/validate.js <dataDir> [--write]')
   const index = JSON.parse(await readFile(join(dataDir, 'index.json'), 'utf8'))
-  const out = { checkedAt: new Date().toISOString(), tickers: 0, contracts: 0, noOptions: 0, fetchErrors: [], failed: {}, oldestQuotes: null }
+  const out = { checkedAt: new Date().toISOString(), tickers: 0, contracts: 0, noOptions: 0, pending: 0, fetchErrors: [], failed: {}, oldestQuotes: null }
   for (const [t, entry] of Object.entries(index.tickers)) {
     if (entry.noOptions) { out.noOptions += 1; continue }
     if (entry.error) { out.fetchErrors.push(`${t}: ${entry.error}`); continue }
+    if (entry.pending) { out.pending += 1; continue } // added, not fetched yet: no snapshot to check
     let snap
     try {
       snap = JSON.parse(await readFile(join(dataDir, `${t}.json`), 'utf8'))
@@ -116,7 +117,7 @@ async function main() {
   }
   const nFailed = Object.keys(out.failed).length
   out.ok = nFailed === 0 && out.fetchErrors.length === 0
-  console.log(`checked ${out.tickers} tickers, ${out.contracts} contracts; ${out.noOptions} without options; ${out.fetchErrors.length} fetch errors; ${nFailed} with problems`)
+  console.log(`checked ${out.tickers} tickers, ${out.contracts} contracts; ${out.noOptions} without options; ${out.pending} pending; ${out.fetchErrors.length} fetch errors; ${nFailed} with problems`)
   for (const [t, e] of Object.entries(out.failed).slice(0, 30)) console.log(`  ${t}: ${e.slice(0, 3).join(' | ')}`)
   for (const e of out.fetchErrors.slice(0, 30)) console.log(`  fetch: ${e}`)
   if (rest.includes('--write')) await writeFile(join(dataDir, 'validation.json'), JSON.stringify(out))
