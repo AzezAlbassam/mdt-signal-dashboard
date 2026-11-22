@@ -3,23 +3,24 @@
 <title>سيولة العقود</title>
 <meta name="description" content="كم تقدر تدخل في عقد أوبشن وتطلع منه بضغطة زر — وكيف تتجنب السبريد.">
 <style>
+/* Text colors clear WCAG AA (4.5:1) on every surface they sit on, the tinted verdicts included. */
 :root{
   --bg:#F2F2EF; --surface:#FAFAF8; --raise:#EDEDE8; --sunk:#E6E6E0;
-  --ink:#1B1B19; --body:#43433D; --muted:#6B6B62; --faint:#93938A;
+  --ink:#1B1B19; --body:#43433D; --muted:#626259; --faint:#6B6B62;
   --line:#DBDBD3; --line-soft:#E7E7E1;
-  --accent:#8F711B; --accent-soft:#EFE7CC;
-  --pos:#3F6B2E; --pos-soft:#E1EBD7; --neg:#9A3E2A; --neg-soft:#F4DED6; --warn:#8A6510; --warn-soft:#F4EACB;
+  --accent:#86691A; --accent-soft:#EFE7CC;
+  --pos:#3F6B2E; --pos-soft:#E1EBD7; --neg:#9A3E2A; --neg-soft:#F4DED6; --warn:#85620F; --warn-soft:#F4EACB;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
-  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#949489; --faint:#929288;
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
   --pos:#8DB36C; --pos-soft:#1F2A19; --neg:#D07D66; --neg-soft:#33201A; --warn:#D2AE4E; --warn-soft:#322B17;
 }}
 :root[data-theme="dark"]{
   --bg:#191917; --surface:#222220; --raise:#2A2A26; --sunk:#141412;
-  --ink:#EDEDE7; --body:#C1C1B7; --muted:#8D8D83; --faint:#696960;
+  --ink:#EDEDE7; --body:#C1C1B7; --muted:#949489; --faint:#929288;
   --line:#34342E; --line-soft:#292925;
   --accent:#CBA84A; --accent-soft:#322B17;
   --pos:#8DB36C; --pos-soft:#1F2A19; --neg:#D07D66; --neg-soft:#33201A; --warn:#D2AE4E; --warn-soft:#322B17;
@@ -48,13 +49,15 @@ a{color:var(--accent)}
 .lbl{font-size:.82rem;color:var(--muted);font-weight:650;margin-bottom:5px}
 label{display:grid;gap:5px;font-size:.82rem;color:var(--muted);font-weight:650}
 input{font:inherit;font-size:1.05rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+input::placeholder{color:var(--muted)}
 input:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:800;font-size:1.25rem;letter-spacing:.02em}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{font:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer;line-height:1.3}
 .chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chips button[aria-pressed="true"] .count{color:inherit}
 #passGo{font:inherit;font-weight:700;min-height:44px;padding:10px 16px;border-radius:8px;border:0;background:var(--accent);color:var(--surface);cursor:pointer}
-.chips button small{display:block;font-size:.72rem;font-weight:600;opacity:.85}
+.chips button small{display:block;font-size:.72rem;font-weight:600}
 .chips.dates{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
 .chips.dates button{font-size:.8rem;padding:6px 8px;border-radius:8px;text-align:center}
 .chips button .dot{margin-inline-end:5px}
@@ -65,6 +68,7 @@ input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:8
 .verdict.bad{background:var(--neg-soft);border-color:transparent}
 .verdict .t{font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1.45}
 .verdict p{margin:6px 0 0}
+.verdict a{color:var(--ink)}
 .tier{font-size:.84rem;font-weight:700;color:var(--muted);margin-bottom:6px}
 .tier .dot{margin-inline-end:6px;vertical-align:middle}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
@@ -80,6 +84,7 @@ input.tick{text-transform:uppercase;direction:ltr;text-align:right;font-weight:8
 .pA,.pB{background:var(--pos-soft);color:var(--pos)} .pC{background:var(--warn-soft);color:var(--warn)} .pD{background:var(--neg-soft);color:var(--neg)}
 .note{font-size:.84rem;color:var(--muted);margin:10px 0 0}
 .tip{font-size:.88rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:10px}
+.tip.old{background:var(--warn-soft);border-color:transparent;color:var(--ink)}
 
 details.more{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 16px}
 details.more>summary{cursor:pointer;font-weight:700;color:var(--muted);padding:12px 0}
@@ -90,6 +95,8 @@ th{font-size:.74rem;color:var(--faint);font-weight:700;background:var(--raise)}
 tr:last-child td{border-bottom:0}
 td.n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
 td.n bdi{direction:ltr;unicode-bidi:isolate}
+td.old{color:var(--muted)}
+[hidden]{display:none!important}
 tr.hl td{background:var(--accent-soft)}
 .adv{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:14px}
 @media (max-width:620px){.adv{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -249,11 +256,11 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-si
   <div class="ex">مثال من صورك (7 أكتوبر): كول 100,000 يونيو 2027، Open = 780,000$، البيتكوين 83,000$ ← المفتوح 9.4 BTC ← حدك 5% = <b>0.46 BTC</b>. لو سعر العقد ~5,300$ ← حدك تقريبًا <b>2,400$</b> في هذا العقد. وكل كول يونيو مجتمعة ~7,000$، ومارس 2027 ~17,000$.</div>
 </section>
 
-<footer id="foot"><span id="src">البيانات: MarketData — أسعار إغلاق آخر جلسة، تتحدث كل يوم تداول. للمعلومة فقط — مو توصية شراء أو بيع.</span><span id="check"></span></footer>
+<footer id="foot"><span id="src">البيانات: MarketData — أسعار إغلاق الجلسة. للمعلومة فقط — مو توصية شراء أو بيع.</span><span id="check"></span></footer>
 </div>
 
 <script type="module">
-import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates, nyDate } from './options/engine.js'
+import { contractMetrics, allocate, expirySummary, daysToExpiry, isMonthly, limitGuide, BUCKETS, expiriesInRange, candidates, nyDate, addDays, isTradingDay } from './options/engine.js'
 
 const $ = (id) => document.getElementById(id)
 const money = (v) => '<bdi class="m">$' + Math.round(v).toLocaleString('en-US') + '</bdi>'
@@ -262,7 +269,8 @@ const shortRaw = (v) => v >= 1e6 ? '$' + (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + '
 const price = (v) => '<bdi class="m">$' + Number(v).toFixed(2) + '</bdi>'
 const fmtN = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d })
 const fmtP = (v) => v == null ? '—' : (v * 100).toFixed(1) + '%'
-const fmtExp = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+// A date in Arabic prose stays on one line: split, "(Nov" and "20, 2026)" read as two things.
+const fmtExp = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).replace(/ /g, '\u00a0')
 const fmtExpShort = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit', timeZone: 'UTC' })
 const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) } catch { return iso } }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
@@ -285,6 +293,8 @@ const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة
 const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول', D: 'سبريد عالي' }
 const BUCKET_TXT = { m1: '1–3 شهور', m3: '3–6 شهور', m6: '6–12 شهر', y1: '1–2 سنة', y2: 'أكثر من سنتين' }
 const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
+const sessionsTxt = (n) => n === 1 ? 'جلسة وحدة' : n === 2 ? 'جلستين' : n <= 10 ? `${n} جلسات` : `${n} جلسة`
+const daysTxt = (n) => n === 1 ? 'يوم' : n === 2 ? 'يومين' : n <= 10 ? `${n} أيام` : `${n} يوم`
 // Two dates. Day counts and what can still be traded (7 days or more left) run from today.
 // Which duration an expiry falls in runs from the date of the data, as the list's figures and
 // the automated check do, so the tool and the list quote the same number; the two dates differ
@@ -318,6 +328,16 @@ if (typeof saved.ticker === 'string' && !cleanT(saved.ticker)) delete saved.tick
 let sel = BUCKETS.some((b) => b.key === saved.sel?.bucket) ? { bucket: saved.sel.bucket }
   : /^\d{4}-\d{2}-\d{2}$/.test(saved.sel?.expiry ?? '') ? { expiry: saved.sel.expiry } : { bucket: 'm6' }
 let index = null
+// How current each ticker is, read from the data itself: when a day's credits refresh only part
+// of the list (stalest first), the time of the last pass says nothing about most tickers.
+let sessions = [] // the distinct sessions the listed tickers carry, newest first
+let late = false // no pass succeeded by the time the next was due (index.staleAfter)
+// Trading sessions after s up to the newest one in the list: counted on the exchange calendar,
+// so a pass that fetched nothing (its session in no ticker) still counts.
+const behind = (s) => { let n = 0; for (let d = addDays(s, 1); d <= sessions[0]; d = addDays(d, 1)) n += isTradingDay(d); return n }
+// Prices two sessions or more behind, from a list that is late, or from more than 5 days ago
+// (a long weekend leaves a current list 5 days old until the morning pass) are not order prices.
+const isOld = (s) => Boolean(s) && (behind(s) >= 2 || late || daysToExpiry(todayNY(), s) > 5)
 let current = null // { t, snap, contracts }
 const cache = new Map()
 if (saved.ticker) $('ticker').value = saved.ticker
@@ -421,7 +441,7 @@ function renderPickers() {
   $('durChips').innerHTML = BUCKETS.map((b) => {
     const ex = expiriesInRange(expiries, day, b.lo, b.hi)
     const cap = current ? Math.round(comfortableFor(current.contracts, ex)) : null
-    const sub = !current ? '' : ex.length === 0 ? 'ما فيه عقود' : `يتحمّل ${short$(cap)}`
+    const sub = !current ? '' : ex.length === 0 ? 'ما فيه عقود مناسبة' : `يتحمّل ${short$(cap)}`
     return `<button type="button" data-bucket="${b.key}" aria-pressed="${sel.bucket === b.key}">${BUCKET_TXT[b.key]}${sub ? `<small>${sub}</small>` : ''}</button>`
   }).join('')
   $('dateChips').innerHTML = expiries.map((e) => {
@@ -490,15 +510,23 @@ async function render() {
   // Compare in whole dollars, as shown: typing the comfortable figure exactly must fit.
   const comfortable = Math.round(a.comfortable)
 
+  const sess = snap.session || info?.session
+  const lag = sess ? behind(sess) : 0
+  const old = sess ? isOld(sess) : late || dataAge() > 4 // no session stamp: judged by its fetch day
+  const sessDay = sess || dataDate() // and dated by it
+  const est = Boolean(info?.priceEstimated || snap.priceEstimated) // an index priced from its options
   const tierKey = info?.tier ?? 'D'
-  const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${price(snap.price)}` : ''}</div>`
+  const tierLine = `<div class="tier"><span class="dot ${TIER[tierKey][1]}"></span>سيولة عقود ${esc(t)}: ${TIER[tierKey][0]}${info?.medianSpread != null ? ` · سبريد وسطي ${fmtP(info.medianSpread)}` : ''}${snap.price != null ? ` · السهم ${est ? '≈ ' : ''}${price(snap.price)}` : ''}${old ? ` · أسعار جلسة <b>${fmtExp(sessDay)}</b>` : ''}</div>`
 
   let cls, head, body = ''
   if (exps.length === 0) {
     const far = allExp[allExp.length - 1]
     cls = 'bad'
-    head = `ما فيه عقود ${typeName} لـ ${esc(t)} بهذه المدة`
-    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysLeft(far)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
+    // The pass drops contracts very deep in or out of the money (and dead ones) before the page
+    // sees them, so a duration the market lists can still come out empty here.
+    head = `ما فيه عقود ${typeName} مناسبة لـ ${esc(t)} بهذه المدة`
+    body = `إما إن السوق ما فيه تواريخ انتهاء بهذه المدة، أو فيه بس عقودها كلها بعيدة جدًا عن سعر السهم (عميقة داخل أو خارج السعر)، وهذي ما نحسبها لأن محد يبني عليها مركز.`
+    if (far && bucket && daysToExpiry(far, day) < bucket.lo) body += ` أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysLeft(far)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.`
   } else if (comfortable === 0) {
     const quoted = cands.map((c) => contractMetrics(c, o)).filter((m) => m.spreadPct != null)
     const best = quoted.length ? Math.min(...quoted.map((m) => m.spreadPct)) : null
@@ -507,7 +535,7 @@ async function render() {
     body = cands.length === 0
       ? `ما فيه عقود ${typeName} دلتاها بين ${adv.dMin} و${adv.dMax} في هذي المدة. جرّب مدة ثانية، أو وسّع نطاق الدلتا من الإعدادات تحت.`
       : best == null
-        ? `ما فيه مشترين معروضين على هذي العقود الحين.`
+        ? `ما فيه مشترين معروضين على هذي العقود ${old ? `في جلسة ${fmtExp(sessDay)}` : 'الحين'}.`
         : best > o.maxSpread
           ? `المشترين موجودين، بس السبريد غالي: أضيق عقد هنا سبريده ${fmtP(best)} — يعني تخسر هذي النسبة بمجرد ما تبيع. جرّب مدة ثانية أو شوف <a href="#spread">دليل السبريد</a>.`
           : `العقود هنا قليلة التداول: العقود المفتوحة أو حجم التداول اليومي صغير لدرجة إن حتى عقد واحد كبير عليها. جرّب مدة ثانية.`
@@ -560,9 +588,10 @@ async function render() {
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
-      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry, allExp) ? ' · عقد شهري' : ''} · معروض على البيد الحين: ${fmtN(l.bidSize)} عقد</div>
+      <div class="note" style="margin:2px 0 0">${dte} يوم${isMonthly(l.expiry, allExp) ? ' · عقد شهري' : ''} · معروض على البيد ${old ? `في جلسة <bdi>${fmtExp(sessDay)}</bdi>` : 'الحين'}: ${fmtN(l.bidSize)} عقد</div>
       <div class="buy">اشترِ ${contractsTxt(l.contracts)} ≈ ${money(l.cost)}</div>
-      ${g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.buy)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}${step > 0.01 ? ` · سعره يتحرك بخطوات ${price(step)}` : ''}</div>` : ''}
+      ${old ? `<div class="how">أمر الشراء: الأسعار هنا من جلسة <b>${fmtExp(sessDay)}</b>، فخذ الـ Bid والـ Ask الحالية من تطبيق الوسيط قبل ما تحط الأمر: Limit عند المنتصف، ولا تدفع أكثر من المنتصف + ربع السبريد.</div>`
+        : g ? `<div class="how">أمر الشراء: <b>Limit عند ${price(g.buy)}</b> — ولا تدفع أكثر من ${price(g.buyMax)}${step > 0.01 ? ` · سعره يتحرك بخطوات ${price(step)}` : ''}</div>` : ''}
     </div>`
   }).join('')
 
@@ -570,11 +599,15 @@ async function render() {
   if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من إغلاق الجلسة أو من خارج وقت السوق — السبريد وقت التداول غالبًا أضيق.')
   if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
   notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
-  if (dataAge() > 4) notes.push(`البيانات من ${fmtExp(dataDate())}: المدد وعدد الأيام محسوبة من اليوم، وأرقام القائمة محسوبة على ذاك التاريخ فممكن تختلف عن الأداة.`)
-  else if (day !== todayNY()) notes.push(`المدد (1–3 شهور وغيرها) محسوبة من تاريخ آخر بيانات (${fmtExp(day)}) عشان تطابق أرقام القائمة؛ عدد الأيام والعقود المتاحة محسوبة من اليوم.`)
+  if (est) notes.push(`سعر ${esc(t)} تقديري (≈)، محسوب من أسعار عقوده.`)
+  // The day the data was fetched is the day the list's figures were computed on, not its session.
+  if (dataAge() > 4) notes.push(`المدد وعدد الأيام هنا محسوبة من اليوم، وعمود «يتحمّل» في القائمة محسوب يوم تحميل البيانات (${fmtExp(dataDate())})، فممكن يختلف عن الأداة.`)
+  else if (day !== todayNY()) notes.push(`المدد (1–3 شهور وغيرها) محسوبة من يوم تحميل البيانات (${fmtExp(day)}) عشان تطابق أرقام القائمة؛ عدد الأيام والعقود المتاحة محسوبة من اليوم.`)
   if (info?.error) notes.unshift(`⚠️ آخر تحديث ما رجّع بيانات ${esc(t)} من مصدر البيانات — الأرقام هنا من ${fmtTime(snap.fetchedAt)} وممكن تكون قديمة.`)
   // When a day's credits cover only part of the list, the rest keeps older data until its turn.
-  else if (snap.session && Object.values(index?.tickers ?? {}).reduce((m, v) => (v.session > m ? v.session : m), '') > snap.session) notes.unshift(`⚠️ بيانات ${esc(t)} من جلسة ${fmtExp(snap.session)}، وفيه أسهم بياناتها أحدث — كل يوم يتحدث جزء من القائمة (الأقدم أول)، وهذا السهم يتحدث في دوره.`)
+  else if (lag > 0 && !old) notes.unshift(`⚠️ بيانات ${esc(t)} من جلسة ${fmtExp(sess)}، وفيه أسهم بياناتها أحدث — كل يوم يتحدث جزء من القائمة (الأقدم أول)، وهذا السهم يتحدث في دوره.`)
+  // Old data says so before the verdict: its sizes still hold roughly, its prices do not.
+  const ageNote = !old ? '' : `<div class="tip old">⚠️ بيانات <b>${esc(t)}</b> من جلسة <b>${fmtExp(sessDay)}</b> (قبل ${daysTxt(daysToExpiry(todayNY(), sessDay))})${lag >= 2 ? `، متأخرة ${sessionsTxt(lag)} عن آخر جلسة في القائمة (${fmtExp(sessions[0])})${info?.error ? '' : ': كل يوم يتحدث جزء من القائمة (الأقدم أول)، وهذا السهم يتحدث في دوره'}` : ''}. الحكم والأحجام تحت محسوبة على أسعار ذاك اليوم، فخذ السعر الحالي من تطبيق الوسيط قبل ما تحط الأمر.</div>`
 
   const top = a.ranked.slice(0, 15)
   const BIND = { volume: 'الحجم اليومي', oi: 'العقود المفتوحة', bid: 'المعروض على البيد', spread: 'السبريد' }
@@ -588,7 +621,7 @@ async function render() {
     <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
     <td class="n"><bdi>${fmtP(e.medianSpread)}</bdi></td><td class="n">${fmtN(e.oi)}</td></tr>`).join('')
 
-  $('out').innerHTML = `
+  $('out').innerHTML = `${ageNote}
     <div class="verdict ${cls}">${tierLine}<div class="t">${head}</div>${body ? `<p>${body}</p>` : ''}</div>
     ${nudge}
     ${a.legs.length ? `<div class="legs">${legsHtml}</div>
@@ -600,7 +633,7 @@ async function render() {
       ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون الأيام الشاذة: اليوم اللي تداول فيه العقد أكثر من 10 أضعاف يومه المعتاد (وأكثر من 20 عقد) صفقة كبيرة وحدة، مو تداول تقدر تبيع فيه — نستبعد أكبر 3 أيام منها بحد أقصى، لأن أكثر من كذا يعني إن هذا أسلوب تداوله.<br>
       ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
       الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
-      <h3>أفضل العقود هنا</h3>
+      <h3>أفضل العقود هنا${old ? ` (أسعار جلسة ${fmtExp(sessDay)})` : ''}</h3>
       ${top.length ? `<div class="tbl"><table><thead><tr><th>العقد</th><th>حده</th><th>تقييم</th><th>سبريد</th><th>Bid / Ask</th><th>على البيد</th><th>OI</th><th>حجم/يوم</th><th>المحدِّد</th></tr></thead><tbody>${candRows}</tbody></table></div>` : '<p class="note">ما فيه عقود مناسبة.</p>'}
       <h3>كل التواريخ — ${typeName}</h3>
       <div class="tbl"><table><thead><tr><th>التاريخ</th><th>أيام</th><th>يتحمّل</th><th>سبريد وسطي</th><th>العقود المفتوحة</th></tr></thead><tbody>${exRows}</tbody></table></div>
@@ -636,7 +669,7 @@ function renderList() {
     <tr data-t="${esc(r.t)}"><td class="n"><b><bdi>${esc(r.t)}</bdi></b></td><td><span class="dot ${TIER[r.k][1]}"></span> ${TIER[r.k][0]}</td>
     <td class="n">${r.k === 'N' || r.cap == null ? '—' : `<b>${money(r.cap)}</b>`}</td>
     <td class="n"><bdi>${r.k === 'N' ? '—' : fmtP(r.medianSpread)}</bdi></td>
-    <td class="n">${r.price != null ? price(r.price) : '—'}</td></tr>`).join('')}</tbody></table>` : '<p class="empty">ما فيه نتائج.</p>'
+    <td class="n${isOld(r.session) ? ' old' : ''}"${isOld(r.session) ? ` title="من جلسة ${fmtExp(r.session)}"` : ''}>${r.price != null ? (r.priceEstimated ? '≈ ' : '') + price(r.price) : '—'}</td></tr>`).join('')}</tbody></table>` : '<p class="empty">ما فيه نتائج.</p>'
 }
 
 // --- Wiring -------------------------------------------------------------------
@@ -738,6 +771,7 @@ $('list').addEventListener('click', (e) => {
 })
 
 async function loadData() {
+  $('tool').querySelector('.panel').hidden = false
 dataFile('validation.json').then((v) => {
   if (!v) return
   const bad = Object.keys(v.failed ?? {}).length
@@ -750,18 +784,35 @@ await dataFile('index.json').then((j) => {
   index = j
   if (j) {
     $('tickers').innerHTML = Object.keys(j.tickers).filter((t) => !j.tickers[t].noOptions).sort().map((t) => `<option value="${esc(t)}">`).join('')
-    $('src').innerHTML = `البيانات: MarketData — أسعار إغلاق آخر جلسة، تتحدث كل يوم تداول (آخر تحديث ${fmtTime(j.updatedAt)}). للمعلومة فقط — مو توصية شراء أو بيع.`
-    if (daysToExpiry(todayNY(), nyDate(j.updatedAt)) > 4) $('listSame').textContent = `عمود «يتحمّل» محسوب على بيانات ${fmtExp(nyDate(j.updatedAt))}، فممكن يختلف عن الأداة اللي تحسب المدد من اليوم.`
-    // Say it where it is seen when the data is not current: a pass that could not reach the
-    // source for most tickers, or no successful pass by the time the next one was due.
     const listed = Object.values(j.tickers).filter((v) => !v.noOptions)
+    const dated = listed.filter((v) => v.session)
+    sessions = [...new Set(dated.map((v) => v.session))].sort().reverse()
+    const newest = sessions[0], oldest = sessions[sessions.length - 1]
+    const onNewest = dated.filter((v) => v.session === newest).length
+    const behind2 = dated.filter((v) => behind(v.session) >= 2).length
+    // How current the list is, from the data: the last pass may have refreshed only part of it.
+    const turns = onNewest < 0.9 * dated.length ? `، والباقي من جلسات أقدم (أقدمها ${fmtExp(oldest)}): القائمة تتحدث بالدور، كل يوم جزء منها والأقدم أول، والسعر الباهت في القائمة من جلسة أقدم` : ''
+    $('src').innerHTML = `البيانات: MarketData — أسعار إغلاق الجلسة. آخر تحديث ${fmtTime(j.updatedAt)}${dated.length ? ` — ${fmtN(onNewest)} من ${fmtN(dated.length)} سهم على آخر جلسة (${fmtExp(newest)})${turns}` : ''}. للمعلومة فقط — مو توصية شراء أو بيع.`
+    // The list's figures are from the day each ticker was fetched; the tool counts durations from
+    // today once that day is more than 4 days back (asOf), so the two can differ for those.
+    const aged = dated.filter((v) => daysToExpiry(todayNY(), nyDate(v.fetchedAt)) > 4).length
+    if (aged) $('listSame').textContent = aged === dated.length
+      ? 'عمود «يتحمّل» محسوب يوم تحميل بيانات كل سهم، وكلها حُمّلت قبل أكثر من 4 أيام، والأداة تحسب المدد من اليوم: فممكن يختلف رقمها عن القائمة.'
+      : `عمود «يتحمّل» هو نفس رقم الأداة للمدة والنوع المختارين فوق، إلا ${fmtN(aged)} سهم حُمّلت بياناتها قبل أكثر من 4 أيام: الأداة تحسب مددها من اليوم والقائمة من يوم تحميل بياناتها، فممكن يختلفون.`
+    // Say it where it is seen when the data is not current: a pass that could not reach the
+    // source for most tickers, no successful pass by the time the next one was due, or most of
+    // the list waiting its turn.
     const unreachable = listed.filter((v) => v.error && !v.pending).length
-    const late = j.staleAfter ? Date.now() > Date.parse(j.staleAfter) : Date.now() - Date.parse(j.updatedAt) > 4 * 86400000
+    late = j.staleAfter ? Date.now() > Date.parse(j.staleAfter) : Date.now() - Date.parse(j.updatedAt) > 4 * 86400000
     if (unreachable > 0.2 * listed.length) {
       $('stale').innerHTML = `<div class="t">⚠️ آخر تحديث للبيانات فشل</div><p>مصدر البيانات ما رجّع عقود ${fmtN(unreachable)} سهم في آخر محاولة (${fmtTime(j.attemptedAt ?? j.updatedAt)}). الأرقام المعروضة من آخر تحديث ناجح (${fmtTime(j.updatedAt)}) — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
       $('stale').hidden = false
     } else if (late) {
       $('stale').innerHTML = `<div class="t">⚠️ البيانات متأخرة</div><p>آخر تحديث ناجح كان ${fmtTime(j.updatedAt)}، وكان المفروض يجي تحديث بعده. الأرقام المعروضة ممكن تكون قديمة — شوف «آخر أسعار» تحت كل نتيجة قبل ما تعتمد عليها.</p>`
+      $('stale').hidden = false
+    } else if (behind2 > dated.length / 2) {
+      $('stale').className = 'verdict warn'
+      $('stale').innerHTML = `<div class="t">⚠️ أغلب الأسهم بياناتها أقدم من آخر جلسة</div><p>${fmtN(behind2)} من ${fmtN(dated.length)} سهم بياناتها قبل آخر جلسة (${fmtExp(newest)}) بجلستين أو أكثر، وأقدمها من ${fmtExp(oldest)}: كل يوم يتحدث جزء من القائمة (الأقدم أول). لما تفتح أي سهم يطلع لك تاريخ بياناته؛ الأحجام تقريبية، وخذ السعر الحالي من تطبيق الوسيط قبل ما تحط أي أمر.</p>`
       $('stale').hidden = false
     }
   }
@@ -779,8 +830,9 @@ const failMsg = (e) => (e?.oldBrowser
   ? 'متصفحك قديم وما يقدر يفتح البيانات المقفلة — حدّث الجهاز أو المتصفح (Safari 16.4 أو أحدث).'
   : 'ما قدرت أوصل للبيانات — تأكد من الاتصال وحدّث الصفحة.')
 const ask = (msg) => {
+  $('tool').querySelector('.panel').hidden = true
   $('out').innerHTML = `<div class="verdict warn"><div class="t">🔒 البيانات مقفلة</div><p>${msg}</p>
-    <div class="row" style="margin-top:8px"><input id="passIn" type="password" autocomplete="current-password" placeholder="كلمة السر" style="direction:ltr"><button type="button" id="passGo">افتح</button></div></div>`
+    <div style="display:flex;gap:8px;margin-top:8px"><input id="passIn" type="password" autocomplete="current-password" placeholder="كلمة السر" style="direction:ltr"><button type="button" id="passGo">افتح</button></div></div>`
   $('list').innerHTML = '<p class="empty">افتح البيانات فوق أول.</p>'
   const go = async () => {
     const p = $('passIn').value.trim()

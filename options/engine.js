@@ -30,6 +30,16 @@ export function daysToExpiry(expiry, fromDate) {
   return Math.round((Date.parse(`${expiry}T00:00:00Z`) - Date.parse(`${fromDate}T00:00:00Z`)) / 86400000)
 }
 
+// NYSE full-day holidays.
+// ponytail: a hand list through 2028 (from the exchange rules); add the next years before then.
+export const HOLIDAYS = new Set([
+  '2026-01-01', '2026-01-19', '2026-02-16', '2026-04-03', '2026-05-25', '2026-06-19', '2026-07-03', '2026-09-07', '2026-11-26', '2026-12-25',
+  '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24',
+  '2028-01-17', '2028-02-21', '2028-04-14', '2028-05-29', '2028-06-19', '2028-07-04', '2028-09-04', '2028-11-23', '2028-12-25',
+])
+export const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
+export const isTradingDay = (day) => { const w = new Date(`${day}T12:00:00Z`).getUTCDay(); return w !== 0 && w !== 6 && !HOLIDAYS.has(day) }
+
 /**
  * Monthly (third-Friday) expirations carry most of the open interest in long-dated options.
  * A Thursday stands in for a third Friday that is a market holiday (Good Friday, Juneteenth);

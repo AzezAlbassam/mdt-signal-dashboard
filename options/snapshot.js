@@ -11,7 +11,7 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, chainDeltas, daysToExpiry } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, chainDeltas, daysToExpiry, HOLIDAYS, addDays, isTradingDay } from './engine.js'
 import { pathToFileURL } from 'node:url'
 
 const UA = 'options-liquidity-snapshot/1.0'
@@ -35,13 +35,8 @@ const readJson = async (p, fallback) => {
 const cleanTickers = (s) =>
   (s ?? '').split(/[,\s]+/).map((t) => t.trim().toUpperCase().replace(/^\$/, '')).filter((t) => /^[A-Z.]{1,6}$/.test(t))
 
-// NYSE full-day holidays and 13:00 early closes.
+// NYSE 13:00 early closes (the full-day holidays are in engine.js).
 // ponytail: a hand list through 2028 (from the exchange rules); add the next years before then.
-const HOLIDAYS = new Set([
-  '2026-01-01', '2026-01-19', '2026-02-16', '2026-04-03', '2026-05-25', '2026-06-19', '2026-07-03', '2026-09-07', '2026-11-26', '2026-12-25',
-  '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24',
-  '2028-01-17', '2028-02-21', '2028-04-14', '2028-05-29', '2028-06-19', '2028-07-04', '2028-09-04', '2028-11-23', '2028-12-25',
-])
 const EARLY_CLOSE = new Set(['2026-11-27', '2026-12-24', '2027-11-26', '2028-07-03', '2028-11-24'])
 
 // The feed runs 15 minutes behind the market, so every clock time here is the market time
@@ -169,8 +164,6 @@ const completedSessions = (history, session, at) =>
 
 const COLS = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
 
-const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
-const isTradingDay = (day) => { const w = new Date(`${day}T12:00:00Z`).getUTCDay(); return w !== 0 && w !== 6 && !HOLIDAYS.has(day) }
 
 /**
  * The newest session the free and trial plans can read: a session's chains roll in at 9:30
