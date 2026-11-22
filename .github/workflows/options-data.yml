@@ -28,9 +28,10 @@ on:
         required: false
         default: ''
       resummarize:
-        description: 'Recompute every figure from the stored data with the current engine, fetching nothing (true/false)'
+        description: 'Recompute every figure from the stored data with the current engine, fetching nothing'
+        type: boolean
         required: false
-        default: 'false'
+        default: false
 permissions:
   contents: write
   actions: write

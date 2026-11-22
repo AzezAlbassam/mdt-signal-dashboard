@@ -89,7 +89,9 @@ export function plan(now, lastAttempt, lastSuccess = lastAttempt) {
   }
   if (c && c.m < start && start - c.m <= 150) {
     if (!closeCaptured && since >= 55) return { action: 'run' }
-    return { action: 'wait', seconds: (start - c.m) * 60 + 30 }
+    // Wake a couple of minutes in: the busiest chains are stamped a minute before they are
+    // fetched, and a chain stamped before the window does not count as today's quotes.
+    return { action: 'wait', seconds: (start - c.m) * 60 + 150 }
   }
   if (c && c.m >= c.close - 10 + LAG && c.m < finalAt(c)) return { action: 'wait', seconds: (finalAt(c) - c.m) * 60 + 30 }
   if (closeCaptured) return { action: 'stop' }
@@ -120,6 +122,14 @@ export function staleAfter(now) {
     t = new Date(t.getTime() + 60000)
   }
   return null
+}
+
+/**
+ * The trading day a missing chain counts against: today on a trading day, else the last one.
+ * A pass on a weekend or holiday sees that day's chains again and adds no news.
+ */
+export function missDay(now) {
+  return nyDate(nyClock(now) ? now : lastClose(now) ?? now)
 }
 
 /** When the chain itself was last updated, per Cboe's own stamp (UTC); null if unknown. */
@@ -175,6 +185,9 @@ export async function snapshotTicker(ticker, dataDir, now) {
   if (rows.length === 0) throw Object.assign(new Error('no listed options'), { noOptions: true })
   // A chain missing a whole field (a renamed column, a broken feed) would size every contract
   // at zero and still pass validation: count it as a failed fetch, keep the last snapshot.
+  // (A field that is there but zero is real: some small chains have no quotes at all.)
+  const listed = raw?.data?.options ?? []
+  if (listed.length >= 20 && !listed.some((o) => o.bid != null || o.ask != null)) throw new Error('chain came back without quotes')
   if (rows.filter((r) => r.delta == null).length > rows.length / 2) throw new Error('chain came back without deltas')
   if (rows.length >= 20 && rows.every((r) => !r.oi)) throw new Error('chain came back without open interest')
 
@@ -312,8 +325,10 @@ export async function main() {
   await writeFile(join(dataDir, 'watchlist.json'), JSON.stringify(watchlist))
   await writeFile(join(dataDir, 'removed.json'), JSON.stringify([...removed]))
 
+  // --only refreshes tickers on the list; anything else would leave a snapshot nobody updates.
   const only = cleanTickers(arg('--only'))
-  const targets = only.length ? only.filter((t) => !removed.has(t)) : watchlist
+  const targets = only.length ? only.filter((t) => watchlist.includes(t)) : watchlist
+  if (only.length > targets.length) console.log(`--only: not on the list, skipped: ${only.filter((t) => !targets.includes(t)).join(', ')}`)
   const prevIndex = await readJson(join(dataDir, 'index.json'), { tickers: {} })
   const now = new Date()
   // A partial run (--only) refreshes its tickers but is not a pass: it neither moves the
@@ -389,14 +404,18 @@ export async function main() {
   // the last snapshots, flag them, count nothing, keep the last good time, fail the run.
   const listed = targets.filter(wasListed)
   const outage = listed.length >= 10 && lost.length + failures > 0.2 * listed.length
-  const day = nyDate(now)
+  // One miss per trading day, not per pass: hourly passes must not turn one bad day into
+  // three. (Counts from before lastMiss existed were per pass, so they start over.)
+  const day = missDay(now)
+  const miss = (prev) => {
+    const counted = prev?.lastMiss ? prev.misses ?? 0 : 0
+    return prev?.lastMiss === day ? { misses: counted, lastMiss: day } : { misses: counted + 1, lastMiss: day }
+  }
   for (const t of lost) {
     const prev = prevIndex.tickers[t]
     if (outage) { index.tickers[t] = { ...prev, error: 'source unavailable this pass' }; continue }
-    // One miss per trading day, not per pass: hourly passes must not turn one bad day
-    // into three. (Counts from before lastMiss existed were per pass, so they start over.)
-    const misses = prev.lastMiss === day ? prev.misses : (prev.lastMiss ? prev.misses ?? 0 : 0) + 1
-    if (misses < 3) { index.tickers[t] = { ...prev, error: 'no chain returned', misses, lastMiss: day }; continue }
+    const m = miss(prev)
+    if (m.misses < 3) { index.tickers[t] = { ...prev, error: 'no chain returned', ...m }; continue }
     noOptions += 1
     index.tickers[t] = { noOptions: true }
     await rm(join(dataDir, `${t}.json`), { force: true })
@@ -408,8 +427,8 @@ export async function main() {
     const prev = prevIndex.tickers?.[t]
     if (prev?.noOptions) { index.tickers[t] = prev; continue }
     if (outage) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
-    const misses = prev?.lastMiss === day ? prev.misses : (prev?.lastMiss ? prev.misses ?? 0 : 0) + 1
-    if (misses < 3) { index.tickers[t] = { ...(prev ?? {}), pending: true, error: 'no chain returned', misses, lastMiss: day }; continue }
+    const m = miss(prev)
+    if (m.misses < 3) { index.tickers[t] = { ...(prev ?? {}), pending: true, error: 'no chain returned', ...m }; continue }
     noOptions += 1
     index.tickers[t] = { noOptions: true }
     await rm(join(dataDir, `${t}.json`), { force: true })

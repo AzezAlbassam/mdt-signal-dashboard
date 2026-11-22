@@ -42,11 +42,16 @@ const days = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b +
 // Expiries are counted from the New York date of the fetch.
 const newYorkDate = (iso) => new Date(iso).toLocaleDateString('en-CA', { timeZone: 'America/New_York' })
 
-// A normal day: the mean of the listed sessions after dropping the single busiest one.
+// A normal day: the mean of the listed sessions, leaving out every day that traded more than
+// 10 times the median of the contract's other days and more than 20 contracts (a one-off print).
 function refAdv(series) {
-  const listed = series.filter((v) => v != null).sort((a, b) => b - a)
+  const listed = series.filter((v) => v != null)
   if (listed.length === 0) return { adv: 0, sessions: 0 }
-  const kept = listed.length >= 2 ? listed.slice(1) : listed
+  const medianOf = (xs) => {
+    const a = [...xs].sort((x, y) => x - y)
+    return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2
+  }
+  const kept = listed.length < 2 ? listed : listed.filter((v, i) => v <= Math.max(10 * medianOf(listed.filter((_, j) => j !== i)), 20))
   return { adv: Math.round((kept.reduce((s, v) => s + v, 0) / kept.length) * 10) / 10, sessions: listed.length }
 }
 

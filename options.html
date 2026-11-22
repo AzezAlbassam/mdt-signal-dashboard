@@ -266,22 +266,29 @@ const fmtExpShort = (e) => new Date(e + 'T00:00:00Z').toLocaleDateString('en-US'
 const fmtTime = (iso) => { try { return new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) } catch { return iso } }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 // Amounts as people type them: Arabic or Persian digits, Arabic separators, $ and commas,
-// and 100k / 1.5m / ١٠٠ ألف / 2 مليون.
+// and 100k / 1.5m / ١٠٠ ألف / ٥ آلاف / 2 مليون / ٣ ملايين. Anything else (a minus sign, an
+// unknown word) reads as no amount, so the page asks again instead of guessing.
+const UNITS = { k: 1e3, 'ألف': 1e3, 'الف': 1e3, 'آلاف': 1e3, 'الاف': 1e3, m: 1e6, 'مليون': 1e6, 'ملايين': 1e6 }
 const parseAmount = (s) => {
   const t = String(s ?? '').replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x660).replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 0x6f0)
     .replace(/٫/g, '.').replace(/[٬,\s$]/g, '').toLowerCase()
-  const m = /(\d*\.?\d+)(k|m|ألف|الف|مليون)?/.exec(t)
-  if (!m) return 0
-  return Number(m[1]) * ({ k: 1e3, 'ألف': 1e3, 'الف': 1e3, m: 1e6, 'مليون': 1e6 }[m[2]] ?? 1)
+  const m = /^(\d*\.?\d+)(.*)$/.exec(t)
+  if (!m || !(m[2] === '' || m[2] in UNITS)) return 0
+  return Number(m[1]) * (UNITS[m[2]] ?? 1)
 }
+const amountOf = () => Math.round(parseAmount($('amount').value))
 const cleanT = (s) => String(s).trim().toUpperCase().replace(/[^A-Z.]/g, '')
 const TIER = { A: ['ممتازة', 'dA'], B: ['جيدة', 'dB'], C: ['ضعيفة — بحذر', 'dC'], D: ['تجنّبه', 'dD'], N: ['ما له عقود', 'dN'], P: ['بانتظار البيانات', 'dN'] }
 const GRADE_TXT = { A: 'ممتاز', B: 'جيد', C: 'مقبول', D: 'سبريد عالي' }
 const BUCKET_TXT = { m1: '1–3 شهور', m3: '3–6 شهور', m6: '6–12 شهر', y1: '1–2 سنة', y2: 'أكثر من سنتين' }
 const contractsTxt = (n) => n === 1 ? 'عقد واحد' : n === 2 ? 'عقدين' : n <= 10 ? `${n} عقود` : `${fmtN(n)} عقد`
-// Days to expiry are counted from the date of the data, the same date the list's figures and
-// the automated check use; it differs from today only while the data is not fresh.
+// Two dates. Day counts and what can still be traded (7 days or more left) run from today.
+// Which duration an expiry falls in runs from the date of the data, as the list's figures and
+// the automated check do, so the tool and the list quote the same number; the two dates differ
+// only while the data is not fresh (overnight, weekends, an outage).
 const todayNY = nyDate()
+const daysLeft = (e) => daysToExpiry(e, todayNY)
+const tradable = (e) => daysLeft(e) >= 7
 
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem('optliq:' + k)) } catch { return null } },
@@ -298,19 +305,18 @@ const sanitizeAdv = (a) => {
 }
 let adv = sanitizeAdv(store.get('adv3'))
 const saved = store.get('form2') ?? {}
-let type = saved.type ?? 'C'
-let sel = saved.sel ?? { bucket: 'm6' }
+let type = saved.type === 'P' ? 'P' : 'C'
+let sel = BUCKETS.some((b) => b.key === saved.sel?.bucket) ? { bucket: saved.sel.bucket }
+  : /^\d{4}-\d{2}-\d{2}$/.test(saved.sel?.expiry ?? '') ? { expiry: saved.sel.expiry } : { bucket: 'm6' }
 let index = null
 let current = null // { t, snap, contracts }
 const cache = new Map()
 if (saved.ticker) $('ticker').value = saved.ticker
 if (saved.amount) $('amount').value = saved.amount
 // The hash is a section of the page (#binance) or a ticker (#MSTR); a malformed one is neither.
-const hashTicker = () => {
-  let h = ''
-  try { h = decodeURIComponent(location.hash.slice(1)) } catch { return '' }
-  return document.getElementById(h) ? '' : cleanT(h)
-}
+const rawHash = () => { try { return decodeURIComponent(location.hash.slice(1)) } catch { return null } }
+const sectionHash = () => { const h = rawHash(); return h && document.getElementById(h) ? h : null }
+const hashTicker = () => { const h = rawHash(); return h == null || sectionHash() ? '' : cleanT(h) }
 if (hashTicker()) $('ticker').value = hashTicker()
 
 const opts = () => ({ pctOfAdv: adv.pctAdv / 100, pctOfOi: adv.pctOi / 100, maxSpread: adv.maxSpread / 100, maxLegs: adv.maxLegs })
@@ -364,31 +370,31 @@ function comfortableFor(contracts, expiries) {
 }
 
 function renderPickers() {
-  const amount = parseAmount($('amount').value)
+  const amount = amountOf()
   const day = asOf()
   const ofType = current ? current.contracts.filter((c) => c.type === type) : []
-  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, day) >= 7)
+  const expiries = [...new Set(ofType.map((c) => c.expiry))].sort().filter(tradable)
   document.querySelectorAll('#typeChips button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)))
   $('durChips').innerHTML = BUCKETS.map((b) => {
     const ex = expiriesInRange(expiries, day, b.lo, b.hi)
-    const cap = current ? comfortableFor(current.contracts, ex) : null
+    const cap = current ? Math.round(comfortableFor(current.contracts, ex)) : null
     const sub = !current ? '' : ex.length === 0 ? 'ما فيه عقود' : `يتحمّل ${short$(cap)}`
     return `<button type="button" data-bucket="${b.key}" aria-pressed="${sel.bucket === b.key}">${BUCKET_TXT[b.key]}${sub ? `<small>${sub}</small>` : ''}</button>`
   }).join('')
   $('dateChips').innerHTML = expiries.map((e) => {
     const cap = Math.round(comfortableFor(current.contracts, [e]))
     const dot = cap >= amount && cap > 0 ? 'dA' : cap > 0 ? 'dC' : 'dD'
-    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysToExpiry(e, day)} يوم${isMonthly(e, expiries) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
+    return `<button type="button" data-expiry="${e}" aria-pressed="${sel.expiry === e}"><span class="dot ${dot}"></span><bdi class="m">${fmtExpShort(e)}</bdi><small>${daysLeft(e)} يوم${isMonthly(e, expiries) ? ' · شهري' : ''} · ${short$(cap)}</small></button>`
   }).join('')
   $('datesNote').textContent = expiries.length ? `(🟢 يتحمّل مبلغك كامل · 🟡 أقل منه · 🔴 ما يتحمّل)` : ''
 }
 
 async function render() {
   const t = cleanT($('ticker').value)
-  const amount = parseAmount($('amount').value)
+  const amount = amountOf()
   store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
   if (!t) return
-  if (hashTicker() !== t) history.replaceState(null, '', '#' + t)
+  if (!sectionHash() && hashTicker() !== t) history.replaceState(null, '', '#' + t)
 
   if (current?.t !== t) $('out').innerHTML = '<p class="empty">جاري التحميل…</p>'
   const info = index?.tickers?.[t]
@@ -400,7 +406,7 @@ async function render() {
   // so a duration stays lit and the list column shows that same duration.
   const day = asOf()
   const ofType = current ? current.contracts.filter((c) => c.type === type) : []
-  const allExp = [...new Set(ofType.map((c) => c.expiry))].sort().filter((e) => daysToExpiry(e, day) >= 7)
+  const allExp = [...new Set(ofType.map((c) => c.expiry))].sort().filter(tradable)
   if (current && sel.expiry && !allExp.includes(sel.expiry)) {
     sel = { bucket: BUCKETS[bucketOf(sel.expiry)].key }
     store.set('form2', { ticker: t, amount: $('amount').value, type, sel })
@@ -440,7 +446,7 @@ async function render() {
     const far = allExp[allExp.length - 1]
     cls = 'bad'
     head = `ما فيه عقود ${typeName} لـ ${esc(t)} بهذه المدة`
-    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysToExpiry(far, day)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
+    body = far ? `أبعد تاريخ متاح: <b class="mono">${fmtExp(far)}</b> (${daysLeft(far)} يوم). عقود الأسهم الأمريكية ما تتجاوز تقريبًا سنتين ونص إلى ثلاث سنوات.` : ''
   } else if (comfortable === 0) {
     const quoted = cands.map((c) => contractMetrics(c, o)).filter((m) => m.spreadPct != null)
     const best = quoted.length ? Math.min(...quoted.map((m) => m.spreadPct)) : null
@@ -494,8 +500,11 @@ async function render() {
   const tick = tickOf(contracts)
   const legsHtml = a.legs.map((l) => {
     const step = tick(l.bid, l.ask)
-    const g = limitGuide(l.bid, l.ask, step)
-    const dte = daysToExpiry(l.expiry, day)
+    // On a quote that straddles $3 the step is the coarser one, and the bid may sit between its
+    // marks: never start below the bid itself, which is a valid price.
+    const g0 = limitGuide(l.bid, l.ask, step)
+    const g = g0 && { ...g0, buy: Math.max(g0.buy, l.bid), buyMax: Math.max(g0.buyMax, l.bid) }
+    const dte = daysLeft(l.expiry)
     return `<div class="leg">
       <div class="top"><span class="name">${typeName} <bdi class="m">${strikeTxt(l)}</bdi> · <bdi class="m">${fmtExp(l.expiry)}</bdi></span>
         <span class="pill p${l.m.grade}">${GRADE_TXT[l.m.grade]} · سبريد ${fmtP(l.m.spreadPct)}</span></div>
@@ -509,7 +518,7 @@ async function render() {
   if (!snap.quotesIntraday) notes.push('الأسعار المسجّلة من خارج وقت السوق الرسمي — السبريد الحقيقي وقت التداول غالبًا أضيق.')
   if ((snap.historySessions ?? 0) < 5) notes.push(`سجل الحجم اليومي فيه ${snap.historySessions ?? 0} من 5 أيام — لين يكتمل نعتمد على المعروض على البيد وتقدير متحفظ.`)
   notes.push(`آخر أسعار: ${fmtTime(snap.quotesFrom ?? snap.fetchedAt)}`)
-  if (day !== todayNY) notes.push(`الأيام والمدد محسوبة من تاريخ آخر بيانات (${fmtExp(day)})، عشان تطابق أرقام القائمة.`)
+  if (day !== todayNY) notes.push(`المدد (1–3 شهور وغيرها) محسوبة من تاريخ آخر بيانات (${fmtExp(day)}) عشان تطابق أرقام القائمة؛ عدد الأيام والعقود المتاحة محسوبة من اليوم.`)
   if (info?.error) notes.unshift(`⚠️ آخر تحديث ما رجّع بيانات ${esc(t)} من Cboe — الأرقام هنا من ${fmtTime(snap.fetchedAt)} وممكن تكون قديمة.`)
 
   const top = a.ranked.slice(0, 15)
@@ -518,7 +527,7 @@ async function render() {
     <td class="n"><bdi>${fmtExpShort(c.expiry)} · ${strikeTxt(c)}${c.type}</bdi></td><td class="n"><b>${money(c.m.capDollars)}</b></td>
     <td><span class="pill p${c.m.grade}">${GRADE_TXT[c.m.grade]}</span></td><td class="n"><bdi>${fmtP(c.m.spreadPct)}</bdi></td>
     <td class="n"><bdi>${fmtN(c.bid, 2)} / ${fmtN(c.ask, 2)}</bdi></td><td class="n">${fmtN(c.bidSize)}</td><td class="n">${fmtN(c.oi)}</td><td class="n">${fmtN(c.m.adv)}</td><td>${BIND[c.m.binding]}</td></tr>`).join('')
-  const ex = expirySummary(ofType, day, { ...o, dMin: adv.dMin, dMax: adv.dMax }).filter((e) => e.dte >= 7)
+  const ex = expirySummary(ofType, day, { ...o, dMin: adv.dMin, dMax: adv.dMax }).filter((e) => tradable(e.expiry)).map((e) => ({ ...e, dte: daysLeft(e.expiry) }))
   const chosen = new Set(exps)
   const exRows = ex.map((e) => `<tr class="${chosen.has(e.expiry) ? 'hl' : ''}">
     <td class="n"><bdi>${fmtExp(e.expiry)}</bdi>${e.monthly ? ' · شهري' : ''}</td><td class="n">${e.dte}</td><td class="n"><b>${money(e.capacity)}</b></td>
@@ -533,7 +542,7 @@ async function render() {
     <details class="more"><summary>التفاصيل وطريقة الحساب</summary>
       <h3>كيف ينحسب «الحد المريح»</h3>
       <p class="note" style="margin-top:0">لكل عقد:<br>
-      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون أكثر يوم تداول، عشان صفقة كبيرة وحدة ما تنحسب كأنها تداول كل يوم.<br>
+      ① <b>طريق الخروج</b> = الأكبر بين: ${adv.pctAdv}% من متوسط تداوله اليومي، أو المشترين المعروضين على البيد الحين — بس بحد أقصى تداول يوم واحد عادي (لأن الصانع يسحب عرضه بعد أول ضربة). المتوسط من آخر 20 جلسة بدون الأيام الشاذة: اليوم اللي تداول فيه العقد أكثر من 10 أضعاف يومه المعتاد (وأكثر من 20 عقد) صفقة كبيرة وحدة، مو تداول تقدر تبيع فيه.<br>
       ② <b>بس</b> ما تملك أكثر من ${adv.pctOi}% من كل العقود المفتوحة عليه — عشان ما تصير أنت السوق.<br>
       الأصغر من ① و② هو حد العقد. العقود اللي سبريدها فوق ${adv.maxSpread}% مستبعدة. والحد المريح للمدة = مجموع أفضل ${adv.maxLegs} عقود (دلتا ${adv.dMin}–${adv.dMax}).</p>
       <h3>أفضل العقود هنا</h3>
@@ -580,16 +589,24 @@ let timer
 const later = () => { clearTimeout(timer); timer = setTimeout(render, 250) }
 $('ticker').addEventListener('input', later)
 $('amount').addEventListener('input', later)
-$('amount').addEventListener('blur', () => { const v = parseAmount($('amount').value); if (v) $('amount').value = v.toLocaleString('en-US') })
+$('amount').addEventListener('blur', () => { const v = amountOf(); if (v) $('amount').value = v.toLocaleString('en-US') })
 $('typeChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { type = b.dataset.type; render() } })
 $('durChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { bucket: b.dataset.bucket }; render() } })
 $('dateChips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { sel = { expiry: b.dataset.expiry }; render() } })
 // Settings apply when a value is complete (Enter, or leaving the box), not on every keystroke,
-// and only within each box's range; anything else is put back and explained.
+// and only within each box's range; anything else is put back and explained. Leaving the box
+// by clicking something fires this before that click lands, so the page is rebuilt only once
+// the pointer is released, or the click would hit an element that no longer exists.
+let pressed = false, afterRelease = null
+document.addEventListener('pointerdown', () => { pressed = true }, true)
+for (const ev of ['pointerup', 'pointercancel']) {
+  document.addEventListener(ev, () => { pressed = false; if (afterRelease) { const f = afterRelease; afterRelease = null; setTimeout(f, 0) } }, true)
+}
+const whenReleased = (f) => { if (pressed) afterRelease = f; else f() }
 $('out').addEventListener('change', (e) => {
   const k = e.target.dataset?.adv
   if (!k) return
-  const v = parseAmount(e.target.value)
+  const v = Number(e.target.value)
   if (String(e.target.value).trim() === '' || !advOk(k, v, adv)) {
     const [lo, hi] = ADV_LIMITS[k]
     e.target.value = adv[k]
@@ -599,7 +616,7 @@ $('out').addEventListener('change', (e) => {
     return
   }
   adv[k] = v; store.set('adv3', adv)
-  render().then(() => { document.querySelector('details.more').open = true })
+  whenReleased(() => render().then(() => { document.querySelector('details.more').open = true }))
 })
 $('out').addEventListener('click', (e) => {
   const d = e.target.closest('[data-setbucket]')
@@ -676,7 +693,7 @@ fetch('data/options/index.json', { cache: 'no-cache' }).then((r) => r.ok ? r.jso
       $('stale').hidden = false
     }
   }
-  render()
+  render().then(() => document.getElementById(sectionHash())?.scrollIntoView())
 }).catch(() => render())
 </script>
 </body></html>

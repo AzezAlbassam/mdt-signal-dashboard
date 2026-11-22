@@ -10,8 +10,7 @@ import { join } from 'node:path'
 const realTimeout = setTimeout
 globalThis.setTimeout = (f, _ms, ...a) => realTimeout(f, 0, ...a)
 
-const { main, plan, quoteWindow, marketOpen, staleAfter } = await import('./snapshot.js')
-const { nyDate } = await import('./engine.js')
+const { main, plan, quoteWindow, marketOpen, staleAfter, missDay } = await import('./snapshot.js')
 
 const TICKERS = ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF', 'GGG', 'HHH', 'III', 'JJJ', 'KKK', 'LLL']
 // An expiry about 13 months out, whatever day the tests run.
@@ -19,22 +18,23 @@ const EXP = new Date(Date.now() + 400 * 86400000).toISOString().slice(2, 10).rep
 let down = new Set()
 let busy = new Set()
 let noDelta = new Set()
+let noQuotes = new Set()
 let stamps = {}
 globalThis.fetch = async (url) => {
   const t = decodeURIComponent(url.split('/').pop().replace('.json', ''))
   if (down.has(t)) return { ok: false, status: 404 }
   if (busy.has(t)) return { ok: false, status: 503 }
   const delta = noDelta.has(t) ? null : 0.5
-  return {
-    ok: true,
-    json: async () => ({ timestamp: stamps[t], data: { current_price: 10, options: [{ option: `${t}${EXP}C00010000`, bid: 1, ask: 1.1, bid_size: 10, open_interest: 500, volume: 20, delta, last_trade_time: '2026-11-19T15:00:00' }] } }),
-  }
+  const quotes = (o) => (noQuotes.has(t) ? o : { ...o, bid: 1, ask: 1.1 })
+  const options = Array.from({ length: noQuotes.has(t) ? 25 : 1 }, (_, i) =>
+    quotes({ option: `${t}${EXP}C${String(10000 + i * 1000).padStart(8, '0')}`, bid_size: 10, open_interest: 500, volume: 20, delta, last_trade_time: '2026-11-19T15:00:00' }))
+  return { ok: true, json: async () => ({ timestamp: stamps[t], data: { current_price: 10, options } }) }
 }
 
 let dir
 const prevUpdatedAt = '2026-11-19T21:06:00.000Z'
 beforeEach(() => {
-  down = new Set(); busy = new Set(); noDelta = new Set(); stamps = {}
+  down = new Set(); busy = new Set(); noDelta = new Set(); noQuotes = new Set(); stamps = {}
   dir = mkdtempSync(join(tmpdir(), 'snap-'))
   const tickers = Object.fromEntries(TICKERS.map((t) => [t, { price: 10, tier: 'B', misses: 2 }])) // legacy per-pass count
   writeFileSync(join(dir, 'index.json'), JSON.stringify({ updatedAt: prevUpdatedAt, tickers }))
@@ -86,8 +86,10 @@ test('if even SPY comes back empty, nothing is fetched and a new ticker stays pe
 
 test('a chain that comes back without a field is a failed fetch, not a ticker with no capacity', async () => {
   noDelta = new Set(['AAA'])
+  noQuotes = new Set(['CCC'])
   const idx = await pass()
   assert.match(idx.tickers.AAA.error, /without deltas/)
+  assert.match(idx.tickers.CCC.error, /without quotes/)
   assert.equal(idx.tickers.AAA.tier, 'B', 'last good figures kept')
   assert.equal(readFileSync(join(dir, 'AAA.json'), 'utf8'), '{"keep":true}', 'last good snapshot kept')
   assert.equal(idx.tickers.BBB.error, undefined)
@@ -107,14 +109,24 @@ test('a new ticker is called option-less only after empty answers on three tradi
   down = new Set(['NEWX', 'NEWY'])
   const idx0 = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
   idx0.tickers.NEWX = { pending: true, misses: 2, lastMiss: '2000-01-03' }
-  idx0.tickers.NEWY = { pending: true, misses: 1, lastMiss: nyDate() }
+  idx0.tickers.NEWY = { pending: true, misses: 1, lastMiss: missDay(new Date()) }
   writeFileSync(join(dir, 'index.json'), JSON.stringify(idx0))
+  writeFileSync(join(dir, 'watchlist.json'), JSON.stringify([...TICKERS, 'NEWX', 'NEWY']))
   process.argv = ['node', 'snapshot.test', dir, '--only', [...TICKERS, 'NEWX', 'NEWY'].join(',')]
   await main()
   const idx = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
   assert.deepEqual(idx.tickers.NEWX, { noOptions: true })
   assert.equal(idx.tickers.NEWY.pending, true)
   assert.equal(idx.tickers.NEWY.misses, 1, 'a second empty answer the same day does not count')
+  process.exitCode = 0
+})
+
+test('--only does not fetch a ticker that is not on the list', async () => {
+  process.argv = ['node', 'snapshot.test', dir, '--only', 'AAA,ZZZZ']
+  await main()
+  assert.equal(existsSync(join(dir, 'ZZZZ.json')), false)
+  const idx = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
+  assert.equal(idx.tickers.ZZZZ, undefined)
   process.exitCode = 0
 })
 
@@ -192,7 +204,7 @@ test('the schedule follows the exchange calendar and the 15-minute feed lag', ()
   assert.equal(quoteWindow(at('2026-11-26T15:30:00Z')), false)
   assert.equal(marketOpen(at('2026-11-26T15:30:00Z')), false)
   // Monday 10:10: the feed still shows the opening scramble; wait for 10:15.
-  assert.deepEqual(plan(at('2026-11-23T15:10:00Z'), friClose), { action: 'wait', seconds: 330 })
+  assert.deepEqual(plan(at('2026-11-23T15:10:00Z'), friClose), { action: 'wait', seconds: 450 })
   assert.deepEqual(plan(at('2026-11-23T15:20:00Z'), friClose), { action: 'run' })
   // The feed shows SPY options trading until 16:15 market time, so 16:20 New York is still open.
   assert.equal(marketOpen(at('2026-11-23T21:20:00Z')), true)
@@ -205,6 +217,10 @@ test('the schedule follows the exchange calendar and the 15-minute feed lag', ()
   const failedClose = at('2026-11-23T21:40:00Z'), lastGood = at('2026-11-23T20:20:00Z')
   assert.equal(plan(at('2026-11-23T21:45:00Z'), failedClose, lastGood).action, 'wait')
   assert.deepEqual(plan(at('2026-11-23T22:41:00Z'), failedClose, lastGood), { action: 'run' })
+  // A pass on a weekend or holiday counts a missing chain against the last trading day.
+  assert.equal(missDay(at('2026-11-22T15:00:00Z')), '2026-11-20')
+  assert.equal(missDay(at('2026-11-26T15:00:00Z')), '2026-11-25')
+  assert.equal(missDay(at('2026-11-24T02:40:00Z')), '2026-11-23')
   // When the page calls the data late: the next pass plus 90 minutes, across weekends and holidays.
   assert.equal(staleAfter(at('2026-11-23T16:20:00Z')), '2026-11-23T18:50:00.000Z')
   assert.equal(staleAfter(at('2026-11-23T20:20:00Z')), '2026-11-23T23:05:00.000Z')

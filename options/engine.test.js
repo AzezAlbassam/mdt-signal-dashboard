@@ -181,12 +181,21 @@ describe('mergeSession', () => {
   })
 })
 
-test('averageVolume skips sessions before listing and leaves out the busiest day', () => {
-  assert.deepEqual(averageVolume([null, null, 10, 20]), { adv: 10, sessions: 2 })
+test('averageVolume skips sessions before listing and leaves out one-off prints', () => {
+  assert.deepEqual(averageVolume([null, null, 10, 20]), { adv: 15, sessions: 2 })
   assert.deepEqual(averageVolume([7]), { adv: 7, sessions: 1 })
   assert.deepEqual(averageVolume([]), { adv: 0, sessions: 0 })
   // One 40,000-contract block on a contract that trades a few a day is not a normal day.
   assert.deepEqual(averageVolume([2, 1, 3, 40000, 2]), { adv: 2, sessions: 5 })
+  // Nor are three 500-lots on a contract that is otherwise idle.
+  assert.deepEqual(averageVolume([473, 800, 0, 0, 0, 0, 5, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 577, 0, 0]), { adv: 7 / 17, sessions: 20 })
+  // Two blocks among four days, and a block on day two of a new contract.
+  assert.deepEqual(averageVolume([40000, 30000, 5, 3]), { adv: 4, sessions: 4 })
+  assert.deepEqual(averageVolume([40000, 5]), { adv: 5, sessions: 2 })
+  // A busy day of a steadily traded contract (8x its typical day) is real flow and stays in.
+  assert.deepEqual(averageVolume([100, 120, 90, 800, 110]), { adv: 244, sessions: 5 })
+  // Small prints are never called one-off, however quiet the other days.
+  assert.deepEqual(averageVolume([20, 0, 0, 0]), { adv: 5, sessions: 4 })
 })
 
 test('nyDate is the New York calendar date, also late in the evening', () => {
@@ -264,9 +273,23 @@ describe('allocate', () => {
   })
 
   test('when every top contract costs more than the amount, the best-ranked one that fits is used', () => {
-    const cs = [mk(100, { bid: 99, ask: 100, adv: 1000 }), mk(110, { bid: 99, ask: 100, adv: 500 }), mk(120, { adv: 100 })]
+    const cs = [mk(100, { bid: 99, ask: 100, adv: 1000 }), mk(110, { bid: 99, ask: 100, adv: 500 }), mk(120, { adv: 100 }), mk(130, { adv: 90 })]
     const r = allocate(cs, { amount: 5000, maxLegs: 2 })
-    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[120, 5]])
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[120, 5]], 'one leg, not one per contract that fits')
+  })
+
+  test('a leftover under 1% of the amount does not open its own order', () => {
+    // $99,000 in the big leg; the other top contract could only add one $1,000 contract.
+    const r = allocate([mk(100, { adv: 990 }), mk(110, { adv: 10, bidSize: 0 })], { amount: 100000 })
+    assert.deepEqual(r.legs.map((l) => [l.strike, l.contracts]), [[100, 99], [110, 1]], '1% is still placed')
+    const r2 = allocate([mk(100, { adv: 9990, oi: 1e6 }), mk(110, { adv: 10, bidSize: 0 })], { amount: 1000000 })
+    assert.deepEqual(r2.legs.map((l) => [l.strike, l.contracts]), [[100, 999]], 'a 0.1% leg is not')
+  })
+
+  test('a symbol listed twice makes one leg', () => {
+    const r = allocate([mk(100, { adv: 300 }), mk(100, { adv: 300 })], { amount: 20000 })
+    assert.equal(r.legs.length, 1)
+    assert.equal(r.legs.reduce((s, l) => s + l.cost, 0), r.placed)
   })
 
   test('an amount equal to the comfortable maximum is placed in full, best-graded first', () => {
