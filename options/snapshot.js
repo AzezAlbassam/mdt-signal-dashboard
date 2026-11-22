@@ -215,21 +215,36 @@ export async function main() {
   const index = { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), marketOpen: marketOpen(now), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
+  // Ask about one ticker that always has options before touching the rest. If even SPY
+  // comes back empty the source is down: fetch nothing, count nothing, remove nothing.
+  const canary = await fetchChain('SPY').then(() => null, (e) => e)
+  if (canary) {
+    for (const t of watchlist) {
+      const prev = prevIndex.tickers?.[t]
+      index.tickers[t] = prev?.noOptions ? prev : { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }
+    }
+    index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
+    console.log(`OUTAGE: no chain for SPY (${canary.message}) — nothing fetched, counted or removed`)
+    await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
+    process.exitCode = 1
+    return
+  }
+
   // A small pool first, then one slow sequential pass over whatever was throttled.
   // What a missing chain means is decided only after the whole pass (below).
   const wasListed = (t) => { const p = prevIndex.tickers?.[t]; return Boolean(p && !p.noOptions && p.price != null) }
   let noOptions = 0
   const failed = []
   const lost = []
+  const unseen = []
   const run = async (t) => {
     try {
       index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
       return true
     } catch (e) {
       if (!e.noOptions) return e
-      if (wasListed(t)) { lost.push(t); return true }
-      noOptions += 1
-      index.tickers[t] = { noOptions: true }
+      if (wasListed(t)) lost.push(t)
+      else unseen.push(t)
       return true
     }
   }
@@ -268,6 +283,14 @@ export async function main() {
     noOptions += 1
     index.tickers[t] = { noOptions: true }
     await rm(join(dataDir, `${t}.json`), { force: true })
+  }
+  // During an outage an empty answer says nothing about a ticker never seen with a chain
+  // (a newly added one stays pending); otherwise it means no listed options.
+  for (const t of unseen) {
+    const prev = prevIndex.tickers?.[t]
+    if (outage && !prev?.noOptions) { index.tickers[t] = { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }; continue }
+    noOptions += 1
+    index.tickers[t] = { noOptions: true }
   }
   if (outage) index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
   console.log(`retried ${failed.length} after throttling`)

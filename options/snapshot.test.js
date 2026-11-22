@@ -35,7 +35,7 @@ beforeEach(() => {
 })
 
 const pass = async () => {
-  process.argv = ['node', 'snapshot.test', dir, '--only', TICKERS.join(',')]
+  process.argv = ['node', 'snapshot.test', dir, '--only', [...TICKERS, 'NEWX'].join(',')]
   await main()
   return JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
 }
@@ -51,6 +51,35 @@ test('the source going dark erases nothing and fails the run', async () => {
   assert.equal(idx.updatedAt, prevUpdatedAt, 'last good time is kept')
   assert.notEqual(idx.attemptedAt, prevUpdatedAt)
   assert.equal(process.exitCode, 1)
+  process.exitCode = 0
+})
+
+test('if even SPY comes back empty, nothing is fetched and a new ticker stays pending', async () => {
+  down = new Set(['SPY'])
+  let calls = 0
+  const f = globalThis.fetch
+  globalThis.fetch = (url) => { calls += 1; return f(url) }
+  writeFileSync(join(dir, 'watchlist.json'), JSON.stringify([...TICKERS, 'NEWX']))
+  process.argv = ['node', 'snapshot.test', dir]
+  await main()
+  globalThis.fetch = f
+  const idx = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
+  assert.equal(calls, 2, 'SPY asked twice (404 is believed on the second asking), nothing else')
+  assert.equal(idx.tickers.AAA.price, 10)
+  assert.equal(idx.tickers.AAA.error, 'source unavailable this pass')
+  assert.equal(idx.tickers.NEWX.pending, true)
+  assert.equal(idx.tickers.NEWX.noOptions, undefined)
+  assert.equal(idx.updatedAt, prevUpdatedAt)
+  assert.equal(process.exitCode, 1)
+  process.exitCode = 0
+})
+
+test('during a partial outage a never-seen ticker is not called option-less', async () => {
+  down = new Set([...TICKERS.slice(0, 6), 'NEWX'])
+  writeFileSync(join(dir, 'watchlist.json'), JSON.stringify([...TICKERS, 'NEWX']))
+  const idx = await pass()
+  assert.equal(idx.tickers.NEWX.pending, true)
+  assert.equal(idx.tickers.NEWX.noOptions, undefined)
   process.exitCode = 0
 })
 
