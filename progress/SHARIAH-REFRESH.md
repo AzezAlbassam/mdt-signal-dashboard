@@ -22,7 +22,7 @@ the industry table): rules change only with the owner, tests first (progress/SHA
 2. `echo ${SEC_USER_AGENT:+set}` must print "set". If not, stop: the SEC contact variable is missing from the
    environment settings, and the owner must add it back.
 3. Copy data/shariah/sec-inputs.json to the scratchpad as sec-inputs.prev.json. Run `node scripts/shariah/sec-load.js`
-   in the background (it takes up to an hour) and wait for it. It must exit 0 and end with "wrote N", N ≥ 500. It stops
+   in the background (it takes up to an hour, longer when SEC throttles it: it waits a 403 or 429 out) and wait for it. It must exit 0 and end with "wrote N", N ≥ 500. It stops
    with exit 1 and leaves the file alone when more than 5 stocks that had SEC numbers last week have none now, or lost
    their industry code (a fetch SEC refused looks like that): report its list.
 4. Funds: fetch the latest holdings, then screen them (the fund loader fetches the held companies that are not on the

@@ -86,6 +86,9 @@ export function purificationIllicit(r) {
   if (hi != null && hi <= ILLICIT_MAX + EPS) return high
   // a fail: the company's published total interest when it is larger than the line that decided (fix review 2026-11-22)
   if (!r.illicitEstimated && lo != null && lo > ILLICIT_MAX + EPS) return Math.max(r.illicit, r.illicitPublished ?? 0)
+  // R3 open on an exact tagged figure: that figure is a certain minimum, purified at least (fix review 2026-11-22: GM's
+  // and Ford's rows in XLY had dropped out); an estimate or a combined figure gives no amount
+  if (!r.illicitEstimated) return r.illicit
   return null
 }
 
@@ -126,7 +129,9 @@ export function screenStock(r, marketValue, sicTable) {
   if (known(r.illicit) && (r.illicitOpen || r.illicitHigh > r.illicit)) {
     const hi = r.illicitOpen ? Infinity : illicitShare(r.illicitHigh, r.revenue), lo = illicitShare(r.illicit, r.revenue)
     if (hi != null && hi <= ILLICIT_MAX + EPS) illicit = r.illicitHigh
-    else if (r.illicitEstimated || !(lo > ILLICIT_MAX + EPS)) { illicit = null; illOpen = true }
+    // (a combined or estimated figure above 5% stays a bound, «فوق 5٪», not "the confirmed part is under 5%": fix
+    // review 2026-11-22, Circle's 76%; shariahVerdict already leaves an estimate above 5% unjudged)
+    else if (!(lo > ILLICIT_MAX + EPS)) { illicit = null; illOpen = true }
   }
   const activity = activityFromSic(r.sic, sicTable, r.cik)
   const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })

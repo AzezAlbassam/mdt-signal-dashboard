@@ -25,13 +25,18 @@ for (const f of funds) {
 const old = existsSync('data/shariah/quarter-prices.json') ? JSON.parse(readFileSync('data/shariah/quarter-prices.json', 'utf8')) : {};
 const prices = Object.fromEntries(Object.entries(old.prices ?? {}).map(([t, e]) => [t, { ...e, asOf: e.asOf ?? old.built?.slice(0, 10) }]));
 const fresh = new Set(), rejected = [], today = new Date().toISOString().slice(0, 10);
+const dayDiff = (a, b) => (Date.parse(b) - Date.parse(a)) / 864e5;
 for (const file of process.argv.slice(2)) {
   for (const line of readFileSync(file, 'utf8').trim().split('\n').filter(Boolean)) {
     const q = JSON.parse(line);
     const why = q.error ? `${q.source ?? 'FMP'}: ${q.error}` : !(q.n >= 40) ? `only ${q.n} days`
       : !(q.first >= q.start && q.last <= q.end) ? 'dates outside the quarter'
+      // the whole quarter, give or take a long weekend (verification 2026-11-22: 47 of 64 days to 09-04 was accepted)
+      : !(dayDiff(q.start, q.first) <= 5 && dayDiff(q.last, q.end) <= 5) ? `covers only ${q.first}..${q.last} of the quarter`
       : !(q.min <= q.avg && q.avg <= q.max && q.avg > 0) ? 'average outside min..max'
-      : nportPrice.has(q.t) && Math.abs(q.avg / nportPrice.get(q.t) - 1) > 0.4 ? `average ${q.avg.toFixed(2)} vs fund-report price ${nportPrice.get(q.t).toFixed(2)}`
+      // (not for the saved bars: fund-load puts them on the share basis from their last bar's date; the fund's raw report
+      // price may be on another one: APH, CRWD, MNST and MRNA were thrown out, fix review 2026-11-22)
+      : !/saved in data\/us\/bars/.test(q.source ?? '') && nportPrice.has(q.t) && Math.abs(q.avg / nportPrice.get(q.t) - 1) > 0.4 ? `average ${q.avg.toFixed(2)} vs fund-report price ${nportPrice.get(q.t).toFixed(2)}`
       : null;
     if (why) rejected.push({ t: q.t, why });
     else { prices[q.t] = { start: q.start, end: q.end, avg: q.avg, n: q.n, first: q.first, last: q.last, source: q.source ?? 'FMP', asOf: q.asOf ?? today }; fresh.add(q.t); }

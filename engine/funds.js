@@ -64,7 +64,8 @@ export function holdingKind(h) {
   if (h.collateral) return 'collateral'                     // cash collateral from lending the fund's shares
   if (h.asset === 'EC') return 'equity'
   // money-market fund: interest-bearing; a spot currency trade filed under the same code is not (audit 2026-11-22)
-  if (h.asset === 'STIV') return h.units === 'NC' && /\bFX\b|currenc/i.test(h.name ?? '') ? 'derivative' : 'cash-fund'
+  // (the bank's name is in the name, "Spot FX Contract: ..." in the title: fix review 2026-11-22)
+  if (h.asset === 'STIV') return h.units === 'NC' && /\bFX\b|currenc/i.test(`${h.name ?? ''} ${h.title ?? ''}`) ? 'derivative' : 'cash-fund'
   if (DEBT.has(h.asset)) return 'debt'                       // bonds, bills, loans: interest-bearing
   if (DERIV.has(h.asset)) return 'derivative'
   return 'other'                                             // preferred shares, real estate, unclassified
@@ -80,9 +81,12 @@ const union = (a, b, ...more) => [...new Set([...(a.missing ?? []), ...(b.missin
 // A split (engine/sec-facts.js: splitRatio k, splitWindow [after, until]) puts a report price on the share count's basis
 // or not. The saved daily bars (split-adjusted) settle it when they cover the report's date; else the dates: on or before
 // the filing the split restated came later, after the restating filing it was done; between, unknown (null).
-export function splitBasis({ price, asOf, bar = null, splitRatio = null, splitWindow = null }) {
+// A bar at the price confirms "post" only when the bars are known to include the split (barsAdjusted: the split falls
+// before their last date, or another report price of the company sits at k times its bar); a split after the last bar
+// leaves them on the old basis (fix review 2026-11-22). A bar at 1/k of the price proves "pre" either way.
+export function splitBasis({ price, asOf, bar = null, splitRatio = null, splitWindow = null, barsAdjusted = true }) {
   if (!(splitRatio > 0) || !(price > 0)) return 'post'
-  if (bar > 0) { const q = price / bar; if (Math.abs(q - 1) < 0.15) return 'post'; if (Math.abs(q / splitRatio - 1) < 0.15) return 'pre' }
+  if (bar > 0) { const q = price / bar; if (Math.abs(q / splitRatio - 1) < 0.15) return 'pre'; if (Math.abs(q - 1) < 0.15 && barsAdjusted) return 'post' }
   if (splitWindow && asOf <= splitWindow[0]) return 'pre'
   if (splitWindow && asOf > splitWindow[1]) return 'post'
   return null
@@ -114,6 +118,10 @@ export function screenHolding(r, price, sicTable, quarter = null, range = null) 
   const v = judge(screenStock(r, pLo * shares * LOW, sicTable), screenStock(r, pHi * shares * HIGH, sicTable), 'priceBand')
   return { ...point, state: v.state, failed: v.failed, missing: v.missing, band: v.state === 'ما ينحكم' && v.missing.includes('priceBand'), purification }
 }
+
+// A quarter's interest on a bill bought at the 3-month discount rate d (percent, FRED DTB3): its investment yield, the
+// return on the price paid, not d x 91/365 (fix review 2026-11-22: 2.3% more)
+export const billQuarter = (d) => (d == null ? null : (d / 100 * 91 / 360) / (1 - d / 100 * 91 / 360))
 
 // A row the quarter-average close should settle: the band could not decide it, or it passed on report prices within
 // reach of the debt line (point ratio 20% or more: 25% at the band floor). The band is no bound on the quarter average

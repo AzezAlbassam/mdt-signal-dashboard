@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage } from '../engine/funds.js';
+import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter } from '../engine/funds.js';
 import { screenStock } from '../engine/shariah.js';
 
 const SIC = { fail: [[6020, 6036, 'banks']], review: [[5400, 5499, 'food stores']] };
@@ -234,14 +234,16 @@ test('audit: interest readings decide R3 only together; a lender with unread loa
   // purification is the figure that decided R3: the high one when it passes, the exact one when it fails, and none
   // while R3 is open (a loose bound is no amount to pay: Ford came out at 40% of the holding a quarter; audit 2026-11-22)
   assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 40 }), 10, SIC).purification, 40 / 1000);
-  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 80 }), 10, SIC).purification, null);
+  // (this was "null while open" until the fix review of 2026-11-22: an exact tagged figure is a certain minimum, so an
+  // open R3 purifies at least it; GM's and Ford's rows in XLY had dropped out)
+  assert.equal(screenHolding(co({ illicit: 20, illicitHigh: 80 }), 10, SIC).purification, 20 / 1000);
   assert.equal(screenHolding(co({ illicit: 60, illicitHigh: 90 }), 10, SIC).purification, 60 / 1000);
   assert.equal(screenHolding(co({ illicit: 10, illicitOpen: true }), 10, SIC).purification, null);
   // an estimate (an upper bound) above 5% leaves R3 open: no purification amount either
   assert.equal(screenHolding(co({ illicit: 90, illicitEstimated: true }), 10, SIC).purification, null);
   assert.equal(screenHolding(co({ illicit: 30, illicitEstimated: true }), 10, SIC).purification, 30 / 1000);
   // the stock page gives the same per share
-  assert.equal(screenStock(co({ illicit: 20, illicitHigh: 80 }), 1000, SIC).numbers.purificationPerShare, null);
+  assert.equal(screenStock(co({ illicit: 20, illicitHigh: 80 }), 1000, SIC).numbers.purificationPerShare, 20 / 100);
   // fix review 2026-11-22: a fail is purified on the company's own published total interest, not the largest single line
   // (KeyCorp's 107 of short-term investment interest against its total interest income of 2,133)
   assert.equal(screenHolding(co({ illicit: 60, illicitPublished: 900, illicitHigh: 950 }), 10, SIC).purification, 900 / 1000);
@@ -296,4 +298,25 @@ test('fix review: a pass on report prices near the debt line also needs the quar
   assert.equal(needsQuarterAverage({ k: 'equity', t: 'AAPL', why: [], s: 'مختلط جائز', exact: false, dr: 0.05 }), false);
   assert.equal(needsQuarterAverage({ k: 'equity', t: 'IBM', why: [], s: 'مختلط جائز', exact: true, dr: 0.28 }), false);   // already exact
   assert.equal(needsQuarterAverage({ k: 'equity', t: null, why: ['priceBand'], s: 'ما ينحكم' }), false);                // nothing to fetch
+});
+test('fix review: spot currency lines named by their bank are found by their title (URA, COPX, LIT)', () => {
+  assert.equal(holdingKind({ asset: 'STIV', units: 'NC', name: 'BANK OF NEW YORK (THE)', title: 'Spot FX Contract: USD/CAD' }), 'derivative');
+  assert.equal(holdingKind({ asset: 'STIV', units: 'NS', name: 'State Street Institutional US Government Money Market Fund', title: 'State Street Inst US Gov MMF' }), 'cash-fund');
+});
+test('fix review: a fund\'s own bills earn their investment yield, not the discount rate (DTB3 3.624% -> 0.9245% a quarter, not 0.9035%)', () => {
+  const q = billQuarter(3.624);
+  assert.ok(Math.abs(q - (0.03624 * 91 / 360) / (1 - 0.03624 * 91 / 360)) < 1e-12, String(q));
+  assert.ok(q > 0.03624 * 91 / 365);
+  assert.equal(billQuarter(null), null);
+});
+test('fix review: a saved bar confirms a post-split price only when the bars are known to include the split (a split after the last bar)', () => {
+  // the bars end 2026-10-06; a split between the 10-Q of 08-07 and the restating one of 11-06 may be after them
+  const w = ['2026-08-07', '2026-11-06'];
+  assert.equal(splitBasis({ price: 100, asOf: '2026-09-30', bar: 100, splitRatio: 2, splitWindow: w, barsAdjusted: null }), null);
+  assert.equal(splitBasis({ price: 100, asOf: '2026-09-30', bar: 100, splitRatio: 2, splitWindow: w, barsAdjusted: true }), 'post');
+  assert.equal(splitBasis({ price: 100, asOf: '2026-09-30', bar: 50, splitRatio: 2, splitWindow: w, barsAdjusted: null }), 'pre');   // the bar's half price proves it
+});
+test('fix review: a company\'s combined interest figure above 5% reads as a bound, not as "the confirmed part is under 5%" (Circle 76%)', () => {
+  const v = screenStock(co({ illicit: 60, illicitEstimated: true, illicitHigh: 90 }), 1000, SIC);
+  assert.equal(v.state, 'ما ينحكم'); assert.ok(v.missing.includes('illicit'), JSON.stringify(v.missing)); assert.ok(!v.missing.includes('illicitRange'));
 });

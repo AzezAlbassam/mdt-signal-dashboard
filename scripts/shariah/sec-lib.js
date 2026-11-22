@@ -5,14 +5,28 @@ import { secInputs } from '../../engine/sec-facts.js';
 
 const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 
-// GET with SEC's required contact header, 3 tries; null on HTTP errors (curl -f exit 22)
+// The contact header SEC requires goes to SEC's own hosts only (fix review 2026-11-22: it had been sent to FRED too);
+// other sites get curl's own default client name (FRED drops an unknown one)
+export const uaFor = (url, ua) => (/(^|\.)sec\.gov$/.test(new URL(url).hostname) ? ua : null);
+
+// GET with SEC's required contact header. A 404 is no data (null); a 403 or 429 (SEC's rate limit, which lasts about
+// ten minutes) or a server error is waited out, doubling from 30 s to about 15 minutes in all, then null (fix review
+// 2026-11-22: a throttled fetch had read as a company without numbers). SEC_BACKOFF_MS shortens the wait in tests.
 export function getter() {
   const UA = process.env.SEC_USER_AGENT;
   if (!UA) throw new Error('SEC_USER_AGENT is not set');
+  const base = +(process.env.SEC_BACKOFF_MS ?? 30e3);
   return (url, json = true) => {
-    for (let i = 0; i < 3; i++) {
-      try { sleep(150); const t = execFileSync('curl', ['-sf', '--max-time', '60', '-H', `User-Agent: ${UA}`, url], { maxBuffer: 1 << 28 }).toString(); return json ? JSON.parse(t) : t; }
-      catch (e) { if (e.status === 22) return null; sleep(2000 * (i + 1)); }
+    const ua = uaFor(url, UA);
+    for (let i = 0; i < 5; i++) {
+      try {
+        sleep(150);
+        const out = execFileSync('curl', ['-s', '--max-time', '60', '-w', '\n%{http_code}', ...(ua ? ['-H', `User-Agent: ${ua}`] : []), url], { maxBuffer: 1 << 28 }).toString();
+        const cut = out.lastIndexOf('\n'), code = +out.slice(cut + 1), body = out.slice(0, cut);
+        if (code === 200) return json ? JSON.parse(body) : body;
+        if (code === 404) return null;
+      } catch { /* a dropped connection or a broken body: try again */ }
+      sleep(base * 2 ** i);
     }
     return null;
   };

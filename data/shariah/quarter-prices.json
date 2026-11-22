@@ -1,5 +1,5 @@
 {
- "built": "2026-11-22T06:08:23.691Z",
+ "built": "2026-11-22T08:56:38.397Z",
  "source": "daily closes, split-adjusted, averaged over the company's own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)",
  "prices": {
   "BA": {
@@ -2331,24 +2331,47 @@
    "last": "2026-09-30",
    "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)",
    "asOf": "2026-11-22"
+  },
+  "MRNA": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 107.76781249999998,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)",
+   "asOf": "2026-11-22"
+  },
+  "APH": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 80.54992187500001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)",
+   "asOf": "2026-11-22"
+  },
+  "CRWD": {
+   "start": "2026-05-01",
+   "end": "2026-07-31",
+   "avg": 171.6009126984127,
+   "n": 63,
+   "first": "2026-05-01",
+   "last": "2026-07-31",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)",
+   "asOf": "2026-11-22"
+  },
+  "MNST": {
+   "start": "2026-07-01",
+   "end": "2026-09-30",
+   "avg": 46.29542968750001,
+   "n": 64,
+   "first": "2026-07-01",
+   "last": "2026-09-30",
+   "source": "TradingView 1D saved in data/us/bars (last bar 2026-10-06)",
+   "asOf": "2026-11-22"
   }
  },
- "rejected": [
-  {
-   "t": "MRNA",
-   "why": "average 107.77 vs fund-report price 70.03"
-  },
-  {
-   "t": "APH",
-   "why": "average 80.55 vs fund-report price 176.32"
-  },
-  {
-   "t": "CRWD",
-   "why": "average 171.60 vs fund-report price 763.14"
-  },
-  {
-   "t": "MNST",
-   "why": "average 46.30 vs fund-report price 96.12"
-  }
- ]
+ "rejected": []
 }

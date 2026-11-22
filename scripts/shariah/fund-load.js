@@ -7,7 +7,7 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { getter, companies, yieldAverager, inputsFor, newErrors, MAX_NEW_ERRORS } from './sec-lib.js';
-import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage } from '../../engine/funds.js';
+import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter } from '../../engine/funds.js';
 
 const MAX_AGE_DAYS = 150; // A7: holdings up to 150 days old (owner, 2026-11-21)
 const list = JSON.parse(readFileSync('data/shariah/funds-list.json', 'utf8')).funds;
@@ -21,10 +21,14 @@ const QP = QPF.prices ?? {};
 // they settle which side of a split a report price is on
 const BARS = existsSync('data/us/bars') ? new Map(readdirSync('data/us/bars').map((f) => [f.replace(/\.json\.gz$/, '').replace(/^[A-Z]+_/, '').replace(/\./g, '-'), f])) : new Map();
 const barData = new Map();
-function barClose(t, date) {
+function barsOf(t) {
   if (!t || !BARS.has(t)) return null;
   if (!barData.has(t)) barData.set(t, JSON.parse(gunzipSync(readFileSync(`data/us/bars/${BARS.get(t)}`))));
-  const b = barData.get(t);
+  return barData.get(t);
+}
+function barClose(t, date) {
+  const b = barsOf(t);
+  if (!b) return null;
   let i = b.date.length - 1;
   while (i >= 0 && b.date[i] > date) i--;
   return i >= 0 && (Date.parse(date) - Date.parse(b.date[i])) / 864e5 <= 5 ? b.close[i] : null;   // that day or the last trading day before
@@ -53,7 +57,7 @@ const avgYield = reuse ? null : yieldAverager(get);
 // the interest a fund earns on its own bills, bonds and money funds, per quarter per unit of value: the 3-month bill
 // yield averaged over the quarter before the report (audit 2026-11-22: MAGS holds 65% in bills and money funds)
 const billYield = yieldAverager(get, 'DTB3');
-const ownInterest = (asOf) => { const y = billYield(new Date(Date.parse(asOf) - 91 * 864e5).toISOString().slice(0, 10), asOf); return y == null ? null : y / 100 * 91 / 365; };
+const ownInterest = (asOf) => billQuarter(billYield(new Date(Date.parse(asOf) - 91 * 864e5).toISOString().slice(0, 10), asOf));
 const extra = {};
 for (const cik of need) { extra[cik] = reuse?.companies?.[cik] ?? inputsFor(cik, get, avgYield ?? yieldAverager(get)); byCik.set(cik, extra[cik]); process.stderr.write('.'); }
 // a fetch SEC refused looks like a company without numbers: more than a few new ones stop the run before anything is written
@@ -68,7 +72,21 @@ const today = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
 const nsPrice = (h) => (h.units === 'NS' && h.balance > 0 && h.usd > 0 ? h.usd / h.balance : null);
 // A report price on the share count's basis: after a split (engine/sec-facts.js), prices from before it are divided by
 // its ratio; when the side is unknown both stand (audit 2026-11-22: CrowdStrike's post-split prices were divided too).
-const shareBasis = (c, t, price, asOf) => (c?.splitRatio ? splitBasis({ price, asOf, bar: barClose(t, asOf), splitRatio: c.splitRatio, splitWindow: c.splitWindow }) : 'post');
+// The saved bars include a split when it falls before their last bar, or when some report price of the company sits at
+// k times its bar; else a bar at the price proves nothing (a split after 2026-10-06; fix review 2026-11-22)
+const adjusted = new Map();
+function barsAdjusted(c, t) {
+  if (adjusted.has(c.cik)) return adjusted.get(c.cik);
+  const b = barsOf(t), k = c.splitRatio;
+  let v = !!(b && c.splitWindow && c.splitWindow[1] <= b.date.at(-1)) || null;
+  if (!v && b) for (const r of Object.values(reports)) for (const h of r.holdings ?? []) {
+    const p = holdingKind(h) === 'equity' ? nsPrice(h) : null, bar = p ? barClose(t, r.as_of) : null;
+    if (bar > 0 && mapHolding(h, maps).cik === c.cik && Math.abs(p / bar / k - 1) < 0.15) v = true;
+  }
+  adjusted.set(c.cik, v);
+  return v;
+}
+const shareBasis = (c, t, price, asOf) => (c?.splitRatio ? splitBasis({ price, asOf, bar: barClose(t, asOf), splitRatio: c.splitRatio, splitWindow: c.splitWindow, barsAdjusted: barsAdjusted(c, t) }) : 'post');
 // Every report price of each company, across all funds, with its date: one band per company, so a fund whose report
 // date happened to fall on a high price does not pass a company another fund's report puts under the line (review
 // 2026-11-22: LUV, HONA). The band uses the prices dated in the company's own quarter when there are any (audit
@@ -146,11 +164,19 @@ for (const f of list) {
     rows: rows.sort((a, b) => Math.abs(b.w) - Math.abs(a.w)) });
 }
 // Holdings the band could not decide, or passed near the debt line: the next step fetches their quarter-average close,
-// first those in funds whose verdict they can change (non-compliant weight under 5%), largest weight first
+// first those whose answer can change a fund's verdict, largest weight first (verification 2026-11-22: 8 of the first
+// 10 could change none). In a passing fund, a pass that would turn unknown; in an unjudged fund under 5% non-compliant,
+// an unknown that would pass, or any row whose fail would cross 5%; never a fund past its 150 days.
+const canFlip = (f, x) => {
+  if (f.old || !(f.badWeight < 0.05)) return false;
+  const w = Math.abs(x.w), sum = f.badWeight + f.unknownWeight;
+  if (f.state === 'مختلط جائز') return sum + w >= 0.05;
+  return (x.s === 'ما ينحكم' && sum - w < 0.05) || f.badWeight + w >= 0.05;
+};
 const band = new Map();
 for (const f of out.funds) for (const x of f.rows ?? []) if (needsQuarterAverage(x)) {
   const c = byCik.get(cos.find((k) => k.ticker === x.t)?.cik);
-  const pri = f.badWeight < 0.05 ? Math.abs(x.w) : 0;
+  const pri = canFlip(f, x) ? Math.abs(x.w) : 0;
   if (c?.period) band.set(x.t, { t: x.t, start: c.period.start, end: c.period.end, pri: Math.max(pri, band.get(x.t)?.pri ?? 0) });
 }
 writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()].sort((a, b) => b.pri - a.pri).map(({ pri, ...e }) => e), null, 1));

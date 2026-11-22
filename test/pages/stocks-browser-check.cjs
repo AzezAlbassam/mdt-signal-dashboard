@@ -45,6 +45,9 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       'cache/NASDAQ:META': { sym: 'NASDAQ:META', fin: fx['NASDAQ:META'].fin, px: { t: fx['NASDAQ:META'].px.bars.t, c: fx['NASDAQ:META'].px.bars.c }, pxTried: true, pxAt: Date.now() - 8 * 864e5, fetchedAt: Date.now() },
       'q/NASDAQ:META': { sym: 'NASDAQ:META', fq: { labels: ['Q1 2026', 'Q2 2026'], series: { fcf: [{ value: 1 }, { value: null }] } }, fqEnd: recentEnd },
       'cache/NYSE:JPM': { sym: 'NYSE:JPM', px: { t: [], c: [] }, pxTried: true },
+      // a verdict an older page saved for the current quarter, without the quarter's average: the list chip must not
+      // show it (fix review 2026-11-22: SMCI kept ✓ after the new rules made it غير جائز)
+      'sh/NASDAQ:META': { sym: 'NASDAQ:META', state: 'مختلط جائز', failed: [], period: { end: '2026-09-30' }, seenAt: Date.now() - 864e5 },
     }
     window.__calls = []
     window.__store = store
@@ -116,6 +119,10 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const okD = due.metaPx && due.metaQ === 4 && due.jpmPx
   console.log('DUE CHECK:', okD ? 'ok' : 'FAILED', JSON.stringify(due))
   if (!okD) process.exitCode = 1
+  // the old save shows no chip until the page recomputes it under the current rules
+  const staleChip = await page.evaluate(() => document.querySelector('#rows tr.row[data-sym="NASDAQ:META"] .shc')?.textContent ?? '')
+  console.log('STALE CHIP CHECK:', staleChip !== '✓' ? 'ok' : 'FAILED', JSON.stringify({ staleChip }))
+  if (staleChip === '✓') process.exitCode = 1
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
   await page.selectOption('#group', '')
@@ -169,12 +176,14 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const AA = JSON.parse(fs.readFileSync(root + 'data/shariah/sec-inputs.json', 'utf8')).stocks.AAPL
   const mv = 250 * (AA.sharesMV ?? AA.shares)
   const f = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
+  // (both readings stand: the page shows the high one on a pass; fix review 2026-11-22, this compared the low one only)
+  const both = (lo, hi) => [lo, hi].filter((x) => x != null)
   const want = {
-    dr: AA.debt != null ? f(100 * AA.debt / Math.max(mv, AA.bookEquity), 1) + '%' : null,
-    ill: f(100 * AA.illicit / AA.revenue, 2) + '%',
-    pps: '$' + f(AA.illicit / AA.shares, 4),
-    own: '$' + f(100 * AA.illicit / AA.shares, 2),
-    pass: AA.debt != null && AA.debt / Math.max(mv, AA.bookEquity) <= 0.3 && AA.illicit / AA.revenue <= 0.05,
+    dr: AA.debt != null ? both(AA.debt, AA.debtHigh).map((x) => f(100 * x / Math.max(mv, AA.bookEquity), 1) + '%') : null,
+    ill: both(AA.illicit, AA.illicitHigh).map((x) => f(100 * x / AA.revenue, 2) + '%'),
+    pps: both(AA.illicit, AA.illicitHigh).map((x) => '$' + f(x / AA.shares, 4)),
+    own: both(AA.illicit, AA.illicitHigh).map((x) => '$' + f(100 * x / AA.shares, 2)),
+    pass: AA.debt != null && (AA.debtHigh ?? AA.debt) / Math.max(mv, AA.bookEquity) <= 0.3 && (AA.illicitHigh ?? AA.illicit) / AA.revenue <= 0.05,
   }
   await page.waitForTimeout(300)
   const sh = await page.evaluate(async () => {
@@ -186,7 +195,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       daily: window.__calls.some((c) => c.startsWith('mcp-tv-get-ohlcv NASDAQ:AAPL')) }
   })
   const has = (t) => (sh.text ?? '').includes(t)
-  const okSh = (!want.dr || has(want.dr)) && has(want.ill) && has(want.pps) && (sh.out ?? '').includes(want.own)
+  const okSh = (!want.dr || want.dr.some(has)) && want.ill.some(has) && want.pps.some(has) && want.own.some((x) => (sh.out ?? '').includes(x))
     && (!AA.debtParts?.leases || has('ما تنحسب')) && (!AA.illicitEstimated || has('تقدير'))
     && (!want.pass || (sh.state === 'مختلط جائز' && sh.saved === 'مختلط جائز' && sh.chip === '✓'))
   console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify({ want, ...sh }))
@@ -538,17 +547,23 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   // no numbers at SEC, stale numbers, no quarterly filings: not one «ما عندنا قوائمها» for all); a row whose company has
   // a 10-Q or 10-K newer than the numbers says so; the method says collateral is named only above 0.5%.
   const top30 = (f) => f.rows.filter((x) => x.k !== 'collateral').slice(0, 30)
-  const fUn = withRows.find((f) => top30(f).some((x) => x.k === 'equity' && (x.why ?? []).includes('unmatched')))
-  const fNew = withRows.find((f) => top30(f).some((x) => x.k === 'equity' && x.newer))
+  const pick9 = (fn) => withRows.find((f) => top30(f).some(fn))
+  // each reason code's own text wherever the data has such a row in a card's top 30 (verification 2026-11-22: a page
+  // with the old text put back on three codes passed the check that looked at one)
+  const CODE_TEXT = { unmatched: 'ما ربطناها بشركة', unreadable: 'ما لقينا أرقامها في SEC', stale: 'آخر إيرادات ربعية لقيناها لها في SEC قديمة',
+    statements: 'ما لقينا إيرادات ربعية بالأسماء المعتادة' }
+  const codes9 = Object.entries(CODE_TEXT).map(([code, text]) => ({ code, text, f: pick9((x) => x.k === 'equity' && (x.why ?? []).includes(code)) })).filter((x) => x.f)
+  const fNew = pick9((x) => x.k === 'equity' && x.newer)
   const t9 = {}
-  for (const f of [...new Set([fUn, fNew].filter(Boolean))]) {
+  for (const f of [...new Set([...codes9.map((x) => x.f), fNew, withRows[0]].filter(Boolean))]) {
     await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(200)
     t9[f.sym] = await page.evaluate(() => ({ card: document.querySelector('#fundsView .fcard.open')?.innerText.replace(/\s+/g, ' ') ?? '', method: document.querySelector('#fundsView .shmore')?.textContent ?? '' }))
     await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(100)
   }
-  const ok9 = !!fUn && t9[fUn.sym].card.includes('ما ربطناها بشركة') && !!fNew && t9[fNew.sym].card.includes('تقرير أحدث')
-    && (t9[fUn.sym]?.method ?? '').includes('لما تتعدى 0.5٪')
-  console.log('FUNDS AUDIT 2 CHECK:', ok9 ? 'ok' : 'FAILED', JSON.stringify({ unmatched: fUn?.sym, newer: fNew?.sym, card: fUn ? t9[fUn.sym].card.slice(0, 300) : null }))
+  const bad9 = codes9.filter((x) => !t9[x.f.sym].card.includes(x.text)).map((x) => `${x.code}@${x.f.sym}`)
+  const ok9 = codes9.length >= 1 && !bad9.length && (!fNew || t9[fNew.sym].card.includes('تقرير أحدث'))
+    && (t9[withRows[0].sym]?.method ?? '').includes('لما تتعدى 0.5٪') && !Object.values(t9).some((t) => t.card.includes('ما عندنا قوائمها في SEC'))
+  console.log('FUNDS AUDIT 2 CHECK:', ok9 ? 'ok' : 'FAILED', JSON.stringify({ codes: codes9.map((x) => `${x.code}@${x.f.sym}`), bad9, newer: fNew?.sym }))
   if (!ok9) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()

@@ -728,3 +728,58 @@ Funds:
   close, like the rows the band cannot decide, ordered by what can change a fund's verdict (data auditor: Snowflake's
   average fell 2.9% under its band floor; SPUS's pass, 0.03 points under 5%, rests on ten such passes: HUBB, ADM, EFX,
   MAS, HAL, PHM, LH, FICO and others).
+Debt (the debt lens, each case read from the 10-Q; tests first):
+- debtHigh fell below the balance sheet where LongTermDebt is the noncurrent line beside its current maturities with
+  no noncurrent tag (Halliburton 7,072 + 90; Coupang 654 + 119 + 988): that sum is now a high reading, for the plain
+  LongTermDebt tag only (Air Products' tag holds its current maturities by name). LineOfCredit is read like
+  LongTermLineOfCredit (EastGroup's 194.7 of bank facilities), once when it equals a short-term line (M&T).
+- Finance leases tagged only as a total stayed inside the bundled lines while the panel said they were not counted
+  (Waste Management 23,370 -> 21,740, UPS 26,078 -> 24,611, FedEx 19,355 -> 17,637, Murphy back to 1,539.6, Cummins
+  -128); the Tapestry rule now applies only where no finance lease is tagged.
+- The high reading counted lines twice: LongTermDebt that holds its current portion beside DebtCurrent (Hubbell 5,734
+  -> 5,120.2, Boeing 50,175 -> none, Dell, 3M, S&P Global, Danaher and others), short lines on top of a DebtCurrent
+  that holds them, a convertible that is the combined figure itself (Tyler 2,820 -> 1,410). SPUS's pass had been 0.18%
+  of Hubbell's price from a wrong «ما ينحكم».
+- Convertible notes or a credit line that are all the tags show now prove a fail, with the liabilities bound as the
+  pass test (Akamai 7,568: «غير جائز» in CIBR, XLK, SPUS); a short-term line tagged at zero is the current line
+  (Cognizant 1,552: «مختلط جائز» in SPUS, widening its margin; NCR Voyix); debt and finance leases less the leases is no
+  more than the balance sheet's pair where one exists (Marathon Petroleum 33,022, not its principal 33,492).
+- Not changed: a short-term line larger than the current portion beside it stays high-only (Clorox, Henry Schein: a
+  wrong «ما ينحكم»; the proposed rule would have counted NXP's 2.0B programme size).
+Interest and shares:
+- A fail is also purified on a positive net interest line (Nano Nuclear 4.98 against 0.374); the lender total revenue
+  also covers a lender below the 10% line (a lending tag or a loan book); capitalized contract costs, tax receivables
+  and current loans (charged at 20% in the loan book) are no interest-earning current assets (Duolingo passes again at
+  4.63%; Dell's estimate loses a double count of 166.6M); a loan book read from cash flows is printed as a year of
+  loans made, and a credit-loss provision tag is no loan (Rocket, Block, Dave).
+- An open R3 on an exact tagged figure purifies at least that figure (GM's and Ford's rows in XLY had dropped out: the
+  card's «على الأقل» was below their certain part alone). Policy now: pass -> the high reading; fail -> the larger of the
+  exact line, the tagged total interest and a positive net interest line; open on an exact figure -> that figure, at
+  least; open on an estimate or a combined figure -> none.
+- A 10-K quarter caps a cover count dated after it at the year's weighted count (Skyworks: 150.0M, not the 234.9M after
+  its merger: its debt ratio read 15.5% instead of about 25%).
+Splits and prices: a saved bar at the report price proves a post-split price only when the bars are known to include
+the split (a split after 2026-10-06 leaves them on the old basis: the Monster error would have come back); a 1:50 or
+1:100 reverse split is a split (only a 1000x step is a unit error); the merge no longer checks a saved-bars average
+against a raw report price on another basis (APH, CRWD, MNST, MRNA kept the band); spot FX lines are found by their
+title (URA, COPX, LIT); a fund's own bills earn their investment yield (+2.3%).
+Page: list chips are recomputed from the saved quarter average under the current rules, never shown as saved (SMCI kept
+✓ after its convertible notes made it «غير جائز»); the purification row names the interest figure it uses when that is
+not the one shown (Wells Fargo's published 23.9B beside its 1.40B line, Cisco's high reading); a combined figure above
+5% reads as a bound, not «المؤكد تحت 5٪» (Circle 76%); weights near 5% get two decimals (SPUS 0.76% + 4.22%); an
+unknown purification names what is missing; «غير منشور» says «ما نقدر نقرأه من بيانات SEC» (Deere publishes its figure
+on an axis companyfacts does not carry).
+Privacy: the SEC contact header (the owner's own SEC_USER_AGENT) had been sent to FRED with every yield fetch since
+2026-11-21; it now goes to SEC hosts only, and FRED gets curl's own default client name (it drops an unknown one;
+scripts/shariah/sec-lib.js uaFor, test first).
+Downloads: a 403 or 429 from SEC (its rate limit, about ten minutes) had read as "no data", like a 404. The first
+reload with the new-errors guard proved the point: SEC throttled it while the reviewers were fetching too, and the guard
+stopped it (19 stocks and 50 held companies newly "without numbers") instead of publishing them. The getter now waits a
+throttle out, doubling from 30 s to about 15 minutes in all, and only a 404 means no data (test first, a local server).
+Correction to M13: "at twice the corporate yield Snap-on would pass ... Ford and Caterpillar likewise" is not what the
+final code does: at twice the yield Snap-on and Ford stay unjudged (6.54%, 6.83%); the 20% rate keeps them open too.
+Not fixed, documented: nested catch-all current-asset tags subtracted twice (ADM, Mastercard: subtracting only the
+largest overcounts Apple), split windows wider than the filings (a no-bar company's price then counts on both bases),
+two splits within a year, restatements that are not splits (a 10-Q/A, SPAC exchange ratios), the 40% check's blind spot
+for a 3:2 split not yet restated, activities (the round-2 gap lens: GE's insurance, Casey's tobacco, Royal Caribbean,
+Amazon's film and music, AppLovin's gambling ads, defense makers): owner decisions for phase 2 (A4).
