@@ -502,3 +502,25 @@ switch to 33% with max(quarter-average MV, EV)), and whether to send Al Rajhi th
 - Results after the change: AAPL debt 80.1B (leases 14.4B not counted) → 2.2% at a $250 average; MSFT 35.5B
   (98.5B leases not counted). `npm test` 476/476; browser check SHARIAH AAPL green at desktop and 390 px.
 - Portfolio card identity A ("Midnight") chosen; B and C removed (in git history).
+
+### M11. Funds (part E) built (2026-11-21/22)
+- Holdings: SEC N-PORT, latest report per fund (scripts/shariah/nport.py → data/shariah/nport-latest.jsonl). 40 of 44
+  funds found; DRAM, URNM, NCLD, LYTE are not in SEC's fund list; GLD, SLV, IBIT, USO hold no companies (listed with
+  the reason). Holdings dates 53-145 days old (A7 limit 150).
+- Matching holdings to companies (engine/funds.js): ticker, then ISIN (seeded from funds that report tickers), then a
+  unique normalised name (also without spaces, and with the words sorted). Checked: 395/395 correct on SPUS/HLAL.
+- Kinds: cash collateral from securities lending is left out and reported; money-market funds and bonds count as
+  non-compliant; derivatives and other instruments as not judged; unlisted remainder as not judged.
+- Each company: screenStock (shared with the stock page). Market value: the fund report's price within a -20%/+25%
+  band, or the exact quarter-average close when fetched (TradingView 1D bars; FMP's plan refuses most symbols; the
+  two sources gave the identical DIS average). TradingView's free daily quota allows about 10 calls: 16 of 86 holdings
+  near the debt line have exact averages so far; the weekly run fetches more.
+- Fund verdict: the owner's rule (fundVerdict); purification per quarter = Σ weight × illicit ÷ market value.
+- Bugs found by checking the first results, each fixed with a test first: banks without readable statements are
+  غير جائز by activity; AbbVie/Oracle debt tags; total liabilities derived for Monster; EPS-implied shares for Visa;
+  the loans guard no longer fires on disclosures (Broadcom) or trade receivables (PepsiCo, Chevron); investment-bank
+  revenue; a plain Cash tag; word-order names (Schwab); the first-listed ticker (not JPM-PM); IBM's short-term debt
+  equal to its current portion counted twice (70.8B → 63.8B; 31.6% → 28.4% at the quarter average).
+- Known limits shown on the page: foreign annual filers (TSMC, ASML, SK hynix, ARM) and combined-report utilities
+  (AEP, XEL, EXC) are not judged; activities under review (Walmart, Costco, Netflix, tobacco, REITs) stay «ما ينحكم»
+  until phase 2; the fund's own securities-lending income and cash interest are not in the purification.
