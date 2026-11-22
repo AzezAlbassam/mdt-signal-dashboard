@@ -95,7 +95,9 @@ export const onShares = (price, basis, k) => (basis === 'pre' ? [price / k] : ba
 // split, when the bars it came from may predate it. price: the report price on the share basis (purification uses it,
 // the price behind the weight); range: [lowest, highest] on that basis for the band.
 export function screenHolding(r, price, sicTable, quarter = null, range = null) {
-  if (!r?.period) return screenStock(r, null, sicTable) ? { ...screenStock(r, null, sicTable), purification: null } : { state: 'ما ينحكم', missing: ['statements'], purification: null }
+  // no quarter to judge: say why (audit 2026-11-22: one «no statements at SEC» was false for renamed and stale US filers)
+  const none = !r ? 'unmatched' : r.error ? 'unreadable' : r.stale ? 'stale' : 'statements'
+  if (!r?.period) return screenStock(r, null, sicTable) ? { ...screenStock(r, null, sicTable), purification: null } : { state: 'ما ينحكم', missing: [none], purification: null }
   const shares = r.sharesMV ?? r.shares
   const pmv = shares > 0 ? (price > 0 ? price : quarter?.avg > 0 ? quarter.avg : NaN) * shares : NaN
   const ill = purificationIllicit(r), purification = ill != null && pmv > 0 ? ill / pmv : null

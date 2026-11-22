@@ -534,6 +534,22 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   console.log('FUNDS AUDIT CHECK:', ok8 ? 'ok' : 'FAILED', JSON.stringify({ part: part?.sym, partCov: part?.purificationCoveredWeight, low: low?.sym, lowCov: low?.purificationCoveredWeight,
     partHead: tp?.head.slice(0, 200), partOut: tp?.out, lowHead: tl?.head.slice(0, 200), lowBox: tl?.box }))
   if (!ok8) process.exitCode = 1
+  // (9) External audit 2026-11-22 (rules, mapping). An unjudged row says why in its own words (not matched to a company,
+  // no numbers at SEC, stale numbers, no quarterly filings: not one «ما عندنا قوائمها» for all); a row whose company has
+  // a 10-Q or 10-K newer than the numbers says so; the method says collateral is named only above 0.5%.
+  const top30 = (f) => f.rows.filter((x) => x.k !== 'collateral').slice(0, 30)
+  const fUn = withRows.find((f) => top30(f).some((x) => x.k === 'equity' && (x.why ?? []).includes('unmatched')))
+  const fNew = withRows.find((f) => top30(f).some((x) => x.k === 'equity' && x.newer))
+  const t9 = {}
+  for (const f of [...new Set([fUn, fNew].filter(Boolean))]) {
+    await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(200)
+    t9[f.sym] = await page.evaluate(() => ({ card: document.querySelector('#fundsView .fcard.open')?.innerText.replace(/\s+/g, ' ') ?? '', method: document.querySelector('#fundsView .shmore')?.textContent ?? '' }))
+    await page.click(`button[data-fund="${f.sym}"]`); await page.waitForTimeout(100)
+  }
+  const ok9 = !!fUn && t9[fUn.sym].card.includes('ما ربطناها بشركة') && !!fNew && t9[fNew.sym].card.includes('تقرير أحدث')
+    && (t9[fUn.sym]?.method ?? '').includes('لما تتعدى 0.5٪')
+  console.log('FUNDS AUDIT 2 CHECK:', ok9 ? 'ok' : 'FAILED', JSON.stringify({ unmatched: fUn?.sym, newer: fNew?.sym, card: fUn ? t9[fUn.sym].card.slice(0, 300) : null }))
+  if (!ok9) process.exitCode = 1
   console.log('LOGS:', logs)
   await browser.close()
 })()

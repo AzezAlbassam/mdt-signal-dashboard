@@ -6,7 +6,7 @@
 // or fewer than 35 funds written.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
-import { getter, companies, yieldAverager, inputsFor } from './sec-lib.js';
+import { getter, companies, yieldAverager, inputsFor, newErrors, MAX_NEW_ERRORS } from './sec-lib.js';
 import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares } from '../../engine/funds.js';
 
 const MAX_AGE_DAYS = 150; // A7: holdings up to 150 days old (owner, 2026-11-21)
@@ -56,7 +56,12 @@ const billYield = yieldAverager(get, 'DTB3');
 const ownInterest = (asOf) => { const y = billYield(new Date(Date.parse(asOf) - 91 * 864e5).toISOString().slice(0, 10), asOf); return y == null ? null : y / 100 * 91 / 365; };
 const extra = {};
 for (const cik of need) { extra[cik] = reuse?.companies?.[cik] ?? inputsFor(cik, get, avgYield ?? yieldAverager(get)); byCik.set(cik, extra[cik]); process.stderr.write('.'); }
-writeFileSync('data/shariah/fund-companies.json', JSON.stringify({ built: new Date().toISOString(), companies: extra }));
+// a fetch SEC refused looks like a company without numbers: more than a few new ones stop the run before anything is written
+const prevCos = reuse ? null : existsSync('data/shariah/fund-companies.json') ? JSON.parse(readFileSync('data/shariah/fund-companies.json', 'utf8')).companies : null;
+const lost = prevCos ? newErrors(prevCos, extra) : [];
+if (lost.length > MAX_NEW_ERRORS) throw new Error(`${lost.length} held companies newly without SEC numbers (more than ${MAX_NEW_ERRORS}): ${lost.join(', ')}`);
+// a rerun with --reuse keeps the fetch's own time, so the 36-hour limit counts from the fetch, not from the last rerun
+writeFileSync('data/shariah/fund-companies.json', JSON.stringify({ built: reuse?.built ?? new Date().toISOString(), companies: extra }));
 
 // Riyadh's date (UTC+3, no daylight saving): the weekly run starts Saturday 01:17 Riyadh, still Friday in UTC
 const today = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
@@ -81,11 +86,12 @@ const rangeOf = (cik, period) => {
   return use.length ? [Math.min(...use), Math.max(...use)] : null;
 };
 // A quarter average from data dated before a split may be on the other basis: divided by the ratio when the split
-// came after the data, open both ways when it may have (the source names the last bar's date; else the file's date).
+// came after the data, open both ways when it may have (the source names the last bar's date; else the entry's asOf,
+// kept across weekly merges; else the file's date).
 const QP_DATE = (QPF.built ?? '').slice(0, 10);
 function quarterOn(q, c) {
   if (!q || !c?.splitRatio || !c.splitWindow) return q;
-  const asOf = q.source?.match(/last bar (\d{4}-\d{2}-\d{2})/)?.[1] ?? QP_DATE;
+  const asOf = q.source?.match(/last bar (\d{4}-\d{2}-\d{2})/)?.[1] ?? q.asOf ?? QP_DATE;
   if (asOf && c.splitWindow[0] >= asOf) return { ...q, avg: q.avg / c.splitRatio };
   if (asOf && c.splitWindow[1] <= asOf) return q;
   return { ...q, alt: q.avg / c.splitRatio };
@@ -120,7 +126,9 @@ for (const f of list) {
       // revenue 0 with interest: an infinite share, written as 100% with a flag (JSON has no Infinity)
       dr: s.numbers?.debtRatio ?? null, is: is === Infinity ? 1 : is, ...(is === Infinity ? { noRev: true } : {}),
       est: !!c?.illicitEstimated && c?.estimate != null, ub: !!c?.illicitEstimated && c?.estimate == null,
-      pur: s.purification ?? null, start: c?.period?.start ?? null, end: c?.period?.end ?? null, foreign: h.country && h.country !== 'US' };
+      pur: s.purification ?? null, start: c?.period?.start ?? null, end: c?.period?.end ?? null, foreign: h.country && h.country !== 'US',
+      // a 10-Q or 10-K newer than these numbers (companyfacts lags some filings; plan R5 wants the latest)
+      ...(c?.newerFiling?.p ? { newer: c.newerFiling.p } : {}) };
   });
   // look-through share of illicit revenue (plan E3): a share above 100% means the revenue tag leaves interest out (lenders
   // with fee-only revenue, review 2026-11-22), so it counts as 100%

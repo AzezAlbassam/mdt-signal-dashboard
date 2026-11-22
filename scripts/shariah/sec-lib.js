@@ -18,6 +18,12 @@ export function getter() {
   };
 }
 
+// Entries that had numbers last time and have none now (a refused or failed fetch reads as 'no XBRL facts'), or lost
+// their industry code (a refused submissions fetch): the weekly run stops on more than a few (audit 2026-11-22)
+export const newErrors = (prev, next) => Object.entries(next).filter(([k, v]) => prev?.[k] && !prev[k].error && (v?.error || (prev[k].sic && !v?.sic)))
+  .map(([k, v]) => `${k} (${v?.error ?? 'no SIC'})`);
+export const MAX_NEW_ERRORS = 5;
+
 // ticker -> CIK and the list of companies (SEC company_tickers.json)
 export function companies(get) {
   const rows = Object.values(get('https://www.sec.gov/files/company_tickers.json') ?? {}).map((r) => ({ cik: String(r.cik_str).padStart(10, '0'), ticker: r.ticker, title: r.title }));

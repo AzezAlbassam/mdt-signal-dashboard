@@ -280,3 +280,9 @@ test('audit: the interest a fund earns on its own bills, bonds and money funds i
   assert.ok(Math.abs(r.purificationCoveredWeight - (0.5545 + 0.0941 + 0.225)) < 1e-12);
   assert.equal(r.state, 'غير جائز');
 });
+test('audit: an unjudged holding says why: not matched to a company, no numbers at SEC, stale numbers, or no quarterly filings', () => {
+  assert.deepEqual(screenHolding(null, 10, SIC).missing, ['unmatched']);
+  assert.deepEqual(screenHolding({ cik: '1', error: 'no XBRL facts' }, 10, SIC).missing, ['unreadable']);
+  assert.deepEqual(screenHolding({ cik: '1', period: null, stale: '2026-03-31' }, 10, SIC).missing, ['stale']);
+  assert.deepEqual(screenHolding({ cik: '1', period: null }, 10, SIC).missing, ['statements']);
+});

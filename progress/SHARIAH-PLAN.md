@@ -661,3 +661,39 @@ Not fixed (documented): debt under a company's own tag (Penske's floor-plan note
 current debt), share counts only by class (Hershey, Visa, Constellation, Tyson, Ares), KLA's swap-marked carrying value,
 derivatives at fair value rather than notional. T5's restated 99-100.5% equity tolerance (L3) is replaced by the loader's
 95-105% signed check (fixes-b C30).
+
+### M14. External audit, second batch (the rules and mapping auditors, reported after M13's fixes) — POST-HOC, tests first
+Tests written first and seen failing: test/funds.test.js (row reasons), test/shariah-scripts.test.js (new: the merge
+keeps saved averages and their price date; new SEC errors are counted), test/page-shariah.test.js (new: the stock
+page's wording), and the browser check's section (9) FUNDS AUDIT 2 CHECK.
+- The weekly run lost exact quarter averages: merge-quarter-prices.js rebuilt quarter-prices.json from that week's part
+  files alone, so averages fetched in an earlier week (and, with the scratchpad cleared, all of them) fell back to the
+  band (XLK went to «ما ينحكم» in the auditor's dry run). It now starts from the saved file; a newer entry replaces an
+  older one and fund-load uses an entry only for the company's current quarter. Each entry keeps asOf, the day its prices
+  were split-adjusted to, so a split after it is still divided out (before, the file's own date stood in, and a kept
+  entry would have taken a later merge's date).
+- A fetch SEC refuses looks like a company without numbers ('no XBRL facts'): 222 refused stocks passed every gate of
+  the weekly run in the auditor's simulation, and 30 sure fails became «ما ينحكم». sec-load.js and fund-load.js now stop
+  (exit 1, nothing written) when more than 5 companies that had numbers last time have none, or lost their industry code
+  (a refused submissions fetch: a bank would no longer fail R1); the stock page no longer
+  calls such a company a foreign annual filer («ما لقينا أرقامها في SEC ... أو SEC ما ردّت»).
+- The weekly run never committed the rebuilt page, so its own step 1 (a clean tree) would have stopped the next
+  Saturday; failures left changed data behind. Step 7 commits pages/stocks.html, and any failure after step 3 restores
+  data/shariah and the page. The TradingView brief is saved in progress/SHARIAH-TV-BRIEF.md (it lived only in the
+  conversation). Step 4b starts from an empty part folder. diff-inputs reports debt that moved more than 10% and reads
+  the activity table with its company list. A rerun of fund-load.js with --reuse keeps the fetch's time in
+  fund-companies.json (each rerun had reset it, so the 36-hour limit never ran out).
+- Row reasons: «ما عندنا قوائمها في SEC» was given to every holding without a quarter. It now says which: not matched to
+  a company in SEC's current list (445 rows: foreign companies, renamed or delisted US ones), no numbers at SEC (56),
+  stale numbers (77), or no quarterly filings. Rows whose company has a 10-Q or 10-K newer than the numbers say so (12
+  companies: CEG, PCG, WMB, PEG and others; companyfacts lags those filings). A combined interest tag reads «رقم مدموج
+  (حد أعلى)» on the stock page, not «تقدير». The method says collateral is named above 0.5%.
+- Corrections to earlier parts: M11's "EPS-implied shares for Visa" never reached real Visa data (Visa, Hershey, Tyson,
+  Constellation, Ares and others tag share counts only by class, so their market value is missing and they stay
+  «ما ينحكم»; no fund verdict depends on it today: XLP has 4.0% of its weight unknown for this reason alone). M12's "22
+  debt figures rise, none fall" counted only rises above 0.5%: 33 rise, none fall; PPG's rise is a finance lease tagged
+  only as a total (6M), and Molson Coors' lease subtraction is now conditional (M13).
+- Not fixed, no verdict changes (the auditors' own effect runs): former company names (Skydance, Hartford, Franklin
+  Templeton, Vivmark), name-format misses (a state glued to the legal form as in "Inc.DE", spaced "N V", key ties such as
+  Rio Tinto plc/Ltd), TSMC's US ADR lines reported under the name "TSMC", CVR and earn-out lines booked as equity (0%
+  weight today), ADR-ratio prices for companies held as both ADRs and home shares (none is judged today).
