@@ -213,7 +213,8 @@ function parityPrice(priced, day) {
 
 /**
  * MarketData's columnar chain as the rows chainRows reads. End-of-day chains (the free and
- * trial plans) carry no Greeks, so delta comes from each option's own price. The chain's time
+ * trial plans) carry no Greeks, so delta comes from chainDeltas: each expiry's smile and
+ * dividends, read from its own quotes. The chain's time
  * is its newest quote; quotes stamped at or after the close are closing quotes (eod), which
  * are wider than the session's and are labelled so. chainSize is every symbol returned (what
  * the request cost), before any is dropped. `deltas` is chainDeltas; a test passes its own to

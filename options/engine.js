@@ -60,7 +60,10 @@ const ncdf = (x) => {
 const R = 0.04 // ponytail: one flat rate; a delta band does not need the curve
 const bsD1 = (S, K, T, v) => (Math.log(S / K) + (R + (v * v) / 2) * T) / (v * Math.sqrt(T))
 
-/** Black–Scholes implied volatility (no dividends) by bisection: 0 when no time value is left, null on bad input. */
+/**
+ * Black–Scholes implied volatility by bisection: 0 when no time value is left, null on bad input.
+ * No dividends in the formula: a dividend payer is priced on its escrowed spot (S less dividends).
+ */
 function impliedVol({ S, K, T, price, type }) {
   if (!(S > 0 && K > 0 && T > 0 && price > 0)) return null
   const disc = K * Math.exp(-R * T)
@@ -90,45 +93,158 @@ function ownDelta({ S, K, T, price, type }) {
   return type === 'C' ? ncdf(bsD1(S, K, T, v)) : ncdf(bsD1(S, K, T, v)) - 1
 }
 
-/** Delta of an American put on a 100-step CRR tree: early exercise pulls a deep put to -1. */
-function americanPutDelta(S, K, T, v, steps = 100) {
+/**
+ * American value and delta on a 100-step CRR tree over the escrowed spot Sx = S − D, the stock less
+ * the dividends due before expiry (D, paid evenly to expiry): exercising pays against Sx_t + D_t.
+ * Early exercise pulls a deep put to -1, and a deep call on a dividend payer to 1. Node prices step
+ * by u² (no power per node): a chain runs thousands of these trees.
+ */
+function american(Sx, D, K, T, v, type, exercise = true, steps = 100) {
   const u = Math.exp(v * Math.sqrt(T / steps))
   const d2 = 1 / (u * u)
   const p = (Math.exp((R * T) / steps) - 1 / u) / (u - 1 / u)
   const disc = Math.exp((-R * T) / steps)
-  const vals = []
-  for (let i = 0, s = S * u ** steps; i <= steps; i += 1, s *= d2) vals.push(Math.max(0, K - s))
+  const w = type === 'C' ? 1 : -1
+  const ex = exercise ? 1 : 0
+  const vals = new Float64Array(steps + 1)
+  for (let i = 0, s = Sx * u ** steps; i <= steps; i += 1, s *= d2) vals[i] = Math.max(0, w * (s - K))
   for (let n = steps - 1; n >= 1; n -= 1) {
-    for (let i = 0, s = S * u ** n; i <= n; i += 1, s *= d2) vals[i] = Math.max(disc * (p * vals[i] + (1 - p) * vals[i + 1]), K - s)
+    const due = (D * (steps - n)) / steps
+    for (let i = 0, s = Sx * u ** n; i <= n; i += 1, s *= d2) vals[i] = Math.max(disc * (p * vals[i] + (1 - p) * vals[i + 1]), ex * w * (s + due - K))
   }
-  return (vals[0] - vals[1]) / (S * (u - 1 / u))
+  return { delta: (vals[0] - vals[1]) / (Sx * (u - 1 / u)), value: Math.max(disc * (p * vals[0] + (1 - p) * vals[1]), ex * w * (Sx + D - K)) }
+}
+
+// A two-sided quote whose ask is over 5 times its bid (0.05 x 10.00) is a placeholder, not a price.
+// Without bid and ask, a mid is taken as given.
+const quoted = (o) => o?.mid > 0 && !(o.bid > 0 && o.ask > 5 * o.bid)
+const spreadOf = (o) => (o.bid > 0 && o.ask >= o.bid ? (2 * (o.ask - o.bid)) / (o.ask + o.bid) : 0)
+
+/**
+ * The dividends (present value, dollars) an expiry's options price in, from put-call parity at the
+ * four strikes nearest the money: D = S − K·e^(−rT) − (C − P). Listed options are American, so
+ * each side's early-exercise premium comes off first; otherwise every put's premium reads as a
+ * dividend. Bounded to 2% of S plus 10% a year (a quarterly payout on a high yielder; more is a
+ * hard-to-borrow stock's skewed quotes) and at most half of S; below, to −5% a year (a market
+ * rate over the flat one).
+ */
+function dividends(list, S) {
+  const puts = new Map(list.filter((o) => o.type === 'P').map((o) => [o.strike, o]))
+  const away = (o) => Math.abs(Math.log(o.strike / S))
+  const pairs = list
+    .filter((c) => c.type === 'C' && away(c) <= 0.25)
+    .map((c) => [c, puts.get(c.strike)])
+    .filter(([c, p]) => c.T > 0 && quoted(c) && quoted(p) && p.T > 0 && spreadOf(c) <= 0.5 && spreadOf(p) <= 0.5)
+    .sort(([a], [b]) => away(a) - away(b))
+    .slice(0, 4)
+  if (pairs.length === 0) return 0
+  const T = pairs[0][0].T
+  const bound = (d) => Math.min(S * Math.min(0.5, 0.02 + 0.1 * T), Math.max(-0.05 * S * T, d))
+  const parity = ([c, p]) => S - c.strike * Math.exp(-R * c.T) - (c.mid - p.mid)
+  const D = bound(median(pairs.map(parity).sort((a, b) => a - b)))
+  const premium = (o, v) => american(S - D, D, o.strike, o.T, v, o.type).value - american(S - D, D, o.strike, o.T, v, o.type, false).value
+  const read = pairs.map(([c, p]) => {
+    const o = c.strike >= S ? c : p
+    const v = impliedVol({ S: S - D, K: o.strike, T: o.T, price: o.mid, type: o.type })
+    return parity([c, p]) + (v > 0.01 ? premium(c, v) - premium(p, v) : 0)
+  })
+  return bound(median(read.sort((a, b) => a - b)))
 }
 
 /**
- * Deltas for a chain that comes without Greeks (end-of-day chains), from the options' prices:
- * [{ expiry, strike, type, T, price, mid }] with T in years, mid only for two-sided quotes.
- * Listed options are American and many of these stocks pay dividends, so an in-the-money option
- * inverted on its own is misread: a deep put carries early-exercise value, a call on a dividend
- * payer trades under parity. Only the out-of-the-money option at each strike is read from its own
- * price; the in-the-money call is 1 + its put's delta, and the in-the-money put takes its call's
- * volatility into an American tree. Against Cboe's own deltas on 475,561 contracts this cut the
- * errors over 0.1 from 33,470 (each option on its own) to 5,830.
- * ponytail: no dividend or borrow model, one flat rate — enough to sort contracts into a delta band.
+ * An expiry's volatility smile from its out-of-the-money quotes (calls at or above S, puts at or
+ * below), priced on the escrowed spot Sx: an in-the-money quote is mostly intrinsic value and says
+ * little about volatility. A vol far above its neighbours' (a quote way over the market) is left
+ * out: it would pull the deep in-the-money options beside it into the band; one below them errs
+ * towards not sizing, so it stays. [{ x: ln(K/S), v, of: [the options read] }] by strike.
+ */
+function smileOf(list, S, Sx) {
+  const byStrike = new Map()
+  for (const o of list) {
+    if (!(o.type === 'C' ? o.strike >= S : o.strike <= S) || !quoted(o)) continue
+    const v = impliedVol({ S: Sx, K: o.strike, T: o.T, price: o.mid, type: o.type })
+    if (!(v > 0.01)) continue // a hair over intrinsic, not a market (and a tree needs v·√dt over r·dt)
+    const p = byStrike.get(o.strike) ?? { x: Math.log(o.strike / S), sum: 0, of: [] }
+    p.sum += v
+    p.of.push(o)
+    byStrike.set(o.strike, p)
+  }
+  const pts = [...byStrike.values()].map((p) => ({ x: p.x, v: p.sum / p.of.length, of: p.of })).sort((a, b) => a.x - b.x)
+  return pts.filter((p, j) => {
+    const near = [...pts.slice(Math.max(0, j - 2), j), ...pts.slice(j + 1, j + 3)].map((q) => q.v).sort((a, b) => a - b)
+    const m = median(near)
+    return near.length < 2 || p.v - m <= Math.max(0.05, 0.25 * m)
+  })
+}
+
+/** Volatility at log-moneyness x: linear between the smile's strikes, flat beyond its ends. */
+function volAt(smile, x) {
+  const j = smile.findIndex((p) => p.x >= x)
+  if (j === 0) return smile[0].v
+  if (j < 0) return smile[smile.length - 1].v
+  const [a, b] = [smile[j - 1], smile[j]]
+  return a.v + ((b.v - a.v) * (x - a.x)) / (b.x - a.x)
+}
+
+/**
+ * Deltas for a chain that comes without Greeks (end-of-day chains), from the options' quotes:
+ * [{ root, expiry, strike, type, T, mid, price, bid, ask }] with T in years, mid only for two-sided
+ * quotes, price = mid, else last; root, bid and ask are used when present.
+ * Per root and expiry: the dividends from put-call parity (escrowed: delta is dV/dS with dollar
+ * dividends, so a call's delta is about its put's plus 1); a smile from the out-of-the-money quotes;
+ * each option at its own vol if it is on the smile, else at the smile's vol for its strike
+ * (interpolated, flat beyond the quoted strikes), so a deep strike without a usable quote reads like
+ * its neighbours instead of from its own wide quote. Puts are priced American, calls too when
+ * dividends are due. An expiry with no usable quote borrows the nearest expiry's smile, however thin
+ * (measured: a smile of 2+ points within 2x the T trades fewer raw errors for more tradable ones);
+ * a root with none at all reads each option from its own price, as before. An option with no
+ * price at all reads null. Away from the money, a strike never reads nearer the band than the
+ * one before it. Placeholder quotes (0.05 x 10.00) are caught only when bid and ask are given:
+ * with a mid alone they are taken as prices.
+ * Against Cboe's own deltas on 475,561 contracts (685 tickers, Cboe's intraday quotes), next to
+ * reading the in-the-money side from its partner's vol without dividends: errors over 0.1 from
+ * 5,831 to 2,012; band calls (0.20-0.85) unlike Cboe's on the 265,507 tradable contracts from 6,607
+ * to 3,972; $100k answers with a leg Cboe puts outside the band by over 0.1 from 22 to 8 (by any
+ * margin, 150 to 94); strikes where delta turns the wrong way by over 0.02 from 5,956 to 2.
+ * ponytail: one flat rate, dividends spread evenly to expiry (a dividend calendar would place them).
  */
 export function chainDeltas(options, S) {
-  const at = new Map(options.map((o) => [`${o.expiry} ${o.strike} ${o.type}`, o]))
-  const own = (o) => ownDelta({ S, K: o.strike, T: o.T, price: o.price, type: o.type })
-  return options.map((o) => {
-    if (o.type === 'C' ? o.strike >= S : o.strike <= S) return own(o)
-    const pair = at.get(`${o.expiry} ${o.strike} ${o.type === 'C' ? 'P' : 'C'}`)
-    if (!(pair?.mid > 0)) return own(o)
-    if (o.type === 'C') {
-      const d = ownDelta({ S, K: o.strike, T: o.T, price: pair.mid, type: 'P' })
-      return d == null ? own(o) : 1 + d
-    }
-    const v = impliedVol({ S, K: o.strike, T: o.T, price: pair.mid, type: 'C' })
-    return v > 0 ? americanPutDelta(S, o.strike, o.T, v) : own(o)
+  if (!(S > 0)) return options.map(() => null)
+  const byExpiry = new Map()
+  for (const o of options) {
+    const k = `${o.root ?? ''} ${o.expiry}`
+    if (!byExpiry.has(k)) byExpiry.set(k, [])
+    byExpiry.get(k).push(o)
+  }
+  const books = [...byExpiry.values()].map((list) => {
+    const D = dividends(list, S)
+    return { list, root: list[0].root ?? '', T: list[0].T, D, smile: smileOf(list, S, S - D) }
   })
+  const deltas = new Map()
+  for (const b of books) {
+    const own = new Map(b.smile.flatMap((p) => p.of.map((o) => [o, p.v])))
+    const src = b.smile.length ? b : books.filter((x) => x.root === b.root && x.smile.length).sort((x, y) => Math.abs(x.T - b.T) - Math.abs(y.T - b.T))[0]
+    for (const o of b.list) {
+      if (!src) deltas.set(o, ownDelta({ S, K: o.strike, T: o.T, price: o.price, type: o.type }))
+      else if (!(o.T > 0 && o.strike > 0) || o.price == null) deltas.set(o, null) // no quote, no trade: nothing to read
+      else {
+        const v = own.get(o) ?? volAt(src.smile, Math.log(o.strike / S))
+        deltas.set(o, o.type === 'P' || b.D > 0 ? american(S - b.D, b.D, o.strike, o.T, v, o.type).delta : ncdf(bsD1(S - b.D, o.strike, o.T, v)))
+      }
+    }
+    // Delta only falls as the strike rises, calls and puts alike. Walking out from the money, a
+    // strike never reads nearer the band than the one before it (a smile rising into the wing, or
+    // a wide quote read alone, would have it turn back): deeper in towards ±1, further out towards 0.
+    for (const type of ['C', 'P']) {
+      const side = b.list.filter((o) => o.type === type && deltas.get(o) != null)
+      const up = side.filter((o) => o.strike >= S).sort((x, y) => x.strike - y.strike)
+      const down = side.filter((o) => o.strike <= S).sort((x, y) => y.strike - x.strike)
+      for (const [walk, pick] of [[up, Math.min], [down, Math.max]]) {
+        for (let k = 1; k < walk.length; k += 1) deltas.set(walk[k], pick(deltas.get(walk[k]), deltas.get(walk[k - 1])))
+      }
+    }
+  }
+  return options.map((o) => deltas.get(o))
 }
 
 /** Median of an ascending array (null when empty). */

@@ -431,14 +431,78 @@ describe('chainDeltas (chains without Greeks)', () => {
     return type === 'C' ? S * Math.exp(-q * T) * N(d1) - K * Math.exp(-r * T) * N(d2) : K * Math.exp(-r * T) * N(-d2) - S * Math.exp(-q * T) * N(-d1)
   }
   const leg = (type, strike, T, price) => ({ expiry: '2029-01-19', type, strike, T, price, mid: price })
+  // A two-sided quote, and one a fraction w either side of a European price.
+  const quote = (type, strike, T, bid, ask, root = 'X') => ({ root, expiry: '2026-12-18', type, strike, T, bid, ask, mid: (bid + ask) / 2, price: (bid + ask) / 2 })
+  const fair = (type, strike, T, S, v, q = 0, w = 0.02) => { const m = euro(S, strike, T, v, q, type); return quote(type, strike, T, m * (1 - w), m * (1 + w)) }
+  const at = (chain, S, type, strike) => chainDeltas(chain, S)[chain.findIndex((o) => o.type === type && o.strike === strike)]
+  const falling = (chain, S, type) => chain.map((o, i) => [o, chainDeltas(chain, S)[i]]).filter(([o]) => o.type === type).sort(([a], [b]) => a.strike - b.strike).every(([, d], i, xs) => i === 0 || d <= xs[i - 1][1] + 1e-9)
 
-  test('a deep put carrying early-exercise value reads near -1, not inside the band', () => {
-    const call = leg('C', 200, 2, euro(100, 200, 2, 0.3, 0, 'C'))
-    const put = leg('P', 200, 2, 100.5) // an American put a little over K - S
-    const [alone] = chainDeltas([put], 100)
-    assert.ok(alone > -0.85, `on its own price it looks like ${alone}`)
-    const [, withCall] = chainDeltas([call, put], 100)
-    assert.ok(withCall < -0.97, `from its call's volatility: ${withCall}`)
+  test('a deep put with no call quoted at its strike reads like its neighbours, not from its own wide quote', () => {
+    // VALE Dec-18: S 9.83, the 12 put closed 2.00 x 2.60 and read -0.83 on its own; Cboe had -0.977
+    const S = 9.83
+    const T = 29 / 365
+    const chain = [fair('C', 9, T, S, 0.4), fair('C', 10, T, S, 0.37), fair('C', 11, T, S, 0.36), fair('P', 8, T, S, 0.5), fair('P', 9, T, S, 0.42), quote('P', 11, T, 1.16, 1.4), quote('P', 12, T, 2.0, 2.6)]
+    const d = at(chain, S, 'P', 12)
+    assert.ok(d < -0.95, `the 12 put reads ${d}`)
+    assert.ok(falling(chain, S, 'P'), 'put deltas fall as the strike rises')
+  })
+
+  test('a placeholder call quote (0.05 x 10.00) does not drag the deep put at its strike into the band', () => {
+    // IESC Dec-18: S 166.9, calls from 240 up quoted 0.05 x 10.00 lifted the puts there to -0.83
+    const S = 166.9
+    const T = 29 / 365
+    const chain = [170, 180, 190, 200, 210, 220].map((K) => fair('C', K, T, S, 0.9, 0, 0.3))
+    for (const K of [240, 250, 260]) chain.push(quote('C', K, T, 0.05, 10), quote('P', K, T, K - S - 1, K - S + 9))
+    for (const K of [240, 250, 260]) assert.ok(at(chain, S, 'P', K) < -0.88, `put ${K}: ${at(chain, S, 'P', K)}`)
+    assert.ok(at(chain, S, 'C', 240) < at(chain, S, 'C', 220), 'the placeholder call reads below the last real one')
+    assert.ok(falling(chain, S, 'P') && falling(chain, S, 'C'))
+  })
+
+  test('one call quoted far over its neighbours misleads neither itself nor its put', () => {
+    // AAL Dec-2028: the 27 call read 0.375 between 0.299 (25) and 0.197 (30), so its put read -0.719 (Cboe -0.974)
+    const S = 12.72
+    const T = 2.07
+    const chain = [15, 17, 20, 22, 25, 30, 35].map((K) => fair('C', K, T, S, 0.45, 0, 0.1))
+    chain.push(fair('C', 27, T, S, 0.62, 0, 0.1))
+    for (const K of [10, 12, 22, 25, 27]) chain.push(fair('P', K, T, S, 0.45, 0, 0.03))
+    const c = at(chain, S, 'C', 27)
+    assert.ok(c < at(chain, S, 'C', 25) && c > at(chain, S, 'C', 30), `the 27 call reads ${c}`)
+    assert.ok(at(chain, S, 'P', 27) < -0.9, `the 27 put reads ${at(chain, S, 'P', 27)}`)
+    assert.ok(falling(chain, S, 'P') && falling(chain, S, 'C'))
+  })
+
+  test('a dividend payer keeps a long-dated in-the-money put inside the band', () => {
+    // O Jan-2029: S 57.66, a 5% yield; the 67.5 put read -1.000 (exercised at once without dividends) and Cboe had -0.674
+    const S = 57.6
+    const T = 2.17
+    const chain = [45, 50, 55, 57.5, 60, 65, 67.5, 75].flatMap((K) => [fair('C', K, T, S, 0.21, 0.05, 0.03), fair('P', K, T, S, 0.21, 0.05, 0.03)])
+    const p = at(chain, S, 'P', 67.5)
+    assert.ok(p > -0.75 && p < -0.6, `the 67.5 put reads ${p}`)
+    // dollar dividends: a call's delta is its put's plus 1 (a hair more, the put is American)
+    const gap = at(chain, S, 'C', 57.5) - at(chain, S, 'P', 57.5)
+    assert.ok(gap > 1 && gap < 1.03, `call minus put at the money: ${gap}`)
+  })
+
+  test('an adjusted root at the same strike does not stand in for the real partner', () => {
+    // MSTR1 delivers something other than 100 shares, so its 120 call is priced for that
+    const S = 100
+    const chain = [fair('C', 120, 1, S, 0.3), fair('P', 120, 1, S, 0.3), fair('C', 110, 1, S, 0.3), fair('P', 90, 1, S, 0.3)]
+    const alone = at(chain, S, 'P', 120)
+    const withAdjusted = chainDeltas([...chain, quote('C', 120, 1, 30, 31, 'X1')], S)[1]
+    assert.equal(withAdjusted, alone)
+    assert.ok(alone < -0.65 && alone > -0.8, `the 120 put: ${alone}`)
+  })
+
+  test('with nothing quoted out of the money, options read from their own price, a deeper put never nearer the band', () => {
+    // BTQ Jan-15, S 1.19: on its own 3.70 x 4.30 the 5 put read -0.64, between -0.82 (2.5) and -1 (7.5)
+    const S = 1.1885
+    const T = 57 / 365
+    const chain = [quote('P', 2.5, T, 1.25, 1.45), quote('P', 5, T, 3.7, 4.3), quote('P', 7.5, T, 5.8, 6.8)]
+    const [p25, p5] = chainDeltas(chain, S)
+    assert.ok(p25 < -0.75 && p25 > -0.9, `the 2.5 put on its own price: ${p25}`)
+    assert.ok(chainDeltas([chain[1]], S)[0] > -0.7, 'the 5 put alone reads from its own quote')
+    assert.ok(p5 <= p25, `next to the 2.5 put: ${p5}`)
+    assert.ok(falling(chain, S, 'P'))
   })
 
   test("a call on a dividend payer trades under parity: it is 1 + its put's delta, not 1", () => {
@@ -449,10 +513,32 @@ describe('chainDeltas (chains without Greeks)', () => {
     assert.ok(d > 0.6 && d < 0.85, `with its put: ${d}`)
   })
 
-  test('out-of-the-money options and unpaired ones read from their own price', () => {
+  test('away from the money a wide quote never reads nearer the band than its neighbour; an unpriced option reads null', () => {
+    // XYZ Dec-24: the 86 call read 0.210 next to the 85 at 0.177 (Cboe 0.150 / 0.173)
+    const S = 70
+    const T = 32 / 365
+    const chain = [70, 75, 80, 85, 90, 95].map((K) => fair('C', K, T, S, 0.5, 0, 0.05))
+    chain.push(quote('C', 86, T, 0.2, 1.4)) // wide, its vol under the outlier tolerance
+    chain.push({ ...quote('C', 100, T, 0, 0), mid: null, price: null }) // no quote, no trade
+    const d = chainDeltas(chain, S)
+    assert.ok(d[6] <= d[3], `the 86 call reads ${d[6]}, the 85 ${d[3]}`)
+    assert.ok(falling(chain.slice(0, 7), S, 'C'))
+    assert.equal(d[7], null)
+  })
+
+  test('one put with a broken time to expiry beside the money leaves the rest of its expiry readable', () => {
+    // the at-the-money pair is the only one to read dividends from, and another expiry has a smile to lend
+    const S = 100
+    const chain = [quote('C', 100, 0.5, 9.9, 10.1), quote('P', 100, NaN, 8.9, 9.1), quote('C', 110, 0.5, 5.9, 6.1), quote('P', 90, 0.5, 4.9, 5.1), quote('P', 120, 0.5, 23, 24), quote('C', 80, 0.5, 23, 24)]
+    const other = [quote('C', 110, 0.15, 1.9, 2.1), quote('P', 90, 0.15, 1.4, 1.6)].map((o) => ({ ...o, expiry: '2027-01-15' }))
+    const d = chainDeltas([...chain, ...other], S)
+    assert.equal(d.filter(Number.isFinite).length, 7, d.join(' ')) // all but the broken put
+  })
+
+  test('out-of-the-money options read from their own price, the put as the American option it is', () => {
     const [c, p] = chainDeltas([leg('C', 110, 1, euro(100, 110, 1, 0.4, 0, 'C')), leg('P', 90, 1, euro(100, 90, 1, 0.4, 0, 'P'))], 100)
     assert.ok(Math.abs(c - 0.5246) < 0.005, `call ${c}`) // N(d1) at the 40% it was priced with
-    assert.ok(Math.abs(p + 0.2866) < 0.005, `put ${p}`)
+    assert.ok(p < -0.2866 && p > -0.31, `put ${p}`) // a little past the European -0.2866: early exercise
     assert.deepEqual(chainDeltas([leg('C', 110, 1, null)], 100), [null])
     assert.deepEqual(chainDeltas([leg('C', 110, 1, 1)], null), [null])
   })
