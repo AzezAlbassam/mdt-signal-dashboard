@@ -1,18 +1,24 @@
-// Pull delayed option chains from Cboe for every ticker on the watchlist, fold today's
+// Pull option chains from MarketData for every ticker on the watchlist, fold each session's
 // volume into a rolling 20-session history, and write one compact snapshot per ticker.
 //
-//   node options/snapshot.js <dataDir> [--add MSTR,HOOD] [--remove XYZ] [--only MSTR]
+//   node options/snapshot.js <dataDir> [--add MSTR,HOOD] [--remove XYZ] [--only MSTR] [--resummarize]
 //
 // <dataDir> holds watchlist.json, removed.json, history/<T>.json and receives <T>.json + index.json.
-// Runs in GitHub Actions; the page reads the snapshots as static files.
+// Runs once a trading day from a scheduled task (options/daily.sh); the page reads the
+// snapshots as static files. The account's token is added to every request by the network the
+// task runs in, never by this code.
 
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate } from './engine.js'
+import { chainRows, mergeSession, averageVolume, tickerSummary, nyDate, parseOccSymbol, bsDelta } from './engine.js'
 
-const INDEXES = new Set(['SPX', 'NDX', 'RUT', 'VIX', 'XSP', 'DJX', 'OEX', 'XEO'])
 const UA = 'options-liquidity-snapshot/1.0'
+const MARKETDATA = 'https://api.marketdata.app/v1/options/chain'
+// Credits left today, as the source last reported them; a pass stops fetching below RESERVE
+// (the free plan has 100 a day; a large chain costs about one credit per 1,000 contracts).
+export const credits = { remaining: null }
+const RESERVE = 15
 
 const readJson = async (p, fallback) => {
   try {
@@ -112,15 +118,15 @@ export function quoteWindow(now = new Date()) {
 }
 
 /**
- * The moment after which the page should call the data late: the next pass plan() would run
- * (at least an hour away — hourly in the quote window, then the close capture, then the next
- * trading day's first pass), plus 90 minutes for a late or slow job.
+ * The moment after which the page should call the data late. The pass runs once a trading
+ * day, shortly after the source rolls the previous session at 9:30 New York; the next one is
+ * due the next trading day, so the data is late from 12:30 that day.
  */
 export function staleAfter(now) {
-  let t = new Date(Math.floor(now.getTime() / 60000) * 60000 + 60 * 60000)
+  let t = new Date(Math.floor(now.getTime() / 60000) * 60000 + 12 * 3600000)
   for (let i = 0; i < 8 * 1440; i += 1) {
     const c = nyClock(t)
-    if (c && ((c.m >= 600 + LAG && c.m < c.close - 10 + LAG) || c.m === finalAt(c))) return new Date(t.getTime() + 90 * 60000).toISOString()
+    if (c && c.m === 750) return t.toISOString()
     t = new Date(t.getTime() + 60000)
   }
   return null
@@ -134,7 +140,7 @@ export function missDay(now) {
   return nyDate(nyClock(now) ? now : lastClose(now) ?? now)
 }
 
-/** When the chain itself was last updated, per Cboe's own stamp (UTC); null if unknown. */
+/** When the chain itself was last updated, per the source's own stamp (UTC); null if unknown. */
 function chainTime(raw, now) {
   const ts = raw?.timestamp
   if (typeof ts !== 'string') return null
@@ -158,30 +164,77 @@ const completedSessions = (history, session, at) =>
 
 const COLS = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
 
-async function fetchChain(ticker) {
-  const sym = INDEXES.has(ticker) ? `_${ticker}` : ticker
-  const url = `https://cdn.cboe.com/api/global/delayed_quotes/options/${encodeURIComponent(sym)}.json`
+const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
+
+/**
+ * MarketData's columnar chain as the rows chainRows reads. End-of-day chains (the free and
+ * trial plans) carry no Greeks, so delta comes from each option's own price. The chain's time
+ * is its newest quote; quotes stamped at or after the close are closing quotes (eod), which
+ * are wider than the session's and are labelled so.
+ */
+export function fromMarketData(j) {
+  const n = j?.s === 'ok' ? j.optionSymbol?.length ?? 0 : 0
+  const at = (k, i) => j[k]?.[i] ?? null
+  let newest = 0
+  for (let i = 0; i < n; i += 1) newest = Math.max(newest, at('updated', i) ?? 0)
+  const options = []
+  for (let i = 0; i < n; i += 1) {
+    const sym = at('optionSymbol', i)
+    const p = parseOccSymbol(sym)
+    if (!p) continue
+    const bid = at('bid', i)
+    const ask = at('ask', i)
+    const last = at('last', i)
+    const stamp = at('updated', i) ?? newest
+    let delta = at('delta', i)
+    if (delta == null) {
+      const price = bid > 0 && ask >= bid ? (bid + ask) / 2 : last > 0 ? last : null
+      const T = (Date.parse(`${p.expiry}T21:00:00Z`) - stamp * 1000) / (365 * 86400000)
+      delta = bsDelta({ S: at('underlyingPrice', i), K: p.strike, T, price, type: p.type })
+    }
+    options.push({
+      option: sym, bid, ask, bid_size: at('bidSize', i), ask_size: at('askSize', i), last_trade_price: last,
+      volume: at('volume', i), open_interest: at('openInterest', i), iv: at('iv', i), delta,
+      last_trade_time: stamp ? nyDate(new Date(stamp * 1000)) : '',
+    })
+  }
+  const time = newest ? new Date(newest * 1000) : null
+  const c = time && nyClock(time)
+  return {
+    timestamp: time ? time.toISOString().slice(0, 19).replace('T', ' ') : undefined,
+    eod: !c || c.m >= c.close,
+    data: { current_price: n ? at('underlyingPrice', 0) : null, options },
+  }
+}
+
+async function fetchChain(ticker, now = new Date()) {
+  // Expiries a week to 1,300 days out: the rest is never sized, and every contract costs credit.
+  const day = nyDate(now)
+  const url = `${MARKETDATA}/${encodeURIComponent(ticker)}/?expiration=all&from=${addDays(day, 7)}&to=${addDays(day, 1300)}`
   let status = 0
-  for (let attempt = 1; attempt <= 4; attempt += 1) {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
       const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } })
-      if (res.ok) return res.json()
+      const left = Number(res.headers.get('x-api-ratelimit-remaining') ?? NaN)
+      if (Number.isFinite(left)) credits.remaining = left
       status = res.status
-      // Cboe answers 403/404 for a symbol with no chain — and, now and then, for one that
-      // has a chain. Believe it only on the second asking.
-      if ((status === 403 || status === 404) && attempt >= 2) throw Object.assign(new Error('no listed options'), { noOptions: true })
+      if (status === 200 || status === 203) return fromMarketData(await res.json())
+      const body = await res.json().catch(() => null)
+      if (status === 404 && body?.s === 'no_data') throw Object.assign(new Error('no listed options'), { noOptions: true })
+      // The account itself is refused (no key, wrong key, plan): no other ticker will do better.
+      if (status === 401 || status === 402 || status === 403) throw Object.assign(new Error(`MarketData refused the account (${status} ${body?.errmsg ?? ''})`.trim()), { fatal: true })
+      if (status === 429) throw Object.assign(new Error("MarketData's daily credits are used up (they reset at 9:30 New York)"), { budget: true })
     } catch (e) {
-      if (e.noOptions) throw e
+      if (e.noOptions || e.fatal || e.budget) throw e
       status = String(e.cause?.code ?? e.message)
     }
-    // Throttled or flaky: back off hard; a full-universe run is not in a hurry.
     await new Promise((r) => setTimeout(r, 5000 * attempt))
   }
-  throw new Error(`Cboe did not answer (${status})`)
+  throw new Error(`MarketData did not answer (${status})`)
 }
 
 export async function snapshotTicker(ticker, dataDir, now) {
-  const raw = await fetchChain(ticker)
+  const raw = await fetchChain(ticker, now)
   const today = nyDate(now)
   const { rows, session, totalVolume, price } = chainRows(raw, ticker, today)
   if (rows.length === 0) throw Object.assign(new Error('no listed options'), { noOptions: true })
@@ -190,7 +243,8 @@ export async function snapshotTicker(ticker, dataDir, now) {
   // (A field that is there but zero is real: some small chains have no quotes at all.)
   const listed = raw?.data?.options ?? []
   for (const k of ['bid', 'ask']) if (listed.length >= 20 && !listed.some((o) => o[k] != null)) throw new Error(`chain came back without ${k} prices`)
-  if (rows.filter((r) => r.delta == null).length > rows.length / 2) throw new Error('chain came back without deltas')
+  const quoted = rows.filter((r) => r.bid > 0)
+  if (quoted.filter((r) => r.delta == null).length > quoted.length / 2) throw new Error('chain came back without deltas')
   if (rows.length >= 20 && rows.every((r) => !r.oi)) throw new Error('chain came back without open interest')
 
   // History: one figure per contract per session, the day's final volume.
@@ -205,7 +259,7 @@ export async function snapshotTicker(ticker, dataDir, now) {
   // source can return a chain it last updated before today's open. Otherwise keep the last
   // representative quotes for any contract that already has them.
   const dataTime = chainTime(raw, now) ?? now
-  const fresh = quoteWindow(dataTime)
+  const fresh = !raw.eod && quoteWindow(dataTime)
   const completed = completedSessions(history, session, now)
   const prev = await readJson(join(dataDir, `${ticker}.json`), null)
   const prevQuotes = new Map()
@@ -213,7 +267,8 @@ export async function snapshotTicker(ticker, dataDir, now) {
     const ci = Object.fromEntries(prev.cols.map((c, i) => [c, i]))
     for (const r of prev.rows) prevQuotes.set(r[ci.sym], { bid: r[ci.bid], ask: r[ci.ask], bidSize: r[ci.bidSize] })
   }
-  const keepPrev = !fresh && Boolean(prev?.quotesIntraday)
+  // Only the same session's intraday quotes are better than its closing ones.
+  const keepPrev = !fresh && Boolean(prev?.quotesIntraday) && nyDate(new Date(prev.quotesFrom)) === nyDate(dataTime)
   const quotesFrom = keepPrev ? prev.quotesFrom : dataTime.toISOString()
   const quotesIntraday = fresh || keepPrev
 
@@ -340,57 +395,75 @@ export async function main() {
     : { updatedAt: now.toISOString(), attemptedAt: now.toISOString(), staleAfter: staleAfter(now), marketOpen: marketOpen(now), tickers: {} }
   for (const t of watchlist) if (prevIndex.tickers?.[t]) index.tickers[t] = prevIndex.tickers[t]
 
-  // Ask about one ticker that always has options before touching the rest. If even SPY
-  // comes back empty the source is down: fetch nothing, count nothing, remove nothing.
-  const canary = await fetchChain('SPY').then(() => null, (e) => e)
-  if (canary) {
+  const outageExit = async (why) => {
     for (const t of watchlist) {
       const prev = prevIndex.tickers?.[t]
+      if (index.tickers[t] !== prev) continue // refreshed before the source went away
       index.tickers[t] = prev?.noOptions ? prev : { ...(prev ?? { pending: true }), error: 'source unavailable this pass' }
     }
     index.updatedAt = prevIndex.updatedAt ?? index.updatedAt
     index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
-    console.log(`OUTAGE: no chain for SPY (${canary.message}) — nothing fetched, counted or removed`)
+    console.log(`OUTAGE: ${why} — nothing more fetched, counted or removed`)
     await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
     process.exitCode = 1
-    return
   }
 
-  // A small pool first, then one slow sequential pass over whatever was throttled.
-  // What a missing chain means is decided only after the whole pass (below).
+  // Stalest first, so a pass the day's credits cannot finish refreshes the oldest data;
+  // tickers known to have no options last. What a missing chain means is decided only after
+  // the whole pass (below).
   const wasListed = (t) => { const p = prevIndex.tickers?.[t]; return Boolean(p && !p.noOptions && p.price != null) }
+  const age = (t) => { const p = prevIndex.tickers?.[t]; return p?.noOptions ? '~' : p?.fetchedAt ?? '' }
+  const queue = [...targets].sort((a, b) => age(a).localeCompare(age(b)))
   let noOptions = 0
+  let stop = null // why fetching ended early: the account refused, or no credits left today
   const failed = []
   const lost = []
   const unseen = []
+  const attempted = []
   const run = async (t) => {
+    attempted.push(t)
     try {
       index.tickers[t] = await snapshotTicker(t, dataDir, new Date())
       return true
     } catch (e) {
+      if (e.fatal || e.budget) { stop ??= e; attempted.splice(attempted.lastIndexOf(t), 1); queue.unshift(t); return true }
       if (!e.noOptions) return e
       if (wasListed(t)) lost.push(t)
       else unseen.push(t)
       return true
     }
   }
-  // A pass that runs into a throttled source must still end, be saved and be flagged, well
-  // inside the job's time limit: past this budget nothing new is fetched.
-  const budget = Date.now() + 40 * 60000
-  const queue = [...targets]
-  const worker = async () => {
-    while (queue.length && Date.now() < budget) {
-      const t = queue.shift()
-      if ((await run(t)) !== true) failed.push(t)
-      await new Promise((r) => setTimeout(r, 250))
+
+  // SPY answers for the source before anything else is fetched: if it is refused, or comes
+  // back without a chain, the source is down — keep everything as it is.
+  if (queue.includes('SPY')) {
+    queue.splice(queue.indexOf('SPY'), 1)
+    const r = await run('SPY')
+    if (stop?.fatal || r !== true || lost.includes('SPY') || unseen.includes('SPY')) {
+      await outageExit(`no chain for SPY (${stop?.message ?? r?.message ?? 'no listed options'})`)
+      return
     }
   }
-  await Promise.all(Array.from({ length: 3 }, worker))
-  failed.push(...queue.splice(0))
+
+  // A pass that runs into a slow source must still end, be saved and be flagged, well
+  // inside the job's time limit: past this budget nothing new is fetched.
+  const budget = Date.now() + 40 * 60000
+  const more = () => !stop && Date.now() < budget && !(credits.remaining != null && credits.remaining < RESERVE)
+  const worker = async () => {
+    while (queue.length && more()) {
+      const t = queue.shift()
+      if ((await run(t)) !== true) failed.push(t)
+    }
+  }
+  await Promise.all(Array.from({ length: 4 }, worker))
+  if (stop?.fatal) { await outageExit(stop.message); return }
+  // What the day's credits did not reach keeps its last data and goes first next time.
+  const waiting = queue.splice(0)
+  if (waiting.length) console.log(`${waiting.length} tickers wait for the next pass (${stop?.message ?? (credits.remaining != null && credits.remaining < RESERVE ? `${credits.remaining} credits left` : 'time budget')})`)
   let failures = 0
   for (const t of failed) {
     let r = new Error('not reached within the time budget')
-    if (Date.now() < budget) {
+    if (more()) {
       await new Promise((res) => setTimeout(res, 1500))
       r = await run(t)
       if (r === true) continue
@@ -404,7 +477,7 @@ export async function main() {
   // losing it at once is the source being down — on 20 Nov 2026 Cboe closed its feed to
   // outside callers and every ticker came back empty — and must not erase anything: keep
   // the last snapshots, flag them, count nothing, keep the last good time, fail the run.
-  const listed = targets.filter(wasListed)
+  const listed = attempted.filter(wasListed)
   const outage = listed.length >= 10 && lost.length + failures > 0.2 * listed.length
   // One miss per trading day, not per pass: hourly passes must not turn one bad day into
   // three. (Counts from before lastMiss existed were per pass, so they start over.)
@@ -440,7 +513,7 @@ export async function main() {
     index.staleAfter = prevIndex.staleAfter ?? index.staleAfter
   }
   console.log(`retried ${failed.length} after throttling`)
-  console.log(`${targets.length} tickers: ${targets.length - failures - noOptions - lost.length} with options, ${noOptions} without, ${lost.length} lost their chain, ${failures} failed`)
+  console.log(`${attempted.length} of ${targets.length} tickers fetched: ${attempted.length - failures - noOptions - lost.length} with options, ${noOptions} without, ${lost.length} lost their chain, ${failures} failed; credits left ${credits.remaining ?? 'unknown'}`)
   if (outage) console.log(`OUTAGE: ${lost.length + failures} of ${listed.length} listed tickers unreachable — nothing counted or removed`)
   await writeFile(join(dataDir, 'index.json'), JSON.stringify(index, null, 2))
   if (outage || failures > targets.length / 2) process.exitCode = 1

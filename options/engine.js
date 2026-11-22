@@ -50,6 +50,43 @@ const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Nu
 // (4.07 x 4.73 is 15%) can come out a hair above it in floating point.
 const EPS = 1e-9
 
+// Normal CDF (Abramowitz–Stegun 7.1.26: |error| < 1.5e-7).
+const ncdf = (x) => {
+  const t = 1 / (1 + (0.3275911 * Math.abs(x)) / Math.SQRT2)
+  const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-(x * x) / 2)
+  return x >= 0 ? (1 + y) / 2 : (1 - y) / 2
+}
+
+/**
+ * Delta from an option's own price, for sources that send no Greeks (end-of-day chains):
+ * implied volatility by bisection on the Black–Scholes price, then N(d1).
+ * ponytail: European exercise, no dividends, a flat 4% rate — enough to sort contracts into a
+ * delta band, not to price them.
+ */
+export function bsDelta({ S, K, T, price, type, r = 0.04 }) {
+  if (!(S > 0 && K > 0 && T > 0 && price > 0)) return null
+  const disc = K * Math.exp(-r * T)
+  const intrinsic = type === 'C' ? Math.max(0, S - disc) : Math.max(0, disc - S)
+  if (price <= intrinsic + 1e-9) return type === 'C' ? 1 : -1 // no time value left: deep in the money
+  const sq = Math.sqrt(T)
+  const d1 = (v) => (Math.log(S / K) + (r + (v * v) / 2) * T) / (v * sq)
+  const value = (v) => {
+    const a = d1(v)
+    const b = a - v * sq
+    return type === 'C' ? S * ncdf(a) - disc * ncdf(b) : disc * ncdf(-b) - S * ncdf(-a)
+  }
+  let lo = 1e-4
+  let hi = 10
+  if (value(hi) < price) return type === 'C' ? 1 : -1
+  for (let i = 0; i < 80; i += 1) {
+    const m = (lo + hi) / 2
+    if (value(m) > price) hi = m
+    else lo = m
+  }
+  const v = (lo + hi) / 2
+  return type === 'C' ? ncdf(d1(v)) : ncdf(d1(v)) - 1
+}
+
 /** Median of an ascending array (null when empty). */
 const median = (s) => (s.length === 0 ? null : s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2)
 

@@ -4,6 +4,10 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_call:
+  # The daily data task deploys right after it pushes; this is the fallback if that dispatch
+  # is missed (about 11:07 New York in winter, 12:07 in summer).
+  schedule:
+    - cron: '7 16 * * 1-5'
 permissions:
   contents: read
   pages: write

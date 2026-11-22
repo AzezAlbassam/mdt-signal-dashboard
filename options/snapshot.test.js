@@ -1,5 +1,6 @@
 // The pass-level rules in snapshot.js main(): what an empty answer from the source means.
-// fetch and the timers are faked; everything else (files, index, history) is real.
+// fetch (a fake MarketData) and the timers are faked; everything else (files, index, history)
+// is real.
 
 import { test, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
@@ -10,7 +11,7 @@ import { join } from 'node:path'
 const realTimeout = setTimeout
 globalThis.setTimeout = (f, _ms, ...a) => realTimeout(f, 0, ...a)
 
-const { main, plan, quoteWindow, marketOpen, staleAfter, missDay } = await import('./snapshot.js')
+const { main, plan, quoteWindow, marketOpen, staleAfter, missDay, fromMarketData, credits } = await import('./snapshot.js')
 
 const TICKERS = ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF', 'GGG', 'HHH', 'III', 'JJJ', 'KKK', 'LLL']
 // An expiry about 13 months out, whatever day the tests run.
@@ -20,21 +21,37 @@ let busy = new Set()
 let noDelta = new Set()
 let noQuotes = new Set()
 let stamps = {}
+let refuse = 0 // HTTP status for every request (401: a bad key), 0 to answer normally
+let creditsLeft = null // credits the fake source reports after each answer
+let calls = []
+const answer = (status, body, left = creditsLeft) => ({
+  ok: status < 300, status, headers: new Headers(left == null ? {} : { 'x-api-ratelimit-remaining': String(left) }), json: async () => body,
+})
 globalThis.fetch = async (url) => {
-  const t = decodeURIComponent(url.split('/').pop().replace('.json', ''))
-  if (down.has(t)) return { ok: false, status: 404 }
-  if (busy.has(t)) return { ok: false, status: 503 }
-  const delta = noDelta.has(t) ? null : 0.5
-  const quotes = (o) => (noQuotes.has(t) ? o : { ...o, bid: 1, ask: 1.1 })
-  const options = Array.from({ length: noQuotes.has(t) ? 25 : 1 }, (_, i) =>
-    quotes({ option: `${t}${EXP}C${String(10000 + i * 1000).padStart(8, '0')}`, bid_size: 10, open_interest: 500, volume: 20, delta, last_trade_time: '2026-11-19T15:00:00' }))
-  return { ok: true, json: async () => ({ timestamp: stamps[t], data: { current_price: 10, options } }) }
+  const t = decodeURIComponent(url.split('/chain/')[1].split('/')[0])
+  calls.push(t)
+  if (refuse) return answer(refuse, { s: 'error', errmsg: 'Invalid token header. No credentials provided.' }, 0)
+  if (down.has(t)) return answer(404, { s: 'no_data' })
+  if (busy.has(t)) return answer(503, null)
+  if (creditsLeft != null) creditsLeft -= 1
+  // One call contract (25 with no quotes at all), stamped 15:00 New York on 19 Nov unless told otherwise.
+  const n = noQuotes.has(t) ? 25 : 1
+  const col = (v) => Array(n).fill(v)
+  const body = {
+    s: 'ok',
+    optionSymbol: Array.from({ length: n }, (_, i) => `${t}${EXP}C${String(10000 + i * 1000).padStart(8, '0')}`),
+    bidSize: col(10), openInterest: col(500), volume: col(20),
+    delta: col(noDelta.has(t) ? null : 0.5), underlyingPrice: col(noDelta.has(t) ? null : 10),
+    updated: col(Date.parse(stamps[t] ?? '2026-11-19T20:00:00Z') / 1000),
+    ...(noQuotes.has(t) ? {} : { bid: col(1), ask: col(1.1) }),
+  }
+  return answer(200, body)
 }
 
 let dir
 const prevUpdatedAt = '2026-11-19T21:06:00.000Z'
 beforeEach(() => {
-  down = new Set(); busy = new Set(); noDelta = new Set(); noQuotes = new Set(); stamps = {}
+  down = new Set(); busy = new Set(); noDelta = new Set(); noQuotes = new Set(); stamps = {}; refuse = 0; creditsLeft = null; calls = []; credits.remaining = null
   dir = mkdtempSync(join(tmpdir(), 'snap-'))
   const tickers = Object.fromEntries(TICKERS.map((t) => [t, { price: 10, tier: 'B', misses: 2 }])) // legacy per-pass count
   writeFileSync(join(dir, 'index.json'), JSON.stringify({ updatedAt: prevUpdatedAt, tickers }))
@@ -73,7 +90,7 @@ test('if even SPY comes back empty, nothing is fetched and a new ticker stays pe
   await main()
   globalThis.fetch = f
   const idx = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
-  assert.equal(calls, 2, 'SPY asked twice (404 is believed on the second asking), nothing else')
+  assert.equal(calls, 1, 'SPY asked once, nothing else')
   assert.equal(idx.tickers.AAA.price, 10)
   assert.equal(idx.tickers.AAA.error, 'source unavailable this pass')
   assert.equal(idx.tickers.NEWX.pending, true)
@@ -158,7 +175,7 @@ test('--resummarize recomputes ADV from the history and redates a stale chain, w
   assert.equal(idx.tickers.ZZZ.historySessions, 5)
   assert.ok(idx.tickers.ZZZ.caps.C.length === 5)
   assert.deepEqual(idx.tickers.GONE, { noOptions: true })
-  assert.equal(idx.staleAfter, '2026-11-23T16:45:00.000Z', 'Saturday data is due by Monday 11:45 New York')
+  assert.equal(idx.staleAfter, '2026-11-23T17:30:00.000Z', 'Saturday data is due by Monday 12:30 New York')
 })
 
 test('during a partial outage a never-seen ticker is not called option-less', async () => {
@@ -223,9 +240,59 @@ test('the schedule follows the exchange calendar and the 15-minute feed lag', ()
   assert.equal(missDay(at('2026-11-22T15:00:00Z')), '2026-11-20')
   assert.equal(missDay(at('2026-11-26T15:00:00Z')), '2026-11-25')
   assert.equal(missDay(at('2026-11-24T02:40:00Z')), '2026-11-23')
-  // When the page calls the data late: the next pass plus 90 minutes, across weekends and holidays.
-  assert.equal(staleAfter(at('2026-11-23T16:20:00Z')), '2026-11-23T18:50:00.000Z')
-  assert.equal(staleAfter(at('2026-11-23T20:20:00Z')), '2026-11-23T23:05:00.000Z')
-  assert.equal(staleAfter(friClose), '2026-11-23T16:45:00.000Z')
-  assert.equal(staleAfter(at('2026-11-25T21:40:00Z')), '2026-11-27T16:45:00.000Z')
+  // When the page calls the data late: 12:30 New York on the next trading day, after its pass.
+  assert.equal(staleAfter(at('2026-11-23T14:50:00Z')), '2026-11-24T17:30:00.000Z')
+  assert.equal(staleAfter(at('2026-11-23T20:20:00Z')), '2026-11-24T17:30:00.000Z')
+  assert.equal(staleAfter(friClose), '2026-11-23T17:30:00.000Z')
+  assert.equal(staleAfter(at('2026-11-25T14:50:00Z')), '2026-11-27T17:30:00.000Z', 'Thanksgiving skipped; the half day counts')
+})
+
+test('MarketData chains: delta from the price when the Greeks are missing, closing quotes marked', () => {
+  const at16 = Date.parse('2026-11-20T21:00:00Z') / 1000 // 16:00 New York: the close
+  const raw = fromMarketData({
+    s: 'ok', optionSymbol: ['ABC271217C00100000', 'ABC271217P00100000'], bid: [13, 9], ask: [13.4, 9.4], bidSize: [5, 7],
+    openInterest: [900, 800], volume: [30, 20], delta: [null, null], underlyingPrice: [100, 100], updated: [at16, at16],
+  })
+  assert.equal(raw.eod, true)
+  assert.equal(raw.timestamp, '2026-11-20 21:00:00')
+  assert.equal(raw.data.current_price, 100)
+  const [c, p] = raw.data.options
+  assert.ok(c.delta > 0.5 && c.delta < 0.75, `call delta ${c.delta}`)
+  assert.ok(p.delta < -0.25 && p.delta > -0.5, `put delta ${p.delta}`)
+  assert.equal(c.last_trade_time, '2026-11-20')
+  assert.equal(c.bid_size, 5)
+  assert.equal(fromMarketData({ s: 'no_data' }).data.options.length, 0)
+  const intraday = fromMarketData({ s: 'ok', optionSymbol: ['ABC271217C00100000'], bid: [1], ask: [1.1], delta: [0.4], underlyingPrice: [90], updated: [Date.parse('2026-11-20T18:00:00Z') / 1000] })
+  assert.equal(intraday.eod, false)
+  assert.equal(intraday.data.options[0].delta, 0.4, "the source's own delta is kept")
+})
+
+test('a refused account is an outage: nothing is erased, little is asked, the run fails', async () => {
+  refuse = 401
+  const idx = await pass()
+  for (const t of TICKERS) {
+    assert.equal(idx.tickers[t].price, 10, t)
+    assert.equal(idx.tickers[t].error, 'source unavailable this pass', t)
+    assert.ok(existsSync(join(dir, `${t}.json`)))
+  }
+  assert.ok(calls.length <= 4, `${calls.length} requests after the first refusal`)
+  assert.equal(idx.updatedAt, prevUpdatedAt)
+  assert.equal(process.exitCode, 1)
+  process.exitCode = 0
+})
+
+test("a pass the day's credits cannot finish refreshes the stalest tickers and leaves the rest as they are", async () => {
+  const idx0 = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'))
+  TICKERS.forEach((t, i) => { idx0.tickers[t].fetchedAt = `2026-11-${String(10 + i).padStart(2, '0')}T21:00:00.000Z` })
+  writeFileSync(join(dir, 'index.json'), JSON.stringify(idx0))
+  creditsLeft = 20 // the source reports 19, 18, ... after each answer; the pass stops under 15
+  const idx = await pass()
+  const fresh = TICKERS.filter((t) => idx.tickers[t].fetchedAt !== idx0.tickers[t].fetchedAt)
+  assert.ok(fresh.length >= 5 && fresh.length <= 8, `${fresh.length} refreshed`)
+  assert.deepEqual(fresh, TICKERS.slice(0, fresh.length), 'the stalest first')
+  for (const t of TICKERS.slice(fresh.length)) {
+    assert.equal(idx.tickers[t].error, undefined, `${t} waits, it did not fail`)
+    assert.equal(readFileSync(join(dir, `${t}.json`), 'utf8'), '{"keep":true}')
+  }
+  assert.equal(process.exitCode, 0)
 })
