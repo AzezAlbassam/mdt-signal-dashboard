@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter } from '../engine/funds.js';
+import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter, quarterOn } from '../engine/funds.js';
 import { screenStock } from '../engine/shariah.js';
 
 const SIC = { fail: [[6020, 6036, 'banks']], review: [[5400, 5499, 'food stores']] };
@@ -325,4 +325,17 @@ test('audit round 2: cash collateral from lending the fund\'s shares earns inter
     { w: 0.34, kind: 'collateral', purification: 0.0092 }]);
   assert.ok(Math.abs(r.purificationPct - (0.9 * 0.001 + 0.1 * 0.002 + 0.34 * 0.0092)) < 1e-12, String(r.purificationPct));
   assert.equal(r.state, 'مختلط جائز'); assert.ok(Math.abs(r.purificationCoveredWeight - 1) < 1e-12);   // weights and coverage as before
+});
+
+test('final check: a saved-bars average whose bars include the split stands; only bars that may predate it get the other basis (Amphenol, Monster)', () => {
+  const c = { splitRatio: 2, splitWindow: ['2025-10-24', '2026-10-30'] };
+  const q = { avg: 80.55, source: 'TradingView 1D saved in data/us/bars (last bar 2026-10-06)' };
+  assert.deepEqual(quarterOn(q, c, { adjusted: true }), q);
+  assert.equal(quarterOn(q, c, { adjusted: false }).alt, 80.55 / 2);
+  // a fetched average is not covered by what the saved bars show
+  assert.equal(quarterOn({ avg: 80.55, source: 'TradingView', asOf: '2026-10-06' }, c, { adjusted: true }).alt, 80.55 / 2);
+  // the split after the data: divided; before it: as it is
+  assert.equal(quarterOn({ avg: 80, source: 'TradingView', asOf: '2025-10-01' }, c).avg, 40);
+  assert.equal(quarterOn({ avg: 80, source: 'TradingView', asOf: '2026-11-01' }, c).avg, 80);
+  assert.equal(quarterOn({ avg: 80, asOf: '2026-11-01' }, { splitRatio: null }).avg, 80);
 });

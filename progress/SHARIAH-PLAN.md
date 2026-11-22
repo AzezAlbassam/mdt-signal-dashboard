@@ -813,3 +813,101 @@ Owner decisions (not applied; each with its filing):
 - Interest inside a revenue line on an axis companyfacts does not carry: ADP's client-fund interest (8.43% with it: a
   fail; the screen shows «ما ينحكم»), Snap-on's and MercadoLibre's financing revenue, Deere's finance income (all open,
   none pass).
+The fix-branch review's round 2 (three more lenses, verified), beyond what the batches above already fixed:
+- A fund whose holdings were there last time and failed to download now stops fund-load (a refused N-PORT fetch would
+  have published XLK and SPUS as «ما لقينا تقرير مكوناته»). The stock page's activity line says «مباح حسب تصنيف نشاطها
+  في SEC», not «مباح» alone. A business held for sale under the current taxonomy's tag earns no interest (IFF had been
+  purified on 69M against a 3M interest line), and an open interest reading's floor reads «على الأقل».
+- Not changed: nport.py takes the newest NPORT-P in a series' list, and an amendment of an old period filed after the
+  latest report would be taken (latent: SOXX and IGV each have one, both older than their current reports); the saved
+  daily bars end 2026-10-06 and no weekly step refreshes them, so new quarters go to TradingView (step 4b) or the band;
+  a 10-Q its company said not to rely on (DVLT, 8-K item 4.02) is still read (fixed in M16).
+- For the owner (with the activities above): SPUS's own index is the S&P 500 Shariah less aerospace and defense,
+  financial exchanges and data, and data processing; 17 of SPUS's holdings disclose a side revenue of unstated size
+  (Tesla's insurance, Home Depot's card profit sharing, PepsiCo's and Coca-Cola's alcohol licensing, Booking and Expedia,
+  Ulta, Best Buy and others); XLK's pass leans on Palantir (defense) and AppLovin (gambling ads): if both were unjudged
+  XLK would be «ما ينحكم»; EQT books 100.3M of derivative gains in revenue (5.66%).
+
+### M16. Final check (2026-11-22, five lenses on 0cbdb9c and on every verdict changed since v36, each verified) — POST-HOC, tests first
+Owner's request: «بعد ماتخلص ابيك تراجع كمدقق خارجي تتاكد ان كل شي صحيح وسليم». 33 findings, all reproduced by a second
+reviewer; none changed a fund's verdict. Fixed, each with a test first (and every new debt rule mutation-tested):
+- Debt. A FinanceLeaseLiability total that another filing contradicts for a date of the last 400 days comes out of the
+  low reading only: Waste Management 21,740..23,370 (its 10-Q tags "Financing leases and other" 1,284 at 2025-12-31,
+  where its 10-K gave 563 of leases); the panel names that line as one that may hold other debt. Convertible notes are
+  interest-bearing debt, except notes the filing itself shows at 0.00% (data/shariah/zero-coupon.json, read from each
+  10-Q: Akamai 3,455.6 of 7,567.7, Super Micro 2,267.0 of 4,668.9, Bill 1,507.4, Onto 1,473.2, Dropbox 691.1), which stay in
+  the high reading until the owner decides (A4); the plain LineOfCredit tag is in the high reading only (Toll Brothers'
+  2,507.7 is its joint ventures' borrowing). With no long-term line, a drawn long-term credit line, the coupon-bearing
+  convertibles and the short-term lines other than commercial paper are the sure reading (Ironwood 325, Dropbox 2,580.2,
+  Opendoor 3,062, BlackLine 668.0) and the liabilities bound is the high one, printed and given its own fund-row reason
+  as such (debtPartial, debtBound). LongTermDebt
+  that another tagged noncurrent line plus the current portion makes up, or that is the current portion, gets no
+  Halliburton push (Conagra, Sarepta, Fusemachines). The debt-and-finance-leases total less the leases may take the pair
+  plus the short lines in the low reading (Lennox 1,550.3). A plain debt tag equal (to 0.1%) to its lease-bundled twin
+  holds the tagged finance leases (Honeywell 14,097, Campbell 7,053, Iron Mountain 17,401.2, Vail 2,737.5; NRG, 0.6%
+  away, is not equal). One test per mutation the fix review left alive.
+- Interest. Where every exact line is a lending line, the high reading adds the cash and securities at the A8 yield
+  (Shopify 96 -> 167.7 beside its 65M of interest under a net tag; HPE 192 -> 273.1; Wendy's, Welltower). An estimate
+  proves no R3 pass at SIC 6100-6299 or 6411: open with its own reason, no purification (Ameriprise's 154M estimate
+  beside 908M of net investment income; Robinhood, Apollo, Virtus); REITs and royalty or patent owners keep theirs.
+  Interest joins contract revenue below the 10% line only with a lending tag or a loan balance of 10% of the revenue
+  (Tronox's one 11M collection). The new current-asset tags are one figure with prepaid expenses (Mastercard's 1,126 of
+  tax receivable sits inside its 4,370); where both are lines of their own the estimate rises (Salesforce's high
+  reading 97 -> 112.4), the cautious side. Sales-type lease investments are in the loan book, their payment schedules
+  and unearned income are not (Intuitive Surgical 366.0). A loan book read from cash flows names the flow's period and
+  the smaller balance tagged beside it (Block 2.35B; Rocket's flow is nine months).
+- Shares and splits. A 10-K quarter caps the cover count at the shares outstanding at its end, else the year's weighted
+  count (BitMine 613.3M, not 482.3M; Twist, Uranium Energy, Zscaler). A split step beyond 50x counts only when the cover
+  count moved by about as much (ONEOK 2,000 -> 2, Freeport 2,000,000 -> 2, EOG, Hanmi, EchoStar, Keurig Dr Pepper and
+  Janux back to their real splits; Chesapeake's real 1:200 confirmed). Saved-bars averages whose bars include the split
+  get no second basis (Amphenol, Monster). Kept: the G6 rerun's rule that two counts 1000x apart with nothing to tell
+  which is right leave the count unjudged (the auditor's "keep the larger" was not taken).
+- Withdrawn statements. An 8-K item 4.02 filed after the report in use, with no newer 10-Q or 10-K: «ما ينحكم» (reason:
+  the company withdrew them), only R1 can still fail, no purification (Datavault AI's Q2 2026 10-Q, 8-K of 2026-10-26).
+- Weekly run. The SEC getter makes a sixth try after about 15 minutes and then stops the run on a lasting 403 or 429
+  (the fifth try came before SEC's 10-minute block lifted, and the refusal read as no data); nport.py waits SEC out the
+  same way and stops with exit 1; the weekly report keeps a bank without numbers a sure fail and lists lost industry
+  codes; step 7 pushes without merging (a merge after step 6 could publish a page that was never built or tested);
+  band-needed's priority counts an unknown row of a passing fund once.
+- Page. The debt row names the liabilities bound as such and says a range is lines we cannot confirm. Corrected
+  sentences: Deere's method (we cannot read its interest figure; it publishes one), Cisco's combined tag (a pass is
+  tested on the highest reading), NextEra's stale quarter (SEC has not published its newer 10-Qs), Tempus's missing
+  share count, a refused fund download («SEC ما ردّت»). The funds tab says fund purification divides by the smaller share
+  count, the cautious side, while the stock page divides by the cover count (R6).
+Not changed, with the reason:
+- PepsiCo's high reading counts its 4,800 of commercial paper twice (it sits inside the 9,223 of short-term debt), so
+  SPUS's pass has 0.087 points to spare on that row. A rule dropping paper beside short-term borrowings would drop real
+  debt where a filer shows them as separate lines (the wrong-pass side). The pass is right today.
+- Fund rows keep the smaller share count for purification (above).
+- data/study11/bars and the saved monthly TradingView bars would settle 17 band-judged companies (9 pass, 8 fail; no
+  fund verdict changes): a new code path, for a later round.
+- A real reverse split beyond 50x that dilution hides from the cover count is dropped (Onconetix's three compounded
+  splits): its report prices would read as post-split. The rule keeps bogus unit-error ratios at large held companies
+  (Freeport, ONEOK, Stanley Black & Decker) from replacing their real splits; no held company has such a split today.
+For the owner (A4): whether zero-coupon convertible notes are interest-bearing debt (until then the 0.00% notes read
+from the filings stay in the high reading; DJT's notes carry a 4% original issue discount and count as debt); defense
+makers (RTX and Boeing newly pass) and credit-rating agencies (S&P Global); both Shariah ETFs in the data hold none.
+
+Review of these fixes (2026-11-22, three lenses on the diff, each finding verified; POST-HOC, tests first): 17 findings,
+all confirmed, fixed except the Onconetix split above.
+- The first fix had moved every convertible tagged on its own out of the fail-proving reading, which unjudged BlackLine,
+  PagerDuty, Five9, PacBio and WhiteFiber, whose notes carry coupons, while 0.00% notes inside LongTermDebt (Bill, Onto)
+  still proved fails: replaced by the zero-coupon list above, applied wherever the notes sit.
+- A non-reliance notice stays until SEC's data carries the quarter refiled or a newer one (any later 10-Q or 10-K had
+  cleared it, a 10-K/A of the withdrawn year too). The list chip and the weekly report judge withdrawn statements on the
+  activity alone.
+- Constellation's 20.5B nuclear decommissioning trust is an interest-earning book in the estimate (the disposal-group fix
+  had left it on the cash alone: 10.2M against at least 34M by its 10-Q); still a pass at about 3.5%.
+- The share box says «على الأقل» for an open interest floor, like the row above it (Ford, ADP, GM and 11 more).
+- The stale sentence says SEC has not published the newer 10-Q only when its data holds nothing from it (NextEra); else
+  that the newer quarter's revenue is under tags we do not read (APA, TMC and 7 more). The finance-business reason says
+  what is known (SEC codes the company as finance), which is true for the crypto miners filed under 6199 too, and an
+  activity under review is named beside what is missing. The loan balance beside a flow is the largest loan balance at
+  the quarter's end, never a lease investment (Deere's 2,593 of leases had been called its declared balance).
+- Weekly run: a refusal on any of the six tries stops the run; fund-load writes nothing when it finds a problem, so a
+  rerun still sees a lost fund; nport.py's output and the fund list are moved into place only on success; step 1 stops
+  on unpushed commits and step 7's recovery drops only that week's commit.
+- Two more tests pin real readings the mutation run showed unguarded (NXP's paper programme under the debt-total cap,
+  Dutch Bros' lease-free LongTermDebt beside the bundled tag), and an offline end-to-end run of fund-load (a missing
+  import had crashed it during the reload).
+

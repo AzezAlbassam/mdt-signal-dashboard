@@ -91,6 +91,18 @@ export function splitBasis({ price, asOf, bar = null, splitRatio = null, splitWi
   if (splitWindow && asOf > splitWindow[1]) return 'post'
   return null
 }
+// A quarter average from data dated before a split may be on the other basis: divided by the ratio when the split came
+// after the data, open both ways when it may have (the source names the last bar's date; else the entry's asOf, kept
+// across weekly merges; else qpDate, the file's date). Saved bars that include the split (adjusted: fund-load's
+// barsAdjusted) need neither (final check 2026-11-22: Amphenol and Monster were judged at half their average too).
+export function quarterOn(q, c, { adjusted = false, qpDate = null } = {}) {
+  if (!q || !c?.splitRatio || !c.splitWindow) return q
+  if (adjusted && /saved in data\/us\/bars/.test(q.source ?? '')) return q
+  const asOf = q.source?.match(/last bar (\d{4}-\d{2}-\d{2})/)?.[1] ?? q.asOf ?? qpDate
+  if (asOf && c.splitWindow[0] >= asOf) return { ...q, avg: q.avg / c.splitRatio }
+  if (asOf && c.splitWindow[1] <= asOf) return q
+  return { ...q, alt: q.avg / c.splitRatio }
+}
 // the price on the share count's basis; both candidates when the basis is unknown
 export const onShares = (price, basis, k) => (basis === 'pre' ? [price / k] : basis === 'post' || !(k > 0) ? [price] : [Math.min(price, price / k), Math.max(price, price / k)])
 
@@ -102,6 +114,9 @@ export function screenHolding(r, price, sicTable, quarter = null, range = null) 
   // no quarter to judge: say why (audit 2026-11-22: one «no statements at SEC» was false for renamed and stale US filers)
   const none = !r ? 'unmatched' : r.error ? 'unreadable' : r.stale ? 'stale' : 'statements'
   if (!r?.period) return screenStock(r, null, sicTable) ? { ...screenStock(r, null, sicTable), purification: null } : { state: 'ما ينحكم', missing: [none], purification: null }
+  // the smaller share count for the purification too, unlike the stock page's per-share figure on the cover count: the
+  // report price can sit on another share basis than the cover count, and the smaller count only raises the amount (the
+  // cautious side; final check 2026-11-22, said on the funds tab)
   const shares = r.sharesMV ?? r.shares
   const pmv = shares > 0 ? (price > 0 ? price : quarter?.avg > 0 ? quarter.avg : NaN) * shares : NaN
   const ill = purificationIllicit(r), purification = ill != null && pmv > 0 ? ill / pmv : null

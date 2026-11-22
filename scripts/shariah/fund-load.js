@@ -6,8 +6,8 @@
 // or fewer than 35 funds written.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
-import { getter, companies, yieldAverager, inputsFor, newErrors, MAX_NEW_ERRORS } from './sec-lib.js';
-import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter } from '../../engine/funds.js';
+import { getter, companies, yieldAverager, inputsFor, newErrors, MAX_NEW_ERRORS, lostFunds, canFlip } from './sec-lib.js';
+import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage, billQuarter, quarterOn } from '../../engine/funds.js';
 
 const MAX_AGE_DAYS = 150; // A7: holdings up to 150 days old (owner, 2026-11-21)
 const list = JSON.parse(readFileSync('data/shariah/funds-list.json', 'utf8')).funds;
@@ -103,17 +103,8 @@ const rangeOf = (cik, period) => {
   const use = (inq.length ? inq : all).map((x) => x.p);
   return use.length ? [Math.min(...use), Math.max(...use)] : null;
 };
-// A quarter average from data dated before a split may be on the other basis: divided by the ratio when the split
-// came after the data, open both ways when it may have (the source names the last bar's date; else the entry's asOf,
-// kept across weekly merges; else the file's date).
+// a quarter average on the share count's basis (quarterOn, engine/funds.js)
 const QP_DATE = (QPF.built ?? '').slice(0, 10);
-function quarterOn(q, c) {
-  if (!q || !c?.splitRatio || !c.splitWindow) return q;
-  const asOf = q.source?.match(/last bar (\d{4}-\d{2}-\d{2})/)?.[1] ?? q.asOf ?? QP_DATE;
-  if (asOf && c.splitWindow[0] >= asOf) return { ...q, avg: q.avg / c.splitRatio };
-  if (asOf && c.splitWindow[1] <= asOf) return q;
-  return { ...q, alt: q.avg / c.splitRatio };
-}
 const ageDays = (d) => Math.round((Date.parse(today) - Date.parse(d)) / 864e5);
 const problems = [];
 const out = { built: new Date().toISOString(), source: 'SEC N-PORT (holdings), SEC EDGAR companyfacts (companies)', maxAgeDays: MAX_AGE_DAYS, funds: [] };
@@ -132,7 +123,7 @@ for (const f of list) {
     const raw = nsPrice(h), basis = raw ? shareBasis(c, t, raw, r.as_of) : 'post';
     const price = raw ? onShares(raw, basis, c?.splitRatio)[0] : null;        // the lower one when the side is unknown: more purification
     const qp = t ? QP[t] : null;
-    const q = quarterOn(qp && qp.start === c?.period?.start && qp.end === c?.period?.end ? qp : null, c);
+    const q = quarterOn(qp && qp.start === c?.period?.start && qp.end === c?.period?.end ? qp : null, c, { adjusted: !!(c?.splitRatio && barsAdjusted(c, t)), qpDate: QP_DATE });
     const s = screenHolding(c, price, sic, q, m.cik ? rangeOf(m.cik, c?.period) : null);
     const is = s.numbers?.illicitShare ?? null;
     // reasons: an interest bound above 5% is not "missing interest" (an estimate, or a combined figure the company
@@ -164,25 +155,23 @@ for (const f of list) {
     rows: rows.sort((a, b) => Math.abs(b.w) - Math.abs(a.w)) });
 }
 // Holdings the band could not decide, or passed near the debt line: the next step fetches their quarter-average close,
-// first those whose answer can change a fund's verdict, largest weight first (verification 2026-11-22: 8 of the first
-// 10 could change none). In a passing fund, a pass that would turn unknown; in an unjudged fund under 5% non-compliant,
-// an unknown that would pass, or any row whose fail would cross 5%; never a fund past its 150 days.
-const canFlip = (f, x) => {
-  if (f.old || !(f.badWeight < 0.05)) return false;
-  const w = Math.abs(x.w), sum = f.badWeight + f.unknownWeight;
-  if (f.state === 'مختلط جائز') return sum + w >= 0.05;
-  return (x.s === 'ما ينحكم' && sum - w < 0.05) || f.badWeight + w >= 0.05;
-};
+// first those whose answer can change a fund's verdict, largest weight first (canFlip, sec-lib.js)
 const band = new Map();
 for (const f of out.funds) for (const x of f.rows ?? []) if (needsQuarterAverage(x)) {
   const c = byCik.get(cos.find((k) => k.ticker === x.t)?.cik);
   const pri = canFlip(f, x) ? Math.abs(x.w) : 0;
   if (c?.period) band.set(x.t, { t: x.t, start: c.period.start, end: c.period.end, pri: Math.max(pri, band.get(x.t)?.pri ?? 0) });
 }
-writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()].sort((a, b) => b.pri - a.pri).map(({ pri, ...e }) => e), null, 1));
 const written = out.funds.filter((f) => f.rows).length;
 if (written < 35) problems.push(`only ${written} funds with holdings`);
+const prevFunds = existsSync('data/shariah/funds.json') ? JSON.parse(readFileSync('data/shariah/funds.json', 'utf8')).funds ?? [] : [];
+const gone = lostFunds(prevFunds, out.funds);
+if (gone.length) problems.push(`funds whose holdings were there last time and failed now: ${gone.join(', ')}`);
+// a problem stops the run before funds.json and band-needed.json are written, so a rerun still compares with last
+// week's file (review of the final check 2026-11-22: a second run had passed the lost-fund guard)
+if (problems.length) { console.log('PROBLEMS', problems); console.log('STOPPED: funds.json and band-needed.json left as they were'); process.exit(1); }
+writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()].sort((a, b) => b.pri - a.pri).map(({ pri, ...e }) => e), null, 1));
 writeFileSync('data/shariah/funds.json', JSON.stringify(out));
 console.log(`\nfunds ${out.funds.length} (with holdings ${written}); companies fetched ${need.size}; near the debt line ${band.size} (band-needed.json)`);
 for (const f of out.funds) console.log(f.sym.padEnd(5), f.state ?? f.why ?? f.err, f.rows ? `bad ${(100 * f.badWeight).toFixed(1)}% unknown ${(100 * f.unknownWeight).toFixed(1)}% collateral ${(100 * f.collateralWeight).toFixed(1)}% purif/qtr ${(100 * f.purificationPct).toFixed(3)}% age ${f.ageDays}d` : '');
-if (problems.length) { console.log('PROBLEMS', problems); process.exitCode = 1; }
+

@@ -1,0 +1,10 @@
+{
+  "_note": "Convertible notes the filing itself shows at a 0.00% coupon: their carrying amount at the period end, read from the 10-Q on 2026-11-22. Until the owner decides whether zero-coupon notes are interest-bearing debt (A4, progress/SHARIAH-PLAN.md M16), they stay in the high debt reading only; every other convertible note is interest-bearing debt. An entry applies from its period on, to no more notes than are tagged; when the company files a newer quarter, the weekly report lists the entry as stale and the filing is read again.",
+  "companies": {
+    "0001086222": { "ticker": "AKAM", "period": "2026-09-30", "zero": 3455562000, "source": "10-Q 0001086222-26-000100: R51 (2030 and 2032 notes, interest rate 0.00%), R53 (net carrying 1,728,137,000 + 1,727,425,000)" },
+    "0001375365": { "ticker": "SMCI", "period": "2026-09-30", "zero": 2267000000, "source": "10-Q 0001375365-26-000027: R62 (2030 notes, coupon 0.00%, carrying 2,267.0M)" },
+    "0001786352": { "ticker": "BILL", "period": "2026-09-30", "zero": 1507404000, "source": "10-Q 0001628280-26-071196: R54 (2027 and 2030 notes, stated 0.00%), R53 (net 123,204K + 1,384,200K)" },
+    "0000704532": { "ticker": "ONTO", "period": "2026-09-30", "zero": 1473179000, "source": "10-Q 0001193125-26-453859: R14 (the 2031 notes will not bear regular interest), R60 (net carrying 1,473,179K)" },
+    "0001467623": { "ticker": "DBX", "period": "2026-09-30", "zero": 691100000, "source": "10-Q 0001467623-26-000061: R63 (2028 notes, stated 0.00%), R64 (carrying 691.1M)" }
+  }
+}

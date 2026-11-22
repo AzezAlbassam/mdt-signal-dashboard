@@ -142,3 +142,32 @@ test('audit: R1 table fixes: wine and spirits makers filed under 2080 Beverages 
   assert.equal(activityFromSic('2015', table, '0000100493'), 'review');  // Tyson: a large pork business
   assert.equal(activityFromSic('5500', table, '0000726958'), 'review');  // Casey's: convenience stores selling beer, wine, tobacco
 });
+test('final check: an estimate a finance business cannot pass on is open with its own reason, and purifies nothing (Ameriprise)', async () => {
+  const { screenStock, purificationIllicit } = await import('../engine/shariah.js');
+  const table = { fail: [], review: [[6100, 6299, 'finance']], companies: {} };
+  const r = { period: { end: '2026-09-30' }, revenue: 5191, illicit: 154, illicitEstimated: true, illicitOpen: true, estimate: { cashStart: 1, cashEnd: 1, yieldPct: 5, days: 92 },
+    debt: 0, bookEquity: 1, shares: 86.8, sic: '6282' };
+  const s = screenStock(r, 4e4, table);
+  assert.equal(s.state, 'ما ينحكم'); assert.deepEqual(s.missing, ['illicitBook']);
+  assert.equal(purificationIllicit(r), null); assert.equal(s.numbers.purificationPerShare, null);
+  // an open exact figure keeps its code (and its floor)
+  assert.deepEqual(screenStock({ ...r, illicitEstimated: false, estimate: null }, 4e4, table).missing, ['illicitRange']);
+});
+test('final check: statements the company withdrew (8-K item 4.02) prove nothing but the activity test, and purify nothing (Datavault AI)', async () => {
+  const { screenStock, purificationIllicit } = await import('../engine/shariah.js');
+  const table = { fail: [[6020, 6036, 'banks']], review: [], companies: {} };
+  const r = { period: { end: '2026-06-30' }, revenue: 6.717, illicit: 0.277, illicitEstimated: true, estimate: {}, debt: 0, bookEquity: 245.9, shares: 727.6, sic: '7372', nonReliance: '2026-10-26' };
+  const s = screenStock(r, 300, table);
+  assert.equal(s.state, 'ما ينحكم'); assert.deepEqual(s.missing, ['restated']); assert.deepEqual(s.failed, []);
+  assert.equal(purificationIllicit(r), null); assert.equal(s.numbers.purificationPerShare, null);
+  // a prohibited activity still fails: it needs no statements
+  const bank = screenStock({ ...r, sic: '6021' }, 300, table);
+  assert.equal(bank.state, 'غير جائز'); assert.deepEqual(bank.failed, ['R1']);
+});
+test('final check: a debt test open on the liabilities bound says so, not "two readings of the debt lines" (Shoals, WhiteFiber)', async () => {
+  const { screenStock } = await import('../engine/shariah.js');
+  const table = { fail: [], review: [], companies: {} };
+  const r = { period: { end: '2026-09-30' }, revenue: 100, illicit: 1, illicitEstimated: false, debt: 163.75, debtHigh: 304.18, debtPartial: true, bookEquity: 1, shares: 10, sic: '3674' };
+  assert.deepEqual(screenStock(r, 1000, table).missing, ['debtBound']);
+  assert.deepEqual(screenStock({ ...r, debtPartial: undefined }, 1000, table).missing, ['debtRange']);
+});

@@ -81,7 +81,8 @@ export function fundVerdict(holdings, listedTotal) {
 // (audit 2026-11-22: Ford's loan book at the lending rate came to 40% of the holding a quarter). R3 does not depend on
 // the market value, so a fund holding's band gives the same answer at both ends.
 export function purificationIllicit(r) {
-  if (r?.illicitOpen || !amount(r?.illicit)) return null
+  // (none on statements the company withdrew: final check 2026-11-22, Datavault AI)
+  if (r?.illicitOpen || r?.nonReliance || !amount(r?.illicit)) return null
   const high = Math.max(r.illicit, r.illicitHigh ?? 0), hi = illicitShare(high, r.revenue), lo = illicitShare(r.illicit, r.revenue)
   if (hi != null && hi <= ILLICIT_MAX + EPS) return high
   // a fail: the company's published total interest when it is larger than the line that decided (fix review 2026-11-22)
@@ -135,8 +136,16 @@ export function screenStock(r, marketValue, sicTable) {
   }
   const activity = activityFromSic(r.sic, sicTable, r.cik)
   const v = shariahVerdict({ activity, debt, marketValue, bookEquity: r.bookEquity, illicit, illicitEstimated: r.illicitEstimated, revenue: r.revenue, shares: r.shares })
-  if (open) v.missing = v.missing.map(x => (x === 'debt' ? 'debtRange' : x))
-  if (illOpen) v.missing = v.missing.map(x => (x === 'illicit' ? 'illicitRange' : x))
+  // (open on the liabilities bound of a partial reading, not on two readings of debt lines: review of the final check)
+  if (open) v.missing = v.missing.map(x => (x === 'debt' ? (r.debtPartial ? 'debtBound' : 'debtRange') : x))
+  // (an estimate a finance business cannot pass on has its own reason: no floor, its interest books are unread; final check)
+  if (illOpen) v.missing = v.missing.map(x => (x === 'illicit' ? (r.estimate ? 'illicitBook' : 'illicitRange') : x))
+  // statements the company withdrew (8-K item 4.02, no newer report since) prove nothing but the activity test (final
+  // check 2026-11-22: Datavault AI passed on its Q2 2026 10-Q, withdrawn on 2026-10-26)
+  if (r.nonReliance) {
+    const r1 = v.failed.includes('R1')
+    Object.assign(v, { state: r1 ? 'غير جائز' : 'ما ينحكم', failed: r1 ? ['R1'] : [], missing: r1 ? [] : ['restated'] })
+  }
   v.numbers.purificationPerShare = purificationPerShare(purificationIllicit(r), r.shares)
   return { ...v, debtUpper, debtRange, activity, marketValue }
 }

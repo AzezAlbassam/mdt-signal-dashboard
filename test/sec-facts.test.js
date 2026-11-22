@@ -377,6 +377,61 @@ test('fix review: LongTermDebt on the noncurrent line beside its current maturit
   const cpng = debtAt(ns({ LongTermDebt: [i(d, 654)], LongTermDebtCurrent: [i(d, 119)], ShortTermBorrowings: [i(d, 988)] }), d);
   assert.deepEqual([cpng.debt, cpng.debtHigh], [654, 1761]);
 });
+test('final check: LongTermDebt that another tagged line plus the current portion makes up, or that is the current portion, already holds it (Conagra, Sarepta, Fusemachines)', () => {
+  const d = Q[1];
+  // Conagra: senior notes 6,940.1 + current installments 787.5 = its LongTermDebt 7,730 (the high reading had 8,550)
+  const cag = debtAt(ns({ LongTermDebt: [i(d, 7730)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 787.5)], SeniorLongTermNotes: [i(d, 6940.1)], ShortTermBorrowings: [i(d, 32.5)] }), d);
+  assert.deepEqual([cag.debt, cag.debtHigh], [7730, 7762.5]);
+  const srpt = debtAt(ns({ LongTermDebt: [i(d, 857.4)], LongTermDebtCurrent: [i(d, 158.0)], LongTermLoansPayable: [i(d, 699.4)] }), d);
+  assert.deepEqual([srpt.debt, srpt.debtHigh], [857.4, null]);
+  const fuse = debtAt(ns({ LongTermDebt: [i(d, 1.545)], LongTermDebtCurrent: [i(d, 1.545)] }), d);
+  assert.deepEqual([fuse.debt, fuse.debtHigh], [1.545, null]);
+  // a total derived from the bundled tag with current maturities is no noncurrent line either (Air Products: no 18,700.5)
+  const apd = debtAt(ns({ LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities: [i(d, 17778.8)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 921.7)],
+    ShortTermBorrowings: [i(d, 77)] }), d);
+  assert.ok(Math.abs(apd.debt - 17778.8) < 1e-9 && Math.abs(apd.debtHigh - 17855.8) < 1e-9, JSON.stringify(apd));
+});
+test('final check: the debt total less its finance leases may take the pair plus the short-term lines in the low reading (Lennox: 1,550.3 with its 455.1 of commercial paper)', () => {
+  const d = Q[1];
+  const lii = debtAt(ns({ DebtAndCapitalLeaseObligations: [i(d, 1621.4)], LongTermDebtAndCapitalLeaseObligations: [i(d, 847.1)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 319.2)],
+    FinanceLeaseLiabilityCurrent: [i(d, 19.6)], FinanceLeaseLiabilityNoncurrent: [i(d, 51.5)], CommercialPaper: [i(d, 455.1)] }), d);
+  assert.ok(Math.abs(lii.debt - 1550.3) < 1e-9, String(lii.debt)); assert.equal(lii.debtHigh, null);
+});
+test('final check: a debt line equal to its lease-bundled twin holds the tagged finance leases too (Honeywell, Campbell, Iron Mountain)', () => {
+  const d = Q[1];
+  // Honeywell: LongTermDebt 14,169 = 10,386 + 3,783 of "debt and finance leases"; finance leases 72 (29 current)
+  const hon = debtAt(ns({ LongTermDebt: [i(d, 14169)], LongTermDebtAndCapitalLeaseObligations: [i(d, 10386)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 3783)],
+    FinanceLeaseLiability: [i(d, 72)], FinanceLeaseLiabilityCurrent: [i(d, 29)], FinanceLeaseLiabilityNoncurrent: [i(d, 43)], ShortTermBorrowings: [i(d, 2424)] }), d);
+  assert.deepEqual([hon.debt, hon.debtHigh], [14097, 16521]);
+  // Campbell: the combined 7,137 = DebtCurrent 977 + the bundled 6,160; finance leases 84 (33 current)
+  const cpb = debtAt(ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 7137)], DebtCurrent: [i(d, 977)], LongTermDebtAndCapitalLeaseObligations: [i(d, 6160)],
+    FinanceLeaseLiability: [i(d, 84)], FinanceLeaseLiabilityCurrent: [i(d, 33)], FinanceLeaseLiabilityNoncurrent: [i(d, 51)], CommercialPaper: [i(d, 373)] }), d);
+  assert.deepEqual([cpb.debt, cpb.debtHigh], [7053, 7426]);
+  // Iron Mountain tags its bundled lines under the plain tags too: 16,739.3 + 1,232.9 hold 499.1 + 71.9 of leases
+  const irm = debtAt(ns({ LongTermDebt: [i(d, 17972.2)], LongTermDebtNoncurrent: [i(d, 16739.3)], LongTermDebtCurrent: [i(d, 1232.9)],
+    LongTermDebtAndCapitalLeaseObligations: [i(d, 16739.3)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 1232.9)],
+    FinanceLeaseLiabilityCurrent: [i(d, 71.9)], FinanceLeaseLiabilityNoncurrent: [i(d, 499.1)] }), d);
+  assert.ok(Math.abs(irm.debt - 17401.2) < 1e-6, String(irm.debt)); assert.equal(irm.debtHigh, null);
+  // near is not equal: NRG's LongTermDebt 23,052 is 0.6% above its bundled lines and is their total less the 45 of leases
+  const nrg = debtAt(ns({ LongTermDebt: [i(d, 23052)], LongTermDebtAndCapitalLeaseObligations: [i(d, 21844)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 1079)],
+    LongTermDebtCurrent: [i(d, 1079)], DebtAndCapitalLeaseObligations: [i(d, 23097)], FinanceLeaseLiability: [i(d, 45)] }), d);
+  assert.deepEqual([nrg.debt, nrg.debtHigh], [23052, null]);
+  // a plain line with no bundled twin keeps what it holds (Solventum: its 206 of finance leases are a line of their own)
+  const solv = debtAt(ns({ LongTermDebtNoncurrent: [i(d, 4561)], DebtCurrent: [i(d, 507)], DebtLongtermAndShorttermCombinedAmount: [i(d, 5068)], FinanceLeaseLiabilityNoncurrent: [i(d, 206)] }), d);
+  assert.deepEqual([solv.debt, solv.debtHigh], [5068, null]);
+});
+test('final check: the debt rules each mutation of the fix review left untested (Occidental, M&T, Onto)', () => {
+  const d = Q[1];
+  // LongTermDebt below a noncurrent line that holds finance leases is the lease-free total, not another noncurrent line
+  const oxy = debtAt(ns({ LongTermDebt: [i(d, 1000)], LongTermDebtNoncurrent: [i(d, 1050)], LongTermDebtCurrent: [i(d, 50)], FinanceLeaseLiabilityNoncurrent: [i(d, 100)] }), d);
+  assert.deepEqual([oxy.debt, oxy.debtHigh], [1000, 1100]);
+  // a credit line equal to a short-term line is that line (M&T: 6,300 beside 6,373 of short-term borrowings)
+  const mtb = debtAt(ns({ LongTermDebt: [i(d, 13648)], ShortTermBorrowings: [i(d, 6373)], LineOfCredit: [i(d, 6300)] }), d);
+  assert.deepEqual([mtb.debt, mtb.debtHigh], [13648, 20021]);
+  // convertible notes within 2% of the whole figure are that figure (Onto: 1,473.2 carried of 1,500 face)
+  const onto = debtAt(ns({ LongTermDebt: [i(d, 1500)], ConvertibleLongTermNotesPayable: [i(d, 1473.2)] }), d);
+  assert.deepEqual([onto.debt, onto.debtHigh], [1500, null]);
+});
 test('fix review: a line of credit under us-gaap LineOfCredit is read like a long-term one (EastGroup: 194.7 of bank credit facilities beside 1,611.9 of notes)', () => {
   const d = Q[1];
   const egp = debtAt(ns({ LongTermDebt: [i(d, 1611.864)], LineOfCredit: [i(d, 194.692)] }), d);
@@ -398,6 +453,25 @@ test('fix review: a finance lease tagged only as a total comes out of the bundle
   assert.ok(Math.abs(mur.debt - 1539.6) < 1e-9, String(mur.debt)); assert.equal(mur.debtHigh, null);
   // a bundled current line loses its tagged current finance lease
   assert.equal(debtAt(ns({ LongTermDebtNoncurrent: [i(d, 1000)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 409)], FinanceLeaseLiabilityCurrent: [i(d, 5)] }), d).debt, 1404);
+  // only the noncurrent part of the total comes out of the noncurrent line (Charles River: 9.7 of which 1.0 is current)
+  const crl = debtAt(ns({ LongTermDebtAndCapitalLeaseObligations: [i(d, 2443.5)], LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 3.1)], LongTermDebtCurrent: [i(d, 2.1)],
+    FinanceLeaseLiability: [i(d, 9.7)], FinanceLeaseLiabilityCurrent: [i(d, 1.0)] }), d);
+  assert.ok(Math.abs(crl.debt - 2436.9) < 1e-9, String(crl.debt)); assert.equal(crl.debtHigh, null);
+});
+test('final check: a lease total another filing contradicts comes out of the low reading only (Waste Management: 1,284 at 2025-12-31 in its 10-Q, 563 of leases in its 10-K)', () => {
+  // WM's 10-Q tags its debt line "Financing leases and other" as FinanceLeaseLiability; its 10-K gave 563 of leases on
+  // that date, so about 720 of the line are other debt. The panel had called all 1,630 leases.
+  const d = Q[1], ye = '2025-12-31';
+  const wm = (fl) => debtAt(ns({ LongTermDebtAndCapitalLeaseObligations: [i(d, 21846)], LongTermDebtCurrent: [i(d, 1524)], DebtCurrent: [i(d, 1524)],
+    LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities: [i(d, 23370)], FinanceLeaseLiability: fl }), d);
+  const r = wm([i(d, 1630), i(ye, 563, { form: '10-K', filed: '2026-02-12' }), i(ye, 1284, { filed: '2026-10-28' })]);
+  assert.deepEqual([r.debt, r.debtHigh], [21740, 23370]);
+  assert.equal(r.parts.leaseDoubt, 1630);   // the page says this line may hold other debt, not "leases, not counted"
+  assert.equal(wm([i(d, 1630)]).parts.leaseDoubt, undefined);
+  // the same total that every filing agrees on comes out of both readings (UPS, Murphy, Charles River above)
+  assert.deepEqual((x => [x.debt, x.debtHigh])(wm([i(d, 1630), i(ye, 1284, { form: '10-K', filed: '2026-02-12' }), i(ye, 1284, { filed: '2026-10-28' })])), [21740, null]);
+  // a contradiction more than 400 days old says nothing about today's line (Murphy Oil's 2020 figures)
+  assert.deepEqual((x => [x.debt, x.debtHigh])(wm([i(d, 1630), i('2020-12-31', 7, { form: '10-K', filed: '2021-02-20' }), i('2020-12-31', 0, { filed: '2021-11-01' })])), [21740, null]);
 });
 test('fix review: the high reading counts no line twice: LongTermDebt that holds its current portion, short lines inside DebtCurrent, a convertible that is the whole figure (Hubbell, Boeing, Tyler)', () => {
   const d = Q[1];
@@ -414,13 +488,66 @@ test('fix review: the high reading counts no line twice: LongTermDebt that holds
   // Adobe (LongTermDebt is its noncurrent line, no noncurrent tag) keeps its high reading
   assert.deepEqual((x => [x.debt, x.debtHigh])(debtAt(ns({ LongTermDebt: [i(d, 4766)], DebtCurrent: [i(d, 1597)] }), d)), [4766, 6363]);
 });
-test('fix review: convertible notes that are the only debt prove a fail; a pass still needs the liabilities bound under 30% (Akamai)', () => {
-  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], ConvertibleNotesPayableCurrent: [i(Q[1], 1148.346)], ConvertibleLongTermNotesPayable: [i(Q[1], 6419.341)],
-    Liabilities: [i(Q[1], 9000)], OperatingLeaseLiability: [i(Q[1], 482.3)] })), { yieldPct: 5 });
-  assert.ok(Math.abs(r.debt - 7567.687) < 1e-9, String(r.debt)); assert.ok(Math.abs(r.debtHigh - (9000 - 482.3)) < 1e-9, String(r.debtHigh));
+test('final check (post-hoc): convertible notes are interest-bearing debt, except notes the filing shows at 0.00%; an unnamed credit line is not debt for sure (Akamai, BlackLine, Toll Brothers, Ironwood, Dropbox)', () => {
+  // This test was "convertible notes that are the only debt prove a fail" (0cbdb9c), then "prove no fail" (first fix of
+  // the final check, 2026-11-22) until its review showed that rule unjudged BlackLine, PagerDuty, Five9, PacBio and
+  // WhiteFiber, whose notes carry coupons. Only notes the filing shows at 0.00% are in question (the owner's decision,
+  // A4): data/shariah/zero-coupon.json lists them, and they stay in the high reading. us-gaap LineOfCredit can be someone
+  // else's borrowing (Toll Brothers' 2,507.7 is its joint ventures'). The liabilities bound is the pass test.
+  const akamTags = ns({ Revenues: [f(...Q, 1000)], ConvertibleNotesPayableCurrent: [i(Q[1], 1148.346)], ConvertibleLongTermNotesPayable: [i(Q[1], 6419.341)],
+    Liabilities: [i(Q[1], 9000)], OperatingLeaseLiability: [i(Q[1], 482.3)] });
+  const akam = secInputs(company(akamTags), { yieldPct: 5, zeroCoupon: { period: Q[1], zero: 3455.562 } });
+  assert.ok(Math.abs(akam.debt - 4112.125) < 1e-9, String(akam.debt)); assert.ok(Math.abs(akam.debtHigh - 8517.7) < 1e-9, String(akam.debtHigh));
+  // an entry for an earlier quarter still applies to the notes that are left (the weekly report names it as stale)
+  assert.ok(Math.abs(secInputs(company(akamTags), { yieldPct: 5, zeroCoupon: { period: '2026-03-31', zero: 3455.562 } }).debt - 4112.125) < 1e-9);
+  // BlackLine: 667.97 of 1.00% notes, its only debt: interest-bearing, a fail can rest on them
+  const bl = secInputs(company(ns({ Revenues: [f(...Q, 1000)], ConvertibleDebtNoncurrent: [i(Q[1], 667.97)], Liabilities: [i(Q[1], 1200)] })), { yieldPct: 5 });
+  assert.equal(bl.debt, 667.97); assert.equal(bl.debtHigh, 1200); assert.equal(bl.debtPartial, true);
+  const tol = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LineOfCredit: [i(Q[1], 2507.7)], Liabilities: [i(Q[1], 6144.3)], OperatingLeaseLiability: [i(Q[1], 147.3)] })), { yieldPct: 5 });
+  assert.equal(tol.debt, null); assert.ok(Math.abs(tol.debtUpperBound - 5997) < 1e-9, String(tol.debtUpperBound));
+  // a drawn long-term credit line is the company's own interest-bearing debt: it proves a fail; the bound is its high reading
+  const irwd = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LongTermLineOfCredit: [i(Q[1], 325)], Liabilities: [i(Q[1], 387.8)], OperatingLeaseLiability: [i(Q[1], 11.2)] })), { yieldPct: 5 });
+  assert.equal(irwd.debt, 325); assert.ok(Math.abs(irwd.debtHigh - 376.6) < 1e-9, String(irwd.debtHigh)); assert.equal(irwd.debtPartial, true);
+  // Dropbox: its 691.1 are 0.00% 2028 notes; the 2,580.2 term loan is the sure debt
+  const dbx = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LongTermLineOfCredit: [i(Q[1], 2580.2)], ConvertibleDebtNoncurrent: [i(Q[1], 691.1)],
+    Liabilities: [i(Q[1], 5021.7)], OperatingLeaseLiability: [i(Q[1], 376.9)], FinanceLeaseLiability: [i(Q[1], 280.5)] })), { yieldPct: 5, zeroCoupon: { period: Q[1], zero: 691.1 } });
+  assert.equal(dbx.debt, 2580.2); assert.ok(Math.abs(dbx.debtHigh - 4364.3) < 1e-9, String(dbx.debtHigh));
   // with no liabilities figure there is nothing to bound a pass: no debt figure at all, as before
   const nob = secInputs(company(ns({ Revenues: [f(...Q, 1000)], ConvertibleNotesPayable: [i(Q[1], 500)] })), { yieldPct: 5 });
   assert.equal(nob.debt, null);
+});
+test('final check: beside or inside long-term debt, 0.00% notes leave the fail-proving reading; an unnamed credit line is in the high reading only; a long-term credit line counts once, at its larger tag (Super Micro, Bill, Onto, Arrowhead)', () => {
+  const d = Q[1];
+  // SMCI: 4,669 of convertibles beside a combined 3,977, 2,267 of them 0.00% 2030 notes: 3,977 + 2,402 for sure
+  const smciTags = ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 3977)], ConvertibleDebtNoncurrent: [i(d, 4669)] });
+  assert.deepEqual((x => [x.debt, x.debtHigh])(debtAt(smciTags, d, { zero: 2267 })), [6379, 8646]);
+  assert.deepEqual((x => [x.debt, x.debtHigh])(debtAt(smciTags, d)), [8646, null]);   // no entry: all of them, as in the audit
+  // Bill: LongTermDebt 1,837.4 holds its 1,507.4 of 0.00% notes and a 330 revolver
+  const bill = debtAt(ns({ LongTermDebt: [i(d, 1837.404)], ConvertibleDebtCurrent: [i(d, 123.204)], ConvertibleDebtNoncurrent: [i(d, 1384.2)], LongTermLineOfCredit: [i(d, 330)] }), d, { zero: 1507.404 });
+  assert.ok(Math.abs(bill.debt - 330) < 1e-9 && Math.abs(bill.debtHigh - 3674.808) < 1e-9, JSON.stringify(bill));
+  // Onto: its 1,500 is its 0.00% 2031 notes (1,473.2 carried): nothing is debt for sure
+  assert.deepEqual((x => [x.debt, x.debtHigh])(debtAt(ns({ LongTermDebt: [i(d, 1500)], ConvertibleLongTermNotesPayable: [i(d, 1473.179)] }), d, { zero: 1473.179 })), [0, 1500]);
+  // a drawn long-term line larger than every line it could sit inside is debt for sure (PSIX: 35 beside 0.9)
+  const psix = debtAt(ns({ LongTermDebt: [i(d, 0.9)], LongTermLineOfCredit: [i(d, 35)] }), d);
+  assert.deepEqual([psix.debt, psix.debtHigh], [35.9, null]);
+  // the same line under both tags (Arrowhead's 195.4 holds its 155.4 long-term part) counts once, at the larger figure
+  const arwr = debtAt(ns({ LongTermDebt: [i(d, 100)], LongTermLineOfCredit: [i(d, 155.4)], LineOfCredit: [i(d, 195.4)] }), d);
+  assert.ok(Math.abs(arwr.debt - 255.4) < 1e-9 && Math.abs(arwr.debtHigh - 295.4) < 1e-9, JSON.stringify(arwr));
+  // an unnamed credit line larger than the rest is still not debt for sure (Toll's joint ventures)
+  const tol = debtAt(ns({ LongTermDebt: [i(d, 100)], LineOfCredit: [i(d, 2507.7)] }), d);
+  assert.deepEqual([tol.debt, tol.debtHigh], [100, 2607.7]);
+});
+test('final check: the debt-total cap of the Lennox rule and the bundled-current condition of the LongTermDebt twin (NXP, Dutch Bros)', () => {
+  const d = Q[1];
+  // NXP: its 2,000 of "commercial paper" is a programme with nothing outstanding; the total less leases caps the low reading
+  const nxpi = debtAt(ns({ DebtAndCapitalLeaseObligations: [i(d, 10978)], DebtCurrent: [i(d, 999)], LongTermDebtAndCapitalLeaseObligations: [i(d, 9979)],
+    LongTermDebtAndCapitalLeaseObligationsCurrent: [i(d, 999)], CommercialPaper: [i(d, 2000)] }), d);
+  assert.deepEqual([nxpi.debt, nxpi.debtHigh], [10978, 12978]);
+  // Dutch Bros tags its lease-free total under LongTermDebt and the bundled tag alike, its 407.4 of finance leases apart:
+  // without a bundled current line the two are no twin
+  const bros = debtAt(ns({ LongTermDebt: [i(d, 199.534)], LongTermDebtCurrent: [i(d, 4.766)], LongTermDebtNoncurrent: [i(d, 192.87)],
+    LongTermDebtAndCapitalLeaseObligations: [i(d, 199.534)], FinanceLeaseLiabilityCurrent: [i(d, 16.872)], FinanceLeaseLiabilityNoncurrent: [i(d, 390.557)] }), d);
+  assert.deepEqual([bros.debt, bros.debtHigh], [199.534, null]);
 });
 test('fix review: a short-term line tagged at zero is the current line beside a noncurrent one (Cognizant: 0 + 1,552)', () => {
   const d = Q[1];
@@ -433,7 +560,8 @@ test('fix review: debt and finance leases less the leases is the low reading onl
 });
 
 test('fix review: capitalized contract costs, tax receivables and current loans (charged at the lending rate) are no interest-earning current assets (Duolingo, Dell)', () => {
-  const ccc = secInputs(company(ns({ Revenues: [f(...Q, 1000)], AssetsCurrent: [i(Q[1], 160)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+  // (one figure with prepaid expenses since the final check of 2026-11-22: they are often inside that line; Mastercard)
+  const ccc = secInputs(company(ns({ Revenues: [f(...Q, 1000)], AssetsCurrent: [i(Q[1], 150)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
     CapitalizedContractCostNetCurrent: [i(Q[1], 50)], IncomeTaxReceivable: [i(Q[1], 10)] })), { yieldPct: 5 });
   assert.ok(Math.abs(ccc.illicit - 100 * 0.05 * 91 / 365) < 1e-9, String(ccc.illicit));
   // Dell: 12,805 of current financing receivables inside the 20,430 loan book: charged at 20%, not again at the yield
@@ -469,6 +597,18 @@ test('fix review: a loan book read from cash flows says so, and a credit-loss pr
   assert.equal(flow.estimate.loansFlow, true);
   const bal = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesAndLoansReceivableNetCurrent: [i(Q[1], 500)] })), { yieldPct: 5 });
   assert.equal(bal.estimate.loans, 500); assert.equal(bal.estimate.loansFlow, undefined);
+  // the flow's own period and the smaller balance beside it, for the page (final check 2026-11-22: Block tags 2,352.2 of
+  // loans beside 32,145.2 of 2025 originations; Rocket's flow covers nine months)
+  assert.equal(flow.estimate.loansFlowDays, 240); assert.equal(flow.estimate.loansBalance, undefined);
+  // (the balance at the quarter's end, from a loan tag: Block's 2,670.3 of the year before is not today's; a lease
+  // investment is no loan balance, and Deere's 42.9B of receivables sit under its own tag: review of the final check)
+  const both = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    NotesAndLoansReceivableNetCurrent: [i('2025-12-31', 2670.3, { filed: '2026-02-20' }), i(Q[1], 2352.2)],
+    PaymentsToAcquireFinanceReceivables: [f('2025-01-01', '2025-12-31', 32145.2)] })), { yieldPct: 5 });
+  assert.deepEqual([both.estimate.loans, both.estimate.loansFlow, both.estimate.loansBalance, both.estimate.loansFlowDays], [32145.2, true, 2352.2, 365]);
+  const de = secInputs(company(ns({ Revenues: [f(...Q, 12608)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 10300)], NetInvestmentInLease: [i(Q[1], 2593)],
+    ProceedsFromCollectionOfFinanceReceivables: [f('2025-06-01', Q[1], 26480)] })), { yieldPct: 5 });
+  assert.equal(de.estimate.loansFlow, true); assert.equal(de.estimate.loansBalance, undefined);
   // Dave: 7,600 of yearly advances under a credit-loss tag beside a 357 book
   const dave = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesAndLoansReceivableNetCurrent: [i(Q[1], 357)],
     FinancingReceivableExcludingAccruedInterestCreditLossExpenseReversal: [f('2025-07-01', Q[1], 7600)] })), { yieldPct: 5 });
@@ -476,14 +616,59 @@ test('fix review: a loan book read from cash flows says so, and a credit-loss pr
 });
 
 test('fix review: a reverse split of 1:50 or more is a split; only a 1000x step is a unit error', () => {
+  // (since the final check of 2026-11-22 a step beyond 50x needs the cover count to move by about as much: a split
+  // restated with a unit change gave ONEOK 2,000 and Freeport 2,000,000; Chesapeake's real 1:200 moved its cover count)
   const w = (start, end, val, filed) => ({ start, end, val, form: '10-Q', filed });
-  const sh = (rows) => company({ ...ns({ Revenues: [f(...Q0, 900), f(...Q, 1000)] }), WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: rows } } });
-  const r100 = secInputs(sh([w('2025-04-01', '2025-06-30', 1000, '2025-08-14'), w('2025-04-01', '2025-06-30', 10, '2026-08-15'), w(...Q, 10.1, '2026-08-15')]), { yieldPct: 5 });
+  const cover = (vals) => ({ EntityCommonStockSharesOutstanding: { units: { shares: vals.map(([filed, val]) => ({ end: filed, val, form: '10-Q', filed })) } } });
+  const sh = (rows, dei = {}) => company({ ...ns({ Revenues: [f(...Q0, 900), f(...Q, 1000)] }), WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: rows } } }, dei);
+  const rows100 = [w('2025-04-01', '2025-06-30', 1000, '2025-08-14'), w('2025-04-01', '2025-06-30', 10, '2026-08-15'), w(...Q, 10.1, '2026-08-15')];
+  const r100 = secInputs(sh(rows100, cover([['2025-08-14', 1000], ['2026-08-15', 10.2]])), { yieldPct: 5 });
   assert.ok(Math.abs(r100.splitRatio - 0.01) < 1e-12, String(r100.splitRatio));
+  assert.equal(secInputs(sh(rows100, cover([['2025-08-14', 1000], ['2026-08-15', 980]])), { yieldPct: 5 }).splitRatio, null);   // the cover did not move: no split
+  assert.equal(secInputs(sh(rows100), { yieldPct: 5 }).splitRatio, null);                                                        // nothing to confirm it
   const unit = secInputs(sh([w('2025-04-01', '2025-06-30', 1, '2025-08-14'), w('2025-04-01', '2025-06-30', 1000, '2026-08-15'), w(...Q, 1000, '2026-08-15')]), { yieldPct: 5 });
   assert.equal(unit.splitRatio, null);
 });
 
+test('final check: a 10-K quarter caps the cover count at the shares outstanding at the quarter\'s end; the year\'s weighted count only without them (BitMine: 613.3M at the end, 482.3M on average)', () => {
+  const rev = ns({ Revenues: [f('2026-06-01', '2026-08-31', 100, { form: '10-K' })] });
+  const g = (w, qe) => ({ WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f('2025-09-01', '2026-08-31', w, { form: '10-K' })] } },
+    ...(qe ? { CommonStockSharesOutstanding: { units: { shares: [i('2026-08-31', qe, { form: '10-K' })] } } } : {}) });
+  const cover = { EntityCommonStockSharesOutstanding: { units: { shares: [{ end: '2026-11-20', val: 625e6, form: '10-K', filed: '2026-11-21' }] } } };
+  assert.equal(secInputs(company({ ...rev, ...g(482.29e6, 613.27e6) }, cover), { yieldPct: 5 }).sharesMV, 613.27e6);
+  assert.equal(secInputs(company({ ...rev, ...g(482.29e6) }, cover), { yieldPct: 5 }).sharesMV, 482.29e6);   // as before
+  // a count 1000x off the other with nothing to tell which is right stays unjudged (G6 rerun), whichever count it is
+  assert.equal(secInputs(company({ ...rev, ...g(482.29e3) }, cover), { yieldPct: 5 }).sharesMV, null);
+});
+test('final check: where every exact interest line is a lending line, the high reading adds the cash and securities at the corporate yield (Shopify: 96M on loans, its 65M on 5.25B of cash under a net tag; HPE)', () => {
+  const shop = secInputs(company(ns({ Revenues: [f(...Q, 3742)], InterestAndFeeIncomeLoansAndLeases: [f(...Q, 96)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 5250)] })), { yieldPct: 5 });
+  assert.equal(shop.illicit, 96); assert.ok(Math.abs(shop.illicitHigh - (96 + 5250 * 0.05 * 91 / 365)) < 1e-9, String(shop.illicitHigh));
+  // HPE: InterestIncomeOperating 192 is the same figure as its lease-interest line
+  const hpe = secInputs(company(ns({ Revenues: [f(...Q, 12213)], InterestIncomeOperating: [f(...Q, 192)], SalesTypeAndDirectFinancingLeasesInterestIncome: [f(...Q, 192)],
+    CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 6216)] })), { yieldPct: 5 });
+  assert.ok(Math.abs(hpe.illicitHigh - (192 + 6216 * 0.05 * 91 / 365)) < 1e-9, String(hpe.illicitHigh));
+  // an exact line on cash covers the cash: nothing is added
+  const other = secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 5250)] })), { yieldPct: 5 });
+  assert.equal(other.illicitHigh, null);
+});
+test('final check: an estimate proves no interest pass for a credit, brokerage or asset-management business (Ameriprise: 154M estimated, 908M of net investment income in its 10-Q)', () => {
+  const amp = (sic) => secInputs(company(ns({ Revenues: [f(...Q, 5191)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 11159)] })), { yieldPct: 5, sic });
+  for (const s of ['6282', '6211', '6162', '6199', '6411']) assert.equal(amp(s).illicitOpen, true, s);
+  // a REIT's, a patent owner's or anyone else's estimate stands
+  for (const s of ['6798', '6794', '3571', null, undefined]) assert.equal(amp(s).illicitOpen, false, String(s));
+});
+test('final check: a loan cash flow or a small note does not make a lender of a company whose interest is under 10% of revenue (Tronox: one 11M loan collection)', () => {
+  const contract = { RevenueFromContractWithCustomerExcludingAssessedTax: [f(...Q, 1000)], InterestIncomeOperating: [f(...Q, 51)] };
+  const flow = secInputs(company(ns({ ...contract, ProceedsFromCollectionOfLoansReceivable: [f('2025-01-01', '2025-12-31', 11)] })), { yieldPct: 5 });
+  assert.equal(flow.revenue, 1000);   // 5.10%: a fail, as on contract revenue alone
+  const note = secInputs(company(ns({ ...contract, NotesReceivableNet: [i(Q[1], 11)] })), { yieldPct: 5 });
+  assert.equal(note.revenue, 1000);
+});
+test('final check: a tax receivable, contract costs or current loans inside "prepaid expenses and other current assets" are not taken off twice (Mastercard: 1,126 of tax receivable inside 4,370)', () => {
+  const ma = secInputs(company(ns({ Revenues: [f(...Q, 8000)], AssetsCurrent: [i(Q[1], 24480)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 10147)],
+    AccountsReceivableNetCurrent: [i(Q[1], 5258)], IncomeTaxReceivable: [i(Q[1], 1126)], PrepaidExpenseAndOtherAssetsCurrent: [i(Q[1], 4370)], OtherAssetsCurrent: [i(Q[1], 1654)] })), { yieldPct: 5 });
+  assert.ok(Math.abs(ma.illicit - (10147 + 3051) * 0.05 * 91 / 365) < 1e-6, String(ma.illicit));
+});
 test('audit round 2: a cover count of one share class is no count of the company (Mobileye: 252.4M Class A of 824M)', () => {
   const g = { WeightedAverageNumberOfSharesOutstandingBasic: { units: { shares: [f(...Q, 824e6)] } }, ...ns({ Revenues: [f(...Q, 1000)], NetIncomeLoss: [f(...Q, -67e6)] }),
     EarningsPerShareBasic: { units: { 'USD/shares': [f(...Q, -0.08)] } } };
@@ -502,6 +687,14 @@ test('audit round 2: notes receivable from related parties are loans (Muscle Mak
   const vz = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesReceivableNet: [i(Q[1], 29530)],
     NotesReceivableGross: [i(Q[1], 32055)] })), { yieldPct: 5 });
   assert.equal(vz.estimate.loans, 29530);
+});
+
+test('final check: a business held for sale under the current taxonomy\'s tag earns no interest (IFF: 5,181 of current assets; purified 69M against a 3M interest line)', () => {
+  const iff = secInputs(company(ns({ Revenues: [f(...Q0, 1900), f(...Q, 1942)], InvestmentIncomeInterest: [f(...Q, 3)], AssetsCurrent: [i(Q0[1], 9275), i(Q[1], 9275)],
+    CashAndCashEquivalentsAtCarryingValue: [i(Q0[1], 272), i(Q[1], 272)], AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent: [i(Q0[1], 5181), i(Q[1], 5181)],
+    InventoryNet: [i(Q0[1], 1452), i(Q[1], 1452)], OtherAssetsCurrent: [i(Q0[1], 837), i(Q[1], 837)], IncomeTaxesReceivable: [i(Q0[1], 368), i(Q[1], 368)],
+    AccountsAndOtherReceivablesNetCurrent: [i(Q0[1], 1165), i(Q[1], 1165)] })), { yieldPct: 5 });
+  assert.equal(iff.illicitHigh, null, String(iff.illicitHigh));   // every current asset is explained: no high reading above the 3
 });
 
 // ---- External audit, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M13) ----
@@ -588,6 +781,7 @@ test('audit: a long-term credit line is debt; it counts for sure when the other 
   assert.deepEqual([rol.debt, rol.debtHigh], [487.6, null]);
 });
 test('audit: convertible notes are debt; for sure when larger than the debt they could sit inside (SMCI), else high reading only', () => {
+  // (since the final check of 2026-11-22, notes the filing shows at 0.00% excepted: see the zero-coupon tests above)
   const d = Q[1];
   // Super Micro 2026-09-30 ($K): lines of credit and term loans 3,977,071 (combined) + convertible notes 4,668,946
   const smci = debtAt(ns({ DebtLongtermAndShorttermCombinedAmount: [i(d, 3977071)], ConvertibleLongTermNotesPayable: [i(d, 4668946)] }), d);
@@ -748,4 +942,24 @@ test('audit: a loan balance repeated in later filings counts once (Cisco: 3,623 
   const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
     NotesAndLoansReceivableNetCurrent: rep(Q[1], 3623), NotesAndLoansReceivableNetNoncurrent: rep(Q[1], 5118) })), { yieldPct: 5 });
   assert.equal(r.estimate.loans, 3623 + 5118);
+});
+
+test('final check: sales-type lease investments are in the loan book; their undiscounted payments and unearned income are not (Intuitive Surgical: 366.0 net, not 396.9 gross)', () => {
+  const r = secInputs(company(ns({ Revenues: [f(...Q, 3048.7)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)],
+    SalesTypeLeaseNetInvestmentInLeaseExcludingAccruedInterestBeforeAllowanceForCreditLoss: [i(Q[1], 366.0)],
+    SalesTypeAndDirectFinancingLeasesLeaseReceivablePaymentsToBeReceived: [i(Q[1], 396.9)], SalesTypeAndDirectFinancingLeasesLeaseReceivableUndiscountedExcessAmount: [i(Q[1], 27.1)] })), { yieldPct: 5 });
+  assert.equal(r.estimate.loans, 366.0);
+});
+test('final check: with no long-term line, current credit lines and short-term borrowings are debt for sure; commercial paper is not (Opendoor: 2,016 of asset-backed lines)', () => {
+  const open = secInputs(company(ns({ Revenues: [f(...Q, 1000)], LongTermLineOfCredit: [i(Q[1], 348)], LinesOfCreditCurrent: [i(Q[1], 2016)], ConvertibleDebtNoncurrent: [i(Q[1], 639)],
+    ConvertibleDebtCurrent: [i(Q[1], 59)], Liabilities: [i(Q[1], 3148)], OperatingLeaseLiability: [i(Q[1], 8)] })), { yieldPct: 5 });
+  assert.deepEqual([open.debt, open.debtHigh, open.debtPartial], [3062, 3140, true]);   // its balance sheet's 3,062
+  const cp = secInputs(company(ns({ Revenues: [f(...Q, 1000)], ConvertibleDebtNoncurrent: [i(Q[1], 639)], CommercialPaper: [i(Q[1], 600)], Liabilities: [i(Q[1], 3148)] })), { yieldPct: 5 });
+  assert.equal(cp.debt, 639);   // the paper is a programme's size, not money owed for sure: it stays out
+});
+
+test('final check: a nuclear decommissioning trust is an interest-earning book in the estimate, beside the cash (Constellation: 20.5B, its estimate had fallen to the cash alone)', () => {
+  const ceg = secInputs(company(ns({ Revenues: [f(...Q, 6000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 697)], LongTermInvestments: [i(Q[1], 500)],
+    DecommissioningFundInvestments: [i(Q[1], 20492)], DecommissioningTrustAssetsAmount: [i(Q[1], 20583)] })), { yieldPct: 5 });
+  assert.ok(Math.abs(ceg.illicit - (697 + 500 + 20583) * 0.05 * 91 / 365) < 1e-6, String(ceg.illicit));   // one figure of the two trust tags, on top
 });

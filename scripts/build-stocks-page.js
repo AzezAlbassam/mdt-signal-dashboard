@@ -18,7 +18,7 @@ function inline(file) {
 const engine = ['engine/fairvalue.js', 'engine/score.js', 'engine/expectations.js', 'engine/projection.js', 'engine/svr.js', 'engine/ranks.js', 'engine/rdcf.js', 'engine/snowflake.js', 'engine/ehs.js', 'engine/shariah.js'].map(inline).join('\n')
 // Only the fields the page reads, so the page stays small.
 function shariah() {
-  const KEEP = ['cik', 'sic', 'sicDescription', 'revenueTag', 'period', 'revenue', 'illicit', 'illicitHigh', 'illicitOpen', 'illicitPublished', 'illicitTag', 'illicitEstimated', 'estimate', 'debt', 'debtHigh', 'debtParts', 'debtUpperBound', 'bookEquity', 'shares', 'sharesMV', 'yieldPct', 'newerFiling', 'error', 'stale']
+  const KEEP = ['cik', 'sic', 'sicDescription', 'revenueTag', 'period', 'revenue', 'illicit', 'illicitHigh', 'illicitOpen', 'illicitPublished', 'illicitTag', 'illicitEstimated', 'estimate', 'debt', 'debtHigh', 'debtPartial', 'debtParts', 'debtUpperBound', 'bookEquity', 'shares', 'sharesMV', 'yieldPct', 'newerFiling', 'nonReliance', 'error', 'stale']
   const d = JSON.parse(fs.readFileSync('data/shariah/sec-inputs.json', 'utf8'))
   const stocks = Object.fromEntries(Object.entries(d.stocks).map(([t, r]) => [t, Object.fromEntries(KEEP.filter((k) => r[k] != null).map((k) => [k, r[k]]))]))
   return JSON.stringify({ built: d.built, stocks, sic: JSON.parse(fs.readFileSync('data/shariah/sic-activity.json', 'utf8')) })
