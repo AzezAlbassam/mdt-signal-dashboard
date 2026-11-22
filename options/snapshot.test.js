@@ -11,7 +11,7 @@ import { join } from 'node:path'
 const realTimeout = setTimeout
 globalThis.setTimeout = (f, _ms, ...a) => realTimeout(f, 0, ...a)
 
-const { main, plan, quoteWindow, marketOpen, staleAfter, missDay, fromMarketData, credits } = await import('./snapshot.js')
+const { main, plan, quoteWindow, marketOpen, staleAfter, missDay, fromMarketData, credits, rolledSession } = await import('./snapshot.js')
 
 const TICKERS = ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF', 'GGG', 'HHH', 'III', 'JJJ', 'KKK', 'LLL']
 // An expiry about 13 months out, whatever day the tests run.
@@ -23,6 +23,7 @@ let noQuotes = new Set()
 let stamps = {}
 let refuse = 0 // HTTP status for every request (401: a bad key), 0 to answer normally
 let creditsLeft = null // credits the fake source reports after each answer
+let ipBlocked = new Set() // tickers whose first request meets the one-address block
 let calls = []
 const answer = (status, body, left = creditsLeft) => ({
   ok: status < 300, status, headers: new Headers(left == null ? {} : { 'x-api-ratelimit-remaining': String(left) }), json: async () => body,
@@ -31,6 +32,8 @@ globalThis.fetch = async (url) => {
   const t = decodeURIComponent(url.split('/chain/')[1].split('/')[0])
   calls.push(t)
   if (refuse) return answer(refuse, { s: 'error', errmsg: 'Invalid token header. No credentials provided.' }, 0)
+  if (ipBlocked.delete(t)) return answer(403, { s: 'error', errmsg: 'Access denied. Only one device is permitted.', authorizedIP: '1.1.1.1', blockedIP: '2.2.2.2' })
+  assert.match(url, /[?&]date=\d{4}-\d{2}-\d{2}&/, 'chains are asked for by session date')
   if (down.has(t)) return answer(404, { s: 'no_data' })
   if (busy.has(t)) return answer(503, null)
   if (creditsLeft != null) creditsLeft -= 1
@@ -51,7 +54,7 @@ globalThis.fetch = async (url) => {
 let dir
 const prevUpdatedAt = '2026-11-19T21:06:00.000Z'
 beforeEach(() => {
-  down = new Set(); busy = new Set(); noDelta = new Set(); noQuotes = new Set(); stamps = {}; refuse = 0; creditsLeft = null; calls = []; credits.remaining = null
+  down = new Set(); busy = new Set(); noDelta = new Set(); noQuotes = new Set(); stamps = {}; refuse = 0; creditsLeft = null; ipBlocked = new Set(); calls = []; credits.remaining = null
   dir = mkdtempSync(join(tmpdir(), 'snap-'))
   const tickers = Object.fromEntries(TICKERS.map((t) => [t, { price: 10, tier: 'B', misses: 2 }])) // legacy per-pass count
   writeFileSync(join(dir, 'index.json'), JSON.stringify({ updatedAt: prevUpdatedAt, tickers }))
@@ -295,4 +298,22 @@ test("a pass the day's credits cannot finish refreshes the stalest tickers and l
     assert.equal(readFileSync(join(dir, `${t}.json`), 'utf8'), '{"keep":true}')
   }
   assert.equal(process.exitCode, 0)
+})
+
+test('the one-address block is waited out, not taken for a refused account', async () => {
+  ipBlocked = new Set(['AAA'])
+  const idx = await pass()
+  assert.equal(idx.tickers.AAA.error, undefined)
+  assert.notEqual(idx.tickers.AAA.fetchedAt, undefined)
+  assert.equal(calls.filter((t) => t === 'AAA').length, 2)
+  assert.equal(process.exitCode, 0)
+})
+
+test('the free plans read the session that rolled in at 9:30 New York on the next trading day', () => {
+  const at = (iso) => rolledSession(new Date(iso))
+  assert.equal(at('2026-11-22T12:00:00Z'), '2026-11-19', 'Sunday: Friday has not rolled in yet')
+  assert.equal(at('2026-11-23T13:00:00Z'), '2026-11-19', 'Monday before 9:30')
+  assert.equal(at('2026-11-23T14:50:00Z'), '2026-11-20', 'Monday after 9:30: Friday')
+  assert.equal(at('2026-11-26T15:00:00Z'), '2026-11-24', 'Thanksgiving: Wednesday rolls in on Friday')
+  assert.equal(at('2026-11-27T14:50:00Z'), '2026-11-25')
 })

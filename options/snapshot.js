@@ -165,6 +165,23 @@ const completedSessions = (history, session, at) =>
 const COLS = ['sym', 'exp', 'type', 'strike', 'bid', 'ask', 'bidSize', 'volume', 'oi', 'delta', 'adv', 'sessions']
 
 const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
+const isTradingDay = (day) => { const w = new Date(`${day}T12:00:00Z`).getUTCDay(); return w !== 0 && w !== 6 && !HOLIDAYS.has(day) }
+
+/**
+ * The newest session the free and trial plans can read: a session's chains roll in at 9:30
+ * New York on the next trading day (Thursday's on Friday morning, Friday's on Monday's).
+ */
+export function rolledSession(now) {
+  const today = nyDate(now)
+  const c = nyClock(now)
+  for (let d = addDays(today, -1), i = 0; i < 15; d = addDays(d, -1), i += 1) {
+    if (!isTradingDay(d)) continue
+    let next = addDays(d, 1)
+    while (!isTradingDay(next)) next = addDays(next, 1)
+    if (next < today || (next === today && c && c.m >= 570)) return d
+  }
+  return null
+}
 
 /**
  * MarketData's columnar chain as the rows chainRows reads. End-of-day chains (the free and
@@ -208,9 +225,11 @@ export function fromMarketData(j) {
 }
 
 async function fetchChain(ticker, now = new Date()) {
-  // Expiries a week to 1,300 days out: the rest is never sized, and every contract costs credit.
-  const day = nyDate(now)
-  const url = `${MARKETDATA}/${encodeURIComponent(ticker)}/?expiration=all&from=${addDays(day, 7)}&to=${addDays(day, 1300)}`
+  // A session's end-of-day chain, asked for by its date: priced per 1,000 contracts, where an
+  // undated request is priced per contract (SPY alone cost 5,029 credits). Expiries a week to
+  // 1,300 days out: the rest is never sized.
+  const day = rolledSession(now)
+  const url = `${MARKETDATA}/${encodeURIComponent(ticker)}/?date=${day}&expiration=all&from=${addDays(day, 7)}&to=${addDays(day, 1300)}`
   let status = 0
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
@@ -222,6 +241,9 @@ async function fetchChain(ticker, now = new Date()) {
       const body = await res.json().catch(() => null)
       if (status === 404 && body?.s === 'no_data') throw Object.assign(new Error('no listed options'), { noOptions: true })
       // The account itself is refused (no key, wrong key, plan): no other ticker will do better.
+      // One address at a time: when the network's way out changes, MarketData blocks the
+      // account for five minutes. Wait it out on the same connection, then ask again.
+      if (status === 403 && body?.blockedIP) { await new Promise((r) => setTimeout(r, 330000)); continue }
       if (status === 401 || status === 402 || status === 403) throw Object.assign(new Error(`MarketData refused the account (${status} ${body?.errmsg ?? ''})`.trim()), { fatal: true })
       if (status === 429) throw Object.assign(new Error("MarketData's daily credits are used up (they reset at 9:30 New York)"), { budget: true })
     } catch (e) {
@@ -455,7 +477,8 @@ export async function main() {
       if ((await run(t)) !== true) failed.push(t)
     }
   }
-  await Promise.all(Array.from({ length: 4 }, worker))
+  // One request at a time, so they share one connection and one address (see fetchChain).
+  await Promise.all(Array.from({ length: 1 }, worker))
   if (stop?.fatal) { await outageExit(stop.message); return }
   // What the day's credits did not reach keeps its last data and goes first next time.
   const waiting = queue.splice(0)
