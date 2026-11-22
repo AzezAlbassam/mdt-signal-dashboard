@@ -1,5 +1,5 @@
 {
- "built": "2026-11-22T05:48:26.178Z",
+ "built": "2026-11-22T06:08:23.691Z",
  "source": "daily closes, split-adjusted, averaged over the company's own latest quarter: FMP historical-price-eod-light or TradingView 1D bars (per entry)",
  "prices": {
   "BA": {
@@ -2335,6 +2335,10 @@
  },
  "rejected": [
   {
+   "t": "MRNA",
+   "why": "average 107.77 vs fund-report price 70.03"
+  },
+  {
    "t": "APH",
    "why": "average 80.55 vs fund-report price 176.32"
   },
@@ -2345,10 +2349,6 @@
   {
    "t": "MNST",
    "why": "average 46.30 vs fund-report price 96.12"
-  },
-  {
-   "t": "MRNA",
-   "why": "average 107.77 vs fund-report price 70.03"
   }
  ]
 }

@@ -7,7 +7,7 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { getter, companies, yieldAverager, inputsFor, newErrors, MAX_NEW_ERRORS } from './sec-lib.js';
-import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares } from '../../engine/funds.js';
+import { buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage } from '../../engine/funds.js';
 
 const MAX_AGE_DAYS = 150; // A7: holdings up to 150 days old (owner, 2026-11-21)
 const list = JSON.parse(readFileSync('data/shariah/funds-list.json', 'utf8')).funds;
@@ -145,13 +145,15 @@ for (const f of list) {
     illicitLookThrough: sum.illicitLookThrough, illicitCoveredWeight: sum.illicitCoveredWeight, kinds,
     rows: rows.sort((a, b) => Math.abs(b.w) - Math.abs(a.w)) });
 }
-// Holdings the band could not decide: the next step fetches their quarter-average close
+// Holdings the band could not decide, or passed near the debt line: the next step fetches their quarter-average close,
+// first those in funds whose verdict they can change (non-compliant weight under 5%), largest weight first
 const band = new Map();
-for (const f of out.funds) for (const x of f.rows ?? []) if (x.why?.includes('priceBand') && x.t) {
+for (const f of out.funds) for (const x of f.rows ?? []) if (needsQuarterAverage(x)) {
   const c = byCik.get(cos.find((k) => k.ticker === x.t)?.cik);
-  if (c?.period) band.set(x.t, { t: x.t, start: c.period.start, end: c.period.end });
+  const pri = f.badWeight < 0.05 ? Math.abs(x.w) : 0;
+  if (c?.period) band.set(x.t, { t: x.t, start: c.period.start, end: c.period.end, pri: Math.max(pri, band.get(x.t)?.pri ?? 0) });
 }
-writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()], null, 1));
+writeFileSync('data/shariah/band-needed.json', JSON.stringify([...band.values()].sort((a, b) => b.pri - a.pri).map(({ pri, ...e }) => e), null, 1));
 const written = out.funds.filter((f) => f.rows).length;
 if (written < 35) problems.push(`only ${written} funds with holdings`);
 writeFileSync('data/shariah/funds.json', JSON.stringify(out));

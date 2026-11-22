@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares } from '../engine/funds.js';
+import { normName, nameKeys, buildMaps, mapHolding, holdingKind, screenHolding, fundSummary, holdingWeight, splitBasis, onShares, needsQuarterAverage } from '../engine/funds.js';
 import { screenStock } from '../engine/shariah.js';
 
 const SIC = { fail: [[6020, 6036, 'banks']], review: [[5400, 5499, 'food stores']] };
@@ -242,6 +242,10 @@ test('audit: interest readings decide R3 only together; a lender with unread loa
   assert.equal(screenHolding(co({ illicit: 30, illicitEstimated: true }), 10, SIC).purification, 30 / 1000);
   // the stock page gives the same per share
   assert.equal(screenStock(co({ illicit: 20, illicitHigh: 80 }), 1000, SIC).numbers.purificationPerShare, null);
+  // fix review 2026-11-22: a fail is purified on the company's own published total interest, not the largest single line
+  // (KeyCorp's 107 of short-term investment interest against its total interest income of 2,133)
+  assert.equal(screenHolding(co({ illicit: 60, illicitPublished: 900, illicitHigh: 950 }), 10, SIC).purification, 900 / 1000);
+  assert.equal(screenHolding(co({ illicit: 20, illicitPublished: 900, illicitHigh: 40 }), 10, SIC).purification, 40 / 1000);   // a pass keeps its high reading
 });
 test('audit: a short position in equities is not compliant weight (a 130/30 fund cannot pass on its shorts)', () => {
   const longs = Array.from({ length: 13 }, () => ({ w: 0.10, kind: 'equity', state: 'مختلط جائز', purification: 0.001 }));
@@ -285,4 +289,11 @@ test('audit: an unjudged holding says why: not matched to a company, no numbers 
   assert.deepEqual(screenHolding({ cik: '1', error: 'no XBRL facts' }, 10, SIC).missing, ['unreadable']);
   assert.deepEqual(screenHolding({ cik: '1', period: null, stale: '2026-03-31' }, 10, SIC).missing, ['stale']);
   assert.deepEqual(screenHolding({ cik: '1', period: null }, 10, SIC).missing, ['statements']);
+});
+test('fix review: a pass on report prices near the debt line also needs the quarter average (Snowflake fell below the band floor; SPUS rests on ten such passes)', () => {
+  assert.equal(needsQuarterAverage({ k: 'equity', t: 'X', why: ['priceBand'], s: 'ما ينحكم' }), true);
+  assert.equal(needsQuarterAverage({ k: 'equity', t: 'HUBB', why: [], s: 'مختلط جائز', exact: false, dr: 0.2396 }), true);
+  assert.equal(needsQuarterAverage({ k: 'equity', t: 'AAPL', why: [], s: 'مختلط جائز', exact: false, dr: 0.05 }), false);
+  assert.equal(needsQuarterAverage({ k: 'equity', t: 'IBM', why: [], s: 'مختلط جائز', exact: true, dr: 0.28 }), false);   // already exact
+  assert.equal(needsQuarterAverage({ k: 'equity', t: null, why: ['priceBand'], s: 'ما ينحكم' }), false);                // nothing to fetch
 });

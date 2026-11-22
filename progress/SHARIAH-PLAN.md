@@ -703,3 +703,28 @@ page's wording), and the browser check's section (9) FUNDS AUDIT 2 CHECK.
   Templeton, Vivmark), name-format misses (a state glued to the legal form as in "Inc.DE", spaced "N V", key ties such as
   Rio Tinto plc/Ltd), TSMC's US ADR lines reported under the name "TSMC", CVR and earn-out lines booked as equity (0%
   weight today), ADR-ratio prices for companies held as both ADRs and home shares (none is judged today).
+
+### M15. Fix-branch review (2026-11-22, five lenses on the M13 fixes, each verified) — POST-HOC, tests first
+Interest (findings with filing evidence; tests written first and seen failing):
+- Deere passed R3 on a 2.09% estimate against its 10-Q's 1,353M of finance and interest income (10.7%): M13's "balances
+  before flows" charged only its 2,593M lease investment (its retail notes are under de: tags, which companyfacts does
+  not carry) and dropped 26.5B of collections. The loan book is again the larger of balances and flows: Deere is open
+  (11.5%), which the 10-Q would make a fail. Only Deere and Block (open either way) change.
+- A fail was purified on the largest single exact line: banks tag their total interest income as an upper-type tag, so
+  KeyCorp was purified on 107 of 2,133, Goldman on 3,760 of 22,793, Morgan Stanley on 4,032 of 16,188. A fail now
+  purifies on the tagged total (InterestAndDividendIncomeOperating) when it is larger. Exact lines are not added up for
+  it: SoFi tags 1,343.2 of interest beside its parts 1,260.9 and 82.3 (Raymond James and State Street likewise).
+- Realty Income passed R3 at 1.99% on its loan interest; its second line, 105.0M of interest and dividends on loans and
+  preferred equity (InterestAndDividendIncomeSecurities), was read nowhere: with it the high reading is 8.46%, open.
+  That tag now adds to the high reading and floors an estimate.
+- Interest joined a company's contract revenue whenever its tag was InterestIncomeOperating: Duolingo's non-operating
+  interest made its revenue 321.4M, not 309.0M, and a non-lender at 5.2% would have passed at 4.94%. It now joins only
+  when it is 10% of that revenue or more, where the share is above 9% either way. Duolingo is open (its high reading is
+  5.0%; its filing's one line is 4.02%: a wrong «ما ينحكم», the mild side).
+- Tests for mutations that survived every test: Cisco's loan candidate (a combined tag plus loans), the 400-day window,
+  unexplained current assets at the corporate yield. The test that fed Deere a de: namespace is renamed.
+Funds:
+- A pass on report prices within reach of the debt line (point ratio 20% or more) is now listed for the quarter-average
+  close, like the rows the band cannot decide, ordered by what can change a fund's verdict (data auditor: Snowflake's
+  average fell 2.9% under its band floor; SPUS's pass, 0.03 points under 5%, rests on ten such passes: HUBB, ADM, EFX,
+  MAS, HAL, PHM, LH, FICO and others).

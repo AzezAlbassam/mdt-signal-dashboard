@@ -150,7 +150,7 @@ test('G6.5: weighted shares never get a "year minus 3 quarters" Q4', () => {
   const r = secInputs(company({ ...ns({ Revenues: [f('2025-10-01', '2025-12-31', 100, { form: '10-K' })] }), ...g }), { yieldPct: 5 });
   assert.equal(r.sharesMV, null);
 });
-test('G6 rerun: loans under a company tag count in the estimate (DE: de:FinancingReceivables)', () => {
+test('G6 rerun: loans under a company tag would count in the estimate (companyfacts carries no company tags: Deere is seen by its flows)', () => {
   const cf = company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)] }));
   cf.facts.de = { FinancingReceivablesNet: { units: { USD: [i(Q[1], 40000)] } } };
   const r = secInputs(cf, { yieldPct: 5 });
@@ -311,6 +311,56 @@ test('audit: splits of the same ratio years apart stay apart, and the latest is 
     w('2020-01-01', '2020-03-31', 400, '2026-08-15'), w('2025-04-01', '2025-06-30', 210, '2025-08-14'), w('2025-04-01', '2025-06-30', 420, '2026-08-15'),
     w(...Q, 425, '2026-08-15')]), { yieldPct: 5 });
   assert.equal(two.splitRatio, 2); assert.deepEqual(two.splitWindow, ['2025-08-14', '2026-08-15']);
+});
+
+// ---- Fix-branch review, 2026-11-22 (post-hoc; progress/SHARIAH-PLAN.md part M15) ----
+test('fix review: a separate securities-interest line adds to the high reading (Realty Income: 32.2M of loan interest + 105.0M on loans and preferred equity)', () => {
+  const o = secInputs(company(ns({ Revenues: [f(...Q, 1621.582)], InterestAndFeeIncomeLoansAndLeases: [f(...Q, 32.248)], InterestAndDividendIncomeSecurities: [f(...Q, 104.982)] })), { yieldPct: 5 });
+  assert.equal(o.illicit, 32.248);
+  assert.ok(Math.abs(o.illicitHigh - (32.248 + 104.982)) < 1e-9, String(o.illicitHigh));   // 8.46%: R3 open, not a 1.99% pass
+  // tagged alone, it floors the estimate like published investment income
+  const only = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], InterestAndDividendIncomeSecurities: [f(...Q, 80)] })), { yieldPct: 5 });
+  assert.equal(only.illicitEstimated, true); assert.equal(only.illicit, 80);
+});
+test('fix review: interest joins the revenue only when it is 10% of it or more, so the total never turns a fail into a pass (Duolingo)', () => {
+  // Duolingo's own interest income (InterestIncomeOperating, below its operating income) had been added to its revenue.
+  // A non-lender at 5.2% would have passed at 4.94% that way. From 10% up the share is above 9% either way: a fail.
+  const contract = (v) => ({ RevenueFromContractWithCustomerExcludingAssessedTax: [f(...Q, v)] });
+  const duol = secInputs(company(ns({ ...contract(309.007), InterestIncomeOperating: [f(...Q, 12.426)] })), { yieldPct: 5 });
+  assert.equal(duol.revenue, 309.007);
+  const near = secInputs(company(ns({ ...contract(1000), InterestIncomeOperating: [f(...Q, 52)] })), { yieldPct: 5 });
+  assert.equal(near.revenue, 1000);   // 5.2%: a fail, not 4.94%
+  const axp = secInputs(company(ns({ ...contract(11232), InterestAndFeeIncomeLoansAndLeases: [f(...Q, 6387)] })), { yieldPct: 5 });
+  assert.equal(axp.revenue, 11232 + 6387);
+  const ibkr = secInputs(company(ns({ ...contract(690), InterestIncomeOperating: [f(...Q, 2433)] })), { yieldPct: 5 });   // a broker's margin interest
+  assert.equal(ibkr.revenue, 690 + 2433);
+});
+test('fix review: the published total interest is kept for purifying a fail (KeyCorp, Goldman Sachs); exact lines are not added up for it (SoFi tags its total and its parts)', () => {
+  const key = secInputs(company(ns({ Revenues: [f(...Q, 2054)], InterestIncomeOperating: [f(...Q, 107)], InterestAndDividendIncomeOperating: [f(...Q, 2133)] })), { yieldPct: 5 });
+  assert.equal(key.illicit, 107); assert.equal(key.illicitEstimated, false); assert.equal(key.illicitPublished, 2133);
+  const gs = secInputs(company(ns({ Revenues: [f(...Q, 15180)], InterestAndFeeIncomeLoansAndLeases: [f(...Q, 3760)], InterestAndDividendIncomeOperating: [f(...Q, 22793)] })), { yieldPct: 5 });
+  assert.equal(gs.illicitPublished, 22793);
+  // SoFi's 1,343.2 of interest income is its loans' 1,260.9 plus 82.3 of other interest, all three tagged: adding the
+  // lines would purify twice its interest (so would Raymond James' 994 + 736 and State Street's 2,916 + 748)
+  const sofi = secInputs(company(ns({ Revenues: [f(...Q, 1506.6)], InterestIncomeOperating: [f(...Q, 1343.2)], InterestAndFeeIncomeLoansAndLeases: [f(...Q, 1260.9)],
+    InterestIncomeOther: [f(...Q, 82.3)] })), { yieldPct: 5 });
+  assert.equal(sofi.illicit, 1343.2); assert.equal(sofi.illicitPublished, null);
+  // one line only: nothing to add
+  assert.equal(secInputs(company(ns({ Revenues: [f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)] })), { yieldPct: 5 }).illicitPublished, null);
+});
+test('fix review: the high reading of a tagged figure keeps its loan candidate (Cisco: a combined tag plus loans at the lending rate)', () => {
+  // mutation M10 (dropping "illicit + loans") survived every test: Cisco's purification would fall 35% unnoticed
+  const csco = secInputs(company(ns({ Revenues: [f(...Q, 14670)], InvestmentIncomeInterestAndDividend: [f(...Q, 234)],
+    NotesAndLoansReceivableNetCurrent: [i(Q[1], 3623)], NotesAndLoansReceivableNetNoncurrent: [i(Q[1], 5118)] })), { yieldPct: 5 });
+  assert.ok(Math.abs(csco.illicitHigh - (234 + (3623 + 5118) * 0.20 * 91 / 365)) < 1e-6, String(csco.illicitHigh));
+});
+test('fix review: a loan balance older than 400 days is not the book; unexplained current assets earn the corporate yield in the high reading', () => {
+  const old = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesAndLoansReceivableNetCurrent: [i('2025-03-31', 5000)] })), { yieldPct: 5 });
+  assert.equal(old.estimate.loans, undefined);
+  // ADP-like: 1,000 of current assets no tagged line explains, beside a tagged interest line of 10
+  const adp = secInputs(company(ns({ Revenues: [f(...Q0, 1000), f(...Q, 1000)], InvestmentIncomeInterest: [f(...Q, 10)], AssetsCurrent: [i(Q0[1], 1100), i(Q[1], 1100)],
+    CashAndCashEquivalentsAtCarryingValue: [i(Q0[1], 100), i(Q[1], 100)] })), { yieldPct: 5 });
+  assert.ok(Math.abs(adp.illicitHigh - (10 + 1000 * 0.05 * 91 / 365)) < 1e-9, String(adp.illicitHigh));
 });
 
 // ---- External audit, 2026-11-22 (post-hoc fixes; progress/SHARIAH-PLAN.md part M13) ----
@@ -541,10 +591,15 @@ test('audit: a loan book tagged in a current and a noncurrent part counts both (
     NotesAndLoansReceivableNetCurrent: [i(Q[1], 11051)], NotesAndLoansReceivableNetNoncurrent: [i(Q[1], 14402)] })), { yieldPct: 5.474 });
   assert.equal(t.estimate.loans, 25453);
 });
-test('audit: a tagged loan balance wins over loan cash flows, which stand in only when no balance is tagged', () => {
-  const r = secInputs(company(ns({ Revenues: [f(...Q, 1000)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 100)], NotesAndLoansReceivableNetCurrent: [i(Q[1], 200)],
-    ProceedsFromCollectionOfFinanceReceivables: [f('2025-10-01', Q[1], 900)] })), { yieldPct: 5 });
-  assert.equal(r.estimate.loans, 200);
+test('fix review: the loan book is the larger of loan balances and loan cash flows (Deere: a 2.6B lease balance beside 26.5B of collections)', () => {
+  // This test was "a tagged loan balance wins over loan cash flows" (b839eca) until the fix-branch review of 2026-11-22:
+  // Deere's retail notes sit under its own de: tags, which companyfacts does not carry; its only us-gaap balance is a
+  // 2,593M net investment in leases, so balances-first charged 2.6B of loans and passed R3 at 2.09% against the 10-Q's
+  // 1,353M of finance and interest income (10.7%). A flow can overstate the book; that only leaves R3 open.
+  const de = secInputs(company(ns({ Revenues: [f(...Q, 12608)], CashAndCashEquivalentsAtCarryingValue: [i(Q[1], 10300)], NetInvestmentInLease: [i(Q[1], 2593)],
+    PaymentsToAcquireFinanceReceivables: [f('2025-11-03', Q[1], 19139)], ProceedsFromCollectionOfFinanceReceivables: [f('2024-11-04', '2025-11-02', 26480)] })), { yieldPct: 5.22 });
+  assert.equal(de.estimate.loans, 26480);
+  assert.ok(de.illicit / de.revenue > 0.05, String(de.illicit / de.revenue));   // an estimate above 5%: R3 stays open, never a pass
 });
 test('audit: a loan balance repeated in later filings counts once (Cisco: 3,623 + 5,118, not every filing that repeats them)', () => {
   const rep = (end, val) => [i(end, val, { filed: '2026-08-01' }), i(end, val, { filed: '2026-11-20' })];

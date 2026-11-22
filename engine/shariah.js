@@ -84,7 +84,8 @@ export function purificationIllicit(r) {
   if (r?.illicitOpen || !amount(r?.illicit)) return null
   const high = Math.max(r.illicit, r.illicitHigh ?? 0), hi = illicitShare(high, r.revenue), lo = illicitShare(r.illicit, r.revenue)
   if (hi != null && hi <= ILLICIT_MAX + EPS) return high
-  if (!r.illicitEstimated && lo != null && lo > ILLICIT_MAX + EPS) return r.illicit
+  // a fail: the company's published total interest when it is larger than the line that decided (fix review 2026-11-22)
+  if (!r.illicitEstimated && lo != null && lo > ILLICIT_MAX + EPS) return Math.max(r.illicit, r.illicitPublished ?? 0)
   return null
 }
 

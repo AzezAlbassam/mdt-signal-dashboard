@@ -32,14 +32,15 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    `node scripts/shariah/fund-load.js`: it must exit 0 (it fails on holdings that do not add up, too few funds, or more
    than 5 held companies newly without SEC numbers).
    Keep its last lines (each fund's state) and compare them with the previous data/shariah/funds.json from git.
-4b. Holdings near the 30% debt line (data/shariah/band-needed.json, written by the loader) get the quarter-average close
-   that Al Rajhi's rule uses, in this order, starting from an empty `<scratchpad>/qp` (`rm -rf <scratchpad>/qp && mkdir -p
+4b. Holdings the report-price band could not decide, or passed near the 30% debt line (data/shariah/band-needed.json,
+   written by the loader, most important first), get the quarter-average close that Al Rajhi's rule uses, in this order, starting from an empty `<scratchpad>/qp` (`rm -rf <scratchpad>/qp && mkdir -p
    <scratchpad>/qp`: last week's averages are already kept in quarter-prices.json):
    (1) `node scripts/shariah/bars-quarter-prices.js --all > <scratchpad>/qp/part-bars.jsonl`: every held company whose
        quarter the repo's saved daily bars (data/us/bars) already cover, near the line or not, no call needed.
    (2) Only for the band-needed tickers that (1) did not write: build TradingView symbols from
        https://www.sec.gov/files/company_tickers_exchange.json (Nasdaq → NASDAQ, NYSE → NYSE, NYSE American/Arca → AMEX;
-       "-" → "."), write the two halves as <scratchpad>/qp/need-tv-1.json and need-tv-2.json, and give each to a
+       "-" → "."), keep band-needed's order and deal its entries alternately into <scratchpad>/qp/need-tv-1.json and
+       need-tv-2.json (so both start with the most important), and give each to a
        background agent with the brief in progress/SHARIAH-TV-BRIEF.md (its <scratchpad> and K filled in).
        FMP's plan refuses most symbols, so it is not used. TradingView and FMP gave the identical DIS average (102.2937
        over 68 days) on 2026-11-22.

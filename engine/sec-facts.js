@@ -196,8 +196,10 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   const hasLoans = LOANS.some(t => (instantAt(g, [t], rev.end) ?? 0) > 0)
     || Object.values(cf.facts ?? {}).some(nsx => Object.entries(nsx).some(([t, v]) => LOANISH.test(t) && !NOT_HELD.test(t) && (v.units?.USD ?? []).some(recent)));
   // the loans to charge a lending rate: the largest loan balance (a current and a noncurrent part of one line on one
-  // date added up: Caterpillar 11,051 + 14,402) or loan cash flow of the last 400 days (a flow stands in where no
-  // balance is tagged: Corning collected 1.1B of finance receivables in 2025)
+  // date added up: Caterpillar 11,051 + 14,402) or loan cash flow of the last 400 days, whichever is larger (Corning
+  // collected 1.1B of finance receivables in 2025; Deere's only us-gaap balance is a 2.6B lease investment beside 26.5B
+  // of collections: balances first passed its R3 on a fifth of its book, fix review 2026-11-22). A flow that overstates
+  // the book leaves R3 open, never passes it.
   // each fact once (later filings repeat earlier balances as comparatives: the latest filing's value counts)
   const loanFacts = Object.values(cf.facts ?? {}).flatMap(nsx => Object.entries(nsx)
     .filter(([t]) => LOANS.includes(t) || (LOANISH.test(t) && !NOT_HELD.test(t))).flatMap(([t, x]) => {
@@ -207,8 +209,7 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     }));
   const parts = new Map();   // base tag @ date -> sum of its current and noncurrent parts (a total stays as it is)
   for (const y of loanFacts) if (!y.start && /[Cc]urrent$/.test(y.t)) { const k = y.t.replace(/(Non)?[Cc]urrent$/, '') + '@' + y.end; parts.set(k, (parts.get(k) ?? 0) + y.val); }
-  const balances = [...parts.values(), ...loanFacts.filter(y => !y.start).map(y => y.val)];
-  const loanBook = Math.max(0, ...(balances.length ? balances : loanFacts.map(y => y.val)));
+  const loanBook = Math.max(0, ...parts.values(), ...loanFacts.map(y => y.val));
   const max = (tags, d) => Math.max(0, ...tags.map(t => instantAt(g, [t], d) ?? 0));
   const unexplainedAt = (d, c) => {
     const ac = instantAt(g, ['AssetsCurrent'], d);
@@ -236,7 +237,8 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
       illicit = cashPart == null ? null : cashPart + loanInterest; illicitEstimated = illicit != null;
       // an insurer's published investment income is at least what its interest-earning book yields (AMERISAFE,
       // Primerica: their bonds held to maturity are not all tagged; audit 2026-11-22)
-      const nii = top(['NetInvestmentIncome', 'GrossInvestmentIncomeOperating']);
+      // a published securities-interest line likewise (Realty Income's loans and preferred equity: fix review 2026-11-22)
+      const nii = top(['NetInvestmentIncome', 'GrossInvestmentIncomeOperating', 'InterestAndDividendIncomeSecurities']);
       if (illicit != null && nii?.val > illicit) { illicit = nii.val; estimate = { ...estimate, published: nii.tag, publishedVal: nii.val }; }
     }
   }
@@ -244,10 +246,14 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   // other interest 87 + lease interest 62), a lender's revenue not from contracts with customers may be financing income
   // (MercadoLibre's credit revenues), current assets no tagged line explains may earn interest booked in revenue (ADP's
   // 44.7B of client funds), and loans whose interest no tag shows earn a lending rate (Snap-on).
-  let illicitHigh = null, illicitOpen = false;
+  let illicitHigh = null, illicitOpen = false, illicitPublished = null;
   if (estimate == null && illicit != null) {
-    const exacts = INTEREST_EXACT.map(t => quarterFacts(g, [t]).find(x => x.end === rev.end)).filter(Boolean), sep = [];
-    for (const x of exacts) if (!sep.some(y => Math.abs(y - x.val) <= 0.02 * Math.max(y, x.val))) sep.push(x.val);
+    // separate lines add up; interest and dividends on securities is one more such line (Realty Income: 32.2M on its
+    // financing receivables and 105.0M on loans and preferred equity; fix review 2026-11-22)
+    const distinct = vs => vs.reduce((a, v) => (a.some(y => Math.abs(y - v) <= 0.02 * Math.max(y, v)) ? a : [...a, v]), []);
+    const exacts = INTEREST_EXACT.map(t => quarterFacts(g, [t]).find(x => x.end === rev.end)).filter(Boolean);
+    const secLine = quarterFacts(g, ['InterestAndDividendIncomeSecurities']).find(x => x.end === rev.end)?.val;
+    const sep = distinct([...exacts.map(x => x.val), ...(secLine > 0 ? [secLine] : [])]);
     const nonContract = quarterFacts(g, ['RevenueNotFromContractWithCustomer']).find(x => x.end === rev.end)?.val ?? 0;
     const unexpl = estimateInterest({ cashStart: prevEnd ? unexplainedAt(prevEnd, instantAt(g, CASH, prevEnd)) : 0, cashEnd: unexplainedAt(rev.end, instantAt(g, CASH, rev.end)), yieldPct, days: qDays }) ?? 0;
     // revenue outside contracts with customers is financing income only at a company that lends (MercadoLibre); at
@@ -260,6 +266,11 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
     if (hasLoans && loanBook > 0 && loanTagged * 365 / qDays < 0.04 * loanBook) high = Math.max(high, sep.reduce((a, x) => a + x, 0) - loanTagged + loanInterest, illicit + loanInterest);
     else if (hasLoans && !(loanBook > 0) && !loanTagged) illicitOpen = true;
     illicitHigh = high > illicit + 1e-9 ? high : null;
+    // The figure to purify a fail with: the company's own total interest income when it tags one (KeyCorp's exact line
+    // was 107 of a total of 2,133, Goldman's 3,760 of 22,793). Exact lines are not added up for it: banks tag the total
+    // beside its parts (SoFi 1,343.2 = 1,260.9 + 82.3); the high reading adds them only as a bound for a pass.
+    const total = quarterFacts(g, ['InterestAndDividendIncomeOperating']).find(x => x.end === rev.end)?.val;
+    if (!illicitEstimated && total > illicit + 1e-9) illicitPublished = total;
   }
   const d = debtAt(g, rev.end);
   // total liabilities; when not tagged, liabilities-and-equity minus the parent's equity (includes minority and mezzanine
@@ -308,10 +319,12 @@ export function secInputs(cf, { yieldPct, minEnd = '' }) {
   for (const e of events) if (!split || e.until > split.until) split = e;
   // Contract revenue never holds interest (ASC 606): a lender's interest comes on top of it for the total revenue
   // R3 divides by (audit 2026-11-22: AXP's card fees alone made its interest 56.9% of "revenue", 36.3% of the total)
-  const lenderTotal = /^RevenueFromContractWithCustomer/.test(rev.tag) && LOAN_INTEREST.has(int?.tag) && !illicitEstimated && illicit > 0;
+  // ...only when the interest is 10% of that revenue or more: then the share is above 9% with or without it, so adding
+  // it never turns a fail into a pass (fix review 2026-11-22: Duolingo's own non-operating interest had been added)
+  const lenderTotal = /^RevenueFromContractWithCustomer/.test(rev.tag) && LOAN_INTEREST.has(int?.tag) && !illicitEstimated && illicit >= 0.1 * rev.val;
   return {
     name: cf.entityName, period, revenue: lenderTotal ? rev.val + illicit : rev.val, revenueTag: lenderTotal ? `${rev.tag}+interest` : rev.tag,
-    illicit, illicitHigh, illicitOpen, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
+    illicit, illicitHigh, illicitOpen, illicitPublished, illicitTag: int?.tag ?? null, illicitEstimated, estimate,
     debt: d.debt, debtHigh: d.debtHigh, debtParts: d.parts, // all liabilities minus the lease liabilities still bound the borrowings from above
     debtUpperBound: d.debt == null && liabilities != null ? Math.max(0, liabilities - d.parts.leases) : null,
     bookEquity: instantAt(g, ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest'], rev.end),

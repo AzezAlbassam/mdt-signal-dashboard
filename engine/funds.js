@@ -115,6 +115,11 @@ export function screenHolding(r, price, sicTable, quarter = null, range = null) 
   return { ...point, state: v.state, failed: v.failed, missing: v.missing, band: v.state === 'ما ينحكم' && v.missing.includes('priceBand'), purification }
 }
 
+// A row the quarter-average close should settle: the band could not decide it, or it passed on report prices within
+// reach of the debt line (point ratio 20% or more: 25% at the band floor). The band is no bound on the quarter average
+// (fix review 2026-11-22: Snowflake's average fell 2.9% under its floor; SPUS rests on ten such passes).
+export const needsQuarterAverage = (x) => !!x.t && x.k !== 'collateral' && ((x.why ?? []).includes('priceBand') || (x.s === 'مختلط جائز' && !x.exact && x.dr >= 0.2))
+
 // rows: [{w (fraction of net assets; negative for some derivatives), kind, state, purification, illicitShare}]
 export function fundSummary(rows) {
   let collateralWeight = 0, net = 0, purificationCoveredWeight = 0, illicitLookThrough = 0, illicitCoveredWeight = 0
