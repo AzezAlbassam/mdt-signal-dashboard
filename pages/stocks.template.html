@@ -343,13 +343,18 @@ tr.row.flash { animation: flash 1.6s ease-out 1; }
 .grade { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; font: 700 24px var(--body); color: #fff; flex: none; }
 .shc { font: 700 11px var(--body); border: 1px solid currentColor; border-radius: 4px; padding: 0 3px; vertical-align: middle; }
 .sh .shs { font: 700 14px var(--body); border: 1px solid currentColor; border-radius: 6px; padding: 1px 8px; }
-.shrows { width: 100%; border-collapse: collapse; margin: 6px 0; }
-.shrows th { text-align: start; font-weight: 600; padding: 6px 8px 6px 0; vertical-align: top; width: 42%; }
-.shrows td { padding: 6px 0; }
-.shrows tr + tr { border-top: 1px solid rgba(127, 127, 127, .2); }
+.shv { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 8px 0 6px; padding: 10px 12px; border: 1px solid currentColor; border-radius: 8px; background: color-mix(in srgb, currentColor 8%, transparent); }
+.shv .shs { font: 700 20px var(--body); border: 0; padding: 0; }
+.shv span { color: var(--fg); }
+.shi { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--line); }
+.shi:first-child { border-top: 0; }
+.shk { font-weight: 600; } .shk small { font-weight: 400; margin-inline-start: 4px; white-space: nowrap; }
+.shx { font-size: 16px; white-space: nowrap; text-align: end; }
+.shd { grid-column: 1 / -1; color: var(--muted); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
 .shq { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
 .shq input { width: 110px; font: inherit; padding: 4px 6px; }
 .grade.sm { width: 20px; height: 20px; border-radius: 5px; font-size: 12px; vertical-align: middle; }
+.grade:not(.g-A):not(.g-B):not(.g-C):not(.g-D) { background: var(--soft); color: var(--muted); border: 1px solid var(--line); }
 .g-A { background: #17784b; } .g-B { background: #8bc34a; color: #10200a; } .g-C { background: #e0a032; color: #1b1405; } .g-D { background: #b8382d; } /* audit 3.7: letters were 2.6–3.5:1 */
 .ehs .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .ehs .chip { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--soft); border: 1px solid var(--line); white-space: nowrap; }

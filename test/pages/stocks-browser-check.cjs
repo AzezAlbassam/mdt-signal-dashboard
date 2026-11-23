@@ -6,7 +6,8 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const root = path.join(__dirname, '../../')
-const html = `<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>${fs.readFileSync(root + 'pages/stocks.html', 'utf8')}</body></html>`
+// NOAVG=1 (with TVDOWN=1): the page carries no saved quarter averages either, so the verdict rests on the quote's 52-week range
+const html = `<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>${fs.readFileSync(root + 'pages/stocks.html', 'utf8').replace('"avg":{', () => (process.env.NOAVG ? '"avgOff":{' : '"avg":{'))}</body></html>`
 // one file per run: two checks at once (another copy of the repo) would otherwise load each other's page
 const file = path.join(os.tmpdir(), `stocks-test-${process.pid}.html`)
 fs.writeFileSync(file, html)
@@ -34,6 +35,7 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const logs = []
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') logs.push(`${m.type()}: ${m.text()}`) })
   page.on('pageerror', (e) => logs.push(`PAGEERROR: ${e.message}`))
+  if (process.env.TVDOWN) await page.addInitScript(() => { window.__tvDown = true })
   await page.addInitScript((fx) => {
     // META's history is pre-saved in the store (as the seeded cache will be); the rest is fetched.
     const recentEnd = Math.floor(Date.now() / 1000) - 30 * 86400 // a quarter that ended a month ago
@@ -50,7 +52,9 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
       'cache/NYSE:JPM': { sym: 'NYSE:JPM', px: { t: [], c: [] }, pxTried: true },
       // a verdict an older page saved for the current quarter, without the quarter's average: the list chip must not
       // show it (fix review 2026-11-22: SMCI kept ✓ after the new rules made it غير جائز)
-      'sh/NASDAQ:META': { sym: 'NASDAQ:META', state: 'مختلط جائز', failed: [], period: { end: '2026-09-30' }, seenAt: Date.now() - 864e5 },
+      // (since 2026-11-23 the chip is recomputed from the page's saved quarter average, so the stale verdict here is one the
+      // current rules do not give)
+      'sh/NASDAQ:META': { sym: 'NASDAQ:META', state: 'غير جائز', failed: ['R2'], period: { end: '2026-09-30' }, seenAt: Date.now() - 864e5 },
     }
     window.__calls = []
     window.__store = store
@@ -97,6 +101,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
         if (tool.endsWith('financial-history') && input.period === 'fq') return { payload: { labels: ['Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'], series: { revenue: [1, 2, 3, 4].map((v) => ({ value: v * 1e10 })), net_income: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })), eps: [1, 1, 1, 1].map((v) => ({ value: v * 0.5 })), fcf: [1, 1, 1, 1].map((v) => ({ value: v * 2e9 })) } } }
         if (tool.endsWith('financial-history')) { if (!fx[input.symbol]) throw { code: 'tool_error', message: 'no data' }; return { payload: fx[input.symbol].fin } }
         // Shariah block (7b): daily bars at a flat $250 for the quarter-average price
+        // TVDOWN=1: TradingView refuses the daily bars (its daily quota), and the block must still give its verdict
+        if (tool.endsWith('ohlcv') && input.interval === '1D' && window.__tvDown) throw { code: 'tool_error', message: 'TOOL_QUOTA_EXCEEDED' }
         if (tool.endsWith('ohlcv') && input.interval === '1D') { const t = []; for (let d = Math.floor(Date.now() / 864e5) * 86400; t.length < input.count; d -= 86400) if (![0, 6].includes(new Date(d * 1000).getUTCDay())) t.unshift(d); return { payload: { bars: { t, c: t.map(() => 250) } } } }
         if (tool.endsWith('ohlcv')) return { payload: fx[input.symbol]?.px ?? { bars: { t: [], c: [] } } }
         if (tool.endsWith('get-news') && window.__newsFail) { window.__newsFail -= 1; throw { code: 'server_unavailable' } }
@@ -124,8 +130,8 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   if (!okD) process.exitCode = 1
   // the old save shows no chip until the page recomputes it under the current rules
   const staleChip = await page.evaluate(() => document.querySelector('#rows tr.row[data-sym="NASDAQ:META"] .shc')?.textContent ?? '')
-  console.log('STALE CHIP CHECK:', staleChip !== '✓' ? 'ok' : 'FAILED', JSON.stringify({ staleChip }))
-  if (staleChip === '✓') process.exitCode = 1
+  console.log('STALE CHIP CHECK:', staleChip !== '✕' ? 'ok' : 'FAILED', JSON.stringify({ staleChip }))
+  if (staleChip === '✕') process.exitCode = 1
   await page.selectOption('#group', 'Investments')
   console.log('GROUP Investments:', await rows())
   await page.selectOption('#group', '')
@@ -177,7 +183,9 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   // own formula (not the engine's code), so the check survives the weekly SEC refresh: debt (leases out) / max(market
   // value at the mocked $250 average, book equity); illicit / revenue; illicit / shares; x 100 shares.
   const AA = JSON.parse(fs.readFileSync(root + 'data/shariah/sec-inputs.json', 'utf8')).stocks.AAPL
-  const mv = 250 * (AA.sharesMV ?? AA.shares)
+  // (TradingView down: the average is the one the page carries from the saved daily bars)
+  const avgPx = process.env.NOAVG ? 180 : process.env.TVDOWN ? +fs.readFileSync(root + 'pages/stocks.html', 'utf8').match(/"avg":\{.*?"AAPL":\{"a":([0-9.]+)/)?.[1] : 250
+  const mv = avgPx * (AA.sharesMV ?? AA.shares)
   const f = (x, d) => (+(+x).toFixed(d) || 0).toFixed(d)
   // (both readings stand: the page shows the high one on a pass; fix review 2026-11-22, this compared the low one only)
   const both = (lo, hi) => [lo, hi].filter((x) => x != null)
@@ -200,8 +208,11 @@ fixtures.hist = JSON.parse(fs.readFileSync(path.join(__dirname, 'aapl-h.json'), 
   const has = (t) => (sh.text ?? '').includes(t)
   const okSh = (!want.dr || want.dr.some(has)) && want.ill.some(has) && want.pps.some(has) && want.own.some((x) => (sh.out ?? '').includes(x))
     && (!AA.debtParts?.leases || has('ما تنحسب')) && (!AA.illicitEstimated || has('تقدير'))
-    && (!want.pass || (sh.state === 'مختلط جائز' && sh.saved === 'مختلط جائز' && sh.chip === '✓'))
-  console.log('SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify({ want, ...sh }))
+    && (!want.pass || (sh.state === 'مختلط جائز' && (process.env.TVDOWN || sh.saved === 'مختلط جائز') && sh.chip === '✓'))
+    // without TradingView the verdict rests on the average saved with the page, and the block says both things
+    && (!process.env.TVDOWN || ((process.env.NOAVG ? has('أدنى وأعلى سعر للسهم في 52 أسبوع') && has('والفعلية أقل منها') : has('من أسعارنا اليومية المحفوظة')) && has('TradingView ما رد')))
+    && !has('undefined') && !has('NaN')
+  console.log(process.env.TVDOWN ? 'SHARIAH AAPL (TradingView down):' : 'SHARIAH AAPL:', okSh ? 'ok' : 'FAILED', JSON.stringify({ want, ...sh }))
   if (!okSh) process.exitCode = 1
   { const el = await page.$('#rows .part.sh'); if (el) { await el.scrollIntoViewIfNeeded(); await el.screenshot({ path: path.join(os.tmpdir(), 'stocks-sh.png') }) } }
   console.log('SVR AAPL:', (await page.$eval('#rows .part.svr', (t) => t.innerText)).replace(/\s+/g, ' ').slice(0, 900))

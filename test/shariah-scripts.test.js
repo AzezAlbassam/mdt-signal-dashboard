@@ -276,3 +276,13 @@ test('review of the final check: a company on the zero-coupon list gets its 0.00
     assert.ok(Math.abs(r.debt - (7567.687e6 - 3455.562e6)) < 1, String(r.debt));
   } finally { if (old != null) process.env.SEC_CACHE = old; }
 });
+test('2026-11-23: a quarter average from saved daily bars needs the whole quarter (the page shows it when TradingView does not answer)', async () => {
+  const { barsQuarterAvg } = await import('../scripts/shariah/sec-lib.js');
+  const days = (a, b) => { const out = []; for (let t = Date.parse(a); t <= Date.parse(b); t += 864e5) if (![0, 6].includes(new Date(t).getUTCDay())) out.push(new Date(t).toISOString().slice(0, 10)); return out; };
+  const bars = (a, b) => { const date = days(a, b); return { date, close: date.map((_, i) => 100 + (i % 2)) }; };
+  const full = barsQuarterAvg(bars('2026-06-01', '2026-10-06'), '2026-07-01', '2026-09-30');
+  assert.equal(full.n, 66); assert.ok(Math.abs(full.a - 100.5) < 1e-9); assert.equal(full.last, '2026-10-06');
+  assert.equal(barsQuarterAvg(bars('2026-06-01', '2026-09-04'), '2026-07-01', '2026-09-30'), null);   // the bars end inside the quarter
+  assert.equal(barsQuarterAvg(bars('2026-07-20', '2026-10-06'), '2026-07-01', '2026-09-30'), null);   // they start inside it
+  assert.equal(barsQuarterAvg(bars('2026-06-01', '2026-10-06'), '2026-09-01', '2026-09-30'), null);   // under 40 trading days
+});

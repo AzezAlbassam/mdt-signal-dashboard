@@ -149,3 +149,20 @@ export function screenStock(r, marketValue, sicTable) {
   v.numbers.purificationPerShare = purificationPerShare(purificationIllicit(r), r.shares)
   return { ...v, debtUpper, debtRange, activity, marketValue }
 }
+
+// A market value known only within bounds: the quarter's average price lies between the 52-week low and high of a quote
+// that covers the quarter, and with no price at all between zero and anything (mvLo 0, mvHi null). The debt ratio only
+// falls as the market value rises, so a pass at the lowest value is a pass at any, and a fail at the highest (or on the
+// tests that need no price) is a fail at any; between them the price decides ('priceBand'). bound: the ratio shown is its
+// 'max' or 'min'. (2026-11-23: the block gave no verdict at all while TradingView refused the daily bars)
+export function screenStockRange(r, mvLo, mvHi, sicTable) {
+  const lo = screenStock(r, mvLo, sicTable), hi = screenStock(r, mvHi, sicTable)
+  if (!lo || !hi) return lo ?? hi
+  if (PASSING.has(lo.state)) return { ...lo, bound: 'max' }
+  if (hi.state === 'غير جائز') return { ...hi, bound: hi.failed.includes('R2') ? 'min' : null }
+  const missing = [...new Set([...hi.missing, ...lo.missing, ...(mvHi != null && lo.failed.includes('R2') ? ['priceBand'] : [])])]
+  const a = hi.numbers.debtRatio, b = lo.numbers.debtRatio
+  return { ...hi, state: 'ما ينحكم', failed: [], missing, numbers: { ...hi.numbers, debtRatio: null },
+    debtRange: hi.debtRange ?? lo.debtRange ?? (a != null && b != null ? [a, b] : null), marketValue: null }
+}
+

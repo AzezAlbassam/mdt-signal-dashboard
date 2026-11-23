@@ -63,7 +63,8 @@ the industry table): rules change only with the owner, tests first (progress/SHA
    must be read again for its 0.00% convertible notes; report them, do not edit the list unattended).
 6. `node scripts/build-stocks-page.js && npm test`, then the browser check at both widths:
    `NODE_PATH=$(npm root -g) node test/pages/stocks-browser-check.cjs` and the same with PHONE=1. Every "CHECK" and
-   "SHARIAH" line must say ok and LOGS must be []. Any failure: do not commit, do not publish; report it.
+   "SHARIAH" line must say ok and LOGS must be []. Then once more with `TVDOWN=1` (TradingView refusing the daily bars:
+   the verdict must still show from the averages the page carries). Any failure: do not commit, do not publish; report it.
 7. Commit data/shariah/sec-inputs.json, nport-latest.jsonl, funds.json, fund-companies.json, band-needed.json,
    quarter-prices.json and pages/stocks.html (the page carries the data's dates, so it always changes, and next week's
    step 1 needs a clean tree) as "Weekly SEC refresh D" with the session's trailers, then `git push -q -u origin $B`

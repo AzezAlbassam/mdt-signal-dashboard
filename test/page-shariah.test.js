@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { pageFns } from './lib/page-fns.js';
 import { readFileSync } from 'node:fs';
 
-const P = pageFns(['illNote', 'shNoPeriod', 'loanWords', 'purOn', 'wd', 'purMissing', 'illRange', 'shareMismatch', 'fullQuarter', 'purFloor', 'debtWords', 'mvMissing', 'leaseWords'], { esc: (s) => String(s) });
+const P = pageFns(['illNote', 'shNoPeriod', 'loanWords', 'purOn', 'wd', 'purMissing', 'illRange', 'shareMismatch', 'fullQuarter', 'purFloor', 'debtWords', 'mvMissing', 'leaseWords', 'mvBounds'], { esc: (s) => String(s) });
 test('audit: a combined interest figure is called an upper bound, not an estimate (CSCO, BKNG)', () => {
   assert.equal(P.illNote({ illicitEstimated: true, illicitTag: 'InvestmentIncomeInterestAndDividend' }), 'رقم مدموج (حد أعلى)');
   assert.equal(P.illNote({ illicitEstimated: true, illicitTag: null }), 'تقدير');
@@ -127,4 +127,39 @@ test('review of the final check: the list chip judges withdrawn statements on th
   const chip = src.slice(src.indexOf('  function shChip(sym) {'), src.indexOf('\n  }\n', src.indexOf('  function shChip(sym) {')));
   assert.match(chip, /if \(r && \(!r\.period \|\| r\.nonReliance\) && activityFromSic\(r\.sic, SHARIAH\.sic, r\.cik\) === 'fail'\)/);
   assert.match(chip, /const pre = r\.nonReliance \? null : shariahVerdict/);
+});
+test('2026-11-23: the block judges from a saved quarter average, or from the 52-week range of a quote that covers the quarter (it showed no verdict while TradingView was refusing)', () => {
+  const r = { period: { start: '2026-07-01', end: '2026-09-30' }, shares: 10, sharesMV: 8 };
+  const at = Date.parse('2026-11-23');
+  assert.deepEqual(P.mvBounds({ price_52_week_low: 50, price_52_week_high: 90 }, at, r), [400, 720]);   // on the smaller share count
+  assert.equal(P.mvBounds({ price_52_week_low: 50, price_52_week_high: 90 }, Date.parse('2026-09-01'), r), null);   // a quote from inside the quarter
+  assert.equal(P.mvBounds({ price_52_week_low: 50, price_52_week_high: 90 }, Date.parse('2027-07-15'), r), null);   // the quarter has left the 52 weeks
+  assert.equal(P.mvBounds({ price_52_week_low: null, price_52_week_high: 90 }, at, r), null);
+  assert.equal(P.mvBounds(undefined, at, r), null);
+  // the saved average is used for its own quarter only: the db's (an earlier visit) first, then the page's saved bars
+  const S = pageFns(['savedAvg'], { state: { sh: { 'NYSE:A': { period: { end: '2026-09-30' }, avgClose: 12, days: 64 }, 'NYSE:B': { period: { end: '2026-06-30' }, avgClose: 9 } } },
+    SHARIAH: { avg: { A: { a: 11, n: 64, s: '2026-07-01', e: '2026-09-30' }, B: { a: 10, n: 64, s: '2026-07-01', e: '2026-09-30' }, C: { a: 7, n: 63, s: '2026-04-01', e: '2026-06-30' } } } });
+  assert.deepEqual(S.savedAvg('NYSE:A', r), { avg: 12, n: 64, src: 'db' });
+  assert.deepEqual(S.savedAvg('NYSE:B', r), { avg: 10, n: 64, src: 'bars' });
+  assert.equal(S.savedAvg('NYSE:C', r), null);
+  assert.equal(S.savedAvg('NYSE:D', r), null);
+});
+test('2026-11-23: the Shariah block is a verdict banner over stacked rows, not a table (on a phone the table squeezed every value into a few letters a line)', () => {
+  const src = readFileSync(new URL('../pages/stocks.app.js', import.meta.url), 'utf8');
+  const block = src.slice(src.indexOf('  function shBlock(sym) {'), src.indexOf('\n  // 7c. Funds'));
+  assert.doesNotMatch(block, /<table|shrows/);
+  assert.match(block, /class="shv /); assert.match(block, /class="shi"/);
+  // a failed price fetch says so instead of "computing…" for ever
+  assert.match(block, /TradingView ما رد/);
+});
+test('2026-11-23: a stock whose TradingView data did not arrive gets no earnings grade (it showed "D 0/15" over empty cells)', async () => {
+  const { EHS_METRICS } = await import('../engine/ehs.js');
+  const G = pageFns(['ehsHasData'], { EHS_METRICS });
+  const parts = (v) => Object.fromEntries(EHS_METRICS.map((m, i) => [m.key, { value: v(i), points: 0 }]));
+  assert.equal(G.ehsHasData({ total: 0, parts: parts(() => null) }), false);      // nothing arrived: no grade
+  assert.equal(G.ehsHasData({ total: 0, parts: parts((i) => (i ? null : -3)) }), true);   // a real zero is a grade
+  assert.equal(G.ehsHasData(null), false);
+  const src = readFileSync(new URL('../pages/stocks.app.js', import.meta.url), 'utf8');
+  assert.match(src, /ehsHasData\(e\) \? \{ \.\.\.e, letter:/);
+  assert.match(src, /ما وصلت بيانات هذا السهم من TradingView/);
 });

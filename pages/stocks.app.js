@@ -631,8 +631,10 @@
     const qS = { ...q, price_earnings_ttm: peNow(sym) }
     state.snow[sym] = b ? snowflake({ ...qS, ...(state.hist[sym]?.h ?? {}), ...hist }, b, state.fair[sym]?.profile === 'Pre-revenue' ? null : state.fair[sym]?.fair ?? null) : null
     const e = b ? ehsScore(qS, b.ehs) : null
-    state.ehs[sym] = e ? { ...e, letter: ehsLetter(e.total, b.ehs) } : null
+    // (no grade when none of its five measures arrived: a stock TradingView did not answer for showed "D 0/15"; 2026-11-23)
+    state.ehs[sym] = ehsHasData(e) ? { ...e, letter: ehsLetter(e.total, b.ehs) } : null
   }
+  const ehsHasData = (e) => !!e && EHS_METRICS.some((m) => e.parts[m.key].value != null)
 
   // Each quarter's estimates and actuals, kept from the first time a stock is opened after its report:
   // TradingView has no history of them, so "beat N of M quarters" grows from here (e/<sym>).
@@ -1436,10 +1438,41 @@
     if (split) return { ...v, ...(v.state !== 'غير جائز' ? { state: 'ما ينحكم', missing: [...new Set([...v.missing, 'split'])] } : {}), numbers: { ...v.numbers, purificationPerShare: null }, period: r.period, avgClose }
     return { ...v, period: r.period, avgClose }
   }
+  // The quarter's average when TradingView has not answered (2026-11-23: the block showed no verdict at all then): the
+  // one an earlier visit saved in the db, or the one from the daily bars saved with the page; for its own quarter only.
+  function savedAvg(sym, r) {
+    const s = state.sh[sym], e = SHARIAH?.avg?.[sym.split(':')[1]]
+    if (s?.period?.end === r.period.end && s.avgClose > 0) return { avg: s.avgClose, n: s.days ?? null, src: 'db' }
+    if (e && e.s === r.period.start && e.e === r.period.end && e.a > 0) return { avg: e.a, n: e.n, src: 'bars' }
+    return null
+  }
+  // Bounds of the quarter's average market value from a quote: its 52-week low and high times the share count, when the
+  // quote was taken after the quarter's end and within 52 weeks of its start (the average lies between them); else null.
+  function mvBounds(q, at, r) {
+    const sh = r.sharesMV ?? r.shares, lo = q?.price_52_week_low, hi = q?.price_52_week_high
+    if (!(sh > 0 && lo > 0 && hi >= lo && at > 0)) return null
+    if (Date.parse(r.period.end) > at || at - Date.parse(r.period.start) > 360 * 864e5) return null
+    return [lo * sh, hi * sh]
+  }
+  // The verdict to show: the live one; else on a saved average; else what the price bounds prove (engine screenStockRange)
+  function shJudge(sym) {
+    const r = shIn(sym)
+    if (!r?.period) return null
+    if (state.sh[sym]?.live) return state.sh[sym]
+    const sv = savedAvg(sym, r)
+    if (sv) return { ...shCompute(sym, sv.avg), days: sv.n, avgSrc: sv.src }
+    const q = state.quotes[sym]
+    if (shareMismatch(q?.close, r.sharesMV ?? r.shares, q?.market_cap_basic)) return shCompute(sym, null)
+    const b = mvBounds(q, q?.__at ?? quotedAt[sym], r)
+    const v = b ? screenStockRange(r, b[0], b[1], SHARIAH.sic) : screenStockRange(r, 0, null, SHARIAH.sic)
+    return { ...v, period: r.period, avgClose: null, band: b ? [q.price_52_week_low, q.price_52_week_high] : null }
+  }
+  const shTry = {} // sym -> 'loading' | 'failed': the live quarter average
   async function loadSh(sym) {
     const r = shIn(sym)
-    if (!mcp || !r?.period || state.sh[sym]?.live) return
+    if (!mcp || !r?.period || state.sh[sym]?.live || shTry[sym] === 'loading') return
     const days = Math.ceil((Date.now() - Date.parse(r.period.start)) / 864e5)
+    shTry[sym] = 'loading'
     try {
       const b = (await call(T.px, { symbol: sym, interval: '1D', count: Math.min(400, Math.ceil(days * 5 / 7) + 15), format: 'columns' }))?.bars
       const t0 = Date.parse(r.period.start) / 1000, t1 = Date.parse(r.period.end) / 1000 + 86400
@@ -1449,6 +1482,9 @@
       const res = shCompute(sym, c.length >= 40 && fullQuarter(inQ.map(([t]) => t), r.period.start, r.period.end) ? c.reduce((a, x) => a + x, 0) / c.length : null)
       if (!res) return
       const prev = state.sh[sym]
+      // (bars too thin to average: the saved average or the price bounds still judge, so this is no live verdict)
+      if (!(res.avgClose > 0)) { shTry[sym] = 'failed'; redraw(sym); return }
+      delete shTry[sym]
       state.sh[sym] = { ...res, live: true, days: c.length }
       redraw(sym); scheduleRender()
       // the quarter's average is saved too, so the list chip is recomputed under the current rules (fix review 2026-11-22)
@@ -1457,7 +1493,7 @@
         state.sh[sym].log = log
         db.doc(`sh/${sym}`).set({ sym, state: res.state, failed: res.failed, period: res.period, numbers: res.numbers, avgClose: res.avgClose ?? null, seenAt: Date.now(), log }).catch(() => {})
       }
-    } catch { /* prices failed: the block says so */ }
+    } catch { shTry[sym] = 'failed'; redraw(sym) /* prices failed: the block says so and judges on what is saved */ }
   }
   function shChip(sym) {
     const r = shIn(sym)
@@ -1470,10 +1506,12 @@
     if (pre?.state === 'غير جائز') return mark(pre.state)
     // a saved verdict is never shown as it was saved: rules change (fix review 2026-11-22: SMCI kept ✓ after its
     // convertible notes made it غير جائز); it is recomputed from the saved quarter average, else not shown
-    const s = state.sh[sym]
-    if (s?.live) return mark(s.state)
-    const again = s?.period?.end === r.period.end && s.avgClose > 0 ? shCompute(sym, s.avgClose) : null
-    return again ? mark(again.state) : ''
+    // (2026-11-23: also on the average saved with the page, and on what the 52-week price range proves; an unjudged
+    // result for want of a price alone shows no mark)
+    const v = shJudge(sym)
+    if (!v) return ''
+    const priceOnly = v.state === 'ما ينحكم' && v.avgClose == null && v.missing.every((x) => x === 'priceBand' || x === 'marketValue') && v.activity !== 'review'
+    return priceOnly ? '' : mark(v.state)
   }
   // an interest figure that is not the company's own exact one: our A8 estimate, or its combined tag (an upper bound)
   const illNote = (r) => (!r.illicitEstimated ? '' : r.illicitTag ? 'رقم مدموج (حد أعلى)' : 'تقدير')
@@ -1511,30 +1549,46 @@
     if (!r) return ''
     if (!r.period && activityFromSic(r.sic, SHARIAH.sic, r.cik) === 'fail') return `<div class="part sh">${head}<span class="shs lo">غير جائز</span></h3><p>نشاط الشركة محرم (${esc(r.sicDescription ?? '')})، فما يجوز بغض النظر عن أرقامها.</p></div>`
     if (!r.period) return `<div class="part sh">${head}<span class="shs dim">ما ينحكم</span></h3><p class="dim">${shNoPeriod(r)}</p></div>`
-    const s = state.sh[sym]?.live ? state.sh[sym] : shCompute(sym, null)
+    const s = shJudge(sym)
     const q = state.quotes[sym]
     const n = s.numbers
     const ok = (x, lim, upper = false) => (x == null ? '<span class="dim">—</span>' : x <= lim + 1e-12 ? '<span class="hi">✓</span>' : upper ? '<span class="dim">؟</span>' : '<span class="lo">✕</span>')
     const d = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })
     const usd = (x, dp = 2) => (x == null ? '—' : `<bdi>$${fmt(x, dp)}</bdi>`)
     const big = (x) => (x == null ? '—' : Math.abs(x) >= 1e9 ? `<bdi>$${fmt(x / 1e9, 2)}</bdi> مليار` : `<bdi>$${fmt(x / 1e6, 1)}</bdi> مليون`)
-    const act = { ok: `<span class="hi">✓</span> مباح حسب تصنيف نشاطها في SEC`, review: `<span class="dim">؟</span> يحتاج مراجعة`, fail: `<span class="lo">✕</span> نشاط محرم` }[s.activity] ?? '<span class="dim">—</span>'
+    const act = { ok: `<span class="hi">✓</span> مباح`, review: `<span class="dim">؟</span> يحتاج مراجعة`, fail: `<span class="lo">✕</span> محرم` }[s.activity] ?? '<span class="dim">—</span>'
     const pps = n.purificationPerShare
+    // One row per test: its name and limit, the result large on the other side, the figures behind it on a line of their
+    // own (2026-11-23: as a table the values were squeezed into a few letters a line on a phone)
+    const item = (k, lim, v, det) => `<div class="shi"><div class="shk">${k}${lim ? ` <small class="dim">${lim}</small>` : ''}</div><div class="shx">${v}</div>${det ? `<div class="shd">${det}</div>` : ''}</div>`
+    // the debt ratio: both ratios while two readings or the price range disagree; a bound when the price range proved it
+    const drText = n.debtRatio == null ? (s.debtRange ? s.debtRange.map((x) => pct(x, 1).replace('+', '')).join(' إلى ') : '—')
+      : pct(n.debtRatio, 1).replace('+', '')
+    const boundNote = s.bound === 'max' ? `النسبة على ${s.band ? 'أدنى سعر في 52 أسبوع' : 'حقوق المساهمين (بدون سعر)'}، والفعلية أقل منها أو مثلها · `
+      : s.bound === 'min' ? 'النسبة على أعلى سعر في 52 أسبوع، والفعلية أعلى منها أو مثلها · ' : ''
     const rows = [
-      ['النشاط', `${act} <small class="dim">${esc(r.sicDescription ?? '')}</small>`],
-      // two readings of the debt (lines that may be the same money): both figures, and both ratios while they disagree
-      ['الديون الربوية ÷ القيمة السوقية', `${n.debtRatio == null && s.debtRange ? '<span class="dim">؟</span>' : ok(n.debtRatio, 0.3)} <b class="n">${n.debtRatio == null ? (s.debtRange ? s.debtRange.map((x) => pct(x, 1).replace('+', '')).join(' إلى ') : '—') : pct(n.debtRatio, 1).replace('+', '')}</b> <small class="dim">الحد 30٪ · ديون بفائدة ${debtWords(r, s, big)}${leaseWords(r, big)}</small>`],
-      ['إيراد الفوائد ÷ الإيرادات', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b> <small class="dim">الحد 5٪ · ${illRange(r.illicit, n.illicitShare != null && r.revenue > 0 ? n.illicitShare * r.revenue : null, big)} من ${big(r.revenue)}${illNote(r) ? ` · <b>${illNote(r)}</b>` : ''}${n.illicitShare > 1 ? (r.revenueTag === 'RevenuesNetOfInterestExpense' ? ' · إيراداتها المنشورة صافية بعد مصروف الفوائد، والفوائد هنا قبله' : ' · إيراداتها صغيرة والفوائد أكبر منها') : ''}</small>`],
-      ['التطهير عن الربع لكل سهم', `<b class="n">${usd(pps, 4)}</b>${pps != null ? purFloor(s) : ''}${pps != null && q?.close > 0 ? ` <small class="dim">(<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من السعر)</small>` : ''}${pps != null && r.shares > 0 ? purOn(pps * r.shares, r.illicit, big) : ''}${pps == null && r.illicit != null ? ` <small class="dim">${purMissing(r)}</small>` : ''}`],
+      item('النشاط', '', act, `حسب تصنيف نشاطها في SEC: ${esc(r.sicDescription ?? '—')}`),
+      item('الديون الربوية ÷ القيمة السوقية', 'الحد 30٪', `${n.debtRatio == null && s.debtRange ? '<span class="dim">؟</span>' : ok(n.debtRatio, 0.3)} <b class="n">${drText}</b>`,
+        `${boundNote}ديون بفائدة ${debtWords(r, s, big)}${leaseWords(r, big)}`),
+      item('إيراد الفوائد ÷ الإيرادات', 'الحد 5٪', `${ok(n.illicitShare, 0.05, r.illicitEstimated)} <b class="n">${n.illicitShare == null ? '—' : pct(n.illicitShare, 2).replace('+', '')}</b>`,
+        `${illRange(r.illicit, n.illicitShare != null && r.revenue > 0 ? n.illicitShare * r.revenue : null, big)} من ${big(r.revenue)}${illNote(r) ? ` · <b>${illNote(r)}</b>` : ''}${n.illicitShare > 1 ? (r.revenueTag === 'RevenuesNetOfInterestExpense' ? ' · إيراداتها المنشورة صافية بعد مصروف الفوائد، والفوائد هنا قبله' : ' · إيراداتها صغيرة والفوائد أكبر منها') : ''}`),
+      item('التطهير عن الربع لكل سهم', '', `<b class="n">${usd(pps, 4)}</b>${pps != null ? purFloor(s) : ''}`,
+        `${pps != null && q?.close > 0 ? `<span class="n">${pct(pps / q.close, 3).replace('+', '')}</span> من سعر السهم` : ''}${pps != null && r.shares > 0 ? purOn(pps * r.shares, r.illicit, big) : ''}${pps == null && r.illicit != null ? purMissing(r) : ''}`),
     ]
-    const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'إيراد الفوائد فوق 5٪' })[x]).join('، ')}. الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.`
-      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', illicitRange: 'إيراد الفوائد الكامل (المؤكد تحت 5٪، وممكن فوائد ثانية داخل الإيرادات أو على قروض توصله فوقها)', illicitBook: 'إيراد الفوائد الفعلي (تقديرنا تحت 5٪، لكن SEC تصنفها شركة مالية، والشركات المالية تعلن فوائدها غالباً بأسماء خاصة ما نقرأها، فما نعتمد التقدير)', debtBound: 'رقم الديون الكامل (المؤكد منها تحت 30٪، وكل الالتزامات ناقص الإيجارات فوقها)', restated: `قوائم معتمدة (الشركة سحبت قوائم هذا الربع بإعلان 8-K بند 4.02 في ${esc(r.nonReliance ?? '')}، وما نشرت المعدّلة للحين)`, debtRange: 'رقم الديون الأكيد (بطريقة تطلع النسبة تحت 30٪ وبطريقة فوقها)', split: 'عدد أسهم يطابق السعر (عدد الأسهم في آخر تقرير ما يطابق قيمتها السوقية اليوم: ممكن تقسيم أسهم بعد التقرير)', marketValue: mvMissing(r), bookEquity: 'حقوق المساهمين', illicit: illNote(r) === 'تقدير' ? 'إيراد الفوائد الفعلي (ما نقدر نقرأه من بيانات SEC، وتقديرنا المتحفظ فوق 5٪)' : illNote(r) ? 'إيراد الفوائد الفعلي (الشركة تعلنه مدموج مع دخل ثاني، والمدموج فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') + (s.activity === 'review' ? '، ونشاط الشركة يحتاج مراجعة' : '') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}${!state.sh[sym]?.live && mcp ? '. نحسب متوسط السعر الحين…' : ''}`
-      : s.state === 'حلال (نقي)' ? 'ما عليها ديون ربوية ولا إيراد محرم في القوائم.' : 'جائز مع التطهير.'
-    return `<div class="part sh">${head}<span class="shs ${SH_CLS[s.state]}">${esc(s.state)}</span></h3>
-      <p>${why}</p>
-      <table class="shrows">${rows.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table>
+    // what the price side of the verdict rests on, and whether TradingView answered
+    const tv = state.sh[sym]?.live ? '' : shTry[sym] === 'loading' ? ' نحدّث متوسط السعر من TradingView الحين…' : shTry[sym] === 'failed' ? ' TradingView ما رد الحين، وبنحاول مرة ثانية لما تفتح السهم.' : ''
+    const priceNote = s.avgClose ? `متوسط السعر في الربع <span class="n">${usd(s.avgClose)}</span>${s.days ? ` (${s.days} يوم تداول)` : ''}${s.avgSrc === 'bars' ? '، من أسعارنا اليومية المحفوظة' : s.avgSrc === 'db' ? '، محفوظ من زيارة سابقة' : ''}.`
+      : s.band ? `ما وصلنا متوسط سعر الربع، فالحكم على أدنى وأعلى سعر للسهم في 52 أسبوع (<span class="n">${usd(s.band[0])}</span> إلى <span class="n">${usd(s.band[1])}</span>): متوسط الربع أكيد بينهم.`
+      : s.bound === 'max' ? 'ما وصلنا سعر السهم، والحكم ثابت بدونه: ديونها ما تتعدى 30٪ حتى من حقوق المساهمين.' : 'ما وصلنا سعر السهم.'
+    const why = s.state === 'غير جائز' ? `ما يجوز: ${s.failed.map((x) => ({ R1: 'النشاط محرم', R2: 'الديون فوق 30٪', R3: 'إيراد الفوائد فوق 5٪' })[x]).join('، ')}.`
+      : s.state === 'ما ينحكم' ? `ما نقدر نحكم: ${s.missing.length ? 'ناقصنا ' + s.missing.map((x) => ({ activity: 'تصنيف النشاط', debt: 'رقم الديون', illicitRange: 'إيراد الفوائد الكامل (المؤكد تحت 5٪، وممكن فوائد ثانية داخل الإيرادات أو على قروض توصله فوقها)', illicitBook: 'إيراد الفوائد الفعلي (تقديرنا تحت 5٪، لكن SEC تصنفها شركة مالية، والشركات المالية تعلن فوائدها غالباً بأسماء خاصة ما نقرأها، فما نعتمد التقدير)', debtBound: 'رقم الديون الكامل (المؤكد منها تحت 30٪، وكل الالتزامات ناقص الإيجارات فوقها)', restated: `قوائم معتمدة (الشركة سحبت قوائم هذا الربع بإعلان 8-K بند 4.02 في ${esc(r.nonReliance ?? '')}، وما نشرت المعدّلة للحين)`, debtRange: 'رقم الديون الأكيد (بطريقة تطلع النسبة تحت 30٪ وبطريقة فوقها)', split: 'عدد أسهم يطابق السعر (عدد الأسهم في آخر تقرير ما يطابق قيمتها السوقية اليوم: ممكن تقسيم أسهم بعد التقرير)', marketValue: mvMissing(r), priceBand: 'متوسط سعر الربع (على أدنى سعر في 52 أسبوع الديون فوق 30٪، وعلى أعلى سعر تحتها)', bookEquity: 'حقوق المساهمين', illicit: illNote(r) === 'تقدير' ? 'إيراد الفوائد الفعلي (ما نقدر نقرأه من بيانات SEC، وتقديرنا المتحفظ فوق 5٪)' : illNote(r) ? 'إيراد الفوائد الفعلي (الشركة تعلنه مدموج مع دخل ثاني، والمدموج فوق 5٪)' : 'إيراد الفوائد', revenue: 'الإيرادات' })[x] ?? x).join('، ') + (s.activity === 'review' ? '، ونشاط الشركة يحتاج مراجعة' : '') : 'نشاط الشركة يحتاج مراجعة (فيه احتمال إيراد من نشاط محرم)'}.`
+      : s.state === 'حلال (نقي)' ? 'ما عليها ديون ربوية ولا إيراد محرم في القوائم.' : 'جائز، ويلزمك التطهير.'
+    return `<div class="part sh">${head}</h3>
+      <div class="shv ${SH_CLS[s.state]}"><b class="shs">${esc(s.state)}</b><span>${why}</span></div>
+      ${s.state === 'غير جائز' ? '<p class="dim">الراجحي: إذا تغيّر حال سهم عندك، يُباع في أقرب وقت وبحد أقصى 90 يوم من العلم.</p>' : ''}
+      <div class="shl">${rows.join('')}</div>
       ${pps != null ? `<label class="shq">كم سهم عندك؟ <input type="number" min="0" step="any" inputmode="decimal" data-shq="${esc(sym)}" data-pps="${pps}" data-floor="${purFloor(s) ? 1 : 0}"> <b class="n" data-sho="${esc(sym)}"></b></label>` : ''}
-      <p class="dim">القوائم: الربع المنتهي ${d(r.period.end)} (<bdi>${esc(r.period.form)}</bdi>${r.period.derived ? '، الربع الرابع = السنة ناقص 3 أرباع' : ''}، نُشرت ${d(r.period.filed)}). ${s.avgClose ? `متوسط السعر في الربع <span class="n">${usd(s.avgClose)}</span> (${s.days} يوم تداول).` : ''}${r.newerFiling ? ` <b>فيه تقرير أحدث (${esc(r.newerFiling.f)} ${d(r.newerFiling.d)}) ما انسحب للحين.</b>` : ''}</p>
+      <p class="dim">${priceNote}${tv} القوائم: الربع المنتهي ${d(r.period.end)} (<bdi>${esc(r.period.form)}</bdi>${r.period.derived ? '، الربع الرابع = السنة ناقص 3 أرباع' : ''}، نُشرت ${d(r.period.filed)}).${r.newerFiling ? ` <b>فيه تقرير أحدث (${esc(r.newerFiling.f)} ${d(r.newerFiling.d)}) ما انسحب للحين.</b>` : ''}</p>
       <details class="shmore"><summary>الطريقة والتنبيهات</summary>
       <p>الطريقة من ضوابط الراجحي المالية كما في شروط صندوق الراجحي للأسهم العالمية (قرار الهيئة الشرعية 336، تحديث 2025/08/12) وملف «آلية احتساب العنصر المحرم»: الديون الربوية لا تتجاوز 30٪ من متوسط القيمة السوقية للربع (أو القيمة الدفترية إذا كانت أعلى)، والإيراد المحرم لا يتجاوز 5٪ من الإيرادات. التطهير = الإيراد المحرم ÷ عدد أسهم الشركة × أسهمك. صفحة الراجحي لقائمة الأسهم السعودية تذكر 33٪ مع «القيمة المؤسسية»، وننتظر توضيحهم.</p>
       <p>يلزم التطهير من يملك السهم وقت صدور القوائم (ربعية أو سنوية)، وزّعت الشركة أرباح أو لا. اللي باع قبل صدورها ما عليه. المبلغ يُصرف في وجوه الخير، وما ينحسب من الزكاة ولا الضريبة.</p>
@@ -2105,6 +2159,7 @@
     return `<div class="part snowcard" style="grid-column:1/-1">
       <div class="snowfig">${snowSvg(sn)}<p class="dim">نجح في <b class="n">${sn.total}</b> من 30 فحص${SNOW_AXES.some((a) => sn.axes[a].judged < 6) ? ` (<b class="n">${30 - SNOW_AXES.reduce((s, a) => s + sn.axes[a].judged, 0)}</b> بدون بيانات)` : ''}</p></div>
       <div class="snowside">
+        ${Number.isFinite(q.close) ? '' : `<p class="notice bad">ما وصلت بيانات هذا السهم من TradingView (${esc(state.errors[sym] ?? 'ما رد على الطلب')})، فالأرقام والفحوصات تحت ناقصة وما تعتبر تقييم.</p>`}
         <div class="ehs"><span class="grade g-${letter}" title="تصنيف الأرباح (طريقة Earnings Hub): 5 مقاييس، كل واحد 0–3 حسب ربعه بين ${sym.startsWith('TADAWUL:') ? 'أسهم تاسي' : 'أسهم S&P 500'}">${letter}</span>
           <div><b>تصنيف الأرباح</b> <span class="n dim">${e ? `${e.total}/15` : ''}</span>
           <div class="chips">${e ? EHS_METRICS.map((m) => `<span class="chip ${e.parts[m.key].value == null ? 'pna' : `p${e.parts[m.key].points}`}" title="${e.parts[m.key].value == null ? 'ما فيه بيانات، وتنحسب 0 في المجموع زي ما تحسبها Earnings Hub · ' : ''}${m.key === 'revG' ? 'نمو الإيراد' : m.key === 'epsG' ? 'نمو ربح السهم' : m.key === 'pe' ? 'مكرر الربح' : m.key === 'fpe' ? 'المكرر المتوقع' : 'السعر ÷ الإيرادات'}: ${e.parts[m.key].points} من 3">${m.key === 'revG' ? 'الإيراد' : m.key === 'epsG' ? 'الربح' : m.key === 'pe' ? 'P/E' : m.key === 'fpe' ? 'Fwd P/E' : 'P/S'} ${'●'.repeat(e.parts[m.key].points)}${'○'.repeat(3 - e.parts[m.key].points)}</span>`).join('') : ''}</div></div></div>

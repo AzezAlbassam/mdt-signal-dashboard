@@ -947,3 +947,19 @@ stipulating a sale inside a loan («لا يحل سلف وبيع»); AAOIFI SS21 
 provider carves them out. The question for Al Rajhi: «هل تُحتسب السندات القابلة للتحويل ذات الكوبون 0% المصدرة بالقيمة
 الاسمية ضمن إجمالي المبلغ المقترض بالربا؟»
 
+### M18. The stock block without TradingView, and its layout (2026-11-23) — POST-HOC, tests first
+Owner: the block showed no verdict («لا هو حلال ولا حرام»), its table was unreadable on a phone, and some stocks showed
+zeros. Cause: the verdict waited for the quarter's average price from live TradingView daily bars, and TradingView was
+refusing calls (daily quota, then a cooldown); a stock with no quote was still graded "D 0/15".
+- The verdict no longer waits for TradingView. In order: the live average; the average an earlier visit saved; the
+  average from the daily bars saved in the repo, carried by the page (177 of 428 stocks with a quarter; not where a split
+  may fall after the last bar); else what price bounds prove (engine screenStockRange): the quarter's average lies
+  between the 52-week low and high of a quote taken after the quarter and within 52 weeks of its start, and with no price
+  at all a debt within 30% of book equity passes at any price. A pass needs the lowest value, a fail the highest; between
+  them «ما ينحكم» for the price. No rule changed. With nothing from TradingView at all, 177 stocks are judged on their
+  saved average and 58 of the other 251 are still decided (42 fail, 16 pass).
+- The block is a verdict banner over one stacked row per test (name and limit, result, figures on their own line), not a
+  table. It says which price the verdict rests on, and «TradingView ما رد» when the live fetch failed.
+- A stock none of whose earnings-grade measures arrived gets no grade, and its scorecard says the data did not arrive.
+- Browser check modes: TVDOWN=1 (daily bars refused) and TVDOWN=1 NOAVG=1 (no saved averages either).
+

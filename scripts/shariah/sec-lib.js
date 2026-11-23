@@ -60,6 +60,15 @@ export const canFlip = (f, x) => {
   return (x.s === 'ما ينحكم' && sum - w < 0.05) || f.badWeight + w >= 0.05;
 };
 
+// The average daily close over a quarter from saved bars ({date: [...], close: [...]}): only when the bars run from the
+// quarter's start (give or take a long weekend) to past its end, with 40 trading days or more; else null. The stock page
+// carries these, so its verdict does not wait for TradingView (2026-11-23).
+export function barsQuarterAvg(b, start, end) {
+  const days = (b?.date ?? []).map((d, i) => [d, b.close[i]]).filter(([d, c]) => d >= start && d <= end && c > 0);
+  if (days.length < 40 || !(b.date.at(-1) >= end) || (Date.parse(days[0][0]) - Date.parse(start)) / 864e5 > 5 || (Date.parse(end) - Date.parse(days.at(-1)[0])) / 864e5 > 5) return null;
+  return { a: days.reduce((s, [, c]) => s + c, 0) / days.length, n: days.length, last: b.date.at(-1) };
+}
+
 // ticker -> CIK and the list of companies (SEC company_tickers.json)
 export function companies(get) {
   const rows = Object.values(get('https://www.sec.gov/files/company_tickers.json') ?? {}).map((r) => ({ cik: String(r.cik_str).padStart(10, '0'), ticker: r.ticker, title: r.title }));

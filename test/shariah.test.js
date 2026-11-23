@@ -198,3 +198,28 @@ test("owner's decisions of 2026-11-22 (post-hoc): Al Rajhi's type two fails outr
   assert.equal(activityFromSic('6200', table, '0001156375'), 'fail');    // CME
   assert.equal(activityFromSic('6200', table), 'review');
 });
+test('2026-11-23: without the quarter average a verdict is still proven when both ends of the price range agree (the block showed nothing while TradingView was refusing)', async () => {
+  const { screenStockRange } = await import('../engine/shariah.js');
+  const table = { fail: [[6020, 6036, 'banks']], review: [], companies: {} };
+  const r = (o) => ({ period: { end: '2026-09-30' }, revenue: 100, illicit: 1, illicitEstimated: false, debt: 10, bookEquity: 50, shares: 10, sic: '3674', ...o });
+  // the average lies between the 52-week low and high: it passes even at the low (the ratio shown is its upper bound)
+  const pass = screenStockRange(r({ debt: 30, bookEquity: 10 }), 120, 300, table);
+  assert.equal(pass.state, 'مختلط جائز'); assert.equal(pass.bound, 'max'); assert.ok(Math.abs(pass.numbers.debtRatio - 0.25) < 1e-12);
+  // it fails even at the high: a fail for any average
+  const fail = screenStockRange(r({ debt: 40, bookEquity: 10 }), 20, 100, table);
+  assert.equal(fail.state, 'غير جائز'); assert.deepEqual(fail.failed, ['R2']); assert.equal(fail.bound, 'min');
+  // the ends disagree: the price decides, and both ratios are shown
+  const open = screenStockRange(r({ debt: 40, bookEquity: 10 }), 100, 200, table);
+  assert.equal(open.state, 'ما ينحكم'); assert.deepEqual(open.missing, ['priceBand']); assert.deepEqual(open.failed, []);
+  assert.deepEqual(open.debtRange.map((x) => +x.toFixed(4)), [0.2, 0.4]);
+  // no price at all: debt within 30% of book equity passes at any price (the denominator is never below book equity)
+  const book = screenStockRange(r({ debt: 10, bookEquity: 50 }), 0, null, table);
+  assert.equal(book.state, 'مختلط جائز'); assert.equal(book.bound, 'max');
+  assert.equal(screenStockRange(r({ debt: 0, illicit: 0 }), 0, null, table).state, 'حلال (نقي)');
+  // debt above 30% of book equity with no price: not judged, and never a fail
+  const need = screenStockRange(r({ debt: 20, bookEquity: 50 }), 0, null, table);
+  assert.equal(need.state, 'ما ينحكم'); assert.ok(need.missing.includes('marketValue')); assert.deepEqual(need.failed, []);
+  // the tests that need no price still fail without one
+  assert.deepEqual(screenStockRange(r({ illicit: 9 }), 0, null, table).failed, ['R3']);
+  assert.deepEqual(screenStockRange(r({ sic: '6021' }), 0, null, table).failed, ['R1']);
+});
