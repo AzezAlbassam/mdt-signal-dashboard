@@ -1,6 +1,8 @@
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
 <!-- Portfolio update card, identity C "Forest" (the owner's choice, 2026-11-21: "this design from today on"; options
-     A and B are in git history, commit f67e3e5). 1080x1350. Data: window.__DATA__ (render-portfolio.cjs) or the default. -->
+     A and B are in git history, commit f67e3e5). 1080x1350. Data: window.__DATA__ (render-portfolio.cjs) or the default.
+     Since 2026-11-24 (owner) this identity is for EVERY designed image, not only portfolio updates: rows may carry their
+     own tag text, and `foot` replaces the footer note. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Big+Shoulders+Display:wght@600;700;800&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -81,7 +83,7 @@ document.getElementById('card').innerHTML = `
         <div class="val"><span class="tag">${r.tag || KIND[r.kind]}</span><div class="big">${r.big}</div><div class="bl">${r.bl}</div></div>
       </div>`).join('')}</div>
     <div class="total"><span>${D.total.label}</span><b>${D.total.value}</b></div>
-    <div class="foot"><div class="me">${X}@AzizzUnited</div><div class="disc">محفظتي الشخصية · ${D.date} · مو توصية</div></div>
+    <div class="foot"><div class="me">${X}@AzizzUnited</div><div class="disc">${D.foot || `محفظتي الشخصية · ${D.date} · مو توصية`}</div></div>
   </div>`
 const n = D.rows.length
 document.querySelector('.rows').classList.add(n >= 5 ? 'dense' : n >= 3 ? 'fill' : 'few')

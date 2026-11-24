@@ -1,4 +1,12 @@
-# Cards for the tweets (owner picked the "paper" template on 2026-11-11)
+# Cards for the tweets
+
+**Design in use for EVERY designed image: identity C "Forest" (owner, 2026-11-24: «مب قلنا غيرنا تصميم صورنا؟»).** The beige
+"paper" template below is retired for new images; its files stay for the history. Render any card with
+`node scripts/cards/render-portfolio.cjs <out.png> scripts/cards/data/<date>-<name>.json` (data: pill, title {pre, em,
+post}, sub, rows [{t, name, kind, tag, big, bl, note}], total {label, value}, foot). Example:
+`data/2026-11-24-nvidia-return.json`.
+
+## Retired: the "paper" template (owner's pick on 2026-11-11, replaced on 2026-11-21/24)
 
 - `portfolio.html?k=port`: trades card (open position, closed trades). `?k=perf`: performance line.
   The trades, weights, dates and the daily curve are written in the file; update them for each portfolio update.
