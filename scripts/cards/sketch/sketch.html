@@ -101,8 +101,20 @@ card.innerHTML = D.kind === 'story'
        <div class="val"><span class="chip">${r.chip}</span><b class="big">${r.big}</b>${r.bl ? `<span class="bl">${r.bl}</span>` : ''}</div></div>`).join('')}</div>${foot}`
   : `${head}<div class="plot" id="plot"></div>${foot}`
 
-// a ruled notebook page: printed lines and the margin line on the side Arabic starts from
-document.getElementById('rules').innerHTML = Array.from({ length: 23 }, (_, i) => `<line x1="0" x2="1080" y1="${96 + i * 54}" y2="${96 + i * 54}" stroke="#9DBFE3" stroke-width="2" opacity="0.6"/>`).join('') + '<line x1="1040" x2="1040" y1="0" y2="1350" stroke="#E58E88" stroke-width="2.5" opacity="0.75"/>'
+// the page: printed rulings sit in #paper under everything; `paper` in the data picks one (options shown to the owner)
+if (D.paper === 'legal') document.documentElement.style.setProperty('--paper', '#FBF1B4')
+function ruled(kind = 'lines') {
+  const g = document.getElementById('rules'), ln = (x1, y1, x2, y2, c, w, o) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" opacity="${o}"/>`
+  const rows = (step, c, w, o, y0 = 96) => Array.from({ length: Math.ceil((1350 - y0) / step) }, (_, i) => ln(0, y0 + i * step, 1080, y0 + i * step, c, w, o)).join('')
+  const margin = ln(1040, 0, 1040, 1350, '#E58E88', 2.5, 0.75)
+  if (kind === 'lines') g.innerHTML = rows(54, '#9DBFE3', 2, 0.6) + margin
+  if (kind === 'grid') g.innerHTML = rows(45, '#9DBFE3', 1.6, 0.5, 12) + Array.from({ length: 24 }, (_, i) => ln(i * 45 + 22, 0, i * 45 + 22, 1350, '#9DBFE3', 1.6, 0.5)).join('')
+  if (kind === 'dots') g.innerHTML = Array.from({ length: 37 }, (_, r) => Array.from({ length: 30 }, (_, c) => `<circle cx="${18 + c * 36}" cy="${24 + r * 36}" r="2.6" fill="#7F96B5" opacity="0.6"/>`).join('')).join('')
+  if (kind === 'legal') g.innerHTML = rows(54, '#7FA8D8', 2, 0.65) + ln(1034, 0, 1034, 1350, '#E0635C', 2.5, 0.8) + ln(1044, 0, 1044, 1350, '#E0635C', 2.5, 0.8)
+  if (kind === 'spiral') g.innerHTML = rows(54, '#9DBFE3', 2, 0.6) + ln(1022, 0, 1022, 1350, '#E58E88', 2.5, 0.75) + Array.from({ length: 22 }, (_, i) => `<circle cx="1052" cy="${42 + i * 60}" r="11" fill="#3A342A" opacity="0.82"/><path d="M1052 ${42 + i * 60} q22 -14 40 -4" fill="none" stroke="#8C8778" stroke-width="5" stroke-linecap="round"/>`).join('')
+  if (kind === 'hand') { for (let y = 96; y < 1350; y += 54) put(R.line(-6, y, 1086, y, O({ stroke: '#8E9BAA', strokeWidth: 2.2, roughness: 1.3, bowing: 0.5 }))).setAttribute('opacity', 0.55)
+    put(R.line(1040, -6, 1040, 1356, O({ stroke: '#D8736C', strokeWidth: 3, roughness: 1.1, bowing: 0.4 }))).setAttribute('opacity', 0.7) }
+}
 
 // ---- drawing: everything below is rough.js with a fixed seed, so a render is the same every time
 const R = rough.svg(deco)
@@ -263,7 +275,7 @@ function line() {
 // kind "icons": every doodle with its name, to choose from
 function icons() { card.innerHTML = ''; Object.keys(DOODLE).forEach((k, i) => { const x = 200 + (i % 3) * 340, y = 220 + Math.floor(i / 3) * 400; doodle(k, x, y, 1.25); text(x, y + 170, k, { font: num(40) }) }) }
 
-document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
+document.fonts.ready.then(async () => { if (D.kind === 'icons') { ruled(D.paper); icons() } else { ruled(D.paper); await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
 </script>
 </body>
 </html>
