@@ -24,3 +24,15 @@ post}, sub, rows [{t, name, kind, tag, big, bl, note}], total {label, value}, fo
   It fails on page errors, a font that did not load, or anything outside the card.
 - Use it for every portfolio update the owner sends; the old portfolio.html / fund-1120.html / avgdown.html paper
   cards are retired for his portfolio.
+
+## Hand-drawn cards (options, 2026-11-25)
+
+The owner asked (2026-11-25) for a hand-drawn look, crayon and marker on paper with a cartoon touch, for every designed
+image except the broker-style performance image of the portfolio update, which stays as it is. `sketch/` holds three
+options (themes `a` ivory drawing paper, `b` squared notebook page, `c` kraft paper) on three layouts (`story`: a hero
+number and rows, also used for the trades card; `bars`; `line`). Forest stays in use until he picks one; then the other
+two themes are removed and the tweets page's charts follow.
+
+    node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png a
+
+`rough.js` is roughjs 4.6.6 (MIT), vendored so a render needs no install. The sample data files name their sources.

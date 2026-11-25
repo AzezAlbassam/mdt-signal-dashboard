@@ -1,0 +1,14 @@
+{
+ "kind": "story",
+ "tag": "تحديث المحفظة · 20 نوفمبر",
+ "title": { "pre": "دخلت انفيديا… ", "em": "وعزّزت", "post": " في ثنتين" },
+ "sub": "نسب بس، بدون مبالغ",
+ "hero": { "value": "+48.0%", "label": "المحفظة كلها من البداية", "tone": "up" },
+ "rows": [
+  { "t": "NVDA", "name": "انفيديا", "chip": "مركز جديد", "tone": "up", "big": "7.1%", "bl": "من المحفظة", "note": "أول دخول، بعد نزول السهم على خبر جنسن" },
+  { "t": "NBIS", "name": "نبيس", "chip": "عزّزت", "tone": "blue", "big": "−2.7%", "bl": "نزل متوسطي", "note": "زدت المركز <bdi>12%</bdi>" },
+  { "t": "SNDK", "name": "سانديسك", "chip": "عزّزت", "tone": "blue", "big": "−3.9%", "bl": "نزل متوسطي", "note": "زدت المركز <bdi>19%</bdi>" }
+ ],
+ "foot": "20 نوفمبر 2026 · مو توصية",
+ "source": "the default data of scripts/cards/portfolio-update.html (the owner's update of 2026-11-20)"
+}
