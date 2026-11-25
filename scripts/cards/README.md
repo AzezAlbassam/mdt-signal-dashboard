@@ -27,8 +27,8 @@ post}, sub, rows [{t, name, kind, tag, big, bl, note}], total {label, value}, fo
 
 ## The hand-drawn card: the design in use (2026-11-25)
 
-The owner's design for EVERY designed image since 2026-11-25: marker and crayons on a ruled notebook page (ivory paper, printed blue lines, a red margin), the stocks' logos in
-colour, and ONE doodle top-left of what the company makes (he picked option A of three, asked for the logos, then on
+The owner's design for EVERY designed image since 2026-11-25: marker and crayons on squared notebook paper (ivory, a light blue grid: his pick of six rulings, «هذه الدفاتر اللي
+انا اعرفها»), the stocks' logos in colour, and ONE doodle top-left of what the company makes (he picked option A of three, asked for the logos, then on
 2026-11-25 had the pencil mascot, stars and planet removed: «ما لهم علاقة»; nothing unrelated to the stock is drawn). The one exception is the broker-style performance image of the
 portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the beige paper template are retired.
 
@@ -40,7 +40,9 @@ portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the
 - Logos: `logo` on the card and on each row is a TradingView logoid (the news tool's relatedSymbols carry it). Save it
   once: `curl -s -o scripts/cards/sketch/logos/<logoid>.svg https://s3-symbol-logo.tradingview.com/<logoid>--big.svg`.
   A stock is shown with its logo beside its ticker, never by name alone.
-- The doodle: `icon` in the data file, by what the company makes: `chip` (Nvidia, AMD), `memory` (Micron, SK Hynix: an
+- The doodle is specific and detailed (the owner, 2026-11-25: «التفاصيل هذه تفرق»): the company's own best-known
+  product when it has one (`bigmac` for McDonald's: sesame bun, two patties, cheese, lettuce), else its sector's.
+  `icon` in the data file, by what the company makes: `chip` (Nvidia, AMD), `memory` (Micron, SK Hynix: an
   HBM stack), `storage` (SanDisk), `server` (Nebius, CoreWeave: cloud and AI data centres), `rocket` (Rocket Lab,
   SpaceX), `ai` (Anthropic, AI software), `metal` (gold, silver, miners), `market` (an index or the whole market),
   `wallet` (his own portfolio). `data/icons.json` renders them all. A company none of them fits gets a NEW doodle

@@ -101,20 +101,9 @@ card.innerHTML = D.kind === 'story'
        <div class="val"><span class="chip">${r.chip}</span><b class="big">${r.big}</b>${r.bl ? `<span class="bl">${r.bl}</span>` : ''}</div></div>`).join('')}</div>${foot}`
   : `${head}<div class="plot" id="plot"></div>${foot}`
 
-// the page: printed rulings sit in #paper under everything; `paper` in the data picks one (options shown to the owner)
-if (D.paper === 'legal') document.documentElement.style.setProperty('--paper', '#FBF1B4')
-function ruled(kind = 'lines') {
-  const g = document.getElementById('rules'), ln = (x1, y1, x2, y2, c, w, o) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" opacity="${o}"/>`
-  const rows = (step, c, w, o, y0 = 96) => Array.from({ length: Math.ceil((1350 - y0) / step) }, (_, i) => ln(0, y0 + i * step, 1080, y0 + i * step, c, w, o)).join('')
-  const margin = ln(1040, 0, 1040, 1350, '#E58E88', 2.5, 0.75)
-  if (kind === 'lines') g.innerHTML = rows(54, '#9DBFE3', 2, 0.6) + margin
-  if (kind === 'grid') g.innerHTML = rows(45, '#9DBFE3', 1.6, 0.5, 12) + Array.from({ length: 24 }, (_, i) => ln(i * 45 + 22, 0, i * 45 + 22, 1350, '#9DBFE3', 1.6, 0.5)).join('')
-  if (kind === 'dots') g.innerHTML = Array.from({ length: 37 }, (_, r) => Array.from({ length: 30 }, (_, c) => `<circle cx="${18 + c * 36}" cy="${24 + r * 36}" r="2.6" fill="#7F96B5" opacity="0.6"/>`).join('')).join('')
-  if (kind === 'legal') g.innerHTML = rows(54, '#7FA8D8', 2, 0.65) + ln(1034, 0, 1034, 1350, '#E0635C', 2.5, 0.8) + ln(1044, 0, 1044, 1350, '#E0635C', 2.5, 0.8)
-  if (kind === 'spiral') g.innerHTML = rows(54, '#9DBFE3', 2, 0.6) + ln(1022, 0, 1022, 1350, '#E58E88', 2.5, 0.75) + Array.from({ length: 22 }, (_, i) => `<circle cx="1052" cy="${42 + i * 60}" r="11" fill="#3A342A" opacity="0.82"/><path d="M1052 ${42 + i * 60} q22 -14 40 -4" fill="none" stroke="#8C8778" stroke-width="5" stroke-linecap="round"/>`).join('')
-  if (kind === 'hand') { for (let y = 96; y < 1350; y += 54) put(R.line(-6, y, 1086, y, O({ stroke: '#8E9BAA', strokeWidth: 2.2, roughness: 1.3, bowing: 0.5 }))).setAttribute('opacity', 0.55)
-    put(R.line(1040, -6, 1040, 1356, O({ stroke: '#D8736C', strokeWidth: 3, roughness: 1.1, bowing: 0.4 }))).setAttribute('opacity', 0.7) }
-}
+// the page: squared notebook paper, the kind the owner knows («هذه الدفاتر اللي انا اعرفها», his pick of six rulings)
+const ln = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9DBFE3" stroke-width="1.6" opacity="0.5"/>`
+document.getElementById('rules').innerHTML = Array.from({ length: 30 }, (_, i) => ln(0, 12 + i * 45, 1080, 12 + i * 45)).join('') + Array.from({ length: 24 }, (_, i) => ln(i * 45 + 22, 0, i * 45 + 22, 1350)).join('')
 
 // ---- drawing: everything below is rough.js with a fixed seed, so a render is the same every time
 const R = rough.svg(deco)
@@ -135,7 +124,8 @@ function arrow(x1, y1, x2, y2, c, bend = 0.25) { const mx = (x1 + x2) / 2 - (y2 
   const a = Math.atan2(y2 - my, x2 - mx); for (const s of [-0.5, 0.5]) put(R.line(x2, y2, x2 - 20 * Math.cos(a + s), y2 - 20 * Math.sin(a + s), O({ stroke: c, strokeWidth: 3.5, roughness: 0.6 }))) }
 // a small filled arrow beside a value, so up and down never rest on colour alone
 function tick(x, y, up, c) { const s = up ? -1 : 1; put(R.polygon([[x - 15, y - 11 * s], [x + 15, y - 11 * s], [x, y + 15 * s]], wax(c, { strokeWidth: 3, hachureGap: 4.5, roughness: 1 }))) }
-// Sector doodles, drawn top-left: one per stock or topic, by what the company makes (the owner, 2026-11-25: a chip for
+// Doodles, drawn top-left: one per card, of the company's own best-known product when it has one (a Big Mac for
+// McDonald's), else of what its sector makes (the owner, 2026-11-25: a chip for
 // Nvidia, an HBM stack for Micron, a rocket for Rocket Lab). Each draws around (0,0) in a box of about 190x150.
 const DOODLE = {
   chip(g, ink) { // processors and GPUs
@@ -186,6 +176,18 @@ const DOODLE = {
   metal(g, ink) { // gold, silver, miners: ingots
     for (const p of [[[-80, 62], [-66, 22], [-14, 22], [0, 62]], [[4, 62], [18, 22], [70, 22], [84, 62]], [[-38, 18], [-24, -22], [28, -22], [42, 18]]]) put(R.polygon(p, wax(C.sticker, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
     for (const [x, y] of [[-52, -44], [58, -36]]) { put(R.line(x - 12, y, x + 12, y, O({ stroke: C.acc, strokeWidth: 4, roughness: 0.6 })), g); put(R.line(x, y - 12, x, y + 12, O({ stroke: C.acc, strokeWidth: 4, roughness: 0.6 })), g) }
+  },
+  bigmac(g, ink) { // McDonald's: its Big Mac, two patties and the middle bun
+    const bun = '#E0A458', patty = '#6B3F22', leaf = '#3FA34D', seed = '#FFF3D0'
+    put(R.path('M-78 54 H78 Q82 80 54 80 H-54 Q-82 80 -78 54 Z', wax(bun, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    put(R.path('M-86 50 q11 -14 22 0 t22 0 t22 0 t22 0 t22 0 t22 0 t22 0 t18 0', O({ stroke: leaf, strokeWidth: 10, roughness: 0.9 })), g)
+    put(R.rectangle(-80, 26, 160, 20, wax(patty, { stroke: ink, strokeWidth: 3.5, hachureGap: 5 })), g)
+    put(R.polygon([[-84, 16], [84, 16], [84, 26], [62, 26], [52, 44], [40, 26], [-18, 26], [-30, 40], [-44, 26], [-84, 26]], wax('#FFC83A', { stroke: ink, strokeWidth: 3, hachureGap: 4.5 })), g)
+    put(R.rectangle(-76, -2, 152, 18, wax(bun, { stroke: ink, strokeWidth: 3.5, hachureGap: 6 })), g)
+    put(R.path('M-86 -6 q11 -14 22 0 t22 0 t22 0 t22 0 t22 0 t22 0 t22 0 t18 0', O({ stroke: leaf, strokeWidth: 10, roughness: 0.9 })), g)
+    put(R.rectangle(-80, -30, 160, 20, wax(patty, { stroke: ink, strokeWidth: 3.5, hachureGap: 5 })), g)
+    put(R.path('M-80 -32 Q-84 -88 0 -90 Q84 -88 80 -32 Z', wax(bun, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    for (const [x, y] of [[-48, -56], [-22, -72], [6, -60], [32, -74], [52, -52], [-34, -44], [24, -44], [-4, -80]]) put(R.ellipse(x, y, 14, 7, O({ stroke: ink, fill: seed, fillStyle: 'solid', strokeWidth: 1.8, roughness: 0.6 })), g)
   },
   wallet(g, ink) { // his own portfolio: a briefcase
     put(R.path('M-26 -32 V-56 H26 V-32', O({ stroke: ink, strokeWidth: 5, roughness: 0.8 })), g)
@@ -252,12 +254,13 @@ function bars() {
 
 function line() {
   const b = box(document.getElementById('plot')), L = b.x + 92, Rr = b.x + b.w - 190, T = b.y + 60, B = b.y + b.h - 78
-  const v = D.close, n = v.length, step = 50, lo = Math.floor(Math.min(...v) / step) * step, hi = Math.ceil(Math.max(...v) / step) * step
+  const v = D.close, n = v.length, step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500].find((x) => (Math.max(...v) - Math.min(...v)) / x <= 5) ?? 1000, lo = Math.floor(Math.min(...v) / step) * step, hi = Math.ceil(Math.max(...v) / step) * step
   const X = (i) => L + (Rr - L) * i / (n - 1), Y = (y) => B - (B - T) * (y - lo) / (hi - lo)
   for (let y = lo; y <= hi; y += step) { if (y > lo) put(R.line(L, Y(y), Rr + 26, Y(y), O({ stroke: C.mut, strokeWidth: 1.6, roughness: 0.9, strokeLineDash: [3, 13] }))); text(L - 16, Y(y) + 10, '$' + y, { anchor: 'end', font: num(30), fill: C.mut }) }
   put(R.line(L - 6, B, Rr + 26, B, O({ stroke: C.ink, strokeWidth: 4.5, roughness: 1.1 })))
   const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-  D.dates.forEach((d, i) => { if (!i || d.slice(5, 7) !== D.dates[i - 1].slice(5, 7)) { put(R.line(X(i), B, X(i), B + 12, O({ stroke: C.ink, strokeWidth: 3.5, roughness: 0.6 }))); text(X(i), B + 50, MON[+d.slice(5, 7) - 1], { anchor: 'start', font: num(32), fill: C.mut }) } })
+  const starts = D.dates.map((d, i) => (!i || d.slice(5, 7) !== D.dates[i - 1].slice(5, 7) ? i : -1)).filter((i) => i >= 0), every = Math.ceil(starts.length / 6)
+  starts.forEach((i, k) => { if (k % every) return; const d = D.dates[i]; put(R.line(X(i), B, X(i), B + 12, O({ stroke: C.ink, strokeWidth: 3.5, roughness: 0.6 }))); text(X(i), B + 50, d.slice(5, 7) === '01' ? d.slice(0, 4) : MON[+d.slice(5, 7) - 1], { anchor: 'start', font: num(32), fill: C.mut }) })
   const pts = v.map((y, i) => [X(i), Y(y)])
   put(R.polygon([[L, B - 3], ...pts, [Rr, B - 3]], O({ stroke: 'none', fill: C.blue, fillStyle: 'hachure', hachureGap: 13, fillWeight: 2.4, hachureAngle: -52, roughness: 1.6 }))).setAttribute('opacity', 0.45)
   put(R.linearPath(pts, O({ stroke: C.blue, strokeWidth: 6.5, roughness: 1.15, bowing: 0.4 })))
@@ -273,9 +276,9 @@ function line() {
 }
 
 // kind "icons": every doodle with its name, to choose from
-function icons() { card.innerHTML = ''; Object.keys(DOODLE).forEach((k, i) => { const x = 200 + (i % 3) * 340, y = 220 + Math.floor(i / 3) * 400; doodle(k, x, y, 1.25); text(x, y + 170, k, { font: num(40) }) }) }
+function icons() { card.innerHTML = ''; Object.keys(DOODLE).forEach((k, i) => { const x = 200 + (i % 3) * 340, y = 170 + Math.floor(i / 3) * 310; doodle(k, x, y, 1.05); text(x, y + 150, k, { font: num(36) }) }) }
 
-document.fonts.ready.then(async () => { if (D.kind === 'icons') { ruled(D.paper); icons() } else { ruled(D.paper); await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
+document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
 </script>
 </body>
 </html>
