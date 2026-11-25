@@ -25,14 +25,22 @@ post}, sub, rows [{t, name, kind, tag, big, bl, note}], total {label, value}, fo
 - Use it for every portfolio update the owner sends; the old portfolio.html / fund-1120.html / avgdown.html paper
   cards are retired for his portfolio.
 
-## Hand-drawn cards (options, 2026-11-25)
+## The hand-drawn card: the design in use (2026-11-25)
 
-The owner asked (2026-11-25) for a hand-drawn look, crayon and marker on paper with a cartoon touch, for every designed
-image except the broker-style performance image of the portfolio update, which stays as it is. `sketch/` holds three
-options (themes `a` ivory drawing paper, `b` squared notebook page, `c` kraft paper) on three layouts (`story`: a hero
-number and rows, also used for the trades card; `bars`; `line`). Forest stays in use until he picks one; then the other
-two themes are removed and the tweets page's charts follow.
+The owner's design for EVERY designed image since 2026-11-25: marker and crayons on ivory drawing paper, with a pencil
+mascot, doodles and the stocks' logos in colour (he picked option A of three and asked for the logos; the other two
+options are in git history, commit before this one). The one exception is the broker-style performance image of the
+portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the beige paper template are retired.
 
-    node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png a
+    node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png
 
-`rough.js` is roughjs 4.6.6 (MIT), vendored so a render needs no install. The sample data files name their sources.
+- Layouts (`kind` in the data file): `story` (a hero number and up to four rows: a stock's story, or the portfolio's
+  trades card), `bars` (few bars, one highlighted, an optional callout sticker), `line` (one price or series line with
+  marked points). 1080x1350.
+- Logos: `logo` on the card and on each row is a TradingView logoid (the news tool's relatedSymbols carry it). Save it
+  once: `curl -s -o scripts/cards/sketch/logos/<logoid>.svg https://s3-symbol-logo.tradingview.com/<logoid>--big.svg`.
+  A stock is shown with its logo beside its ticker, never by name alone.
+- Line marks carry `dx`, `dy` (where the label sits from its point), `arrow` and `patch`: the renderer checks overflow,
+  not overlaps, so LOOK at the render and move a label that sits on the line or on another label.
+- A row gets a small up or down arrow only with `arrow`, for values that are moves (not for a position's size).
+- `rough.js` is roughjs 4.6.6 (MIT), vendored so a render needs no install. Every number on a card is in the post's facts.

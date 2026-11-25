@@ -2,54 +2,50 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<!-- Hand-drawn card: crayon and marker on paper (owner 2026-11-25: every designed image except the broker-style
-     performance image). 1080x1350. Layout is HTML; every stroke and fill is drawn by rough.js into #deco and
-     roughened by the SVG filters below. Data: window.__DATA__ (kind: story | bars | line), theme: window.__THEME__
-     (a | b | c: the three options shown to the owner). Render with render-sketch.cjs. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@400;500;600;700;800&family=Marhey:wght@500;700&family=Lalezar&family=Londrina+Solid:wght@400;900&display=swap">
+<!-- The hand-drawn card: marker and crayons on ivory drawing paper. The owner's design for every designed image since
+     2026-11-25 (he picked option A of three and asked for stock logos in colour); the one exception is the broker-style
+     performance image of the portfolio update. 1080x1350. Layout is HTML; every stroke and fill is drawn by rough.js
+     (seeded, so a render repeats exactly) and roughened by the SVG filters below; logos are stuck on as stickers and
+     stay crisp. Data: window.__DATA__ (kind: story | bars | line; see data/). Render with render-sketch.cjs. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@400;500;600;700;800&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1350px;overflow:hidden}
+:root{--paper:#F8F1DD;--ink:#23211D;--mut:#575141;--em:#1F7A4D;--up:#1F7A4D;--down:#D5402E;--blue:#2B6CC9;--acc:#F2762E;--sticker:#FFD65C;--pencil:#F2762E;--f:'Playpen Sans Arabic'}
 bdi,.ltr{direction:ltr;unicode-bidi:isolate}
-body{background:var(--paper);font-family:'Playpen Sans Arabic';color:var(--ink)}
-#paper,#deco,#lab,#card{position:absolute;left:0;top:0;width:1080px;height:1350px}
+body{background:var(--paper);font-family:var(--f);color:var(--ink)}
+#paper,#deco,#lab,#card,#stick{position:absolute;left:0;top:0;width:1080px;height:1350px}
 #deco{filter:url(#crayon)}
 #lab,#card{filter:url(#ink)}
-#card{padding:56px 64px 38px;display:flex;flex-direction:column}
-.tag{align-self:flex-start;font:800 27px/1.5 var(--body);padding:5px 22px}
-h1{font:var(--h1);margin-top:22px;text-wrap:balance}
+#card{padding:50px 64px 36px;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:22px;min-height:96px}
+.logo{display:block;flex:none;width:84px;height:84px;visibility:hidden}
+.logo.lg{width:94px;height:94px}
+#stick img{position:absolute;border:5px solid #fff;border-radius:18px;box-shadow:3px 4px 0 rgba(35,33,29,.22)}
+.tag{font:800 28px/1.5 var(--f);padding:5px 22px;transform:rotate(-2deg)}
+h1{font:800 67px/1.3 var(--f);margin-top:14px;text-wrap:balance}
 h1 em{font-style:normal;color:var(--em)}
-.sub{font:500 27px/1.5 var(--body);color:var(--mut);margin-top:16px}
-.hero{margin-top:26px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
-.hero b{font:var(--heroNum);direction:ltr;unicode-bidi:isolate;color:var(--tone)}
-.hero span{font:700 29px/1.4 var(--body)}
-.rows{margin-top:30px;flex:1;min-height:0;display:grid;grid-auto-rows:minmax(0,1fr)}
-.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:18px}
-.tk{font:var(--tk);direction:ltr;unicode-bidi:isolate}
-.nm{font:700 28px var(--body);margin-inline-start:14px}
-.note{font:500 23px/1.45 var(--body);color:var(--mut);margin-top:2px}
+.sub{font:500 30px/1.5 var(--f);color:var(--mut);margin-top:16px}
+.hero{margin-top:22px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.hero b{font:800 178px/1 var(--f);direction:ltr;unicode-bidi:isolate;color:var(--tone);text-shadow:8px 8px 0 color-mix(in srgb,var(--tone) 22%,transparent)}
+.hero span{font:700 31px/1.4 var(--f)}
+.rows{margin-top:26px;flex:1;min-height:0;display:grid;grid-auto-rows:minmax(0,1fr)}
+.row{display:flex;align-items:center;gap:20px}
+.who{flex:1;min-width:0}
+.tk{font:800 46px var(--f);direction:ltr;unicode-bidi:isolate}
+.nm{font:700 30px var(--f);margin-inline-start:14px}
+.note{font:500 26px/1.45 var(--f);color:var(--mut);margin-top:2px}
 .val{display:flex;flex-direction:column;align-items:flex-end;direction:rtl}
-.chip{font:700 21px/1.5 var(--body);padding:1px 14px;margin-bottom:2px}
-.big{font:var(--big);direction:ltr;unicode-bidi:isolate;color:var(--tone)}
-.bl{font:500 20px var(--body);color:var(--mut)}
+.chip{font:700 24px/1.5 var(--f);padding:1px 15px;margin-bottom:4px}
+.big{font:800 64px/1.1 var(--f);direction:ltr;unicode-bidi:isolate;color:var(--tone)}
+.bl{font:500 23px var(--f);color:var(--mut)}
 .plot{flex:1;min-height:0;margin-top:14px}
-.foot{margin-top:14px;display:flex;justify-content:space-between;align-items:center;direction:ltr;font:700 25px var(--body)}
+.foot{margin-top:14px;display:flex;justify-content:space-between;align-items:center;direction:ltr;font:700 26px var(--f)}
 .me{display:flex;align-items:center;gap:14px}
 .x{width:46px;height:46px;display:grid;place-items:center;background:var(--ink);border-radius:7px 9px 6px 10px}
 .x svg{width:24px;height:24px;fill:var(--paper)}
-.disc{direction:rtl;font:500 22px var(--body);color:var(--mut)}
+.disc{direction:rtl;font:500 23px var(--f);color:var(--mut)}
 .tone-up{--tone:var(--up)}.tone-down{--tone:var(--down)}.tone-ink{--tone:var(--ink)}.tone-blue{--tone:var(--blue)}
-
-/* A: ivory drawing paper, charcoal marker, green / orange / blue crayons */
-.t-a{--paper:#F7F0DC;--ink:#23211D;--mut:#6A6456;--em:#1F7A4D;--up:#1F7A4D;--down:#D5402E;--blue:#2B6CC9;--acc:#F2762E;--sticker:#FFD65C;--pencil:#F2762E;
-  --body:'Playpen Sans Arabic';--h1:800 66px/1.32 'Playpen Sans Arabic';--heroNum:800 176px/1.02 'Playpen Sans Arabic';--tk:800 44px 'Playpen Sans Arabic';--big:800 62px/1.1 'Playpen Sans Arabic'}
-/* B: squared notebook page, navy pen, yellow highlighter, teal / coral crayons */
-.t-b{--paper:#FBFBF5;--ink:#1B2A4A;--mut:#5D6A86;--em:#1B2A4A;--up:#0E8F7E;--down:#EA4B45;--blue:#6C4FD0;--acc:#EA4B45;--sticker:#FFE55A;--pencil:#FFCB3D;
-  --body:'Playpen Sans Arabic';--h1:700 62px/1.4 'Marhey';--heroNum:800 176px/1.02 'Playpen Sans Arabic';--tk:800 44px 'Playpen Sans Arabic';--big:800 62px/1.1 'Playpen Sans Arabic'}
-.t-b body{background-image:linear-gradient(#C9DEF0 1.5px,transparent 1.5px),linear-gradient(90deg,#C9DEF0 1.5px,transparent 1.5px);background-size:45px 45px;background-position:0 12px}
-/* C: kraft paper, dark brown marker, white chalk, deep green / brick red pencils */
-.t-c{--paper:#D2B083;--ink:#2A1B0F;--mut:#5B4431;--em:#0F5B3A;--up:#0F5B3A;--down:#A3241A;--blue:#1F4E8C;--acc:#FFFCF0;--sticker:#FFFCF0;--pencil:#0F5B3A;
-  --body:'Playpen Sans Arabic';--h1:400 74px/1.28 'Lalezar';--heroNum:900 196px/0.98 'Londrina Solid';--tk:900 50px 'Londrina Solid';--big:900 70px/1.05 'Londrina Solid'}
 </style>
 </head>
 <body>
@@ -75,35 +71,31 @@ h1 em{font-style:normal;color:var(--em)}
       <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="2"/>
       <feColorMatrix type="matrix" values="0 0 0 0 0.3  0 0 0 0 0.22  0 0 0 0 0.1  0 0 0 0.34 -0.115"/>
     </filter>
-    <filter id="fibre" x="0" y="0" width="1080" height="1350" filterUnits="userSpaceOnUse">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.42" numOctaves="2" seed="6"/>
-      <feColorMatrix type="matrix" values="0 0 0 0 0.3  0 0 0 0 0.18  0 0 0 0 0.05  0 0 0 0.7 -0.25"/>
-    </filter>
+    <radialGradient id="edge" cx="50%" cy="46%" r="75%"><stop offset="0.62" stop-color="#7A5A20" stop-opacity="0"/><stop offset="1" stop-color="#7A5A20" stop-opacity="0.16"/></radialGradient>
   </defs>
   <rect width="1080" height="1350" filter="url(#grain)"/>
-  <rect id="fibres" width="1080" height="1350" filter="url(#fibre)" display="none"/>
+  <rect width="1080" height="1350" fill="url(#edge)"/>
 </svg>
 <svg id="deco" viewBox="0 0 1080 1350"></svg>
 <svg id="lab" viewBox="0 0 1080 1350"></svg>
 <div id="card"></div>
+<div id="stick"></div>
 <script src="rough.js"></script>
 <script>
 const D = window.__DATA__
-for (const k of ['pre', 'em', 'post']) D.title[k] = D.title[k].replace(/…/g, '...') // one of the title faces has no ellipsis
-const THEME = window.__THEME__ || 'a'
-document.documentElement.classList.add('t-' + THEME)
-if (THEME === 'c') document.getElementById('fibres').removeAttribute('display')
 const NS = 'http://www.w3.org/2000/svg'
-const deco = document.getElementById('deco'), lab = document.getElementById('lab'), card = document.getElementById('card')
+const deco = document.getElementById('deco'), lab = document.getElementById('lab'), card = document.getElementById('card'), stick = document.getElementById('stick')
 const V = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
 const C = Object.fromEntries(['paper', 'ink', 'mut', 'em', 'up', 'down', 'blue', 'acc', 'sticker', 'pencil'].map((k) => [k, V('--' + k)]))
+const F = V('--f')
 const tone = (t) => C[t === 'ink' || !t ? 'ink' : t]
+const logo = (id, cls = '') => (id ? `<span class="logo ${cls}" data-logo="${id}"></span>` : '')
 const XLOGO = '<i class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></i>'
-const head = `<div class="tag"><span>${D.tag}</span></div><h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1><div class="sub">${D.sub}</div>`
+const head = `<div class="top">${logo(D.logo, 'lg')}<div class="tag"><span>${D.tag}</span></div></div><h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1><div class="sub">${D.sub}</div>`
 const foot = `<div class="foot"><div class="me">${XLOGO}<span>@AzizzUnited</span></div><div class="disc">${D.foot}</div></div>`
 card.innerHTML = D.kind === 'story'
   ? `${head}<div class="hero tone-${D.hero.tone}"><b>${D.hero.value}</b><span>${D.hero.label}</span></div>
-     <div class="rows">${D.rows.map((r) => `<div class="row tone-${r.tone}"><div class="who"><div><b class="tk">${r.t}</b><span class="nm">${r.name}</span></div><div class="note">${r.note}</div></div>
+     <div class="rows">${D.rows.map((r) => `<div class="row tone-${r.tone}">${logo(r.logo)}<div class="who"><div><b class="tk">${r.t}</b><span class="nm">${r.name}</span></div><div class="note">${r.note}</div></div>
        <div class="val"><span class="chip">${r.chip}</span><b class="big">${r.big}</b>${r.bl ? `<span class="bl">${r.bl}</span>` : ''}</div></div>`).join('')}</div>${foot}`
   : `${head}<div class="plot" id="plot"></div>${foot}`
 
@@ -114,63 +106,72 @@ const O = (o) => Object.assign({ roughness: 1.5, bowing: 1, strokeWidth: 4, seed
 const put = (node, g = deco) => (g.appendChild(node), node)
 const grp = (tf) => { const g = document.createElementNS(NS, 'g'); if (tf) g.setAttribute('transform', tf); deco.appendChild(g); return g }
 const box = (el, pad = 0) => { const r = el.getBoundingClientRect(); return { x: r.left - pad, y: r.top - pad, w: r.width + 2 * pad, h: r.height + 2 * pad } }
-const wax = (c, o) => O(Object.assign({ stroke: c, fill: c, fillStyle: 'zigzag', fillWeight: 5, hachureGap: 7.5, hachureAngle: -41 }, o))
-const shade = (c, o) => O(Object.assign({ stroke: c, fill: c, fillStyle: 'zigzag', fillWeight: 7.5, hachureGap: 15, hachureAngle: -52, roughness: 2 }, o))
+const wax = (c, o) => O(Object.assign({ stroke: c, fill: c, fillStyle: 'zigzag', fillWeight: 5, hachureGap: 7.5, hachureAngle: -41 }, o)) // coloured in solid
+const shade = (c, o) => O(Object.assign({ stroke: c, fill: c, fillStyle: 'zigzag', fillWeight: 7.5, hachureGap: 15, hachureAngle: -52, roughness: 2 }, o)) // strokes you can see
 const text = (x, y, s, o = {}) => { const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('text-anchor', o.anchor || 'middle')
-  t.setAttribute('style', `font:${o.font || `700 26px ${V('--body')}`};fill:${o.fill || C.ink};direction:${o.dir || 'ltr'};unicode-bidi:plaintext`); t.textContent = s; lab.appendChild(t); return t }
-const numFont = (px) => V('--big').replace(/\d+px(\/[\d.]+)?/, px + 'px')
+  t.setAttribute('style', `font:${o.font || `700 26px ${F}`};fill:${o.fill || C.ink};direction:${o.dir || 'ltr'};unicode-bidi:plaintext`); t.textContent = s; lab.appendChild(t); return t }
+const num = (px) => `800 ${px}px ${F}`
 
 function star(cx, cy, r, c, g) { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; p.push([cx + rr * Math.cos(a), cy + rr * Math.sin(a)]) } put(R.polygon(p, O({ stroke: c, strokeWidth: 3.5, roughness: 1.1 })), g) }
 function planet(cx, cy, d, c) { const g = grp(`rotate(-18 ${cx} ${cy})`); put(R.circle(cx, cy, d, O({ stroke: c, fill: c, fillStyle: 'hachure', hachureGap: 7, fillWeight: 3, hachureAngle: 24, strokeWidth: 3.5 })), g); put(R.ellipse(cx, cy, d * 1.95, d * 0.46, O({ stroke: c, strokeWidth: 3.5 })), g) }
-function moon(cx, cy, d, c) { put(R.circle(cx, cy, d, O({ stroke: c, strokeWidth: 3.5 }))); for (const [dx, dy, s] of [[-0.18, -0.12, 0.26], [0.2, 0.05, 0.2], [-0.05, 0.24, 0.16]]) put(R.circle(cx + dx * d, cy + dy * d, s * d, O({ stroke: c, strokeWidth: 3, roughness: 0.8 }))) }
+function cloud(x, y, w, c) { const h = w * 0.42; put(R.path(`M${x} ${y} q${-w * 0.03} ${-h * 0.55} ${w * 0.2} ${-h * 0.5} q${w * 0.08} ${-h * 0.6} ${w * 0.32} ${-h * 0.3} q${w * 0.2} ${-h * 0.35} ${w * 0.3} ${h * 0.25} q${w * 0.2} 0 ${w * 0.18} ${h * 0.55} z`, O({ stroke: c, strokeWidth: 3.5, roughness: 1, fill: c, fillStyle: 'hachure', hachureGap: 9, fillWeight: 2.5, hachureAngle: -30 }))) }
 function burst(x, y, side, c) { for (const a of [-18, -48, -78]) { const r = (side > 0 ? a : 180 - a) * Math.PI / 180; put(R.line(x + 20 * Math.cos(r), y + 20 * Math.sin(r), x + 58 * Math.cos(r), y + 58 * Math.sin(r), O({ stroke: c, strokeWidth: 5, roughness: 0.9 }))) } }
 function scribble(x1, x2, y, c, w = 6) { const p = [], n = Math.max(4, Math.round((x2 - x1) / 40)); for (let i = 0; i <= n; i++) p.push([x1 + (x2 - x1) * i / n, y + (i % 2 ? 5 : -3)]); put(R.curve(p, O({ stroke: c, strokeWidth: w, roughness: 0.8 }))) }
 function arrow(x1, y1, x2, y2, c, bend = 0.25) { const mx = (x1 + x2) / 2 - (y2 - y1) * bend, my = (y1 + y2) / 2 + (x2 - x1) * bend; put(R.path(`M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`, O({ stroke: c, strokeWidth: 3.5, roughness: 0.7 })))
   const a = Math.atan2(y2 - my, x2 - mx); for (const s of [-0.5, 0.5]) put(R.line(x2, y2, x2 - 20 * Math.cos(a + s), y2 - 20 * Math.sin(a + s), O({ stroke: c, strokeWidth: 3.5, roughness: 0.6 }))) }
+// a small filled arrow beside a value, so up and down never rest on colour alone
+function tick(x, y, up, c) { const s = up ? -1 : 1; put(R.polygon([[x - 15, y - 11 * s], [x + 15, y - 11 * s], [x, y + 15 * s]], wax(c, { strokeWidth: 3, hachureGap: 4.5, roughness: 1 }))) }
 // the mascot: a pencil that flies like a rocket when the number is up and noses down, sweating, when it is down
 function pencil(cx, cy, ang, mood, k = 1) {
   const g = grp(`translate(${cx} ${cy}) rotate(${ang}) scale(${k})`), ink = C.ink
-  if (mood === 'up') put(R.polygon([[-150, -22], [-208, -36], [-186, -10], [-240, 0], [-186, 10], [-208, 36], [-150, 22]], wax('#F7A823', { stroke: '#E8541E', strokeWidth: 3.5, hachureGap: 6 })), g)
+  if (mood === 'up') { put(R.polygon([[-150, -22], [-208, -36], [-186, -10], [-240, 0], [-186, 10], [-208, 36], [-150, 22]], wax('#F7A823', { stroke: '#E8541E', strokeWidth: 3.5, hachureGap: 6 })), g)
+    for (const y of [-44, 46]) put(R.line(-262, y, -206, y * 0.9, O({ stroke: C.mut, strokeWidth: 3, roughness: 0.8 })), g) }
   put(R.rectangle(-150, -31, 36, 62, wax('#F090AA', { stroke: ink, strokeWidth: 3.5, hachureGap: 5.5 })), g)
   put(R.rectangle(-114, -31, 22, 62, O({ stroke: ink, fill: '#9AA1AB', fillStyle: 'hachure', hachureAngle: 90, hachureGap: 6, fillWeight: 3, strokeWidth: 3.5 })), g)
   put(R.rectangle(-92, -31, 170, 62, wax(C.pencil, { stroke: ink, strokeWidth: 3.5, hachureAngle: 0, hachureGap: 8 })), g)
+  put(R.line(-88, -11, 74, -11, O({ stroke: '#C4561A', strokeWidth: 2.5, roughness: 0.7 })), g)
   put(R.polygon([[78, -31], [152, 0], [78, 31]], O({ stroke: ink, fill: '#E9C48F', fillStyle: 'hachure', hachureGap: 6, fillWeight: 3, strokeWidth: 3.5 })), g)
   put(R.polygon([[124, -12], [152, 0], [124, 12]], O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 3, roughness: 0.8 })), g)
-  const f = grp(`translate(${cx} ${cy}) rotate(${ang}) scale(${k}) translate(4 0) rotate(${-ang})`) // the face stays upright
+  const f = grp(`translate(${cx} ${cy}) rotate(${ang}) scale(${k}) translate(4 2) rotate(${-ang})`) // the face stays upright
+  for (const ex of [-27, 27]) put(R.circle(ex, 10, 13, O({ stroke: 'none', fill: '#F0708C', fillStyle: 'solid', roughness: 0.8 })), f).setAttribute('opacity', 0.75)
   for (const ex of [-15, 15]) { put(R.circle(ex, -6, 21, O({ stroke: ink, fill: '#FFFFFF', fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.6 })), f); put(R.circle(ex + (mood === 'up' ? 2 : 0), -5 + (mood === 'up' ? -1 : 3), 8, O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 2, roughness: 0.4 })), f) }
-  put(R.path(mood === 'up' ? 'M-13 12 Q0 26 13 12' : 'M-12 20 Q0 9 12 20', O({ stroke: ink, strokeWidth: 3.5, roughness: 0.5 })), f)
-  if (mood !== 'up') for (const [dx, dy] of [[-150, -64], [-118, -86]]) put(R.path(`M${dx} ${dy} q-9 16 0 22 q9 -6 0 -22`, O({ stroke: C.blue, fill: C.blue, fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.5 })), g)
+  put(R.path(mood === 'up' ? 'M-13 12 Q0 27 13 12 Z' : 'M-12 21 Q0 10 12 21', O({ stroke: ink, strokeWidth: 3.5, roughness: 0.5, fill: mood === 'up' ? '#FFFFFF' : undefined, fillStyle: 'solid' })), f)
+  if (mood !== 'up') { for (const [x1, x2] of [[-27, -6], [27, 6]]) put(R.line(x1, -24, x2, -19, O({ stroke: ink, strokeWidth: 3, roughness: 0.4 })), f)
+    for (const [dx, dy] of [[-150, -64], [-118, -86]]) put(R.path(`M${dx} ${dy} q-9 16 0 22 q9 -6 0 -22`, O({ stroke: C.blue, fill: C.blue, fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.5 })), g) }
 }
 
 function frame() {
-  // sticker behind the tag, lettering extras on the title, the X mark, and the sky doodles in the free corner
-  const t = box(card.querySelector('.tag'), 3)
-  put(R.rectangle(t.x, t.y, t.w, t.h, wax(C.sticker, { stroke: C.ink, strokeWidth: 3.5, hachureGap: 5, fillWeight: 6, roughness: 1.2 })))
-  if (THEME === 'c') for (const x of [t.x + 16, t.x + t.w - 60]) put(R.rectangle(x, t.y - 13, 44, 22, O({ stroke: 'none', fill: '#F4E7C6', fillStyle: 'solid', roughness: 0.8 })))
-  for (const r of card.querySelector('h1 em').getClientRects()) {
-    if (THEME === 'b') put(R.rectangle(r.left - 8, r.top + r.height * 0.3, r.width + 16, r.height * 0.56, O({ stroke: 'none', fill: C.sticker, fillStyle: 'zigzag', fillWeight: 13, hachureGap: 11, hachureAngle: 0, roughness: 1.8 })))
-    else scribble(r.left, r.right, r.bottom - 6, C.acc, 7)
-  }
-  const h1 = box(card.querySelector('h1'))
-  const sky = THEME === 'c' ? [C.acc, C.acc, C.em] : [C.blue, C.acc, C.down]
-  planet(168, 108, 62, sky[0]); star(306, 76, 24, sky[1]); star(62, 58, 16, sky[2])
-  if (THEME === 'b') { put(R.line(1038, 0, 1038, 1350, O({ stroke: '#F0A3A0', strokeWidth: 2.5, roughness: 0.5, bowing: 0.2 }))) }
-  return h1
+  // the tag is a taped-on sticker; the key words of the title get a crayon underline; logos become stickers
+  const tg = card.querySelector('.tag'), t = box(tg), w = tg.offsetWidth + 8, h = tg.offsetHeight + 6, tx = t.x + t.w / 2, ty = t.y + t.h / 2
+  const tgG = grp(`rotate(-2 ${tx} ${ty})`)
+  put(R.rectangle(tx - w / 2, ty - h / 2, w, h, wax(C.sticker, { stroke: C.ink, strokeWidth: 3.5, hachureGap: 5, fillWeight: 6, roughness: 1.2 })), tgG)
+  put(R.rectangle(tx - w / 2 - 20, ty - h / 2 - 12, 62, 24, O({ stroke: 'none', fill: C.acc, fillStyle: 'solid', roughness: 1 })), grp(`rotate(-34 ${tx - w / 2 + 10} ${ty - h / 2})`)).setAttribute('opacity', 0.6)
+  for (const r of card.querySelector('h1 em').getClientRects()) scribble(r.left, r.right, r.bottom - 6, C.acc, 7)
+  planet(168, 108, 62, C.blue); star(306, 76, 24, C.acc); star(62, 58, 16, C.down); cloud(352, 150, 92, C.blue)
+  const imgs = [...card.querySelectorAll('.logo')].map((el, i) => {
+    const b = box(el), im = new Image(), rot = [-4, 3, -2, 4][i % 4]
+    im.src = `logos/${el.dataset.logo}.svg`; im.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;transform:rotate(${rot}deg)`
+    stick.appendChild(im)
+    put(R.rectangle(b.x - 2, b.y - 2, b.w + 4, b.h + 4, O({ stroke: C.ink, strokeWidth: 3, roughness: 1 })), grp(`rotate(${rot} ${b.x + b.w / 2} ${b.y + b.h / 2})`))
+    return im.decode()
+  })
+  return Promise.all(imgs)
 }
 
 function story() {
   const hero = card.querySelector('.hero b'), hb = box(hero), up = D.hero.tone === 'up'
   burst(hb.x - 6, hb.y + 26, -1, C.acc); burst(hb.x + hb.w + 6, hb.y + 26, 1, C.acc)
-  scribble(hb.x + 6, hb.x + hb.w - 6, hb.y + hb.h + 2, tone(D.hero.tone), 8)
+  scribble(hb.x + 6, hb.x + hb.w - 6, hb.y + hb.h + 6, tone(D.hero.tone), 8)
   const room = hb.x - 34 - 64 // the mascot takes the free side of the hero number, as large as it leaves
   if (room > 190) pencil(64 + room / 2, hb.y + hb.h / 2 + 8, up ? -32 : 30, up ? 'up' : 'down', Math.min(1.08, room / 345))
-  star(86, hb.y + hb.h + 30, 15, C.acc); if (room > 420) star(hb.x - 44, hb.y + 30, 19, C.blue)
+  star(86, hb.y + hb.h + 34, 15, C.acc); if (room > 420) star(hb.x - 44, hb.y + 30, 19, C.blue)
   const rows = [...card.querySelectorAll('.row')], rb = box(card.querySelector('.rows'))
   put(R.line(rb.x, rb.y, rb.x + rb.w, rb.y, O({ stroke: C.ink, strokeWidth: 4.5, roughness: 1.3 })))
   rows.forEach((r, i) => {
-    const b = box(r); if (i) put(R.line(b.x, b.y, b.x + b.w, b.y, O({ stroke: C.mut, strokeWidth: 2.5, roughness: 1.4 })))
-    const c = box(r.querySelector('.chip'), 1), t = D.rows[i].tone
-    put(R.rectangle(c.x, c.y, c.w, c.h, O({ stroke: tone(t), strokeWidth: 3, roughness: 1.3, fill: THEME === 'c' ? C.acc : C.sticker, fillStyle: 'zigzag', fillWeight: 4, hachureGap: 6 })))
+    const b = box(r); if (i) put(R.line(b.x, b.y, b.x + b.w, b.y, O({ stroke: C.mut, strokeWidth: 2.5, roughness: 1.4, strokeLineDash: [16, 12] })))
+    const c = box(r.querySelector('.chip'), 1), t = D.rows[i].tone, g = box(r.querySelector('.big'))
+    put(R.rectangle(c.x, c.y, c.w, c.h, O({ stroke: tone(t), strokeWidth: 3, roughness: 1.3, fill: C.sticker, fillStyle: 'zigzag', fillWeight: 4, hachureGap: 6 })))
+    if (D.rows[i].arrow) tick(g.x + g.w + 34, g.y + g.h / 2, D.rows[i].arrow === 'up', tone(t)) // only where the value is a move
   })
   put(R.line(rb.x, rb.y + rb.h, rb.x + rb.w, rb.y + rb.h, O({ stroke: C.mut, strokeWidth: 2.5, roughness: 1.4 })))
 }
@@ -182,44 +183,44 @@ function bars() {
   D.bars.forEach((x, i) => { // time runs left to right, whatever the page's direction
     const cx = L + slot * (i + 0.5), y = B - (B - T) * x.value / max, c = x.hi ? C.up : C.blue
     put(R.rectangle(cx - bw / 2, y, bw, B - y - 3, shade(c, { stroke: C.ink, strokeWidth: 4, roughness: 1.4 })))
-    text(cx, y - 22, `${D.unit || ''}${x.value}${D.suffix || ''}`, { font: numFont(x.hi ? 66 : 54), fill: x.hi ? C.up : C.ink })
-    text(cx, B + 62, x.label, { font: numFont(46) })
+    text(cx, y - 22, `${D.unit || ''}${x.value}${D.suffix || ''}`, { font: num(x.hi ? 66 : 54), fill: x.hi ? C.up : C.ink })
+    text(cx, B + 64, x.label, { font: num(48) })
     if (x.hi) { burst(cx - bw / 2 - 4, y - 70, -1, C.acc); burst(cx + bw / 2 + 4, y - 70, 1, C.acc) }
   })
   if (D.callout) { // a sticker in the empty sky over the shortest bar; the pencil flies from it to the tallest
     const cx = L + slot * 0.5 + 6, cy = T - 16
     put(R.ellipse(cx, cy, 310, 176, wax(C.sticker, { stroke: C.ink, strokeWidth: 3.5, hachureGap: 5, fillWeight: 6, roughness: 1.3 })))
-    text(cx, cy + 6, D.callout.value, { font: numFont(62), fill: C.ink })
-    text(cx, cy + 46, D.callout.label, { font: `700 22px ${V('--body')}`, dir: 'rtl' })
+    text(cx, cy + 6, D.callout.value, { font: num(62) })
+    text(cx, cy + 46, D.callout.label, { font: `700 23px ${F}`, dir: 'rtl' })
     pencil(L + slot * 1.5 - 10, T - 44, -16, 'up', 0.62)
   }
 }
 
 function line() {
-  const b = box(document.getElementById('plot')), L = b.x + 84, Rr = b.x + b.w - 190, T = b.y + 60, B = b.y + b.h - 78
+  const b = box(document.getElementById('plot')), L = b.x + 92, Rr = b.x + b.w - 190, T = b.y + 60, B = b.y + b.h - 78
   const v = D.close, n = v.length, step = 50, lo = Math.floor(Math.min(...v) / step) * step, hi = Math.ceil(Math.max(...v) / step) * step
   const X = (i) => L + (Rr - L) * i / (n - 1), Y = (y) => B - (B - T) * (y - lo) / (hi - lo)
-  for (let y = lo; y <= hi; y += step) { if (y > lo) put(R.line(L, Y(y), Rr + 26, Y(y), O({ stroke: C.mut, strokeWidth: 1.6, roughness: 0.9, strokeLineDash: [3, 13] }))); text(L - 16, Y(y) + 9, '$' + y, { anchor: 'end', font: numFont(27), fill: C.mut }) }
+  for (let y = lo; y <= hi; y += step) { if (y > lo) put(R.line(L, Y(y), Rr + 26, Y(y), O({ stroke: C.mut, strokeWidth: 1.6, roughness: 0.9, strokeLineDash: [3, 13] }))); text(L - 16, Y(y) + 10, '$' + y, { anchor: 'end', font: num(30), fill: C.mut }) }
   put(R.line(L - 6, B, Rr + 26, B, O({ stroke: C.ink, strokeWidth: 4.5, roughness: 1.1 })))
   const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-  D.dates.forEach((d, i) => { if (!i || d.slice(5, 7) !== D.dates[i - 1].slice(5, 7)) { put(R.line(X(i), B, X(i), B + 12, O({ stroke: C.ink, strokeWidth: 3.5, roughness: 0.6 }))); text(X(i), B + 48, MON[+d.slice(5, 7) - 1], { anchor: 'start', font: numFont(30), fill: C.mut }) } })
+  D.dates.forEach((d, i) => { if (!i || d.slice(5, 7) !== D.dates[i - 1].slice(5, 7)) { put(R.line(X(i), B, X(i), B + 12, O({ stroke: C.ink, strokeWidth: 3.5, roughness: 0.6 }))); text(X(i), B + 50, MON[+d.slice(5, 7) - 1], { anchor: 'start', font: num(32), fill: C.mut }) } })
   const pts = v.map((y, i) => [X(i), Y(y)])
-  put(R.polygon([[L, B - 3], ...pts, [Rr, B - 3]], O({ stroke: 'none', fill: C.blue, fillStyle: 'hachure', hachureGap: 13, fillWeight: 2.2, hachureAngle: -52, roughness: 1.6 }))).setAttribute('opacity', 0.38)
+  put(R.polygon([[L, B - 3], ...pts, [Rr, B - 3]], O({ stroke: 'none', fill: C.blue, fillStyle: 'hachure', hachureGap: 13, fillWeight: 2.4, hachureAngle: -52, roughness: 1.6 }))).setAttribute('opacity', 0.45)
   put(R.linearPath(pts, O({ stroke: C.blue, strokeWidth: 6.5, roughness: 1.15, bowing: 0.4 })))
-  for (const m of D.marks) { // dx, dy: where the label sits from its point (the data chooses a free spot)
+  for (const m of D.marks) { // dx, dy: where the label sits from its point (the data chooses a free spot; look at the render)
     const i = D.dates.indexOf(m.date); if (i < 0) throw new Error('no bar on ' + m.date)
     const x = X(i), y = Y(v[i]), c = tone(m.tone), lx = x + (m.dx ?? 0), ly = y + (m.dy ?? -96)
-    if (m.patch) put(R.rectangle(lx - 96, ly - 44, 192, 92, O({ stroke: 'none', fill: C.paper, fillStyle: 'solid', roughness: 1.6 })))
+    if (m.patch) put(R.rectangle(lx - 100, ly - 46, 200, 98, O({ stroke: 'none', fill: C.paper, fillStyle: 'solid', roughness: 1.6 })))
     put(R.circle(x, y, 30, O({ stroke: c, fill: C.paper, fillStyle: 'solid', strokeWidth: 5, roughness: 0.9 })))
-    text(lx, ly, m.value, { font: numFont(46), fill: c }); text(lx, ly + 36, m.label, { font: `700 24px ${V('--body')}`, dir: 'rtl' })
-    if (m.arrow === 'down') arrow(lx - 30, ly + 50, x + 4, y - 24, c, 0.18)
-    if (m.arrow === 'right') arrow(lx + 88, ly - 4, x - 24, y + 2, c, -0.12)
+    text(lx, ly, m.value, { font: num(48), fill: c }); text(lx, ly + 38, m.label, { font: `700 26px ${F}`, dir: 'rtl' })
+    if (m.arrow === 'down') arrow(lx - 30, ly + 54, x + 4, y - 24, c, 0.18)
+    if (m.arrow === 'right') arrow(lx + 92, ly - 4, x - 24, y + 2, c, -0.12)
   }
   const fell = v[n - 1] < v[0]
   pencil(Rr + 96, T + 64, fell ? 32 : -30, fell ? 'down' : 'up', 0.56)
 }
 
-document.fonts.ready.then(() => { frame(); ({ story, bars, line })[D.kind](); document.body.dataset.done = '1' })
+document.fonts.ready.then(async () => { await frame(); ({ story, bars, line })[D.kind](); document.body.dataset.done = '1' })
 </script>
 </body>
 </html>
