@@ -120,5 +120,6 @@
  ],
  "foot": "24 نوفمبر 2026 · مو توصية",
  "source": "mcp-tv-get-ohlcv NASDAQ:NVDA 1D 2026-10-01..2026-11-25, fetched 2026-11-25; the forming 2026-11-25 bar left out",
- "logo": "nvidia"
+ "logo": "nvidia",
+ "icon": "chip"
 }

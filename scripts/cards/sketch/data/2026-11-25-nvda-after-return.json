@@ -43,5 +43,6 @@
   }
  ],
  "foot": "25 نوفمبر 2026 · مو توصية",
- "source": "mcp-tv-get-ohlcv NASDAQ:NVDA 1D 2026-11-09..2026-11-26, fetched 2026-11-25 22:25 Riyadh; the 2026-11-25 bar was still forming (147.50)"
+ "source": "mcp-tv-get-ohlcv NASDAQ:NVDA 1D 2026-11-09..2026-11-26, fetched 2026-11-25 22:25 Riyadh; the 2026-11-25 bar was still forming (147.50)",
+ "icon": "chip"
 }

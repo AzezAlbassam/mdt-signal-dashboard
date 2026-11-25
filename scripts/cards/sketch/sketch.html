@@ -18,12 +18,13 @@ body{background:var(--paper);font-family:var(--f);color:var(--ink)}
 #deco{filter:url(#crayon)}
 #lab,#card{filter:url(#ink)}
 #card{padding:50px 64px 36px;display:flex;flex-direction:column}
-.top{display:flex;align-items:center;gap:22px;min-height:96px}
+.top{display:flex;align-items:center;gap:22px;min-height:150px}
+.icon{flex:none;width:200px;height:150px;margin-inline-start:auto}
 .logo{display:block;flex:none;width:84px;height:84px;visibility:hidden}
 .logo.lg{width:94px;height:94px}
 #stick img{position:absolute;border:5px solid #fff;border-radius:18px;box-shadow:3px 4px 0 rgba(35,33,29,.22)}
 .tag{font:800 28px/1.5 var(--f);padding:5px 22px;transform:rotate(-2deg)}
-h1{font:800 67px/1.3 var(--f);margin-top:14px;text-wrap:balance}
+h1{font:800 67px/1.3 var(--f);margin-top:6px;text-wrap:balance}
 h1 em{font-style:normal;color:var(--em)}
 .sub{font:500 30px/1.5 var(--f);color:var(--mut);margin-top:16px}
 .hero{margin-top:22px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
@@ -74,6 +75,7 @@ h1 em{font-style:normal;color:var(--em)}
     <radialGradient id="edge" cx="50%" cy="46%" r="75%"><stop offset="0.62" stop-color="#7A5A20" stop-opacity="0"/><stop offset="1" stop-color="#7A5A20" stop-opacity="0.16"/></radialGradient>
   </defs>
   <rect width="1080" height="1350" filter="url(#grain)"/>
+  <g id="rules"></g>
   <rect width="1080" height="1350" fill="url(#edge)"/>
 </svg>
 <svg id="deco" viewBox="0 0 1080 1350"></svg>
@@ -91,13 +93,16 @@ const F = V('--f')
 const tone = (t) => C[t === 'ink' || !t ? 'ink' : t]
 const logo = (id, cls = '') => (id ? `<span class="logo ${cls}" data-logo="${id}"></span>` : '')
 const XLOGO = '<i class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></i>'
-const head = `<div class="top">${logo(D.logo, 'lg')}<div class="tag"><span>${D.tag}</span></div></div><h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1><div class="sub">${D.sub}</div>`
-const foot = `<div class="foot"><div class="me">${XLOGO}<span>@AzizzUnited</span></div><div class="disc">${D.foot}</div></div>`
+const head = D.kind === 'icons' ? '' : `<div class="top">${logo(D.logo, 'lg')}<div class="tag"><span>${D.tag}</span></div><span class="icon"></span></div><h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1><div class="sub">${D.sub}</div>`
+const foot = D.kind === 'icons' ? '' : `<div class="foot"><div class="me">${XLOGO}<span>@AzizzUnited</span></div><div class="disc">${D.foot}</div></div>`
 card.innerHTML = D.kind === 'story'
   ? `${head}<div class="hero tone-${D.hero.tone}"><b>${D.hero.value}</b><span>${D.hero.label}</span></div>
      <div class="rows">${D.rows.map((r) => `<div class="row tone-${r.tone}">${logo(r.logo)}<div class="who"><div><b class="tk">${r.t}</b><span class="nm">${r.name}</span></div><div class="note">${r.note}</div></div>
        <div class="val"><span class="chip">${r.chip}</span><b class="big">${r.big}</b>${r.bl ? `<span class="bl">${r.bl}</span>` : ''}</div></div>`).join('')}</div>${foot}`
   : `${head}<div class="plot" id="plot"></div>${foot}`
+
+// a ruled notebook page: printed lines and the margin line on the side Arabic starts from
+document.getElementById('rules').innerHTML = Array.from({ length: 23 }, (_, i) => `<line x1="0" x2="1080" y1="${96 + i * 54}" y2="${96 + i * 54}" stroke="#9DBFE3" stroke-width="2" opacity="0.6"/>`).join('') + '<line x1="1040" x2="1040" y1="0" y2="1350" stroke="#E58E88" stroke-width="2.5" opacity="0.75"/>'
 
 // ---- drawing: everything below is rough.js with a fixed seed, so a render is the same every time
 const R = rough.svg(deco)
@@ -112,42 +117,83 @@ const text = (x, y, s, o = {}) => { const t = document.createElementNS(NS, 'text
   t.setAttribute('style', `font:${o.font || `700 26px ${F}`};fill:${o.fill || C.ink};direction:${o.dir || 'ltr'};unicode-bidi:plaintext`); t.textContent = s; lab.appendChild(t); return t }
 const num = (px) => `800 ${px}px ${F}`
 
-function star(cx, cy, r, c, g) { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; p.push([cx + rr * Math.cos(a), cy + rr * Math.sin(a)]) } put(R.polygon(p, O({ stroke: c, strokeWidth: 3.5, roughness: 1.1 })), g) }
-function planet(cx, cy, d, c) { const g = grp(`rotate(-18 ${cx} ${cy})`); put(R.circle(cx, cy, d, O({ stroke: c, fill: c, fillStyle: 'hachure', hachureGap: 7, fillWeight: 3, hachureAngle: 24, strokeWidth: 3.5 })), g); put(R.ellipse(cx, cy, d * 1.95, d * 0.46, O({ stroke: c, strokeWidth: 3.5 })), g) }
-function cloud(x, y, w, c) { const h = w * 0.42; put(R.path(`M${x} ${y} q${-w * 0.03} ${-h * 0.55} ${w * 0.2} ${-h * 0.5} q${w * 0.08} ${-h * 0.6} ${w * 0.32} ${-h * 0.3} q${w * 0.2} ${-h * 0.35} ${w * 0.3} ${h * 0.25} q${w * 0.2} 0 ${w * 0.18} ${h * 0.55} z`, O({ stroke: c, strokeWidth: 3.5, roughness: 1, fill: c, fillStyle: 'hachure', hachureGap: 9, fillWeight: 2.5, hachureAngle: -30 }))) }
 function burst(x, y, side, c) { for (const a of [-18, -48, -78]) { const r = (side > 0 ? a : 180 - a) * Math.PI / 180; put(R.line(x + 20 * Math.cos(r), y + 20 * Math.sin(r), x + 58 * Math.cos(r), y + 58 * Math.sin(r), O({ stroke: c, strokeWidth: 5, roughness: 0.9 }))) } }
 function scribble(x1, x2, y, c, w = 6) { const p = [], n = Math.max(4, Math.round((x2 - x1) / 40)); for (let i = 0; i <= n; i++) p.push([x1 + (x2 - x1) * i / n, y + (i % 2 ? 5 : -3)]); put(R.curve(p, O({ stroke: c, strokeWidth: w, roughness: 0.8 }))) }
 function arrow(x1, y1, x2, y2, c, bend = 0.25) { const mx = (x1 + x2) / 2 - (y2 - y1) * bend, my = (y1 + y2) / 2 + (x2 - x1) * bend; put(R.path(`M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`, O({ stroke: c, strokeWidth: 3.5, roughness: 0.7 })))
   const a = Math.atan2(y2 - my, x2 - mx); for (const s of [-0.5, 0.5]) put(R.line(x2, y2, x2 - 20 * Math.cos(a + s), y2 - 20 * Math.sin(a + s), O({ stroke: c, strokeWidth: 3.5, roughness: 0.6 }))) }
 // a small filled arrow beside a value, so up and down never rest on colour alone
 function tick(x, y, up, c) { const s = up ? -1 : 1; put(R.polygon([[x - 15, y - 11 * s], [x + 15, y - 11 * s], [x, y + 15 * s]], wax(c, { strokeWidth: 3, hachureGap: 4.5, roughness: 1 }))) }
-// the mascot: a pencil that flies like a rocket when the number is up and noses down, sweating, when it is down
-function pencil(cx, cy, ang, mood, k = 1) {
-  const g = grp(`translate(${cx} ${cy}) rotate(${ang}) scale(${k})`), ink = C.ink
-  if (mood === 'up') { put(R.polygon([[-150, -22], [-208, -36], [-186, -10], [-240, 0], [-186, 10], [-208, 36], [-150, 22]], wax('#F7A823', { stroke: '#E8541E', strokeWidth: 3.5, hachureGap: 6 })), g)
-    for (const y of [-44, 46]) put(R.line(-262, y, -206, y * 0.9, O({ stroke: C.mut, strokeWidth: 3, roughness: 0.8 })), g) }
-  put(R.rectangle(-150, -31, 36, 62, wax('#F090AA', { stroke: ink, strokeWidth: 3.5, hachureGap: 5.5 })), g)
-  put(R.rectangle(-114, -31, 22, 62, O({ stroke: ink, fill: '#9AA1AB', fillStyle: 'hachure', hachureAngle: 90, hachureGap: 6, fillWeight: 3, strokeWidth: 3.5 })), g)
-  put(R.rectangle(-92, -31, 170, 62, wax(C.pencil, { stroke: ink, strokeWidth: 3.5, hachureAngle: 0, hachureGap: 8 })), g)
-  put(R.line(-88, -11, 74, -11, O({ stroke: '#C4561A', strokeWidth: 2.5, roughness: 0.7 })), g)
-  put(R.polygon([[78, -31], [152, 0], [78, 31]], O({ stroke: ink, fill: '#E9C48F', fillStyle: 'hachure', hachureGap: 6, fillWeight: 3, strokeWidth: 3.5 })), g)
-  put(R.polygon([[124, -12], [152, 0], [124, 12]], O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 3, roughness: 0.8 })), g)
-  const f = grp(`translate(${cx} ${cy}) rotate(${ang}) scale(${k}) translate(4 2) rotate(${-ang})`) // the face stays upright
-  for (const ex of [-27, 27]) put(R.circle(ex, 10, 13, O({ stroke: 'none', fill: '#F0708C', fillStyle: 'solid', roughness: 0.8 })), f).setAttribute('opacity', 0.75)
-  for (const ex of [-15, 15]) { put(R.circle(ex, -6, 21, O({ stroke: ink, fill: '#FFFFFF', fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.6 })), f); put(R.circle(ex + (mood === 'up' ? 2 : 0), -5 + (mood === 'up' ? -1 : 3), 8, O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 2, roughness: 0.4 })), f) }
-  put(R.path(mood === 'up' ? 'M-13 12 Q0 27 13 12 Z' : 'M-12 21 Q0 10 12 21', O({ stroke: ink, strokeWidth: 3.5, roughness: 0.5, fill: mood === 'up' ? '#FFFFFF' : undefined, fillStyle: 'solid' })), f)
-  if (mood !== 'up') { for (const [x1, x2] of [[-27, -6], [27, 6]]) put(R.line(x1, -24, x2, -19, O({ stroke: ink, strokeWidth: 3, roughness: 0.4 })), f)
-    for (const [dx, dy] of [[-150, -64], [-118, -86]]) put(R.path(`M${dx} ${dy} q-9 16 0 22 q9 -6 0 -22`, O({ stroke: C.blue, fill: C.blue, fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.5 })), g) }
+// Sector doodles, drawn top-left: one per stock or topic, by what the company makes (the owner, 2026-11-25: a chip for
+// Nvidia, an HBM stack for Micron, a rocket for Rocket Lab). Each draws around (0,0) in a box of about 190x150.
+const DOODLE = {
+  chip(g, ink) { // processors and GPUs
+    for (const s of [-1, 1]) for (const p of [-36, -12, 12, 36]) { put(R.line(p, s * 52, p, s * 74, O({ stroke: ink, strokeWidth: 5, roughness: 0.8 })), g); put(R.line(s * 52, p, s * 74, p, O({ stroke: ink, strokeWidth: 5, roughness: 0.8 })), g) }
+    put(R.rectangle(-54, -54, 108, 108, wax(C.up, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    put(R.rectangle(-27, -27, 54, 54, wax(C.sticker, { stroke: ink, strokeWidth: 3.5, hachureGap: 5 })), g)
+    put(R.circle(-40, -40, 9, O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 2, roughness: 0.5 })), g)
+  },
+  memory(g, ink) { // memory makers: stacked dies on a substrate (HBM)
+    put(R.rectangle(-86, 44, 172, 20, wax('#9AA1AB', { stroke: ink, strokeWidth: 3.5, hachureGap: 6 })), g)
+    for (const x of [-66, -33, 0, 33, 66]) put(R.circle(x, 72, 13, O({ stroke: ink, fill: C.sticker, fillStyle: 'solid', strokeWidth: 3, roughness: 0.7 })), g)
+    ;[C.blue, C.acc, C.blue, C.acc].forEach((c, i) => put(R.rectangle(-70, 18 - i * 26, 140, 20, wax(c, { stroke: ink, strokeWidth: 3.5, hachureGap: 6 })), g))
+    for (const x of [-40, 0, 40]) put(R.line(x, -58, x, 42, O({ stroke: ink, strokeWidth: 2.5, roughness: 0.6, strokeLineDash: [6, 6] })), g)
+  },
+  storage(g, ink) { // flash and drives: a memory card
+    put(R.polygon([[-48, -72], [26, -72], [52, -46], [52, 72], [-48, 72]], wax(C.blue, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    for (let i = 0; i < 5; i++) put(R.rectangle(-40 + i * 15, -62, 9, 28, O({ stroke: ink, fill: C.sticker, fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.7 })), g)
+    put(R.rectangle(-34, -12, 72, 60, O({ stroke: ink, fill: C.paper, fillStyle: 'solid', strokeWidth: 3.5, roughness: 1 })), g)
+    for (const y of [6, 22, 38]) put(R.line(-22, y, 26, y, O({ stroke: C.down, strokeWidth: 4, roughness: 0.8 })), g)
+  },
+  server(g, ink) { // cloud and AI data centres: a rack
+    for (let i = 0; i < 3; i++) { const y = -68 + i * 46
+      put(R.rectangle(-76, y, 152, 38, wax(i % 2 ? '#9AA1AB' : C.blue, { stroke: ink, strokeWidth: 3.5, hachureGap: 6 })), g)
+      put(R.circle(-54, y + 19, 13, O({ stroke: ink, fill: '#7BE08A', fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.6 })), g); put(R.circle(-34, y + 19, 13, O({ stroke: ink, fill: C.sticker, fillStyle: 'solid', strokeWidth: 2.5, roughness: 0.6 })), g)
+      for (const x of [4, 24, 44]) put(R.line(x, y + 11, x, y + 27, O({ stroke: ink, strokeWidth: 3, roughness: 0.6 })), g) }
+  },
+  rocket(g, ink) { // space and launch
+    put(R.polygon([[-16, 50], [0, 96], [16, 50]], wax('#F7A823', { stroke: '#E8541E', strokeWidth: 3.5, hachureGap: 5 })), g)
+    for (const s of [-1, 1]) put(R.polygon([[s * 24, 16], [s * 54, 56], [s * 24, 48]], wax(C.down, { stroke: ink, strokeWidth: 3.5, hachureGap: 5 })), g)
+    put(R.path('M0 -86 C 36 -50 34 20 24 50 L -24 50 C -34 20 -36 -50 0 -86 Z', O({ stroke: ink, fill: '#FFFFFF', fillStyle: 'solid', strokeWidth: 4, roughness: 0.9 })), g)
+    put(R.path('M0 -86 C 15 -70 24 -54 28 -38 L -28 -38 C -24 -54 -15 -70 0 -86 Z', wax(C.down, { stroke: ink, strokeWidth: 3.5, hachureGap: 5 })), g)
+    put(R.circle(0, -6, 28, O({ stroke: ink, fill: C.blue, fillStyle: 'solid', strokeWidth: 3.5, roughness: 0.7 })), g)
+  },
+  market(g, ink) { // an index or the whole market
+    put(R.line(-84, 62, 84, 62, O({ stroke: ink, strokeWidth: 4.5, roughness: 1 })), g)
+    ;[[-70, 30], [-32, 52], [6, 44], [44, 88]].forEach(([x, h], i) => put(R.rectangle(x, 60 - h, 28, h, wax(i === 3 ? C.up : C.blue, { stroke: ink, strokeWidth: 3.5, hachureGap: 6 })), g))
+    put(R.linearPath([[-78, 0], [-40, -22], [-8, -6], [58, -60]], O({ stroke: C.acc, strokeWidth: 6, roughness: 0.9 })), g)
+    for (const [x, y] of [[32, -60], [56, -34]]) put(R.line(58, -60, x, y, O({ stroke: C.acc, strokeWidth: 6, roughness: 0.6 })), g)
+  },
+  ai(g, ink) { // AI labs and software: a robot head
+    put(R.line(0, -42, 0, -62, O({ stroke: ink, strokeWidth: 4, roughness: 0.6 })), g); put(R.circle(0, -68, 16, O({ stroke: ink, fill: C.acc, fillStyle: 'solid', strokeWidth: 3, roughness: 0.6 })), g)
+    for (const s of [-1, 1]) put(R.rectangle(s > 0 ? 52 : -64, -12, 12, 30, wax('#9AA1AB', { stroke: ink, strokeWidth: 3, hachureGap: 5 })), g)
+    put(R.rectangle(-52, -42, 104, 90, wax(C.sticker, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    for (const x of [-22, 22]) { put(R.circle(x, -8, 24, O({ stroke: ink, fill: '#FFFFFF', fillStyle: 'solid', strokeWidth: 3, roughness: 0.6 })), g); put(R.circle(x, -7, 9, O({ stroke: ink, fill: ink, fillStyle: 'solid', strokeWidth: 2, roughness: 0.4 })), g) }
+    put(R.rectangle(-24, 20, 48, 14, O({ stroke: ink, fill: '#FFFFFF', fillStyle: 'solid', strokeWidth: 3, roughness: 0.7 })), g)
+    for (const x of [-8, 8]) put(R.line(x, 20, x, 34, O({ stroke: ink, strokeWidth: 2.5, roughness: 0.4 })), g)
+  },
+  metal(g, ink) { // gold, silver, miners: ingots
+    for (const p of [[[-80, 62], [-66, 22], [-14, 22], [0, 62]], [[4, 62], [18, 22], [70, 22], [84, 62]], [[-38, 18], [-24, -22], [28, -22], [42, 18]]]) put(R.polygon(p, wax(C.sticker, { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    for (const [x, y] of [[-52, -44], [58, -36]]) { put(R.line(x - 12, y, x + 12, y, O({ stroke: C.acc, strokeWidth: 4, roughness: 0.6 })), g); put(R.line(x, y - 12, x, y + 12, O({ stroke: C.acc, strokeWidth: 4, roughness: 0.6 })), g) }
+  },
+  wallet(g, ink) { // his own portfolio: a briefcase
+    put(R.path('M-26 -32 V-56 H26 V-32', O({ stroke: ink, strokeWidth: 5, roughness: 0.8 })), g)
+    put(R.rectangle(-76, -32, 152, 96, wax('#B5793A', { stroke: ink, strokeWidth: 4, hachureGap: 6 })), g)
+    put(R.line(-76, 8, 76, 8, O({ stroke: ink, strokeWidth: 3.5, roughness: 0.9 })), g)
+    put(R.rectangle(-13, -4, 26, 24, O({ stroke: ink, fill: C.sticker, fillStyle: 'solid', strokeWidth: 3, roughness: 0.7 })), g)
+  },
 }
+const TILT = { rocket: 36 }
+function doodle(kind, cx, cy, k = 1) { if (!DOODLE[kind]) throw new Error('no doodle named ' + kind + ' (have: ' + Object.keys(DOODLE) + ')'); DOODLE[kind](grp(`translate(${cx} ${cy}) rotate(${TILT[kind] ?? -5}) scale(${k})`), C.ink) }
 
 function frame() {
-  // the tag is a taped-on sticker; the key words of the title get a crayon underline; logos become stickers
+  // the tag is a taped-on sticker; the key words of the title get a crayon underline; logos become stickers; the
+  // top-left corner carries the doodle of what the company makes
   const tg = card.querySelector('.tag'), t = box(tg), w = tg.offsetWidth + 8, h = tg.offsetHeight + 6, tx = t.x + t.w / 2, ty = t.y + t.h / 2
   const tgG = grp(`rotate(-2 ${tx} ${ty})`)
   put(R.rectangle(tx - w / 2, ty - h / 2, w, h, wax(C.sticker, { stroke: C.ink, strokeWidth: 3.5, hachureGap: 5, fillWeight: 6, roughness: 1.2 })), tgG)
   put(R.rectangle(tx - w / 2 - 20, ty - h / 2 - 12, 62, 24, O({ stroke: 'none', fill: C.acc, fillStyle: 'solid', roughness: 1 })), grp(`rotate(-34 ${tx - w / 2 + 10} ${ty - h / 2})`)).setAttribute('opacity', 0.6)
   for (const r of card.querySelector('h1 em').getClientRects()) scribble(r.left, r.right, r.bottom - 6, C.acc, 7)
-  planet(168, 108, 62, C.blue); star(306, 76, 24, C.acc); star(62, 58, 16, C.down); cloud(352, 150, 92, C.blue)
+  if (D.icon) { const b = box(card.querySelector('.icon')); doodle(D.icon, b.x + b.w / 2, b.y + b.h / 2) }
   const imgs = [...card.querySelectorAll('.logo')].map((el, i) => {
     const b = box(el), im = new Image(), rot = [-4, 3, -2, 4][i % 4]
     im.src = `logos/${el.dataset.logo}.svg`; im.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;transform:rotate(${rot}deg)`
@@ -159,12 +205,9 @@ function frame() {
 }
 
 function story() {
-  const hero = card.querySelector('.hero b'), hb = box(hero), up = D.hero.tone === 'up'
+  const hero = card.querySelector('.hero b'), hb = box(hero)
   burst(hb.x - 6, hb.y + 26, -1, C.acc); burst(hb.x + hb.w + 6, hb.y + 26, 1, C.acc)
   scribble(hb.x + 6, hb.x + hb.w - 6, hb.y + hb.h + 6, tone(D.hero.tone), 8)
-  const room = hb.x - 34 - 64 // the mascot takes the free side of the hero number, as large as it leaves
-  if (room > 190) pencil(64 + room / 2, hb.y + hb.h / 2 + 8, up ? -32 : 30, up ? 'up' : 'down', Math.min(1.08, room / 345))
-  star(86, hb.y + hb.h + 34, 15, C.acc); if (room > 420) star(hb.x - 44, hb.y + 30, 19, C.blue)
   const rows = [...card.querySelectorAll('.row')], rb = box(card.querySelector('.rows'))
   put(R.line(rb.x, rb.y, rb.x + rb.w, rb.y, O({ stroke: C.ink, strokeWidth: 4.5, roughness: 1.3 })))
   rows.forEach((r, i) => {
@@ -187,12 +230,11 @@ function bars() {
     text(cx, B + 64, x.label, { font: num(48) })
     if (x.hi) { burst(cx - bw / 2 - 4, y - 70, -1, C.acc); burst(cx + bw / 2 + 4, y - 70, 1, C.acc) }
   })
-  if (D.callout) { // a sticker in the empty sky over the shortest bar; the pencil flies from it to the tallest
+  if (D.callout) { // a sticker in the empty space over the shortest bar
     const cx = L + slot * 0.5 + 6, cy = T - 16
     put(R.ellipse(cx, cy, 310, 176, wax(C.sticker, { stroke: C.ink, strokeWidth: 3.5, hachureGap: 5, fillWeight: 6, roughness: 1.3 })))
     text(cx, cy + 6, D.callout.value, { font: num(62) })
     text(cx, cy + 46, D.callout.label, { font: `700 23px ${F}`, dir: 'rtl' })
-    pencil(L + slot * 1.5 - 10, T - 44, -16, 'up', 0.62)
   }
 }
 
@@ -216,11 +258,12 @@ function line() {
     if (m.arrow === 'down') arrow(lx - 30, ly + 54, x + 4, y - 24, c, 0.18)
     if (m.arrow === 'right') arrow(lx + 92, ly - 4, x - 24, y + 2, c, -0.12)
   }
-  const fell = v[n - 1] < v[0]
-  pencil(Rr + 96, T + 64, fell ? 32 : -30, fell ? 'down' : 'up', 0.56)
 }
 
-document.fonts.ready.then(async () => { await frame(); ({ story, bars, line })[D.kind](); document.body.dataset.done = '1' })
+// kind "icons": every doodle with its name, to choose from
+function icons() { card.innerHTML = ''; Object.keys(DOODLE).forEach((k, i) => { const x = 200 + (i % 3) * 340, y = 220 + Math.floor(i / 3) * 400; doodle(k, x, y, 1.25); text(x, y + 170, k, { font: num(40) }) }) }
+
+document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
 </script>
 </body>
 </html>

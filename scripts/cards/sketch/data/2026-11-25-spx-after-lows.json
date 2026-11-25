@@ -52,5 +52,6 @@
   }
  ],
  "foot": "SP500 بأسعار الإقفال · 25 نوفمبر 2026 · مو توصية",
- "source": "mcp-tv-get-ohlcv SP:SPX 1D 2018-09-01..2026-11-26 (2,069 bars, fetched 2026-11-25). Low = lowest close: 2018-12-24 2351.10, 2020-03-23 2237.40, 2022-10-12 3577.04, 2025-04-08 4982.78, 2026-11-20 6910.39. First day = next session's close-to-close move. Pullback = deepest fall from the rebound's own highest close within the first 40 sessions. 3 months = 63 sessions after the low."
+ "source": "mcp-tv-get-ohlcv SP:SPX 1D 2018-09-01..2026-11-26 (2,069 bars, fetched 2026-11-25). Low = lowest close: 2018-12-24 2351.10, 2020-03-23 2237.40, 2022-10-12 3577.04, 2025-04-08 4982.78, 2026-11-20 6910.39. First day = next session's close-to-close move. Pullback = deepest fall from the rebound's own highest close within the first 40 sessions. 3 months = 63 sessions after the low.",
+ "icon": "market"
 }

@@ -27,9 +27,9 @@ post}, sub, rows [{t, name, kind, tag, big, bl, note}], total {label, value}, fo
 
 ## The hand-drawn card: the design in use (2026-11-25)
 
-The owner's design for EVERY designed image since 2026-11-25: marker and crayons on ivory drawing paper, with a pencil
-mascot, doodles and the stocks' logos in colour (he picked option A of three and asked for the logos; the other two
-options are in git history, commit before this one). The one exception is the broker-style performance image of the
+The owner's design for EVERY designed image since 2026-11-25: marker and crayons on a ruled notebook page (ivory paper, printed blue lines, a red margin), the stocks' logos in
+colour, and ONE doodle top-left of what the company makes (he picked option A of three, asked for the logos, then on
+2026-11-25 had the pencil mascot, stars and planet removed: «ما لهم علاقة»; nothing unrelated to the stock is drawn). The one exception is the broker-style performance image of the
 portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the beige paper template are retired.
 
     node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png
@@ -40,6 +40,12 @@ portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the
 - Logos: `logo` on the card and on each row is a TradingView logoid (the news tool's relatedSymbols carry it). Save it
   once: `curl -s -o scripts/cards/sketch/logos/<logoid>.svg https://s3-symbol-logo.tradingview.com/<logoid>--big.svg`.
   A stock is shown with its logo beside its ticker, never by name alone.
+- The doodle: `icon` in the data file, by what the company makes: `chip` (Nvidia, AMD), `memory` (Micron, SK Hynix: an
+  HBM stack), `storage` (SanDisk), `server` (Nebius, CoreWeave: cloud and AI data centres), `rocket` (Rocket Lab,
+  SpaceX), `ai` (Anthropic, AI software), `metal` (gold, silver, miners), `market` (an index or the whole market),
+  `wallet` (his own portfolio). `data/icons.json` renders them all. A company none of them fits gets a NEW doodle
+  (add a function to DOODLE in sketch.html, same style: ink outline, crayon fill), never an unrelated one; with no
+  `icon` the corner stays empty.
 - Line marks carry `dx`, `dy` (where the label sits from its point), `arrow` and `patch`: the renderer checks overflow,
   not overlaps, so LOOK at the render and move a label that sits on the line or on another label.
 - A row gets a small up or down arrow only with `arrow`, for values that are moves (not for a position's size).
