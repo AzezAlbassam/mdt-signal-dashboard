@@ -2,7 +2,7 @@
 
 The scheduled task «محافظ المستثمرين» (daily 23:53 Riyadh, bound to the audit session, which has this repository and
 the card renderer) sends a pointer to this file. Change the steps here.
-2026-11-27: the donut card is the default (owner).
+2026-11-27: the donut card is the default (owner); the text follows his own short edit; cards stay PNG.
 2026-11-26: created. Owner: «فكرة نظيف محافظ كبار المستثمرين بس تكون بنفس تصميمنا بالضبط … تتاكد ١٠٠٪ من دقتها وفي
 نفس اليوم نغرد فيها ما نتاخر». First post written by hand the same day: tweets/2026-11-26-burry.
 
@@ -45,11 +45,14 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    (get-news relatedSymbols, or the company's name in kebab case), saved once as scripts/cards/sketch/logos/<logoid>.svg
    from https://s3-symbol-logo.tradingview.com/<logoid>--big.svg. Render with
    `NODE_PATH=$(npm root -g) node scripts/cards/sketch/render-sketch.cjs <data> <out.png>`, LOOK at it, fix anything cut or
-   crowded (fewer items per group, or a `pair`), convert to JPEG (ffmpeg -q:v 2) and upload it with the Artifact tool
+   crowded (fewer items per group, or a `pair`), keep it as the PNG (never convert to JPEG: X recompresses it and a JPEG is compressed twice) and upload it with the Artifact tool
    (url = the page, asset: true).
-5. The text: real Saudi dialect, short (150-450 characters), the one change that matters and why people care, one line
-   tied to the owner's positions where it fits (meta/positions; never contradict them, never mock a stock he holds), one
-   plain question, «رأيي الشخصي، مو توصية». Every claim in facts with both sources.
+5. The text, written the way the owner cut the first one himself (2026-11-27, tweets/2026-11-27-tepper): 3-4 short lines of
+   facts only: who and his top position with its weight and what he did with it, the biggest other change, what he sold
+   out of, and «ترا هذي محفظته نهاية <month>، والإفصاح ينزل بعدها بـ 45 يوم» for a 13F. No opinion line, no question, no
+   emoji, no disclaimer. Real Saudi dialect. Never contradict meta/positions or mock a stock he holds. Every claim in
+   facts with its source; re-read every ticker and name against the facts before saving (a held stock must never appear
+   as sold).
 6. Save tweets/<D>-inv (status draft, family "investor-portfolios", idea, idea_sentence, stance_check, title, text,
    tickers, facts, photos, links [], createdAt, checked). Commit and push the data file and new logos («Card data: …» with
    the session's trailers).

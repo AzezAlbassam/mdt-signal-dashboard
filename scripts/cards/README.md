@@ -56,3 +56,11 @@ portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the
   not overlaps, so LOOK at the render and move a label that sits on the line or on another label.
 - A row gets a small up or down arrow only with `arrow`, for values that are moves (not for a position's size).
 - `rough.js` is roughjs 4.6.6 (MIT), vendored so a render needs no install. Every number on a card is in the post's facts.
+
+## Sharp on X (2026-11-27)
+
+The owner found the posted image blurry. X recompresses every image, and the card's fine pixel noise (paper grain, single
+pixels knocked out of the letters and the crayon) is exactly what that recompression smears. The template now has no
+pixel grain, crisp lettering (the ink filter only wobbles), and coarser wax gaps in the crayon; the PNG of a card fell
+from 9.2 MB to 3.2 MB. Always upload the PNG as rendered at scale 2 (2160x2700), never a JPEG, and save it to the phone
+from the tweets page's save button (the original file), not from a chat preview or a screenshot.
