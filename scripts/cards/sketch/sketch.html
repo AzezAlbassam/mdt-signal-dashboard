@@ -337,9 +337,21 @@ function donut() {
     : shade(cols[i % cols.length], { stroke: C.ink, strokeWidth: 3.5, roughness: 1.3, hachureGap: 13 }))))
   put(R.circle(W.cx, W.cy, W.ri * 2, O({ stroke: C.ink, strokeWidth: 4, fill: C.paper, fillStyle: 'solid', roughness: 1.1 })))
   const c = D.center ?? {}
+  if (c.photo) { // a real photo in the hole, clipped round, with a marker ring; its credit goes at the plot's top corner
+    const im = new Image(), d = W.ri * 2 - 18
+    im.src = c.photo; im.style.cssText = `left:${W.cx - d / 2}px;top:${W.cy - d / 2}px;width:${d}px;height:${d}px;border-radius:50%;border:0;box-shadow:none;object-fit:cover;object-position:${c.focus ?? '50% 30%'}`
+    stick.appendChild(im); photoReady = im.decode()
+    put(R.circle(W.cx, W.cy, d + 6, O({ stroke: C.ink, strokeWidth: 5, roughness: 0.9 })))
+    if (c.credit) { const pb = box(document.getElementById('plot')); text(pb.x, pb.y + 18, c.credit, { anchor: 'start', font: `500 17px ${F}`, fill: C.mut }) }
+    return labels(W)
+  }
   if (c.top) text(W.cx, W.cy - 18, c.top, { font: `800 ${c.topSize ?? 34}px ${F}`, dir: 'rtl' })
   if (c.big) text(W.cx, W.cy + 40, c.big, { font: num(c.bigSize ?? 58), fill: tone(c.tone) })
   if (c.small) text(W.cx, W.cy + 78, c.small, { font: `600 22px ${F}`, fill: C.mut, dir: 'rtl' })
+  labels(W)
+}
+let photoReady = Promise.resolve()
+function labels(W) {
   for (const x of W.all) { // ticker and weight outside, with a short leader
     const r1 = W.ro + 10, r2 = W.ro + 34, cos = Math.cos(x.am), sin = Math.sin(x.am)
     put(R.line(W.cx + r1 * cos, W.cy + r1 * sin, W.cx + r2 * cos, W.cy + r2 * sin, O({ stroke: C.ink, strokeWidth: 3, roughness: 0.6 })))
@@ -349,7 +361,7 @@ function donut() {
   }
 }
 
-document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { if (D.kind === 'donut') donutPlace(); await frame(); ({ story, bars, line, holdings, donut })[D.kind]() } document.body.dataset.done = '1' })
+document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { if (D.kind === 'donut') donutPlace(); await frame(); ({ story, bars, line, holdings, donut })[D.kind](); await photoReady } document.body.dataset.done = '1' })
 </script>
 </body>
 </html>

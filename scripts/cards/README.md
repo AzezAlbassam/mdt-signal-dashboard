@@ -34,7 +34,7 @@ portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the
 
     node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png
 
-- `donut`: an investor's portfolio as a crayon wheel (`slices: [{t, logo, w}]`, `rest: {label, w}`, `center: {top, big, small}`),
+- `donut`: an investor's portfolio as a crayon wheel (`slices: [{t, logo, w}]`, `rest: {label, w}`, `center: {top, big, small}` or `center: {photo, focus, credit}` for the investor's real, freely licensed photo; photos/),
   a logo in each slice and ticker + weight outside: the owner's pick (2026-11-27). Use it whenever weights are known.
 - `holdings`: an investor's portfolio as groups of logo stickers (`groups: [{label, note, tone, items: [{t, logo}]}]`,
   `pair` puts a small group beside it); no weights unless the source publishes them.

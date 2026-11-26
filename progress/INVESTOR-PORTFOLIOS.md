@@ -33,7 +33,11 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    Never fill a gap from memory; if a part cannot be confirmed, leave it off the card and say so in checked.
 4. The card (the owner, 2026-11-27, on the first one: «العجله مع النسب وشعار كل شركة اجمل وابسط»): kind "donut" like
    data/sample-tepper-donut.json, the top 6 holdings by weight with their logos and a grey «الباقي» slice, the investor's name and
-   number of holdings in the centre. Use it whenever the source gives weights (a 13F always does). Only when no weights are
+   number of holdings in the sub line, and the investor's REAL photo in the centre (the owner, 2026-11-27: «ابي صورته الصدقية»):
+   a freely licensed photo from Wikimedia Commons (search the File namespace, read its licence with prop=imageinfo&iiprop=extmetadata,
+   download the original from upload.wikimedia.org once into scripts/cards/sketch/photos/<name>.jpg), set center.photo, center.focus
+   (the face's position) and center.credit «Photo: <author>, <licence>, Wikimedia Commons». No free photo: no photo, never an
+   unlicensed one or an AI image. Use it whenever the source gives weights (a 13F always does). Only when no weights are
    published, fall back to kind "holdings" like data/2026-11-26-burry.json
    (tag with the investor's name and best-known label, a title that says the one thing that changed, hero = one number
    from the source such as cash share or the top position's weight, groups such as «أكبر مراكزه», «جديد», «باع»,
