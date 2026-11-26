@@ -34,7 +34,7 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    Never fill a gap from memory; if a part cannot be confirmed, leave it off the card and say so in checked.
 4. The card (the owner, 2026-11-27, on the first one: «العجله مع النسب وشعار كل شركة اجمل وابسط»): kind "donut" like
    data/sample-tepper-donut.json, the top 6 holdings by weight with their logos and a grey «الباقي» slice, the investor's name and
-   number of holdings in the sub line, and the investor's REAL photo in the centre (the owner, 2026-11-27: «ابي صورته الصدقية»):
+   «الباقي» = 100 minus the UNROUNDED top six (never 100 minus rounded figures), number of holdings in the sub line, and the investor's REAL photo in the centre (the owner, 2026-11-27: «ابي صورته الصدقية»):
    a freely licensed photo from Wikimedia Commons (search the File namespace, read its licence with prop=imageinfo&iiprop=extmetadata,
    download the original from upload.wikimedia.org once into scripts/cards/sketch/photos/<name>.jpg), set center.photo, center.focus
    (the face's position) and center.credit «Photo: <author>, <licence>, Wikimedia Commons». No free photo: no photo, never an
@@ -49,8 +49,8 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    crowded (fewer items per group, or a `pair`), keep it as the PNG (never convert to JPEG: X recompresses it and a JPEG is compressed twice) and upload it with the Artifact tool
    (url = the page, asset: true).
 5. The text, written the way the owner cut the first one himself (2026-11-27, tweets/2026-11-27-tepper): 3-4 short lines of
-   facts only: who and his top position with its weight and what he did with it, the biggest other change, what he sold
-   out of, and «ترا هذي محفظته نهاية <month>، والإفصاح ينزل بعدها بـ 45 يوم» for a 13F. No opinion line, no question, no
+   facts only, every stock as its ticker in Latin letters (MU, AVGO), never its Arabic name: who and his top position with its weight and what he did with it, the biggest other change, what he sold
+   out of, and «ترا هذي محفظته نهاية <month>، وأعلنها يوم <filing date>» for a 13F. No opinion line, no question, no
    emoji, no disclaimer. Real Saudi dialect. Never contradict meta/positions or mock a stock he holds. Every claim in
    facts with its source; re-read every ticker and name against the facts before saving (a held stock must never appear
    as sold).

@@ -43,7 +43,7 @@
  ],
  "rest": {
   "label": "الباقي (18 سهم)",
-  "w": 38.2
+  "w": 38.1
  },
  "center": {
   "photo": "photos/david-tepper.jpg",
@@ -51,6 +51,6 @@
   "credit": "Photo: Appaloosa Management, CC BY-SA 3.0, Wikimedia Commons"
  },
  "foot": "إفصاح 16 نوفمبر 2026 · نموذج للتصميم · مو توصية",
- "source": "Appaloosa LP 13F-HR for 2026-09-30, filed 2026-11-16, accession 0001656456-26-000004 (sec.gov), information table summed by issuer, options excluded; weights = value / 13F total.",
+ "source": "Appaloosa LP 13F-HR for 2026-09-30, filed 2026-11-16, accession 0001656456-26-000004 (sec.gov), information table summed by issuer, options excluded; weights = value / 13F total. The rest = 100 minus the exact (unrounded) top six = 38.10%.",
  "photo_source": "https://commons.wikimedia.org/wiki/File:David_Tepper_01.jpg (CC BY-SA 3.0, author Appaloosa Management, 2006-05-08)"
 }
