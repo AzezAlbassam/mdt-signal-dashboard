@@ -1,0 +1,56 @@
+{
+ "kind": "donut",
+ "logo": null,
+ "icon": "wallet",
+ "tag": "ديفيد تيبر · Appaloosa",
+ "title": {
+  "pre": "وين حاط فلوسه؟ ",
+  "em": "الذاكرة والذكاء الاصطناعي",
+  "post": ""
+ },
+ "sub": "أكبر 6 مراكز من 24 سهم في إفصاحه للربع الثالث 2026 (13F)",
+ "slices": [
+  {
+   "t": "MU",
+   "logo": "micron-technology",
+   "w": 17.6
+  },
+  {
+   "t": "AMZN",
+   "logo": "amazon",
+   "w": 14.7
+  },
+  {
+   "t": "TSM",
+   "logo": "taiwan-semiconductor",
+   "w": 9.5
+  },
+  {
+   "t": "SPCX",
+   "logo": "spacex",
+   "w": 7.4
+  },
+  {
+   "t": "UBER",
+   "logo": "uber",
+   "w": 6.6
+  },
+  {
+   "t": "NVDA",
+   "logo": "nvidia",
+   "w": 6.0
+  }
+ ],
+ "rest": {
+  "label": "الباقي (18 سهم)",
+  "w": 38.2
+ },
+ "center": {
+  "photo": "photos/david-tepper.jpg",
+  "focus": "50% 35%",
+  "credit": "Photo: Appaloosa Management, CC BY-SA 3.0, Wikimedia Commons"
+ },
+ "foot": "إفصاح 16 نوفمبر 2026 · مو توصية",
+ "source": "Appaloosa LP 13F-HR for 2026-09-30, filed 2026-11-16, accession 0001656456-26-000004 (sec.gov), information table summed by issuer, options excluded; weights = value / 13F total.",
+ "photo_source": "https://commons.wikimedia.org/wiki/File:David_Tepper_01.jpg (CC BY-SA 3.0, author Appaloosa Management, 2006-05-08)"
+}
