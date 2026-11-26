@@ -9,6 +9,8 @@ the whole text: change it here first, then copy it into the task.
 طبيعي و 80% من المتداولين او في السوق الامريكي بيعرفونه ترسلي اياه مع المقطع الميم او المقطع الصدقي وانا انزلهم ...
 تبحث كل يوم ... او كل 12 ساعة». The environment allows cdn.syndication.twimg.com, video.twimg.com and pbs.twimg.com
 for the clips (added the same day with his approval).
+2026-11-26 (owner: big investors' portfolios, 100% accurate, the same day): step 2b only flags a disclosure; the task «محافظ المستثمرين»
+writes it.
 2026-11-25 (owner: never contradict his earlier posts): step 1 reads meta/positions; a line never mocks a position
 or a stock he holds.
 2026-11-24 (owner: «اهم شي عندي نصير الاوائل مب نسير متاخرين مره + المقاطع تكون مضحكه مره زي هذا يكون له علاقه في
@@ -31,6 +33,7 @@ Page: https://claude.ai/artifact/HxfJc8duiX3H6fcVbp6HNY (its database through Ar
    d. Not a tragedy: nothing with deaths, casualties, disasters or illness. Those never get a joke.
    Already covered: if a tweets doc of the last 7 days has the same idea key or tells the same story, only a new twist that itself passes the bar counts.
    If nothing passes: reply «ما فيه خبر يستاهل» plus the biggest headline you saw in one line, and stop. Never lower the bar to have something to send.
+2b. A famous investor's portfolio disclosure (a new 13F or his own post) is not a meme: the task «محافظ المستثمرين» (progress/INVESTOR-PORTFOLIOS.md) writes it. If you see one in the last 24 hours, add one line about it to your reply and go on.
 3. The line. The owner's model is «رئيس مجلس إدارة إنفيديا في أول اجتماع للشركة بعد رجوعه» over 15 seconds of the famous 1979 footage of Saddam Hussein at the podium, calmly lighting a cigar before the names are read out and those named are led from the hall (https://x.com/bobfairhair/status/2124972720895242337; the owner: «اللي يسمع اسمه يقوم يلحق ربعه»). The line never says so: every Arab viewer knows what happens next in that hall, and that is the joke (Huang is back and the board that pushed him out is sitting in front of him). So the line only sets the scene, and the best clip is one the audience recognises on sight (famous archive footage, a classic Gulf or Arab series or play, a football or wrestling moment) whose known story mirrors the news.
    - ONE line, at most 110 characters, Saudi dialect the way he texts a friend (meta/style "voice"). Shape: who + the moment («فلان يوم...», «فلان وهو...», «أنا وأنا أشوف...», «اللي باع ... وهو يشوف ...»).
    - No explaining the joke, no opinion, no analysis, no question, no hashtags, no «مو توصية», no source line. At most one number and only if it makes the joke (fetched today, recorded in facts). $TICKER once if a stock is the subject.

@@ -22,6 +22,23 @@ body{background:var(--paper);font-family:var(--f);color:var(--ink)}
 .icon{flex:none;width:200px;height:150px;margin-inline-start:auto}
 .logo{display:block;flex:none;width:84px;height:84px;visibility:hidden}
 .logo.lg{width:94px;height:94px}
+.logo.sm{width:60px;height:60px}
+/* holdings: an investor's portfolio, groups of logo stickers (no weights shown unless the source gives them) */
+.groups{margin-top:22px;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly}
+.grp{display:flex;flex-direction:column;gap:8px}
+.gh{display:flex;align-items:baseline;gap:12px}
+.gh b{font:800 30px var(--f);padding:0 12px}
+.gh span{font:500 23px var(--f);color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:10px 16px}
+.chp{display:flex;flex-direction:column;align-items:center;gap:4px;width:78px}
+.chp i{font:800 19px var(--f);font-style:normal;direction:ltr}
+.k-holdings .hero{flex-direction:row;align-items:center;gap:22px;margin-top:14px}
+.k-holdings .hero b{font-size:120px}
+.k-holdings .hero span{max-width:9em}
+.k-holdings .groups{margin-top:10px}
+.k-holdings .grp{gap:6px}
+.pair{display:flex;gap:40px}.pair .grp{flex:1}
+.k-holdings .logo.sm{width:54px;height:54px}
 #stick img{position:absolute;border:5px solid #fff;border-radius:18px;box-shadow:3px 4px 0 rgba(35,33,29,.22)}
 .tag{font:800 28px/1.5 var(--f);padding:5px 22px;transform:rotate(-2deg)}
 h1{font:800 67px/1.3 var(--f);margin-top:6px;text-wrap:balance}
@@ -95,7 +112,11 @@ const logo = (id, cls = '') => (id ? `<span class="logo ${cls}" data-logo="${id}
 const XLOGO = '<i class="x"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></i>'
 const head = D.kind === 'icons' ? '' : `<div class="top">${logo(D.logo, 'lg')}<div class="tag"><span>${D.tag}</span></div><span class="icon"></span></div><h1>${D.title.pre}<em>${D.title.em}</em>${D.title.post}</h1><div class="sub">${D.sub}</div>`
 const foot = D.kind === 'icons' ? '' : `<div class="foot"><div class="me">${XLOGO}<span>@AzizzUnited</span></div><div class="disc">${D.foot}</div></div>`
-card.innerHTML = D.kind === 'story'
+document.body.classList.add('k-' + D.kind)
+card.innerHTML = D.kind === 'holdings'
+  ? `${head}<div class="hero tone-${D.hero.tone}"><b>${D.hero.value}</b><span>${D.hero.label}</span></div>
+     <div class="groups">${D.groups.map((g) => { const one = (g) => `<div class="grp tone-${g.tone}"><div class="gh"><b>${g.label}</b><span>${g.note ?? ''}</span></div><div class="chips">${g.items.map((x) => `<span class="chp">${logo(x.logo, 'sm')}<i>${x.t}</i></span>`).join('')}</div></div>`; return g.pair ? `<div class="pair">${one(g)}${one(g.pair)}</div>` : one(g) }).join('')}</div>${foot}`
+  : D.kind === 'story'
   ? `${head}<div class="hero tone-${D.hero.tone}"><b>${D.hero.value}</b><span>${D.hero.label}</span></div>
      <div class="rows">${D.rows.map((r) => `<div class="row tone-${r.tone}">${logo(r.logo)}<div class="who"><div><b class="tk">${r.t}</b><span class="nm">${r.name}</span></div><div class="note">${r.note}</div></div>
        <div class="val"><span class="chip">${r.chip}</span><b class="big">${r.big}</b>${r.bl ? `<span class="bl">${r.bl}</span>` : ''}</div></div>`).join('')}</div>${foot}`
@@ -218,6 +239,19 @@ function frame() {
   return Promise.all(imgs)
 }
 
+function holdings() {
+  const hb = box(card.querySelector('.hero b'))
+  burst(hb.x - 6, hb.y + 26, -1, C.acc); burst(hb.x + hb.w + 6, hb.y + 26, 1, C.acc)
+  scribble(hb.x + 6, hb.x + hb.w - 6, hb.y + hb.h + 6, tone(D.hero.tone), 8)
+  const tones = D.groups.flatMap((g) => (g.pair ? [g.tone, g.pair.tone] : [g.tone]))
+  const gs = [...card.querySelectorAll('.grp')]
+  gs.forEach((g, i) => {
+    const b = box(g), h = box(g.querySelector('.gh b'), 2), t = tones[i]
+    if (i && !g.parentElement.classList.contains('pair') || g.parentElement.firstElementChild === g && i) put(R.line(b.x, b.y - 12, b.x + b.w, b.y - 12, O({ stroke: C.mut, strokeWidth: 2.5, roughness: 1.4, strokeLineDash: [16, 12] })))
+    put(R.rectangle(h.x, h.y, h.w, h.h, O({ stroke: tone(t), strokeWidth: 3, roughness: 1.3, fill: C.sticker, fillStyle: 'zigzag', fillWeight: 4, hachureGap: 6 })))
+  })
+}
+
 function story() {
   const hero = card.querySelector('.hero b'), hb = box(hero)
   burst(hb.x - 6, hb.y + 26, -1, C.acc); burst(hb.x + hb.w + 6, hb.y + 26, 1, C.acc)
@@ -278,7 +312,7 @@ function line() {
 // kind "icons": every doodle with its name, to choose from
 function icons() { card.innerHTML = ''; Object.keys(DOODLE).forEach((k, i) => { const x = 200 + (i % 3) * 340, y = 170 + Math.floor(i / 3) * 310; doodle(k, x, y, 1.05); text(x, y + 150, k, { font: num(36) }) }) }
 
-document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { await frame(); ({ story, bars, line })[D.kind]() } document.body.dataset.done = '1' })
+document.fonts.ready.then(async () => { if (D.kind === 'icons') icons(); else { await frame(); ({ story, bars, line, holdings })[D.kind]() } document.body.dataset.done = '1' })
 </script>
 </body>
 </html>

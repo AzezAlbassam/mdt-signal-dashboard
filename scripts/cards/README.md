@@ -34,6 +34,8 @@ portfolio update, which stays as it is. Forest (`portfolio-update.html`) and the
 
     node scripts/cards/sketch/render-sketch.cjs scripts/cards/sketch/data/story-nvda.json out.png
 
+- `holdings`: an investor's portfolio as groups of logo stickers (`groups: [{label, note, tone, items: [{t, logo}]}]`,
+  `pair` puts a small group beside it); no weights unless the source publishes them.
 - Layouts (`kind` in the data file): `story` (a hero number and up to four rows: a stock's story, or the portfolio's
   trades card), `bars` (few bars, one highlighted, an optional callout sticker), `line` (one price or series line with
   marked points). 1080x1350.

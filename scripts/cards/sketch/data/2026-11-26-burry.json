@@ -1,0 +1,140 @@
+{
+ "kind": "holdings",
+ "logo": null,
+ "icon": "wallet",
+ "tag": "مايكل باري · صاحب The Big Short",
+ "title": {
+  "pre": "أشهر واحد يراهن على الطيحة… ",
+  "em": "صار لونق تقريباً بالكامل",
+  "post": ""
+ },
+ "sub": "من منشوره في Substack يوم 25 نوفمبر",
+ "hero": {
+  "value": "25%",
+  "label": "من محفظته كاش.. ينتظر فرصة",
+  "tone": "blue"
+ },
+ "groups": [
+  {
+   "label": "أكبر مراكزه",
+   "note": "",
+   "tone": "up",
+   "items": [
+    {
+     "t": "MELI",
+     "logo": "mercadolibre"
+    },
+    {
+     "t": "TPW",
+     "logo": "temple-and-webster-group"
+    },
+    {
+     "t": "JD",
+     "logo": "jd-com"
+    }
+   ]
+  },
+  {
+   "label": "أسهم ثانية",
+   "note": "بدون نسب",
+   "tone": "ink",
+   "items": [
+    {
+     "t": "ADBE",
+     "logo": "adobe"
+    },
+    {
+     "t": "BIRK",
+     "logo": "birkenstock"
+    },
+    {
+     "t": "DECK",
+     "logo": "deckers-outdoor"
+    },
+    {
+     "t": "MOH",
+     "logo": "molina-healthcare"
+    },
+    {
+     "t": "HCA",
+     "logo": "hca-healthcare"
+    },
+    {
+     "t": "LULU",
+     "logo": "lululemon-athletica"
+    },
+    {
+     "t": "FISV",
+     "logo": "fiserv"
+    },
+    {
+     "t": "VEEV",
+     "logo": "veeva-systems"
+    },
+    {
+     "t": "PYPL",
+     "logo": "paypal"
+    },
+    {
+     "t": "BBW",
+     "logo": "build-a-bear-workshop"
+    }
+   ]
+  },
+  {
+   "label": "عقود شراء",
+   "note": "يراهن إنها تطلع",
+   "tone": "up",
+   "items": [
+    {
+     "t": "NVDA",
+     "logo": "nvidia"
+    },
+    {
+     "t": "SFM",
+     "logo": "sprouts-farmers-markets"
+    },
+    {
+     "t": "ZTS",
+     "logo": "zoetis"
+    }
+   ]
+  },
+  {
+   "label": "أسهم ممتازة",
+   "note": "preferred",
+   "tone": "blue",
+   "items": [
+    {
+     "t": "FNMA",
+     "logo": "fannie-mae"
+    },
+    {
+     "t": "FMCC",
+     "logo": "freddie-mac"
+    },
+    {
+     "t": "QXO",
+     "logo": "qxo"
+    }
+   ],
+   "pair": {
+    "label": "باقي يراهن ضدها",
+    "note": "puts",
+    "tone": "down",
+    "items": [
+     {
+      "t": "PLTR",
+      "logo": "palantir"
+     },
+     {
+      "t": "MET",
+      "logo": "metlife"
+     }
+    ]
+   }
+  }
+ ],
+ "foot": "25 نوفمبر 2026 · مو توصية",
+ "source": "Seeking Alpha via TradingView news (seekingalpha:c3775f54f094b:0, published 2026-11-26) quoting Burry's Cassandra Unchained post of Wednesday 2026-11-25; core facts confirmed by Benzinga (benzinga.com/markets/equities/26/11/63659439) and Yahoo Finance via WebSearch 2026-11-26. The Substack itself could not be read from here."
+}

@@ -155,7 +155,7 @@ textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; 
 (() => {
   const $ = (id) => document.getElementById(id)
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
-  const FAMILY = { market: 'قراءة السوق', company: 'تحليل شركة', valuation: 'تقييم', compounding: 'العائد المركب', etf: 'صناديق', halal: 'استثمار شرعي', earnings: 'نتائج', dividends: 'توزيعات', saudi: 'السوق السعودي', history: 'تاريخ', myth: 'خرافة وأرقام', 'data-study': 'من اختباراتنا', comparison: 'مقارنة', risk: 'مخاطر', behaviour: 'سلوك المستثمر', macro: 'اقتصاد', meme: 'خبر + ميم', 'business-model': 'كيف تكسب الشركة', explainer: 'شرح مبسط', statements: 'قراءة القوائم', tools: 'طريقتي', money: 'فلوسك', indicators: 'مؤشرات', portfolio: 'المحفظة', 'news-angle': 'خبر وزاوية' }
+  const FAMILY = { market: 'قراءة السوق', company: 'تحليل شركة', valuation: 'تقييم', compounding: 'العائد المركب', etf: 'صناديق', halal: 'استثمار شرعي', earnings: 'نتائج', dividends: 'توزيعات', saudi: 'السوق السعودي', history: 'تاريخ', myth: 'خرافة وأرقام', 'data-study': 'من اختباراتنا', comparison: 'مقارنة', risk: 'مخاطر', behaviour: 'سلوك المستثمر', macro: 'اقتصاد', meme: 'خبر + ميم', 'business-model': 'كيف تكسب الشركة', explainer: 'شرح مبسط', statements: 'قراءة القوائم', tools: 'طريقتي', money: 'فلوسك', indicators: 'مؤشرات', portfolio: 'المحفظة', 'news-angle': 'خبر وزاوية', 'investor-portfolios': 'محافظ المستثمرين' }
   let tweets = []
   let ideas = []
   let db = null
