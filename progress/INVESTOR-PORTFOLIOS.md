@@ -2,6 +2,7 @@
 
 The scheduled task «محافظ المستثمرين» (daily 23:53 Riyadh, bound to the audit session, which has this repository and
 the card renderer) sends a pointer to this file. Change the steps here.
+2026-11-27: the donut card is the default (owner).
 2026-11-26: created. Owner: «فكرة نظيف محافظ كبار المستثمرين بس تكون بنفس تصميمنا بالضبط … تتاكد ١٠٠٪ من دقتها وفي
 نفس اليوم نغرد فيها ما نتاخر». First post written by hand the same day: tweets/2026-11-26-burry.
 
@@ -30,7 +31,10 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
      filed up to 45 days later.
    - Own post: the holdings and actions as reported, with no weights unless the source gives them.
    Never fill a gap from memory; if a part cannot be confirmed, leave it off the card and say so in checked.
-4. The card: a data file scripts/cards/sketch/data/<D>-<investor>.json of kind "holdings" like data/2026-11-26-burry.json
+4. The card (the owner, 2026-11-27, on the first one: «العجله مع النسب وشعار كل شركة اجمل وابسط»): kind "donut" like
+   data/sample-tepper-donut.json, the top 6 holdings by weight with their logos and a grey «الباقي» slice, the investor's name and
+   number of holdings in the centre. Use it whenever the source gives weights (a 13F always does). Only when no weights are
+   published, fall back to kind "holdings" like data/2026-11-26-burry.json
    (tag with the investor's name and best-known label, a title that says the one thing that changed, hero = one number
    from the source such as cash share or the top position's weight, groups such as «أكبر مراكزه», «جديد», «باع»,
    «قلّل»; for a 13F with weights, put the weight in the item's t, e.g. "AAPL 22%"). Logos: the logoid from TradingView
