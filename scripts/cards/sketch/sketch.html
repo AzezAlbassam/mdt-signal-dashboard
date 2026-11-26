@@ -241,7 +241,7 @@ function bars() {
     const cx = L + slot * (i + 0.5), y = B - (B - T) * x.value / max, c = x.hi ? C.up : C.blue
     put(R.rectangle(cx - bw / 2, y, bw, B - y - 3, shade(c, { stroke: C.ink, strokeWidth: 4, roughness: 1.4 })))
     text(cx, y - 22, `${D.unit || ''}${x.value}${D.suffix || ''}`, { font: num(x.hi ? 66 : 54), fill: x.hi ? C.up : C.ink })
-    text(cx, B + 64, x.label, { font: num(48) })
+    text(cx, B + 64, x.label, /[\u0600-\u06FF]/.test(x.label) ? { font: `800 34px ${F}`, dir: 'rtl' } : { font: num(48) })
     if (x.hi) { burst(cx - bw / 2 - 4, y - 70, -1, C.acc); burst(cx + bw / 2 + 4, y - 70, 1, C.acc) }
   })
   if (D.callout) { // a sticker in the empty space over the shortest bar
