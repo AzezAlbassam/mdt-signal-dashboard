@@ -53,7 +53,7 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    crowded (fewer items per group, or a `pair`), keep it as the PNG (never convert to JPEG: X recompresses it and a JPEG is compressed twice) and upload it with the Artifact tool
    (url = the page, asset: true).
 5. The text, written the way the owner cut the first one himself (2026-11-27, tweets/2026-11-27-tepper): 3-4 short lines of
-   facts only, every stock as its ticker in Latin letters (MU, AVGO), never its Arabic name: who and his top position with its weight and what he did with it, the biggest other change, what he sold
+   facts only, every stock as its ticker in Latin letters with $ on every one ($MU, $AVGO) so X shows its price, never its Arabic name: who and his top position with its weight and what he did with it, the biggest other change, what he sold
    out of, and «ترا هذي محفظته نهاية <month>، وأعلنها يوم <filing date>» for a 13F. No opinion line, no question, no
    emoji, no disclaimer. Real Saudi dialect. Never contradict meta/positions or mock a stock he holds. Every claim in
    facts with its source; re-read every ticker and name against the facts before saving (a held stock must never appear
