@@ -1,0 +1,56 @@
+{
+ "kind": "donut",
+ "logo": null,
+ "icon": "wallet",
+ "tag": "ستانلي دراكنميلر · Duquesne",
+ "title": {
+  "pre": "وين حاط فلوسه؟ ",
+  "em": "قرابة ثلث محفظته في سهم واحد",
+  "post": ""
+ },
+ "sub": "أكبر 6 من 59 مركز · 13F الربع الثالث 2026 · بدون الخيارات",
+ "slices": [
+  {
+   "t": "NTRA",
+   "logo": "natera",
+   "w": 31.5
+  },
+  {
+   "t": "STX",
+   "logo": "seagate",
+   "w": 7.6
+  },
+  {
+   "t": "FOXA·FOX",
+   "logo": "fox-corporation",
+   "w": 5.5
+  },
+  {
+   "t": "AMZN",
+   "logo": "amazon",
+   "w": 4.6
+  },
+  {
+   "t": "YPF",
+   "logo": "ypf",
+   "w": 4.3
+  },
+  {
+   "t": "U",
+   "logo": "unity",
+   "w": 3.9
+  }
+ ],
+ "rest": {
+  "label": "الباقي (53 مركز)",
+  "w": 42.6
+ },
+ "center": {
+  "top": "دراكنميلر",
+  "big": "59",
+  "small": "مركز في المحفظة",
+  "tone": "ink"
+ },
+ "foot": "إفصاح 16 نوفمبر 2026 · مو توصية",
+ "source": "Duquesne Family Office LLC 13F-HR for 2026-09-30, filed 2026-11-16 (accession 0001536411-26-000011), information table read from sec.gov 2026-11-27; option rows (calls on AMZN, CDW, INSM, STX, TSLA) excluded from weights and total; FOXA and FOX (both Fox Corp classes) combined; rest = 100 minus the unrounded top six. Tickers from sec.gov/files/company_tickers.json."
+}

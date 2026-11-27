@@ -321,9 +321,11 @@ function wheel() {
 }
 function donutPlace() {
   const W = wheel(), rm = (W.ro + W.ri) / 2
-  for (const x of W.all) if (x.logo && x.a1 - x.a0 > 0.36) {
+  for (const x of W.all) { // a logo in every slice it fits in: as big as the slice's arc allows, up to 62px
+    const sz = Math.min(62, (x.a1 - x.a0) * rm * 0.82, (W.ro - W.ri) * 0.8)
+    if (!x.logo || sz < 30) continue
     const sp = document.createElement('span'); sp.className = 'logo sm'; sp.dataset.logo = x.logo
-    sp.style.left = `${W.cx + rm * Math.cos(x.am) - 31}px`; sp.style.top = `${W.cy + rm * Math.sin(x.am) - 31}px`; card.appendChild(sp)
+    sp.style.cssText = `left:${W.cx + rm * Math.cos(x.am) - sz / 2}px;top:${W.cy + rm * Math.sin(x.am) - sz / 2}px;width:${sz}px;height:${sz}px`; card.appendChild(sp)
   }
 }
 function donut() {
