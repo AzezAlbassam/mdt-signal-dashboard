@@ -1,0 +1,45 @@
+{
+ "kind": "story",
+ "logo": "mcdonalds",
+ "icon": "bigmac",
+ "tag": "MCD · من وين تكسب؟",
+ "title": {
+  "pre": "<bdi>MCD</bdi> ",
+  "em": "شركة عقار",
+  "post": " تبيع برقر"
+ },
+ "sub": "من تقريرها السنوي 2025 · هامشها التشغيلي <bdi>46%</bdi>",
+ "hero": {
+  "value": "90%",
+  "label": "من ربح المطاعم يجي من فروع يشغّلها غيرها",
+  "tone": "up"
+ },
+ "rows": [
+  {
+   "t": "",
+   "name": "إيجار من أصحاب الفروع",
+   "chip": "إيراد 2025",
+   "tone": "up",
+   "big": "$10.4B",
+   "note": "الموقع بيدها، وصاحب الفرع يدفع لها إيجار"
+  },
+  {
+   "t": "",
+   "name": "رسوم الامتياز",
+   "chip": "إيراد 2025",
+   "tone": "ink",
+   "big": "$6.0B",
+   "note": "نسبة من مبيعات كل فرع"
+  },
+  {
+   "t": "",
+   "name": "مبيعات مطاعمها هي",
+   "chip": "إيراد 2025",
+   "tone": "blue",
+   "big": "$9.7B",
+   "note": "تشغّل بنفسها <bdi>5%</bdi> بس من المطاعم"
+  }
+ ],
+ "foot": "السنة المالية 2025 · مو توصية",
+ "source": "McDonald's 10-K for fiscal 2025, filed 2026-02-24 (sec.gov/Archives/edgar/data/63908/000006390826000035/mcd-20251231.htm), fetched 2026-11-26: rents 10,442; royalties 6,018; sales by Company-owned and operated restaurants 9,690; franchised margins 13,930 and Company-owned and operated margins 1,422 (about 90% of restaurant margin dollars, the filing's words); about 95% of 45,356 restaurants franchised; operating margin 46.1%. $ millions."
+}

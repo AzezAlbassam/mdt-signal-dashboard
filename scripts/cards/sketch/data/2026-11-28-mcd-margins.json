@@ -1,0 +1,31 @@
+{
+ "kind": "bars",
+ "logo": "mcdonalds",
+ "icon": "bigmac",
+ "tag": "MCD · ربح المطاعم",
+ "title": {
+  "pre": "الفروع تبيع البرقر… ",
+  "em": "والربح يوصلها إيجار ورسوم",
+  "post": ""
+ },
+ "sub": "ربح المطاعم في 2025 بمليارات الدولار، قبل المصاريف الإدارية",
+ "unit": "$",
+ "suffix": "B",
+ "bars": [
+  {
+   "label": "مطاعمها هي",
+   "value": 1.4
+  },
+  {
+   "label": "فروع يشغّلها غيرها",
+   "value": 13.9,
+   "hi": true
+  }
+ ],
+ "callout": {
+  "value": "90%",
+  "label": "من ربح المطاعم"
+ },
+ "foot": "السنة المالية 2025 · مو توصية",
+ "source": "McDonald's 10-K for fiscal 2025, filed 2026-02-24 (sec.gov/Archives/edgar/data/63908/000006390826000035/mcd-20251231.htm), fetched 2026-11-26: Franchised margins 13,930; Company-owned and operated margins 1,422 ($ millions; restaurant margins as the filing defines them, before general and administrative costs)."
+}
