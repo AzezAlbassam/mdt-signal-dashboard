@@ -8,7 +8,7 @@
   "em": "قرابة ثلث محفظته في سهم واحد",
   "post": ""
  },
- "sub": "أكبر 6 من 59 مركز · 13F الربع الثالث 2026 · بدون الخيارات",
+ "sub": "أكبر 6 من 59 مركز في محفظته · 13F الربع الثالث 2026 · بدون الخيارات",
  "slices": [
   {
    "t": "NTRA",
@@ -46,11 +46,11 @@
   "w": 42.6
  },
  "center": {
-  "top": "دراكنميلر",
-  "big": "59",
-  "small": "مركز في المحفظة",
-  "tone": "ink"
+  "photo": "photos/stanley-druckenmiller.jpg",
+  "focus": "50% 30%",
+  "credit": "Photo: Scott Mlyn | CNBC"
  },
  "foot": "إفصاح 16 نوفمبر 2026 · مو توصية",
- "source": "Duquesne Family Office LLC 13F-HR for 2026-09-30, filed 2026-11-16 (accession 0001536411-26-000011), information table read from sec.gov 2026-11-27; option rows (calls on AMZN, CDW, INSM, STX, TSLA) excluded from weights and total; FOXA and FOX (both Fox Corp classes) combined; rest = 100 minus the unrounded top six. Tickers from sec.gov/files/company_tickers.json."
+ "source": "Duquesne Family Office LLC 13F-HR for 2026-09-30, filed 2026-11-16 (accession 0001536411-26-000011), information table read from sec.gov 2026-11-27; option rows (calls on AMZN, CDW, INSM, STX, TSLA) excluded from weights and total; FOXA and FOX (both Fox Corp classes) combined; rest = 100 minus the unrounded top six. Tickers from sec.gov/files/company_tickers.json.",
+ "photo_source": "CNBC photo by Scott Mlyn, as attached (with that credit) to https://x.com/StockMKTNewz/status/2122432118848397731 (2026-11-16); not a free licence: owner chose on 2026-11-27 to use news photos with their source"
 }

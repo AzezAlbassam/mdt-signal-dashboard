@@ -37,8 +37,12 @@ is watching: do not ask questions. Do NOT post on X. Most days nothing is disclo
    «الباقي» = 100 minus the UNROUNDED top six (never 100 minus rounded figures), number of holdings in the sub line, and the investor's REAL photo in the centre (the owner, 2026-11-27: «ابي صورته الصدقية»):
    a freely licensed photo from Wikimedia Commons (search the File namespace, read its licence with prop=imageinfo&iiprop=extmetadata,
    download the original from upload.wikimedia.org once into scripts/cards/sketch/photos/<name>.jpg), set center.photo, center.focus
-   (the face's position) and center.credit «Photo: <author>, <licence>, Wikimedia Commons». No free photo: no photo, never an
-   unlicensed one or an AI image. Use it whenever the source gives weights (a 13F always does). Only when no weights are
+   (the face's position) and center.credit «Photo: <author>, <licence>, Wikimedia Commons». No free photo: a news photo with its
+   source on the card (the owner's choice, 2026-11-27: «صورة من الأخبار مع المصدر»): a news or markets account's post on X
+   about him (WebSearch with allowed_domains ["x.com"], then the syndication URL; the photo is on pbs.twimg.com, add ?name=large),
+   LOOK to be sure it is him, crop square around the face into photos/<name>.jpg, and credit the photographer and outlet
+   as the post gives them (e.g. «Photo: Scott Mlyn | CNBC»). Never an AI image. EVERY investor card has his photo: the
+   owner, 2026-11-27: «مب قلنا تظيف صوره اي واحد ننزل محفظته». Use it whenever the source gives weights (a 13F always does). Only when no weights are
    published, fall back to kind "holdings" like data/2026-11-26-burry.json
    (tag with the investor's name and best-known label, a title that says the one thing that changed, hero = one number
    from the source such as cash share or the top position's weight, groups such as «أكبر مراكزه», «جديد», «باع»,
